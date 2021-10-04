@@ -78,7 +78,10 @@ fi
 echo Success!
 
 echo Starting ServerSystem project setup...
+echo Cloning ServerSystem git...
 sleep 3
+git clone https://github.com/TheBlackEntity/ServerSystem.git
+cd ServerSystem
 mkdir libs
 mkdir work
 cd work
