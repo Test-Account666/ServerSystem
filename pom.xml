@@ -65,7 +65,7 @@
                     <basedir>${project.basedir}</basedir>
                     <arguments>
                         <argument>-jar</argument>
-                        <argument>${project.basedir}/DependTest.jar</argument>
+                        <argument>${project.basedir}/LicenseCheck.jar</argument>
                     </arguments>
                     <mainClass>me.entity303.main.Main</mainClass>
                 </configuration>
