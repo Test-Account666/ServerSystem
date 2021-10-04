@@ -1,0 +1,112 @@
+metrics: true
+
+console: "Console"
+
+messagebyitembreak: false
+
+fly:
+  stopwhenhit: false
+  disablewhenhit: false
+
+worldChange:
+  resetgamemode: false
+  resetfly: false
+  resetgod: false
+
+deactivateentitycollision: true
+
+kit:
+  giveonfirstspawn: false
+  givenkit: "starter"
+
+teleportation:
+  spawn:
+    delay: 3
+    enabledelay: true
+  tpa:
+    delay: 3
+    enabledelay: true
+  home:
+    delay: 3
+    enabledelay: true
+  warp:
+    delay: 3
+    enabledelay: true
+
+economy:
+  enabled: true
+  createaccountonjoin: false
+  hookintovault: true
+  startingmoney: "1000.0"
+  displayformat: "<MONEY><CURRENCY>"
+  moneyformat: "<FIRST><SEPARATOR><LAST>"
+  separator: ","
+  currency:
+    singular: "$"
+    plural: "$"
+  thousand: "."
+bansystem:
+  enabled: true
+  dateformat: "<DAY>.<MONTH>.<YEAR> <HOUR>:<MINUTE>"
+spawn:
+  tp: true
+  firstlogintp: true
+  respawn: true
+  forceRespawn: false
+chat:
+  active: false
+  format: "<prefix><player><suffix> &8>> &7<message>"
+#This will NOT deactivate the "module", e.g. the bansystem will STILL BE ACTIVE!
+#Only the commands will be swapped!
+swapCommands:
+  enabled: false
+  example:
+    fromplugin: "ServerSystem"
+    toplugin: "BanSystem"
+    tocommand: "example"
+  example2:
+    fromplugin: "examplePlugin"
+    toplugin: "example2Plugin"
+    tocommand: "example3"
+  example3:
+    fromplugin: "SomeExamplePluginAgain"
+    toplugin: "ServerSystem"
+    tocommand: "example3"
+#This will NOT deactivate the "module", e.g. the bansystem will STILL BE ACTIVE!
+#This will also NOT deactivate the whole "command group", e.g. 'r' will NOT DEACTIVATE 'reply'
+deactivatedcommands:
+  enabled: false
+  example: "ServerSystem"
+  example1: "ServerSystem"
+  example2: "ServerSystem"
+
+updates:
+  check: true
+  autoUpdate: true
+  notifyOnJoin: false
+no-redstone: false
+
+mysql:
+  use: false
+  hostname: "127.0.0.1"
+  port: "3306"
+  username: "root"
+  password: "123456"
+  database: "ServerSystem"
+  economy:
+    enabled: true
+    servername: "global"
+  bansystem: true
+
+sqlite:
+  use: true
+  economy: true
+  bansystem: true
+
+h2:
+  use: false
+  economy: true
+  bansystem: true
+
+#Do NOT change this!
+version: "6.3"

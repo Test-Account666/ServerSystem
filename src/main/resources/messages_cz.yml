@@ -1,0 +1,528 @@
+Messages:
+  Syntax:
+    GetPos: "Použití: &2/<LABEL> <Hráč>"
+    BroadCast: "Použij: &2/<LABEL> <Zpráva>"
+    Ban: "Použij: &2/<LABEL> <Hráč> <Čas|Permanent> <<YEAR>|<MONTH>|<WEEK>|<DAY>|<HOUR>|<MINUTE>|<SECOND>> <Důvod>"
+    Burn: "Použij: &2/<LABEL> <Hráč> <Čas>"
+    CheckGameMode: "Použij: &2/<LABEL> <Hráč>"
+    DelHome: "Použij: &2/<LABEL> <Domov>"
+    DelWarp: "Použij: &2/<LABEL> <Warp>"
+    Economy:
+      General: "Použij: &2/<LABEL> <Set|Add|Take> <Hráč> <Množství>"
+      Set: "Použij: &2/<LABEL> <Set> <Hráč> <Množství>"
+      Give: "Použij: &2/<LABEL> <Add> <Hráč> <Množství>"
+      Revoke: "Použij: &2/<LABEL> <Take> <Hráč> <Množství>"
+    Extinguish: "Použij: &2/<LABEL> <Hráč>"
+    Feed: "Použij: &2/<LABEL> <Hráč>"
+    Fly: "Použij: &2/<LABEL> <Hráč>"
+    GameMode: "Použij: &2/<LABEL> <0|1|2|3> <Hráč>"
+    Gma: "Použij: &2/<LABEL> <Hráč>"
+    Gmc: "Použij: &2/<LABEL> <Hráč>"
+    Gms: "Použij: &2/<LABEL> <Hráč>"
+    Gmsp: "Použij: &2/<LABEL> <Hráč>"
+    God: "Použij: &2/<LABEL> <Hráč>"
+    Heal: "Použij: &2/<LABEL> <Hráč>"
+    InvSee: "Použij: &2/<LABEL> <Hráč>"
+    Ip: "Použij: &2/<LABEL> <Hráč>"
+    Kick: "Použij: &2/<LABEL> <Hráč> <Důvod>"
+    Money: "Použij: &2/<LABEL> <Hráč>"
+    Msg: "Použij: &2/<LABEL> <Hráč> <Zpráva>"
+    Pay: "Použij: &2/<LABEL> <Hráč> <Množství>"
+    Ping: "Použij: &2/<LABEL> <Hráč>"
+    Rain: "Použij: &2/<LABEL> <Svět>"
+    Reply: "Použij: &2/<LABEL> <Zpráva>"
+    SetHome: "Použij: &2/<LABEL> <Domov>"
+    SetWarp: "Použij: &2/<LABEL> <Warp>"
+    Sign: "Použij: &2/<LABEL> <Text>"
+    Sudo: "Použij: &2/<LABEL> <Hráč> <Zpráva>"
+    Sun: "Použij: &2/<LABEL> <Svět>"
+    TeamChat: "Použij: &2/<LABEL> <Zpráva>"
+    Time: "Použij: &2/<LABEL> <Day|Noon|Night> <Svět> &7nebo &2/<LABEL> <Ticks> <Svět>"
+    Tp: "Použij: &2/<LABEL> <Hráč1> <Hráč2>"
+    Tpa: "Použij: &2/<LABEL> <Hráč>"
+    Tpahere: "Použij: &2/<LABEL> <Hráč>"
+    TpAll: "Použij: &2/<LABEL> <Hráč>"
+    Tphere: "Použij: &2/<LABEL> <Hráč>"
+    Tpo: "Použij: &2/<LABEL> <Hráč1> <Hráč2>"
+    TpoHere: "Použij: &2/<LABEL> <Hráč>"
+    TpToggle: "Použij: &2/<LABEL> <Hráč>"
+    UnBan: "Použij: &2/<LABEL> <Hráč>"
+    Vanish: "Použij: &2/<LABEL> <Hráč>"
+    Warp: "Použij: &2/<LABEL> <Warp> <Hráč>"
+    Weather: "Použij: &2/<LABEL> <Sun|Storm> <Svět>"
+    ServerSystem: "Použij: &2/<LABEL> <Version|Reload>"
+    Mute: "Použij: &2/<LABEL> <Hráč> <Čas|Permanent> <<YEAR>|<MONTH>|<WEEK>|<DAY>|<HOUR>|<MINUTE>|<SECOND>>
+      <Důvod>"
+    UnMute: "Použij: &2/<LABEL> <Hráč>"
+    Speed: "Použij: &2/<LABEL> <1-10> <Fly|Walk|Player> <Walk|Fly>"
+    TPPos: "Použij: &2/<LABEL> <Hráč> <X> <Y> <Z> <Yaw> <Pitch>"
+    CreateKit: "Použití: &2/<LABEL> <Jméno> <Delay>"
+    DeleteKit: "Použij: &2/<LABEL> <Jméno>"
+    Kit: "Použij: &2/<LABEL> <Jméno> <Hráč>"
+    Invsee: "Použij: &2/<LABEL> <Hráč>"
+    Unnick: "Použij: &2/<LABEL> <Hráč>"
+    Nick: "Použij: &2/<LABEL> <Hráč> <Nick>"
+    Rename: "Použití: &2/<LABEL> <jméno>"
+    CheckHealth: "Použij: &2/<LABEL> <Hráč>"
+  Normal:
+    GetPos:
+      Self: "Jsi na souřadnicích &6X:&2<X> &6Y:&2<Y> &6Z:&2<Z> &6Svět:&2<WORLD>"
+      Others: "&2<TARGET> &7je na souřadnicích &6X:&2<X> &6Y:&2<Y> &6Z:&2<Z> &6Svět:&2<WORLD>"
+    Break:
+      BlockBroke: "Zničil jsi block na &6X:&2<X> &6Y:&2<Y> &6Z:&2<Z>&7!"
+      NoBlockFound: "&cNenalezen block v 10 blokovém rozsahu!"
+    Ban:
+      Success: "Zabanoval jsi &2<TARGET>&7! (Datum unbanu: &a<DATE>&7)"
+      Cannotban: "&cNemůžeš zabanovat &4<TARGET>&c!"
+      NotANumber: "&c<TIME> &cNení platný čas!"
+      NotATimeUnit: "&4<TIMEUNIT> &cnení platná jednotka!"
+      Kick: "&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cbyl
+        jsi zabanován!<BREAK>&6Důvod: &c<REASON><BREAK>&6Od: &c<SENDER><BREAK>&6Datum
+        unbanu: &c<DATE><BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]"
+      DefaultReason: "&cNebyl specifikován Důvod"
+    Kick:
+      DefaultReason: "&cNebyl specifikován Důvod"
+      Kick: "&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl
+        jsi vyhozen ze serveru!<BREAK>&6Důvod: &c<REASON><BREAK>&6Od: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]"
+      CannotKick: "&cNemůžeš vyhodit &4<TARGET>&c!"
+      Success: "Vyhodil jsi &2<TARGET>&7!"
+    Money:
+      Self: "Peníze: &2<BALANCE>"
+      Others: "&2<TARGET>&7 má: &2<BALANCE>&7!"
+    KickAll:
+      DefaultReason: "&cNebyl specifikován Důvod"
+      Success: "Vyhodil jsi všechny hráče!"
+      Kick: "&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl
+        jsi vyhozen ze serveru!<BREAK>&6Důvod: &c<REASON><BREAK>&6Od: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]"
+    Pay:
+      NotANumber: "&4<NUMBER> &cNeplatné číslo!"
+      ToLessAmount: "&c&Můžeš použít jen kladné čísla!"
+      NotEnough: "&cNemáš dostatek peněz!"
+      Success:
+        Self: "Poslal jsi &2<AMOUNT> &7hráči &2<TARGET>&7!"
+        Others: "&2<SENDER> &7ti poslal &2<AMOUNT>&7!"
+    ClearChat: "Chat smazal &2<SENDER>&7!"
+    Back:
+      NoBack: "&cNemůžeš se teleportovat zpět, když si ještě nezemřel!"
+      Success:
+        Death: "Byl jsi teleportován na poslední pozici smrti!"
+        Teleport: "Byl jsi teleportován na poslední pozici!"
+    Broadcast: "<BREAK><BREAK><BREAK>&8[&2Server&8] &c<MESSAGE><BREAK><BREAK><BREAK>"
+    SetHome:
+      MaxReached: "&cNemůžeš mít více domovů!"
+      Success: "Nastavil jsi si domov &2<HOME>&7!"
+    Home:
+      InstantTeleporting: "Byl jsi teleportován na domov: &2<HOME>&7!"
+      Teleporting: "Počkej chvíli, telepotuji!"
+      HomeDoesntExist: "&cDomov &4<HOME> &cneexistuje!!"
+      NoHomes: "&cNemáš dosud nastavený žádný domov!"
+      HomeFormat:
+        Separator: "&b, "
+        Format: "<SEPERATOR>&7<HOME>"
+        Message: "Domovy (&b<AMOUNT>&7): <HOMES>"
+    Vanish:
+      StillActivated: "Stal jsi se neviditelným!"
+      Self:
+        DeActivated: "Nadále nejsi neviditelný!"
+        Activated: "Stal jsi se neviditelným!"
+      Others:
+        DeActivated:
+          Sender: "&2<TARGET>&7 už nadále není neviditelný!"
+          Target: "Nadále nejsi neviditelný!"
+        Activated:
+          Sender: "&2<TARGET>&7 se stal neviditelným!"
+          Target: "Stal si se neviditelným"
+      Misc:
+        NoChat: "&cNemůžeš &4Psát/Vyhazovat itemy/Zvedat itemy/Iteraktovat&c když
+          jsi neviditelný, na Psaní/Vyhazování itemů/Zvedání itemů/Iteraktování použij
+          příkazy : &4/chat, /drop, /pickup, /interact !"
+        NoDrop: "&c&cNemůžeš &4Psát/Vyhazovat itemy/Zvedat itemy/Iteraktovat&c když
+          jsi neviditelný, na Psaní/Vyhazování itemů/Zvedání itemů/Iteraktování použij
+          příkazy : &4/chat, /drop, /pickup, /interact !"
+        NoInteract: "&c&cNemůžeš &4Psát/Vyhazovat itemy/Zvedat itemy/Iteraktovat&c
+          když jsi neviditelný, na Psaní/Vyhazování itemů/Zvedání itemů/Iteraktování
+          použij příkazy : &4/chat, /drop, /pickup, /interact !"
+    Tpa:
+      PendingTpa: "&4<TARGET>&c už má žádost!"
+      TeleportationDisabled: "&4<TARGET>&c má vypnuté teleportace!"
+      Sender: "Poslal jsi žádost o teleportaci k &2<TARGET>&7!"
+      Target: "&2<SENDER> &7se chce k tobě teleportovat!"
+      Accept: "&2Přijmout"
+      Deny: "&4Zamítnout"
+    TpaHere:
+      PendingTpa: "&4<TARGET>&c už má žádost!"
+      TeleportationDisabled: "&4<TARGET>&c má vypnuté teleportace!"
+      Sender: "Poslal jsi o teleportaci k tobě hráči &2<TARGET>&7!"
+      Target: "&2<SENDER> &7chce aby jsi se k němu teleportoval!"
+      Accept: "&2Přijmout"
+      Deny: "&4Zamítnout"
+    TpAccept:
+      NoTpa: "&cNemáš žádné žádosti o teleportaci!"
+      AlreadyOffline: "&4<TARGET> &cje právě offline!"
+      Teleporting: "Počkej chvíli, telepotuji!"
+      Sender: "Potvrdil jsi teleportaci od &2<TARGET>&7!"
+      Target: "&2<SENDER>&7 potvrdil žádost o teleportaci!"
+    TpDeny:
+      NoTpa: "&cNemáš žádné žádosti o teleportaci!"
+      Sender: "Zamítnul jsi teleportaci od &2<TARGET>&7!"
+      Target: "&2<SENDER>&7 zamítl žádost o teleportaci!"
+    Chat:
+      Activated: "Odteď můžeš používat chat!"
+      DeActivated: "Odteď nemůžeš používat chat!"
+    Interact:
+      Activated: "Odteď můžeš interaktovat!"
+      DeActivated: "Odteď nemůžeš interaktovat!"
+    PickUp:
+      Activated: "Odteď můžeš zvedat itemy!"
+      DeActivated: "Odteď nemůžeš zvedat itemy!"
+    Drop:
+      Activated: "Odteď můžeš vyhazovat itemy!"
+      DeActivated: "Odteď nemůžeš vyhazovat itemy!"
+    TpToggle:
+      Self:
+        Activated: "Povolil jsi si teleportace!"
+        DeActivated: "Zakázal jsi si teleportace!"
+      Others:
+        Activated:
+          Sender: "Povolil jsi teleportace &2<TARGET>&7!"
+          Target: "Teleportace byly povoleny!"
+        DeActivated:
+          Sender: "Zakázal jsi teleportace &2<TARGET>&7!"
+          Target: "Teleportace byly zakázany!"
+    CheckGamemode: "Hráči &2<TARGET> &7byl změněn herní režim na &2<MODE>&7!"
+    ClearEnderChest:
+      Self: "Vymazal jsi si itemy z ender bedny! (<AMOUNT> Itemů)"
+      Others:
+        Sender: "Vymazal jsi itemy z ender bedny hráči &2<TARGET>&7! (<AMOUNT> Itemů)"
+        Target: "Byla ti smázana ender bedna! (<AMOUNT> Itemů)"
+    ClearInventory:
+      Self: "Vymazal jsi si itemy z inventáře! (<AMOUNT> Itemů)"
+      Others:
+        Sender: "Vymazal jsi inventář hráči &2<TARGET>&7! (<AMOUNT> Itemů)"
+        Target: "Tvůj inventář byl smazán! (<AMOUNT> Itemů)"
+    Burn:
+      NotNumber: "&4<NUMBER> &cnení číslo!"
+      Success: "&2<TARGET> &7Byl zapálen na &2<TIME> &7sekund!"
+    Time:
+      NoWorld: "&cSvět &4<WORLD> &cNeexistuje!"
+      Success: "Nastavil jsi čas ve světě &2<WORLD> &7na &2<TIME>&7!"
+    DisEnchant:
+      All: "Všechny itemy byly odenchantované!"
+      Hand: "Item byl odenchantován!"
+      NoItem: "&cNedržíš v ruce žádný item!"
+      NotInInv: "&cNemáš žádný item v inventáři typu &4<TYPE>!"
+      Type: "Všechy itemy typu &2<TYPE> &7byly odenchantované!"
+    Extinguish:
+      Others:
+        Sender: "Uhasil jsi &2<TARGET>&7!"
+        Target: "Byl jsi uhašen!"
+      Self: "Uhasil jsi se!"
+    UnSign:
+      NoItem: "&cPotřebuješ mít v ruce item!"
+      NotSigned: "&cTento item není podepsán!"
+      Success: "Item už není podepsaný!"
+    Stack:
+      NoItem: "&cMusíš v ruce držet item!"
+      Success: "Nově máš celý stack!"
+    Sudo: "&cNemůžeš mluvit za tohoto hráče!"
+    Sun:
+      Success: "Počasí ve světě &2<WORLD> &7změněno na &2slunečné!"
+      NoWorld: "&cSvět &4<WORLD> &cneexistuje!"
+    TeamChat: "&8[&7TeamChat&2] &c<SENDER> &2>> &7<MESSAGE>"
+    Sign:
+      NoItem: "&cPotřebuješ mít v ruce item!"
+      AlreadySigned: "&cTento item už je podepsán!"
+      Success: "Item je podepsaný!"
+      Translation:
+        Von: "Od"
+        Am: "Datum"
+        Um: "Kdy"
+    Skull:
+      Others: "Přidal jsi si hlavu hráče &2<TARGET>&7!"
+      Self: "Přidal jsi si svou hlavu!"
+    Smelt:
+      NoItem: "&cPotřebuješ mít v ruce item!"
+      Success: "Užij si srandu s &5<ITEM>&7!"
+      NotSmeltable: "&cNemůžeš vypéct tenhle item!"
+    EditSign:
+      NotAvailable: "&cVerze serveru tohle nepodporuje!"
+      SignNeeded: "&cPodíval ses na cedulku!"
+      NotInPlot: "&cTahle cedulka není registrovaná!"
+      NotYourPlot: "&cTenhle pozemek nevlastníš!"
+    Restart:
+      AlreadyRestarting: "&cPrávě se restartuje server!"
+      RestartTimer: "restart za &2<TIME> sekund&7!"
+      RestartMessage: "RESTART!"
+    Ping:
+      Others: "Ping &2<TARGET>&7: &2<PING>ms"
+      Self: "Tvůj ping: &a<PING>ms"
+    Repair:
+      All: "Opravil jsi si itemy!"
+      Hand: "Item v ruce opraven!"
+      NoItem: "&cMusíš držet item v ruce!"
+      NoType: "&cMáš nesprávný typ itemu: &4<TYPE>&c!"
+      Type: "Itemy typu &2<TYPE> &7byly opraveny!"
+      Armor: "Opravil sis brnění!"
+    Ip: "IP adresa od &2<TARGET>&7: &2<IP>"
+    Heal:
+      NotHealable: "&cNemůžeš uzdravit &4<TARGET> &c, Protože jeho zdraví je menší
+        než 1. &7Zkus &2/kill <TARGET>"
+      Others:
+        Target: "Byl jsi uzdraven!"
+        Sender: "Uzdravil jsi &2<TARGET>&7!"
+      Self: "Uzdravil jsi se!"
+    GameMode:
+      Changed:
+        Others:
+          Sender: "Nastavil jsi &2<TARGET> &7herní režim na &2<MODE>&7!"
+          Target: "Herní režim změněn na &2<MODE>&7!"
+        Self: "Herní režim změněn na &2<MODE>&7!"
+      NotGameMode: "&cTento herní režim neexistuje &4<MODE>&c!"
+    Feed:
+      Others:
+        Sender: "Nasytil si &2<TARGET>&7!"
+        Target: "Byl jsi nasycen!"
+      Self: "Byl jsi nasycen!"
+    CommandSpy:
+      Activated: "Odteď vidíš všechny příkazy!"
+      Deactivated: "Už nevidíš všechny příkazy!"
+      Spy: "&7{&4CommandSpy&7} [&2<SENDER>&7] &2<MESSAGE>"
+    Speed:
+      Walk:
+        Self: "Tvá rychlost byla nastavena na &a<SPEED>&7!"
+        Others:
+          Sender: "Nastavil jsi rychlost &2<SPEED> hráči &2<TARGET>&7!"
+          Target: "Tvá rychlost se zvýšila na &2<SPEED>&7!"
+      Fly:
+        Self: "Tvá rychlost byla nastavena na &2<SPEED>&7!"
+        Others:
+          Sender: "Nastavil jsi rychlost &2<SPEED> hráči &2<TARGET>&7!"
+          Target: "Tvá rychlost se zvýšila na &2<SPEED>&7!"
+    ServerSystem:
+      Version: "Použáváš ServerSystem verze &2<PLUGINVERSION> &7s verzí configu &2<CONFIGVERSION>!"
+      Reload: "ServerSystem byl restartován!"
+      Update:
+        Checking: "Hledám updaty..."
+        NewVersion: "Nová verze nalezena (<VERSION>)! Restartuj server pro updatování!"
+        LatestVersion: "Máš nejnovější verzi!"
+    SetWarp:
+      WarpAlreadyExists: "&cWarp &4<WARP> &cjiž existuje!"
+      Success: "Nastavil jsi warp &2<WARP>&7!"
+    DelWarp:
+      WarpDoesntExists: "&cWarp &4<WARP> &cNeexistuje!"
+      Success: "Smazal jsi warp &2<WARP>&7!"
+    Warp:
+      WarpDoesntExists: "&cWarp &4<WARP> &cNeexistuje!"
+      Teleporting: "Počkej chvíli, teleportuji!"
+      InstantTeleporting: "Byl jsi teleportován na warp &2<WARP>&7!"
+      Others:
+        Teleporting:
+          Sender: "Teleportoval jsi &2<TARGET> &7na warp &2<WARP>&7!"
+          Target: "Byl jsi teleportován na warp &2<WARP>&7!"
+    SetSpawn: "Nastavil jsi spawn!"
+    Spawn:
+      NoSpawn: "&cNení nastaven žádný spawn!"
+      InstantTeleporting: "Byl jsi teleportován na spawn!"
+      Teleporting: "Počkej chvíli, teleportuji!"
+    Kit:
+      DoesntExist: "&cKit &4<KIT> &cneexistuje!"
+      Success:
+        Self: "Dostal jsi kit &2<KIT>&7!"
+        Others:
+          Sender: "Dal jsi hráči &2<TARGET> &7kit &2<KIT>&7!"
+          Target: "Dostal jsi kit &2<KIT>&7!"
+      OnDelay: "&cTento kit můžeš znovu použít až za &4<MINUTES> minuty&c!"
+    DeleteKit:
+      DoesntExist: "&cKit &4<KIT> &cneexistuje!"
+      Success: "Smazal jsi kit &2<KIT>&7!"
+    CreateKit:
+      AlreadyExist: "&cKit &4<KIT> &cUž existuje!"
+      Success: "Vytvořil jsi kit &2<KIT>&7!"
+    Economy:
+      Error:
+        NotANumber: "&4<NUMBER> &cnení číslo!"
+      Success:
+        Set:
+          Sender: "Nastavil jsi peníze hráči &2<TARGET> &7na &2<AMOUNT>&7!"
+          Target: "Právě máš &2<AMOUNT>&7!"
+        Give:
+          Sender: "Daroval si peníze hráči &2<TARGET> &a<AMOUNT>&7!"
+          Target: "Dostal si &2<AMOUNT>&7!"
+        Revoke:
+          Sender: "Vzal si peníze hráči &2<TARGET> &a<AMOUNT>&7!"
+          Target: "&7Bylo ti odebráno &2<AMOUNT>!"
+    Tp:
+      NoTeleportations: "&4<TARGET> &cmá vypnuté teleportace!"
+      Self: "Byl jsi teleportován k &2<TARGET>&7!"
+      Others: "Teleportoval jsi &2<TARGET> &7k &2<TARGET2>&7!"
+    Tphere:
+      NoTeleportations: "&4<TARGET> &cmá vypnuté teleportace!"
+      Success: "Teleportoval jsi &2<TARGET> &7k sobě!"
+    Tpo:
+      Self: "Byl jsi teleportován k &2<TARGET>&7!"
+      Others: "Teleportoval jsi &2<TARGET> &7k &2<TARGET2>&7!"
+    TpoHere: "Teleportoval jsi &2<TARGET> &7k sobě!"
+    TpAll:
+      Self: "Teleportoval jsi všechny k sobě!"
+      Others: "Teleportoval jsi všechny k &2<TARGET>&7!"
+    Fly:
+      Activated:
+        Self: "Odteď můžeš létat!"
+        Others:
+          Sender: "&2<TARGET> &7může létat!"
+          Target: "Odteď můžeš létat!"
+      DeActivated:
+        Self: "Odteď nemůžeš létat!"
+        Others:
+          Sender: "&2<TARGET> &7nemůže létat"
+          Target: "Odteď nemůžeš létat!"
+    Msg:
+      Sender: "&8[&cMSG&2] &3Ty &7-> &c<TARGET> &7>> &2<MESSAGE>"
+      Target: "&8[&cMSG&2] &3<SENDER> &7-> &cTy &7>> &2<MESSAGE>"
+      SocialSpy: "&8[&cSocialSpy&2] &3<SENDER> &7-> &c<TARGET> &7>> &2<MESSAGE>"
+      Deactivated: "&4<TARGET> &cdeaktivoval msg zprávy"
+    ConvertFromEssentials:
+      WarnNotTested: "&cVarování!! &cTento příkaz ještě &4nebyl testováný&c! &4Omluvte
+        veškeré problémy! &cVarování!!<BREAK>&7Pokud chceš použít tento příkaz, napiš
+        ho znovu!"
+      Failed:
+        NoDirectory: "&cError při konvertování! V Essentials nejsou žádné data!"
+        Unknown: "&cError při konvertování! Podívej se do konsole pro bližší info!
+          Nebo pošli error: &4<TARGET> &cs obrázkem konsole na tento discord (&4https://discord.gg/TbnyUrJ)"
+      Finished: "Konvertování dokončeno!"
+    TPPos:
+      NotANumber: "&4<NUMBER> &cnení platné číslo!"
+      Success:
+        Self: "Teleportoval jsi se na místo &aX: <X> Y: <Y> Z: <Z>&7!"
+        Others: "Teleportoval jsi &2<TARGET> &7na místo &aX: <X> Y: <Y> Z: <Z>&7!"
+    Unnick:
+      Self: "Odnickoval jsi se!"
+      Others: "Nastavil jsi nick hráči &2<TARGET>&7!"
+    Nick:
+      NickTooLong: "&4<NICK> &cje příliš dlouhý (max. 16 písmen)!"
+      Success:
+        Self: "Tvůj nick byl změněn na &2<NICK>&7!"
+        Others: "Změnil jsi nick hráči &2<TARGET> &7na &2<NICK>&7!"
+    DelHome:
+      Success: "Smazal si domov &2<HOME>&7!"
+      NoHomes: "&cNemáš již žádne domovy!"
+    Hat:
+      NoItem: "&cDrž item v ruce!"
+      Success:
+        HatRemoved: "Čepice &8[<TYPE>] &7byla smazaná!"
+        NewHat: "Nová čepice: &8[<TYPE>]&7!"
+    UnBan:
+      Success: "Odbanoval si &2<TARGET>&7!"
+      NotBanned: "&4<TARGET> &cnení zabanovaný!"
+    Mute:
+      CannotMute: "&cNemůžeš umlčet &4<TARGET>&c!"
+      DefaultReason: "&cNebyl specifikován důvod"
+      NotANumber: "&4<NUMBER> &cnení platné číslo!"
+      NotATimeUnit: "&4<TIMEUNIT> &cnení platná jednotka!"
+      Success: "Umlčel si &2<TARGET>&7! (Datum odmlčení: &2<UNMUTE_DATE>&7) (Důvod:
+        &2<REASON>&7)"
+      Muted: "&cByl si umlčen! (Datum odmlčení: &4<UNMUTE_DATE>&c)"
+    UnMute:
+      NotMuted: "&4<TARGET> &cnení umlčen!"
+      Success: "Odmlčel si &2<TARGET>&7!"
+    God:
+      Self:
+        Activated: "Nyní jsi nesmrtelný!"
+        Deactivated: "Už nejsi nesmrtelný!"
+      Others:
+        Activated:
+          Sender: "&2<TARGET> &7je nesmrtelný!"
+          Target: "Jsi nesmrtelný!"
+        Deactivated:
+          Sender: "&2<TARGET> &7už není nesmrtelný!"
+          Target: "Už nejsi nesmrtelný!"
+    Weather:
+      RainStopped: "Vypnul jsi déšť ve světě &2<WORLD>&7!"
+      RainStarted: "Zapnul jsi déšť ve světě &2<WORLD>&7!"
+      NoWorld: "&cSvět &4<WORLD> &cneexistuje!"
+    KickedByHigher:
+      Admin: "&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl
+        jsi vyhozen ze serveru!<BREAK>&6Důvod: &7Na server se připojil &cAdmin &7!
+        <BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]"
+      Premium: "&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl
+        jsi vyhozen ze serveru!<BREAK>&6Důvod: &7Na server se připojilo &6Premium &7!
+        <BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]"
+    Reply: "&cJeště jsi nikoho neoznačil"
+    BalTop: "&8[]&7--------------------------------&8[]<BREAK>&2Baltop<BREAK>&8[]&7--------------------------------&8[]<BREAK>&61.<FIRST><BREAK>&62.<SECOND><BREAK>&63.<THIRD><BREAK>&64.<FOURTH><BREAK>&65.<FIFTH><BREAK>&66.<SIXTH><BREAK>&67.<SEVENTH><BREAK>&68.<EIGHTH><BREAK>&69.<NINTH><BREAK>&610.<TENTH><BREAK>&8[]&7--------------------------------&8[]<BREAK>&2Baltop<BREAK>&8[]&7--------------------------------&8[]"
+    AFK:
+      Kick: "&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl
+        jsi vyhozen ze serveru!<BREAK>&6Důvod: &cJsi AFK déle jak <MINUTES> minut!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]"
+      Afk: "Nyní si AFK!"
+      NotAfk: "Už nejsi AFK!"
+    Maintenance:
+      NoJoin: "&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Byl
+        jsi vyhozen ze serveru!<BREAK>&cServer je momentálně v údržbě!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]"
+      Kick: "&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Byl
+        jsi vyhozen ze serveru!<BREAK>&6Důvod: &cServer je nyní v údržbě!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]"
+      Activated: "Server je nyní v údržbě!"
+      Deactivated: "Server již není v údržbě!"
+    Rules: "&8[]&7--------------------------------&8[]<BREAK>&2Pravidla<BREAK>&8[]&7--------------------------------&8[]<BREAK>&6<RULES><BREAK>&8[]&7--------------------------------&8[]<BREAK>&2Pravidla<BREAK>&8[]&7--------------------------------&8[]"
+    Rename:
+      Success: "Přejmenoval jsi item v ruce na &2<NAME>&7!"
+      NoItem: "&cPotřebuješ mít v ruce item!"
+    Recipe:
+      NoItem: "&cNedržíš žádný item v ruce!"
+      NoRecipe: "&cNení zde žádný recept pro &4<MATERIAL>&c!"
+      InvalidMaterial: "&cMateriál &4<MATERIAL>&c neexistuje!"
+    Warps:
+      Format:
+        Separator: "&b, "
+        Format: "<SEPERATOR>&7<Warp>"
+        Message: "Warps (&b<AMOUNT>&7): <WARPS>"
+    ItemBreaking: "&cTvůj item &4\"<ITEM>\" &cse brzo zničí &2(&4<DURABILITY>&2/&2<MAXDURABILITY>&2)"
+    CheckHealth: "Životy: &2<HEALTH>&6/&2<MAXHEALTH> &7Jídlo: &2<FOOD>&6/&220"
+    MsgToggle:
+      Deactivated: "Deaktivoval jsi své msg zprávy!"
+      Activated: "Aktivoval jsi své msg zprávy!"
+  Misc:
+    ServerFull: "&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Server
+      je plný!<BREAK>&cK přojení potřebuješ permissi &4<PERMISSION>&c!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]"
+    JoinMessage:
+      Send: false
+      Message: "&2<PLAYER> &7se připojil!"
+      Change: true
+      SendMessageToPlayer: false
+      MessageToPlayer: "&cVítej na serveru!"
+    QuitMessage:
+      Send: false
+      Message: "&2<PLAYER> &7se odpojil!"
+      Change: true
+    NoPermissionInfo: "<SENDER> na toto nemáš práva!"
+    Prefix: "&8[&2Server&8] &7"
+    NoPermissions: "&cNa toto nemáš dostatečné práva (<PERMISSION>)!"
+    OnlyPlayer: "&cNa toto musíš být hráč!"
+    NoTarget: "&4<TARGET> &cneexistuje!"
+    ServerStillStarting: "&cServer se stále načítá!"
+    CommandSpyLayout: "&7{&4CommandSpy&7} [&2<SENDER>&7] &2<COMMAND>"
+    DisposalName: "&cOdpad"
+    Teleportation:
+      Failed: "&cTeleportace zrušena, pohl si se!"
+      Success: "Teleportuji..."
+    GameModes:
+      SURVIVAL: "SURVIVAL"
+      CREATIVE: "CREATIVE"
+      ADVENTURE: "ADVENTURE"
+      SPECTATOR: "SPECTATOR"
+    Times:
+      Day: "Den"
+      Noon: "Odpoledne"
+      Night: "Noc"
+    BanSystem:
+      PermaBan: "Permanentní"
+      ShadowBan: "Shadow"
+      ConsoleName: "Konzole"
+      PermanentName: "permanentní"
+      YearName: "r"
+      MonthName: "m"
+      WeekName: "t"
+      DayName: "d"
+      HourName: "h"
+      MinuteName: "min"
+      SecondName: "s"
+
+language: "cz"

@@ -1,0 +1,289 @@
+Permissions:
+  socialspy: "server.socialspy"
+  msgtoggle: "server.msgtoggle"
+  clearchat: "server.clearchat"
+  back:
+    teleport: "server.back.teleport"
+    death: "server.back.death"
+  broadcast: "server.broadcast"
+  delhome:
+    required: false
+    permission: "server.delhome"
+  sethome:
+    general:
+      required: false
+      permission: "server.sethome.general"
+    bypassmax: "server.sethome.bypassmax"
+    maxhomes:
+      '1': "server.sethome.1"
+      '2': "server.sethome.2"
+      '3': "server.sethome.3"
+      '4': "server.sethome.4"
+      '5': "server.sethome.5"
+      '6': "server.sethome.6"
+      '7': "server.sethome.7"
+      '8': "server.sethome.8"
+      '9': "server.sethome.9"
+      '10': "server.sethome.10"
+      '11': "server.sethome.11"
+      '12': "server.sethome.12"
+      '13': "server.sethome.13"
+      '14': "server.sethome.14"
+      '15': "server.sethome.15"
+      '16': "server.sethome.16"
+      '17': "server.sethome.17"
+      '18': "server.sethome.18"
+      '19': "server.sethome.19"
+      '20': "server.sethome.20"
+  home:
+    required: false
+    permission: "server.home.general"
+    bypassdelay: "server.home.bypassdelay"
+  vanish:
+    see: "server.vanish.see"
+    self: "server.vanish.self"
+    others: "server.vanish.others"
+  tpa:
+    required: false
+    permission: "server.tpa"
+  tpahere:
+    required: false
+    permission: "server.tpahere"
+  tpaccept:
+    required: false
+    permission: "server.tpaccept.general"
+    bypassdelay: "server.tpaccept.bypassdelay"
+  tpdeny:
+    required: false
+    permission: "server.tpdeny"
+  tptoggle:
+    self: "server.tptoggle.self"
+    others: "server.tptoggle.others"
+  checkgamemode: "server.checkgamemode"
+  clearenderchest:
+    self:
+      required: false
+      permission: "server.clearenderchest.self"
+    others: "server.clearenderchest.others"
+  clearinventory:
+    self:
+      required: false
+      permission: "server.clearinventory.self"
+    others: "server.clearinventory.others"
+  commandspy: "server.commandspy"
+  time: "server.time"
+  day: "server.time"
+  night: "server.time"
+  noon: "server.time"
+  disenchant: "server.disenchant"
+  disposal:
+    required: false
+    permission: "server.disposal"
+  extinguish:
+    self:  "server.extinguish.self"
+    others: "server.extinguish.others"
+  feed:
+    self: "server.feed.self"
+    others: "server.feed.others"
+  gamemode:
+    self:
+      survival: "server.gamemode.survival.self"
+      creative: "server.gamemode.creative.self"
+      adventure:  "server.gamemode.adventure.self"
+      spectator: "server.gamemode.spectator.self"
+    others:
+      survival: "server.gamemode.survival.others"
+      creative: "server.gamemode.creative.others"
+      adventure:  "server.gamemode.adventure.others"
+      spectator: "server.gamemode.spectator.others"
+  hat:
+    required: true
+    permission: "server.hat"
+  heal:
+    self: "server.heal.self"
+    others: "server.heal.others"
+  ip: "server.ip"
+  ping:
+    self:
+      required: false
+      permission: "server.ping.self"
+    others: "server.ping.others"
+  weather: "server.weather"
+  sun: "server.weather"
+  rain: "server.weather"
+  repair: "server.repair"
+  restart: "server.restart"
+  editschild:
+    players: "server.schild"
+#Only for PlotSquared!
+    admin: "server.schild.admin"
+  sign: "server.sign"
+  smelt: "server.smelt"
+  stack: "server.stack"
+  sudo:
+    use: "server.sudo.use"
+    exempt: "server.sudo.exempt"
+  suicide:
+    required: false
+    permission: "server.suicide"
+  teamchat:
+    send: "server.teamchat.send"
+    recieve: "server.teamchat.receive"
+  unsign: "server.unsign"
+  signs:
+    warp: "server.signs.warp"
+    disposal: "server.signs.disposal"
+    color: "server.signs.colorsigns"
+  serversystem:
+    use: "server.serversystem.use"
+    reload: "server.serversystem.reload"
+    version: "server.serversystem.version"
+    update: "server.serversystem.update"
+  speed:
+    general: "server.speed.general"
+    self: "server.speed.self"
+    others: "server.speed.others"
+  tppos:
+    self: "server.tppos.self"
+    others: "server.tppos.others"
+  colorchat: "server.chat.color"
+  setspawn: "server.setspawn"
+  spawn:
+    required: false
+    permission: "server.spawn.general"
+    bypassdelay: "server.spawn.bypassdelay"
+  warp:
+    required: false
+    permission: "server.warp.general"
+    bypassdelay: "server.warp.bypassdelay"
+    others: "server.warp.others"
+  setwarp: "server.setwarp"
+  delwarp: "server.delwarp"
+  kickall: "server.kickall"
+  kick:
+    use: "server.kick.use"
+    exempt: "server.kick.exempt"
+  ban:
+    use:
+      general: "server.ban.use"
+      permanent: "server.ban.permanent"
+      temporary: "server.ban.temporary"
+    exempt: "server.ban.exempt"
+  unban: "server.unban"
+  kit:
+    self: "server.kit.<KIT>.self"
+    others: "server.kit.<KIT>.others"
+    bypassdelay: "server.kit.bypass.delay"
+  deletekit: "server.deletekit"
+  createkit: "server.createkit"
+  economy:
+    general: "server.economy.use"
+    set: "server.economy.set"
+    give: "server.economy.give"
+    revoke: "server.economy.revoke"
+  invsee:
+    use: "server.invsee.use"
+    exempt: "server.invsee.exempt"
+  enderchest:
+    self: "server.enderchest.self"
+    others: "server.enderchest.others"
+    exempt: "server.enderchest.exempt"
+  tp:
+    self: "server.tp.self"
+    others: "server.tp.others"
+  tphere: "server.tphere"
+  tpo:
+    self: "server.tpo.self"
+    others: "server.tpo.others"
+  tpohere: "server.tpohere"
+  tpall:
+    self: "server.tpall.self"
+    others: "server.tpall.others"
+  workbench: "server.workbench"
+  fly:
+    self: "server.fly.self"
+    others: "server.fly.others"
+    bypassdamage: "server.fly.bypassdamage"
+  msg:
+    required: false
+    permission: "server.msg"
+  convertfromessentials: "server.convertfromessentials"
+  skull:
+    self: "server.skull.self"
+    others: "server.skull.others"
+  mute:
+    use: "server.mute.use"
+    temporary: "server.mute.temporary"
+    permanent: "server.mute.permanent"
+    exempt: "server.mute.exempt"
+    shadow:
+      permanent: "server.mute.permanent.shadow"
+      temporary: "server.mute.temporary.shadow"
+  unmute: "server.unmute"
+  unnick:
+    required: false
+    permission: "server.unnick.self"
+    others: "server.unnick.others"
+  nick:
+    self:
+      use: "server.nick.self.use"
+      colored: "server.nick.self.colored"
+    others:
+      use: "server.nick.others.use"
+      colored: "server.nick.others.colored"
+  joinfullserver:
+    premium: "server.joinfullserver.premium"
+    admin: "server.joinfullserver.admin"
+  burn: "server.burn"
+  god:
+    self: "server.god.self"
+    others: "server.god.others"
+  money:
+    self:
+      required: false
+      permission: "server.money.self"
+    others: "server.money.others"
+  pay:
+    required: false
+    permission: "server.pay"
+  reply:
+    required: false
+    permission: "server.reply"
+  lag: "server.lag"
+  baltop:
+    required: false
+    permission: "server.baltop"
+  noafk: "server.noafk"
+  maintenance:
+    toggle: "server.maintenance.toggle"
+    join: "server.maintenance.join"
+  recipe:
+    required: false
+    permission: "server.recipe"
+  warps:
+    required: false
+    permission: "server.warps"
+  checkhealth: "server.checkhealth"
+  lightning: "server.lightning"
+  worldchange:
+    bypassreset:
+      gamemode: "server.bypassreset.gamemode"
+      god: "server.bypassreset.god"
+      fly: "server.bypassreset.fly"
+  rename: "server.rename"
+  updatenotify: "server.updatenotify"
+  anvil: "server.anvil"
+  loom: "server.loom"
+  cartography: "server.cartography"
+  grindstone: "server.grindstone"
+  stonecutter: "server.stonecutter"
+  smithingtable: "server.smithingtable"
+  getpos:
+    self: "server.getpos.self"
+    others: "server.getpos.others"
+  break:
+    use: "server.break.use"
+    bedrock: "server.break.bedrock"
+    barrier: "server.break.barrier"
+    commandblock: "server.break.commandblock"
+    structureblock: "server.break.structureblock"

@@ -1,0 +1,14 @@
+name: ServerSystem
+version: 1.6.9
+main: me.Entity303.ServerSystem.Main.ss
+api-version: 1.13
+authors: [Entity303]
+load: POSTWORLD
+loadbefore:
+  - AntiPluginLookUp
+  - Vault
+softdepend:
+  - Essentials
+  - PlotSquared
+  - Vault
+  - PlaceholderAPI

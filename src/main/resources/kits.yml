@@ -1,0 +1,32 @@
+Kits:
+  starter:
+    '0':
+      ==: org.bukkit.inventory.ItemStack
+      type: STONE_SWORD
+    '1':
+      ==: org.bukkit.inventory.ItemStack
+      type: STONE_PICKAXE
+    '2':
+      ==: org.bukkit.inventory.ItemStack
+      type: STONE_AXE
+    '3':
+      ==: org.bukkit.inventory.ItemStack
+      type: STONE_SPADE
+    '4':
+      ==: org.bukkit.inventory.ItemStack
+      type: GRILLED_PORK
+      amount: 32
+    '8':
+      ==: org.bukkit.inventory.ItemStack
+      type: TORCH
+      amount: 64
+    '9':
+      ==: org.bukkit.inventory.ItemStack
+      type: ARROW
+      amount: 16
+    '10':
+      ==: org.bukkit.inventory.ItemStack
+      type: BOW
+    '37':
+      ==: org.bukkit.inventory.ItemStack
+      type: CHAINMAIL_CHESTPLATE
