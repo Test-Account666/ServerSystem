@@ -33,6 +33,7 @@ You want to use another plugin's /ban, but my plugin overrides the commands, you
 Also you can just disable commands, if you like.
 
 <details><summary>What placeholders does it add? (PlaceholderAPI)</summary>
+  
   %serversystem_money% -> Shows the unformatted balance
 
     %serversystem_formattedmoney% -> Shows the formatted balance
