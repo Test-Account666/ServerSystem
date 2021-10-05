@@ -1,10 +1,11 @@
 # ServerSystem
 
-# Developers: I recommend you using my setup.sh file: https://raw.githubusercontent.com/TheBlackEntity/ServerSystem/files/setup.sh (Don't have one for windows, yet)
+# Developers: I recommend you using my [setup.sh file](https://raw.githubusercontent.com/TheBlackEntity/ServerSystem/files/setup.sh) (Don't have one for windows, yet)
 
 \~~~~~~~~~~~~~~~~~~~~~~ English ~~~~~~~~~~~~~~~~~~~~~~
 
 You want to know what I'm currently working on?
+
 Here's my todo list:
 https://trello.com/b/gs6SQW8M/serversystem-todo-list
 
@@ -22,7 +23,8 @@ Also you can set every single message and permission.
 Plus this plugin has some useful functions that are NOT included in essentials.
 
 What commands will this plugin add?
-You can download the list of commands here
+
+[You can download the list of commands here](https://www.dropbox.com/s/62f56n2flw8pvbe/Command_Reference.pdf?dl=0)
 
 
 What other cool features does this plugin have?
@@ -53,6 +55,7 @@ Also you can just disable commands, if you like.
 </details>
 
 How do I install this plugin?
+
 Just put it into you plugins folder
 
 I found a bug or need help configuring the plugin, what do I do?
@@ -61,6 +64,7 @@ You can always join on this discord: https://discord.gg/TbnyUrJ and ask me some 
 \~~~~~~~~~~~~~~~~~~~~~~ Deutsch ~~~~~~~~~~~~~~~~~~~~~~
 
 Du möchtest wissen woran ich gerade arbeite?
+
 Hier ist meine Todo Liste:
 https://trello.com/b/gs6SQW8M/serversystem-todo-list
 
@@ -69,17 +73,20 @@ Es versucht sogar besser als Essentials zu sein (zum Beispiel kannst du jede ein
 
 
 Benötigt dieses Plugin irgendwelche Zusätz?
+
 Nun, es gibt ein paar Plugins, die mein Plugin verwendet, diese sind aber alle optional:
 Vault, PlotSquared und PlaceholderAPI.
 
 
 Wieso eine Alternative zu Essentials?
+
 Zuerst, Essentials sieht einfach hässlich aus.
 Außerdem kannst du in diesem Plugin jede einzelne Nachricht und Permission selbst setzen.
 Plus dieses Plugin bietet ein paar Funktionen, die in Essentials NICHT enthalten sind.
 
 Was für Befehle fügt dieses Plugin hinzu?
-Du kannst eine Liste der Plugins hier herunterladen.
+
+[Du kannst eine Liste der Plugins hier herunterladen.](https://www.dropbox.com/s/62f56n2flw8pvbe/Command_Reference.pdf?dl=0)
 
 
 Welche anderen coolen Featurs hat das Plugin?
