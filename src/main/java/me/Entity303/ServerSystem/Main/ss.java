@@ -518,12 +518,10 @@ public final class ss extends JavaPlugin {
                         this.log("Auto-updating!");
                         this.log("(You need to restart the server so the update can take effect)");
                         try {
-                            //Open a URL Stream
                             Connection.Response resultImageResponse = Jsoup.connect("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem/" + version + ".jar").referrer("ServerSystem").timeout(30000).ignoreContentType(true).execute();
 
-                            // output here
                             FileOutputStream out = (new FileOutputStream(new File("plugins/update", this.JAR_NAME)));
-                            out.write(resultImageResponse.bodyAsBytes());  // resultImageResponse.body() is where the image's contents are.
+                            out.write(resultImageResponse.bodyAsBytes());
                             out.close();
                         } catch (IOException e) {
                             this.error("Error while trying downloading the update!");

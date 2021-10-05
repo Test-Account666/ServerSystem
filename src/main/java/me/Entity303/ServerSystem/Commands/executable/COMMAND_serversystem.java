@@ -84,12 +84,10 @@ public class COMMAND_serversystem extends ServerSystemCommand implements Command
                     if (!this.plugin.getDescription().getVersion().equalsIgnoreCase(version)) {
                         cs.sendMessage(this.getPrefix() + this.getMessage("ServerSystem.Update.NewVersion", label, cmd.getName(), cs, null).replace("<VERSION>", version));
                         try {
-                            //Open a URL Stream
                             Connection.Response resultImageResponse = Jsoup.connect("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem/" + version + ".jar").referrer("ServerSystem").timeout(30000).ignoreContentType(true).execute();
 
-                            // output here
                             FileOutputStream out = (new FileOutputStream(new File("plugins/update", this.plugin.JAR_NAME)));
-                            out.write(resultImageResponse.bodyAsBytes());  // resultImageResponse.body() is where the image's contents are.
+                            out.write(resultImageResponse.bodyAsBytes());
                             out.close();
                         } catch (IOException e) {
                             cs.sendMessage(this.getPrefix() + ChatColor.RED + "Error while trying to download the update!");
