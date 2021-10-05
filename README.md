@@ -92,7 +92,7 @@ Du kannst außerdem auch einfach Commands deaktivieren, wenn du möchtest.
 
     %serversystem_afk% -> Zeigt ob der Spieler AFK ist
    </details>
-
+ 
 
 Wie installiere ich das Plugin?
 Schiebe es einfach in den plugins-Ordner
