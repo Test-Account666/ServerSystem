@@ -73,7 +73,6 @@ Wenn du den /ban Command eines anderen Plugins nutzen möchtest, mein Plugin den
 Du kannst außerdem auch einfach Commands deaktivieren, wenn du möchtest.
 
 <details><summary>Welche Placeholder fügt dieses Plugin hinzu? (PlaceholderAPI)</summary>
-    <pre>
   %serversystem_money% -> Gibt den unformatierten Kontostand aus
 
     %serversystem_formattedmoney% -> Gibt den formatierten Kontostand aus
@@ -89,8 +88,6 @@ Du kannst außerdem auch einfach Commands deaktivieren, wenn du möchtest.
     %serversystem_vanish% -> Zeigt ob der Spieler im Vanish ist
 
     %serversystem_god% -> Zeigt ob der Spieler im GodMode ist
-
-    %serversystem_afk% -> Zeigt ob der Spieler AFK ist
    </details>
  
 
