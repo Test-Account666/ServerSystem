@@ -2,7 +2,7 @@
 
 # Developers: I recommend you using my setup.sh file: https://raw.githubusercontent.com/TheBlackEntity/ServerSystem/files/setup.sh (Don't have one for windows, yet)
 
-~~~~~~~~~~~~~~~~~~~~~~ English ~~~~~~~~~~~~~~~~~~~~~~
+\~~~~~~~~~~~~~~~~~~~~~~ English ~~~~~~~~~~~~~~~~~~~~~~
 
 You want to know what I'm currently working on?
 Here's my todo list:
@@ -42,7 +42,7 @@ Just put it into you plugins folder
 I found a bug or need help configuring the plugin, what do I do?
 You can always join on this discord: https://discord.gg/TbnyUrJ and ask me some questions.
 
-~~~~~~~~~~~~~~~~~~~~~~ Deutsch ~~~~~~~~~~~~~~~~~~~~~~
+\~~~~~~~~~~~~~~~~~~~~~~ Deutsch ~~~~~~~~~~~~~~~~~~~~~~
 
 Du möchtest wissen woran ich gerade arbeite?
 Hier ist meine Todo Liste:
@@ -72,7 +72,27 @@ Ein Beispiel:
 Wenn du den /ban Command eines anderen Plugins nutzen möchtest, mein Plugin den Command aber überschreibt, kannst du genau das erreichen!
 Du kannst außerdem auch einfach Commands deaktivieren, wenn du möchtest.
 
-Welche Placeholder fügt dieses Plugin hinzu? (PlaceholderAPI)
+<details><summary>Welche Placeholder fügt dieses Plugin hinzu? (PlaceholderAPI)</summary>
+    <pre>
+    %serversystem_money% -> Gibt den unformatierten Kontostand aus
+
+    %serversystem_formattedmoney% -> Gibt den formatierten Kontostand aus
+
+    %serversystem_drop% -> Zeigt ob der Spieler im Vanish Items droppen kann
+
+    %serversystem_pickup% -> Zeigt ob der Spieler im Vanish Items aufheben kann
+
+    %serversystem_chat% -> Zeigt ob der Spieler im Vanish Nachrichten schreiben kann
+
+    %serversystem_interact% -> Zeigt ob der Spieler im Vanish mit Blöcken interargieren kann
+
+    %serversystem_vanish% -> Zeigt ob der Spieler im Vanish ist
+
+    %serversystem_god% -> Zeigt ob der Spieler im GodMode ist
+
+    %serversystem_afk% -> Zeigt ob der Spieler AFK ist
+    </pre>
+   </details>
 
 
 Wie installiere ich das Plugin?
