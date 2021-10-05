@@ -74,7 +74,7 @@ Du kannst außerdem auch einfach Commands deaktivieren, wenn du möchtest.
 
 <details><summary>Welche Placeholder fügt dieses Plugin hinzu? (PlaceholderAPI)</summary>
     <pre>
-    %serversystem_money% -> Gibt den unformatierten Kontostand aus
+%serversystem_money% -> Gibt den unformatierten Kontostand aus
 
     %serversystem_formattedmoney% -> Gibt den formatierten Kontostand aus
 
