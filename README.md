@@ -33,22 +33,24 @@ You want to use another plugin's /ban, but my plugin overrides the commands, you
 Also you can just disable commands, if you like.
 
 <details><summary>What placeholders does it add? (PlaceholderAPI)</summary>
-    <pre>  %serversystem_money% -> Shows the unformatted balance
+<pre>
 
-    %serversystem_formattedmoney% -> Shows the formatted balance
+%serversystem_money% -> Shows the unformatted balance
 
-    %serversystem_drop% -> Shows if the player can drop items in vanish
+%serversystem_formattedmoney% -> Shows the formatted balance
 
-    %serversystem_pickup% -> Shows if the player can pick up items in vanish
+%serversystem_drop% -> Shows if the player can drop items in vanish
 
-    %serversystem_chat% -> Shows if the place can chat in vanish
+%serversystem_pickup% -> Shows if the player can pick up items in vanish
 
-    %serversystem_interact% -> Shows if the player can interact in vanish
+%serversystem_chat% -> Shows if the place can chat in vanish
 
-    %serversystem_vanish% -> Shows if the player is in vanish
+%serversystem_interact% -> Shows if the player can interact in vanish
 
-    %serversystem_god% -> Shows if the player is in god mode</pre>
-   </details>
+%serversystem_vanish% -> Shows if the player is in vanish
+
+%serversystem_god% -> Shows if the player is in god mode</pre>
+</details>
 
 How do I install this plugin?
 Just put it into you plugins folder
@@ -87,22 +89,24 @@ Wenn du den /ban Command eines anderen Plugins nutzen möchtest, mein Plugin den
 Du kannst außerdem auch einfach Commands deaktivieren, wenn du möchtest.
 
 <details><summary>Welche Placeholder fügt dieses Plugin hinzu? (PlaceholderAPI)</summary>
-  <pre>  %serversystem_money% -> Gibt den unformatierten Kontostand aus
+<pre>
 
-    %serversystem_formattedmoney% -> Gibt den formatierten Kontostand aus
+%serversystem_money% -> Gibt den unformatierten Kontostand aus
 
-    %serversystem_drop% -> Zeigt ob der Spieler im Vanish Items droppen kann
+%serversystem_formattedmoney% -> Gibt den formatierten Kontostand aus
 
-    %serversystem_pickup% -> Zeigt ob der Spieler im Vanish Items aufheben kann
+%serversystem_drop% -> Zeigt ob der Spieler im Vanish Items droppen kann
 
-    %serversystem_chat% -> Zeigt ob der Spieler im Vanish Nachrichten schreiben kann
+%serversystem_pickup% -> Zeigt ob der Spieler im Vanish Items aufheben kann
 
-    %serversystem_interact% -> Zeigt ob der Spieler im Vanish mit Blöcken interargieren kann
+%serversystem_chat% -> Zeigt ob der Spieler im Vanish Nachrichten schreiben kann
 
-    %serversystem_vanish% -> Zeigt ob der Spieler im Vanish ist
+%serversystem_interact% -> Zeigt ob der Spieler im Vanish mit Blöcken interargieren kann
 
-    %serversystem_god% -> Zeigt ob der Spieler im GodMode ist</pre>
-  </details>
+%serversystem_vanish% -> Zeigt ob der Spieler im Vanish ist
+
+%serversystem_god% -> Zeigt ob der Spieler im GodMode ist</pre>
+</details>
  
 
 Wie installiere ich das Plugin?
