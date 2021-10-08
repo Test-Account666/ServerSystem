@@ -28,19 +28,19 @@ public class COMMAND_sudo extends ServerSystemCommand implements CommandExecutor
             cs.sendMessage(this.getPrefix() + this.getNoTarget(args[0]));
             return true;
         }
-        if (this.isAllowed(target, "sudo.exempt")) {
+        if (this.isAllowed(target, "sudo.exempt", true)) {
             if (cs instanceof Player) {
                 cs.sendMessage(this.getPrefix() + this.getMessage("Sudo", label, cmd.getName(), cs, target));
                 return true;
             }
             StringBuilder msg = new StringBuilder();
             for (int i = 1; args.length > i; i++) msg.append(args[i]).append(" ");
-            target.chat(msg.toString());
+            target.chat(msg.toString().trim());
             return true;
         }
         StringBuilder msg = new StringBuilder();
         for (int i = 1; args.length > i; i++) msg.append(args[i]).append(" ");
-        target.chat(msg.toString());
+        target.chat(msg.toString().trim());
         return true;
     }
 }
