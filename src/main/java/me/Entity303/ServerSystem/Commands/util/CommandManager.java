@@ -51,6 +51,18 @@ public final class CommandManager {
             this.serverSystem.getCommand(command).setTabCompleter(completer);
     }
 
+    public Command getCommand(String command) {
+        Object result = null;
+        try {
+            result = this.getPrivateField(this.serverSystem.getServer().getPluginManager(), "commandMap");
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
+        SimpleCommandMap commandMap = (SimpleCommandMap) result;
+        return commandMap.getCommand(command.toLowerCase(Locale.ROOT));
+    }
+
     public void rc(String command, CommandExecutor executor, TabCompleter tabCompleter) {
         if (executor == null) System.out.println("Executor!");
         if (command == null) System.out.println("Command?!");

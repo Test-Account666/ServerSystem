@@ -86,6 +86,7 @@ public final class ss extends JavaPlugin {
     private boolean maintenance = false;
     private boolean stopFlightOnHit = false;
     private boolean disableFlightOnHit = false;
+    private boolean specialSudo = true;
     private Vanish vanish;
     private MetaValue metaValue;
     private WantsTP wantsTP;
@@ -118,6 +119,10 @@ public final class ss extends JavaPlugin {
 
     public static VanishAPI getVanishAPI() {
         return ss.vanishAPI;
+    }
+
+    public boolean isSpecialSudo() {
+        return this.specialSudo;
     }
 
     public EventManager getEventManager() {
@@ -310,8 +315,6 @@ public final class ss extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        this.check();
-
         if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
             this.vault = new Vault();
             this.vaultHookManager = new VaultHookManager(this);
@@ -423,6 +426,8 @@ public final class ss extends JavaPlugin {
 
         this.startDeactivatingCommands();
 
+        specialSudo = getConfig().getBoolean("specialsudo", true);
+
         File commandsFiles = new File("plugins//ServerSystem", "commands.yml");
         FileConfiguration commandsConfig = YamlConfiguration.loadConfiguration(commandsFiles);
 
@@ -432,6 +437,8 @@ public final class ss extends JavaPlugin {
         this.startSwappingCommands();
 
         this.startUpdateCheck();
+
+        this.check();
     }
 
     private void startDeactivatingCommands() {
