@@ -426,7 +426,7 @@ public final class ss extends JavaPlugin {
 
         this.startDeactivatingCommands();
 
-        specialSudo = getConfig().getBoolean("specialsudo", true);
+        this.specialSudo = this.getConfig().getBoolean("specialsudo", true);
 
         File commandsFiles = new File("plugins//ServerSystem", "commands.yml");
         FileConfiguration commandsConfig = YamlConfiguration.loadConfiguration(commandsFiles);
@@ -738,6 +738,7 @@ public final class ss extends JavaPlugin {
         File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
         File msgTRFile = new File("plugins//ServerSystem", "messages_tr.yml");
         File msgZHCNFile = new File("plugins//ServerSystem", "messages_zhcn.yml");
+        File msgITFile = new File("plugins//ServerSystem", "messages_it.yml");
         File msgFile = new File("plugins//ServerSystem", "messages.yml");
         File commandsFile = new File("plugins//ServerSystem", "commands.yml");
         File aliasesFile = new File("plugins//ServerSystem", "aliases.yml");
@@ -756,6 +757,8 @@ public final class ss extends JavaPlugin {
 
         if (!msgZHCNFile.exists()) this.saveResource("messages_zhcn.yml", false);
 
+        if (msgITFile.exists()) this.saveResource("messages_it.yml", false);
+
         if (!rulesFile.exists()) {
             String locale = System.getProperty("user.language");
             if (locale.equalsIgnoreCase("de")) {
@@ -764,6 +767,9 @@ public final class ss extends JavaPlugin {
             } else if (locale.equalsIgnoreCase("cz")) {
                 this.saveResource("rules_cz.yml", true);
                 new File("plugins//ServerSystem", "rules_cz.yml").renameTo(new File("plugins//ServerSystem", "rules.yml"));
+            } else if (locale.equalsIgnoreCase("it")) {
+                this.saveResource("rules_it.yml", true);
+                new File("plugins//ServerSystem", "rules_it.yml").renameTo(new File("plugins//ServerSystem", "rules.yml"));
             } else {
                 this.saveResource("rules_en.yml", true);
                 new File("plugins//ServerSystem", "rules_en.yml").renameTo(new File("plugins//ServerSystem", "rules.yml"));
@@ -789,6 +795,11 @@ public final class ss extends JavaPlugin {
             }
             else if (locale.toLowerCase(Locale.ROOT).contains("zh")) try {
                 Files.copy(msgZHCNFile, new File("plugins//ServerSystem", "messages.yml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            else if (locale.toLowerCase(Locale.ROOT).contains("it")) try {
+                Files.copy(msgITFile, new File("plugins//ServerSystem", "messages.yml"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
