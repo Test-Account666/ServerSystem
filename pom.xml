@@ -329,11 +329,10 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy-dep -->
         <dependency>
             <groupId>net.bytebuddy</groupId>
-            <artifactId>byte-buddy-dep</artifactId>
-            <version>1.11.19</version>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.11.20</version>
             <scope>compile</scope>
         </dependency>
 
