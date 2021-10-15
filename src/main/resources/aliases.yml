@@ -194,18 +194,20 @@ Aliases:
   lightning:
     aliases: "No Aliases"
   anvil:
-    aliases: amboss
+    aliases: "amboss"
   loom:
-    aliases: webstuhl
+    aliases: "webstuhl"
   cartographytable:
-    aliases: kartografietisch, cartography, kartografie
+    aliases: "kartografietisch, cartography, kartografie"
   grindstone:
-    aliases: schleifstein
+    aliases: "schleifstein"
   stonecutter:
-    aliases: steinmetz
+    aliases: "steinmetz"
   smithingtable:
-    aliases: schmiedetisch, smithing
+    aliases: "schmiedetisch, smithing"
   getpos:
-    aliases: pos,position,coords
+    aliases: "pos,position,coords"
   break:
-    aliases: No Aliases
+    aliases: "No Aliases"
+  offlineteleport:
+    aliases: "otp, offlinetp, oteleport"

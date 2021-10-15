@@ -287,3 +287,4 @@ Permissions:
     barrier: "server.break.barrier"
     commandblock: "server.break.commandblock"
     structureblock: "server.break.structureblock"
+  offlineteleport: "server.offlineteleport"

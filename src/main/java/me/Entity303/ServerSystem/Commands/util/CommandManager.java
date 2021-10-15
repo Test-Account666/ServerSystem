@@ -74,8 +74,7 @@ public final class CommandManager {
         File commandsFiles = new File("plugins//ServerSystem", "commands.yml");
         FileConfiguration commandsConfig = YamlConfiguration.loadConfiguration(commandsFiles);
 
-        //TODO: Remove the second condition
-        if (commandsConfig.getBoolean(command.toLowerCase()) || command.equalsIgnoreCase("offlineteleport")) {
+        if (commandsConfig.getBoolean(command.toLowerCase())) {
             this.registerCommand(executor, tabCompleter, this.serverSystem, command);
 
             this.serverSystemCommands.add(command.toLowerCase());

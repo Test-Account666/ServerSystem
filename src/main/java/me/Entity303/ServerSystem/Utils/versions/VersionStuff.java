@@ -9,6 +9,9 @@ import me.Entity303.ServerSystem.Commands.executable.COMMAND_recipe;
 import me.Entity303.ServerSystem.Listener.PlotSquared.PlotListener;
 import me.Entity303.ServerSystem.Main.ss;
 import me.Entity303.ServerSystem.SignEdit.SignEdit;
+import me.Entity303.ServerSystem.Utils.versions.commands.BukkitCommandWrap;
+import me.Entity303.ServerSystem.Utils.versions.offlineplayer.data.SaveData;
+import me.Entity303.ServerSystem.Utils.versions.offlineplayer.entityplayer.EntityPlayer;
 import me.Entity303.ServerSystem.Vanish.Packets.VanishPacket;
 import me.Entity303.ServerSystem.Virtual.Anvil.VirtualAnvil;
 import me.Entity303.ServerSystem.Virtual.Cartography.VirtualCartography;
@@ -34,6 +37,8 @@ public class VersionStuff {
     private VirtualStoneCutter virtualStoneCutter;
     private VirtualCartography virtualCartography;
     private VirtualSmithing virtualSmithing;
+    private SaveData saveData;
+    private EntityPlayer entityPlayer;
     private Method getHandleMethod;
     private Method aMethod;
     private Field playerConnectionField;
@@ -53,12 +58,28 @@ public class VersionStuff {
         this.bukkitCommandWrap = bukkitCommandWrap;
     }
 
+    public EntityPlayer getEntityPlayer() {
+        return this.entityPlayer;
+    }
+
+    public void setEntityPlayer(EntityPlayer entityPlayer) {
+        this.entityPlayer = entityPlayer;
+    }
+
     public VanishPacket getVanishPacket() {
         return this.vanishPacket;
     }
 
     public void setVanishPacket(VanishPacket vanishPacket) {
         this.vanishPacket = vanishPacket;
+    }
+
+    public SaveData getSaveData() {
+        return this.saveData;
+    }
+
+    public void setSaveData(SaveData saveData) {
+        this.saveData = saveData;
     }
 
     public ActionBar getActionBar() {

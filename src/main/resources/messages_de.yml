@@ -63,6 +63,7 @@ Messages:
     Nick: "Syntax: &2/<LABEL> <Spieler> <Nickname>"
     Rename: "Syntax: &2/<LABEL> <Name>"
     CheckHealth: "Syntax: &2/<LABEL> <Spieler>"
+    OfflineTeleport: "Syntax: &2/<LABEL> <Offline-Spieler>"
   Normal:
     GetPos:
       Self: "Du bist bei folgenden Koordinaten: &6X:&2<X> &6Y:&2<Y> &6Z:&2<Z> &6Welt:&2<WORLD>"
@@ -462,6 +463,10 @@ Messages:
     MsgToggle:
       Deactivated: "Du hast deine msg Nachrichten deaktiviert!"
       Activated: "Du hast deine msg Nachrichten aktiviert!"
+    OfflineTeleport:
+      NeverPlayed: "&4<TARGET> &cwar noch nie auf dem Server!"
+      PlayerIsOnline: "&4<TARGET> &cist online!"
+      Success: "Du hast dich zu &2<TARGET> &7teleportiert!"
   Misc:
     ServerFull: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4Der Server ist voll!<BREAK>&cUm trotzdem beitreten zu können, benötigst du die Permission &4<PERMISSION>&c!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
     JoinMessage:
@@ -474,7 +479,7 @@ Messages:
       Send: false
       Message: "&2<PLAYER> &7hat den Server verlassen!"
       Change: true
-    NoPermissionInfo: "<SENDER> hat für keine Rechte!"
+    NoPermissionInfo: "<SENDER> hat dafür keine Rechte!"
     Prefix: "&8[&2Server&8] &7"
     NoPermissions: "&cDafür hast du keine Rechte (<PERMISSION>)!"
     OnlyPlayer: "&cDafür musst du ein Spieler sein!"

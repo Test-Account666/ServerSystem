@@ -102,3 +102,4 @@ stonecutter: true
 smithingtable: true
 getpos: true
 break: true
+offlineteleport: true
