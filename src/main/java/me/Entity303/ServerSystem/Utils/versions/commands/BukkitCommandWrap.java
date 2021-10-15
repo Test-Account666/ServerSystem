@@ -1,4 +1,4 @@
-package me.Entity303.ServerSystem.Utils.versions;
+package me.Entity303.ServerSystem.Utils.versions.commands;
 
 import org.bukkit.command.Command;
 
