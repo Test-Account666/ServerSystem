@@ -2,7 +2,7 @@ package me.Entity303.ServerSystem.Listener;
 
 import me.Entity303.ServerSystem.Commands.executable.COMMAND_recipe;
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,7 +15,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-public class InventoryClickListener extends ServerSystemCommand implements Listener {
+public class InventoryClickListener extends MessageUtils implements Listener {
 
     public InventoryClickListener(ss plugin) {
         super(plugin);

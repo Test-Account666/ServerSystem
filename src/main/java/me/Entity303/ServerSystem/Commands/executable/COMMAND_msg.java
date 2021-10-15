@@ -4,7 +4,7 @@ package me.Entity303.ServerSystem.Commands.executable;
 import me.Entity303.ServerSystem.BanSystem.ManagerMute;
 import me.Entity303.ServerSystem.BanSystem.Mute;
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
-public class COMMAND_msg extends ServerSystemCommand implements CommandExecutor {
+public class COMMAND_msg extends MessageUtils implements CommandExecutor {
     public static final HashMap<CommandSender, CommandSender> reply = new HashMap<>();
 
     public COMMAND_msg(ss plugin) {

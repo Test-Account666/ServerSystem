@@ -1,7 +1,7 @@
 package me.Entity303.ServerSystem.TabCompleter;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TABCOMPLETER_recipe extends ServerSystemCommand implements TabCompleter {
+public class TABCOMPLETER_recipe extends MessageUtils implements TabCompleter {
 
     public TABCOMPLETER_recipe(ss plugin) {
         super(plugin);

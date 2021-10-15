@@ -1,7 +1,7 @@
 package me.Entity303.ServerSystem.Commands.executable;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 
-public class COMMAND_teamchat extends ServerSystemCommand implements CommandExecutor {
+public class COMMAND_teamchat extends MessageUtils implements CommandExecutor {
 
     public COMMAND_teamchat(ss plugin) {
         super(plugin);

@@ -2,7 +2,7 @@ package me.Entity303.ServerSystem.Listener;
 
 import me.Entity303.ServerSystem.Main.ss;
 import me.Entity303.ServerSystem.Utils.ChatColor;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
@@ -11,7 +11,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class SignListener extends ServerSystemCommand implements Listener {
+public class SignListener extends MessageUtils implements Listener {
 
     public SignListener(ss plugin) {
         super(plugin);

@@ -2,7 +2,7 @@ package me.Entity303.ServerSystem.Commands.executable;
 
 import me.Entity303.ServerSystem.Main.ss;
 import me.Entity303.ServerSystem.Utils.ChatColor;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,7 +13,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class COMMAND_nick extends ServerSystemCommand implements CommandExecutor {
+public class COMMAND_nick extends MessageUtils implements CommandExecutor {
 
     public COMMAND_nick(ss plugin) {
         super(plugin);

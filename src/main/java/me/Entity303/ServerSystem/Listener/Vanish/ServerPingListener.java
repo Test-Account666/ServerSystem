@@ -1,7 +1,7 @@
 package me.Entity303.ServerSystem.Listener.Vanish;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -9,7 +9,7 @@ import org.bukkit.event.server.ServerListPingEvent;
 
 import java.util.Iterator;
 
-public class ServerPingListener extends ServerSystemCommand implements Listener {
+public class ServerPingListener extends MessageUtils implements Listener {
 
     public ServerPingListener(ss plugin) {
         super(plugin);

@@ -5,7 +5,7 @@ import com.earth2me.essentials.User;
 import com.earth2me.essentials.Warps;
 import com.earth2me.essentials.commands.WarpNotFoundException;
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import net.ess3.api.InvalidWorldException;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -18,7 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
-public class COMMAND_essentialsconvertion extends ServerSystemCommand implements CommandExecutor {
+public class COMMAND_essentialsconvertion extends MessageUtils implements CommandExecutor {
     private boolean starting = false;
 
     public COMMAND_essentialsconvertion(ss plugin) {

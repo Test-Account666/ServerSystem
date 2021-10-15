@@ -1,14 +1,14 @@
 package me.Entity303.ServerSystem.Listener;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 
-public class WorldChangeListener extends ServerSystemCommand implements Listener {
+public class WorldChangeListener extends MessageUtils implements Listener {
     private final boolean resetGameMode;
     private final boolean resetGodMode;
     private final boolean resetFly;

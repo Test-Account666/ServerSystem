@@ -2,14 +2,14 @@ package me.Entity303.ServerSystem.Commands.executable;
 
 import me.Entity303.ServerSystem.Events.AsyncUnbanEvent;
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class COMMAND_unban extends ServerSystemCommand implements CommandExecutor {
+public class COMMAND_unban extends MessageUtils implements CommandExecutor {
 
     public COMMAND_unban(ss plugin) {
         super(plugin);

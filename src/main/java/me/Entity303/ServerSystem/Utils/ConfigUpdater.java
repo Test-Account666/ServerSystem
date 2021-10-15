@@ -16,7 +16,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class ConfigUpdater extends ServerSystemCommand {
+public class ConfigUpdater extends MessageUtils {
 
     public ConfigUpdater(ss plugin) {
         super(plugin);

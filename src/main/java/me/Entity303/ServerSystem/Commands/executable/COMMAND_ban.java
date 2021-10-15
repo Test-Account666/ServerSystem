@@ -5,7 +5,7 @@ import me.Entity303.ServerSystem.BanSystem.TimeUnit;
 import me.Entity303.ServerSystem.Events.AsyncBanEvent;
 import me.Entity303.ServerSystem.Main.ss;
 import me.Entity303.ServerSystem.Utils.ChatColor;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -18,7 +18,7 @@ import java.util.stream.IntStream;
 
 import static me.Entity303.ServerSystem.BanSystem.TimeUnit.*;
 
-public class COMMAND_ban extends ServerSystemCommand implements CommandExecutor {
+public class COMMAND_ban extends MessageUtils implements CommandExecutor {
 
     public COMMAND_ban(ss plugin) {
         super(plugin);

@@ -1,7 +1,7 @@
 package me.Entity303.ServerSystem.TabCompleter;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 import static me.Entity303.ServerSystem.BanSystem.TimeUnit.*;
 
-public class TABCOMPLETER_mute extends ServerSystemCommand implements TabCompleter {
+public class TABCOMPLETER_mute extends MessageUtils implements TabCompleter {
 
     public TABCOMPLETER_mute(ss plugin) {
         super(plugin);

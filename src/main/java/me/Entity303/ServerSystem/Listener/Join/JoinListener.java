@@ -2,7 +2,7 @@ package me.Entity303.ServerSystem.Listener.Join;
 
 import me.Entity303.ServerSystem.Main.ss;
 import me.Entity303.ServerSystem.Utils.ChatColor;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -20,7 +20,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class JoinListener extends ServerSystemCommand implements Listener {
+public class JoinListener extends MessageUtils implements Listener {
 
     public JoinListener(ss plugin) {
         super(plugin);

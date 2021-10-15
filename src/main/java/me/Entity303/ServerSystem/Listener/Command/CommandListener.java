@@ -1,7 +1,7 @@
 package me.Entity303.ServerSystem.Listener.Command;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.RemoteServerCommandEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
-public class CommandListener extends ServerSystemCommand implements Listener {
+public class CommandListener extends MessageUtils implements Listener {
 
     public CommandListener(ss plugin) {
         super(plugin);

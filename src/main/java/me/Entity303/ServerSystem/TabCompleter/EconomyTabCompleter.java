@@ -1,7 +1,7 @@
 package me.Entity303.ServerSystem.TabCompleter;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EconomyTabCompleter extends ServerSystemCommand implements TabCompleter {
+public class EconomyTabCompleter extends MessageUtils implements TabCompleter {
 
     public EconomyTabCompleter(ss plugin) {
         super(plugin);

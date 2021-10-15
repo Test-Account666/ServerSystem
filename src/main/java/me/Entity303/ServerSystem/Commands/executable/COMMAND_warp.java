@@ -3,7 +3,7 @@ package me.Entity303.ServerSystem.Commands.executable;
 import me.Entity303.ServerSystem.DatabaseManager.WarpManager;
 import me.Entity303.ServerSystem.Main.ss;
 import me.Entity303.ServerSystem.Utils.ChatColor;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -12,7 +12,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class COMMAND_warp extends ServerSystemCommand implements CommandExecutor {
+public class COMMAND_warp extends MessageUtils implements CommandExecutor {
 
     public COMMAND_warp(ss plugin) {
         super(plugin);

@@ -5,11 +5,11 @@ import com.intellectualcrafters.plot.flag.Flags;
 import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
 import com.plotsquared.bukkit.events.PlayerLeavePlotEvent;
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class PlotListener1 extends ServerSystemCommand implements Listener {
+public class PlotListener1 extends MessageUtils implements Listener {
 
     public PlotListener1(ss plugin) {
         super(plugin);

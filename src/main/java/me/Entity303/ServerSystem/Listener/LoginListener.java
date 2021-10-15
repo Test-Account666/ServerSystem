@@ -4,7 +4,7 @@ import me.Entity303.ServerSystem.BanSystem.Ban;
 import me.Entity303.ServerSystem.BanSystem.ManagerBan;
 import me.Entity303.ServerSystem.Main.ss;
 import me.Entity303.ServerSystem.Utils.ChatColor;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -14,7 +14,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 
 import java.util.UUID;
 
-public class LoginListener extends ServerSystemCommand implements Listener {
+public class LoginListener extends MessageUtils implements Listener {
 
     public LoginListener(ss plugin) {
         super(plugin);

@@ -1,7 +1,7 @@
 package me.Entity303.ServerSystem.Listener.Vanish;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,7 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-public class KillListener extends ServerSystemCommand implements Listener {
+public class KillListener extends MessageUtils implements Listener {
 
     public KillListener(ss plugin) {
         super(plugin);

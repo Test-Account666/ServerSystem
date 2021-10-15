@@ -1,14 +1,14 @@
 package me.Entity303.ServerSystem.Listener;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-public class FlightHitListener extends ServerSystemCommand implements Listener {
+public class FlightHitListener extends MessageUtils implements Listener {
 
     public FlightHitListener(ss plugin) {
         super(plugin);

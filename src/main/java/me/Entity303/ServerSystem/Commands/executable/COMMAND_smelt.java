@@ -1,7 +1,7 @@
 package me.Entity303.ServerSystem.Commands.executable;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -15,7 +15,7 @@ import org.bukkit.inventory.Recipe;
 import java.util.Iterator;
 
 
-public class COMMAND_smelt extends ServerSystemCommand implements CommandExecutor {
+public class COMMAND_smelt extends MessageUtils implements CommandExecutor {
 
     public COMMAND_smelt(ss plugin) {
         super(plugin);

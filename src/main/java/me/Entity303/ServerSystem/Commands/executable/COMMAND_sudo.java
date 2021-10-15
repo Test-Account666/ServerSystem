@@ -1,7 +1,7 @@
 package me.Entity303.ServerSystem.Commands.executable;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.implementation.MethodCall;
 import net.bytebuddy.matcher.ElementMatchers;
@@ -15,7 +15,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class COMMAND_sudo extends ServerSystemCommand implements CommandExecutor {
+public class COMMAND_sudo extends MessageUtils implements CommandExecutor {
 
     private Method getHandleMethod = null;
 
@@ -39,11 +39,13 @@ public class COMMAND_sudo extends ServerSystemCommand implements CommandExecutor
         boolean special = this.plugin.isSpecialSudo();
 
         if (args.length >= 3) try {
-            special = Boolean.parseBoolean(args[0]);
-            String[] nArgs = new String[args.length - 1];
-            boolean skipped = false;
-            System.arraycopy(args, 1, nArgs, 0, args.length - 1);
-            args = nArgs;
+            if (args[0].equalsIgnoreCase("true") || args[0].equalsIgnoreCase("false")) {
+                special = Boolean.parseBoolean(args[0]);
+                String[] nArgs = new String[args.length - 1];
+                boolean skipped = false;
+                System.arraycopy(args, 1, nArgs, 0, args.length - 1);
+                args = nArgs;
+            }
         } catch (Exception ignored) {
 
         }

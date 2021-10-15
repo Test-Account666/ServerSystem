@@ -1,7 +1,7 @@
 package me.Entity303.ServerSystem.Listener;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,7 +10,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 
-public class GodListener extends ServerSystemCommand implements Listener {
+public class GodListener extends MessageUtils implements Listener {
 
     public GodListener(ss plugin) {
         super(plugin);

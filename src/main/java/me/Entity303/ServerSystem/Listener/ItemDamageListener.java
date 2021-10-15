@@ -1,12 +1,12 @@
 package me.Entity303.ServerSystem.Listener;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 
-public class ItemDamageListener extends ServerSystemCommand implements Listener {
+public class ItemDamageListener extends MessageUtils implements Listener {
 
     public ItemDamageListener(ss plugin) {
         super(plugin);

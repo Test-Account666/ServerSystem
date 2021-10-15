@@ -2,7 +2,7 @@ package me.Entity303.ServerSystem.Commands.executable;
 
 import me.Entity303.ServerSystem.Main.ss;
 import me.Entity303.ServerSystem.Utils.ChatColor;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -11,7 +11,7 @@ import java.text.DecimalFormat;
 
 import static java.lang.Runtime.getRuntime;
 
-public class COMMAND_lag extends ServerSystemCommand implements CommandExecutor {
+public class COMMAND_lag extends MessageUtils implements CommandExecutor {
     private static final DecimalFormat twoDPlaces = new DecimalFormat("#,###.##");
 
     public COMMAND_lag(ss plugin) {

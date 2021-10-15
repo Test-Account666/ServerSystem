@@ -4,7 +4,7 @@ import me.Entity303.ServerSystem.BanSystem.ManagerMute;
 import me.Entity303.ServerSystem.BanSystem.Mute;
 import me.Entity303.ServerSystem.Main.ss;
 import me.Entity303.ServerSystem.Utils.ChatColor;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,7 +12,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.UUID;
 
-public class ChatListenerWithPrefix extends ServerSystemCommand implements Listener {
+public class ChatListenerWithPrefix extends MessageUtils implements Listener {
     private final String format;
 
     public ChatListenerWithPrefix(ss plugin, String format) {

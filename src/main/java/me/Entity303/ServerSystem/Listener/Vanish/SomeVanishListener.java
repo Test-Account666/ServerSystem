@@ -1,7 +1,7 @@
 package me.Entity303.ServerSystem.Listener.Vanish;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -14,7 +14,7 @@ import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 import java.util.List;
 import java.util.UUID;
 
-public class SomeVanishListener extends ServerSystemCommand implements Listener {
+public class SomeVanishListener extends MessageUtils implements Listener {
 
     public SomeVanishListener(ss plugin) {
         super(plugin);

@@ -2,13 +2,13 @@ package me.Entity303.ServerSystem.Commands.executable;
 
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class COMMAND_restart extends ServerSystemCommand implements CommandExecutor {
+public class COMMAND_restart extends MessageUtils implements CommandExecutor {
     private Boolean restarting = false;
 
     public COMMAND_restart(ss plugin) {

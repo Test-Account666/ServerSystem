@@ -3,7 +3,7 @@ package me.Entity303.ServerSystem.Commands.executable;
 import me.Entity303.ServerSystem.Listener.Join.JoinUpdateListener;
 import me.Entity303.ServerSystem.Main.ss;
 import me.Entity303.ServerSystem.Utils.ChatColor;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import me.Entity303.ServerSystem.Utils.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -20,7 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 
-public class COMMAND_serversystem extends ServerSystemCommand implements CommandExecutor {
+public class COMMAND_serversystem extends MessageUtils implements CommandExecutor {
 
     public COMMAND_serversystem(ss plugin) {
         super(plugin);

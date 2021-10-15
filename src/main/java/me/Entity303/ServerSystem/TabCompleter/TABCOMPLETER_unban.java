@@ -1,7 +1,7 @@
 package me.Entity303.ServerSystem.TabCompleter;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TABCOMPLETER_unban extends ServerSystemCommand implements TabCompleter {
+public class TABCOMPLETER_unban extends MessageUtils implements TabCompleter {
 
     public TABCOMPLETER_unban(ss plugin) {
         super(plugin);

@@ -1,7 +1,7 @@
 package me.Entity303.ServerSystem.Commands.executable;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import static java.lang.Integer.parseInt;
 
 
-public class COMMAND_burn extends ServerSystemCommand implements CommandExecutor {
+public class COMMAND_burn extends MessageUtils implements CommandExecutor {
 
     public COMMAND_burn(ss plugin) {
         super(plugin);

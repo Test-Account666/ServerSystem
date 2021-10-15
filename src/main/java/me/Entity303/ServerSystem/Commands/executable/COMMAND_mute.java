@@ -4,7 +4,7 @@ import me.Entity303.ServerSystem.BanSystem.Mute;
 import me.Entity303.ServerSystem.BanSystem.TimeUnit;
 import me.Entity303.ServerSystem.Events.AsyncMuteEvent;
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 
 import static me.Entity303.ServerSystem.BanSystem.TimeUnit.*;
 
-public class COMMAND_mute extends ServerSystemCommand implements CommandExecutor {
+public class COMMAND_mute extends MessageUtils implements CommandExecutor {
 
     public COMMAND_mute(ss plugin) {
         super(plugin);

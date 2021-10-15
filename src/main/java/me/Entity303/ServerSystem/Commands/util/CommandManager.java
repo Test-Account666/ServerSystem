@@ -74,7 +74,8 @@ public final class CommandManager {
         File commandsFiles = new File("plugins//ServerSystem", "commands.yml");
         FileConfiguration commandsConfig = YamlConfiguration.loadConfiguration(commandsFiles);
 
-        if (commandsConfig.getBoolean(command.toLowerCase())) {
+        //TODO: Remove the second condition
+        if (commandsConfig.getBoolean(command.toLowerCase()) || command.equalsIgnoreCase("offlineteleport")) {
             this.registerCommand(executor, tabCompleter, this.serverSystem, command);
 
             this.serverSystemCommands.add(command.toLowerCase());
@@ -430,6 +431,7 @@ public final class CommandManager {
         if (this.serverSystem.getVersionStuff().getVirtualSmithing() != null)
             this.rc("smithingtable", new COMMAND_smithingtable(this.serverSystem), null);
         this.rc("break", new COMMAND_break(this.serverSystem), null);
+        this.rc("offlineteleport", new COMMAND_offlineteleport(this.serverSystem), null);
 
         boolean plotSquaredAlreadyRegistered = false;
 

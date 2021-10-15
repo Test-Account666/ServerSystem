@@ -1,7 +1,7 @@
 package me.Entity303.ServerSystem.Listener;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 
 import java.io.File;
 
-public class RespawnListener extends ServerSystemCommand implements Listener {
+public class RespawnListener extends MessageUtils implements Listener {
 
     public RespawnListener(ss plugin) {
         super(plugin);

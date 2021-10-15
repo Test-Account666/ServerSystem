@@ -8,10 +8,10 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-public class ServerSystemCommand {
+public class MessageUtils {
     protected final ss plugin;
 
-    public ServerSystemCommand(ss plugin) {
+    public MessageUtils(ss plugin) {
         this.plugin = plugin;
     }
 

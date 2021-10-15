@@ -1,7 +1,7 @@
 package me.Entity303.ServerSystem.Commands.executable;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.io.IOException;
 
-public class COMMAND_setspawn extends ServerSystemCommand implements CommandExecutor {
+public class COMMAND_setspawn extends MessageUtils implements CommandExecutor {
 
     public COMMAND_setspawn(ss plugin) {
         super(plugin);

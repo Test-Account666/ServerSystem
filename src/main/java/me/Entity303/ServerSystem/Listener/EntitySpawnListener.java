@@ -1,7 +1,7 @@
 package me.Entity303.ServerSystem.Listener;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -15,7 +15,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class EntitySpawnListener extends ServerSystemCommand implements Listener {
+public class EntitySpawnListener extends MessageUtils implements Listener {
     private Class entityLiving;
     private Field collidesField;
     private Method getHandleMethod;

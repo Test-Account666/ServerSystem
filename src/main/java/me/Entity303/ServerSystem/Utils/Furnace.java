@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Furnace extends ServerSystemCommand {
+public class Furnace extends MessageUtils {
     private final Map<Material, String> furnaceMap;
 
     public Furnace(ss plugin) {

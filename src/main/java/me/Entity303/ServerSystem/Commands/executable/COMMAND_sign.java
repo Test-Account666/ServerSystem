@@ -2,7 +2,7 @@ package me.Entity303.ServerSystem.Commands.executable;
 
 import me.Entity303.ServerSystem.Main.ss;
 import me.Entity303.ServerSystem.Utils.ChatColor;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class COMMAND_sign extends ServerSystemCommand implements CommandExecutor {
+public class COMMAND_sign extends MessageUtils implements CommandExecutor {
 
     public COMMAND_sign(ss plugin) {
         super(plugin);

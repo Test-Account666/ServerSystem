@@ -1,13 +1,13 @@
 package me.Entity303.ServerSystem.Commands.executable;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.ServerSystemCommand;
+import me.Entity303.ServerSystem.Utils.MessageUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class COMMAND_enderchest extends ServerSystemCommand implements CommandExecutor {
+public class COMMAND_enderchest extends MessageUtils implements CommandExecutor {
 
     public COMMAND_enderchest(ss plugin) {
         super(plugin);

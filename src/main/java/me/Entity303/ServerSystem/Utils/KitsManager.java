@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class KitsManager extends ServerSystemCommand {
+public class KitsManager extends MessageUtils {
     private final File file = new File("plugins//ServerSystem", "kits.yml");
     private final FileConfiguration cfg;
     private final File file2 = new File("plugins//ServerSystem", "delays.yml");
