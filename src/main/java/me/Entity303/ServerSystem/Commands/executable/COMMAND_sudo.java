@@ -1,9 +1,13 @@
 package me.Entity303.ServerSystem.Commands.executable;
 
 import me.Entity303.ServerSystem.Main.ss;
+import me.Entity303.ServerSystem.Utils.Interceptor;
 import me.Entity303.ServerSystem.Utils.MessageUtils;
+import me.Entity303.ServerSystem.Utils.Morpher;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.implementation.MethodCall;
+import net.bytebuddy.implementation.MethodDelegation;
+import net.bytebuddy.implementation.bind.annotation.Morph;
 import net.bytebuddy.matcher.ElementMatchers;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -19,9 +23,34 @@ public class COMMAND_sudo extends MessageUtils implements CommandExecutor {
 
     private Method getHandleMethod = null;
 
-
     public COMMAND_sudo(ss plugin) {
         super(plugin);
+    }
+
+    public static void sendMessage(CommandSender commandSender, Object... objects) {
+        Method sendMessageMethod = null;
+        for (Method method : CommandSender.class.getDeclaredMethods()) {
+            Class<?>[] parameters = method.getParameterTypes();
+            if (parameters.length == objects.length) {
+                boolean found = true;
+                for (int i = 0, parametersLength = parameters.length; i < parametersLength; i++) {
+                    Class<?> parameter = parameters[i];
+                    if (!parameter.getCanonicalName().equals((objects[i].getClass().getCanonicalName()))) {
+                        found = false;
+                        break;
+                    }
+                }
+                if (found) {
+                    sendMessageMethod = method;
+                    break;
+                }
+            }
+        }
+        if (sendMessageMethod != null) try {
+            sendMessageMethod.invoke(commandSender, objects);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -30,11 +59,11 @@ public class COMMAND_sudo extends MessageUtils implements CommandExecutor {
             cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("sudo.use")));
             return true;
         }
+
         if (args.length <= 1) {
             cs.sendMessage(this.getPrefix() + this.getSyntax("Sudo", label, cmd.getName(), cs, null));
             return true;
         }
-
 
         boolean special = this.plugin.isSpecialSudo();
 
@@ -56,15 +85,18 @@ public class COMMAND_sudo extends MessageUtils implements CommandExecutor {
             return true;
         }
 
-        if (special && cs instanceof Player) {
+        if (special) {
             boolean failed = false;
             Class<?> dynamicType = null;
             try {
-                //Hacky stuff to hook into "sendMessage", only works with players, no console
+                //Hacky and stupid stuff ™ to hook into "sendMessage"
                 dynamicType = new ByteBuddy()
                         .subclass(Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".entity.CraftPlayer"))
                         .method(ElementMatchers.named("sendMessage"))
-                        .intercept(MethodCall.invokeSuper().withAllArguments().andThen(MethodCall.invokeSelf().on(cs).withAllArguments()))
+                        .intercept(MethodCall.invokeSuper().withAllArguments().
+                                andThen(MethodDelegation.withDefaultConfiguration().
+                                        withBinders(Morph.Binder.install(Morpher.class)).
+                                        to(new Interceptor(cs))))
                         .make()
                         .load(this.getClass().getClassLoader())
                         .getLoaded();
@@ -93,8 +125,12 @@ public class COMMAND_sudo extends MessageUtils implements CommandExecutor {
                 cs.sendMessage(this.getPrefix() + this.getMessage("Sudo", label, cmd.getName(), cs, target));
                 return true;
             }
-            StringBuilder msg = new StringBuilder();
-            for (int i = 1; args.length > i; i++) msg.append(args[i]).append(" ");
+            StringBuilder msgBuilder = new StringBuilder();
+            for (int i = 1; args.length > i; i++) msgBuilder.append(args[i]).append(" ");
+
+            String msg = msgBuilder.toString().trim();
+
+            while (msg.endsWith(" ")) msg = msg.substring(0, msg.length() - 1);
 
             String first = args[1];
             if (first.startsWith("/")) {
