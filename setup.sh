@@ -1,3 +1,6 @@
+echo Checking system...
+SYSTEM=$(command uname)
+
 echo Checking for curl...
 sleep 3
 if ! command -v curl &> /dev/null
@@ -115,108 +118,145 @@ mkdir java16
 cd java16
 echo Downloading Java16...
 sleep 3
-curl -O https://download.java.net/java/GA/jdk16.0.2/d4a915d82b4c4fbb9bde534da945d746/7/GPL/openjdk-16.0.2_linux-x64_bin.tar.gz
+
+if [[ "$SYSTEM" == *"MINGW64_NT"* ]];
+then
+PATH_JAVA_16="openjdk-16.0.2_windows-x64_bin"
+curl -O https://download.java.net/java/GA/jdk16.0.2/d4a915d82b4c4fbb9bde534da945d746/7/GPL/$PATH_JAVA_16.zip
+else
+PATH_JAVA_16="openjdk-16.0.2_linux-x64_bin.tar"
+curl -O https://download.java.net/java/GA/jdk16.0.2/d4a915d82b4c4fbb9bde534da945d746/7/GPL/$PATH_JAVA_16.tar.gz
+fi
+
 echo Success!
 echo Extracting Java16...
 sleep 3
-tar -xvf openjdk-16.0.2_linux-x64_bin.tar.gz
+
+if [[ "$SYSTEM" == *"MINGW64_NT"* ]];
+then
+unzip -o $PATH_JAVA_16.zip
+PATH_JAVA_16="jdk-16.0.2"
+export PATH="$(pwd)/$PATH_JAVA_16/bin:$PATH"
+export JAVA_HOME="$(pwd)/$PATH_JAVA_16/"
+else
+tar -xvf $PATH_JAVA_16.tar.gz
+PATH_JAVA_16="jdk-16.0.2"
+fi
+
 echo Success!
 cd ..
 mkdir java8
 cd java8
 echo Downloading Java8...
 sleep 3
-curl -O https://cdn.azul.com/zulu/bin/zulu8.56.0.21-ca-jdk8.0.302-linux_x64.tar.gz
+
+if [[ "$SYSTEM" == *"MINGW64_NT"* ]];
+then
+PATH_JAVA_8="zulu8.56.0.21-ca-jdk8.0.302-win_x64"
+curl -O https://cdn.azul.com/zulu/bin/$PATH_JAVA_8.zip
+else
+PATH_JAVA_8="zulu8.56.0.21-ca-jdk8.0.302-linux_x64"
+curl -O https://cdn.azul.com/zulu/bin/$PATH_JAVA_8.tar.gz
+fi
+
 echo Success!
 echo Extracting Java8...
 sleep 3
-tar -xvf zulu8.56.0.21-ca-jdk8.0.302-linux_x64.tar.gz
+
+if [[ "$SYSTEM" == *"MINGW64_NT"* ]];
+then
+unzip -o $PATH_JAVA_8.zip
+else
+tar -xvf $PATH_JAVA_8.tar.gz
+fi
+
 echo Success!
 cd ..
 cd 1.8.8
 echo Building Spigot 1.8.8...
 sleep 3
-./../java8/zulu8.56.0.21-ca-jdk8.0.302-linux_x64/bin/java -jar BuildTools.jar --rev 1.8.8
+./../java8/$PATH_JAVA_8/bin/java -jar BuildTools.jar --rev 1.8.8
 echo Success!
 cd ..
 cp 1.8.8/spigot-1.8.8.jar ../libs/spigot-1.8.8.jar
 cd 1.9
 echo Building Spigot 1.9...
 sleep 3
-./../java8/zulu8.56.0.21-ca-jdk8.0.302-linux_x64/bin/java -jar BuildTools.jar --rev 1.9
+./../java8/$PATH_JAVA_8/bin/java -jar BuildTools.jar --rev 1.9
 echo Success!
 cd ..
 cp 1.9/spigot-1.9.jar ../libs/spigot-1.9.jar
 cd 1.10.2
 echo Building Spigot 1.10.2...
 sleep 3
-./../java8/zulu8.56.0.21-ca-jdk8.0.302-linux_x64/bin/java -jar BuildTools.jar --rev 1.10.2
+./../java8/$PATH_JAVA_8/bin/java -jar BuildTools.jar --rev 1.10.2
 echo Success!
 cd ..
 cp 1.10.2/spigot-1.10.2.jar ../libs/spigot-1.10.2.jar
 cd 1.11.1
 echo Building Spigot 1.11.1...
 sleep 3
-./../java8/zulu8.56.0.21-ca-jdk8.0.302-linux_x64/bin/java -jar BuildTools.jar --rev 1.11.1
+./../java8/$PATH_JAVA_8/bin/java -jar BuildTools.jar --rev 1.11.1
 echo Success!
 cd ..
 cp 1.11.1/spigot-1.11.2.jar ../libs/spigot-1.11.1.jar
 cd 1.12.2
 echo Building Spigot 1.12.2...
 sleep 3
-./../java8/zulu8.56.0.21-ca-jdk8.0.302-linux_x64/bin/java -jar BuildTools.jar --rev 1.12.2
+./../java8/$PATH_JAVA_8/bin/java -jar BuildTools.jar --rev 1.12.2
 echo Success!
 cd ..
 cp 1.12.2/spigot-1.12.2.jar ../libs/spigot-1.12.2.jar
 cd 1.13
 echo Building Spigot 1.13...
 sleep 3
-./../java8/zulu8.56.0.21-ca-jdk8.0.302-linux_x64/bin/java -jar BuildTools.jar --rev 1.13
+./../java8/$PATH_JAVA_8/bin/java -jar BuildTools.jar --rev 1.13
 echo Success!
 cd ..
 cp 1.13/spigot-1.13.jar ../libs/spigot-1.13.jar
 cd 1.13.2
 echo Building Spigot 1.13.2...
 sleep 3
-./../java8/zulu8.56.0.21-ca-jdk8.0.302-linux_x64/bin/java -jar BuildTools.jar --rev 1.13.2
+./../java8/$PATH_JAVA_8/bin/java -jar BuildTools.jar --rev 1.13.2
 echo Success!
 cd ..
 cp 1.13.2/spigot-1.13.2.jar ../libs/spigot-1.13.2.jar
 cd 1.14.4
 echo Building Spigot 1.14.4...
 sleep 3
-./../java8/zulu8.56.0.21-ca-jdk8.0.302-linux_x64/bin/java -jar BuildTools.jar --rev 1.14.4
+./../java8/$PATH_JAVA_8/bin/java -jar BuildTools.jar --rev 1.14.4
 echo Success!
 cd ..
 cp 1.14.4/spigot-1.14.4.jar ../libs/spigot-1.14.4.jar
 cd 1.15.2
 echo Building Spigot 1.15.2...
 sleep 3
-./../java8/zulu8.56.0.21-ca-jdk8.0.302-linux_x64/bin/java -jar BuildTools.jar --rev 1.15.2
+./../java8/$PATH_JAVA_8/bin/java -jar BuildTools.jar --rev 1.15.2
 echo Success!
 cd ..
 cp 1.15.2/spigot-1.15.2.jar ../libs/spigot-1.15.2.jar
 cd 1.16.1
 echo Building Spigot 1.16.1...
 sleep 3
-./../java8/zulu8.56.0.21-ca-jdk8.0.302-linux_x64/bin/java -jar BuildTools.jar --rev 1.16.1
+./../java8/$PATH_JAVA_8/bin/java -jar BuildTools.jar --rev 1.16.1
 echo Success!
 cd ..
 cp 1.16.1/spigot-1.16.1.jar ../libs/spigot-1.16.1.jar
 cd 1.16.3
 echo Building Spigot 1.16.3...
 sleep 3
-./../java8/zulu8.56.0.21-ca-jdk8.0.302-linux_x64/bin/java -jar BuildTools.jar --rev 1.16.3
+./../java8/$PATH_JAVA_8/bin/java -jar BuildTools.jar --rev 1.16.3
 echo Success!
 cd ..
 cp 1.16.3/spigot-1.16.3.jar ../libs/spigot-1.16.3.jar
 cd 1.17
 echo Building Spigot 1.17...
 sleep 3
-./../java16/jdk-16.0.2/bin/java -jar BuildTools.jar --rev 1.17
+./../java16/$PATH_JAVA_16/bin/java -jar BuildTools.jar --rev 1.17
 echo Success!
 cd ..
 cp 1.17/spigot-1.17.jar ../libs/spigot-1.17.jar
+
 cd ..
 echo Spigot dependencies complete!
 echo Downloading PlotSquared...
