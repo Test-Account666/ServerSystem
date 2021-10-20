@@ -1,6 +1,6 @@
 # ServerSystem
 
-# Developers: I recommend you using my [setup.sh file](https://raw.githubusercontent.com/TheBlackEntity/ServerSystem/files/setup.sh) (Don't have one for windows, yet)
+# Developers: I recommend you using my [setup.sh file](https://raw.githubusercontent.com/TheBlackEntity/ServerSystem/files/setup.sh) it is compatible with Windows 8+ through "Git Bash" too.
 
 \~~~~~~~~~~~~~~~~~~~~~~ English ~~~~~~~~~~~~~~~~~~~~~~
 
