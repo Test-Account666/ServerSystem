@@ -139,6 +139,7 @@ public class EconomyManager_Disabled extends ManagerEconomy {
 
     @Override
     public LinkedHashMap<OfflinePlayer, Double> getTopTen() {
+
         return new LinkedHashMap<>();
     }
 

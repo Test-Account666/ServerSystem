@@ -1,7 +1,7 @@
 package me.Entity303.ServerSystem.Commands.executable;
 
 import me.Entity303.ServerSystem.Main.ss;
-import me.Entity303.ServerSystem.Utils.Interceptor;
+import me.Entity303.ServerSystem.Utils.interceptors.SudoInterceptor;
 import me.Entity303.ServerSystem.Utils.MessageUtils;
 import me.Entity303.ServerSystem.Utils.Morpher;
 import net.bytebuddy.ByteBuddy;
@@ -96,7 +96,7 @@ public class COMMAND_sudo extends MessageUtils implements CommandExecutor {
                         .intercept(MethodCall.invokeSuper().withAllArguments().
                                 andThen(MethodDelegation.withDefaultConfiguration().
                                         withBinders(Morph.Binder.install(Morpher.class)).
-                                        to(new Interceptor(cs))))
+                                        to(new SudoInterceptor(cs))))
                         .make()
                         .load(this.getClass().getClassLoader())
                         .getLoaded();

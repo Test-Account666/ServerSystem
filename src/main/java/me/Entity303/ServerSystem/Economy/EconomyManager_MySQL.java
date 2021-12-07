@@ -7,9 +7,9 @@ import org.bukkit.entity.Player;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
-
-import static java.util.stream.Collectors.toMap;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.UUID;
 
 public class EconomyManager_MySQL extends ManagerEconomy {
     private final String currencySingular;
@@ -268,33 +268,27 @@ public class EconomyManager_MySQL extends ManagerEconomy {
 
     @Override
     public LinkedHashMap<OfflinePlayer, Double> getTopTen() {
-        return this.topTen;
+        LinkedHashMap<OfflinePlayer, Double> topTen = new LinkedHashMap<>();
+        try {
+            ResultSet resultSet = this.plugin.getMySQL().getResult(
+                    "SELECT * " +
+                    "FROM Economy " +
+                    "WHERE Server='" + server + "' " +
+                    "ORDER BY Balance desc " +
+                    "LIMIT 10");
+            while (resultSet.next()) {
+                UUID uuid = UUID.fromString(resultSet.getString("UUID"));
+                Double balance = Double.parseDouble(String.format("%.2f", resultSet.getDouble("Balance")).replace(",", "."));
+                topTen.put(Bukkit.getOfflinePlayer(uuid), balance);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return topTen;
     }
 
     @Override
     public void fetchTopTen() {
-
-        if (!this.topTen.isEmpty()) this.topTen.clear();
-        Map<OfflinePlayer, Double> moneyMap = new HashMap<>();
-        ResultSet resultSet = null;
-        resultSet = this.plugin.getMySQL().getResult("SELECT UUID, Balance FROM Economy WHERE Server = '" + this.plugin.getServerName() + "' ORDER BY Balance DESC LIMIT 10");
-        try {
-            while (resultSet.next()) {
-                UUID uuid = UUID.fromString(resultSet.getString("UUID"));
-                Double balance = Double.parseDouble(String.format("%.2f", resultSet.getDouble("Balance")).replace(",", "."));
-                moneyMap.put(Bukkit.getOfflinePlayer(uuid), balance);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        LinkedHashMap<OfflinePlayer, Double> doubleLinkedHashMap = moneyMap.entrySet()
-                .stream()
-                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                        LinkedHashMap::new));
-
-        this.topTen.putAll(doubleLinkedHashMap);
 
     }
 

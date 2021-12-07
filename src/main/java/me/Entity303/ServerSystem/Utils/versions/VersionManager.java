@@ -9,6 +9,7 @@ import me.Entity303.ServerSystem.Commands.executable.COMMAND_skull_newer;
 import me.Entity303.ServerSystem.Listener.Vanish.*;
 import me.Entity303.ServerSystem.Main.ss;
 import me.Entity303.ServerSystem.SignEdit.SignEdit_Reflection_Latest;
+import me.Entity303.ServerSystem.SignEdit.SignEdit_Reflection_to_v1_17_R1;
 import me.Entity303.ServerSystem.SignEdit.SignEdit_Reflection_Old;
 import me.Entity303.ServerSystem.Utils.versions.commands.BukkitCommandWrap_Reflection_Latest;
 import me.Entity303.ServerSystem.Utils.versions.commands.BukkitCommandWrap_Reflection_Old;
@@ -16,6 +17,10 @@ import me.Entity303.ServerSystem.Utils.versions.offlineplayer.data.SaveData_Late
 import me.Entity303.ServerSystem.Utils.versions.offlineplayer.data.SaveData_Old;
 import me.Entity303.ServerSystem.Utils.versions.offlineplayer.entityplayer.EntityPlayer_Latest;
 import me.Entity303.ServerSystem.Utils.versions.offlineplayer.entityplayer.EntityPlayer_Old;
+import me.Entity303.ServerSystem.Utils.versions.offlineplayer.teleport.Teleport_Latest;
+import me.Entity303.ServerSystem.Utils.versions.offlineplayer.teleport.Teleport_v1_16_R1_to_v1_17_R1;
+import me.Entity303.ServerSystem.Utils.versions.offlineplayer.teleport.Teleport_v1_8_R3;
+import me.Entity303.ServerSystem.Utils.versions.offlineplayer.teleport.Teleport_v1_9_R1_to_v1_15_R1;
 import me.Entity303.ServerSystem.Vanish.Packets.VanishPacket_Reflection_Latest;
 import me.Entity303.ServerSystem.Vanish.Packets.VanishPacket_Reflection_Old;
 import me.Entity303.ServerSystem.Vanish.Packets.VanishPacket_Reflection_To_1_16;
@@ -106,6 +111,12 @@ public class VersionManager {
 
         this.serverSystem.log("ServerSystem is running on " + version + "!");
 
+        try {
+            this.serverSystem.getVersionStuff().setGetHandleMethod(Class.forName("org.bukkit.craftbukkit." + this.nmsVersion + ".entity.CraftPlayer").getDeclaredMethod("getHandle"));
+        } catch (NoSuchMethodException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
         if (version.contains("1.18")) {
             this.serverSystem.getVersionStuff().setActionBar(new ActionBar_Latest(this.nmsVersion));
             this.v117 = true;
@@ -128,6 +139,7 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setVirtualSmithing(new VirtualSmithing_Latest());
             this.serverSystem.getVersionStuff().setSaveData(new SaveData_Latest(this.serverSystem));
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Latest(this.serverSystem));
+            this.serverSystem.getVersionStuff().setTeleport(new Teleport_Latest(this.serverSystem));
             Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
                 this.serverSystem.getCommandManager().rc("skull", new COMMAND_skull_newer(this.serverSystem), null);
             }, 5L);
@@ -144,7 +156,7 @@ public class VersionManager {
                 this.serverSystem.getVersionStuff().setBukkitCommandWrap(new BukkitCommandWrap_Reflection_Latest());
             this.serverSystem.getVersionStuff().setVanishPacket(new VanishPacket_Reflection_Latest(this.serverSystem));
             Bukkit.getPluginManager().registerEvents(new InteractListener_Newer(this.serverSystem), this.serverSystem);
-            this.serverSystem.getVersionStuff().setSignEdit(new SignEdit_Reflection_Latest());
+            this.serverSystem.getVersionStuff().setSignEdit(new SignEdit_Reflection_to_v1_17_R1());
             this.serverSystem.getVersionStuff().setVirtualAnvil(new VirtualAnvil_Latest());
             this.serverSystem.getVersionStuff().setVirtualCartography(new VirtualCartography_Latest());
             this.serverSystem.getVersionStuff().setVirtualGrindstone(new VirtualGrindstone_latest());
@@ -153,6 +165,7 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setVirtualSmithing(new VirtualSmithing_Latest());
             this.serverSystem.getVersionStuff().setSaveData(new SaveData_Latest(this.serverSystem));
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Latest(this.serverSystem));
+            this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_16_R1_to_v1_17_R1(this.serverSystem));
             Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
                 this.serverSystem.getCommandManager().rc("skull", new COMMAND_skull_newer(this.serverSystem), null);
             }, 5L);
@@ -178,6 +191,7 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setVirtualSmithing(new VirtualSmithing_v1_16_R1_To_v1_16_R3());
             this.serverSystem.getVersionStuff().setSaveData(new SaveData_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
+            this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_16_R1_to_v1_17_R1(this.serverSystem));
             Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
                 this.serverSystem.getCommandManager().rc("skull", new COMMAND_skull_newer(this.serverSystem), null);
             }, 5L);
@@ -203,6 +217,7 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setVirtualSmithing(new VirtualSmithing_v1_16_R1_To_v1_16_R3());
             this.serverSystem.getVersionStuff().setSaveData(new SaveData_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
+            this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_16_R1_to_v1_17_R1(this.serverSystem));
             Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
                 this.serverSystem.getCommandManager().rc("skull", new COMMAND_skull_newer(this.serverSystem), null);
             }, 5L);
@@ -227,6 +242,7 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setVirtualSmithing(new VirtualSmithing_v1_16_R1_To_v1_16_R3());
             this.serverSystem.getVersionStuff().setSaveData(new SaveData_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
+            this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_16_R1_to_v1_17_R1(this.serverSystem));
             Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
                 this.serverSystem.getCommandManager().rc("skull", new COMMAND_skull_newer(this.serverSystem), null);
             }, 5L);
@@ -250,6 +266,7 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setVirtualSmithing(new VirtualSmithing_v1_16_R1_To_v1_16_R3());
             this.serverSystem.getVersionStuff().setSaveData(new SaveData_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
+            this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_9_R1_to_v1_15_R1(this.serverSystem));
             Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
                 this.serverSystem.getCommandManager().rc("skull", new COMMAND_skull_newer(this.serverSystem), null);
             }, 5L);
@@ -273,6 +290,7 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setVirtualSmithing(new VirtualSmithing_v1_16_R1_To_v1_16_R3());
             this.serverSystem.getVersionStuff().setSaveData(new SaveData_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
+            this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_9_R1_to_v1_15_R1(this.serverSystem));
             Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
                 this.serverSystem.getCommandManager().rc("skull", new COMMAND_skull_newer(this.serverSystem), null);
             }, 5L);
@@ -290,6 +308,7 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setVirtualAnvil(new me.Entity303.ServerSystem.Virtual.Anvil.VirtualAnvil_v1_8_R3_To_v1_13_R2());
             this.serverSystem.getVersionStuff().setSaveData(new SaveData_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
+            this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_9_R1_to_v1_15_R1(this.serverSystem));
             Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
                 this.serverSystem.getCommandManager().rc("skull", new COMMAND_skull_newer(this.serverSystem), null);
             }, 5L);
@@ -307,6 +326,7 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setVirtualAnvil(new VirtualAnvil_v1_8_R3_To_v1_13_R2());
             this.serverSystem.getVersionStuff().setSaveData(new SaveData_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
+            this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_9_R1_to_v1_15_R1(this.serverSystem));
             Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
                 this.serverSystem.getCommandManager().rc("skull", new COMMAND_skull_newer(this.serverSystem), null);
             }, 5L);
@@ -321,6 +341,7 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setVirtualAnvil(new me.Entity303.ServerSystem.Virtual.Anvil.VirtualAnvil_v1_8_R3_To_v1_13_R2());
             this.serverSystem.getVersionStuff().setSaveData(new SaveData_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
+            this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_9_R1_to_v1_15_R1(this.serverSystem));
             Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
                 this.serverSystem.getCommandManager().rc("skull", new COMMAND_skull(this.serverSystem), null);
             }, 5L);
@@ -333,6 +354,7 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setVirtualAnvil(new me.Entity303.ServerSystem.Virtual.Anvil.VirtualAnvil_v1_8_R3_To_v1_13_R2());
             this.serverSystem.getVersionStuff().setSaveData(new SaveData_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
+            this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_9_R1_to_v1_15_R1(this.serverSystem));
             Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
                 this.serverSystem.getCommandManager().rc("skull", new COMMAND_skull(this.serverSystem), null);
             }, 5L);
@@ -345,6 +367,7 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setVirtualAnvil(new me.Entity303.ServerSystem.Virtual.Anvil.VirtualAnvil_v1_8_R3_To_v1_13_R2());
             this.serverSystem.getVersionStuff().setSaveData(new SaveData_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
+            this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_9_R1_to_v1_15_R1(this.serverSystem));
             Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
                 this.serverSystem.getCommandManager().rc("skull", new COMMAND_skull(this.serverSystem), null);
             }, 5L);
@@ -357,6 +380,7 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setVirtualAnvil(new me.Entity303.ServerSystem.Virtual.Anvil.VirtualAnvil_v1_8_R3_To_v1_13_R2());
             this.serverSystem.getVersionStuff().setSaveData(new SaveData_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
+            this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_9_R1_to_v1_15_R1(this.serverSystem));
             Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
                 this.serverSystem.getCommandManager().rc("skull", new COMMAND_skull(this.serverSystem), null);
             }, 5L);
@@ -370,6 +394,7 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setVirtualAnvil(new me.Entity303.ServerSystem.Virtual.Anvil.VirtualAnvil_v1_8_R3_To_v1_13_R2());
             this.serverSystem.getVersionStuff().setSaveData(new SaveData_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
+            this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_9_R1_to_v1_15_R1(this.serverSystem));
             Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
                 this.serverSystem.getCommandManager().rc("skull", new COMMAND_skull(this.serverSystem), null);
             }, 5L);
@@ -382,6 +407,7 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setVirtualAnvil(new me.Entity303.ServerSystem.Virtual.Anvil.VirtualAnvil_v1_8_R3_To_v1_13_R2());
             this.serverSystem.getVersionStuff().setSaveData(new SaveData_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
+            this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_8_R3());
             Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
                 this.serverSystem.getCommandManager().rc("skull", new COMMAND_skull(this.serverSystem), null);
             }, 5L);
@@ -408,6 +434,7 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setVirtualSmithing(new VirtualSmithing_Latest());
             this.serverSystem.getVersionStuff().setSaveData(new SaveData_Latest(this.serverSystem));
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Latest(this.serverSystem));
+            this.serverSystem.getVersionStuff().setTeleport(new Teleport_Latest(this.serverSystem));
             Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
                 this.serverSystem.getCommandManager().rc("skull", new COMMAND_skull_newer(this.serverSystem), null);
             }, 5L);

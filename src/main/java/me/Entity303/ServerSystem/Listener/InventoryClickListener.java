@@ -3,10 +3,12 @@ package me.Entity303.ServerSystem.Listener;
 import me.Entity303.ServerSystem.Commands.executable.COMMAND_recipe;
 import me.Entity303.ServerSystem.Main.ss;
 import me.Entity303.ServerSystem.Utils.MessageUtils;
+import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -36,6 +38,28 @@ public class InventoryClickListener extends MessageUtils implements Listener {
     @EventHandler
     public void onClick(InventoryClickEvent e) {
         if (e.getClickedInventory() == null) return;
+
+        if (e.getView().getTopInventory() instanceof PlayerInventory)
+            if (e.getView().getTopInventory().getSize() == 45) {
+                InventoryAction action = e.getAction();
+                if (action.name().equalsIgnoreCase("CLONE_STACK")) {
+                    if (e.getSlot() > 40) e.setCancelled(true);
+                    if (e.getCursor().getType() == Material.DROPPER)
+                        e.setCancelled(true);
+                    return;
+                } else if (action.name().equalsIgnoreCase("HOTBAR_MOVE_AND_READD") || action.name().equalsIgnoreCase("HOTBAR_SWAP") || action.name().equalsIgnoreCase("MOVE_TO_OTHER_INVENTORY")) {
+                    if (e.getSlot() > 40) e.setCancelled(true);
+
+                    if (e.getCursor().getType() == Material.DROPPER)
+                        e.setCancelled(true);
+                    return;
+                } else if (action.name().equalsIgnoreCase("COLLECT_TO_CURSOR")) {
+                    if (e.getCursor().getType() == Material.DROPPER)
+                        e.setCancelled(true);
+                    return;
+                }
+                return;
+            }
 
         if (COMMAND_recipe.getRecipeList().contains(e.getWhoClicked())) {
             if (e.getClickedInventory() instanceof PlayerInventory) return;

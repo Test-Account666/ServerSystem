@@ -1,15 +1,52 @@
 package me.Entity303.ServerSystem.Utils;
 
 import me.Entity303.ServerSystem.Main.ss;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.implementation.MethodCall;
+import net.bytebuddy.matcher.ElementMatchers;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Method;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MessageUtils {
     protected final ss plugin;
+
+    private Method loadDataMethod = null;
+
+    public Player getHookedPlayer(OfflinePlayer offlineTarget) {
+        try {
+            AtomicReference<Player> player = new AtomicReference<>(null);
+            Object cPlayer = new ByteBuddy()
+                    .subclass(Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".entity.CraftPlayer"))
+                    .method(ElementMatchers.named("saveData"))
+                    .intercept(MethodCall.invokeSuper().
+                            andThen(MethodCall.run(() -> this.plugin.getVersionStuff().getSaveData().saveData(player.get()))))
+                    .make()
+                    .load(this.plugin.getClass().getClassLoader())
+                    .getLoaded()
+                    .getConstructors()[0]
+                    .newInstance(Bukkit.getServer(), this.plugin.getVersionStuff().getEntityPlayer().getEntityPlayer(offlineTarget));
+
+            if (this.loadDataMethod == null) {
+                this.loadDataMethod = Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".entity.CraftPlayer").getDeclaredMethod("loadData");
+                this.loadDataMethod.setAccessible(true);
+            }
+
+            this.loadDataMethod.invoke(cPlayer);
+
+            player.set((Player) cPlayer);
+            return player.get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public MessageUtils(ss plugin) {
         this.plugin = plugin;

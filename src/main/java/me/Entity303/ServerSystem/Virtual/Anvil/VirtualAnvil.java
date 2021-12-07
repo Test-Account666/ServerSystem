@@ -1,12 +1,13 @@
 package me.Entity303.ServerSystem.Virtual.Anvil;
 
 import me.Entity303.ServerSystem.Virtual.ContainerAccess.ContainerAccessWrapper;
+import me.Entity303.ServerSystem.Virtual.Virtual;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
 
-public abstract class VirtualAnvil {
+public abstract class VirtualAnvil extends Virtual {
 
     private String version = null;
 

@@ -1,6 +1,7 @@
 # User-specific stuff
 .idea/
 libs
+work/
 
 *.iml
 *.ipr

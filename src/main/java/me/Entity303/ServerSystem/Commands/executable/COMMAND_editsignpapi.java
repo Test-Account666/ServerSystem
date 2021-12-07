@@ -48,8 +48,8 @@ public class COMMAND_editsignpapi implements CommandExecutor {
 
                 if ((this.isPlayerInPlotLatest(p) || ((this.isAllowed(p, "editschild.admin")))))
                     if (((this.isPlayerInPlotLatest(p)) && (this.getLatestPlot(p.getLocation()).isOwner(p.getUniqueId()))) || ((this.isAllowed(p, "editschild.admin")))) {
-                        System.out.println(((this.isPlayerInPlotLatest(p)) && (this.getLatestPlot(p.getLocation()).isOwner(p.getUniqueId()))));
-                        System.out.println(this.isAllowed(p, "editschild.admin"));
+                        /*System.out.println(((this.isPlayerInPlotLatest(p)) && (this.getLatestPlot(p.getLocation()).isOwner(p.getUniqueId()))));
+                        System.out.println(this.isAllowed(p, "editschild.admin"));*/
                         Sign sign = (Sign) block.getState();
                         this.plugin.getVersionStuff().getSignEdit().editSign(p, sign);
                     } else

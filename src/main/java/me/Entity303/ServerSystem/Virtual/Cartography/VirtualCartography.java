@@ -1,12 +1,13 @@
 package me.Entity303.ServerSystem.Virtual.Cartography;
 
 import me.Entity303.ServerSystem.Virtual.ContainerAccess.ContainerAccessWrapper;
+import me.Entity303.ServerSystem.Virtual.Virtual;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
 
-public abstract class VirtualCartography {
+public abstract class VirtualCartography extends Virtual {
 
     String version = null;
 
