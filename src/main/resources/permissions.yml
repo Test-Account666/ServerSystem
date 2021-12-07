@@ -288,3 +288,6 @@ Permissions:
     commandblock: "server.break.commandblock"
     structureblock: "server.break.structureblock"
   offlineteleport: "server.offlineteleport"
+  offlineteleporthere: "server.offlineteleporthere"
+  offlineinvsee: "server.offlineinvsee"
+  offlineenderchest: "server.offlineenderchest"

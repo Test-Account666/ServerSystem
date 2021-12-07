@@ -64,7 +64,10 @@ Messages:
     Nick: "Použij: &2/<LABEL> <Hráč> <Nick>"
     Rename: "Použití: &2/<LABEL> <jméno>"
     CheckHealth: "Použij: &2/<LABEL> <Hráč>"
-    OfflineTeleport: "Syntax: &2/<LABEL> <OfflinePlayer>"
+    OfflineTeleport: "Použij: &2/<LABEL> <OfflinePlayer>"
+    OfflineTeleportHere: "Použij: &2/<LABEL> <OfflinePlayer>"
+    OfflineInvsee: "Použij: &2/<LABEL> <OfflinePlayer>"
+    OfflineEnderChest: "Použij: &2/<LABEL> <OfflinePlayer>"
   Normal:
     GetPos:
       Self: "Jsi na souřadnicích &6X:&2<X> &6Y:&2<Y> &6Z:&2<Z> &6Svět:&2<WORLD>"
@@ -484,6 +487,18 @@ Messages:
       NeverPlayed: "&4<TARGET> &cnikdy nehrál na tomto serveru"
       PlayerIsOnline: "&4<TARGET> &cje online"
       Success: "Teleportoval jsi se k &2<TARGET>&7!"
+    OfflineTeleportHere:
+      NeverPlayed: "&4<TARGET> &cnikdy nehrál na tomto serveru"
+      PlayerIsOnline: "&4<TARGET> &cje online"
+      Success: "Teleportoval jsi &2<TARGET> &7k sobě!"
+    OfflineEnderChest:
+      NeverPlayed: "&4<TARGET> &cnikdy nehrál na tomto serveru"
+      PlayerIsOnline: "&4<TARGET> &cje online"
+      PlayerCameOnline: "&4<TARGET> &cje online, použij prosím /enderchest!"
+    OfflineInvsee:
+      NeverPlayed: "&4<TARGET> &cnikdy nehrál na tomto serveru"
+      PlayerIsOnline: "&4<TARGET> &cje online"
+      PlayerCameOnline: "&4<TARGET> &cje online, použij prosím /invsee!"
   Misc:
     ServerFull: "&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Server
       je plný!<BREAK>&cK přojení potřebuješ permissi &4<PERMISSION>&c!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]"

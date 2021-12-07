@@ -1,5 +1,5 @@
 #==============================================
-#=      Last Update 2021/6/13                 =
+#=                                            =
 #=   Thx to realEntity303 made ServerSystem   =
 #=                                            =
 #=          You can DIY this file             =
@@ -70,6 +70,10 @@ Messages:
     Nick: "用法: &2/<LABEL> <玩家> <Nickname>"
     Rename: "用法: &2/<LABEL> <名称>"
     CheckHealth: "用法: &2/<LABEL> <玩家>"
+    OfflineTeleport: "用法: &2/<LABEL> <OfflinePlayer>"
+    OfflineTeleportHere: "用法: &2/<LABEL> <OfflinePlayer>"
+    OfflineEnderChest: "用法: &2/<LABEL> <OfflinePlayer>"
+    OfflineInvsee: "用法: &2/<LABEL> <OfflinePlayer>"
   Normal:
     Break:
       BlockBroke: "你在 &6X:&2<X> &6Y:&2<Y> &6Z:&2<Z>&7处破坏了方块!"
@@ -78,7 +82,7 @@ Messages:
       Self: "你当前在这里哦！ &6X:&2<X> &6Y:&2<Y> &6Z:&2<Z> &6所在世界:&2<WORLD>"
       Others: "&2<TARGET> &7在这里哦 &6X:&2<X> &6Y:&2<Y> &6Z:&2<Z> &6当前世界:&2<WORLD>"
     SocialSpyToggle:
-      Activated: "监听开启!(FBI Open Door!)"
+      Activated: "监听开启!(FBI开门！)"
       Deactivated: "监听关闭!"
     Ban:
       Success: "你封禁了玩家唉 &2<TARGET>&7! (解封时间: &2<DATE>&7)"
@@ -382,7 +386,7 @@ Messages:
       SocialSpy: "&2[&7悄悄话监听&2] &3<SENDER> &7-> &5<TARGET> &7>> &2<MESSAGE>"
       Deactivated: "&4<TARGET> &c拒收悄悄话!"
     ConvertFromEssentials:
-      WarnNotTested: "&c&l警告!! &7| &c该功能 &4&6从未被 &c测试过&c! &4可能会出现 Bug、错误、和其他不可预知的问题 &7| &c&l警告!!<BREAK>&7如果你坚持进行数据转移操作, 请再次输入该命令!"
+      WarnNotTested: "&c&l警告!! &7| &c该功能 &4&6从未被 &c测试过&c! &4可能会出现错误和其他不可预知的问题 &7| &c&l警告!!<BREAK>&7如果你坚持进行数据转移操作, 请再次输入该命令!"
       Failed:
         NoDirectory: "&c数据转移时出现问题! 似乎Essentials中没有数据!" #此处可能出现了原文错误,译文可能不准确 原句"It seems like there is now data from Essentials"
         Unknown: "&c数据转移时出现错误! 请查询控制台以获得更多信息! <BREAK>&c或将此消息: &4<TARGET> &c与控制台反馈信息一同反馈到Discord (&4https://discord.gg/TbnyUrJ)"
@@ -468,6 +472,20 @@ Messages:
     MsgToggle:
       Deactivated: "您已拒收所有悄悄话!"
       Activated: "您已恢复了悄悄话的收取!"
+    OfflineTeleport:
+      NeverPlayed: "&4<TARGET> &c从未在此服务器上玩过!"
+      PlayerIsOnline: "&4<TARGET> &c在线!"
+      Success: "你将自己传送到 &2<TARGET>&7!"
+    OfflineTeleportHere:
+      NeverPlayed: "&4<TARGET> &c从未在此服务器上玩过!"
+      PlayerIsOnline: "&4<TARGET> &c在线!"
+      Success: "你传送 &2<TARGET> &7到你现在的位置!"
+    OfflineEnderChest:
+      NeverPlayed: "&4<TARGET> &c从未在此服务器上玩过!"
+      PlayerIsOnline: "&4<TARGET> &c在线!"
+    OfflineInvsee:
+      NeverPlayed: "&4<TARGET> &c从未在此服务器上玩过!"
+      PlayerIsOnline: "&4<TARGET> &c在线!"
   Misc:
     ServerFull: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4服务器已满!<BREAK>&c如果想要使用预留通道,你需要权限 &4<PERMISSION>&c!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
     JoinMessage:

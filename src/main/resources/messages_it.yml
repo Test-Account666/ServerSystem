@@ -68,6 +68,9 @@ Messages:
     Rename: "Sintassi: &2/<LABEL> <Cognome>"
     CheckHealth: "Sintassi: &2/<LABEL> <Giocatore>"
     OfflineTeleport: "Sintassi: &2/<LABEL> <OfflinePlayer>"
+    OfflineTeleportHere: "Sintassi: &2/<LABEL> <OfflinePlayer>"
+    OfflineEnderChest: "Sintassi: &2/<LABEL> <OfflinePlayer>"
+    OfflineInvsee: "Sintassi: &2/<LABEL> <OfflinePlayer>"
   Normal:
     GetPos:
       Self: "Sei alle seguenti coordinate: &6X:&2<X> &6Y:&2<Y> &6Z:&2<Z> &6Mondo:&2<WORLD>"
@@ -471,6 +474,18 @@ Messages:
       NeverPlayed: "&4<TARGET> &cmai giocato su questo server!"
       PlayerIsOnline: "&4<TARGET> &cè in linea!"
       Success: "Ti sei teletrasportato a &2<TARGET>&7!"
+    OfflineTeleportHere:
+      NeverPlayed: "&4<TARGET> &cmai giocato su questo server!"
+      PlayerIsOnline: "&4<TARGET> &cè in linea!"
+      Success: "Hai il giocatore &2<TARGET> &7teletrasportato da te!"
+    OfflineEnderChest:
+      NeverPlayed: "&4<TARGET> &cmai giocato su questo server!"
+      PlayerIsOnline: "&4<TARGET> &cè in linea!"
+      PlayerCameOnline: "&4<TARGET> &cè online, si prega di utilizzare /enderchest!"
+    OfflineInvsee:
+      NeverPlayed: "&4<TARGET> &cmai giocato su questo server!"
+      PlayerIsOnline: "&4<TARGET> &cè in linea!"
+      PlayerCameOnline: "&4<TARGET> &cè online, si prega di utilizzare /invsee!"
   Misc:
     ServerFull: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4Il server è pieno!<BREAK>&cPer poter partecipare comunque, è necessaria l'autorizzazione &4<PERMISSION>&c!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
     JoinMessage:

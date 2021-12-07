@@ -63,6 +63,10 @@ Messages:
     Nick: "Syntax: &2/<LABEL> <Player> <Nickname>"
     Rename: "Syntax: &2/<LABEL> <Name>"
     CheckHealth: "Syntax: &2/<LABEL> <Player>"
+    OfflineTeleport: "Syntax: &2/<LABEL> <OfflinePlayer>"
+    OfflineTeleportHere: "Syntax: &2/<LABEL> <OfflinePlayer>"
+    OfflineEnderChest: "Syntax: &2/<LABEL> <OfflinePlayer>"
+    OfflineInvsee: "Syntax: &2/<LABEL> <OfflinePlayer>"
   Normal:
     GetPos:
       Self: "You are at coords &6X:&2<X> &6Y:&2<Y> &6Z:&2<Z> &6World:&2<WORLD>"
@@ -461,6 +465,22 @@ Messages:
     MsgToggle:
       Deactivated: "You deactivated your msg messages!"
       Activated: "You activated your msg messages!"
+    OfflineTeleport:
+      NeverPlayed: "&4<TARGET> &cnever played on this server!"
+      PlayerIsOnline: "&4<TARGET> &cis online!"
+      Success: "You teleported yourself to &2<TARGET>&7!"
+    OfflineTeleportHere:
+      NeverPlayed: "&4<TARGET> &cnever played on this server!"
+      PlayerIsOnline: "&4<TARGET> &cis online!"
+      Success: "You teleported &2<TARGET> &7to your current location!"
+    OfflineEnderChest:
+      NeverPlayed: "&4<TARGET> &cnever played on this server!"
+      PlayerIsOnline: "&4<TARGET> &cis online!"
+      PlayerCameOnline: "&4<TARGET> &ccame online, please use /enderchest!"
+    OfflineInvsee:
+      NeverPlayed: "&4<TARGET> &cnever played on this server!"
+      PlayerIsOnline: "&4<TARGET> &cis online!"
+      PlayerCameOnline: "&4<TARGET> &ccame online, please use /invsee!"
   Misc:
     ServerFull: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4The Server is full!<BREAK>&cTo join anyway, you need the permission &4<PERMISSION>&c!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
     JoinMessage:
