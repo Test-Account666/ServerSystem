@@ -3,6 +3,7 @@ metrics: true
 console: "Console"
 
 specialsudo: true
+advancedinvsee: true
 
 messagebyitembreak: false
 
@@ -111,4 +112,4 @@ h2:
   bansystem: true
 
 #Do NOT change this!
-version: "6.3"
+version: "6.4"

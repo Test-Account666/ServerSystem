@@ -142,6 +142,8 @@ public final class CommandManager {
                 this.serverSystem.getVersionStuff().getBukkitCommandWrap().wrap(command, "serversystem:" + alias);
             }
         }
+
+        command.register(getCommandMap());
     }
 
     private PluginCommand getNewCommand(String name, Plugin plugin) {
@@ -431,6 +433,9 @@ public final class CommandManager {
             this.rc("smithingtable", new COMMAND_smithingtable(this.serverSystem), null);
         this.rc("break", new COMMAND_break(this.serverSystem), null);
         this.rc("offlineteleport", new COMMAND_offlineteleport(this.serverSystem), null);
+        this.rc("offlineteleporthere", new COMMAND_offlineteleporthere(this.serverSystem), null);
+        this.rc("offlineinvsee", new COMMAND_offlineinvsee(this.serverSystem), null);
+        this.rc("offlineenderchest", new COMMAND_offlineenderchest(this.serverSystem), null);
 
         boolean plotSquaredAlreadyRegistered = false;
 

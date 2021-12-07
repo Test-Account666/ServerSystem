@@ -211,3 +211,11 @@ Aliases:
     aliases: "No Aliases"
   offlineteleport:
     aliases: "otp, offlinetp, oteleport"
+  offlineteleporthere:
+    aliases: "otphere, offlinetphere, oteleporthere"
+  offlineinvsee:
+    aliases: "oinvsee"
+  offlineenderchest:
+    aliases: "oec, offlineec"
+  baltop:
+    aliases: "top, balancetop"

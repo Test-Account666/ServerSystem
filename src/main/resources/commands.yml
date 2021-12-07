@@ -103,3 +103,7 @@ smithingtable: true
 getpos: true
 break: true
 offlineteleport: true
+offlineteleporthere: true
+offlineinvsee: true
+offlineenderchest: true
+baltop: true
