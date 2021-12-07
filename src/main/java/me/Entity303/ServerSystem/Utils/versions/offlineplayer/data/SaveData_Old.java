@@ -47,16 +47,17 @@ public class SaveData_Old extends MessageUtils implements SaveData {
 
             if (this.saveMethod == null) try {
                 this.saveMethod = Class.forName("net.minecraft.server." + this.plugin.getVersionManager().getNMSVersion() + ".Entity").getDeclaredMethod("save", Class.forName("net.minecraft.server." + this.plugin.getVersionManager().getNMSVersion() + ".NBTTagCompound"));
-            } catch (NoSuchMethodError | NoSuchMethodException ignored) {
+            } catch (NoSuchMethodError | NoSuchMethodException e) {
                 this.saveMethod = Class.forName("net.minecraft.server." + this.plugin.getVersionManager().getNMSVersion() + ".Entity").getDeclaredMethod("e", Class.forName("net.minecraft.server." + this.plugin.getVersionManager().getNMSVersion() + ".NBTTagCompound"));
             }
 
             if (this.NBTTagCompoundConstructor == null)
                 this.NBTTagCompoundConstructor = Class.forName("net.minecraft.server." + this.plugin.getVersionManager().getNMSVersion() + ".NBTTagCompound").getDeclaredConstructor();
 
-            Object playerData = this.saveMethod.invoke(entityPlayer, this.NBTTagCompoundConstructor.newInstance());
-            if (!player.isOnline()) {
+            Object playerData = this.NBTTagCompoundConstructor.newInstance();
+            this.saveMethod.invoke(entityPlayer, playerData);
 
+            if (!player.isOnline()) {
                 if (this.loadMethod == null)
                     this.loadMethod = Class.forName("net.minecraft.server." + this.plugin.getVersionManager().getNMSVersion() + ".WorldNBTStorage").getDeclaredMethod("load", Class.forName("net.minecraft.server." + this.plugin.getVersionManager().getNMSVersion() + ".EntityHuman"));
 
@@ -91,6 +92,7 @@ public class SaveData_Old extends MessageUtils implements SaveData {
             if (file1.exists() && !file1.delete() || !file.renameTo(file1))
                 Bukkit.getLogger().severe("Failed to save player data for " + player.getDisplayName());
         } catch (Exception var5) {
+            var5.printStackTrace();
             Bukkit.getLogger().severe("Failed to save player data for " + player.getDisplayName());
         }
     }
