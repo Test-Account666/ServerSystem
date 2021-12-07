@@ -44,9 +44,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -60,7 +58,7 @@ public final class ss extends JavaPlugin {
     private static MuteAPI muteAPI;
     private static BanAPI banAPI;
     private static VanishAPI vanishAPI;
-    public final String CONFIG_VERSION = "6.3";
+    public final String CONFIG_VERSION = "6.4";
     public final String JAR_NAME = this.getFile().getName();
     private final File RULES_FILE = new File("plugins//ServerSystem", "rules.yml");
     private final List<Player> cmdSpy = new ArrayList<>();
@@ -87,6 +85,7 @@ public final class ss extends JavaPlugin {
     private boolean stopFlightOnHit = false;
     private boolean disableFlightOnHit = false;
     private boolean specialSudo = true;
+    private boolean advancedInvsee = true;
     private Vanish vanish;
     private MetaValue metaValue;
     private WantsTP wantsTP;
@@ -104,6 +103,7 @@ public final class ss extends JavaPlugin {
     private Furnace furnace;
     private MetricsLite metrics;
     private FileConfiguration rulesConfig;
+    private Method syncCommandsMethod = null;
 
     public static EconomyAPI getEconomyAPI() {
         return ss.economyAPI;
@@ -179,6 +179,14 @@ public final class ss extends JavaPlugin {
 
     public void setMaintenance(boolean maintenance) {
         this.maintenance = maintenance;
+    }
+
+    public boolean isAdvancedInvsee() {
+        return this.advancedInvsee;
+    }
+
+    public void setAdvancedInvsee(boolean advancedInvsee) {
+        this.advancedInvsee = advancedInvsee;
     }
 
     public boolean isRegistered() {
@@ -370,6 +378,22 @@ public final class ss extends JavaPlugin {
         Bukkit.getScheduler().runTaskLater(this, () -> {
             this.commandManager.registerCommands();
 
+            if (this.versionManager.isV113()) {
+                if (this.syncCommandsMethod == null) try {
+                    this.syncCommandsMethod = Class.forName("org.bukkit.craftbukkit." + this.versionManager.getNMSVersion() + ".CraftServer").getDeclaredMethod("syncCommands");
+                    this.syncCommandsMethod.setAccessible(true);
+                } catch (NoSuchMethodException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                    return;
+                }
+
+                try {
+                    this.syncCommandsMethod.invoke(Bukkit.getServer());
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+
             if (this.getVersionManager().isV113()) if (Bukkit.getOnlinePlayers().size() >= 1)
                 for (Player player : Bukkit.getOnlinePlayers()) player.updateCommands();
         }, 5L);
@@ -427,6 +451,8 @@ public final class ss extends JavaPlugin {
         this.startDeactivatingCommands();
 
         this.specialSudo = this.getConfig().getBoolean("specialsudo", true);
+
+        this.advancedInvsee = this.getConfig().getBoolean("advancedinvsee", true);
 
         File commandsFiles = new File("plugins//ServerSystem", "commands.yml");
         FileConfiguration commandsConfig = YamlConfiguration.loadConfiguration(commandsFiles);
@@ -858,6 +884,23 @@ public final class ss extends JavaPlugin {
         this.economyManager = null;
 
         this.commandManager.unregisterCommands();
+
+        if (this.versionManager.isV113()) {
+            if (this.syncCommandsMethod == null) try {
+                this.syncCommandsMethod = Class.forName("org.bukkit.craftbukkit." + this.versionManager.getNMSVersion() + ".CraftServer").getDeclaredMethod("syncCommands");
+                this.syncCommandsMethod.setAccessible(true);
+            } catch (NoSuchMethodException | ClassNotFoundException e) {
+                e.printStackTrace();
+                return;
+            }
+
+            try {
+                this.syncCommandsMethod.invoke(Bukkit.getServer());
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+
         HandlerList.unregisterAll(this);
     }
 
