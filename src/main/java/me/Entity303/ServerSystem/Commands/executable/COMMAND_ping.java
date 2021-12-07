@@ -13,6 +13,7 @@ import java.lang.reflect.Method;
 public class COMMAND_ping extends MessageUtils implements CommandExecutor {
     private Method getHandleMethod;
     private Field pingField;
+    private Method getPingMethod;
 
     public COMMAND_ping(ss plugin) {
         super(plugin);
@@ -24,12 +25,25 @@ public class COMMAND_ping extends MessageUtils implements CommandExecutor {
                 this.getHandleMethod = player.getClass().getDeclaredMethod("getHandle");
                 this.getHandleMethod.setAccessible(true);
             }
+
             Object entityPlayer = this.getHandleMethod.invoke(player);
-            if (this.pingField == null) {
-                this.pingField = entityPlayer.getClass().getDeclaredField("ping");
-                this.pingField.setAccessible(true);
+
+            if (this.pingField == null && this.getPingMethod == null) {
+                try {
+                    this.pingField = entityPlayer.getClass().getDeclaredField("ping");
+                } catch (NoSuchFieldError | NoSuchFieldException e) {
+                    this.getPingMethod = Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".entity.CraftPlayer").getDeclaredMethod("getPing");
+                }
+                if (this.pingField != null)
+                    this.pingField.setAccessible(true);
             }
-            int ping = this.pingField.getInt(entityPlayer);
+
+            int ping;
+
+            if (this.getPingMethod != null)
+                ping = (int) this.getPingMethod.invoke(player);
+            else
+                ping = this.pingField.getInt(entityPlayer);
 
             player.sendMessage(this.getPrefix() + this.getMessage("Ping.Self", label, "ping", player.getName(), null).replace("<PING>", String.valueOf(Math.max(ping, 0))));
         } catch (Exception e) {
@@ -44,11 +58,22 @@ public class COMMAND_ping extends MessageUtils implements CommandExecutor {
                 this.getHandleMethod.setAccessible(true);
             }
             Object entityPlayer = this.getHandleMethod.invoke(player);
-            if (this.pingField == null) {
-                this.pingField = entityPlayer.getClass().getDeclaredField("ping");
-                this.pingField.setAccessible(true);
+            if (this.pingField == null && this.getPingMethod == null) {
+                try {
+                    this.pingField = entityPlayer.getClass().getDeclaredField("ping");
+                } catch (NoSuchFieldError | NoSuchFieldException e) {
+                    this.getPingMethod = Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".entity.CraftPlayer").getDeclaredMethod("getPing");
+                }
+                if (this.pingField != null)
+                    this.pingField.setAccessible(true);
             }
-            int ping = this.pingField.getInt(entityPlayer);
+
+            int ping;
+
+            if (this.getPingMethod != null)
+                ping = (int) this.getPingMethod.invoke(player);
+            else
+                ping = this.pingField.getInt(entityPlayer);
 
             return Math.max(ping, 0);
         } catch (Exception e) {

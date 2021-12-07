@@ -14,7 +14,7 @@ public class BukkitCommandWrap_Reflection_Latest extends BukkitCommandWrap {
     private Class minecraftServerClass;
     private Method aMethod;
     private Method getServerMethod;
-    private Method getCommandDispatcherMethod;
+    private Field vanillaCommandDispatcherField;
     private Method registerMethod;
     private Constructor bukkitcommandWrapperConstructor;
 
@@ -53,18 +53,18 @@ public class BukkitCommandWrap_Reflection_Latest extends BukkitCommandWrap {
             return;
         }
 
-        if (this.getCommandDispatcherMethod == null) try {
-            this.getCommandDispatcherMethod = this.minecraftServerClass.getDeclaredMethod("getCommandDispatcher");
-            this.getCommandDispatcherMethod.setAccessible(true);
-        } catch (NoSuchMethodException e) {
+        if (this.vanillaCommandDispatcherField == null) try {
+            this.vanillaCommandDispatcherField = this.minecraftServerClass.getDeclaredField("vanillaCommandDispatcher");
+            this.vanillaCommandDispatcherField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
             e.printStackTrace();
             return;
         }
 
         Object commandDispatcher;
         try {
-            commandDispatcher = this.getCommandDispatcherMethod.invoke(minecraftServer);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+            commandDispatcher = this.vanillaCommandDispatcherField.get(minecraftServer);
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
             return;
         }
@@ -116,7 +116,6 @@ public class BukkitCommandWrap_Reflection_Latest extends BukkitCommandWrap {
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -145,18 +144,18 @@ public class BukkitCommandWrap_Reflection_Latest extends BukkitCommandWrap {
             return;
         }
 
-        if (this.getCommandDispatcherMethod == null) try {
-            this.getCommandDispatcherMethod = this.minecraftServerClass.getDeclaredMethod("getCommandDispatcher");
-            this.getCommandDispatcherMethod.setAccessible(true);
-        } catch (NoSuchMethodException e) {
+        if (this.vanillaCommandDispatcherField == null) try {
+            this.vanillaCommandDispatcherField = this.minecraftServerClass.getDeclaredField("vanillaCommandDispatcher");
+            this.vanillaCommandDispatcherField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
             e.printStackTrace();
             return;
         }
 
         Object commandDispatcher = null;
         try {
-            commandDispatcher = this.getCommandDispatcherMethod.invoke(server);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+            commandDispatcher = this.vanillaCommandDispatcherField.get(server);
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
             return;
         }

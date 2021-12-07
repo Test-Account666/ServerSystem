@@ -1,18 +1,23 @@
 package me.Entity303.ServerSystem.SignEdit;
 
-import org.bukkit.Bukkit;
+import net.minecraft.core.BlockPosition;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.server.network.PlayerConnection;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public class SignEdit_Reflection_Latest implements SignEdit {
     private String version;
     private Method getHandleMethodPlayer;
     private Method getHandleMethodWorld;
     private Method getPositionMethod;
+    private Method sendPacketMethod;
+    private Method getTileEntityMethod;
     private Field playerConnectionField;
     private Field setEditableField;
     private Field gField;
@@ -37,14 +42,17 @@ public class SignEdit_Reflection_Latest implements SignEdit {
         }
 
         if (this.getPositionMethod == null) try {
-            this.getPositionMethod = Class.forName("net.minecraft.world.level.block.entity.TileEntity").getMethod("getPosition");
+            this.getPositionMethod = Arrays.stream(Class.forName("net.minecraft.world.level.block.entity.TileEntity").getMethods()).filter(method -> method.getParameters().length == 0).filter(method -> method.getReturnType().getName().equalsIgnoreCase(BlockPosition.class.getName())).findFirst().orElse(null);
+            if (this.getPositionMethod == null) throw new NoSuchMethodException("Could not find 'getPosition' method!");
         } catch (NoSuchMethodException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
         if (this.playerConnectionField == null) {
             try {
-                this.playerConnectionField = entityPlayer.getClass().getField("b");
+                this.playerConnectionField = Arrays.stream(entityPlayer.getClass().getFields()).filter(field -> field.getType().getName().equalsIgnoreCase(PlayerConnection.class.getName())).findFirst().orElse(null);
+                if (this.playerConnectionField == null)
+                    throw new NoSuchFieldException("Couldn't find 'playerConnection' field!");
             } catch (NoSuchFieldException e) {
                 e.printStackTrace();
             }
@@ -66,19 +74,46 @@ public class SignEdit_Reflection_Latest implements SignEdit {
             sign.getLine(i);
             lines[i] = sign.getLine(i).replace("§", "&");
         }
-        Object tes = null;
-        try {
-            tes = this.getHandleMethodWorld.
+
+        if (this.getTileEntityMethod == null) try {
+            this.getTileEntityMethod = this.getHandleMethodWorld.
                     invoke(sign.getWorld()).
                     getClass().
-                    getMethod("getTileEntity", Class.forName("net.minecraft.core.BlockPosition")).
-                    invoke(this.getHandleMethodWorld.
-                                    invoke(sign.getWorld()),
-                            Class.forName("net.minecraft.core.BlockPosition").
-                                    getConstructor(double.class, double.class, double.class).
-                                    newInstance(sign.getLocation().getX(),
-                                            sign.getLocation().getY(),
-                                            sign.getLocation().getZ()));
+                    getMethod("getTileEntity", Class.forName("net.minecraft.core.BlockPosition"));
+        } catch (NoSuchMethodException | NoSuchMethodError | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
+            if (e instanceof NoSuchMethodException || e instanceof NoSuchMethodError) try {
+                this.getTileEntityMethod = this.getHandleMethodWorld.
+                        invoke(sign.getWorld()).
+                        getClass().
+                        getMethod("getBlockEntity", Class.forName("net.minecraft.core.BlockPosition"), boolean.class);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException ex) {
+                ex.printStackTrace();
+            }
+            else
+                e.printStackTrace();
+        }
+
+        Object tes = null;
+        try {
+            tes =
+                    this.getTileEntityMethod.getParameterCount() == 2 ?
+                            this.getTileEntityMethod.invoke(this.getHandleMethodWorld.
+                                            invoke(sign.getWorld()),
+                                    Class.forName("net.minecraft.core.BlockPosition").
+                                            getConstructor(double.class, double.class, double.class).
+                                            newInstance(sign.getLocation().getX(),
+                                                    sign.getLocation().getY(),
+                                                    sign.getLocation().getZ()), false)
+
+                            :
+
+                            this.getTileEntityMethod.invoke(this.getHandleMethodWorld.
+                                            invoke(sign.getWorld()),
+                                    Class.forName("net.minecraft.core.BlockPosition").
+                                            getConstructor(double.class, double.class, double.class).
+                                            newInstance(sign.getLocation().getX(),
+                                                    sign.getLocation().getY(),
+                                                    sign.getLocation().getZ()));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException | InstantiationException e) {
             e.printStackTrace();
         }
@@ -130,20 +165,16 @@ public class SignEdit_Reflection_Latest implements SignEdit {
             e.printStackTrace();
         }
 
-        try {
-            connection.getClass().getMethod("sendPacket", Class.forName("net.minecraft.network.protocol.Packet")).invoke(connection, packet2);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
+        if (this.sendPacketMethod == null)
+            this.sendPacketMethod = Arrays.stream(PlayerConnection.class.getMethods()).
+                    filter(method -> method.getParameters().length == 1).
+                    filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(Packet.class.getName())).
+                    findFirst().orElse(null);
 
-    private String getVersion() {
-        if (this.version == null) try {
-            this.version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
-        } catch (ArrayIndexOutOfBoundsException e) {
+        try {
+            this.sendPacketMethod.invoke(connection, packet2);
+        } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
-            return null;
         }
-        return this.version;
     }
 }

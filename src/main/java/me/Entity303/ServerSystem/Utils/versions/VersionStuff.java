@@ -12,6 +12,7 @@ import me.Entity303.ServerSystem.SignEdit.SignEdit;
 import me.Entity303.ServerSystem.Utils.versions.commands.BukkitCommandWrap;
 import me.Entity303.ServerSystem.Utils.versions.offlineplayer.data.SaveData;
 import me.Entity303.ServerSystem.Utils.versions.offlineplayer.entityplayer.EntityPlayer;
+import me.Entity303.ServerSystem.Utils.versions.offlineplayer.teleport.Teleport;
 import me.Entity303.ServerSystem.Vanish.Packets.VanishPacket;
 import me.Entity303.ServerSystem.Virtual.Anvil.VirtualAnvil;
 import me.Entity303.ServerSystem.Virtual.Cartography.VirtualCartography;
@@ -38,6 +39,7 @@ public class VersionStuff {
     private VirtualCartography virtualCartography;
     private VirtualSmithing virtualSmithing;
     private SaveData saveData;
+    private Teleport teleport;
     private EntityPlayer entityPlayer;
     private Method getHandleMethod;
     private Method aMethod;
@@ -80,6 +82,14 @@ public class VersionStuff {
 
     public void setSaveData(SaveData saveData) {
         this.saveData = saveData;
+    }
+
+    public Teleport getTeleport() {
+        return this.teleport;
+    }
+
+    public void setTeleport(Teleport teleport) {
+        this.teleport = teleport;
     }
 
     public ActionBar getActionBar() {

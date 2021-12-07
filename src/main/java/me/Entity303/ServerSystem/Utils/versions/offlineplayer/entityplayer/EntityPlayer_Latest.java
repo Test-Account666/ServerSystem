@@ -3,11 +3,20 @@ package me.Entity303.ServerSystem.Utils.versions.offlineplayer.entityplayer;
 import com.mojang.authlib.GameProfile;
 import me.Entity303.ServerSystem.Main.ss;
 import me.Entity303.ServerSystem.Utils.MessageUtils;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.level.World;
 import org.bukkit.OfflinePlayer;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Locale;
+
 public class EntityPlayer_Latest extends MessageUtils implements EntityPlayer {
+
+    private static Method getWorldServerMethod = null;
 
     public EntityPlayer_Latest(ss plugin) {
         super(plugin);
@@ -15,7 +24,20 @@ public class EntityPlayer_Latest extends MessageUtils implements EntityPlayer {
 
     @Override
     public Object getEntityPlayer(OfflinePlayer offlinePlayer) {
+        if (EntityPlayer_Latest.getWorldServerMethod == null)
+            EntityPlayer_Latest.getWorldServerMethod = Arrays.stream(MinecraftServer.class.getDeclaredMethods())
+                    .filter(method -> method.getParameters().length == 1)
+                    .filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(ResourceKey.class.getName()))
+                    .filter(method -> method.getReturnType().getName().toLowerCase(Locale.ROOT).contains("world"))
+                    .findFirst().orElse(null);
+
         GameProfile gameProfile = new GameProfile(offlinePlayer.getUniqueId(), offlinePlayer.getName());
-        return new net.minecraft.server.level.EntityPlayer(MinecraftServer.getServer(), MinecraftServer.getServer().getWorldServer(World.f), gameProfile);
+        try {
+            return new net.minecraft.server.level.EntityPlayer(MinecraftServer.getServer(), (WorldServer) EntityPlayer_Latest.getWorldServerMethod.invoke(MinecraftServer.getServer(), World.f), gameProfile);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

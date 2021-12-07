@@ -2,7 +2,9 @@ package me.Entity303.ServerSystem.Vanish.Packets;
 
 import me.Entity303.ServerSystem.Main.ss;
 import net.minecraft.network.chat.IChatBaseComponent;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.level.EntityPlayer;
+import net.minecraft.server.network.PlayerConnection;
 import net.minecraft.world.level.EnumGamemode;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -12,16 +14,18 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class VanishPacket_Reflection_Latest extends VanishPacket {
     private final ss plugin;
     private String version;
     private Method getHandleMethod;
-    private Method getPlayerListNameMethod;
+    //private Method getPlayerListNameMethod;
     private Method getProfileMethod;
-    private Method getGameModeMethod;
+    //private Method getGameModeMethod;
     private Method spigotMethod;
+    private Method sendPacketMethod;
     private Field playerInteractManagerField;
     private Field playerConnectionField;
     private Field pingField;
@@ -29,6 +33,7 @@ public class VanishPacket_Reflection_Latest extends VanishPacket {
 
     public VanishPacket_Reflection_Latest(ss plugin) {
         this.plugin = plugin;
+
         try {
             this.collidesField = Class.forName("net.minecraft.world.entity.EntityLiving").getDeclaredField("collides");
             this.collidesField.setAccessible(true);
@@ -74,11 +79,7 @@ public class VanishPacket_Reflection_Latest extends VanishPacket {
             this.playerConnectionField.setAccessible(true);
         }
 
-        if (this.getPlayerListNameMethod == null) try {
-            this.getPlayerListNameMethod = Class.forName("net.minecraft.server.level.EntityPlayer").getMethod("getPlayerListName");
-        } catch (NoSuchMethodException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        Object playerListName = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + player.getPlayerListName() + "\"}");
 
         if (this.playerInteractManagerField == null) try {
             this.playerInteractManagerField = Class.forName("net.minecraft.server.level.EntityPlayer").getField("d");
@@ -86,16 +87,23 @@ public class VanishPacket_Reflection_Latest extends VanishPacket {
             e.printStackTrace();
         }
 
-        if (this.getGameModeMethod == null) try {
+        /*if (this.getGameModeMethod == null) try {
             this.getGameModeMethod = Class.forName("net.minecraft.server.level.PlayerInteractManager").getMethod("getGameMode");
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             e.printStackTrace();
-        }
+        }*/
 
         if (this.getProfileMethod == null) try {
             this.getProfileMethod = Class.forName("net.minecraft.world.entity.player.EntityHuman").getMethod("getProfile");
         } catch (NoSuchMethodException | ClassNotFoundException e) {
-            e.printStackTrace();
+            try {
+                for (Method method : Class.forName("net.minecraft.world.entity.player.EntityHuman").getDeclaredMethods())
+                    if (method.getReturnType().getName().contains("GameProfile"))
+                        if (method.getParameters().length <= 0) this.getProfileMethod = method;
+            } catch (ClassNotFoundException ex) {
+                ex.addSuppressed(e);
+                ex.printStackTrace();
+            }
         }
 
         Object profile = null;
@@ -141,11 +149,18 @@ public class VanishPacket_Reflection_Latest extends VanishPacket {
                         connection = this.playerConnectionField.get(this.getHandleMethod.invoke(all));
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         e.printStackTrace();
+                        return;
                     }
 
+                    if (this.sendPacketMethod == null)
+                        this.sendPacketMethod = Arrays.stream(PlayerConnection.class.getMethods()).
+                                filter(method -> method.getParameters().length == 1).
+                                filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(Packet.class.getName())).
+                                findFirst().orElse(null);
+
                     try {
-                        connection.getClass().getMethod("sendPacket", Class.forName("net.minecraft.network.protocol.Packet")).invoke(connection, playerInfo);
-                    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
+                        this.sendPacketMethod.invoke(connection, playerInfo);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
                         e.printStackTrace();
                     }
                 }
@@ -182,7 +197,7 @@ public class VanishPacket_Reflection_Latest extends VanishPacket {
                             this.getProfileMethod.invoke(entityPlayer),
                             this.getPing(player),
                             Class.forName("net.minecraft.world.level.EnumGamemode").getEnumConstants()[3],
-                            this.getPlayerListNameMethod.invoke(entityPlayer));
+                            /*this.getPlayerListNameMethod.invoke(entityPlayer)*/playerListName);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | ClassNotFoundException instantiationException) {
             instantiationException.printStackTrace();
         }
@@ -214,9 +229,17 @@ public class VanishPacket_Reflection_Latest extends VanishPacket {
                     e.printStackTrace();
                 }
 
+                if (this.sendPacketMethod == null)
+                    this.sendPacketMethod = Arrays.stream(PlayerConnection.class.getMethods()).
+                            filter(method -> method.getParameters().length == 1).
+                            filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(Packet.class.getName())).
+                            findFirst().orElse(null);
+
+                this.sendPacketMethod.setAccessible(true);
+
                 try {
-                    connection.getClass().getMethod("sendPacket", Class.forName("net.minecraft.network.protocol.Packet")).invoke(connection, playerInfo);
-                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
+                    this.sendPacketMethod.invoke(connection, playerInfo);
+                } catch (IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
             }
