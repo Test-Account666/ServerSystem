@@ -86,9 +86,12 @@ public class COMMAND_serversystem extends MessageUtils implements CommandExecuto
                         try {
                             Connection.Response resultImageResponse = Jsoup.connect("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem/" + version + ".jar").referrer("ServerSystem").timeout(30000).ignoreContentType(true).execute();
 
-                            FileOutputStream out = (new FileOutputStream(new File("plugins/update", this.plugin.JAR_NAME)));
-                            out.write(resultImageResponse.bodyAsBytes());
-                            out.close();
+                            BufferedInputStream in = new BufferedInputStream(new URL("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem/" + version + ".jar").openStream());
+                            FileOutputStream fileOutputStream = new FileOutputStream(new File("plugins/update", this.plugin.JAR_NAME));
+                            byte[] dataBuffer = new byte[1024];
+                            int bytesRead;
+                            while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1)
+                                fileOutputStream.write(dataBuffer, 0, bytesRead);
                         } catch (IOException e) {
                             cs.sendMessage(this.getPrefix() + ChatColor.RED + "Error while trying to download the update!");
                             this.plugin.error("Error while trying to download the update!");
