@@ -1,5 +1,5 @@
 name: ServerSystem
-version: 1.7.0
+version: 1.7.1
 main: me.Entity303.ServerSystem.Main.ss
 api-version: 1.13
 authors: [Entity303]
