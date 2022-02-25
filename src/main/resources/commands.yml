@@ -84,8 +84,6 @@ createkit: true
 delkit: true
 kit: true
 convertfromessentials: true
-nick: true
-unnick: true
 maintenance: true
 rules: true
 rename: true
@@ -107,3 +105,4 @@ offlineteleporthere: true
 offlineinvsee: true
 offlineenderchest: true
 baltop: true
+unlimited: true

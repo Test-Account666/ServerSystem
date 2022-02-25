@@ -177,10 +177,6 @@ Aliases:
     aliases: "No Aliases"
   convertfromessentials:
     aliases: "No Aliases"
-  nick:
-    aliases: "No Aliases"
-  unnick:
-    aliases: "No Aliases"
   maintenance:
     aliases: "wartungen"
   rules:
@@ -219,3 +215,5 @@ Aliases:
     aliases: "oec, offlineec"
   baltop:
     aliases: "top, balancetop"
+  unlimited:
+    aliases: "No Aliases"
