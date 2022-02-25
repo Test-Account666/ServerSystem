@@ -60,8 +60,6 @@ Messages:
     DeleteKit: "Použij: &2/<LABEL> <Jméno>"
     Kit: "Použij: &2/<LABEL> <Jméno> <Hráč>"
     Invsee: "Použij: &2/<LABEL> <Hráč>"
-    Unnick: "Použij: &2/<LABEL> <Hráč>"
-    Nick: "Použij: &2/<LABEL> <Hráč> <Nick>"
     Rename: "Použití: &2/<LABEL> <jméno>"
     CheckHealth: "Použij: &2/<LABEL> <Hráč>"
     OfflineTeleport: "Použij: &2/<LABEL> <OfflinePlayer>"
@@ -399,14 +397,6 @@ Messages:
       Success:
         Self: "Teleportoval jsi se na místo &aX: <X> Y: <Y> Z: <Z>&7!"
         Others: "Teleportoval jsi &2<TARGET> &7na místo &aX: <X> Y: <Y> Z: <Z>&7!"
-    Unnick:
-      Self: "Odnickoval jsi se!"
-      Others: "Nastavil jsi nick hráči &2<TARGET>&7!"
-    Nick:
-      NickTooLong: "&4<NICK> &cje příliš dlouhý (max. 16 písmen)!"
-      Success:
-        Self: "Tvůj nick byl změněn na &2<NICK>&7!"
-        Others: "Změnil jsi nick hráči &2<TARGET> &7na &2<NICK>&7!"
     DelHome:
       Success: "Smazal si domov &2<HOME>&7!"
       NoHomes: "&cNemáš již žádne domovy!"
@@ -499,6 +489,10 @@ Messages:
       NeverPlayed: "&4<TARGET> &cnikdy nehrál na tomto serveru"
       PlayerIsOnline: "&4<TARGET> &cje online"
       PlayerCameOnline: "&4<TARGET> &cje online, použij prosím /invsee!"
+    Unlimited:
+      NoItem: "&cMusíš item držet ve své ruce!"
+      LimitedNow: "Tento item je nyní limitovaný!"
+      UnlimitedNow: "Tento item již není limitovaný!"
   Misc:
     ServerFull: "&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Server
       je plný!<BREAK>&cK přojení potřebuješ permissi &4<PERMISSION>&c!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]"

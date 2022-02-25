@@ -1,6 +1,6 @@
 name: ServerSystem
 version: 1.7.1
-main: me.Entity303.ServerSystem.Main.ss
+main: me.entity303.serversystem.main.ServerSystem
 api-version: 1.13
 authors: [Entity303]
 load: POSTWORLD

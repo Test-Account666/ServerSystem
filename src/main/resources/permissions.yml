@@ -1,4 +1,5 @@
 Permissions:
+  unlimited: "server.unlimited"
   socialspy: "server.socialspy"
   msgtoggle: "server.msgtoggle"
   clearchat: "server.clearchat"
@@ -220,17 +221,6 @@ Permissions:
       permanent: "server.mute.permanent.shadow"
       temporary: "server.mute.temporary.shadow"
   unmute: "server.unmute"
-  unnick:
-    required: false
-    permission: "server.unnick.self"
-    others: "server.unnick.others"
-  nick:
-    self:
-      use: "server.nick.self.use"
-      colored: "server.nick.self.colored"
-    others:
-      use: "server.nick.others.use"
-      colored: "server.nick.others.colored"
   joinfullserver:
     premium: "server.joinfullserver.premium"
     admin: "server.joinfullserver.admin"

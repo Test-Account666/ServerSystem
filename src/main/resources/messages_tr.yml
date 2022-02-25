@@ -59,8 +59,6 @@ Messages:
     DeleteKit: "Syntax: &2/<LABEL> <Name>"
     Kit: "Syntax: &2/<LABEL> <Name> <Player>"
     Invsee: "Syntax: &2/<LABEL> <Player>"
-    Unnick: "Syntax: &2/<LABEL> <Player>"
-    Nick: "Syntax: &2/<LABEL> <Player> <Nickname>"
     Rename: "Syntax: &2/<LABEL> <Name>"
     CheckHealth: "Syntax: &2/<LABEL> <Player>"
     OfflineTeleport: "Syntax: &2/<LABEL> <OfflinePlayer>"
@@ -385,14 +383,6 @@ Messages:
       Success:
         Self: "Kendini &2X: <X> Y: <Y> Z: <Z> &7koordinatlarına ışınladın!"
         Others: "&2<TARGET> &7oyuncusunu &2X: <X> Y: <Y> Z: <Z> &7koordinatlarına ışınladın!"
-    Unnick:
-      Self: "Kullanıcı adını sildin!"
-      Others: "&2<TARGET> &7adlı oyuncunun kullanıcı adını sildin!"
-    Nick:
-      NickTooLong: "&4<NICK> &ckullanıcı adı çok uzun (maksimum 16 karakter)!"
-      Success:
-        Self: "Kullanıcı adını &2<NICK> &7olarak değiştirdin!"
-        Others: "&2<TARGET> &7kullanıcı adını &2<NICK> &7olarak değiştirdin!"
     DelHome:
       Success: "&2<HOME> &7evini başarıyla sildin!"
       NoHomes: "&cHenüz hiç evin yok!"
@@ -472,6 +462,10 @@ Messages:
     OfflineInvsee:
       NeverPlayed: "&4<TARGET> &cHichvaght Dar In Server Bazi Nakarde Ast!"
       PlayerIsOnline: "&4<TARGET> &cOnline Ast!"
+    Unlimited:
+      NoItem: "&cElinizde bir eşya tutmalısınız!"
+      LimitedNow: "Bu öğe artık sınırlı!"
+      UnlimitedNow: "Bu öğe artık sınırsız!"
   Misc:
     ServerFull: "&8[]&7--------------------------------&8[]<BREAK>&2SUNUCU<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Sunucu dolu!<BREAK>&cYine de girmek istiyorsan, &4<PERMISSION> &ciznine ihtiyacın var!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SUNUCU<BREAK>&8[]&7--------------------------------&8[]"
     JoinMessage:

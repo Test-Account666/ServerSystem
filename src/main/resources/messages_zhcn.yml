@@ -66,8 +66,6 @@ Messages:
     DeleteKit: "用法: &2/<LABEL> <名称>"
     Kit: "用法: &2/<LABEL> <名称> <玩家>"
     Invsee: "用法: &2/<LABEL> <玩家>"
-    Unnick: "用法: &2/<LABEL> <玩家>"
-    Nick: "用法: &2/<LABEL> <玩家> <Nickname>"
     Rename: "用法: &2/<LABEL> <名称>"
     CheckHealth: "用法: &2/<LABEL> <玩家>"
     OfflineTeleport: "用法: &2/<LABEL> <OfflinePlayer>"
@@ -396,14 +394,6 @@ Messages:
       Success:
         Self: "已传送至坐标 &2X: <X> Y: <Y> Z: <Z>&7!"
         Others: "你将 &2<TARGET> &7飞到了坐标点 &2X: <X> Y: <Y> Z: <Z>&7!"
-    Unnick:
-      Self: "你取消了名称!"
-      Others: "你将 &2<TARGET>&7 的名称取消了!"
-    Nick:
-      NickTooLong: "&4<NICK> &c太长了 (最多16个字节)!"
-      Success:
-        Self: "你拥有了新的名称: &2<NICK>&7!"
-        Others: "你将 &2<TARGET> &7的名称改为 &2<NICK>&7!"
     DelHome:
       Success: "你删除了 &2<HOME>&7 这个家!从此将流浪四方"
       NoHomes: "&c你 无家可归!"
@@ -486,6 +476,10 @@ Messages:
     OfflineInvsee:
       NeverPlayed: "&4<TARGET> &c从未在此服务器上玩过!"
       PlayerIsOnline: "&4<TARGET> &c在线!"
+    Unlimited:
+      NoItem: "&c哎？空气本来就是无线的哦!"
+      LimitedNow: "好啦，它现在又变回有限的啦!"
+      UnlimitedNow: "好啦，它现在是无限的啦!"
   Misc:
     ServerFull: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4服务器已满!<BREAK>&c如果想要使用预留通道,你需要权限 &4<PERMISSION>&c!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
     JoinMessage:

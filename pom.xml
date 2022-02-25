@@ -51,7 +51,6 @@
                         <configuration>
                             <filters>
                                 <filter>
-                                    <artifact>*:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/*</exclude>
                                         <exclude>META-INF/**</exclude>
@@ -245,6 +244,14 @@
             <version>1.9</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/spigot-1.9-R0.1-SNAPSHOT-latest.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>spigot</groupId>
+            <artifactId>spigot-1.9.4</artifactId>
+            <version>1.9.4</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/spigot-1.9.4-R0.1-SNAPSHOT-latest.jar</systemPath>
         </dependency>
 
         <dependency>

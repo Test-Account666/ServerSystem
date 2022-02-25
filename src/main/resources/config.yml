@@ -4,6 +4,7 @@ console: "Console"
 
 specialsudo: true
 advancedinvsee: true
+clientsideOpSpoof: true
 
 messagebyitembreak: false
 

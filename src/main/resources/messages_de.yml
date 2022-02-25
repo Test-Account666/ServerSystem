@@ -59,8 +59,6 @@ Messages:
     DeleteKit: "Syntax: &2/<LABEL> <Name>"
     Kit: "Syntax: &2/<LABEL> <Name> <Spieler>"
     Invsee: "Syntax: &2/<LABEL> <Spieler>"
-    Unnick: "Syntax: &2/<LABEL> <Spieler>"
-    Nick: "Syntax: &2/<LABEL> <Spieler> <Nickname>"
     Rename: "Syntax: &2/<LABEL> <Name>"
     CheckHealth: "Syntax: &2/<LABEL> <Spieler>"
     OfflineTeleport: "Syntax: &2/<LABEL> <Offline-Spieler>"
@@ -390,14 +388,6 @@ Messages:
       Success:
         Self: "Du hast dich zu den Koordinaten &2X: <X> Y: <Y> Z: <Z> &7teleportiert!"
         Others: "Du hast &2<TARGET> &7zu den Koordinaten &2X: <X> Y: <Y> Z: <Z> &7teleportiert!"
-    Unnick:
-      Self: "Du dich entnickt!"
-      Others: "Du hast &2<TARGET> &7entnickt!"
-    Nick:
-      NickTooLong: "&cDer Nick &4<NICK> &cist zu lang (max. 16 Zeichen)!"
-      Success:
-        Self: "Du hast deinen Nick zu &2<NICK> &7geändert!"
-        Others: "Du hast den Nick von &2<TARGET> &7zu &2<NICK> &7geändert!"
     DelHome:
       Success: "Du hast den Home &2<HOME> &7gelöscht!"
       NoHomes: "&cDu hast keine Homes!"
@@ -482,6 +472,10 @@ Messages:
       NeverPlayed: "&4<TARGET> &cwar noch nie auf dem Server!"
       PlayerIsOnline: "&4<TARGET> &cist online!"
       PlayerCameOnline: "&4<TARGET> &cist online gekommen, bitte nutze /invsee!"
+    Unlimited:
+      NoItem: "&cDu musst ein Item in der Hand halten!"
+      LimitedNow: "Dieses Item ist nun limitiert!"
+      UnlimitedNow: "Dieses Item ist nun unlimitiert!"
   Misc:
     ServerFull: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4Der Server ist voll!<BREAK>&cUm trotzdem beitreten zu können, benötigst du die Permission &4<PERMISSION>&c!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
     JoinMessage:
