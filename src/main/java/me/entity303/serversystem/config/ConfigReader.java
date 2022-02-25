@@ -1,0 +1,54 @@
+package me.entity303.serversystem.config;
+
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.ItemStack;
+
+import java.io.File;
+
+public interface ConfigReader {
+
+    FileConfiguration getCfg();
+
+    File getFile();
+
+    Object get(String path, Object def);
+
+    Object get(String path);
+
+    boolean getBoolean(String path, boolean def);
+
+    boolean getBoolean(String path);
+
+    String getString(String path, String def);
+
+    String getString(String path);
+
+    int getInt(String path, int def);
+
+    int getInt(String path);
+
+    long getLong(String path, long def);
+
+    long getLong(String path);
+
+    double getDouble(String path, double def);
+
+    double getDouble(String path);
+
+    ItemStack getItemStack(String path, ItemStack def);
+
+    ItemStack getItemStack(String path);
+
+    void set(String path, Object object);
+
+    void save();
+
+    void reload();
+
+    void load(File file);
+
+    ConfigurationSection getConfigurationSection(String path);
+
+    boolean isConfigurationSection(String  path);
+}
