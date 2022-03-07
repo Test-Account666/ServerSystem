@@ -24,7 +24,8 @@ public class BanTabCompleter extends MessageUtils implements TabCompleter {
         if (!this.isAllowed(cs, "ban.use.general", true)) return Collections.singletonList("");
         if (args.length == 1) return null;
         if (args.length == 2)
-            if (this.isAllowed(cs, "ban.use.permanent")) return Collections.singletonList(this.getBanSystem("PermanentName"));
+            if (this.isAllowed(cs, "ban.use.permanent"))
+                return Collections.singletonList(this.getBanSystem("PermanentName"));
             else
                 return Collections.singletonList("");
         if (args.length == 3) {
