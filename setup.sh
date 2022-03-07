@@ -114,9 +114,44 @@ mkdir 1.16.3
 cp BuildTools.jar 1.16.3/BuildTools.jar
 mkdir 1.17
 cp BuildTools.jar 1.17/BuildTools.jar
+mkdir 1.18.2
+cp BuildTools.jar 1.18.2/BuildTools.jar
+
+mkdir java17
+cd java17
+echo Downloading Java-17 ...
+sleep 3
+
+if [[ "$SYSTEM" == *"MINGW64_NT"* ]];
+then
+PATH_JAVA_17="jdk-17_windows-x64_bin"
+curl -O https://download.oracle.com/java/17/latest/$PATH_JAVA_17.zip
+else
+PATH_JAVA_17="openjdk-16.0.2_linux-x64_bin"
+curl -O https://download.oracle.com/java/17/latest/$PATH_JAVA_17.tar.gz
+fi
+
+echo Success!
+echo Extracting Java-17...
+sleep 3
+
+if [[ "$SYSTEM" == *"MINGW64_NT"* ]];
+then
+unzip -o $PATH_JAVA_17.zip
+PATH_JAVA_17="jdk-17.0.2"
+export PATH="$(pwd)/$PATH_JAVA_17/bin:$PATH"
+export JAVA_HOME="$(pwd)/$PATH_JAVA_17/"
+else
+tar -xvf $PATH_JAVA_17.tar.gz
+PATH_JAVA_17="jdk-17.0.2"
+fi
+
+echo Success!
+cd ..
+
 mkdir java16
 cd java16
-echo Downloading Java16...
+echo Downloading Java-16 ...
 sleep 3
 
 if [[ "$SYSTEM" == *"MINGW64_NT"* ]];
@@ -129,7 +164,7 @@ curl -O https://download.java.net/java/GA/jdk16.0.2/d4a915d82b4c4fbb9bde534da945
 fi
 
 echo Success!
-echo Extracting Java16...
+echo Extracting Java-16...
 sleep 3
 
 if [[ "$SYSTEM" == *"MINGW64_NT"* ]];
@@ -147,7 +182,7 @@ echo Success!
 cd ..
 mkdir java8
 cd java8
-echo Downloading Java8...
+echo Downloading Java-8...
 sleep 3
 
 if [[ "$SYSTEM" == *"MINGW64_NT"* ]];
@@ -160,7 +195,7 @@ curl -O https://cdn.azul.com/zulu/bin/$PATH_JAVA_8.tar.gz
 fi
 
 echo Success!
-echo Extracting Java8...
+echo Extracting Java-8...
 sleep 3
 
 if [[ "$SYSTEM" == *"MINGW64_NT"* ]];
@@ -256,6 +291,13 @@ sleep 3
 echo Success!
 cd ..
 cp 1.17/spigot-1.17.jar ../libs/spigot-1.17.jar
+cd 1.18.2
+echo Building Spigot 1.18.2...
+sleep 3
+./../java17/$PATH_JAVA_17/bin/java -jar BuildTools.jar --rev 1.18.2
+echo Success!
+cd ..
+cp 1.18.2/spigot-1.18.2.jar ../libs/spigot-1.18.2.jar
 
 cd ..
 echo Spigot dependencies complete!
