@@ -445,9 +445,7 @@ public class VersionStuff {
 
                 Object world = this.getHandleWorldMethod.invoke(player.getWorld());
 
-                Object entity = (VersionStuff.this.getEntityMethod.invoke(world, player.getEntityId()));
-
-                Object newStatus = VersionStuff.this.packetPlayOutEntityStatusConstructor.newInstance(entity, (byte) 28);
+                Object newStatus = VersionStuff.this.packetPlayOutEntityStatusConstructor.newInstance(entityPlayer, (byte) 28);
 
                 this.sendPacketMethod.invoke(networkManager, newStatus);
             }
