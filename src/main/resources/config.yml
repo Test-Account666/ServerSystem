@@ -78,6 +78,9 @@ swapCommands:
     tocommand: "example3"
 #This will NOT deactivate the "module", e.g. the bansystem will STILL BE ACTIVE!
 #This will also NOT deactivate the whole "command group", e.g. 'r' will NOT DEACTIVATE 'reply'
+#This is different from deactivating a command via command.yml!
+#You can disable commands from other plugins, not just ServerSystem
+#Deactivating a command will not give opportunity to other plugins to register this command, it's simply going to get removed!
 deactivatedcommands:
   enabled: false
   example: "ServerSystem"
