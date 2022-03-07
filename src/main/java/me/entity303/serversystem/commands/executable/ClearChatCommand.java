@@ -26,7 +26,13 @@ public class ClearChatCommand implements CommandExecutor {
     }
 
     private void clear(Player player) {
-        for (int i = 0; i < 500; i++) player.sendMessage(String.valueOf((char) (5000 - 10)));
+        for (int i = 0; i < 500; i++) {
+            StringBuilder clear = new StringBuilder();
+            for (int i1 = 0; i1 < i; i1++) {
+                clear.append(String.valueOf((char) (5000 - 10)));
+            }
+            player.sendMessage(clear.toString());
+        }
         for (int i = 0; i < 500; i++) player.sendMessage(" ");
     }
 }
