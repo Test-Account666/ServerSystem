@@ -1,7 +1,6 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.ChatColor;
 import me.entity303.serversystem.utils.MessageUtils;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -44,7 +43,7 @@ public class RepairCommand extends MessageUtils implements CommandExecutor {
                 if (items == null) continue;
                 if (items.getType() == Material.AIR) continue;
                 if (items.getItemMeta() == null) continue;
-                if (!(items.getItemMeta() instanceof Repairable) && !(items instanceof Repairable) && !(items.getType().getMaxDurability() > items.getDurability()))
+                if (!(items.getItemMeta() instanceof Repairable) || /*!items.getType().isItem() ||*/ items.getType().isBlock())
                     continue;
                 items.setDurability((short) 0);
             }
@@ -75,7 +74,7 @@ public class RepairCommand extends MessageUtils implements CommandExecutor {
                 if (items == null) continue;
                 if (items.getType() == Material.AIR) continue;
                 if (items.getItemMeta() == null) continue;
-                if (!(items.getItemMeta() instanceof Repairable) && !(items instanceof Repairable) && !(items.getType().getMaxDurability() > items.getDurability()))
+                if (!(items.getItemMeta() instanceof Repairable) || /*!items.getType().isItem() ||*/ items.getType().isBlock())
                     continue;
                 items.setDurability((short) 0);
             }
@@ -85,23 +84,25 @@ public class RepairCommand extends MessageUtils implements CommandExecutor {
         }
 
         boolean found = false;
-        for (/*ItemStack items : p.getInventory().getContents()*/ int i = 0; i < p.getInventory().getSize(); i++) {
+        for (int i = 0; i < p.getInventory().getSize(); i++) {
             ItemStack items = p.getInventory().getItem(i);
             if (Material.getMaterial(args[0].toUpperCase()) == null) break;
             if (items == null) continue;
             if (items.getType() == Material.AIR) continue;
             if (items.getType() != Material.getMaterial(args[0].toUpperCase())) continue;
             if (items.getItemMeta() == null) continue;
-            if (items.getItemMeta() instanceof Repairable || items instanceof Repairable || (items.getType().getMaxDurability() > items.getDurability())) {
+            if (items.getItemMeta() instanceof Repairable && /*items.getType().isItem() && */items.getType().isBlock()) {
                 items.setDurability((short) 0);
                 found = true;
             }
         }
+
         if (!found) {
             cs.sendMessage(this.getPrefix() + this.getMessage("Repair.NoType", label, cmd.getName(), cs, null).replace("<TYPE>", args[0].toUpperCase()));
             return true;
         }
-        p.sendMessage(this.getPrefix() + "Alle Items der Art " + ChatColor.DARK_GRAY + args[0] + ChatColor.GRAY + " wurden repariert!");
+
+        cs.sendMessage(this.getPrefix() + this.getMessage("Repair.Type", label, cmd.getName(), cs, null).replace("<TYPE>", args[0]));
         return true;
     }
 }
