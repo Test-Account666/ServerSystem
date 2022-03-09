@@ -127,7 +127,7 @@ then
 PATH_JAVA_17="jdk-17_windows-x64_bin"
 curl -O https://download.oracle.com/java/17/latest/$PATH_JAVA_17.zip
 else
-PATH_JAVA_17="openjdk-16.0.2_linux-x64_bin"
+PATH_JAVA_17="jdk-17_linux-x64_bin"
 curl -O https://download.oracle.com/java/17/latest/$PATH_JAVA_17.tar.gz
 fi
 
