@@ -7,14 +7,18 @@ import me.entity303.serversystem.api.EconomyAPI;
 import me.entity303.serversystem.api.MuteAPI;
 import me.entity303.serversystem.api.VanishAPI;
 import me.entity303.serversystem.bansystem.*;
+import me.entity303.serversystem.bstats.MetricsLite;
 import me.entity303.serversystem.commands.util.CommandManager;
+import me.entity303.serversystem.config.ConfigReader;
+import me.entity303.serversystem.config.DefaultConfigReader;
+import me.entity303.serversystem.config.NonValidatingConfigReader;
 import me.entity303.serversystem.databasemanager.HomeManager;
 import me.entity303.serversystem.databasemanager.MySQL;
 import me.entity303.serversystem.databasemanager.WarpManager;
 import me.entity303.serversystem.economy.*;
 import me.entity303.serversystem.events.EventManager;
-import me.entity303.serversystem.listener.command.EssentialsCommandListener;
 import me.entity303.serversystem.listener.FlightHitListener;
+import me.entity303.serversystem.listener.command.EssentialsCommandListener;
 import me.entity303.serversystem.listener.join.JoinUpdateListener;
 import me.entity303.serversystem.placeholderapi.ServerSystemExpansion;
 import me.entity303.serversystem.utils.*;
@@ -24,10 +28,6 @@ import me.entity303.serversystem.vanish.MetaValue;
 import me.entity303.serversystem.vanish.Vanish;
 import me.entity303.serversystem.vault.Vault;
 import me.entity303.serversystem.vault.VaultHookManager;
-import me.entity303.serversystem.bstats.MetricsLite;
-import me.entity303.serversystem.config.ConfigReader;
-import me.entity303.serversystem.config.DefaultConfigReader;
-import me.entity303.serversystem.config.NonValidatingConfigReader;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.PluginCommand;
@@ -368,6 +368,21 @@ public final class ServerSystem extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        this.loadConfigs();
+
+        ConfigUpdater updater = new ConfigUpdater(this);
+
+        if (updater.configUpdateNeeded(this.getConfigReader().getString("version"))) {
+            try {
+                updater.updateConfig(this.getConfigReader().getString("version"));
+            } catch (IOException | InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
+            return;
+        } else
+            this.reloadConfigValidating();
+
+
         if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
             this.vault = new Vault();
             this.vaultHookManager = new VaultHookManager(this);
@@ -384,20 +399,6 @@ public final class ServerSystem extends JavaPlugin {
         this.starting = true;
         this.metaValue = new MetaValue(this);
         this.vanish = new Vanish(this);
-
-        this.loadConfigs();
-
-        ConfigUpdater updater = new ConfigUpdater(this);
-
-        if (updater.configUpdateNeeded(this.getConfigReader().getString("version"))) {
-            try {
-                updater.updateConfig(this.getConfigReader().getString("version"));
-            } catch (IOException | InvalidConfigurationException e) {
-                e.printStackTrace();
-            }
-            return;
-        } else
-            this.reloadConfigValidating();
 
         if (Bukkit.getPluginManager().getPlugin("Vault") != null) this.vault = new Vault();
 
