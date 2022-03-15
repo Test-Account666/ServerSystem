@@ -146,7 +146,7 @@ public class ConfigUpdater extends MessageUtils {
 
             this.plugin.log("Updated config version 2.5 to 2.6!");
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("2.6")) {
             this.plugin.log("Updating config version 2.6 to 2.7...");
@@ -241,7 +241,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 2.6 to 2.7!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("2.7")) {
             this.plugin.log("Updating config version 2.7 to 2.8...");
@@ -361,7 +361,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 2.7 to 2.8!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("2.8")) {
             this.plugin.log("Updating config version 2.8 to 2.9...");
@@ -449,7 +449,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 2.8 to 2.9!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("2.9")) {
             this.plugin.log("Updating config version 2.9 to 3.0...");
@@ -519,7 +519,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 2.9 to 3.0!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("3.0")) {
             this.plugin.log("Updating config version 3.0 to 3.1...");
@@ -595,7 +595,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 3.0 to 3.1!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("3.1")) {
             this.plugin.log("Updating config version 3.1 to 3.2...");
@@ -643,7 +643,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 3.1 to 3.2!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("3.2")) {
             this.plugin.log("Updating config version 3.2 to 3.3...");
@@ -694,7 +694,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 3.2 to 3.3!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("3.3")) {
             this.plugin.log("Updating config version 3.3 to 3.4...");
@@ -761,7 +761,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 3.3 to 3.4!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("3.4")) {
             this.plugin.log("Updating config version 3.4 to 3.5...");
@@ -837,7 +837,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 3.4 to 3.5!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("3.5")) {
             this.plugin.log("Updating config version 3.5 to 3.6...");
@@ -909,7 +909,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 3.5 to 3.6!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("3.6")) {
             this.plugin.log("Updating config version 3.6 to 3.7...");
@@ -1049,7 +1049,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 3.6 to 3.7!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("3.7")) {
             this.plugin.log("Updating config version 3.7 to 3.8...");
@@ -1136,7 +1136,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 3.7 to 3.8!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("3.8")) {
             this.plugin.log("Updating config version 3.8 to 3.9...");
@@ -1308,7 +1308,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 3.8 to 3.9!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("3.9")) {
             this.plugin.log("Updating config version 3.9 to 4.0...");
@@ -1391,7 +1391,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 3.9 to 4.0!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("4.0")) {
             this.plugin.log("Updating config version 4.0 to 4.1...");
@@ -1468,7 +1468,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 4.0 to 4.1!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("4.1")) {
             this.plugin.log("Updating config version 4.1 to 4.2...");
@@ -1551,7 +1551,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 4.1 to 4.2!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("4.2")) {
             this.plugin.log("Updating config version 4.2 to 4.3...");
@@ -1607,7 +1607,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 4.2 to 4.3!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("4.3")) {
             this.plugin.log("Updating config version 4.3 to 4.4...");
@@ -1705,7 +1705,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 4.3 to 4.4!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("4.4")) {
             this.plugin.log("Updating config version 4.4 to 4.5...");
@@ -1775,7 +1775,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 4.4 to 4.5!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("4.5")) {
             this.plugin.log("Updating config version 4.5 to 4.6...");
@@ -1830,7 +1830,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 4.5 to 4.6!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("4.6")) {
             this.plugin.log("Updating config version 4.6 to 4.7...");
@@ -1906,7 +1906,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 4.6 to 4.7!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("4.7")) {
             this.plugin.log("Updating config version 4.7 to 4.8...");
@@ -1980,7 +1980,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 4.7 to 4.8!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("4.8")) {
             this.plugin.log("Updating config version 4.8 to 4.9...");
@@ -2034,7 +2034,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 4.8 to 4.9!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("4.9")) {
             this.plugin.log("Updating config version 4.9 to 5.0...");
@@ -2128,7 +2128,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 4.9 to 5.0!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("5.0")) {
             this.plugin.log("Updating config version 5.0 to 5.1...");
@@ -2217,7 +2217,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 5.0 to 5.1!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("5.1")) {
             this.plugin.log("Updating config version 5.1 to 5.2...");
@@ -2267,7 +2267,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 5.1 to 5.2!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("5.2")) {
             this.plugin.log("Updating config version 5.2 to 5.3...");
@@ -2351,7 +2351,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 5.2 to 5.3!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("5.3")) {
             this.plugin.log("Updating config version 5.3 to 5.4...");
@@ -2430,7 +2430,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 5.3 to 5.4!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("5.4")) {
             this.plugin.log("Updating config version 5.4 to 5.5...");
@@ -2514,7 +2514,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 5.4 to 5.5!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("5.5")) {
             this.plugin.log("Updating config version 5.5 to 5.6...");
@@ -2587,7 +2587,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 5.5 to 5.6!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("5.6")) {
             this.plugin.log("Updating config version 5.6 to 5.7...");
@@ -2664,7 +2664,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 5.6 to 5.7!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("5.7")) {
             this.plugin.log("Updating config version 5.7 to 5.8...");
@@ -2715,7 +2715,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 5.7 to 5.8!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("5.8")) {
             this.plugin.log("Updating config version 5.8 to 5.9...");
@@ -2782,7 +2782,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 5.8 to 5.9!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("5.9")) {
             this.plugin.log("Updating config version 5.9 to 6.0...");
@@ -2834,7 +2834,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 5.9 to 6.0!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         } else if (version.equalsIgnoreCase("6.0")) {
             this.plugin.log("Updating config version 6.0 to 6.1...");
@@ -2888,7 +2888,7 @@ public class ConfigUpdater extends MessageUtils {
             this.plugin.log("Updated config version 6.0 to 6.1!");
 
 
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return;
         }
 
@@ -2902,7 +2902,7 @@ public class ConfigUpdater extends MessageUtils {
             e.printStackTrace();
         }
         this.plugin.warn("Creating new files...");
-        this.plugin.onEnable();
+        this.plugin.onLoad();
     }
 
     public boolean configUpdateNeeded(String version) {
@@ -3140,7 +3140,7 @@ public class ConfigUpdater extends MessageUtils {
                 }
             }
             this.plugin.log("Updated config version " + version + " to " + newVersion + "!");
-            this.plugin.onEnable();
+            this.plugin.onLoad();
             return true;
         }
         return false;
