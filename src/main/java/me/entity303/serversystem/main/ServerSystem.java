@@ -354,12 +354,6 @@ public final class ServerSystem extends JavaPlugin {
                     this.error("Unsupported Serversoftware!");
                     this.warn("ServerSystem may not work (correctly)!");
                 }
-                try {
-                    Class.forName("com.tuinity.tuinity.config.TuinityConfig");
-                } catch (Exception ignored) {
-                    this.log("I recommend you using Tuinity");
-                    this.log("This is just a RECOMMENDATION!!!!!!!");
-                }
             }, 1L);
         } catch (Exception e) {
             e.printStackTrace();
