@@ -1,6 +1,6 @@
 # ServerSystem
 
-# Developers: I recommend you using my [setup.sh file](https://raw.githubusercontent.com/TheBlackEntity/ServerSystem/files/setup.sh) it is compatible with Windows 8+ through "Git Bash" too.
+# Developers: I recommend you using my [setup.sh file](https://raw.githubusercontent.com/TheBlackEntity/ServerSystem/files/setup.sh) it is compatible with Windows 8+ through `Git Bash` too. But it is fully recommend to use `WSL 2` (`Windows Subsystem Linux 2` included in Windows 10+ Pro/Enterprise)
 
 \~~~~~~~~~~~~~~~~~~~~~~ English ~~~~~~~~~~~~~~~~~~~~~~
 
