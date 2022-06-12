@@ -87,7 +87,7 @@ Plus dieses Plugin bietet ein paar Funktionen, die in Essentials NICHT enthalten
 
 Was für Befehle fügt dieses Plugin hinzu?
 
-[Du kannst eine Liste der Plugins hier herunterladen.](https://www.dropbox.com/s/62f56n2flw8pvbe/Command_Reference.pdf?dl=0)
+[Du kannst eine Liste der Befehle hier herunterladen.](https://www.dropbox.com/s/62f56n2flw8pvbe/Command_Reference.pdf?dl=0)
 
 
 Welche anderen coolen Featurs hat das Plugin?
