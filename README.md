@@ -60,7 +60,7 @@ Just put it into you plugins folder
 
 I found a bug or need help configuring the plugin, what do I do?
 
-You can always join on this discord: https://discord.gg/TbnyUrJ and ask me some questions.
+You can always join on this discord: https://discord.gg/dBhfCzdZxq and ask me some questions.
 
 \~~~~~~~~~~~~~~~~~~~~~~ Deutsch ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -122,4 +122,4 @@ Schiebe es einfach in den plugins-Ordner
 
 Ich habe einen Bug gefunden oder brauche Hilfe beim Konfigurieren, was soll ich tun?
 
-Du kannst jederzeit diesem Discord beitreten: https://discord.gg/TbnyUrJ und mich etwas fragen.
+Du kannst jederzeit diesem Discord beitreten: https://discord.gg/dBhfCzdZxq und mich etwas fragen.
