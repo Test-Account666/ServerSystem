@@ -28,6 +28,11 @@ public class DefaultConfigReader implements ConfigReader {
         else if (file.getName().equalsIgnoreCase("messages.yml"))
             if (plugin.getResource("messages_" + this.cfg.getString("language") + ".yml") != null)
                 this.originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("messages_" + this.cfg.getString("language") + ".yml")));
+            else {
+                this.originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("messages_en.yml")));
+                plugin.error("Couldn't find default message.yml for language'" + this.cfg.getString("language") + "'!");
+                plugin.log("Using english...");
+            }
 
         if (!this.validateConfig()) {
             plugin.warn("One or more errors with your '" + file.getName() + "' file were found and fixed, a backup was made before doing this!");
