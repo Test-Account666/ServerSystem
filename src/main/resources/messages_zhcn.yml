@@ -327,7 +327,8 @@ Messages:
       InstantTeleporting: "已传送!"
       Teleporting: "传送君正在吟唱魔法!请不要乱动哦!"
     Kit:
-      OnDelay: "&c&4<MINUTES> 分钟后可以再次使用该工具包&c!"
+      OnDelay: "&c这个kit还在冷却当中！ &4<DATE> &c的时候才能结束冷却！"
+      TimeFormat: "yyyy年MM月dd日 hh:mm:ss"
       DoesntExist: "&c工具包 &4<KIT> &c无效!"
       Success:
         Self: "&2<KIT>&7 已获取!"

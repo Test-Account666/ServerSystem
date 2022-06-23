@@ -320,7 +320,8 @@ Messages:
       InstantTeleporting: "You were teleported to the spawn!"
       Teleporting: "Please stand still, while you are being teleported!"
     Kit:
-      OnDelay: "&cYou can use this kit again in &4<MINUTES> minutes&c!"
+      OnDelay: "&cYou won't be able to use this kit again until &4<DATE>&c!"
+      TimeFormat: "dd.MM.yyyy HH:mm:ss"
       DoesntExist: "&cThe kit &4<KIT> &cdoes not exist!"
       Success:
         Self: "You gave yourself the kit &2<KIT>&7!"

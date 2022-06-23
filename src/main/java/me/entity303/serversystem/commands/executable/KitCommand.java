@@ -8,6 +8,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class KitCommand extends MessageUtils implements CommandExecutor {
 
@@ -39,10 +41,23 @@ public class KitCommand extends MessageUtils implements CommandExecutor {
             }
 
             if (this.plugin.getKitsManager().isKitDelayed(((Player) cs), args[0]) && !this.isAllowed(cs, "kit.bypassdelay", true)) {
+                String message = this.getMessage("Kit.OnDelay", label, cmd.getName(), cs, null).replace("<KIT>", args[0].toUpperCase());
+
                 long delay = this.plugin.getKitsManager().getPlayerLastDelay(((Player) cs).getUniqueId().toString(), args[0]) + this.plugin.getKitsManager().getKitDelay(args[0]);
-                long calc = delay - System.currentTimeMillis();
-                double minutes = ((calc / 1000D) / 60D);
-                cs.sendMessage(this.getPrefix() + this.getMessage("Kit.OnDelay", label, cmd.getName(), cs, null).replace("<KIT>", args[0].toUpperCase()).replace("<MINUTES>", new DecimalFormat("#.##").format(minutes)));
+
+                if (message.contains("<MINUTES>")) {
+                    this.plugin.log("Found <MINUTES> tag in kit OnDelay message, this outdated, please go with the new <DATE> format!");
+                    long calc = delay - System.currentTimeMillis();
+                    double minutes = ((calc / 1000D) / 60D);
+                    cs.sendMessage(this.getPrefix() + this.getMessage("Kit.OnDelay", label, cmd.getName(), cs, null).replace("<KIT>", args[0].toUpperCase()).replace("<MINUTES>", new DecimalFormat("#.##").format(minutes)));
+                    return true;
+                }
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat(this.getMessage("Kit.TimeFormat", label, cmd.getName(), cs, null));
+
+                Date date = new Date(delay);
+
+                cs.sendMessage(this.getPrefix() + this.getMessage("Kit.OnDelay", label, cmd.getName(), cs, null).replace("<KIT>", args[0].toUpperCase()).replace("<DATE>", dateFormat.format(date)));
                 return true;
             }
 

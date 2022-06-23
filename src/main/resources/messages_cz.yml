@@ -333,7 +333,8 @@ Messages:
         Others:
           Sender: "Dal jsi hráči &2<TARGET> &7kit &2<KIT>&7!"
           Target: "Dostal jsi kit &2<KIT>&7!"
-      OnDelay: "&cTento kit můžeš znovu použít až za &4<MINUTES> minuty&c!"
+      OnDelay: "&cTento kit budeš moct znovu použít &4<DATE>&c!"
+      TimeFormat: "yyyy-MM-dd HH:mm:ss"
     DeleteKit:
       DoesntExist: "&cKit &4<KIT> &cneexistuje!"
       Success: "Smazal jsi kit &2<KIT>&7!"

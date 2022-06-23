@@ -317,7 +317,8 @@ Messages:
       InstantTeleporting: "Doğma noktasına ışınlandın!"
       Teleporting: "Lütfen olduğun yerde dur, ışınlanıyorsun!"
     Kit:
-      OnDelay: "&cBu kiti &4<MINUTES> dakika &ciçinde kullanabilirsin!"
+      OnDelay: "&cBu kiti &4<DATE> &ctarihine kadar tekrar kullanamayacaksınız!"
+      TimeFormat: "dd.MM.yyyy HH:mm:ss"
       DoesntExist: "&4<KIT> &cadında bir kit yok!"
       Success:
         Self: "Kendine &2<KIT> &7kitini verdin!"
@@ -511,4 +512,4 @@ Messages:
       MinuteName: "m"
       SecondName: "s"
 
-language: "en"
+language: "tr"
