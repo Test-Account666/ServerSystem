@@ -9,14 +9,15 @@ import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.level.World;
 import org.bukkit.OfflinePlayer;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Locale;
 
 public class EntityPlayer_Latest extends MessageUtils implements EntityPlayer {
-
     private static Method getWorldServerMethod = null;
+    private Constructor<net.minecraft.server.level.EntityPlayer> entityPlayerConstructor = null;
 
     public EntityPlayer_Latest(ServerSystem plugin) {
         super(plugin);
@@ -33,8 +34,18 @@ public class EntityPlayer_Latest extends MessageUtils implements EntityPlayer {
 
         GameProfile gameProfile = new GameProfile(offlinePlayer.getUniqueId(), offlinePlayer.getName());
         try {
-            return new net.minecraft.server.level.EntityPlayer(MinecraftServer.getServer(), (WorldServer) EntityPlayer_Latest.getWorldServerMethod.invoke(MinecraftServer.getServer(), World.f), gameProfile);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+
+            if (this.entityPlayerConstructor != null)
+                return this.entityPlayerConstructor.newInstance(MinecraftServer.getServer(), (WorldServer) EntityPlayer_Latest.getWorldServerMethod.invoke(MinecraftServer.getServer(), World.f), gameProfile, null);
+
+            try {
+                return new net.minecraft.server.level.EntityPlayer(MinecraftServer.getServer(), (WorldServer) EntityPlayer_Latest.getWorldServerMethod.invoke(MinecraftServer.getServer(), World.f), gameProfile);
+            } catch (NoSuchMethodError ignored) {
+                this.entityPlayerConstructor = (Constructor<net.minecraft.server.level.EntityPlayer>) net.minecraft.server.level.EntityPlayer.class.getConstructors()[0];
+
+                return this.entityPlayerConstructor.newInstance(MinecraftServer.getServer(), (WorldServer) EntityPlayer_Latest.getWorldServerMethod.invoke(MinecraftServer.getServer(), World.f), gameProfile, null);
+            }
+        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
             e.printStackTrace();
         }
 

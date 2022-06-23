@@ -56,54 +56,6 @@ public class VersionManager {
         this.serverSystem = serverSystem;
     }
 
-    public boolean is188() {
-        if (!this.checkedOnce) {
-            String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
-            this.v188 = version.equals("v1_8_R3");
-            this.checkedOnce = true;
-        }
-        return this.v188;
-    }
-
-    public boolean isV119() {
-        return this.v119;
-    }
-
-    public boolean isV112() {
-        return this.v112;
-    }
-
-    public boolean isV113() {
-        return this.v113;
-    }
-
-    public boolean isV114() {
-        return this.v114;
-    }
-
-    public boolean isV116() {
-        return this.v116;
-    }
-
-    public boolean isV117() {
-        return this.v117;
-    }
-
-    public String getVersion() {
-        String version;
-        try {
-            version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3].replace("_", ".");
-        } catch (ArrayIndexOutOfBoundsException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return version;
-    }
-
-    public boolean isTerracotta() {
-        return this.terracotta;
-    }
-
     public void registerVersionStuff() {
         this.nmsVersion = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
         String version = this.getVersion();
@@ -115,8 +67,32 @@ public class VersionManager {
         } catch (NoSuchMethodException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-
-        if (version.contains("1.18")) {
+        if (version.contains("1.19")) {
+            this.serverSystem.getVersionStuff().setActionBar(new ActionBar_Latest(this.nmsVersion));
+            this.v117 = true;
+            this.v116 = true;
+            this.v114 = true;
+            this.v113 = true;
+            this.v112 = true;
+            this.v119 = true;
+            this.terracotta = true;
+            this.serverSystem.getVersionStuff().setVanishPacket(new VanishPacket_Reflection_Latest(this.serverSystem));
+            Bukkit.getPluginManager().registerEvents(new InteractListener_Newer(this.serverSystem), this.serverSystem);
+            this.serverSystem.getVersionStuff().setSignEdit(new SignEdit_Reflection_Latest());
+            this.serverSystem.getVersionStuff().setVirtualAnvil(new VirtualAnvil_Latest());
+            this.serverSystem.getVersionStuff().setVirtualCartography(new VirtualCartography_Latest());
+            this.serverSystem.getVersionStuff().setVirtualGrindstone(new VirtualGrindstone_latest());
+            this.serverSystem.getVersionStuff().setVirtualLoom(new VirtualLoom_Latest());
+            this.serverSystem.getVersionStuff().setVirtualStoneCutter(new VirtualStoneCutter_Latest());
+            this.serverSystem.getVersionStuff().setVirtualSmithing(new VirtualSmithing_Latest());
+            this.serverSystem.getVersionStuff().setSaveData(new SaveData_Latest(this.serverSystem));
+            this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Latest(this.serverSystem));
+            this.serverSystem.getVersionStuff().setTeleport(new Teleport_Latest(this.serverSystem));
+            this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer_Latest());
+            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
+                this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null);
+            }, 5L);
+        } else if (version.contains("1.18")) {
             this.serverSystem.getVersionStuff().setActionBar(new ActionBar_Latest(this.nmsVersion));
             this.v117 = true;
             this.v116 = true;
@@ -394,6 +370,17 @@ public class VersionManager {
                 this.serverSystem.getCommandManager().rc("skull", new SkullCommand(this.serverSystem), null);
             }, 5L);
         } else if (version.contains("1.8")) {
+
+            if (!this.is188())
+                this.serverSystem.error("You are using an outdated version of 1.8! Please use at least 1.8.4 (better 1.8.8), ServerSystem will not work (correctly) otherwise!");
+
+            try {
+                Class.forName("org.github.paperspigot.event.ServerExceptionEvent");
+                this.serverSystem.error("Running on Paper 1.8! ServerSystem will NOT work, please use Spigot or a newer version of Paper!");
+            } catch (ClassNotFoundException | NoClassDefFoundError ignored) {
+                this.serverSystem.warn("You're using a very old version of minecraft, I suggest you to update!");
+            }
+
             this.serverSystem.getVersionStuff().setActionBar(new ActionBar_v1_8_R3_to_v1_11_R1(this.nmsVersion));
             this.serverSystem.getVersionStuff().setVanishPacket(new VanishPacket_Reflection_Old(this.serverSystem));
             Bukkit.getPluginManager().registerEvents(new InteractListener_v1_8_R3(this.serverSystem), this.serverSystem);
@@ -434,6 +421,54 @@ public class VersionManager {
                 this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null);
             }, 5L);
         }
+    }
+
+    public boolean is188() {
+        if (!this.checkedOnce) {
+            String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+            this.v188 = version.equals("v1_8_R3");
+            this.checkedOnce = true;
+        }
+        return this.v188;
+    }
+
+    public boolean isV119() {
+        return this.v119;
+    }
+
+    public boolean isV112() {
+        return this.v112;
+    }
+
+    public boolean isV113() {
+        return this.v113;
+    }
+
+    public boolean isV114() {
+        return this.v114;
+    }
+
+    public boolean isV116() {
+        return this.v116;
+    }
+
+    public boolean isV117() {
+        return this.v117;
+    }
+
+    public String getVersion() {
+        String version;
+        try {
+            version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3].replace("_", ".");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return version;
+    }
+
+    public boolean isTerracotta() {
+        return this.terracotta;
     }
 
     public String getNMSVersion() {
