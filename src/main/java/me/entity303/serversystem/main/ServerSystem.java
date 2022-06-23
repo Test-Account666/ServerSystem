@@ -111,102 +111,6 @@ public final class ServerSystem extends JavaPlugin {
     private Method syncCommandsMethod = null;
     private ConfigReader configReader;
 
-    public static EconomyAPI getEconomyAPI() {
-        return ServerSystem.economyAPI;
-    }
-
-    public static MuteAPI getMuteAPI() {
-        return ServerSystem.muteAPI;
-    }
-
-    public static BanAPI getBanAPI() {
-        return ServerSystem.banAPI;
-    }
-
-    public static VanishAPI getVanishAPI() {
-        return ServerSystem.vanishAPI;
-    }
-
-    public boolean isSpecialSudo() {
-        return this.specialSudo;
-    }
-
-    public EventManager getEventManager() {
-        return this.eventManager;
-    }
-
-    public VersionManager getVersionManager() {
-        return this.versionManager;
-    }
-
-    public VersionStuff getVersionStuff() {
-        return this.versionStuff;
-    }
-
-    public EssentialsCommandListener getEssentialsCommandListener() {
-        return this.essentialsCommandListener;
-    }
-
-    public HomeManager getHomeManager() {
-        return this.homeManager;
-    }
-
-    public boolean isStopFlightOnHit() {
-        return this.stopFlightOnHit;
-    }
-
-    public void setStopFlightOnHit(boolean stopFlightOnHit) {
-        this.stopFlightOnHit = stopFlightOnHit;
-    }
-
-    public List<Player> getSocialSpy() {
-        return this.socialSpy;
-    }
-
-    public boolean isDisableFlightOnHit() {
-        return this.disableFlightOnHit;
-    }
-
-    public void setDisableFlightOnHit(boolean disableFlightOnHit) {
-        this.disableFlightOnHit = disableFlightOnHit;
-    }
-
-    public File getRULES_FILE() {
-        return this.RULES_FILE;
-    }
-
-    public FileConfiguration getRulesConfig() {
-        return this.rulesConfig;
-    }
-
-    public boolean isMaintenance() {
-        return this.maintenance;
-    }
-
-    public void setMaintenance(boolean maintenance) {
-        this.maintenance = maintenance;
-    }
-
-    public boolean isAdvancedInvsee() {
-        return this.advancedInvsee;
-    }
-
-    public void setAdvancedInvsee(boolean advancedInvsee) {
-        this.advancedInvsee = advancedInvsee;
-    }
-
-    public boolean isClientsideOp() {
-        return this.clientsideOp;
-    }
-
-    public void setClientsideOp(boolean clientsideOp) {
-        this.clientsideOp = clientsideOp;
-    }
-
-    public ConfigReader getConfigReader() {
-        return this.configReader;
-    }
-
     @Override
     public void saveDefaultConfig() {
         super.saveDefaultConfig();
@@ -234,62 +138,6 @@ public final class ServerSystem extends JavaPlugin {
             this.configReader.save();
     }
 
-    public boolean isRegistered() {
-        return this.registered;
-    }
-
-    public void setRegistered(boolean registered) {
-        this.registered = registered;
-    }
-
-    public KitsManager getKitsManager() {
-        return this.kitsManager;
-    }
-
-    public List<Player> getGodList() {
-        return this.godList;
-    }
-
-    public List<Player> getCmdSpy() {
-        return this.cmdSpy;
-    }
-
-    public Map<Player, Player> getEnderchest() {
-        return this.enderchest;
-    }
-
-    public String getServerName() {
-        return this.serverName;
-    }
-
-    public void setServerName(String serverName) {
-        this.serverName = serverName;
-    }
-
-    public ManagerEconomy getEconomyManager() {
-        return this.economyManager;
-    }
-
-    public MySQL getMySQL() {
-        return this.mySQL;
-    }
-
-    public ManagerMute getMuteManager() {
-        return this.muteManager;
-    }
-
-    public ManagerBan getBanManager() {
-        return this.banManager;
-    }
-
-    public Map<Player, TpaData> getTpaDataMap() {
-        return this.tpaDataMap;
-    }
-
-    public MetricsLite getMetrics() {
-        return this.metrics;
-    }
-
     public boolean wantsTP(Player player) {
         ResultSet resultSet = this.wantsTP.query("SELECT wants FROM wantsTP WHERE UUID='" + player.getUniqueId() + "'");
         if (resultSet != null) while (true) {
@@ -308,41 +156,9 @@ public final class ServerSystem extends JavaPlugin {
         return true;
     }
 
-    public List<Player> getMsgOff() {
-        return this.msgOff;
-    }
-
     public void setWantsTP(Player player, Boolean wants) {
         this.wantsTP.update("DELETE FROM wantsTP WHERE UUID='" + player.getUniqueId() + "'");
         this.wantsTP.update("INSERT INTO wantsTP (UUID, wants) VALUES ('" + player.getUniqueId() + "','" + wants.toString() + "')");
-    }
-
-    public Map<Player, Location> getBackloc() {
-        return this.backloc;
-    }
-
-    public Map<Player, String> getBackreason() {
-        return this.backreason;
-    }
-
-    public MetaValue getMetaValue() {
-        return this.metaValue;
-    }
-
-    public Map<Player, BukkitTask> getTeleportMap() {
-        return this.teleportMap;
-    }
-
-    public boolean isStarting() {
-        return this.starting;
-    }
-
-    public Message getMessages() {
-        return this.messages;
-    }
-
-    public permissions getPermissions() {
-        return this.permissions;
     }
 
     private void check() {
@@ -781,30 +597,6 @@ public final class ServerSystem extends JavaPlugin {
         }
     }
 
-    public String getNewVersion() {
-        return this.newVersion;
-    }
-
-    public void setNewVersion(String newVersion) {
-        this.newVersion = newVersion;
-    }
-
-    public WarpManager getWarpManager() {
-        return this.warpManager;
-    }
-
-    public ServerSystemTimer getTimer() {
-        return this.timer;
-    }
-
-    public String getConfigVersion() {
-        return this.CONFIG_VERSION;
-    }
-
-    public Vanish getVanish() {
-        return this.vanish;
-    }
-
     private void loadConfigs() {
         this.saveDefaultConfig();
         this.reloadConfig();
@@ -896,14 +688,6 @@ public final class ServerSystem extends JavaPlugin {
         this.rulesConfig = YamlConfiguration.loadConfiguration(this.RULES_FILE);
     }
 
-    public Vault getVault() {
-        return this.vault;
-    }
-
-    public VaultHookManager getVaultHookManager() {
-        return this.vaultHookManager;
-    }
-
     @Override
     public void onDisable() {
         Bukkit.getScheduler().cancelTasks(this);
@@ -971,14 +755,6 @@ public final class ServerSystem extends JavaPlugin {
         return this.getMessages().getCfg().getString("Messages.Misc.BanSystem." + action);
     }
 
-    public Furnace getFurnace() {
-        return this.furnace;
-    }
-
-    public CommandManager getCommandManager() {
-        return this.commandManager;
-    }
-
     /*
     Fix for something, don't know anymore
      */
@@ -1028,5 +804,229 @@ public final class ServerSystem extends JavaPlugin {
                 this.error("Unknown");
             }
         }
+    }
+
+    public static EconomyAPI getEconomyAPI() {
+        return ServerSystem.economyAPI;
+    }
+
+    public static MuteAPI getMuteAPI() {
+        return ServerSystem.muteAPI;
+    }
+
+    public static BanAPI getBanAPI() {
+        return ServerSystem.banAPI;
+    }
+
+    public static VanishAPI getVanishAPI() {
+        return ServerSystem.vanishAPI;
+    }
+
+    public boolean isSpecialSudo() {
+        return this.specialSudo;
+    }
+
+    public EventManager getEventManager() {
+        return this.eventManager;
+    }
+
+    public VersionManager getVersionManager() {
+        return this.versionManager;
+    }
+
+    public VersionStuff getVersionStuff() {
+        return this.versionStuff;
+    }
+
+    public EssentialsCommandListener getEssentialsCommandListener() {
+        return this.essentialsCommandListener;
+    }
+
+    public HomeManager getHomeManager() {
+        return this.homeManager;
+    }
+
+    public boolean isStopFlightOnHit() {
+        return this.stopFlightOnHit;
+    }
+
+    public void setStopFlightOnHit(boolean stopFlightOnHit) {
+        this.stopFlightOnHit = stopFlightOnHit;
+    }
+
+    public List<Player> getSocialSpy() {
+        return this.socialSpy;
+    }
+
+    public boolean isDisableFlightOnHit() {
+        return this.disableFlightOnHit;
+    }
+
+    public void setDisableFlightOnHit(boolean disableFlightOnHit) {
+        this.disableFlightOnHit = disableFlightOnHit;
+    }
+
+    public File getRULES_FILE() {
+        return this.RULES_FILE;
+    }
+
+    public FileConfiguration getRulesConfig() {
+        return this.rulesConfig;
+    }
+
+    public boolean isMaintenance() {
+        return this.maintenance;
+    }
+
+    public void setMaintenance(boolean maintenance) {
+        this.maintenance = maintenance;
+    }
+
+    public boolean isAdvancedInvsee() {
+        return this.advancedInvsee;
+    }
+
+    public void setAdvancedInvsee(boolean advancedInvsee) {
+        this.advancedInvsee = advancedInvsee;
+    }
+
+    public boolean isClientsideOp() {
+        return this.clientsideOp;
+    }
+
+    public void setClientsideOp(boolean clientsideOp) {
+        this.clientsideOp = clientsideOp;
+    }
+
+    public ConfigReader getConfigReader() {
+        return this.configReader;
+    }
+
+    public boolean isRegistered() {
+        return this.registered;
+    }
+
+    public void setRegistered(boolean registered) {
+        this.registered = registered;
+    }
+
+    public KitsManager getKitsManager() {
+        return this.kitsManager;
+    }
+
+    public List<Player> getGodList() {
+        return this.godList;
+    }
+
+    public List<Player> getCmdSpy() {
+        return this.cmdSpy;
+    }
+
+    public Map<Player, Player> getEnderchest() {
+        return this.enderchest;
+    }
+
+    public String getServerName() {
+        return this.serverName;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
+    public ManagerEconomy getEconomyManager() {
+        return this.economyManager;
+    }
+
+    public MySQL getMySQL() {
+        return this.mySQL;
+    }
+
+    public ManagerMute getMuteManager() {
+        return this.muteManager;
+    }
+
+    public ManagerBan getBanManager() {
+        return this.banManager;
+    }
+
+    public Map<Player, TpaData> getTpaDataMap() {
+        return this.tpaDataMap;
+    }
+
+    public MetricsLite getMetrics() {
+        return this.metrics;
+    }
+
+    public List<Player> getMsgOff() {
+        return this.msgOff;
+    }
+
+    public Map<Player, Location> getBackloc() {
+        return this.backloc;
+    }
+
+    public Map<Player, String> getBackreason() {
+        return this.backreason;
+    }
+
+    public MetaValue getMetaValue() {
+        return this.metaValue;
+    }
+
+    public Map<Player, BukkitTask> getTeleportMap() {
+        return this.teleportMap;
+    }
+
+    public boolean isStarting() {
+        return this.starting;
+    }
+
+    public Message getMessages() {
+        return this.messages;
+    }
+
+    public permissions getPermissions() {
+        return this.permissions;
+    }
+
+    public String getNewVersion() {
+        return this.newVersion;
+    }
+
+    public void setNewVersion(String newVersion) {
+        this.newVersion = newVersion;
+    }
+
+    public WarpManager getWarpManager() {
+        return this.warpManager;
+    }
+
+    public ServerSystemTimer getTimer() {
+        return this.timer;
+    }
+
+    public String getConfigVersion() {
+        return this.CONFIG_VERSION;
+    }
+
+    public Vanish getVanish() {
+        return this.vanish;
+    }
+
+    public Vault getVault() {
+        return this.vault;
+    }
+
+    public VaultHookManager getVaultHookManager() {
+        return this.vaultHookManager;
+    }
+
+    public Furnace getFurnace() {
+        return this.furnace;
+    }
+
+    public CommandManager getCommandManager() {
+        return this.commandManager;
     }
 }
