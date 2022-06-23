@@ -76,6 +76,9 @@ public class ReplyCommand extends MessageUtils implements CommandExecutor {
             target.sendMessage(this.getMessage("Msg.Target", label, cmd.getName(), cs, target).replace("<MESSAGE>", msg));
             cs.sendMessage(this.getMessage("Msg.Sender", label, cmd.getName(), cs, target).replace("<MESSAGE>", msg));
 
+            for (Player all : this.plugin.getSocialSpy())
+                all.sendMessage(this.getMessage("Msg.SocialSpy", label, cmd.getName(), cs, target).replace("<MESSAGE>", msg));
+
             reply.remove(target);
             reply.put(cs, target);
             reply.put(target, cs);
