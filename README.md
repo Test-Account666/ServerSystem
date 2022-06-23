@@ -1,6 +1,6 @@
 # ServerSystem
 
-# Developers: I recommend you using my [setup.sh file](https://raw.githubusercontent.com/TheBlackEntity/ServerSystem/files/setup.sh) it is compatible with Windows 8+ through "Git Bash" too.
+# Developers: I recommend you using my [setup.sh file](https://raw.githubusercontent.com/TheBlackEntity/ServerSystem/files/setup.sh) it is compatible with Windows 8+ through `Git Bash` too. But it is fully recommend to use `WSL 2` (`Windows Subsystem Linux 2` included in Windows 10+)
 
 \~~~~~~~~~~~~~~~~~~~~~~ English ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -60,7 +60,7 @@ Just put it into you plugins folder
 
 I found a bug or need help configuring the plugin, what do I do?
 
-You can always join on this discord: https://discord.gg/TbnyUrJ and ask me some questions.
+You can always join on this discord: https://discord.gg/dBhfCzdZxq and ask me some questions.
 
 \~~~~~~~~~~~~~~~~~~~~~~ Deutsch ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -87,7 +87,7 @@ Plus dieses Plugin bietet ein paar Funktionen, die in Essentials NICHT enthalten
 
 Was für Befehle fügt dieses Plugin hinzu?
 
-[Du kannst eine Liste der Plugins hier herunterladen.](https://www.dropbox.com/s/62f56n2flw8pvbe/Command_Reference.pdf?dl=0)
+[Du kannst eine Liste der Befehle hier herunterladen.](https://www.dropbox.com/s/62f56n2flw8pvbe/Command_Reference.pdf?dl=0)
 
 
 Welche anderen coolen Featurs hat das Plugin?
@@ -122,4 +122,4 @@ Schiebe es einfach in den plugins-Ordner
 
 Ich habe einen Bug gefunden oder brauche Hilfe beim Konfigurieren, was soll ich tun?
 
-Du kannst jederzeit diesem Discord beitreten: https://discord.gg/TbnyUrJ und mich etwas fragen.
+Du kannst jederzeit diesem Discord beitreten: https://discord.gg/dBhfCzdZxq und mich etwas fragen.
