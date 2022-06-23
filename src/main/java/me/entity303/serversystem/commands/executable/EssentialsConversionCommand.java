@@ -18,10 +18,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
-public class EssentialsConvertionCommand extends MessageUtils implements CommandExecutor {
+public class EssentialsConversionCommand extends MessageUtils implements CommandExecutor {
     private boolean starting = false;
 
-    public EssentialsConvertionCommand(ServerSystem plugin) {
+    public EssentialsConversionCommand(ServerSystem plugin) {
         super(plugin);
     }
 
