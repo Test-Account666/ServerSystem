@@ -41,7 +41,7 @@ public class OfflineEnderChestCommand extends MessageUtils implements CommandExe
         }
 
         if (args.length == 0) {
-            cs.sendMessage(this.getPrefix() + this.getSyntax("OfflineEnderchest", label, cmd.getName(), cs, null));
+            cs.sendMessage(this.getPrefix() + this.getSyntax("OfflineEnderChest", label, cmd.getName(), cs, null));
             return true;
         }
 
@@ -50,7 +50,7 @@ public class OfflineEnderChestCommand extends MessageUtils implements CommandExe
         if (!offlineTarget.hasPlayedBefore()) {
             String name = offlineTarget.getName();
             if (name == null) name = args[0];
-            cs.sendMessage(this.getPrefix() + this.getMessage("OfflineEnderchest.NeverPlayed", label, cmd.getName(), cs, new DummyCommandSender(name)));
+            cs.sendMessage(this.getPrefix() + this.getMessage("OfflineEnderChest.NeverPlayed", label, cmd.getName(), cs, new DummyCommandSender(name)));
             return true;
         }
 
@@ -59,7 +59,7 @@ public class OfflineEnderChestCommand extends MessageUtils implements CommandExe
                 ((Player) cs).openInventory(offlineTarget.getPlayer().getEnderChest());
                 return true;
             }
-            cs.sendMessage(this.getPrefix() + this.getMessage("OfflineEnderchest.PlayerIsOnline", label, cmd.getName(), cs, offlineTarget.getPlayer()));
+            cs.sendMessage(this.getPrefix() + this.getMessage("OfflineEnderChest.PlayerIsOnline", label, cmd.getName(), cs, offlineTarget.getPlayer()));
             return true;
         }
 
@@ -89,7 +89,7 @@ public class OfflineEnderChestCommand extends MessageUtils implements CommandExe
             Bukkit.getScheduler().runTask(this.plugin, () -> {
                 for (HumanEntity human : new ArrayList<>(target.getEnderChest().getViewers())) {
                     human.closeInventory();
-                    human.sendMessage(this.getPrefix() + this.getMessage("OfflineEnderchest.PlayerCameOnline", "invsee", "invsee", human, target));
+                    human.sendMessage(this.getPrefix() + this.getMessage("OfflineEnderChest.PlayerCameOnline", "invsee", "invsee", human, target));
                 }
 
                 this.cachedInventories.remove(target);
