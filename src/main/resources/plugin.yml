@@ -1,8 +1,8 @@
 name: ServerSystem
-version: 1.7.5
+version: 1.7.6
 main: me.entity303.serversystem.main.ServerSystem
 api-version: 1.13
-authors: [Entity303]
+authors: [Entity303, GavinGoGaming, BlockyTheDev]
 load: POSTWORLD
 loadbefore:
   - AntiPluginLookUp
