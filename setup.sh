@@ -116,6 +116,8 @@ mkdir 1.17
 cp BuildTools.jar 1.17/BuildTools.jar
 mkdir 1.18.2
 cp BuildTools.jar 1.18.2/BuildTools.jar
+mkdir 1.19
+cp BuildTools.jar 1.19/BuildTools.jar
 
 mkdir java17
 cd java17
@@ -298,6 +300,13 @@ sleep 3
 echo Success!
 cd ..
 cp 1.18.2/spigot-1.18.2.jar ../libs/spigot-1.18.2.jar
+cd 1.19
+echo Building Spigot 1.19...
+sleep 3
+./../java17/$PATH_JAVA_17/bin/java -jar BuildTools.jar --rev 1.19
+echo Success!
+cd ..
+cp 1.19/spigot-1.19.jar ../libs/spigot-1.19.jar
 
 cd ..
 echo Spigot dependencies complete!
