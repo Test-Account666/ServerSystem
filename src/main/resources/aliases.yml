@@ -217,3 +217,5 @@ Aliases:
     aliases: "top, balancetop"
   unlimited:
     aliases: "No Aliases"
+  seen:
+    aliases: "No Aliases"

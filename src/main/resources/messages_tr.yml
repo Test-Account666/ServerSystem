@@ -65,6 +65,7 @@ Messages:
     OfflineTeleportHere: "Syntax: &2/<LABEL> <OfflinePlayer>"
     OfflineEnderChest: "Syntax: &2/<LABEL> <OfflinePlayer>"
     OfflineInvsee: "Syntax: &2/<LABEL> <OfflinePlayer>"
+    Seen: "Syntax: &2/<LABEL> <Player>"
   Normal:
     GetPos:
       Self: "Shoma Dar Mokhtasat &6X:&2<X> &6Y:&2<Y> &6Z:&2<Z> &6World:&2<WORLD>"
@@ -467,6 +468,10 @@ Messages:
       NoItem: "&cElinizde bir eşya tutmalısınız!"
       LimitedNow: "Bu öğe artık sınırlı!"
       UnlimitedNow: "Bu öğe artık sınırsız!"
+    Seen:
+      TimeFormat: "dd.MM.yyyy HH:mm:ss"
+      PlayerNeverPlayed: "&4<TARGET> &chiç oynamadı!"
+      LastSeen: "&2<TARGET> &7son görülme tarihi: &2<TIME>"
   Misc:
     ServerFull: "&8[]&7--------------------------------&8[]<BREAK>&2SUNUCU<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Sunucu dolu!<BREAK>&cYine de girmek istiyorsan, &4<PERMISSION> &ciznine ihtiyacın var!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SUNUCU<BREAK>&8[]&7--------------------------------&8[]"
     JoinMessage:

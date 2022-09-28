@@ -1,11 +1,11 @@
 package me.entity303.serversystem.commands.util;
 
 import me.entity303.serversystem.commands.executable.*;
+import me.entity303.serversystem.config.ConfigReader;
+import me.entity303.serversystem.config.DefaultConfigReader;
 import me.entity303.serversystem.listener.plotsquared.*;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.tabcompleter.*;
-import me.entity303.serversystem.config.ConfigReader;
-import me.entity303.serversystem.config.DefaultConfigReader;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.plugin.Plugin;
@@ -31,22 +31,6 @@ public final class CommandManager {
         this.serverSystem = serverSystem;
     }
 
-    public boolean isDropActive() {
-        return this.dropActive;
-    }
-
-    public boolean isPickupActive() {
-        return this.pickupActive;
-    }
-
-    public boolean isInteractActive() {
-        return this.interactActive;
-    }
-
-    public boolean isChatActive() {
-        return this.chatActive;
-    }
-
     public void rtc(String command, TabCompleter completer) {
         if (this.serverSystem.getCommand(command) != null)
             this.serverSystem.getCommand(command).setTabCompleter(completer);
@@ -54,12 +38,7 @@ public final class CommandManager {
 
     public Command getCommand(String command) {
         Object result = null;
-        try {
-            result = this.getPrivateField(this.serverSystem.getServer().getPluginManager(), "commandMap");
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
-        }
+        result = /*this.getPrivateField(this.serverSystem.getServer().getPluginManager(), "commandMap")*/this.getCommandMap();
         SimpleCommandMap commandMap = (SimpleCommandMap) result;
         return commandMap.getCommand(command.toLowerCase(Locale.ROOT));
     }
@@ -69,7 +48,10 @@ public final class CommandManager {
         if (command == null) System.out.println("Command?!");
 
         if (tabCompleter == null)
-            tabCompleter = new DefaultTabCompleter(this.serverSystem);
+            if (executor instanceof TabCompleter)
+                tabCompleter = (TabCompleter) executor;
+            else
+                tabCompleter = new DefaultTabCompleter(this.serverSystem);
 
 
         File commandsFiles = new File("plugins//ServerSystem", "commands.yml");
@@ -92,10 +74,14 @@ public final class CommandManager {
                     this.serverSystemCommands.addAll(Arrays.asList(aliases));
                 }
             } else this.serverSystem.warn("Null alias for: " + command);
-        } else if (command.equalsIgnoreCase("drop")) this.dropActive = false;
-        else if (command.equalsIgnoreCase("chat")) this.chatActive = false;
-        else if (command.equalsIgnoreCase("pickup")) this.pickupActive = false;
-        else if (command.equalsIgnoreCase("interact")) this.interactActive = false;
+        } else if (command.equalsIgnoreCase("drop"))
+            this.dropActive = false;
+        else if (command.equalsIgnoreCase("chat"))
+            this.chatActive = false;
+        else if (command.equalsIgnoreCase("pickup"))
+            this.pickupActive = false;
+        else if (command.equalsIgnoreCase("interact"))
+            this.interactActive = false;
     }
 
     private Object getPrivateField(Object object, String field) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
@@ -103,9 +89,15 @@ public final class CommandManager {
 
         String version = this.serverSystem.getVersionManager().getVersion();
 
-        Field objectField = field.equals("commandMap") ? clazz.getDeclaredField(field) : field.equals("knownCommands") ? this.serverSystem.getVersionManager().isV113() ? clazz.getSuperclass().getDeclaredField(field) : clazz.getDeclaredField(field) : null;
-        objectField.setAccessible(true);
-        return objectField.get(object);
+        try {
+            Field objectField = field.equals("commandMap") ? clazz.getDeclaredField(field) : field.equals("knownCommands") ? this.serverSystem.getVersionManager().isV113() ? clazz.getSuperclass().getDeclaredField(field) : clazz.getDeclaredField(field) : null;
+            objectField.setAccessible(true);
+            return objectField.get(object);
+        } catch (NoSuchFieldException | NoSuchFieldError ignored) {
+            for (Field field1 : this.getClass().getDeclaredFields())
+                System.out.println(field1.getName() + " -> " + field1.getType().getName());
+            return null;
+        }
     }
 
     public void registerCommand(CommandExecutor executor, TabCompleter tabCompleter, Plugin plugin, String... aliases) {
@@ -128,9 +120,7 @@ public final class CommandManager {
         if (tabCompleter != null)
             command.setTabCompleter(tabCompleter);
 
-        for (String alias : aliases) {
-            knownCommands.remove(alias.toLowerCase());
-        }
+        for (String alias : aliases) knownCommands.remove(alias.toLowerCase());
 
         for (String alias : aliases) {
             alias = alias.toLowerCase();
@@ -156,32 +146,11 @@ public final class CommandManager {
         return command;
     }
 
-    private CommandMap getCommandMap() {
-        CommandMap commandMap = null;
-        try {
-            if (Bukkit.getPluginManager() instanceof SimplePluginManager) {
-                Field f = Bukkit.getPluginManager().getClass().getDeclaredField("commandMap");
-                f.setAccessible(true);
-
-                commandMap = (CommandMap) f.get(this.serverSystem.getServer().getPluginManager());
-            }
-        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        return commandMap;
-    }
-
     private void addAlias(String cmd, CommandExecutor executor, String[] aliases) {
         cmd = cmd.toLowerCase();
         try {
             Object result = null;
-            try {
-                result = this.getPrivateField(this.serverSystem.getServer().getPluginManager(), "commandMap");
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                e.printStackTrace();
-                return;
-            }
+            result = /*this.getPrivateField(this.serverSystem.getServer().getPluginManager(), "commandMap")*/ this.getCommandMap();
             SimpleCommandMap commandMap = (SimpleCommandMap) result;
             Object map = this.getPrivateField(commandMap, "knownCommands");
             HashMap<String, Command> knownCommands = (HashMap<String, Command>) map;
@@ -213,14 +182,13 @@ public final class CommandManager {
     private void deactivateOwnCommand(String cmd) {
         try {
             String plugin = "serversystem";
-            Object result = this.getPrivateField(this.serverSystem.getServer().getPluginManager(), "commandMap");
+            Object result = /*this.getPrivateField(this.serverSystem.getServer().getPluginManager(), "commandMap")*/this.getCommandMap();
             SimpleCommandMap commandMap = (SimpleCommandMap) result;
             Object map = this.getPrivateField(commandMap, "knownCommands");
             HashMap<String, Command> knownCommands = (HashMap<String, Command>) map;
             if (cmd == null) return;
-            if (this.serverSystem.getServer().getPluginCommand(plugin + ":" + cmd) == this.serverSystem.getServer().getPluginCommand(cmd)) {
+            if (this.serverSystem.getServer().getPluginCommand(plugin + ":" + cmd) == this.serverSystem.getServer().getPluginCommand(cmd))
                 knownCommands.remove(cmd);
-            }
             knownCommands.remove(plugin + ":" + cmd);
         } catch (Exception e) {
             e.printStackTrace();
@@ -229,19 +197,17 @@ public final class CommandManager {
 
     public void deactivateBukkitCommand(String cmd, String plugin) {
         try {
-            Object result = this.getPrivateField(this.serverSystem.getServer().getPluginManager(), "commandMap");
+            Object result = /*this.getPrivateField(this.serverSystem.getServer().getPluginManager(), "commandMap")*/this.getCommandMap();
             SimpleCommandMap commandMap = (SimpleCommandMap) result;
             Object map = this.getPrivateField(commandMap, "knownCommands");
             HashMap<String, Command> knownCommands = (HashMap<String, Command>) map;
             if (cmd == null) return;
             if (plugin == null) return;
-            if (this.serverSystem.getServer().getPluginCommand(plugin + ":" + cmd) == this.serverSystem.getServer().getPluginCommand(cmd)) {
+            if (this.serverSystem.getServer().getPluginCommand(plugin + ":" + cmd) == this.serverSystem.getServer().getPluginCommand(cmd))
                 knownCommands.remove(cmd);
-            }
 
-            if (!plugin.equalsIgnoreCase("minecraft") && !plugin.equalsIgnoreCase("bukkit") && !plugin.equalsIgnoreCase("spigot")) {
+            if (!plugin.equalsIgnoreCase("minecraft") && !plugin.equalsIgnoreCase("bukkit") && !plugin.equalsIgnoreCase("spigot"))
                 knownCommands.remove(plugin + ":" + cmd);
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -249,7 +215,7 @@ public final class CommandManager {
 
     private void activateBukkitCommand(PluginCommand cmd) {
         try {
-            Object result = this.getPrivateField(this.serverSystem.getServer().getPluginManager(), "commandMap");
+            Object result = /*this.getPrivateField(this.serverSystem.getServer().getPluginManager(), "commandMap")*/this.getCommandMap();
             SimpleCommandMap commandMap = (SimpleCommandMap) result;
             Object map = this.getPrivateField(commandMap, "knownCommands");
             HashMap<String, Command> knownCommands = (HashMap<String, Command>) map;
@@ -259,7 +225,7 @@ public final class CommandManager {
             if (cmd.getAliases().size() > 0) for (String alias : cmd.getAliases()) {
                 knownCommands.put(alias.toLowerCase(), cmd);
                 if (Bukkit.getServer().getPluginCommand(alias.toLowerCase().toLowerCase()) == null)
-                knownCommands.put(cmd.getPlugin().getName().toLowerCase() + ":" + alias.toLowerCase(), cmd);
+                    knownCommands.put(cmd.getPlugin().getName().toLowerCase() + ":" + alias.toLowerCase(), cmd);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -268,7 +234,9 @@ public final class CommandManager {
 
     public void unregisterCommands() {
         if (this.deactivatedBukkitCommands.size() > 0) {
-            for (String cmd : this.deactivatedBukkitCommands.keySet()) {
+            for (Map.Entry<String, PluginCommand> entry : this.deactivatedBukkitCommands.entrySet()) {
+                String cmd = entry.getKey();
+
                 String plugin = cmd.split(":")[0];
                 String command = cmd.split(":")[1];
                 this.serverSystem.log("Reactivating command " + command + " from " + plugin + "!");
@@ -411,6 +379,8 @@ public final class CommandManager {
         this.rc("offlineteleporthere", new OfflineTeleportHereCommand(this.serverSystem), null);
         this.rc("offlineinvsee", new OfflineInvseeCommand(this.serverSystem), null);
         this.rc("offlineenderchest", new OfflineEnderChestCommand(this.serverSystem), null);
+        this.rc("seen", new SeenCommand(this.serverSystem), null);
+
 
         boolean plotSquaredAlreadyRegistered = false;
 
@@ -450,5 +420,58 @@ public final class CommandManager {
             } catch (Exception ignored) {
 
             }
+    }
+
+    public boolean isDropActive() {
+        return this.dropActive;
+    }
+
+    public boolean isPickupActive() {
+        return this.pickupActive;
+    }
+
+    public boolean isInteractActive() {
+        return this.interactActive;
+    }
+
+    public boolean isChatActive() {
+        return this.chatActive;
+    }
+
+    private CommandMap getCommandMap() {
+        CommandMap commandMap = null;
+        try {
+            if (Bukkit.getPluginManager() instanceof SimplePluginManager) {
+                /*System.out.println("PluginManager:");
+                for (Field field : ((SimplePluginManager) Bukkit.getPluginManager()).getClass().getDeclaredFields()) {
+                    System.out.println(field.getName() + " -> " + field.getType().getName());
+                }
+                System.out.println("Plugin:");
+                for (Field field : serverSystem.getClass().getDeclaredFields()) {
+                    System.out.println(field.getName() + " -> " + field.getType().getName());
+                }
+                System.out.println("SimplePluginManager:");
+                for (Field field : SimplePluginManager.class.getDeclaredFields()) {
+                    System.out.println(field.getName() + " -> " + field.getType().getName());
+                }*/
+                Field f = ((SimplePluginManager) Bukkit.getPluginManager()).getClass().getDeclaredField("commandMap");
+                f.setAccessible(true);
+
+                commandMap = (CommandMap) f.get(this.serverSystem.getServer().getPluginManager());
+            }
+        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+            if (e instanceof NoSuchFieldException) try {
+                Field f = SimplePluginManager.class.getDeclaredField("commandMap");
+                f.setAccessible(true);
+
+                commandMap = (CommandMap) f.get(this.serverSystem.getServer().getPluginManager());
+                return commandMap;
+            } catch (Exception ex) {
+                e.addSuppressed(ex);
+            }
+            e.printStackTrace();
+        }
+
+        return commandMap;
     }
 }

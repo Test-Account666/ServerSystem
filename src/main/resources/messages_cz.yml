@@ -66,6 +66,7 @@ Messages:
     OfflineTeleportHere: "Použij: &2/<LABEL> <OfflinePlayer>"
     OfflineInvsee: "Použij: &2/<LABEL> <OfflinePlayer>"
     OfflineEnderChest: "Použij: &2/<LABEL> <OfflinePlayer>"
+    Seen: "Použití: &2/<LABEL> <Hráč>"
   Normal:
     GetPos:
       Self: "Jsi na souřadnicích &6X:&2<X> &6Y:&2<Y> &6Z:&2<Z> &6Svět:&2<WORLD>"
@@ -494,6 +495,10 @@ Messages:
       NoItem: "&cMusíš item držet ve své ruce!"
       LimitedNow: "Tento item je nyní limitovaný!"
       UnlimitedNow: "Tento item již není limitovaný!"
+    Seen:
+      TimeFormat: "yyyy-MM-dd HH:mm:ss"
+      PlayerNeverPlayed: "&4<TARGET> &cnikdy nehrál!"
+      LastSeen: "&2<TARGET> &7byl naposledy spatřen: &2<TIME>"
   Misc:
     ServerFull: "&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Server
       je plný!<BREAK>&cK přojení potřebuješ permissi &4<PERMISSION>&c!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]"

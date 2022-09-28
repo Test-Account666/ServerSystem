@@ -69,6 +69,7 @@ Messages:
     OfflineTeleportHere: "Sintassi: &2/<LABEL> <OfflinePlayer>"
     OfflineEnderChest: "Sintassi: &2/<LABEL> <OfflinePlayer>"
     OfflineInvsee: "Sintassi: &2/<LABEL> <OfflinePlayer>"
+    Seen: "Sintassi: &2/<LABEL> <Giocatore>"
   Normal:
     GetPos:
       Self: "Sei alle seguenti coordinate: &6X:&2<X> &6Y:&2<Y> &6Z:&2<Z> &6Mondo:&2<WORLD>"
@@ -481,6 +482,10 @@ Messages:
       NoItem: "&cDevi tenere un oggetto in mano!"
       LimitedNow: "Questo articolo è ora limitato!"
       UnlimitedNow: "Questo articolo è ora illimitato!"
+    Seen:
+      TimeFormat: "dd.MM.yyyy HH:mm:ss"
+      PlayerNeverPlayed: "&4<TARGET> &cnon ha mai giocato!"
+      LastSeen: "&2<TARGET> &7È stato visto l'ultima volta: &2<TIME>"
   Misc:
     ServerFull: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4Il server è pieno!<BREAK>&cPer poter partecipare comunque, è necessaria l'autorizzazione &4<PERMISSION>&c!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
     JoinMessage:
