@@ -307,6 +307,13 @@
             <scope>system</scope>
             <systemPath>${user.home}/BuildTools/Spigot/Spigot-Server/target/spigot-1.18.2-R0.1-SNAPSHOT.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>spigot</groupId>
+            <artifactId>spigot-1.19</artifactId>
+            <version>1.19</version>
+            <scope>system</scope>
+            <systemPath>${user.home}/BuildTools/Spigot/Spigot-Server/target/spigot-1.19-R0.1-SNAPSHOT.jar</systemPath>
+        </dependency>
 
         <dependency>
             <groupId>spigot</groupId>
