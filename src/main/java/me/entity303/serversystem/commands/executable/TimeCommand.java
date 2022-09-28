@@ -18,14 +18,16 @@ public class TimeCommand extends MessageUtils implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (args.length == 0) cs.sendMessage(this.getPrefix() + this.getSyntax("Time", label, cmd.getName(), cs, null));
+        if (!this.isAllowed(cs, "time")) {
+            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("time")));
+            return true;
+        }
+
+        if (args.length == 0)
+            cs.sendMessage(this.getPrefix() + this.getSyntax("Time", label, cmd.getName(), cs, null));
         else if (args.length == 1) {
             if (!(cs instanceof Player)) {
                 cs.sendMessage(this.getPrefix() + this.getSyntax("Time", label, cmd.getName(), cs, null));
-                return true;
-            }
-            if (!this.isAllowed(cs, "time")) {
-                cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("time")));
                 return true;
             }
             if ("Tag".equalsIgnoreCase(args[0]) || "Day".equalsIgnoreCase(args[0])) {

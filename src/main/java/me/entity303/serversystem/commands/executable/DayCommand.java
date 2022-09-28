@@ -18,12 +18,14 @@ public class DayCommand extends MessageUtils implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (args.length == 0) if (cs instanceof Player) if (this.isPermAllowed(cs, this.Perm("day"))) {
-            ((Player) cs).getWorld().setTime(0);
-            cs.sendMessage(this.getPrefix() + this.getMessage("Time.Success", label, "time", cs, null).replace("<WORLD>", ((Player) cs).getWorld().getName()).replace("<TIME>", this.getTime("Day")));
-        } else cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("day")));
-        else
-            cs.sendMessage(this.getPrefix() + this.getSyntax("Time", "time", "time", cs, null));
+        if (args.length == 0)
+            if (cs instanceof Player)
+                if (this.isPermAllowed(cs, this.Perm("day"))) {
+                    ((Player) cs).getWorld().setTime(0);
+                    cs.sendMessage(this.getPrefix() + this.getMessage("Time.Success", label, "time", cs, null).replace("<WORLD>", ((Player) cs).getWorld().getName()).replace("<TIME>", this.getTime("Day")));
+                } else cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("day")));
+            else
+                cs.sendMessage(this.getPrefix() + this.getSyntax("Time", "time", "time", cs, null));
         else if (this.isPermAllowed(cs, this.Perm("day"))) {
             World w = Bukkit.getWorld(args[0]);
             if (w != null) {
@@ -31,10 +33,11 @@ public class DayCommand extends MessageUtils implements CommandExecutor {
                 cs.sendMessage(this.getPrefix() + this.getMessage("Time.Success", label, "time", cs, null).replace("<WORLD>", w.getName()).replace("<TIME>", this.getTime("Day")));
             } else
                 cs.sendMessage(this.getPrefix() + this.getMessage("Time.NoWorld", label, "time", cs, null).replace("<WORLD>", args[0]));
-        } else if (cs instanceof Player) if (this.isPermAllowed(cs, this.Perm("day"))) {
-            ((Player) cs).getWorld().setTime(0);
-            cs.sendMessage(this.getPrefix() + this.getMessage("Time.Success", label, "time", cs, null).replace("<WORLD>", ((Player) cs).getWorld().getName()).replace("<TIME>", this.getTime("Day")));
-        } else cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("day")));
+        } else if (cs instanceof Player)
+            if (this.isPermAllowed(cs, this.Perm("day"))) {
+                ((Player) cs).getWorld().setTime(0);
+                cs.sendMessage(this.getPrefix() + this.getMessage("Time.Success", label, "time", cs, null).replace("<WORLD>", ((Player) cs).getWorld().getName()).replace("<TIME>", this.getTime("Day")));
+            } else cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("day")));
         else
             cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("day")));
         return true;
