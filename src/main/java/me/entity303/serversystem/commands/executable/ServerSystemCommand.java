@@ -77,7 +77,7 @@ public class ServerSystemCommand extends MessageUtils implements CommandExecutor
                 if (doc != null) {
                     for (Element f : doc.getElementsContainingOwnText(".jar")) {
                         String s = f.attr("href");
-                        s = s.substring(0, s.lastIndexOf("."));
+                        s = s.substring(0, s.lastIndexOf('.'));
                         version = s;
                     }
 
@@ -92,6 +92,9 @@ public class ServerSystemCommand extends MessageUtils implements CommandExecutor
                             int bytesRead;
                             while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1)
                                 fileOutputStream.write(dataBuffer, 0, bytesRead);
+
+                            in.close();
+                            fileOutputStream.close();
                         } catch (IOException e) {
                             cs.sendMessage(this.getPrefix() + ChatColor.RED + "Error while trying to download the update!");
                             this.plugin.error("Error while trying to download the update!");

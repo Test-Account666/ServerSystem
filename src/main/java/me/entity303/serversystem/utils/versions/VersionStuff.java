@@ -242,7 +242,13 @@ public class VersionStuff {
                 Method aMethod = Arrays.stream(playerConnection.getClass().getDeclaredMethods()).filter(field -> field.getReturnType().getName().toLowerCase(Locale.ROOT).contains("networkmanager")).findFirst().orElse(null);
 
                 if (aMethod == null) {
-                    Field field = Arrays.stream(playerConnection.getClass().getDeclaredFields()).filter(field1 -> field1.getType().getName().toLowerCase(Locale.ROOT).contains("networkdispatcher")).findFirst().orElse(null);
+                    Field field = Arrays.stream(playerConnection.getClass().getDeclaredFields()).filter(field1 -> field1.getType().getName().toLowerCase(Locale.ROOT).contains("networkdispatcher") || field1.getType().getName().toLowerCase(Locale.ROOT).contains("networkmanager")).findFirst().orElse(null);
+
+                    if (field == null) {
+                        serverSystem.error("Couldn't find NetworkManager field!");
+                        return;
+                    }
+
                     this.aMethod = new MethodOrField(field);
                 } else
                     this.aMethod = new MethodOrField(aMethod);

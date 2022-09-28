@@ -44,9 +44,7 @@ public class JoinListener extends MessageUtils implements Listener {
                 if (this.plugin.getKitsManager().doesKitExist(this.plugin.getConfigReader().getString("kit.givenkit")))
                     Bukkit.getScheduler().runTaskLater(this.plugin, () -> this.plugin.getKitsManager().giveKit(e.getPlayer(), this.plugin.getConfigReader().getString("kit.givenkit")), 20);
                 else
-                    Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                        e.getPlayer().sendMessage(this.getPrefix() + this.getMessage("Kit.DoesntExist", "kit", "kit", e.getPlayer().getName(), null).replace("<KIT>", this.plugin.getConfigReader().getString("kit.givenkit").toUpperCase()));
-                    }, 20);
+                    Bukkit.getScheduler().runTaskLater(this.plugin, () -> e.getPlayer().sendMessage(this.getPrefix() + this.getMessage("Kit.DoesntExist", "kit", "kit", e.getPlayer().getName(), null).replace("<KIT>", this.plugin.getConfigReader().getString("kit.givenkit").toUpperCase())), 20);
 
         if (!this.plugin.getPermissions().hasPerm(e.getPlayer(), "vanish.see", true))
             for (UUID uuid : this.plugin.getVanish().getVanishList()) {

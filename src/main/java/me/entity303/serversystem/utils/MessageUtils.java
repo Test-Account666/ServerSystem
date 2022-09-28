@@ -104,8 +104,7 @@ public class MessageUtils {
         }
 
         try {
-            String s = ChatColor.translateAlternateColorCodes('&', rules.replace("<LABEL>", label).replace("<COMMAND>", command).replace("<SENDER>", senderName).replace("<TARGET>", targetName).replace("<SENDERDISPLAY>", senderDisplayName).replace("<TARGETDISPLAY>", targetDisplayName).replace("<BREAK>", "\n"));
-            return s;
+            return ChatColor.translateAlternateColorCodes('&', rules.replace("<LABEL>", label).replace("<COMMAND>", command).replace("<SENDER>", senderName).replace("<TARGET>", targetName).replace("<SENDERDISPLAY>", senderDisplayName).replace("<TARGETDISPLAY>", targetDisplayName).replace("<BREAK>", "\n"));
         } catch (NullPointerException ignored) {
             return "Error! Path: Rules";
         }

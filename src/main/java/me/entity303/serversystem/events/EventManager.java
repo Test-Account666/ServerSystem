@@ -57,9 +57,7 @@ public class EventManager {
             this.re(new WorldChangeListener(this.serverSystem, resetGameMode, resetGodMode, resetFly));
 
         if (this.serverSystem.getConfigReader().getBoolean("deactivateentitycollision"))
-            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
-                this.re(new EntitySpawnListener(this.serverSystem));
-            }, 5L);
+            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.re(new EntitySpawnListener(this.serverSystem)), 5L);
 
         if (this.serverSystem.getConfigReader().getBoolean("no-redstone"))
             this.re(new RedstoneListener(this.serverSystem));

@@ -266,11 +266,16 @@ public final class ServerSystem extends JavaPlugin {
         Bukkit.getScheduler().runTaskLater(this, () -> this.starting = false, 100L);
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             List<Player> players = new ArrayList<>();
-            for (Player player : this.tpaDataMap.keySet())
-                if (this.tpaDataMap.get(player).getEnd() <= System.currentTimeMillis()) players.add(player);
+            for (Map.Entry<Player, TpaData> entry : this.tpaDataMap.entrySet()) {
+                Player player = entry.getKey();
+
+                if (entry.getValue().getEnd() <= System.currentTimeMillis())
+                    players.add(player);
+            }
 
             if (players.size() >= 1)
-                for (Player player : players) this.tpaDataMap.remove(player);
+                for (Player player : players)
+                    this.tpaDataMap.remove(player);
         }, 20L, 20L);
 
         this.wantsTP = new WantsTP(this);
@@ -405,7 +410,7 @@ public final class ServerSystem extends JavaPlugin {
                 if (doc != null) {
                     for (Element f : doc.getElementsContainingOwnText(".jar")) {
                         String s = f.attr("href");
-                        s = s.substring(0, s.lastIndexOf("."));
+                        s = s.substring(0, s.lastIndexOf('.'));
                         version = s;
                     }
 
@@ -423,6 +428,9 @@ public final class ServerSystem extends JavaPlugin {
                                 int bytesRead;
                                 while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1)
                                     fileOutputStream.write(dataBuffer, 0, bytesRead);
+
+                                in.close();
+                                fileOutputStream.close();
                             } catch (Exception e) {
                                 this.error("Error while trying downloading the update!");
                                 e.printStackTrace();
@@ -690,27 +698,43 @@ public final class ServerSystem extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        this.log("Shutting down...");
+
+        this.log("Cancelling leftover tasks...");
         Bukkit.getScheduler().cancelTasks(this);
-        if (this.vaultHookManager != null) this.vaultHookManager.unhook();
+
+        if (this.vaultHookManager != null) {
+            this.log("Unhooking from vault...");
+            this.vaultHookManager.unhook();
+        }
+
+        this.log("Saving vanished players...");
         File file = new File("plugins//ServerSystem", "vanish.yml");
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-        for (UUID uuid : this.getVanish().getVanishList()) cfg.set("Vanish." + uuid.toString(), true);
+        for (UUID uuid : this.getVanish().getVanishList())
+            cfg.set("Vanish." + uuid.toString(), true);
         try {
             cfg.save(file);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        this.log("Closing wantsTP database...");
         if (this.wantsTP != null)
             this.wantsTP.close();
+        this.log("Closing banManager database...");
         if (this.banManager != null)
             this.banManager.close();
+        this.log("Closing muteManager database...");
         if (this.muteManager != null)
             this.muteManager.close();
+        this.log("Closing economyManager database...");
         if (this.economyManager != null)
             this.economyManager.close();
+        this.log("Closing MySQL...");
         if (this.mySQL != null)
             this.mySQL.close();
+        this.log("Closing warp database...");
         if (this.warpManager != null)
             this.warpManager.close();
 
@@ -718,9 +742,12 @@ public final class ServerSystem extends JavaPlugin {
         this.muteManager = null;
         this.economyManager = null;
 
+        this.log("Unregistering commands...");
         this.commandManager.unregisterCommands();
 
         if (this.versionManager.isV113()) {
+            this.log("Syncing commands...");
+
             if (this.syncCommandsMethod == null) try {
                 this.syncCommandsMethod = Class.forName("org.bukkit.craftbukkit." + this.versionManager.getNMSVersion() + ".CraftServer").getDeclaredMethod("syncCommands");
                 this.syncCommandsMethod.setAccessible(true);
@@ -736,7 +763,11 @@ public final class ServerSystem extends JavaPlugin {
             }
         }
 
+        this.log("Unregistering Handlers...");
+
         HandlerList.unregisterAll(this);
+
+        this.log("Shutdown done!");
     }
 
     public void log(String text) {

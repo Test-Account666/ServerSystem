@@ -287,7 +287,7 @@ public class DefaultConfigReader implements ConfigReader {
                 for (int i = 0; i <= periods; i++) {
                     String internalPath = path;
                     for (int i1 = 0; i1 < i; i1++)
-                        internalPath = internalPath.substring(0, internalPath.lastIndexOf("."));
+                        internalPath = internalPath.substring(0, internalPath.lastIndexOf('.'));
                     if (this.cfg.isSet(internalPath)) {
                         partialPath = internalPath;
                         break;

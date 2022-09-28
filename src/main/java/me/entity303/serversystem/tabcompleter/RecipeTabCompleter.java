@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 
 public class RecipeTabCompleter extends MessageUtils implements TabCompleter {
 
+    public static final Material[] MATERIALS = Material.values();
+
     public RecipeTabCompleter(ServerSystem plugin) {
         super(plugin);
     }
@@ -24,10 +26,10 @@ public class RecipeTabCompleter extends MessageUtils implements TabCompleter {
             if (this.plugin.getPermissions().getCfg().getBoolean("Permissions.recipe.required"))
                 if (!this.isAllowed(cs, "recipe.permission", true)) return Collections.singletonList("");
 
-            List<String> tabCompletions = Arrays.stream(Material.values()).filter(material -> material.name().toLowerCase().startsWith(args[0].toLowerCase()) && !material.name().endsWith("AIR") && !material.name().startsWith("LEGACY")).map(Enum::name).collect(Collectors.toList());
+            List<String> tabCompletions = Arrays.stream(MATERIALS).filter(material -> material.name().toLowerCase().startsWith(args[0].toLowerCase()) && !material.name().endsWith("AIR") && !material.name().startsWith("LEGACY")).map(Enum::name).collect(Collectors.toList());
 
             if (tabCompletions.isEmpty()) {
-                tabCompletions.addAll(Arrays.stream(Material.values()).map(Enum::name).collect(Collectors.toList()));
+                tabCompletions.addAll(Arrays.stream(RecipeTabCompleter.MATERIALS).map(Enum::name).collect(Collectors.toList()));
                 tabCompletions.removeIf(s -> s.endsWith("AIR") || s.startsWith("LEGACY"));
                 return tabCompletions;
             }
