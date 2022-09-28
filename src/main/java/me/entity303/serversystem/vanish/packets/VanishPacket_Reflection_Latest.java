@@ -30,6 +30,7 @@ public class VanishPacket_Reflection_Latest extends VanishPacket {
     private Field playerConnectionField;
     private Field pingField;
     private Field collidesField;
+    private boolean v19 = false;
 
     public VanishPacket_Reflection_Latest(ServerSystem plugin) {
         this.plugin = plugin;
@@ -180,18 +181,38 @@ public class VanishPacket_Reflection_Latest extends VanishPacket {
                                 EnumGamemode.class,
                                 IChatBaseComponent.class);
             } catch (NoSuchMethodException | ClassNotFoundException e) {
-                e.printStackTrace();
-                return;
+                if (!(e instanceof NoSuchMethodException)) {
+                    e.printStackTrace();
+                    return;
+                }
+                this.constructor = clazz
+                        .getDeclaredConstructors(/*
+                                Class.forName("com.mojang.authlib.GameProfile"),
+                                int.class,
+                                EnumGamemode.class,
+                                IChatBaseComponent.class*/)[0];
+                this.v19 = true;
             }
         }
 
-        try {
+        if (!this.v19)
+            try {
+                playerInfoData = this.constructor
+                        .newInstance(
+                                this.getProfileMethod.invoke(entityPlayer),
+                                this.getPing(player),
+                                Class.forName("net.minecraft.world.level.EnumGamemode").getEnumConstants()[3],
+                                playerListName);
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | ClassNotFoundException instantiationException) {
+                instantiationException.printStackTrace();
+            }
+        else try {
             playerInfoData = this.constructor
                     .newInstance(
                             this.getProfileMethod.invoke(entityPlayer),
                             this.getPing(player),
                             Class.forName("net.minecraft.world.level.EnumGamemode").getEnumConstants()[3],
-                            playerListName);
+                            playerListName, null);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | ClassNotFoundException instantiationException) {
             instantiationException.printStackTrace();
         }
