@@ -10,12 +10,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.temporal.TemporalAccessor;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,14 +51,12 @@ public class SignCommand extends MessageUtils implements CommandExecutor {
         String loreString = Arrays.stream(args).map(arg -> ChatColor.translateAlternateColorCodes('&', arg) + " §9").collect(Collectors.joining("", "§9", ""));
         loreList.add("§c-------------------------------------");
         loreList.add(loreString);
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm");
-        DateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy");
-        Date localDate = new Date();
-        localDate.setTime(System.currentTimeMillis());
-        TemporalAccessor accessor = localDate.toInstant();
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("HH:mm");
+        DateTimeFormatter dateFormat2 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDateTime localDate = LocalDateTime.now();
         loreList.add("§c" + this.getMessage("Sign.Translation.Von", label, cmd.getName(), cs, null) + ": §2" + cs.getName());
-        loreList.add("§c" + this.getMessage("Sign.Translation.Am", label, cmd.getName(), cs, null) + ": §2" + dateFormat2.format(localDate).replace("/", "."));
-        loreList.add("§c" + this.getMessage("Sign.Translation.Um", label, cmd.getName(), cs, null) + ": §2" + dateFormat.format(localDate));
+        loreList.add("§c" + this.getMessage("Sign.Translation.Am", label, cmd.getName(), cs, null) + ": §2" + localDate.format(dateFormat2).replace("/", "."));
+        loreList.add("§c" + this.getMessage("Sign.Translation.Um", label, cmd.getName(), cs, null) + ": §2" + localDate.format(dateFormat));
         loreList.add("§4§c-------------------------------------");
         meta.setLore(loreList);
         ((Player) cs).getInventory().getItemInHand().setItemMeta(meta);
