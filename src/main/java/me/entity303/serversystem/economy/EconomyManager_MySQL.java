@@ -32,36 +32,6 @@ public class EconomyManager_MySQL extends ManagerEconomy {
     }
 
     @Override
-    public String getMoneyFormat() {
-        return this.moneyFormat;
-    }
-
-    @Override
-    public String getSeparator() {
-        return this.separator;
-    }
-
-    @Override
-    public String getStartingMoney() {
-        return this.startingMoney;
-    }
-
-    @Override
-    public String getDisplayFormat() {
-        return this.displayFormat;
-    }
-
-    @Override
-    public String getCurrencySingular() {
-        return this.currencySingular;
-    }
-
-    @Override
-    public String getCurrencyPlural() {
-        return this.currencyPlural;
-    }
-
-    @Override
     public String format(double money) {
         String moneyStr = String.format(Locale.US, "%1$,.2f", money);
 
@@ -267,27 +237,6 @@ public class EconomyManager_MySQL extends ManagerEconomy {
     }
 
     @Override
-    public LinkedHashMap<OfflinePlayer, Double> getTopTen() {
-        LinkedHashMap<OfflinePlayer, Double> topTen = new LinkedHashMap<>();
-        try {
-            ResultSet resultSet = this.plugin.getMySQL().getResult(
-                    "SELECT * " +
-                    "FROM Economy " +
-                    "WHERE Server='" + server + "' " +
-                    "ORDER BY Balance desc " +
-                    "LIMIT 10");
-            while (resultSet.next()) {
-                UUID uuid = UUID.fromString(resultSet.getString("UUID"));
-                Double balance = Double.parseDouble(String.format("%.2f", resultSet.getDouble("Balance")).replace(",", "."));
-                topTen.put(Bukkit.getOfflinePlayer(uuid), balance);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return topTen;
-    }
-
-    @Override
     public void fetchTopTen() {
 
     }
@@ -295,6 +244,65 @@ public class EconomyManager_MySQL extends ManagerEconomy {
     @Override
     public void close() {
         this.getPlugin().getMySQL().close();
+    }
+
+    @Override
+    public String getMoneyFormat() {
+        return this.moneyFormat;
+    }
+
+    @Override
+    public String getSeparator() {
+        return this.separator;
+    }
+
+    @Override
+    public String getStartingMoney() {
+        return this.startingMoney;
+    }
+
+    @Override
+    public String getDisplayFormat() {
+        return this.displayFormat;
+    }
+
+    @Override
+    public String getCurrencySingular() {
+        return this.currencySingular;
+    }
+
+    @Override
+    public String getCurrencyPlural() {
+        return this.currencyPlural;
+    }
+
+    @Override
+    public LinkedHashMap<OfflinePlayer, Double> getTopTen() {
+        LinkedHashMap<OfflinePlayer, Double> topTen = new LinkedHashMap<>();
+        ResultSet resultSet = null;
+        try {
+            resultSet = this.plugin.getMySQL().getResult(
+                    "SELECT * " +
+                            "FROM Economy " +
+                            "WHERE Server='" + this.server + "' " +
+                            "ORDER BY Balance desc " +
+                            "LIMIT 10");
+            while (resultSet.next()) {
+                UUID uuid = UUID.fromString(resultSet.getString("UUID"));
+                Double balance = Double.parseDouble(String.format("%.2f", resultSet.getDouble("Balance")).replace(",", "."));
+                topTen.put(Bukkit.getOfflinePlayer(uuid), balance);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (resultSet != null) try {
+                if (!resultSet.isClosed())
+                    resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return topTen;
     }
 }
 

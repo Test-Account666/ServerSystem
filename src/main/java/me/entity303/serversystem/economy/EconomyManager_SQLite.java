@@ -6,10 +6,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.UUID;
@@ -33,9 +30,13 @@ public class EconomyManager_SQLite extends ManagerEconomy {
         this.moneyFormat = moneyFormat;
         this.open();
         try {
-            this.connection.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS Economy (UUID VARCHAR(100), Balance DECIMAL(30, 2))");
+            Statement statement = this.connection.createStatement();
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS Economy (UUID VARCHAR(100), Balance DECIMAL(30, 2))");
+            statement.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            this.close();
         }
     }
 
@@ -50,6 +51,13 @@ public class EconomyManager_SQLite extends ManagerEconomy {
     }
 
     public boolean open() {
+        if (this.connection != null) try {
+            if (!this.connection.isClosed())
+                return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         if (this.initialize()) try {
             this.connection = DriverManager.getConnection("jdbc:sqlite:" + new File("plugins//ServerSystem", "economy.sqlite").getAbsolutePath());
             return true;
@@ -59,37 +67,6 @@ public class EconomyManager_SQLite extends ManagerEconomy {
         }
         else return false;
     }
-
-    @Override
-    public String getMoneyFormat() {
-        return this.moneyFormat;
-    }
-
-    @Override
-    public String getSeparator() {
-        return this.separator;
-    }
-
-    @Override
-    public String getStartingMoney() {
-        return this.startingMoney;
-    }
-
-    @Override
-    public String getDisplayFormat() {
-        return this.displayFormat;
-    }
-
-    @Override
-    public String getCurrencySingular() {
-        return this.currencySingular;
-    }
-
-    @Override
-    public String getCurrencyPlural() {
-        return this.currencyPlural;
-    }
-
 
     @Override
     public String format(double money) {
@@ -165,65 +142,144 @@ public class EconomyManager_SQLite extends ManagerEconomy {
 
     @Override
     public void setMoney(OfflinePlayer player, double amount) {
+        this.open();
         double[] doubles = new double[]{amount};
 
-        if (player == null) return;
+        if (player == null) {
+            return;
+        }
         doubles[0] = Double.parseDouble(String.format("%.2f", doubles[0]).replace(",", "."));
         this.deleteAccountSync(player);
+        Statement statement = null;
         try {
-            this.connection.createStatement().executeUpdate("INSERT INTO `Economy` (UUID, Balance)"
+            this.open();
+            statement = this.connection.createStatement();
+            statement.executeUpdate("INSERT INTO `Economy` (UUID, Balance)"
                     + " VALUES ('" + player.getUniqueId() +
                     "','" + doubles[0] + "')");
+
+            statement.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            if (statement != null) try {
+                if (!statement.isClosed())
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            if (statement != null) try {
+                if (!statement.isClosed())
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
     }
 
     @Override
     public void removeMoney(OfflinePlayer player, double amount) {
+        this.open();
         double[] doubles = new double[]{amount};
 
-        if (player == null) return;
+        if (player == null) {
+            return;
+        }
         doubles[0] = Double.parseDouble(String.format("%.2f", doubles[0]).replace(",", "."));
         double balance = this.getMoneyAsNumber(player) - doubles[0];
         this.deleteAccountSync(player);
+        Statement statement = null;
         try {
-            this.connection.createStatement().executeUpdate("INSERT INTO `Economy` (UUID, Balance)"
+            this.open();
+            statement = this.connection.createStatement();
+            statement.executeUpdate("INSERT INTO `Economy` (UUID, Balance)"
                     + " VALUES ('" + player.getUniqueId() +
                     "','" + balance + "')");
+            statement.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            if (statement != null) try {
+                if (!statement.isClosed())
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            if (statement != null) try {
+                if (!statement.isClosed())
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     @Override
     public void addMoney(OfflinePlayer player, double amount) {
+        this.open();
         double[] doubles = new double[]{amount};
 
         if (player == null) return;
         doubles[0] = Double.parseDouble(String.format("%.2f", doubles[0]).replace(",", "."));
         double balance = this.getMoneyAsNumber(player) + doubles[0];
         this.deleteAccountSync(player);
+        Statement statement = null;
         try {
-            this.connection.createStatement().executeUpdate("INSERT INTO `Economy` (UUID, Balance)"
+            this.open();
+            statement = this.connection.createStatement();
+            statement.executeUpdate("INSERT INTO `Economy` (UUID, Balance)"
                     + " VALUES ('" + player.getUniqueId() + "','" + balance + "')");
+
+            statement.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            if (statement != null) try {
+                if (!statement.isClosed())
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            if (statement != null) try {
+                if (!statement.isClosed())
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
     }
 
     @Override
     public void createAccount(OfflinePlayer player) {
-        if (this.hasAccount(player)) return;
+        if (this.hasAccount(player))
+            return;
 
-        {
-            if (player == null) return;
-            try {
-                this.connection.createStatement().executeUpdate("INSERT INTO `Economy` (UUID, Balance) VALUES ('" + player.getUniqueId() + "','" + this.startingMoney + "')");
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
+        this.open();
+
+        if (player == null) {
+            return;
+        }
+        Statement statement = null;
+        try {
+            this.open();
+            statement = this.connection.createStatement();
+            statement.executeUpdate("INSERT INTO `Economy` (UUID, Balance) VALUES ('" + player.getUniqueId() + "','" + this.startingMoney + "')");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            if (statement != null) try {
+                if (!statement.isClosed())
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            if (statement != null) try {
+                if (!statement.isClosed())
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -232,22 +288,61 @@ public class EconomyManager_SQLite extends ManagerEconomy {
     public void deleteAccount(OfflinePlayer player) {
         if (!this.hasAccount(player)) return;
 
-        {
-            if (player == null) return;
-            try {
-                this.connection.createStatement().executeUpdate("DELETE FROM Economy WHERE UUID='" + player.getUniqueId() + "'");
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
+        this.open();
+
+
+        if (player == null) {
+            return;
+        }
+        Statement statement = null;
+        try {
+            this.open();
+            statement = this.connection.createStatement();
+            statement.executeUpdate("DELETE FROM Economy WHERE UUID='" + player.getUniqueId() + "'");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            if (statement != null) try {
+                if (!statement.isClosed())
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            if (statement != null) try {
+                if (!statement.isClosed())
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
+
     }
 
     public void deleteAccountSync(OfflinePlayer player) {
-        if (player == null) return;
+        this.open();
+        if (player == null) {
+            return;
+        }
+        Statement statement = null;
         try {
-            this.connection.createStatement().executeUpdate("DELETE FROM Economy WHERE UUID='" + player.getUniqueId() + "'");
+            this.open();
+            statement = this.connection.createStatement();
+            statement.executeUpdate("DELETE FROM Economy WHERE UUID='" + player.getUniqueId() + "'");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            if (statement != null) try {
+                if (!statement.isClosed())
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            if (statement != null) try {
+                if (!statement.isClosed())
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -263,27 +358,68 @@ public class EconomyManager_SQLite extends ManagerEconomy {
 
     @Override
     public Double getMoneyAsNumber(OfflinePlayer player) {
-        if (player == null) return 0.0D;
+        this.open();
+        if (player == null) {
+            return 0.0D;
+        }
         ResultSet resultSet = null;
+        Statement statement = null;
         try {
-            resultSet = this.connection.createStatement().executeQuery("SELECT * FROM Economy WHERE UUID = '" + player.getUniqueId() + "'");
+            this.open();
+            statement = this.connection.createStatement();
+            resultSet = statement.executeQuery("SELECT * FROM Economy WHERE UUID = '" + player.getUniqueId() + "'");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            if (statement != null) try {
+                if (!statement.isClosed())
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             return 0.0D;
         }
         try {
             try {
-                if (resultSet.isClosed()) return 0.0D;
+                if (resultSet.isClosed()) {
+                                    if (statement != null) try {
+                        if (!statement.isClosed())
+                            statement.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    return 0.0D;
+                }
             } catch (AbstractMethodError ignored) {
 
             }
-            if (!resultSet.next()) return 0.0D;
+            if (!resultSet.next()) {
+                        resultSet.close();
+                if (statement != null) try {
+                    if (!statement.isClosed())
+                        statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                return 0.0D;
+            }
             Double money = Double.parseDouble(String.format("%.2f", resultSet.getDouble("Balance")).replace(",", "."));
             resultSet.close();
+            if (statement != null) try {
+                if (!statement.isClosed())
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             return money;
         } catch (SQLException e) {
             if (!e.getMessage().toLowerCase().contains("closed"))
                 e.printStackTrace();
+            if (statement != null) try {
+                if (!statement.isClosed())
+                    statement.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
         return 0.0D;
     }
@@ -295,61 +431,158 @@ public class EconomyManager_SQLite extends ManagerEconomy {
 
     @Override
     public boolean hasAccount(OfflinePlayer player) {
-        if (player == null) return false;
+        this.open();
+        if (player == null) {
+                return false;
+        }
         ResultSet rs = null;
+        Statement statement = null;
         try {
-            rs = this.connection.createStatement().executeQuery("SELECT * FROM Economy WHERE UUID = '" + player.getUniqueId() + "'");
+            this.open();
+            statement = this.connection.createStatement();
+            rs = statement.executeQuery("SELECT * FROM Economy WHERE UUID = '" + player.getUniqueId() + "'");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+                if (statement != null) try {
+                if (!statement.isClosed())
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             return false;
         }
         try {
-            if (rs == null) return false;
+            if (rs == null) {
+                                if (statement != null) try {
+                    if (!statement.isClosed())
+                        statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
             try {
-                if (rs.isClosed()) return false;
+                if (rs.isClosed()) {
+                                                if (statement != null) try {
+                        if (!statement.isClosed())
+                            statement.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    return false;
+                }
             } catch (AbstractMethodError ignored) {
             }
-            if (!rs.next()) return false;
+            if (!rs.next()) {
+                                rs.close();
+                if (statement != null) try {
+                    if (!statement.isClosed())
+                        statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
             String uuid = rs.getString("UUID");
             rs.close();
-            return uuid != null;
+            if (statement != null) try {
+                if (!statement.isClosed())
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+                return uuid != null;
         } catch (SQLException throwables) {
             if (!throwables.getMessage().toLowerCase().contains("closed"))
                 throwables.printStackTrace();
+                if (statement != null) try {
+                if (!statement.isClosed())
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return false;
     }
 
     @Override
-    public LinkedHashMap<OfflinePlayer, Double> getTopTen() {
-        LinkedHashMap<OfflinePlayer, Double> topTen = new LinkedHashMap<>();
-        try {
-            ResultSet resultSet = this.connection.createStatement().executeQuery(
-                    "SELECT * " +
-                    "FROM Economy " +
-                    "ORDER BY Balance desc " +
-                    "LIMIT 10");
-            while (resultSet.next()) {
-                UUID uuid = UUID.fromString(resultSet.getString("UUID"));
-                Double balance = Double.parseDouble(String.format("%.2f", resultSet.getDouble("Balance")).replace(",", "."));
-                topTen.put(Bukkit.getOfflinePlayer(uuid), balance);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return topTen;
-    }
-
-    @Override
     public void fetchTopTen() {
-
     }
 
     @Override
     public void close() {
         try {
-            this.connection.close();
+            if (!this.connection.isClosed())
+                this.connection.close();
         } catch (Exception ignored) {
         }
+    }
+
+    @Override
+    public String getMoneyFormat() {
+        return this.moneyFormat;
+    }
+
+    @Override
+    public String getSeparator() {
+        return this.separator;
+    }
+
+    @Override
+    public String getStartingMoney() {
+        return this.startingMoney;
+    }
+
+    @Override
+    public String getDisplayFormat() {
+        return this.displayFormat;
+    }
+
+    @Override
+    public String getCurrencySingular() {
+        return this.currencySingular;
+    }
+
+    @Override
+    public String getCurrencyPlural() {
+        return this.currencyPlural;
+    }
+
+    @Override
+    public LinkedHashMap<OfflinePlayer, Double> getTopTen() {
+        this.open();
+        LinkedHashMap<OfflinePlayer, Double> topTen = new LinkedHashMap<>();
+        Statement statement = null;
+        try {
+            statement = this.connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT * " +
+                            "FROM Economy " +
+                            "ORDER BY Balance desc " +
+                            "LIMIT 10");
+            while (resultSet.next()) {
+                UUID uuid = UUID.fromString(resultSet.getString("UUID"));
+                Double balance = Double.parseDouble(String.format("%.2f", resultSet.getDouble("Balance")).replace(",", "."));
+                topTen.put(Bukkit.getOfflinePlayer(uuid), balance);
+            }
+
+            resultSet.close();
+            if (statement != null) try {
+                if (!statement.isClosed())
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null) try {
+                if (!statement.isClosed())
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return topTen;
     }
 }
