@@ -6,11 +6,14 @@ import me.entity303.serversystem.utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-public class OfflineTeleportHereCommand extends MessageUtils implements CommandExecutor {
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class OfflineTeleportHereCommand extends MessageUtils implements TabExecutor {
 
     public OfflineTeleportHereCommand(ServerSystem plugin) {
         super(plugin);
@@ -59,5 +62,21 @@ public class OfflineTeleportHereCommand extends MessageUtils implements CommandE
         player.saveData();
         cs.sendMessage(this.getPrefix() + this.getMessage("OfflineTeleportHere.Success", label, cmd.getName(), cs, player));
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        if (!this.isAllowed(sender, "offlineteleporthere", true))
+            return Collections.singletonList("");
+
+        List<String> players = Arrays.stream(Bukkit.getOfflinePlayers()).filter(offlinePlayer -> !offlinePlayer.isOnline()).map(OfflinePlayer::getName).collect(Collectors.toList());
+
+        List<String> possiblePlayers = new ArrayList<>();
+
+        for (String player : players)
+            if (player.toLowerCase(Locale.ROOT).startsWith(args[0].toLowerCase(Locale.ROOT)))
+                possiblePlayers.add(player);
+
+        return !possiblePlayers.isEmpty() ? possiblePlayers : players;
     }
 }

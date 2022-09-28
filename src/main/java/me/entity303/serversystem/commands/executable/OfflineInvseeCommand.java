@@ -14,8 +14,8 @@ import net.bytebuddy.matcher.ElementMatchers;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,12 +27,11 @@ import org.bukkit.inventory.PlayerInventory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Locale;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
-public class OfflineInvseeCommand extends MessageUtils implements CommandExecutor, Listener {
+public class OfflineInvseeCommand extends MessageUtils implements TabExecutor, Listener {
     private final HashMap<Player, PlayerInventory> cachedCustomInventories = new HashMap<>();
     private Class playerInventoryNmsClass = null;
     private Constructor craftInventoryPlayerConstructor = null;
@@ -388,5 +387,21 @@ public class OfflineInvseeCommand extends MessageUtils implements CommandExecuto
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
         this.cachedCustomInventories.remove(e.getPlayer());
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        if (!this.isAllowed(sender, "offlineinvsee", true))
+            return Collections.singletonList("");
+
+        List<String> players = Arrays.stream(Bukkit.getOfflinePlayers()).filter(offlinePlayer -> !offlinePlayer.isOnline()).map(OfflinePlayer::getName).collect(Collectors.toList());
+
+        List<String> possiblePlayers = new ArrayList<>();
+
+        for (String player : players)
+            if (player.toLowerCase(Locale.ROOT).startsWith(args[0].toLowerCase(Locale.ROOT)))
+                possiblePlayers.add(player);
+
+        return !possiblePlayers.isEmpty() ? possiblePlayers : players;
     }
 }

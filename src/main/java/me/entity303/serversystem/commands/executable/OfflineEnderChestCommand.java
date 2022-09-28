@@ -6,8 +6,8 @@ import me.entity303.serversystem.utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,11 +15,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.inventory.Inventory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
-public class OfflineEnderChestCommand extends MessageUtils implements CommandExecutor, Listener {
+public class OfflineEnderChestCommand extends MessageUtils implements TabExecutor, Listener {
     private final HashMap<Player, Inventory> cachedInventories = new HashMap<>();
 
     public OfflineEnderChestCommand(ServerSystem plugin) {
@@ -95,5 +95,21 @@ public class OfflineEnderChestCommand extends MessageUtils implements CommandExe
                 this.cachedInventories.remove(target);
             });
         }
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        if (!this.isAllowed(sender, "offlineenderchest", true))
+            return Collections.singletonList("");
+
+        List<String> players = Arrays.stream(Bukkit.getOfflinePlayers()).filter(offlinePlayer -> !offlinePlayer.isOnline()).map(OfflinePlayer::getName).collect(Collectors.toList());
+
+        List<String> possiblePlayers = new ArrayList<>();
+
+        for (String player : players)
+            if (player.toLowerCase(Locale.ROOT).startsWith(args[0].toLowerCase(Locale.ROOT)))
+                possiblePlayers.add(player);
+
+        return !possiblePlayers.isEmpty() ? possiblePlayers : players;
     }
 }
