@@ -380,6 +380,7 @@ public final class CommandManager {
         this.rc("offlineinvsee", new OfflineInvseeCommand(this.serverSystem), null);
         this.rc("offlineenderchest", new OfflineEnderChestCommand(this.serverSystem), null);
         this.rc("seen", new SeenCommand(this.serverSystem), null);
+        this.rc("freeze", new FreezeCommand(this.serverSystem), null);
 
 
         boolean plotSquaredAlreadyRegistered = false;

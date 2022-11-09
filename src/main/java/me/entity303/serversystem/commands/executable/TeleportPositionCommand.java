@@ -2,11 +2,15 @@ package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.MessageUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Locale;
 
 public class TeleportPositionCommand extends MessageUtils implements CommandExecutor {
 
@@ -19,6 +23,27 @@ public class TeleportPositionCommand extends MessageUtils implements CommandExec
         if (!this.isAllowed(cs, "tppos.self", true) && !this.isAllowed(cs, "tppos.others", true)) {
             cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("tppos.self")));
             return true;
+        }
+
+        String potentialWorld = args[args.length - 1];
+
+        World world = null;
+
+        if (potentialWorld.toLowerCase(Locale.ROOT).startsWith("w:") || potentialWorld.toLowerCase(Locale.ROOT).startsWith("world:")) {
+            String[] argsCopy = args;
+
+            args = new String[argsCopy.length - 1];
+
+            System.arraycopy(argsCopy, 0, args, 0, args.length);
+
+            potentialWorld = potentialWorld.replaceAll("(world|w):", "");
+
+            String finalPotentialWorld = potentialWorld;
+            world = Bukkit.getWorlds().stream().filter(world1 -> world1.getName().equalsIgnoreCase(finalPotentialWorld)).findFirst().orElse(null);
+
+            //TODO: Send error
+            if (world == null)
+                return true;
         }
 
         if (args.length <= 2) {
@@ -37,17 +62,19 @@ public class TeleportPositionCommand extends MessageUtils implements CommandExec
                 return true;
             }
 
-            Location location = this.getLocationFromString(cs, label, cmd.getName(), ((Player) cs), args[0], args[1], args[2]);
+            Location location = this.getLocationFromString(cs, label, cmd.getName(), ((Player) cs), world, args[0], args[1], args[2]);
 
-            if (!location.getWorld().getWorldBorder().isInside(location))  {
-                //TODO: Send error
+            //TODO: Send error
+            if (!location.getWorld().getWorldBorder().isInside(location))
                 return true;
-            }
 
             Location playerLocation = ((Player) cs).getLocation();
 
-            if (location.distance(playerLocation) <= 0)
-                return true;
+            if (location.getWorld().getName().equalsIgnoreCase(playerLocation.getWorld().getName()))
+                if (location.distance(playerLocation) <= 0)
+                    if (Math.max(playerLocation.getYaw(), location.getYaw()) - Math.min(playerLocation.getYaw(), location.getYaw()) <= 0)
+                        if (Math.max(playerLocation.getPitch(), location.getPitch()) - Math.min(playerLocation.getPitch(), location.getPitch()) <= 0)
+                            return true;
 
 
             ((Player) cs).teleport(location);
@@ -68,17 +95,19 @@ public class TeleportPositionCommand extends MessageUtils implements CommandExec
                 return true;
             }
 
-            Location location = this.getLocationFromString(cs, label, cmd.getName(), target, args[1], args[2], args[3]);
+            Location location = this.getLocationFromString(cs, label, cmd.getName(), target, world, args[1], args[2], args[3]);
 
-            if (!location.getWorld().getWorldBorder().isInside(location))  {
-                //TODO: Send error
+            //TODO: Send error
+            if (!location.getWorld().getWorldBorder().isInside(location))
                 return true;
-            }
 
             Location playerLocation = target.getLocation();
 
-            if (location.distance(playerLocation) <= 0)
-                return true;
+            if (location.getWorld().getName().equalsIgnoreCase(playerLocation.getWorld().getName()))
+                if (location.distance(playerLocation) <= 0)
+                    if (Math.max(playerLocation.getYaw(), location.getYaw()) - Math.min(playerLocation.getYaw(), location.getYaw()) <= 0)
+                        if (Math.max(playerLocation.getPitch(), location.getPitch()) - Math.min(playerLocation.getPitch(), location.getPitch()) <= 0)
+                            return true;
 
             target.getPlayer().teleport(location);
             cs.sendMessage(this.getPrefix() + this.getMessage("TPPos.Success.Others", label, cmd.getName(), cs, target).replace("<X>", String.format("%.2f", location.getX())).replace("<Y>", String.format("%.2f", location.getY())).replace("<Z>", String.format("%.2f", location.getZ())));
@@ -96,18 +125,20 @@ public class TeleportPositionCommand extends MessageUtils implements CommandExec
                 return true;
             }
 
-            Location location = this.getLocationFromString(cs, label, cmd.getName(), ((Player) cs), args[0], args[1], args[2], args[3], args[4]);
+            Location location = this.getLocationFromString(cs, label, cmd.getName(), ((Player) cs), world, args[0], args[1], args[2], args[3], args[4]);
 
 
-            if (!location.getWorld().getWorldBorder().isInside(location))  {
-                //TODO: Send error
+            //TODO: Send error
+            if (!location.getWorld().getWorldBorder().isInside(location))
                 return true;
-            }
 
             Location playerLocation = ((Player) cs).getLocation();
 
-            if (location.distance(playerLocation) <= 0)
-                return true;
+            if (location.getWorld().getName().equalsIgnoreCase(playerLocation.getWorld().getName()))
+                if (location.distance(playerLocation) <= 0)
+                    if (Math.max(playerLocation.getYaw(), location.getYaw()) - Math.min(playerLocation.getYaw(), location.getYaw()) <= 0)
+                        if (Math.max(playerLocation.getPitch(), location.getPitch()) - Math.min(playerLocation.getPitch(), location.getPitch()) <= 0)
+                            return true;
 
             ((Player) cs).teleport(location);
             cs.sendMessage(this.getPrefix() + this.getMessage("TPPos.Success.Self", label, cmd.getName(), cs, null).replace("<X>", String.format("%.2f", location.getX())).replace("<Y>", String.format("%.2f", location.getY())).replace("<Z>", String.format("%.2f", location.getZ())));
@@ -126,17 +157,19 @@ public class TeleportPositionCommand extends MessageUtils implements CommandExec
             return true;
         }
 
-        Location location = this.getLocationFromString(cs, label, cmd.getName(), target, args[1], args[2], args[3], args[4], args[5]);
+        Location location = this.getLocationFromString(cs, label, cmd.getName(), target, world, args[1], args[2], args[3], args[4], args[5]);
 
-        if (!location.getWorld().getWorldBorder().isInside(location))  {
-            //TODO: Send error
+        //TODO: Send error
+        if (!location.getWorld().getWorldBorder().isInside(location))
             return true;
-        }
 
         Location playerLocation = target.getLocation();
 
-        if (location.distance(playerLocation) <= 0)
-            return true;
+        if (location.getWorld().getName().equalsIgnoreCase(playerLocation.getWorld().getName()))
+            if (location.distance(playerLocation) <= 0)
+                if (Math.max(playerLocation.getYaw(), location.getYaw()) - Math.min(playerLocation.getYaw(), location.getYaw()) <= 0)
+                    if (Math.max(playerLocation.getPitch(), location.getPitch()) - Math.min(playerLocation.getPitch(), location.getPitch()) <= 0)
+                        return true;
 
         target.getPlayer().teleport(location);
         cs.sendMessage(this.getPrefix() + this.getMessage("TPPos.Success.Others", label, cmd.getName(), cs, null).replace("<X>", String.format("%.2f", location.getX())).replace("<Y>", String.format("%.2f", location.getY())).replace("<Z>", String.format("%.2f", location.getZ())));
@@ -144,7 +177,7 @@ public class TeleportPositionCommand extends MessageUtils implements CommandExec
     }
 
 
-    private Location getLocationFromString(CommandSender cs, String label, String command, Player target, String... locationData) {
+    private Location getLocationFromString(CommandSender cs, String label, String command, Player target, World world, String... locationData) {
         for (int i = 0; i < locationData.length; i++) {
             if (!locationData[i].startsWith("~"))
                 continue;
@@ -202,6 +235,9 @@ public class TeleportPositionCommand extends MessageUtils implements CommandExec
                 cs.sendMessage(this.getPrefix() + this.getMessage("TPPos.NotANumber", label, command, cs, target).replace("<NUMBER>", locationData[2]));
                 return target.getLocation();
             }
+
+            if (world != null)
+                location.setWorld(world);
             return location;
         }
 
@@ -243,6 +279,9 @@ public class TeleportPositionCommand extends MessageUtils implements CommandExec
                 cs.sendMessage(this.getPrefix() + this.getMessage("TPPos.NotANumber", label, command, cs, target).replace("<NUMBER>", locationData[4]));
                 return target.getLocation();
             }
+
+            if (world != null)
+                location.setWorld(world);
             return location;
         }
         return null;

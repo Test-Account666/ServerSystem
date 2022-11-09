@@ -91,7 +91,21 @@ public class EconomyManager_SQLite extends ManagerEconomy {
                 replace("<LAST>", last).
                 replace("<SEPARATOR>", this.separator).
                 replace("<THOUSAND>", this.getThousands());
-        return this.displayFormat.replace("<MONEY>", formattedMoney).replace("<CURRENCY>", money >= 2 ? this.currencyPlural : this.currencySingular);
+
+
+        boolean plural = false;
+
+        double moneyWorth = money;
+
+        if (money < 0)
+            moneyWorth = money * -1;
+
+        if (moneyWorth < 1)
+            plural = true;
+
+        if (money > 1)
+            plural = true;
+        return this.displayFormat.replace("<MONEY>", formattedMoney).replace("<CURRENCY>", plural ? this.currencyPlural : this.currencySingular);
     }
 
     @Override

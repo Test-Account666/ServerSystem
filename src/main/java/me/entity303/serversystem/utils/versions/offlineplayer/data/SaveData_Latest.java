@@ -30,6 +30,7 @@ public class SaveData_Latest extends MessageUtils implements SaveData {
     private static Method hasKeyOfTypeMethod = null;
     private static Method getCompoundMethod = null;
     private static Method setMethod = null;
+    private static Field worldNbtField = null;
 
     public SaveData_Latest(ServerSystem plugin) {
         super(plugin);
@@ -60,7 +61,20 @@ public class SaveData_Latest extends MessageUtils implements SaveData {
                 SaveData_Latest.playerList = (PlayerList) field.get(MinecraftServer.getServer());
             }
 
-            WorldNBTStorage worldNBTStorage = SaveData_Latest.playerList.r;
+            if (SaveData_Latest.worldNbtField == null) {
+                SaveData_Latest.worldNbtField = Arrays.stream(PlayerList.class.getDeclaredFields()).filter(field -> field.getType().getName().contains(WorldNBTStorage.class.getName())).findFirst().orElse(null);
+
+                if (SaveData_Latest.worldNbtField == null)
+                    try {
+                        throw new NoSuchFieldException("Couldn't find field 'worldNbt' in class " + PlayerList.class.getName());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                return;
+
+            }
+
+            WorldNBTStorage worldNBTStorage = (WorldNBTStorage) SaveData_Latest.worldNbtField.get(SaveData_Latest.playerList);
 
             if (SaveData_Latest.saveDataMethod == null) {
                 SaveData_Latest.saveDataMethod = Arrays.stream(Entity.class.getDeclaredMethods()).filter(method -> method.getReturnType().getName().equalsIgnoreCase(NBTTagCompound.class.getName())).findFirst().orElse(null);

@@ -66,6 +66,7 @@ Messages:
     OfflineEnderChest: "Syntax: &2/<LABEL> <OfflinePlayer>"
     OfflineInvsee: "Syntax: &2/<LABEL> <OfflinePlayer>"
     Seen: "Syntax: &2/<LABEL> <Player>"
+    Freeze: "Syntax: &2/<LABEL> <Player>"
   Normal:
     GetPos:
       Self: "You are at coords &6X:&2<X> &6Y:&2<Y> &6Z:&2<Z> &6World:&2<WORLD>"
@@ -481,6 +482,9 @@ Messages:
       TimeFormat: "dd.mm.yyyy HH:mm:ss"
       PlayerNeverPlayed: "&4<TARGET> &cnever played!"
       LastSeen: "&2<TARGET> &7was last seen: &2<TIME>"
+    Freeze:
+      Freeze: "You froze &2<TARGET>&7!"
+      UnFreeze: "You unfroze &2<TARGET>&7!"
   Misc:
     ServerFull: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4The Server is full!<BREAK>&cTo join anyway, you need the permission &4<PERMISSION>&c!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
     JoinMessage:

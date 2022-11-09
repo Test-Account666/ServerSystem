@@ -80,6 +80,25 @@ public class MuteManager extends ManagerMute {
     }
 
     @Override
+    public Mute addMute(Mute mute) {
+        UUID mutedUUID = UUID.fromString(mute.getMUTED_UUID());
+        String senderUUID = mute.getSENDER_UUID();
+        boolean shadow = mute.isSHADOW();
+        long unbanTime = mute.getUNMUTE_TIME();
+
+        if (this.isMuted(Bukkit.getOfflinePlayer(mutedUUID))) this.removeMute(mutedUUID);
+        this.cfg.set("Muted." + mutedUUID + ".Sender", senderUUID);
+        this.cfg.set("Muted." + mutedUUID + ".Reason", "No reason when shadow");
+        this.cfg.set("Muted." + mutedUUID + ".Shadow", shadow);
+        this.cfg.set("Muted." + mutedUUID + ".UnmuteTime", Long.toString(unbanTime));
+
+        this.save();
+
+        this.reload();
+        return mute;
+    }
+
+    @Override
     public String getDateFormat() {
         return this.dateFormat;
     }

@@ -219,3 +219,5 @@ Aliases:
     aliases: "No Aliases"
   seen:
     aliases: "No Aliases"
+  freeze:
+    aliases: "unfreeze"

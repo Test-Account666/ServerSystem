@@ -224,6 +224,26 @@ public class MuteManager_SQLite extends ManagerMute {
     }
 
     @Override
+    public Mute addMute(Mute mute) {
+        UUID mutedUUID = UUID.fromString(mute.getMUTED_UUID());
+        String senderUUID = mute.getSENDER_UUID();
+        String reason = mute.getREASON();
+
+        if (this.isMuted(Bukkit.getOfflinePlayer(mutedUUID))) this.removeMute(mutedUUID);
+        long unbanTime = mute.getUNMUTE_TIME();
+        if (unbanTime < 1) unbanTime = -1L;
+        try {
+            this.connection.createStatement().executeUpdate("INSERT INTO `MutedPlayers`" +
+                    " (BannedUUID, SenderUUID, Reason, Shadow, UnbanTime) VALUES ('"
+                    + mutedUUID + "','" + senderUUID + "',"
+                    + "'" + reason + "'" + "," + 1 + ",'" + unbanTime + "')");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return mute;
+    }
+
+    @Override
     public String getDateFormat() {
         return this.dateFormat;
     }

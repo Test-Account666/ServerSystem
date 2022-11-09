@@ -4,6 +4,7 @@ import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 import com.earth2me.essentials.Warps;
 import com.earth2me.essentials.commands.WarpNotFoundException;
+import me.entity303.serversystem.bansystem.Mute;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.MessageUtils;
 import net.ess3.api.InvalidWorldException;
@@ -59,6 +60,21 @@ public class EssentialsConversionCommand extends MessageUtils implements Command
                     if (offlineUser == null) {
                         this.plugin.error("User '" + userData.getName().split("\\.")[0] + "' is null?!");
                         continue;
+                    }
+
+                    if (offlineUser.isMuted()) {
+                        String reason = this.getMessageWithStringTarget("Mute.DefaultReason", label, cmd.getName(), cs, offlineUser.getName());
+
+                        if (offlineUser.hasMuteReason())
+                            reason = offlineUser.getMuteReason();
+
+                        long unMute = offlineUser.getMuteTimeout();
+
+                        String date = plugin.getMuteManager().convertLongToDate(unMute);
+
+                        Mute mute = new Mute(offlineUser.getUUID().toString(), this.getBanSystem("ConsoleName"), unMute, date, reason);
+
+                        plugin.getMuteManager().addMute(mute);
                     }
 
                     this.plugin.getEconomyManager().setMoney(offlineUser.getBase(), offlineUser.getMoney().doubleValue());

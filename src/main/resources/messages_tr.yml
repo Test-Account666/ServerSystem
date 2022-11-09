@@ -66,6 +66,7 @@ Messages:
     OfflineEnderChest: "Syntax: &2/<LABEL> <OfflinePlayer>"
     OfflineInvsee: "Syntax: &2/<LABEL> <OfflinePlayer>"
     Seen: "Syntax: &2/<LABEL> <Player>"
+    Freeze: "Syntax: &2/<LABEL> <Player>"
   Normal:
     GetPos:
       Self: "Shoma Dar Mokhtasat &6X:&2<X> &6Y:&2<Y> &6Z:&2<Z> &6World:&2<WORLD>"
@@ -472,6 +473,9 @@ Messages:
       TimeFormat: "dd.MM.yyyy HH:mm:ss"
       PlayerNeverPlayed: "&4<TARGET> &chiç oynamadı!"
       LastSeen: "&2<TARGET> &7son görülme tarihi: &2<TIME>"
+    Freeze:
+      Freeze: "&2<TARGET>&7'yi dondurdun!"
+      UnFreeze: "&2<TARGET>&7'yi çözdün!"
   Misc:
     ServerFull: "&8[]&7--------------------------------&8[]<BREAK>&2SUNUCU<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Sunucu dolu!<BREAK>&cYine de girmek istiyorsan, &4<PERMISSION> &ciznine ihtiyacın var!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SUNUCU<BREAK>&8[]&7--------------------------------&8[]"
     JoinMessage:

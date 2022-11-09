@@ -70,6 +70,7 @@ Messages:
     OfflineEnderChest: "Sintassi: &2/<LABEL> <OfflinePlayer>"
     OfflineInvsee: "Sintassi: &2/<LABEL> <OfflinePlayer>"
     Seen: "Sintassi: &2/<LABEL> <Giocatore>"
+    Freeze: "Sintassi: &2/<LABEL> <Giocatore>"
   Normal:
     GetPos:
       Self: "Sei alle seguenti coordinate: &6X:&2<X> &6Y:&2<Y> &6Z:&2<Z> &6Mondo:&2<WORLD>"
@@ -486,6 +487,9 @@ Messages:
       TimeFormat: "dd.MM.yyyy HH:mm:ss"
       PlayerNeverPlayed: "&4<TARGET> &cnon ha mai giocato!"
       LastSeen: "&2<TARGET> &7È stato visto l'ultima volta: &2<TIME>"
+    Freeze:
+      Freeze: "Hai congelato &2<TARGET>&7!"
+      UnFreeze: "Hai scongelato &2<TARGET>&7!"
   Misc:
     ServerFull: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4Il server è pieno!<BREAK>&cPer poter partecipare comunque, è necessaria l'autorizzazione &4<PERMISSION>&c!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
     JoinMessage:

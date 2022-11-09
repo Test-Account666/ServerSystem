@@ -22,6 +22,8 @@ public abstract class ManagerMute {
 
     public abstract Mute addMute(UUID mutedUUID, String senderUUID, String reason, boolean shadow, Long howLong, TimeUnit timeUnit);
 
+    public abstract Mute addMute(Mute mute);
+
     public abstract String getDateFormat();
 
     public abstract String convertLongToDate(Long l);

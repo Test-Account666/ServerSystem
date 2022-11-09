@@ -40,40 +40,6 @@ public class EconomyManager extends ManagerEconomy {
     }
 
     @Override
-    public String getMoneyFormat() {
-        return this.moneyFormat;
-    }
-
-    @Override
-    public String getSeparator() {
-        return this.separator;
-    }
-
-    @Override
-    public String getStartingMoney() {
-        return this.startingMoney;
-    }
-
-    @Override
-    public String getDisplayFormat() {
-        return this.displayFormat;
-    }
-
-    @Override
-    public String getCurrencySingular() {
-        return this.currencySingular;
-    }
-
-    @Override
-    public String getCurrencyPlural() {
-        return this.currencyPlural;
-    }
-
-    public String getThousand() {
-        return this.thousand;
-    }
-
-    @Override
     public String format(double money) {
         String moneyStr = String.format(Locale.US, "%1$,.2f", money);
 
@@ -96,7 +62,21 @@ public class EconomyManager extends ManagerEconomy {
                 replace("<LAST>", last).
                 replace("<SEPARATOR>", this.separator).
                 replace("<THOUSAND>", this.getThousands());
-        return this.displayFormat.replace("<MONEY>", formattedMoney).replace("<CURRENCY>", money >= 2 ? this.currencyPlural : this.currencySingular);
+
+        boolean plural = false;
+
+        double moneyWorth = money;
+
+        if (money < 0)
+            moneyWorth = money * -1;
+
+        if (moneyWorth < 1)
+            plural = true;
+
+        if (money > 1)
+            plural = true;
+
+        return this.displayFormat.replace("<MONEY>", formattedMoney).replace("<CURRENCY>", plural ? this.currencyPlural : this.currencySingular);
     }
 
     @Override
@@ -229,9 +209,6 @@ public class EconomyManager extends ManagerEconomy {
         }
     }
 
-
-    ///////////////////////////////////
-
     @Override
     public void deleteAccount(OfflinePlayer player) {
         if (player == null) return;
@@ -298,6 +275,9 @@ public class EconomyManager extends ManagerEconomy {
 
     }
 
+
+    ///////////////////////////////////
+
     public void save(Player player, String balance) {
         if (player == null) return;
         balance = String.format("%.2f", Double.parseDouble(balance)).replace(",", ".");
@@ -314,11 +294,6 @@ public class EconomyManager extends ManagerEconomy {
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public LinkedHashMap<OfflinePlayer, Double> getTopTen() {
-        return this.topTen;
     }
 
     @Override
@@ -351,5 +326,44 @@ public class EconomyManager extends ManagerEconomy {
         }
 
         this.topTen = topTenMoney;
+    }
+
+    @Override
+    public String getMoneyFormat() {
+        return this.moneyFormat;
+    }
+
+    @Override
+    public String getSeparator() {
+        return this.separator;
+    }
+
+    @Override
+    public String getStartingMoney() {
+        return this.startingMoney;
+    }
+
+    @Override
+    public String getDisplayFormat() {
+        return this.displayFormat;
+    }
+
+    @Override
+    public String getCurrencySingular() {
+        return this.currencySingular;
+    }
+
+    @Override
+    public String getCurrencyPlural() {
+        return this.currencyPlural;
+    }
+
+    public String getThousand() {
+        return this.thousand;
+    }
+
+    @Override
+    public LinkedHashMap<OfflinePlayer, Double> getTopTen() {
+        return this.topTen;
     }
 }

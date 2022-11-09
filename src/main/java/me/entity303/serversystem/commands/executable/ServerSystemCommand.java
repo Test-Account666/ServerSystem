@@ -60,7 +60,7 @@ public class ServerSystemCommand extends MessageUtils implements CommandExecutor
                 return true;
             }
             cs.sendMessage(this.getPrefix() + this.getMessage("ServerSystem.Update.Checking", label, cmd.getName(), cs, null));
-            Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+            Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> {
                 String version = this.plugin.getDescription().getVersion();
 
                 Document doc = null;
@@ -70,7 +70,7 @@ public class ServerSystemCommand extends MessageUtils implements CommandExecutor
                     cs.sendMessage(this.getPrefix() + ChatColor.RED + "Error while trying to check for updates!");
                     cs.sendMessage(this.getPrefix() + ChatColor.DARK_GREEN + "Please ignore this error. The update server is currently down. Please be patient");
                     this.plugin.error("Error while trying to check for updates!");
-                    e.printStackTrace();
+                    //e.printStackTrace();
                     this.plugin.log("Please ignore this error. The update server is currently down. Please be patient");
                 }
 

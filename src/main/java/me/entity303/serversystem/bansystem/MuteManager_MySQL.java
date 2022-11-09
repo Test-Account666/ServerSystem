@@ -149,6 +149,24 @@ public class MuteManager_MySQL extends ManagerMute {
     }
 
     @Override
+    public Mute addMute(Mute mute) {
+        UUID mutedUUID = UUID.fromString(mute.getMUTED_UUID());
+        String senderUUID = mute.getSENDER_UUID();
+        String reason = mute.getREASON();
+
+        if (this.isMuted(Bukkit.getOfflinePlayer(mutedUUID))) this.removeMute(mutedUUID);
+        long unbanTime = mute.getUNMUTE_TIME();
+        if (unbanTime < 1) unbanTime = -1L;
+
+        this.plugin.getMySQL().executeUpdate("INSERT INTO `MutedPlayers`" +
+                " (BannedUUID, SenderUUID, Reason, Shadow, UnbanTime) VALUES ('"
+                + mutedUUID + "','" + senderUUID + "',"
+                + "'" + reason + "'" + "," + 0 + ",'" + unbanTime + "')");
+
+        return mute;
+    }
+
+    @Override
     public String getDateFormat() {
         return this.dateFormat;
     }

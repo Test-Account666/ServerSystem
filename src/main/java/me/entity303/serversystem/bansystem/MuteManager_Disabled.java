@@ -35,6 +35,11 @@ public class MuteManager_Disabled extends ManagerMute {
     }
 
     @Override
+    public Mute addMute(Mute mute) {
+        return mute;
+    }
+
+    @Override
     public String getDateFormat() {
         return "";
     }

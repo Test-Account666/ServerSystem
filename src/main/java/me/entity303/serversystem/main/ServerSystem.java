@@ -403,7 +403,7 @@ public final class ServerSystem extends JavaPlugin {
                     doc = Jsoup.connect("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem").referrer("ServerSystem").timeout(30000).get();
                 } catch (IOException e) {
                     this.error("An error occurred while trying to connect to the updater!");
-                    e.printStackTrace();
+                    //e.printStackTrace();
                     this.log("Please ignore this error. The update server is currently down. Please be patient");
                 }
 

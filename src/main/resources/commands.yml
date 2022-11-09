@@ -107,3 +107,4 @@ offlineenderchest: true
 baltop: true
 unlimited: true
 seen: true
+freeze: true

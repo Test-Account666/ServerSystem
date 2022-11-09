@@ -282,3 +282,4 @@ Permissions:
   offlineinvsee: "server.offlineinvsee"
   offlineenderchest: "server.offlineenderchest"
   seen: "server.seen"
+  freeze: "server.freeze"
