@@ -79,7 +79,45 @@ fi
 fi
 fi
 echo Success!
+echo Checking for unzip...
+sleep 3
+if ! command -v unzip &> /dev/null
+then
+    echo "unzip could not be found"
+    if [ "$EUID" -ne 0 ]
+  then echo "Please run as root for automatic installation"
+  exit 1
 
+  else
+    if command -v apt &> /dev/null
+  then
+  apt install unzip
+  else
+  if command -v pacman &> /dev/null
+  then
+  pacman -S unzip
+  else
+  if command -v yum &> /dev/null
+  then
+  yum install unzip
+  else
+  if command -v dnf &> /dev/null
+  then
+  dnf install unzip
+  if command -v zypper &> /dev/null
+  then
+  zypper install unzip
+  else
+  echo "Could not automatically install unzip, please install manually"
+  exit 2
+fi
+fi
+fi
+fi
+fi
+fi
+fi
+echo Success!
 echo Starting ServerSystem project setup...
 sleep 3
 mkdir libs
@@ -94,6 +132,8 @@ mkdir 1.8.8
 cp BuildTools.jar 1.8.8/BuildTools.jar
 mkdir 1.9
 cp BuildTools.jar 1.9/BuildTools.jar
+mkdir 1.9.4
+cp BuildTools.jar 1.9.4/BuildTools.jar
 mkdir 1.10.2
 cp BuildTools.jar 1.10.2/BuildTools.jar
 mkdir 1.11.1
@@ -112,6 +152,8 @@ mkdir 1.16.1
 cp BuildTools.jar 1.16.1/BuildTools.jar
 mkdir 1.16.3
 cp BuildTools.jar 1.16.3/BuildTools.jar
+mkdir 1.16.5
+cp BuildTools.jar 1.16.5/BuildTools.jar
 mkdir 1.17
 cp BuildTools.jar 1.17/BuildTools.jar
 mkdir 1.18.2
@@ -140,12 +182,12 @@ sleep 3
 if [[ "$SYSTEM" == *"MINGW64_NT"* ]];
 then
 unzip -o $PATH_JAVA_17.zip
-PATH_JAVA_17="jdk-17.0.2"
+PATH_JAVA_17="jdk-17.0.5"
 export PATH="$(pwd)/$PATH_JAVA_17/bin:$PATH"
 export JAVA_HOME="$(pwd)/$PATH_JAVA_17/"
 else
 tar -xvf $PATH_JAVA_17.tar.gz
-PATH_JAVA_17="jdk-17.0.2"
+PATH_JAVA_17="jdk-17.0.5"
 fi
 
 echo Success!
@@ -161,7 +203,7 @@ then
 PATH_JAVA_16="openjdk-16.0.2_windows-x64_bin"
 curl -O https://download.java.net/java/GA/jdk16.0.2/d4a915d82b4c4fbb9bde534da945d746/7/GPL/$PATH_JAVA_16.zip
 else
-PATH_JAVA_16="openjdk-16.0.2_linux-x64_bin.tar"
+PATH_JAVA_16="openjdk-16.0.2_linux-x64_bin"
 curl -O https://download.java.net/java/GA/jdk16.0.2/d4a915d82b4c4fbb9bde534da945d746/7/GPL/$PATH_JAVA_16.tar.gz
 fi
 
@@ -223,6 +265,13 @@ sleep 3
 echo Success!
 cd ..
 cp 1.9/spigot-1.9.jar ../libs/spigot-1.9.jar
+cd 1.9.4
+echo Building Spigot 1.9.4...
+sleep 3
+./../java8/$PATH_JAVA_8/bin/java -jar BuildTools.jar --rev 1.9.4
+echo Success!
+cd ..
+cp 1.9.4/spigot-1.9.4.jar ../libs/spigot-1.9.4.jar
 cd 1.10.2
 echo Building Spigot 1.10.2...
 sleep 3
@@ -286,27 +335,34 @@ sleep 3
 echo Success!
 cd ..
 cp 1.16.3/spigot-1.16.3.jar ../libs/spigot-1.16.3.jar
+cd 1.16.5
+echo Building Spigot 1.16.5...
+sleep 3
+./../java8/$PATH_JAVA_8/bin/java -jar BuildTools.jar --rev 1.16.5
+echo Success!
+cd ..
+cp 1.16.5/spigot-1.16.5.jar ../libs/spigot-1.16.5.jar
 cd 1.17
 echo Building Spigot 1.17...
 sleep 3
-./../java16/$PATH_JAVA_16/bin/java -jar BuildTools.jar --rev 1.17
+./../java16/$PATH_JAVA_16/bin/java -jar BuildTools.jar --rev 1.17 --compile CRAFTBUKKIT,SPIGOT
 echo Success!
 cd ..
 cp 1.17/spigot-1.17.jar ../libs/spigot-1.17.jar
 cd 1.18.2
 echo Building Spigot 1.18.2...
 sleep 3
-./../java17/$PATH_JAVA_17/bin/java -jar BuildTools.jar --rev 1.18.2
+./../java17/$PATH_JAVA_17/bin/java -jar BuildTools.jar --rev 1.18.2 --compile CRAFTBUKKIT,SPIGOT
 echo Success!
 cd ..
-cp 1.18.2/spigot-1.18.2.jar ../libs/spigot-1.18.2.jar
+cp 1.18.2/Spigot/Spigot-Server/target/spigot-1.18.2-R0.1-SNAPSHOT.jar ../libs/spigot-1.18.2.jar
 cd 1.19
 echo Building Spigot 1.19...
 sleep 3
-./../java17/$PATH_JAVA_17/bin/java -jar BuildTools.jar --rev 1.19
+./../java17/$PATH_JAVA_17/bin/java -jar BuildTools.jar --rev 1.19 --compile CRAFTBUKKIT,SPIGOT
 echo Success!
 cd ..
-cp 1.19/spigot-1.19.jar ../libs/spigot-1.19.jar
+cp 1.19/Spigot/Spigot-Server/target/spigot-1.19-R0.1-SNAPSHOT.jar ../libs/spigot-1.19.jar
 
 cd ..
 echo Spigot dependencies complete!
@@ -332,8 +388,20 @@ mkdir PlotSquaredv6
 cd PlotSquaredv6
 git clone https://github.com/IntellectualSites/PlotSquared.git
 cd PlotSquared
-./gradlew build
-cp build/libs/PlotSquared-Bukkit* ../../../libs/PlotSquared-Bukkit-6.0.6-SNAPSHOT.jar
+./gradlew shadowJar
+cp Bukkit/build/libs/PlotSquared-Bukkit*-SNAPSHOT.jar ../../../libs/PlotSquared-Bukkit-6.0.6-SNAPSHOT.jar
+echo Success!
+sleep 3
+echo Downloading LuckPerms...
+sleep 3
+cd ..
+cd ..
+mkdir LuckPerms
+cd LuckPerms
+curl -o luckperms.zip -L https://ci.lucko.me/job/LuckPerms/lastSuccessfulBuild/artifact/bukkit/loader/build/libs/*/*zip*/libs.zip
+unzip luckperms.zip
+cp LuckPerms-Bukkit* ../../libs/LuckPerms-Bukkit-5.4.54.jar
+cd ..
 echo Success!
 sleep 3
 echo Finished project setup!
