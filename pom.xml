@@ -65,12 +65,15 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
-                    <goals><goal>exec</goal></goals>
-                </execution></executions>
+                        <phase>install<!--package--></phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <executable>java</executable>
                     <basedir>${project.basedir}</basedir>
@@ -113,12 +116,12 @@
         <repository>
             <id>dakani</id>
             <name>Dakani Nexus Repo</name>
-            <url>http://repo.dakanilabs.com/content/repositories/public</url>
+            <url>https://repo.dakanilabs.com/content/repositories/public</url>
         </repository>
 
         <repository>
             <id>ess-repo</id>
-            <url>http://repo.ess3.net/content/groups/essentials</url>
+            <url>https://repo.ess3.net/content/groups/essentials</url>
         </repository>
 
         <repository>
@@ -164,7 +167,7 @@
             <artifactId>luckperms</artifactId>
             <version>5.3.21</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/LuckPerms-Bukkit-5.3.21.jar</systemPath>
+            <systemPath>${project.basedir}/libs/LuckPerms-Bukkit-5.4.54.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -235,7 +238,7 @@
             <artifactId>spigot-1.8.8</artifactId>
             <version>1.8.8</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar</systemPath>
+            <systemPath>${project.basedir}/libs/spigot-1.8.8.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -243,7 +246,7 @@
             <artifactId>spigot-1.9</artifactId>
             <version>1.9</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/spigot-1.9-R0.1-SNAPSHOT-latest.jar</systemPath>
+            <systemPath>${project.basedir}/libs/spigot-1.9.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -251,7 +254,7 @@
             <artifactId>spigot-1.9.4</artifactId>
             <version>1.9.4</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/spigot-1.9.4-R0.1-SNAPSHOT-latest.jar</systemPath>
+            <systemPath>${project.basedir}/libs/spigot-1.9.4.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -259,7 +262,7 @@
             <artifactId>spigot-1.10</artifactId>
             <version>1.10</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/spigot-1.10.2-R0.1-SNAPSHOT-latest.jar</systemPath>
+            <systemPath>${project.basedir}/libs/spigot-1.10.2.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -305,14 +308,14 @@
             <artifactId>spigot-1.18.2</artifactId>
             <version>1.18.2</version>
             <scope>system</scope>
-            <systemPath>${user.home}/BuildTools/Spigot/Spigot-Server/target/spigot-1.18.2-R0.1-SNAPSHOT.jar</systemPath>
+            <systemPath>${project.basedir}/libs/spigot-1.18.2.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>spigot</groupId>
             <artifactId>spigot-1.19</artifactId>
             <version>1.19</version>
             <scope>system</scope>
-            <systemPath>${user.home}/Spigot-1.19/Spigot/Spigot-Server/target/spigot-1.19-R0.1-SNAPSHOT.jar</systemPath>
+            <systemPath>${project.basedir}/libs/spigot-1.19.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -328,6 +331,12 @@
             <artifactId>EssentialsX</artifactId>
             <version>2.19.0</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bstats</groupId>
+                    <artifactId>bstats-bukkit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
@@ -371,14 +380,16 @@
 
 
         <!-- PlotSquared Core API -->
+        <!--
         <dependency>
             <groupId>com.plotsquared</groupId>
             <artifactId>PlotSquared-Core</artifactId>
             <version>5.13.3</version>
             <scope>provided</scope>
-        </dependency>
+        </dependency>-->
 
         <!-- PlotSquared Bukkit API -->
+        <!--
         <dependency>
             <groupId>com.plotsquared</groupId>
             <artifactId>PlotSquared-Bukkit</artifactId>
@@ -390,6 +401,6 @@
                 </exclusion>
             </exclusions>
             <scope>provided</scope>
-        </dependency>
+        </dependency>-->
     </dependencies>
 </project>
