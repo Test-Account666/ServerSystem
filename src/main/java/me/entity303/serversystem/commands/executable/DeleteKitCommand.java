@@ -25,7 +25,7 @@ public class DeleteKitCommand extends MessageUtils implements CommandExecutor {
         }
 
         if (!this.plugin.getKitsManager().doesKitExist(args[0])) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("DeleteKit.DoesntExist", label, cmd.getName(), cs, null));
+            cs.sendMessage(this.getPrefix() + this.getMessage("DeleteKit.DoesntExist", label, cmd.getName(), cs, null).replace("<KIT>", args[0].toUpperCase()));
             return true;
         }
 

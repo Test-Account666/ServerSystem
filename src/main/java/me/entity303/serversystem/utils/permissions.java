@@ -15,7 +15,7 @@ public class permissions {
     public permissions(ServerSystem plugin) {
         this.plugin = plugin;
         this.permFile = new File("plugins//ServerSystem", "permissions.yml");
-        this.cfg = DefaultConfigReader.loadConfiguration(this.permFile);
+        this.cfg = DefaultConfigReader.loadConfiguration(this.permFile, this.plugin);
     }
 
     public boolean hasPerm(CommandSender cs, String action) {

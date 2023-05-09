@@ -2,6 +2,7 @@ package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
+import me.entity303.serversystem.utils.Teleport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -79,7 +80,9 @@ public class HomeCommand implements CommandExecutor {
                 OfflinePlayer player = ((OfflinePlayer) cs).getPlayer();
                 if (player.isOnline()) {
                     Location location = (Location) cfg.get("Homes." + args[0].toUpperCase());
-                    player.getPlayer().teleport(location);
+
+                    Teleport.teleport(player.getPlayer(), location);
+
                     cs.sendMessage(HomeCommand.this.plugin.getMessages().getPrefix() + ChatColor.translateAlternateColorCodes('&', HomeCommand.this.plugin.getMessages().getCfg().getString("Messages.Misc.Teleportation.Success")));
                     HomeCommand.this.plugin.getTeleportMap().remove(player);
                 }
@@ -88,7 +91,9 @@ public class HomeCommand implements CommandExecutor {
             return true;
         }
         Location location = (Location) cfg.get("Homes." + args[0].toUpperCase());
-        ((Player) cs).teleport(location);
+
+        Teleport.teleport((Player) cs, location);
+
         cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, null, "Home.InstantTeleporting").replace("<HOME>", args[0].toUpperCase()));
         return true;
     }

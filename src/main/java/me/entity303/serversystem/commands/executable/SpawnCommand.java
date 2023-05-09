@@ -3,6 +3,7 @@ package me.entity303.serversystem.commands.executable;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
 import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.Teleport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -46,14 +47,18 @@ public class SpawnCommand extends MessageUtils implements CommandExecutor {
         location.setPitch((float) cfg.getDouble("Spawn.Pitch"));
         location.setWorld(Bukkit.getWorld(cfg.getString("Spawn.World")));
         if (!this.plugin.getConfigReader().getBoolean("teleportation.spawn.enabledelay") || this.isAllowed(cs, "spawn.bypassdelay", true)) {
-            ((Player) cs).teleport(location);
+
+            Teleport.teleport((Player) cs, location);
+
             cs.sendMessage(this.getPrefix() + this.getMessage("Spawn.InstantTeleporting", label, cmd.getName(), cs, null));
             return true;
         }
         this.plugin.getTeleportMap().put(((Player) cs), Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
             OfflinePlayer player = ((OfflinePlayer) cs).getPlayer();
             if (player.isOnline()) {
-                player.getPlayer().teleport(location);
+
+                Teleport.teleport(player.getPlayer(), location);
+
                 cs.sendMessage(SpawnCommand.this.plugin.getMessages().getPrefix() + ChatColor.translateAlternateColorCodes('&', SpawnCommand.this.plugin.getMessages().getCfg().getString("Messages.Misc.Teleportation.Success")));
                 SpawnCommand.this.plugin.getTeleportMap().remove(player);
             }

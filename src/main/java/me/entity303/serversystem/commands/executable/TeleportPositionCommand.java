@@ -2,6 +2,7 @@ package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.Teleport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -76,8 +77,8 @@ public class TeleportPositionCommand extends MessageUtils implements CommandExec
                         if (Math.max(playerLocation.getPitch(), location.getPitch()) - Math.min(playerLocation.getPitch(), location.getPitch()) <= 0)
                             return true;
 
+            Teleport.teleport((Player) cs, location);
 
-            ((Player) cs).teleport(location);
             cs.sendMessage(this.getPrefix() + this.getMessage("TPPos.Success.Self", label, cmd.getName(), cs, null).replace("<X>", String.format("%.2f", location.getX())).replace("<Y>", String.format("%.2f", location.getY())).replace("<Z>", String.format("%.2f", location.getZ())));
             return true;
         }
@@ -109,7 +110,8 @@ public class TeleportPositionCommand extends MessageUtils implements CommandExec
                         if (Math.max(playerLocation.getPitch(), location.getPitch()) - Math.min(playerLocation.getPitch(), location.getPitch()) <= 0)
                             return true;
 
-            target.getPlayer().teleport(location);
+            Teleport.teleport(target.getPlayer(), location);
+
             cs.sendMessage(this.getPrefix() + this.getMessage("TPPos.Success.Others", label, cmd.getName(), cs, target).replace("<X>", String.format("%.2f", location.getX())).replace("<Y>", String.format("%.2f", location.getY())).replace("<Z>", String.format("%.2f", location.getZ())));
             return true;
         }
@@ -140,7 +142,8 @@ public class TeleportPositionCommand extends MessageUtils implements CommandExec
                         if (Math.max(playerLocation.getPitch(), location.getPitch()) - Math.min(playerLocation.getPitch(), location.getPitch()) <= 0)
                             return true;
 
-            ((Player) cs).teleport(location);
+            Teleport.teleport((Player) cs, location);
+
             cs.sendMessage(this.getPrefix() + this.getMessage("TPPos.Success.Self", label, cmd.getName(), cs, null).replace("<X>", String.format("%.2f", location.getX())).replace("<Y>", String.format("%.2f", location.getY())).replace("<Z>", String.format("%.2f", location.getZ())));
             return true;
         }
@@ -171,7 +174,8 @@ public class TeleportPositionCommand extends MessageUtils implements CommandExec
                     if (Math.max(playerLocation.getPitch(), location.getPitch()) - Math.min(playerLocation.getPitch(), location.getPitch()) <= 0)
                         return true;
 
-        target.getPlayer().teleport(location);
+        Teleport.teleport(target.getPlayer(), location);
+
         cs.sendMessage(this.getPrefix() + this.getMessage("TPPos.Success.Others", label, cmd.getName(), cs, null).replace("<X>", String.format("%.2f", location.getX())).replace("<Y>", String.format("%.2f", location.getY())).replace("<Z>", String.format("%.2f", location.getZ())));
         return true;
     }

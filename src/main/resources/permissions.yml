@@ -68,7 +68,7 @@ Permissions:
     others: "server.clearenderchest.others"
   clearinventory:
     self:
-      required: false
+      required: true
       permission: "server.clearinventory.self"
     others: "server.clearinventory.others"
   commandspy: "server.commandspy"

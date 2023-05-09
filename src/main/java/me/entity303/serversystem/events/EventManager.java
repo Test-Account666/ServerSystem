@@ -5,7 +5,7 @@ import me.entity303.serversystem.listener.chat.ChatListenerWithPrefix;
 import me.entity303.serversystem.listener.chat.ChatListenerWithoutPrefix;
 import me.entity303.serversystem.listener.command.CommandListener;
 import me.entity303.serversystem.listener.join.JoinListener;
-import me.entity303.serversystem.listener.move.FreezeListener;
+import me.entity303.serversystem.listener.move.freeze.FreezeListener;
 import me.entity303.serversystem.listener.move.MoveListener;
 import me.entity303.serversystem.listener.vanish.*;
 import me.entity303.serversystem.main.ServerSystem;

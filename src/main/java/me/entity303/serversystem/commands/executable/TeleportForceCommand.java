@@ -4,6 +4,7 @@ package me.entity303.serversystem.commands.executable;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
 import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.Teleport;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -40,7 +41,9 @@ public class TeleportForceCommand extends MessageUtils implements CommandExecuto
                 cs.sendMessage(this.getPrefix() + this.getNoTarget(args[0]));
                 return true;
             }
-            ((Player) cs).teleport(target);
+
+            Teleport.teleport((Player) cs, target);
+
             cs.sendMessage(this.getPrefix() + this.getMessage("Tpo.Self", label, cmd.getName(), cs, target));
             return true;
         }
@@ -58,7 +61,9 @@ public class TeleportForceCommand extends MessageUtils implements CommandExecuto
             cs.sendMessage(this.getPrefix() + this.getNoTarget(args[1]));
             return true;
         }
-        target1.teleport(target2);
+
+        Teleport.teleport(target1, target2);
+
         cs.sendMessage(this.getPrefix() + this.getMessage("Tpo.Others", label, cmd.getName(), cs, target1).replace("<TARGET2>", target2.getName()));
         return true;
     }

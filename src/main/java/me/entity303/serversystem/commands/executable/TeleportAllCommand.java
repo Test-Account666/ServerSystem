@@ -2,6 +2,7 @@ package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.Teleport;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -25,17 +26,18 @@ public class TeleportAllCommand extends MessageUtils implements CommandExecutor 
                 cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("tpall.self")));
                 return true;
             }
-            Bukkit.getOnlinePlayers().forEach(all -> all.teleport(((Player) cs)));
+
+            Bukkit.getOnlinePlayers().forEach(all -> Teleport.teleport(all, (Player) cs));
             cs.sendMessage(this.getPrefix() + this.getMessage("TpAll.Self", label, cmd.getName(), cs, null));
         } else if (this.isAllowed(cs, "tpall.others")) {
             Player target = this.getPlayer(cs, args[0]);
             if (target != null) {
-                Bukkit.getOnlinePlayers().forEach(all -> all.teleport(target));
+                Bukkit.getOnlinePlayers().forEach(all -> Teleport.teleport(all, target));
                 target.sendMessage(this.getPrefix() + this.getMessage("TpAll.Self", label, cmd.getName(), cs, target));
                 cs.sendMessage(this.getPrefix() + this.getMessage("TpAll.Others", label, cmd.getName(), cs, target));
             } else cs.sendMessage(this.getPrefix() + this.getNoTarget(args[0]));
         } else if (cs instanceof Player) if (this.isAllowed(cs, "tpall.self")) {
-            Bukkit.getOnlinePlayers().forEach(all -> all.teleport(((Player) cs)));
+            Bukkit.getOnlinePlayers().forEach(all -> Teleport.teleport(all, (Player) cs));
             cs.sendMessage(this.getPrefix() + this.getMessage("TpAll.Self", label, cmd.getName(), cs, null));
         } else cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("tpall.others")));
         else

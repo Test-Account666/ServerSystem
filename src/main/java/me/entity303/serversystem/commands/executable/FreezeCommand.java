@@ -3,24 +3,29 @@ package me.entity303.serversystem.commands.executable;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.MessageUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Objects;
 
 public class FreezeCommand extends MessageUtils implements CommandExecutor {
+    private Object namespacedKey;
     private boolean persistent = false;
     private boolean checked = false;
-    private final NamespacedKey namespacedKey;
 
     public FreezeCommand(ServerSystem plugin) {
         super(plugin);
-        this.namespacedKey = new NamespacedKey(plugin, "freeze");
+        try {
+            Class clazz = Class.forName("org.bukkit.NamespacedKey");
+            this.namespacedKey = clazz.getConstructor(Plugin.class, String.class).newInstance(plugin, "freeze");
+        } catch (Throwable ignored) {
+            this.namespacedKey = null;
+        }
     }
 
     @Override
@@ -68,10 +73,10 @@ public class FreezeCommand extends MessageUtils implements CommandExecutor {
         if (this.persistent) {
             org.bukkit.persistence.PersistentDataHolder dataHolder = (org.bukkit.persistence.PersistentDataHolder) player;
 
-            if (!dataHolder.getPersistentDataContainer().has(this.namespacedKey, org.bukkit.persistence.PersistentDataType.BYTE))
+            if (!dataHolder.getPersistentDataContainer().has((org.bukkit.NamespacedKey) this.namespacedKey, org.bukkit.persistence.PersistentDataType.BYTE))
                 return false;
 
-            byte frozen = dataHolder.getPersistentDataContainer().get(this.namespacedKey, org.bukkit.persistence.PersistentDataType.BYTE);
+            byte frozen = dataHolder.getPersistentDataContainer().get((org.bukkit.NamespacedKey) this.namespacedKey, org.bukkit.persistence.PersistentDataType.BYTE);
             return frozen >= 1;
         }
 
@@ -85,7 +90,7 @@ public class FreezeCommand extends MessageUtils implements CommandExecutor {
         if (this.persistent) {
             org.bukkit.persistence.PersistentDataHolder dataHolder = (org.bukkit.persistence.PersistentDataHolder) player;
 
-            dataHolder.getPersistentDataContainer().set(this.namespacedKey, org.bukkit.persistence.PersistentDataType.BYTE, (byte) 1);
+            dataHolder.getPersistentDataContainer().set((org.bukkit.NamespacedKey) this.namespacedKey, org.bukkit.persistence.PersistentDataType.BYTE, (byte) 1);
             return;
         }
 
@@ -97,7 +102,7 @@ public class FreezeCommand extends MessageUtils implements CommandExecutor {
         if (this.persistent) {
             org.bukkit.persistence.PersistentDataHolder dataHolder = (org.bukkit.persistence.PersistentDataHolder) player;
 
-            dataHolder.getPersistentDataContainer().set(this.namespacedKey, org.bukkit.persistence.PersistentDataType.BYTE, (byte) 0);
+            dataHolder.getPersistentDataContainer().set((org.bukkit.NamespacedKey) this.namespacedKey, org.bukkit.persistence.PersistentDataType.BYTE, (byte) 0);
             return;
         }
 

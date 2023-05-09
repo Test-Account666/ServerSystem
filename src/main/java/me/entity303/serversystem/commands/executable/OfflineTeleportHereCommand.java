@@ -3,6 +3,7 @@ package me.entity303.serversystem.commands.executable;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.DummyCommandSender;
 import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.Teleport;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -47,7 +48,9 @@ public class OfflineTeleportHereCommand extends MessageUtils implements TabExecu
 
         if (offlineTarget.isOnline()) {
             if (this.getPlayer(cs, offlineTarget.getUniqueId()) == null) {
-                offlineTarget.getPlayer().teleport(((Player) cs));
+
+                Teleport.teleport(offlineTarget.getPlayer(), (Player) cs);
+
                 cs.sendMessage(this.getPrefix() + this.getMessage("OfflineTeleportHere.Success", label, cmd.getName(), cs, offlineTarget.getPlayer()));
                 return true;
             }

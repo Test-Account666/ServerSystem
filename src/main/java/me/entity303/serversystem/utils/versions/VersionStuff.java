@@ -226,10 +226,10 @@ public class VersionStuff {
             if (this.playerConnectionField == null) {
                 this.playerConnectionField = Arrays.stream(entityPlayer.getClass().getDeclaredFields()).filter(field -> field.getType().getName().toLowerCase(Locale.ROOT).contains("playerconnection")).findFirst().orElse(null);
 
-                if (playerConnectionField == null) {
-                    serverSystem.error("Couldn't find PlayerConnection field! (Modded environment?)");
-                    Arrays.stream(entityPlayer.getClass().getDeclaredFields()).forEach(field -> serverSystem.log(field.getType()+ " -> " + field.getName()));
-                    serverSystem.warn("Please forward this to the developer of ServerSystem!");
+                if (this.playerConnectionField == null) {
+                    this.serverSystem.error("Couldn't find PlayerConnection field! (Modded environment?)");
+                    Arrays.stream(entityPlayer.getClass().getDeclaredFields()).forEach(field -> this.serverSystem.log(field.getType() + " -> " + field.getName()));
+                    this.serverSystem.warn("Please forward this to the developer of ServerSystem!");
                     return;
                 }
 
@@ -245,7 +245,7 @@ public class VersionStuff {
                     Field field = Arrays.stream(playerConnection.getClass().getDeclaredFields()).filter(field1 -> field1.getType().getName().toLowerCase(Locale.ROOT).contains("networkdispatcher") || field1.getType().getName().toLowerCase(Locale.ROOT).contains("networkmanager")).findFirst().orElse(null);
 
                     if (field == null) {
-                        serverSystem.error("Couldn't find NetworkManager field!");
+                        this.serverSystem.error("Couldn't find NetworkManager field!");
                         return;
                     }
 
@@ -327,7 +327,8 @@ public class VersionStuff {
 
                                 if (VersionStuff.this.getHandleWorldMethod == null) try {
                                     VersionStuff.this.getHandleWorldMethod = Class.forName("org.bukkit.craftbukkit." + VersionStuff.this.serverSystem.getVersionManager().getNMSVersion() + ".CraftWorld").getDeclaredMethod("getHandle");
-                                } catch (ClassNotFoundException | NoClassDefFoundError | NoSuchMethodException | NoSuchMethodError ignored) {
+                                } catch (ClassNotFoundException | NoClassDefFoundError | NoSuchMethodException |
+                                         NoSuchMethodError ignored) {
                                     VersionStuff.this.serverSystem.error("Could not find method 'getHandle' in class 'CraftWorld'!");
                                     super.write(ctx, msg, promise);
                                     return;
@@ -337,7 +338,8 @@ public class VersionStuff {
 
                                 if (VersionStuff.this.getEntityMethod == null) try {
                                     VersionStuff.this.getEntityMethod = Class.forName("net.minecraft.server." + VersionStuff.this.serverSystem.getVersionManager().getNMSVersion() + ".World").getDeclaredMethod("getEntity", int.class);
-                                } catch (ClassNotFoundException | NoClassDefFoundError | NoSuchMethodException | NoSuchMethodError e) {
+                                } catch (ClassNotFoundException | NoClassDefFoundError | NoSuchMethodException |
+                                         NoSuchMethodError e) {
                                     if (e instanceof NoSuchMethodException || e instanceof NoSuchMethodError)
                                         VersionStuff.this.getEntityMethod = Arrays.stream(Class.forName("net.minecraft.server." + VersionStuff.this.serverSystem.getVersionManager().getNMSVersion() + ".World").getDeclaredMethods()).
                                                 filter(method -> method.getReturnType().getName().toLowerCase(Locale.ROOT).contains("entity")).
@@ -356,7 +358,8 @@ public class VersionStuff {
                                                 super.write(ctx, msg, promise);
                                                 return;
                                             }
-                                        } catch (ClassNotFoundException | NoClassDefFoundError | NoSuchMethodError ignored1) {
+                                        } catch (ClassNotFoundException | NoClassDefFoundError |
+                                                 NoSuchMethodError ignored1) {
                                             VersionStuff.this.serverSystem.error("Could not find method 'getEntity' in class 'World'!");
                                             super.write(ctx, msg, promise);
                                             return;
@@ -416,14 +419,16 @@ public class VersionStuff {
 
                     if (VersionStuff.this.getHandleWorldMethod == null) try {
                         VersionStuff.this.getHandleWorldMethod = Class.forName("org.bukkit.craftbukkit." + VersionStuff.this.serverSystem.getVersionManager().getNMSVersion() + ".CraftWorld").getDeclaredMethod("getHandle");
-                    } catch (ClassNotFoundException | NoClassDefFoundError | NoSuchMethodException | NoSuchMethodError ignored) {
+                    } catch (ClassNotFoundException | NoClassDefFoundError | NoSuchMethodException |
+                             NoSuchMethodError ignored) {
                         VersionStuff.this.serverSystem.error("Could not find method 'getHandle' in class 'CraftWorld'!");
                         return;
                     }
 
                     if (VersionStuff.this.getEntityMethod == null) try {
                         VersionStuff.this.getEntityMethod = Class.forName("net.minecraft.server." + VersionStuff.this.serverSystem.getVersionManager().getNMSVersion() + ".World").getDeclaredMethod("getEntity", int.class);
-                    } catch (ClassNotFoundException | NoClassDefFoundError | NoSuchMethodException | NoSuchMethodError e) {
+                    } catch (ClassNotFoundException | NoClassDefFoundError | NoSuchMethodException |
+                             NoSuchMethodError e) {
                         if (e instanceof NoSuchMethodException || e instanceof NoSuchMethodError)
                             VersionStuff.this.getEntityMethod = Arrays.stream(Class.forName("net.minecraft.server." + VersionStuff.this.serverSystem.getVersionManager().getNMSVersion() + ".World").getDeclaredMethods()).
                                     filter(method -> method.getReturnType().getName().toLowerCase(Locale.ROOT).contains("entity")).

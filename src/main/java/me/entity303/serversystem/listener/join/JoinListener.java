@@ -3,10 +3,12 @@ package me.entity303.serversystem.listener.join;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
 import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.Teleport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,6 +18,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -93,7 +96,8 @@ public class JoinListener extends MessageUtils implements Listener {
                         location.setYaw((float) cfg.getDouble("Spawn.Yaw"));
                         location.setPitch((float) cfg.getDouble("Spawn.Pitch"));
                         location.setWorld(Bukkit.getWorld(cfg.getString("Spawn.World")));
-                        e.getPlayer().teleport(location);
+
+                        Teleport.teleport(e.getPlayer(), location);
                     }
                 }, 20 * 3L);
         } else if (this.plugin.getConfigReader().getBoolean("spawn.tp")) {
@@ -114,7 +118,19 @@ public class JoinListener extends MessageUtils implements Listener {
                 location.setYaw((float) cfg.getDouble("Spawn.Yaw"));
                 location.setPitch((float) cfg.getDouble("Spawn.Pitch"));
                 location.setWorld(Bukkit.getWorld(cfg.getString("Spawn.World")));
+
+                LinkedList<Entity> passengers = new LinkedList<>();
+                for (Entity passenger : e.getPlayer().getPassengers()) {
+                    passenger.eject();
+                    passengers.add(passenger);
+                }
+
                 e.getPlayer().teleport(location);
+
+                Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+for (Entity passenger : passengers)
+                    e.getPlayer().addPassenger(passenger);
+}, 10L);
             }
         }
 
@@ -138,7 +154,8 @@ public class JoinListener extends MessageUtils implements Listener {
                 p.showPlayer(player);
             }
             if (this.plugin.getVanish().isVanish(player)) this.plugin.getVanish().setVanish(true, player);
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException e) {
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException |
+                 InvocationTargetException | NoSuchFieldException e) {
             e.printStackTrace();
         }
     }
@@ -161,7 +178,8 @@ public class JoinListener extends MessageUtils implements Listener {
                 p.showPlayer(player);
             }
             if (this.plugin.getVanish().isVanish(player)) this.plugin.getVanish().setVanish(true, player);
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException e) {
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException |
+                 InvocationTargetException | NoSuchFieldException e) {
             e.printStackTrace();
         }
     }

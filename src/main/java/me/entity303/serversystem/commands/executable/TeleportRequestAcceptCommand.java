@@ -2,6 +2,7 @@ package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
+import me.entity303.serversystem.utils.Teleport;
 import me.entity303.serversystem.utils.TpaData;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -52,7 +53,9 @@ public class TeleportRequestAcceptCommand implements CommandExecutor {
                 Player player = tpaData.getSender().getPlayer();
                 cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.Sender"));
                 tpaData.getSender().getPlayer().sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.Target"));
-                player.teleport(((Player) cs));
+
+                Teleport.teleport(player, (Player) cs);
+
                 player.sendMessage(this.plugin.getMessages().getPrefix() + ChatColor.translateAlternateColorCodes('&', TeleportRequestAcceptCommand.this.plugin.getMessages().getCfg().getString("Messages.Misc.Teleportation.Success")));
                 this.plugin.getTpaDataMap().remove(cs);
                 return true;
@@ -60,7 +63,9 @@ public class TeleportRequestAcceptCommand implements CommandExecutor {
             this.plugin.getTeleportMap().put(tpaData.getSender().getPlayer(), Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
                 OfflinePlayer player = tpaData.getSender().getPlayer();
                 if (player.isOnline() && ((OfflinePlayer) cs).isOnline()) {
-                    player.getPlayer().teleport(((Player) cs));
+
+                    Teleport.teleport(player.getPlayer(), (Player) cs);
+
                     player.getPlayer().sendMessage(TeleportRequestAcceptCommand.this.plugin.getMessages().getPrefix() + ChatColor.translateAlternateColorCodes('&', TeleportRequestAcceptCommand.this.plugin.getMessages().getCfg().getString("Messages.Misc.Teleportation.Success")));
                     TeleportRequestAcceptCommand.this.plugin.getTeleportMap().remove(player);
                     TeleportRequestAcceptCommand.this.plugin.getTpaDataMap().remove(cs);
@@ -74,7 +79,9 @@ public class TeleportRequestAcceptCommand implements CommandExecutor {
                 cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.Sender"));
                 tpaData.getSender().getPlayer().sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.Target"));
                 Player player = ((Player) cs);
-                player.getPlayer().teleport(tpaData.getSender().getPlayer());
+
+                Teleport.teleport(player.getPlayer(), tpaData.getSender().getPlayer());
+
                 player.getPlayer().sendMessage(this.plugin.getMessages().getPrefix() + ChatColor.translateAlternateColorCodes('&', TeleportRequestAcceptCommand.this.plugin.getMessages().getCfg().getString("Messages.Misc.Teleportation.Success")));
                 this.plugin.getTpaDataMap().remove(cs);
                 return true;
@@ -82,7 +89,9 @@ public class TeleportRequestAcceptCommand implements CommandExecutor {
             this.plugin.getTeleportMap().put(((Player) cs), Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
                 OfflinePlayer player = ((OfflinePlayer) cs).getPlayer();
                 if (player.isOnline() && tpaData.getSender().isOnline()) {
-                    player.getPlayer().teleport(tpaData.getSender().getPlayer());
+
+                    Teleport.teleport(player.getPlayer(), tpaData.getSender().getPlayer());
+
                     player.getPlayer().sendMessage(TeleportRequestAcceptCommand.this.plugin.getMessages().getPrefix() + ChatColor.translateAlternateColorCodes('&', TeleportRequestAcceptCommand.this.plugin.getMessages().getCfg().getString("Messages.Misc.Teleportation.Success")));
                     TeleportRequestAcceptCommand.this.plugin.getTeleportMap().remove(player);
                     TeleportRequestAcceptCommand.this.plugin.getTpaDataMap().remove(cs);

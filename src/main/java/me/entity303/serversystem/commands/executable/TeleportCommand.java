@@ -4,6 +4,7 @@ package me.entity303.serversystem.commands.executable;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
 import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.Teleport;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -43,7 +44,9 @@ public class TeleportCommand extends MessageUtils implements CommandExecutor {
                 cs.sendMessage(this.getPrefix() + this.getMessage("Tp.NoTeleportations", label, cmd.getName(), cs, target));
                 return true;
             }
-            ((Player) cs).teleport(target);
+
+            Teleport.teleport((Player) cs, target);
+
             cs.sendMessage(this.getPrefix() + this.getMessage("Tp.Self", label, cmd.getName(), cs, target));
             return true;
         } else if (!this.isAllowed(cs, "tp.others")) {
@@ -68,7 +71,9 @@ public class TeleportCommand extends MessageUtils implements CommandExecutor {
             cs.sendMessage(this.getPrefix() + this.getMessage("Tp.NoTeleportations", label, cmd.getName(), cs, target2));
             return true;
         }
-        target1.teleport(target2);
+
+        Teleport.teleport(target1, target2);
+
         cs.sendMessage(this.getPrefix() + this.getMessage("Tp.Others", label, cmd.getName(), cs, target1).replace("<TARGET2>", target2.getName()).replace("<TARGET2DISPLAY>", target2.getDisplayName()));
         return true;
     }

@@ -20,8 +20,8 @@ public class Message {
     public Message(ServerSystem plugin) {
         this.plugin = plugin;
         this.messagesFile = new File("plugins//ServerSystem", "messages.yml");
-        this.cfg = DefaultConfigReader.loadConfiguration(this.messagesFile);
-        placeholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
+        this.cfg = DefaultConfigReader.loadConfiguration(this.messagesFile, this.plugin);
+        this.placeholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
     }
 
     public String getMessage(String label, String command, CommandSender sender, CommandSender target, String action) {
@@ -52,7 +52,7 @@ public class Message {
 
         try {
             String message = ChatColor.translateAlternateColorCodes('&', this.cfg.getString("Messages.Normal." + action).replace("<LABEL>", label).replace("<COMMAND>", command).replace("<SENDER>", senderName).replace("<TARGET>", targetName).replace("<SENDERDISPLAY>", senderDisplayName).replace("<TARGETDISPLAY>", targetDisplayName).replace("<BREAK>", "\n"));
-            return sender instanceof Player && placeholderAPI ? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
+            return sender instanceof Player && this.placeholderAPI ? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
         } catch (NullPointerException ignored) {
             return "Error! Path: Normal." + action;
         }
@@ -90,7 +90,7 @@ public class Message {
         try {
             String message = ChatColor.translateAlternateColorCodes('&', this.cfg.getString("Messages.Normal." + action)).replace("<BREAK>", "\n").replace("<LABEL>", label).replace("<COMMAND>", command).replace("<SENDER>", senderName).replace("<TARGET>", targetName).replace("<SENDERDISPLAY>", senderDisplayName).replace("<TARGETDISPLAY>", targetDisplayName);
 
-            return sender instanceof Player && placeholderAPI ? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
+            return sender instanceof Player && this.placeholderAPI ? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
         } catch (NullPointerException ignored) {
             return "Error! Path: Normal." + action;
         }
@@ -158,7 +158,7 @@ public class Message {
         }
         try {
             String message = ChatColor.translateAlternateColorCodes('&', this.cfg.getString("Messages.Misc." + action).replace("<LABEL>", label).replace("<COMMAND>", command).replace("<SENDER>", senderName).replace("<TARGET>", targetName).replace("<SENDERDISPLAY>", senderDisplayName).replace("<TARGETDISPLAY>", targetDisplayName).replace("<BREAK>", "\n"));
-            return sender instanceof Player && placeholderAPI ? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
+            return sender instanceof Player && this.placeholderAPI ? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
         } catch (NullPointerException ignored) {
             return "Error! Path: Misc." + action;
         }
@@ -196,7 +196,7 @@ public class Message {
         }
         else try {
             String message = ChatColor.translateAlternateColorCodes('&', this.cfg.getString("Messages.Normal." + action).replace("<LABEL>", label).replace("<COMMAND>", command).replace("<SENDER>", senderName).replace("<TARGET>", targetName).replace("<BREAK>", "\n"));
-            return sender instanceof Player && placeholderAPI ? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
+            return sender instanceof Player && this.placeholderAPI ? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
         } catch (NullPointerException ignored) {
             return "Error! Path: Normal." + action;
         }
@@ -229,7 +229,7 @@ public class Message {
         }
         try {
             String message = ChatColor.translateAlternateColorCodes('&', this.cfg.getString("Messages.Syntax." + action)).replace("<BREAK>", "\n").replace("<LABEL>", label).replace("<COMMAND>", command).replace("<SENDER>", senderName).replace("<TARGET>", targetName).replace("<SENDERDISPLAY>", senderDisplayName).replace("<TARGETDISPLAY>", targetDisplayName);
-            return sender instanceof Player && placeholderAPI ? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
+            return sender instanceof Player && this.placeholderAPI ? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
         } catch (NullPointerException ignored) {
             return "Error! Path: Syntax." + action;
         }
@@ -266,7 +266,7 @@ public class Message {
         }
         try {
             String message = ChatColor.translateAlternateColorCodes('&', this.cfg.getString("Messages.Syntax." + action)).replace("<BREAK>", "\n").replace("<LABEL>", label).replace("<COMMAND>", command).replace("<SENDER>", senderName).replace("<TARGET>", targetName).replace("<SENDERDISPLAY>", senderDisplayName).replace("<TARGETDISPLAY>", targetDisplayName);
-            return sender instanceof Player && placeholderAPI ? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
+            return sender instanceof Player && this.placeholderAPI ? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
         } catch (NullPointerException ignored) {
             return "Error! Path: Syntax." + action;
         }

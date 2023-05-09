@@ -51,7 +51,11 @@ public class DefaultConfigReader implements ConfigReader {
     }
 
     public static ConfigReader loadConfiguration(File file) {
-        return new DefaultConfigReader(file, ServerSystem.getPlugin(ServerSystem.class));
+        return loadConfiguration(file, ServerSystem.getPlugin(ServerSystem.class));
+    }
+
+    public static ConfigReader loadConfiguration(File file, ServerSystem serverSystem) {
+        return new DefaultConfigReader(file, serverSystem);
     }
 
     protected boolean validateConfig() {

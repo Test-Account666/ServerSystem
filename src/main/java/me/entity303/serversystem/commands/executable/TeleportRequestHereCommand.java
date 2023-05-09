@@ -32,7 +32,7 @@ public class TeleportRequestHereCommand extends MessageUtils implements CommandE
         }
 
         if (args.length <= 0) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(label, cmd.getName(), cs, null, "tpahere"));
+            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(label, cmd.getName(), cs, null, "Tpahere"));
             return true;
         }
 

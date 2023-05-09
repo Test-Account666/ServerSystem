@@ -3,6 +3,7 @@ package me.entity303.serversystem.commands.executable;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.DummyCommandSender;
 import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.Teleport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -48,7 +49,9 @@ public class OfflineTeleportCommand extends MessageUtils implements TabExecutor 
 
         if (offlineTarget.isOnline()) {
             if (this.getPlayer(cs, offlineTarget.getUniqueId()) == null) {
-                ((Player) cs).teleport(offlineTarget.getPlayer());
+
+                Teleport.teleport((Player) cs, offlineTarget.getPlayer());
+
                 cs.sendMessage(this.getPrefix() + this.getMessage("OfflineTeleport.Success", label, cmd.getName(), cs, offlineTarget.getPlayer()));
                 return true;
             }
@@ -59,7 +62,9 @@ public class OfflineTeleportCommand extends MessageUtils implements TabExecutor 
         Player player = this.getHookedPlayer(offlineTarget);
 
         Location location = player.getLocation();
-        ((Player) cs).teleport(location);
+
+        Teleport.teleport((Player) cs, location);
+
         cs.sendMessage(this.getPrefix() + this.getMessage("OfflineTeleport.Success", label, cmd.getName(), cs, player));
         return true;
     }

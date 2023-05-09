@@ -55,7 +55,7 @@ public final class CommandManager {
 
 
         File commandsFiles = new File("plugins//ServerSystem", "commands.yml");
-        ConfigReader commandsConfig = DefaultConfigReader.loadConfiguration(commandsFiles);
+        ConfigReader commandsConfig = DefaultConfigReader.loadConfiguration(commandsFiles, this.serverSystem);
 
         if (commandsConfig.getBoolean(command.toLowerCase())) {
             this.registerCommand(executor, tabCompleter, this.serverSystem, command);
@@ -63,7 +63,7 @@ public final class CommandManager {
             this.serverSystemCommands.add(command.toLowerCase());
 
             File aliasFiles = new File("plugins//ServerSystem", "aliases.yml");
-            ConfigReader aliasConfig = DefaultConfigReader.loadConfiguration(aliasFiles);
+            ConfigReader aliasConfig = DefaultConfigReader.loadConfiguration(aliasFiles, this.serverSystem);
 
             String aliasString = aliasConfig.getString("Aliases." + command.toLowerCase() + ".aliases");
 
@@ -139,7 +139,8 @@ public final class CommandManager {
             c.setAccessible(true);
 
             command = c.newInstance(name, plugin);
-        } catch (IllegalArgumentException | IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (IllegalArgumentException | IllegalAccessException | InstantiationException |
+                 InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
         }
 

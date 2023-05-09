@@ -3,6 +3,7 @@ package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.Teleport;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -38,7 +39,8 @@ public class TeleportHereCommand extends MessageUtils implements CommandExecutor
             cs.sendMessage(this.getPrefix() + this.getMessage("Tphere.NoTeleportations", label, cmd.getName(), cs, target));
             return true;
         }
-        target.teleport((Entity) cs);
+
+        Teleport.teleport(target, (Entity) cs);
         cs.sendMessage(this.getPrefix() + this.getMessage("Tphere.Success", label, cmd.getName(), cs, target));
         return true;
     }

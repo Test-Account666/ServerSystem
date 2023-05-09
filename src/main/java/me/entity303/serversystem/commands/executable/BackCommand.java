@@ -1,6 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
+import me.entity303.serversystem.utils.Teleport;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -27,7 +28,9 @@ public class BackCommand implements CommandExecutor {
                     cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().Perm("back.teleport")));
                     return true;
                 }
-                ((Player) cs).teleport(this.plugin.getBackloc().get(cs));
+
+                Teleport.teleport(((Player) cs), this.plugin.getBackloc().get(cs));
+
                 cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, null, "Back.Success.Teleport"));
                 return true;
             } else if ("Death".equalsIgnoreCase(reason)) {
@@ -35,7 +38,9 @@ public class BackCommand implements CommandExecutor {
                     cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().Perm("back.death")));
                     return true;
                 }
-                ((Player) cs).teleport(this.plugin.getBackloc().get(cs));
+
+                Teleport.teleport(((Player) cs), this.plugin.getBackloc().get(cs));
+
                 cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, null, "Back.Success.Death"));
                 return true;
             }

@@ -4,6 +4,7 @@ import me.entity303.serversystem.databasemanager.WarpManager;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
 import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.Teleport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -51,7 +52,9 @@ public class WarpCommand extends MessageUtils implements CommandExecutor {
                 return true;
             }
             Location location = warpManager.getWarp(name);
-            targetPlayer.teleport(location);
+
+            Teleport.teleport(targetPlayer, location);
+
             targetPlayer.sendMessage(this.getPrefix() + this.getMessage("Warp.Others.Teleporting.Target", label, cmd.getName(), cs, targetPlayer).replace("<WARP>", name.toUpperCase()));
             cs.sendMessage(this.getPrefix() + this.getMessage("Warp.Others.Teleporting.Sender", label, cmd.getName(), cs, targetPlayer).replace("<WARP>", name.toUpperCase()));
             return true;
@@ -62,7 +65,9 @@ public class WarpCommand extends MessageUtils implements CommandExecutor {
                 OfflinePlayer player = ((OfflinePlayer) cs).getPlayer();
                 if (player.isOnline()) {
                     Location location = warpManager.getWarp(name);
-                    player.getPlayer().teleport(location);
+
+                    Teleport.teleport(player.getPlayer(), location);
+
                     cs.sendMessage(WarpCommand.this.plugin.getMessages().getPrefix() + ChatColor.translateAlternateColorCodes('&', WarpCommand.this.plugin.getMessages().getCfg().getString("Messages.Misc.Teleportation.Success")));
                     WarpCommand.this.plugin.getTeleportMap().remove(player);
                 }
@@ -71,7 +76,9 @@ public class WarpCommand extends MessageUtils implements CommandExecutor {
             return true;
         }
         Location location = warpManager.getWarp(name);
-        ((Player) cs).teleport(location);
+
+        Teleport.teleport((Player) cs, location);
+
         cs.sendMessage(this.getPrefix() + this.getMessage("Warp.InstantTeleporting", label, cmd.getName(), cs, null).replace("<WARP>", name.toUpperCase()));
         return true;
     }

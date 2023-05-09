@@ -163,13 +163,15 @@ public class EconomyManager_MySQL extends ManagerEconomy {
 
     @Override
     public void createAccount(OfflinePlayer player) {
-        if (this.hasAccount(player)) return;
+        if (this.hasAccount(player))
+            return;
         this.accountCache.put(player, true);
         this.moneyCache.put(player, Double.valueOf(this.startingMoney));
 
-        if (player == null) return;
-        this.getPlugin().getMySQL().executeUpdate("INSERT INTO `Economy` (UUID, Server, Balance) VALUES ('" + player.getUniqueId() + "','" + this.server + "','" + this.startingMoney + "')");
+        if (player == null)
+            return;
 
+        this.getPlugin().getMySQL().executeUpdate("INSERT INTO `Economy` (UUID, Server, Balance) VALUES ('" + player.getUniqueId() + "','" + this.server + "','" + this.startingMoney + "')");
     }
 
     @Override
@@ -227,17 +229,23 @@ public class EconomyManager_MySQL extends ManagerEconomy {
 
     @Override
     public boolean hasAccount(OfflinePlayer player) {
-        if (player == null) return false;
-        if (Bukkit.isPrimaryThread()) if (this.accountCache.containsKey(player)) return this.accountCache.get(player);
+        if (player == null)
+            return false;
+        if (Bukkit.isPrimaryThread())
+            if (this.accountCache.containsKey(player))
+                return this.accountCache.get(player);
         ResultSet rs = null;
         rs = this.plugin.getMySQL().getResult("SELECT * FROM Economy WHERE UUID = '" + player.getUniqueId() + "'" + " AND Server = '" + this.server + "'");
         try {
-            if (rs == null) return false;
+            if (rs == null)
+                return false;
             try {
-                if (rs.isClosed()) return false;
+                if (rs.isClosed())
+                    return false;
             } catch (AbstractMethodError ignored) {
             }
-            if (!rs.next()) return false;
+            if (!rs.next())
+                return false;
             String uuid = rs.getString("UUID");
             rs.close();
             boolean has = uuid != null;

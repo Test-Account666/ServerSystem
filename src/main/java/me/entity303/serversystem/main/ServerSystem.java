@@ -111,6 +111,22 @@ public final class ServerSystem extends JavaPlugin {
     private Method syncCommandsMethod = null;
     private ConfigReader configReader;
 
+    public static EconomyAPI getEconomyAPI() {
+        return ServerSystem.economyAPI;
+    }
+
+    public static MuteAPI getMuteAPI() {
+        return ServerSystem.muteAPI;
+    }
+
+    public static BanAPI getBanAPI() {
+        return ServerSystem.banAPI;
+    }
+
+    public static VanishAPI getVanishAPI() {
+        return ServerSystem.vanishAPI;
+    }
+
     @Override
     public void saveDefaultConfig() {
         super.saveDefaultConfig();
@@ -835,22 +851,6 @@ public final class ServerSystem extends JavaPlugin {
                 this.error("Unknown");
             }
         }
-    }
-
-    public static EconomyAPI getEconomyAPI() {
-        return ServerSystem.economyAPI;
-    }
-
-    public static MuteAPI getMuteAPI() {
-        return ServerSystem.muteAPI;
-    }
-
-    public static BanAPI getBanAPI() {
-        return ServerSystem.banAPI;
-    }
-
-    public static VanishAPI getVanishAPI() {
-        return ServerSystem.vanishAPI;
     }
 
     public boolean isSpecialSudo() {
