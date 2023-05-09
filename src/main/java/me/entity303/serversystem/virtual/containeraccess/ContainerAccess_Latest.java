@@ -65,11 +65,11 @@ public class ContainerAccess_Latest extends ContainerAccessWrapper implements Co
 
     @Override
     public BlockPosition getPosition() {
-        return new BlockPosition(this.player.getLocation().getX(), this.player.getLocation().getY(), this.player.getLocation().getZ());
+        return new BlockPosition(this.player.getLocation().getBlockX(), this.player.getLocation().getBlockY(), this.player.getLocation().getBlockZ());
     }
 
     @Override
     public <T> Optional<T> a(BiFunction<World, BlockPosition, T> biFunction) {
-        return Optional.of(biFunction.apply(this.getWorld(), new BlockPosition(this.player.getLocation().getX(), this.player.getLocation().getY(), this.player.getLocation().getZ())));
+        return Optional.of(biFunction.apply(this.getWorld(), new BlockPosition(this.player.getLocation().getBlockX(), this.player.getLocation().getBlockY(), this.player.getLocation().getBlockZ())));
     }
 }
