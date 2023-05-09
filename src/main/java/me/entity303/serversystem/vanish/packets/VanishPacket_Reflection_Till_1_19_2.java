@@ -3,7 +3,9 @@ package me.entity303.serversystem.vanish.packets;
 import me.entity303.serversystem.main.ServerSystem;
 import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.server.network.PlayerConnection;
+import net.minecraft.world.level.EnumGamemode;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -15,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class VanishPacket_Reflection_Latest extends VanishPacket {
+public class VanishPacket_Reflection_Till_1_19_2 extends VanishPacket {
     private final ServerSystem plugin;
     private String version;
     private Method getHandleMethod;
@@ -28,8 +30,9 @@ public class VanishPacket_Reflection_Latest extends VanishPacket {
     private Field playerConnectionField;
     private Field pingField;
     private Field collidesField;
+    private boolean v19 = false;
 
-    public VanishPacket_Reflection_Latest(ServerSystem plugin) {
+    public VanishPacket_Reflection_Till_1_19_2(ServerSystem plugin) {
         this.plugin = plugin;
 
         try {
@@ -106,20 +109,30 @@ public class VanishPacket_Reflection_Latest extends VanishPacket {
             e.printStackTrace();
         }
 
+        List<Object> players = new ArrayList<>();
+
+        try {
+            players.add(this.getHandleMethod.invoke(player));
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+        net.minecraft.server.level.EntityPlayer[] entityPlayers = new EntityPlayer[players.size()];
+
+        for (int i = 0; i < players.size(); i++) entityPlayers[i] = (EntityPlayer) players.get(i);
+
         Object playerInfo = null;
         try {
             Constructor cons = null;
 
-            for (Constructor<?> con : Class.forName("net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket").getConstructors())
+            for (Constructor<?> con : Class.forName("net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo").getConstructors())
                 if (con.getParameterCount() == 2)
-                    if (con.getParameterTypes()[1] == net.minecraft.server.level.EntityPlayer.class) cons = con;
+                    if (con.getParameterTypes()[1] == net.minecraft.server.level.EntityPlayer[].class) cons = con;
 
-            if (cons == null)
-                return;
+            if (cons == null) return;
 
-            playerInfo = cons.newInstance(Class.forName("net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket$a").getEnumConstants()[2], this.getHandleMethod.invoke(player));
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 ClassNotFoundException e) {
+            playerInfo = cons.newInstance(Class.forName("net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo$EnumPlayerInfoAction").getEnumConstants()[0], entityPlayers);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -155,37 +168,52 @@ public class VanishPacket_Reflection_Latest extends VanishPacket {
 
             Class<?> clazz = null;
             try {
-                clazz = this.getClass().getClassLoader().loadClass("net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket$b");
+                clazz = this.getClass().getClassLoader().loadClass("net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo$PlayerInfoData");
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
 
             try {
                 this.constructor = clazz
+                        .getDeclaredConstructor(
+                                Class.forName("com.mojang.authlib.GameProfile"),
+                                int.class,
+                                EnumGamemode.class,
+                                IChatBaseComponent.class);
+            } catch (NoSuchMethodException | ClassNotFoundException e) {
+                if (!(e instanceof NoSuchMethodException)) {
+                    e.printStackTrace();
+                    return;
+                }
+                this.constructor = clazz
                         .getDeclaredConstructors(/*
                                 Class.forName("com.mojang.authlib.GameProfile"),
                                 int.class,
                                 EnumGamemode.class,
-                                IChatBaseComponent.class*/)[1];
-
-                this.constructor.setAccessible(true);
-            } catch (Throwable e) {
-                e.printStackTrace();
-                return;
+                                IChatBaseComponent.class*/)[0];
+                this.v19 = true;
             }
         }
 
-        try {
+        if (!this.v19)
+            try {
+                playerInfoData = this.constructor
+                        .newInstance(
+                                this.getProfileMethod.invoke(entityPlayer),
+                                this.getPing(player),
+                                Class.forName("net.minecraft.world.level.EnumGamemode").getEnumConstants()[3],
+                                playerListName);
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | ClassNotFoundException instantiationException) {
+                instantiationException.printStackTrace();
+            }
+        else try {
             playerInfoData = this.constructor
                     .newInstance(
-                            player.getUniqueId(),
                             this.getProfileMethod.invoke(entityPlayer),
-                            false,
                             this.getPing(player),
                             Class.forName("net.minecraft.world.level.EnumGamemode").getEnumConstants()[3],
                             playerListName, null);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 ClassNotFoundException instantiationException) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | ClassNotFoundException instantiationException) {
             instantiationException.printStackTrace();
         }
 
@@ -199,12 +227,9 @@ public class VanishPacket_Reflection_Latest extends VanishPacket {
         b.setAccessible(true);
 
         try {
-            List bList = new ArrayList();
+            List<Object> bList = (List<Object>) b.get(playerInfo);
+            bList.clear();
             bList.add(playerInfoData);
-
-            b.set(playerInfo, bList);
-
-            System.out.println(((List) b.get(playerInfo)).size());
         } catch (IllegalAccessException illegalAccessException) {
             illegalAccessException.printStackTrace();
         }
