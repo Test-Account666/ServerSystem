@@ -72,7 +72,7 @@ public class Teleport_Latest extends MessageUtils implements Teleport {
         }
 
         try {
-            this.teleportToMethod.invoke(entity, worldServer, new BlockPosition(location.getX(), location.getY(), location.getZ()));
+            this.teleportToMethod.invoke(entity, worldServer, new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
