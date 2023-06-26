@@ -48,17 +48,39 @@ public class SignCommand extends MessageUtils implements CommandExecutor {
             return true;
         }
         List<String> loreList = new ArrayList<>();
-        String loreString = Arrays.stream(args).map(arg -> ChatColor.translateAlternateColorCodes('&', arg) + " §9").collect(Collectors.joining("", "§9", ""));
-        loreList.add("§c-------------------------------------");
-        loreList.add(loreString);
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("HH:mm");
-        DateTimeFormatter dateFormat2 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        String signFormat = this.getMessage("Sign.Format", label, cmd.getName(), cs, null);
+
+        String dateFormat = this.getMessage("Sign.DateFormat", label, cmd.getName(), cs, null);
+
+        String timeFormat = this.getMessage("Sign.TimeFormat", label, cmd.getName(), cs, null);
+
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(timeFormat);
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateFormat);
         LocalDateTime localDate = LocalDateTime.now();
-        loreList.add("§c" + this.getMessage("Sign.Translation.Von", label, cmd.getName(), cs, null) + ": §2" + cs.getName());
-        loreList.add("§c" + this.getMessage("Sign.Translation.Am", label, cmd.getName(), cs, null) + ": §2" + localDate.format(dateFormat2).replace("/", "."));
-        loreList.add("§c" + this.getMessage("Sign.Translation.Um", label, cmd.getName(), cs, null) + ": §2" + localDate.format(dateFormat));
-        loreList.add("§4§c-------------------------------------");
+
+        String message;
+
+        String textColor = this.getMessage("Sign.TextColor", label, cmd.getName(), cs, null);
+
+        message = Arrays.stream(args).map(arg -> textColor + ChatColor.translateAlternateColorCodes('&', arg) + " ").collect(Collectors.joining());
+
+        System.out.println(signFormat);
+
+        for (String lore : signFormat.split("\\n")) {
+            System.out.println(lore.replace("<DATE>", localDate.format(dateFormatter))
+                    .replace("<TIME>", localDate.format(timeFormatter))
+                    .replace("<SENDER>", cs.getName())
+                    .replace("<MESSAGE>", message));
+
+            loreList.add(lore.replace("<DATE>", localDate.format(dateFormatter))
+                    .replace("<TIME>", localDate.format(timeFormatter))
+                    .replace("<SENDER>", cs.getName())
+                    .replace("<MESSAGE>", message));
+        }
+
         meta.setLore(loreList);
+
         ((Player) cs).getInventory().getItemInHand().setItemMeta(meta);
         ((Player) cs).updateInventory();
         cs.sendMessage(this.getPrefix() + this.getMessage("Sign.Success", label, cmd.getName(), cs, null));
