@@ -27,7 +27,10 @@ public class MySQL {
     }
 
     public void connect() {
-        if (!this.isConnected()) try {
+        if (this.isConnected())
+            return;
+
+        try {
             this.con = DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database + "?autoReconnect=true", this.username, this.password);
         } catch (SQLException throwables2) {
             throwables2.printStackTrace();
@@ -35,7 +38,10 @@ public class MySQL {
     }
 
     public void close() {
-        if (this.isConnected()) try {
+        if (!this.isConnected())
+            return;
+
+        try {
             this.con.close();
             this.plugin.log("MySQL connection successfully closed!");
         } catch (SQLException throwables) {
@@ -46,11 +52,23 @@ public class MySQL {
 
 
     public boolean isConnected() {
-        return this.con != null;
+        if (this.con == null)
+            return false;
+
+        try {
+            return !this.con.isClosed();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     public void executeUpdate(String cmd) {
         try {
+            if (!this.isConnected())
+                this.connect();
+
             this.con.createStatement().executeUpdate(cmd);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -58,7 +76,10 @@ public class MySQL {
     }
 
     public void executeQuery(String cmd) {
-        if (this.isConnected()) try {
+        try {
+            if (!this.isConnected())
+                this.connect();
+
             this.con.createStatement().executeQuery(cmd);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -72,7 +93,10 @@ public class MySQL {
     }
 
     public void execute(String cmd) {
-        if (this.isConnected()) try {
+        try {
+            if (!this.isConnected())
+                this.connect();
+
             this.con.createStatement().execute(cmd);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -81,7 +105,10 @@ public class MySQL {
     }
 
     public ResultSet getResult(String qry) {
-        if (this.isConnected()) try {
+        try {
+            if (!this.isConnected())
+                this.connect();
+
             return this.con.createStatement().executeQuery(qry);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
