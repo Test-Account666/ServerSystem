@@ -209,6 +209,7 @@ Permissions:
     required: false
     permission: "server.msg"
   convertfromessentials: "server.convertfromessentials"
+  converttoessentials: "server.converttoessentials"
   skull:
     self: "server.skull.self"
     others: "server.skull.others"
