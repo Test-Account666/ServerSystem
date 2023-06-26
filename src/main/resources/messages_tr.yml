@@ -226,10 +226,10 @@ Messages:
       NoItem: "&cBir eşya tutmalısın!"
       AlreadySigned: "&cBu eşya zaten imzalı!"
       Success: "Bu eşyayı imzaladın!"
-      Translation:
-        Von: "Tarafından"
-        Am: "Tarih"
-        Um: "Zaman"
+      TextColor: "&9"
+      TimeFormat: "HH:mm"
+      DateFormat: "dd.MM. yyyy"
+      Format: "&c-------------------------------------<BREAK><MESSAGE><BREAK>&cTarafından: &2<SENDER><BREAK>&cTarih: &2<DATE><BREAK>&cZaman: &2<TIME><BREAK>&4&c-------------------------------------"
     Skull:
       Others: "&2<TARGET> &7adlı oyuncunun kafasını aldın!"
       Self: "Kendi kafanı aldın!"
@@ -377,10 +377,16 @@ Messages:
       SocialSpy: "&8[&7SocialSpy&8] &3<SENDER> &7-> &5<TARGET> &7>> &2<MESSAGE>"
     ConvertFromEssentials:
       WarnNotTested: "&cUyarı!! &cBu özellik henüz &4test edilmedi&c! &4Açık/Hata/vb. problemler beklenir! &cUyarı!!<BREAK>&7Hala bu özelliği kullanmak istiyorsanız, bu komutu tekrar girin!"
+      Start: "Starting conversion from Essentials..."
       Failed:
         NoDirectory: "&cÇevirilemedi! Görünüşe göre Essentials verisi yok!"
         Unknown: "&cÇevirme işleminde hata! Daha fazla detay için konsola bakın! Ya da bu hatayı: &4<TARGET> &ckonsol raporu ile birlikte discord desteğe gönderin: (&4https://discord.gg/TbnyUrJ)"
       Finished: "Çevirme işlemi bitti!"
+    ConvertToEssentials:
+      WarnNotTested: "&cUyarı!! &cBu özellik &4test edilmemiştir&c! &4Hatalar/Hatalar/Çeşitli sorunlar bekleniyor! &cUyarı!!<BREAK>&7Bu özelliği hâlâ kullanmak istiyorsanız, bu komutu tekrar yazmanız yeterli!"
+      Start: "Essentials'a dönüştürme işlemi başlatılıyor..."
+      FinishedWithErrors: "&cDönüştürme hatalarla tamamlandı, daha fazla bilgi için konsola bakın!"
+      Finished: "Dönüşüm tamamlandı!"
     TPPos:
       NotANumber: "&4<NUMBER> &cgeçerli bir sayı değil!"
       Success:

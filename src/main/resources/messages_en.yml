@@ -229,10 +229,10 @@ Messages:
       NoItem: "&cYou need to hold an item!"
       AlreadySigned: "&cThis item is already signed!"
       Success: "You signed this item!"
-      Translation:
-        Von: "By"
-        Am: "Date"
-        Um: "When"
+      TextColor: "&9"
+      TimeFormat: "HH:mm"
+      DateFormat: "dd.MM. yyyy"
+      Format: "&c-------------------------------------<BREAK><MESSAGE><BREAK>&cBy: &2<SENDER><BREAK>&cDate: &2<DATE><BREAK>&cWhen: &2<TIME><BREAK>&4&c-------------------------------------"
     Skull:
       Others: "You gave yourself the skull of &2<TARGET>&7!"
       Self: "You gave yourself your skull!"
@@ -381,10 +381,16 @@ Messages:
       Deactivated: "&4<TARGET> &cdeactivated msg messages!"
     ConvertFromEssentials:
       WarnNotTested: "&cWarning!! &cThis feature is &4not tested&c! &4Expect Bugs/Errors/Misc problems! &cWarning!!<BREAK>&7If you still want to use this feature, just type this command again!"
+      Start: "Starting conversion from Essentials..."
       Failed:
-        NoDirectory: "&cError while converting! It seems like there is now data from Essentials!"
+        NoDirectory: "&cError while converting! It seems like there is no data from Essentials!"
         Unknown: "&cError while converting! Look console for more information! Or send this error: &4<TARGET> &cwith the console report in the support discord (&4https://discord.gg/TbnyUrJ)"
-      Finished: "Convertion finished!"
+      Finished: "Conversion finished!"
+    ConvertToEssentials:
+      WarnNotTested: "&cWarning!! &cThis feature is &4not tested&c! &4Expect Bugs/Errors/Misc problems! &cWarning!!<BREAK>&7If you still want to use this feature, just type this command again!"
+      Start: "Starting conversion to Essentials..."
+      FinishedWithErrors: "&cConversion finished with errors, look at console for more information!"
+      Finished: "Conversion finished!"
     TPPos:
       NotANumber: "&4<NUMBER> &cis not a valid number!"
       Success:
@@ -479,7 +485,7 @@ Messages:
       LimitedNow: "This item is now limited!"
       UnlimitedNow: "This item is now unlimited!"
     Seen:
-      TimeFormat: "dd.mm.yyyy HH:mm:ss"
+      TimeFormat: "dd.MM.yyyy HH:mm:ss"
       PlayerNeverPlayed: "&4<TARGET> &cnever played!"
       LastSeen: "&2<TARGET> &7was last seen: &2<TIME>"
     Freeze:

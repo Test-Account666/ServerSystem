@@ -236,10 +236,10 @@ Messages:
       NoItem: "&c神奇的力量说她没有能力对空气进行操作!"
       AlreadySigned: "&c该物品已被署名!"
       Success: "成功署名!"
-      Translation:
-        Von: "操作者"
-        Am: "日期"
-        Um: "日期"
+      TextColor: "&9"
+      TimeFormat: "hh:mm"
+      DateFormat: "yyyy年MM月dd日"
+      Format: "&c-------------------------------------<BREAK><MESSAGE><BREAK>&c操作者: &2<SENDER><BREAK>&c日期: &2<DATE><BREAK>&c日期: &2<TIME><BREAK>&4&c-------------------------------------"
     Skull:
       Others: "你把 &2<TARGET>&7 的头取了下来!但它又以光速重生了"
       Self: "你把自己的头取了下来!但它又以光速重生了"
@@ -388,10 +388,16 @@ Messages:
       Deactivated: "&4<TARGET> &c拒收悄悄话!"
     ConvertFromEssentials:
       WarnNotTested: "&c&l警告!! &7| &c该功能 &4&6从未被 &c测试过&c! &4可能会出现错误和其他不可预知的问题 &7| &c&l警告!!<BREAK>&7如果你坚持进行数据转移操作, 请再次输入该命令!"
+      Start: "Starting conversion from Essentials..."
       Failed:
         NoDirectory: "&c数据转移时出现问题! 似乎Essentials中没有数据!" #此处可能出现了原文错误,译文可能不准确 原句"It seems like there is now data from Essentials"
         Unknown: "&c数据转移时出现错误! 请查询控制台以获得更多信息! <BREAK>&c或将此消息: &4<TARGET> &c与控制台反馈信息一同反馈到Discord (&4https://discord.gg/TbnyUrJ)"
       Finished: "数据转移完毕!"
+    ConvertToEssentials:
+      WarnNotTested: "&c警告！！&c该功能还 &4未经过测试&c! &4可能存在 BUG、错误或其他的问题! &c警告！！<BREAK>&7如果你仍需要使用该功能，请再次输入一遍本指令"
+      Start: "正在从Essentials中转换数据..."
+      FinishedWithErrors: "&c转换数据时出现错误，请检查控制台来获取更多信息！"
+      Finished: "转换完成！:3"
     TPPos:
       NotANumber: "&4<NUMBER> &c是一个无效数值!"
       Success:

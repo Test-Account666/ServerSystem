@@ -237,10 +237,10 @@ Messages:
       NoItem: "&cPotřebuješ mít v ruce item!"
       AlreadySigned: "&cTento item už je podepsán!"
       Success: "Item je podepsaný!"
-      Translation:
-        Von: "Od"
-        Am: "Datum"
-        Um: "Kdy"
+      TextColor: "&9"
+      TimeFormat: "HH:mm"
+      DateFormat: "yyyy-MM-dd"
+      Format: "&c-------------------------------------<BREAK><MESSAGE><BREAK>&cOd: &2<SENDER><BREAK>&cDatum: &2<DATE><BREAK>&cKdy: &2<TIME><BREAK>&4&c-------------------------------------"
     Skull:
       Others: "Přidal jsi si hlavu hráče &2<TARGET>&7!"
       Self: "Přidal jsi si svou hlavu!"
@@ -390,11 +390,17 @@ Messages:
       WarnNotTested: "&cVarování!! &cTento příkaz ještě &4nebyl testováný&c! &4Omluvte
         veškeré problémy! &cVarování!!<BREAK>&7Pokud chceš použít tento příkaz, napiš
         ho znovu!"
+      Start: "Začínám převod z Essentials..."
       Failed:
         NoDirectory: "&cError při konvertování! V Essentials nejsou žádné data!"
         Unknown: "&cError při konvertování! Podívej se do konsole pro bližší info!
           Nebo pošli error: &4<TARGET> &cs obrázkem konsole na tento discord (&4https://discord.gg/TbnyUrJ)"
       Finished: "Konvertování dokončeno!"
+    ConvertToEssentials:
+      WarnNotTested: "&cVarování!! &cTato funkce &4není testována&c! &4Očekávej Chyby/Errory/Ostatní problémy! &cVarování!!<BREAK>&7Pokud stále chceš tuto funkci využít, napiš příkaz ještě jednou!"
+      Start: "Začínám převod do Essentials..."
+      FinishedWithErrors: "&cPřevod dokončen s chybami, podívej se do konzole pro více informací!"
+      Finished: "Převod dokončen!"
     TPPos:
       NotANumber: "&4<NUMBER> &cnení platné číslo!"
       Success:

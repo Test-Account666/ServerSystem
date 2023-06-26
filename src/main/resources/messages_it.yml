@@ -1,5 +1,7 @@
 # Translation by UnlegitDqrk
 # Please report incorrect Italian translations
+# Since June 2023, all new translations are done with translation tools like DeepL
+# I'm searching for new translators
 
 
 Messages:
@@ -233,10 +235,10 @@ Messages:
       NoItem: "&cPer fare questo, devi tenere un oggetto in mano!"
       AlreadySigned: "&cQuesto articolo è già firmato!"
       Success: "Hai firmato questo articolo!"
-      Translation:
-        Von: "A partire dal"
-        Am: "Al"
-        Um: "In giro"
+      TextColor: "&9"
+      TimeFormat: "HH:mm"
+      DateFormat: "dd.MM. yyyy"
+      Format: "&c-------------------------------------<BREAK><MESSAGE><BREAK>&cA partire dal: &2<SENDER><BREAK>&cAl: &2<DATE><BREAK>&cIn giro: &2<TIME><BREAK>&4&c-------------------------------------"
     Skull:
       Others: "Hai perso la testa &2<TARGET> &7dato!"
       Self: "Ti sei dato la testa!"
@@ -390,6 +392,11 @@ Messages:
         NoDirectory: "&cErrore di conversione! Sembra che non ci siano dati Essentials!"
         Unknown: "&cErrore durante la conversione! Vedi la console per ulteriori dati! Oppure invia il seguente errore: &4<TARGET> &ce il messaggio di errore della console in Support Discord (&4https://discord.gg/TbnyUrJ)"
       Finished: "La conversione è terminata!"
+    ConvertToEssentials:
+      WarnNotTested: "&cAvviso!! &cQuesta funzionalità non è stata testata! &4Aspettarsi bug/errori/problemi vari! &cAvviso!!<BREAK>&7Se si desidera comunque utilizzare questa funzionalità, digitare nuovamente questo comando!"
+      Start: "Avvio conversione a Essentials..."
+      FinishedWithErrors: "&cConversione terminata con errori, consultare la console per ulteriori informazioni!"
+      Finished: "Conversione completata!"
     TPPos:
       NotANumber: "&4<NUMBER> &cnon è un numero!"
       Success:

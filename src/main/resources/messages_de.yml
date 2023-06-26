@@ -229,10 +229,10 @@ Messages:
       NoItem: "&cDafür musst du ein Item in der Hand halten!"
       AlreadySigned: "&cDieses Item ist bereits signiert!"
       Success: "Du hast dieses Item signiert!"
-      Translation:
-        Von: "Von"
-        Am: "Am"
-        Um: "Um"
+      TextColor: "&9"
+      TimeFormat: "HH:mm"
+      DateFormat: "dd.MM. yyyy"
+      Format: "&c-------------------------------------<BREAK><MESSAGE><BREAK>&cVon: &2<SENDER><BREAK>&cAm: &2<DATE><BREAK>&cUm: &2<TIME><BREAK>&4&c-------------------------------------"
     Skull:
       Others: "Du hast dir den Kopf von &2<TARGET> &7gegeben!"
       Self: "Du hast dir deinen Kopf gegeben!"
@@ -385,6 +385,11 @@ Messages:
       Failed:
         NoDirectory: "&cFehler bei der Konvertierung! Es scheint als gäbe es keine Essentials Daten!"
         Unknown: "&cFehler bei der Konvertierung! Siehe Konsole für mehr Daten! Oder schicke folgenden Fehler: &4<TARGET> &cund die Fehlermeldung der Konsole in den Support Discord (&4https://discord.gg/TbnyUrJ)"
+      Finished: "Die Konvertierung wurde beendet!"
+    ConvertToEssentials:
+      WarnNotTested: "&cWarnung!! &cDieses Feature wurde &4nicht getestet&c! &4Erwarte Bugs/Fehler/Sonstige Probleme! &cWarnung!!<BREAK>&7Solltest du dieses Feature dennoch nutzen wollen, gib den Befehl einfach noch einmal ein!"
+      Start: "Starte Konvertierung zu Essentials..."
+      FinishedWithErrors: "&cDie Konvertierung wurde mit Fehlern beendet! Siehe Konsole für mehr Daten!"
       Finished: "Die Konvertierung wurde beendet!"
     TPPos:
       NotANumber: "&4<NUMBER> &cist keine Zahl!"
