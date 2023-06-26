@@ -68,7 +68,30 @@ public class VersionManager {
         } catch (NoSuchMethodException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        if (version.contains("1.19.R3")) {
+        if (version.contains("1.20")) {
+            this.serverSystem.getVersionStuff().setActionBar(new ActionBar_Latest(this.nmsVersion));
+            this.v117 = true;
+            this.v116 = true;
+            this.v114 = true;
+            this.v113 = true;
+            this.v112 = true;
+            this.v119 = true;
+            this.terracotta = true;
+            this.serverSystem.getVersionStuff().setVanishPacket(new VanishPacket_Reflection_Latest(this.serverSystem));
+            Bukkit.getPluginManager().registerEvents(new InteractListener_Newer(this.serverSystem), this.serverSystem);
+            this.serverSystem.getVersionStuff().setSignEdit(new SignEdit_Reflection_Latest());
+            this.serverSystem.getVersionStuff().setVirtualAnvil(new VirtualAnvil_Latest());
+            this.serverSystem.getVersionStuff().setVirtualCartography(new VirtualCartography_Latest());
+            this.serverSystem.getVersionStuff().setVirtualGrindstone(new VirtualGrindstone_latest());
+            this.serverSystem.getVersionStuff().setVirtualLoom(new VirtualLoom_Latest());
+            this.serverSystem.getVersionStuff().setVirtualStoneCutter(new VirtualStoneCutter_Latest());
+            this.serverSystem.getVersionStuff().setVirtualSmithing(new VirtualSmithing_Latest());
+            this.serverSystem.getVersionStuff().setSaveData(new SaveData_Latest(this.serverSystem));
+            this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Latest(this.serverSystem));
+            this.serverSystem.getVersionStuff().setTeleport(new Teleport_Latest(this.serverSystem));
+            this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer_Latest());
+            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null), 5L);
+        } else if (version.contains("1.19.R3")) {
             this.serverSystem.getVersionStuff().setActionBar(new ActionBar_Latest(this.nmsVersion));
             this.v117 = true;
             this.v116 = true;
