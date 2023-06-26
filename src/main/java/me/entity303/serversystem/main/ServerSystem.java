@@ -30,6 +30,7 @@ import me.entity303.serversystem.vault.Vault;
 import me.entity303.serversystem.vault.VaultHookManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -154,7 +155,7 @@ public final class ServerSystem extends JavaPlugin {
             this.configReader.save();
     }
 
-    public boolean wantsTP(Player player) {
+    public boolean wantsTP(OfflinePlayer player) {
         ResultSet resultSet = this.wantsTP.query("SELECT wants FROM wantsTP WHERE UUID='" + player.getUniqueId() + "'");
         if (resultSet != null) while (true) {
             try {
@@ -172,7 +173,7 @@ public final class ServerSystem extends JavaPlugin {
         return true;
     }
 
-    public void setWantsTP(Player player, Boolean wants) {
+    public void setWantsTP(OfflinePlayer player, Boolean wants) {
         this.wantsTP.update("DELETE FROM wantsTP WHERE UUID='" + player.getUniqueId() + "'");
         this.wantsTP.update("INSERT INTO wantsTP (UUID, wants) VALUES ('" + player.getUniqueId() + "','" + wants.toString() + "')");
     }
