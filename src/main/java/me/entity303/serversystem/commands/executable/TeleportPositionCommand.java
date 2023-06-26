@@ -26,6 +26,11 @@ public class TeleportPositionCommand extends MessageUtils implements CommandExec
             return true;
         }
 
+        if (args.length <= 0) {
+            cs.sendMessage(this.getPrefix() + this.getSyntax("TPPos", label, cmd.getName(), cs, null));
+            return true;
+        }
+
         String potentialWorld = args[args.length - 1];
 
         World world = null;
