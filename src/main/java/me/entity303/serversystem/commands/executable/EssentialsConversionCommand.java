@@ -6,6 +6,7 @@ import com.earth2me.essentials.Warps;
 import com.earth2me.essentials.commands.WarpNotFoundException;
 import me.entity303.serversystem.bansystem.Mute;
 import me.entity303.serversystem.main.ServerSystem;
+import me.entity303.serversystem.utils.FileUtils;
 import me.entity303.serversystem.utils.MessageUtils;
 import net.ess3.api.InvalidWorldException;
 import org.bukkit.Bukkit;
@@ -17,6 +18,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 public class EssentialsConversionCommand extends MessageUtils implements CommandExecutor {
@@ -41,6 +44,17 @@ public class EssentialsConversionCommand extends MessageUtils implements Command
         }
 
         cs.sendMessage(this.getPrefix() + this.getMessage("ConvertFromEssentials.Start", label, cmd.getName(), cs, null));
+
+        File serverSystemDirectory = new File("plugins//ServerSystem");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm-ss");
+        LocalDateTime now = LocalDateTime.now();
+        String backupDate = dtf.format(now);
+
+        try {
+            FileUtils.copyFile(serverSystemDirectory, new File("plugins//ServerSystem-Backups//ServerSystem-Backup-" + backupDate));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         File essentialsDirectory = new File("plugins//Essentials");
 
@@ -70,11 +84,11 @@ public class EssentialsConversionCommand extends MessageUtils implements Command
 
                         long unMute = offlineUser.getMuteTimeout();
 
-                        String date = plugin.getMuteManager().convertLongToDate(unMute);
+                        String date = this.plugin.getMuteManager().convertLongToDate(unMute);
 
                         Mute mute = new Mute(offlineUser.getUUID().toString(), this.getBanSystem("ConsoleName"), unMute, date, reason);
 
-                        plugin.getMuteManager().addMute(mute);
+                        this.plugin.getMuteManager().addMute(mute);
                     }
 
                     this.plugin.getEconomyManager().setMoney(offlineUser.getBase(), offlineUser.getMoney().doubleValue());
@@ -103,6 +117,8 @@ public class EssentialsConversionCommand extends MessageUtils implements Command
                     }
 
                     this.plugin.getVanish().setVanish(offlineUser.isVanished(), offlineUser.getConfigUUID());
+
+                    this.plugin.setWantsTP(Bukkit.getOfflinePlayer(offlineUser.getUUID()), offlineUser.isTeleportEnabled());
                 } catch (Exception e) {
                     this.plugin.error("Failed to process userdata '" + userData.getName() + "'!");
                 }
@@ -115,10 +131,17 @@ public class EssentialsConversionCommand extends MessageUtils implements Command
                     try {
                         this.plugin.getWarpManager().addWarp(warp, warps.getWarp(warp));
                     } catch (WarpNotFoundException | InvalidWorldException e) {
+                        if (e instanceof WarpNotFoundException) {
+                            this.plugin.warn("Warp '" + warp + "' does not exist?!");
+                            continue;
+                        }
+
                         e.printStackTrace();
                         cs.sendMessage(this.getPrefix() + this.getMessageWithStringTarget("ConvertFromEssentials.Failed.Unknown", label, cmd.getName(), cs, "warpSetting;" + warp));
                         return true;
                     }
+
+        //TODO: Convert kits
 
         if (this.plugin != null)
             if (this.plugin.getVaultHookManager() != null)

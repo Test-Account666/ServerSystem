@@ -177,6 +177,8 @@ Aliases:
     aliases: "No Aliases"
   convertfromessentials:
     aliases: "No Aliases"
+  converttoessentials:
+    aliases: "No Aliases"
   maintenance:
     aliases: "wartungen"
   rules:

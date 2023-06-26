@@ -84,6 +84,7 @@ createkit: true
 delkit: true
 kit: true
 convertfromessentials: true
+converttoessentials: true
 maintenance: true
 rules: true
 rename: true

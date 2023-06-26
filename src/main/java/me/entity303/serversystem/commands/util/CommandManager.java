@@ -352,8 +352,10 @@ public final class CommandManager {
         this.rc("msg", new MsgCommand(this.serverSystem), null);
         this.rc("msgtoggle", new MsgToggleCommand(this.serverSystem), null);
         this.rc("socialspy", new SocialSpyCommand(this.serverSystem), null);
-        if (Bukkit.getPluginManager().getPlugin("Essentials") != null)
+        if (Bukkit.getPluginManager().getPlugin("Essentials") != null) {
             this.rc("convertfromessentials", new EssentialsConversionCommand(this.serverSystem), null);
+            this.rc("converttoessentials", new ServerSystemConversionCommand(this.serverSystem), null);
+        }
         this.rc("god", new GodCommand(this.serverSystem), null);
         this.rc("reply", new ReplyCommand(this.serverSystem), null);
         this.rc("maintenance", new MaintenanceCommand(this.serverSystem), null);
