@@ -1,4 +1,4 @@
-package me.entity303.serversystem.vanish;
+package me.entity303.serversystem.utils;
 
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.Bukkit;
@@ -10,51 +10,51 @@ public class MetaValue {
     public MetaValue(ServerSystem plugin) {
     }
 
-    public MetadataValue getMetaValue(boolean vanish) {
+    public MetadataValue getMetaValue(boolean value) {
         return new MetadataValue() {
             @Override
             public Object value() {
-                return vanish;
+                return value;
             }
 
             @Override
             public int asInt() {
-                return vanish ? 1 : 0;
+                return value ? 1 : 0;
             }
 
             @Override
             public float asFloat() {
-                return vanish ? 1 : 0;
+                return value ? 1 : 0;
             }
 
             @Override
             public double asDouble() {
-                return vanish ? 1 : 0;
+                return value ? 1 : 0;
             }
 
             @Override
             public long asLong() {
-                return vanish ? 1 : 0;
+                return value ? 1 : 0;
             }
 
             @Override
             public short asShort() {
-                return vanish ? (short) 1 : (short) 0;
+                return value ? (short) 1 : (short) 0;
             }
 
             @Override
             public byte asByte() {
-                return vanish ? (byte) 1 : (byte) 0;
+                return value ? (byte) 1 : (byte) 0;
             }
 
             @Override
             public boolean asBoolean() {
-                return vanish;
+                return value;
             }
 
             @Override
             public String asString() {
-                return vanish ? "true" : "false";
+                return value ? "true" : "false";
             }
 
             @Override

@@ -63,6 +63,7 @@ public class Vanish {
             this.vanishList.remove(player.getUniqueId());
 
         player.setMetadata("Vanish", this.plugin.getMetaValue().getMetaValue(vanish));
+        player.setMetadata("vanished", this.plugin.getMetaValue().getMetaValue(vanish));
     }
 
     public void setVanish(Boolean vanish, UUID uuid) {
