@@ -69,11 +69,15 @@ public class VanishPacket_Reflection_Latest extends VanishPacket {
         player.setCollidable(false);
 
         if (this.playerConnectionField == null) {
-            try {
-                this.playerConnectionField = entityPlayer.getClass().getField("b");
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
+            this.playerConnectionField = Arrays.stream(entityPlayer.getClass().getDeclaredFields()).filter(field -> field.getType().getName().toLowerCase().contains("playerconnection")).findFirst().orElse(null);
+
+            if (this.playerConnectionField == null) {
+                this.plugin.error("Couldn't find PlayerConnection field! (Modded environment?)");
+                Arrays.stream(entityPlayer.getClass().getDeclaredFields()).forEach(field -> this.plugin.log(field.getType() + " -> " + field.getName()));
+                this.plugin.warn("Please forward this to the developer of ServerSystem!");
+                return;
             }
+
             this.playerConnectionField.setAccessible(true);
         }
 
@@ -203,8 +207,6 @@ public class VanishPacket_Reflection_Latest extends VanishPacket {
             bList.add(playerInfoData);
 
             b.set(playerInfo, bList);
-
-            System.out.println(((List) b.get(playerInfo)).size());
         } catch (IllegalAccessException illegalAccessException) {
             illegalAccessException.printStackTrace();
         }

@@ -17,6 +17,7 @@ import org.bukkit.inventory.InventoryView;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.Locale;
 
 public class VirtualCartography_Latest extends VirtualCartography {
 
@@ -98,7 +99,8 @@ public class VirtualCartography_Latest extends VirtualCartography {
         EntityPlayer human = null;
         try {
             human = (EntityPlayer) Class.forName("org.bukkit.craftbukkit." + this.getVersion() + ".entity.CraftPlayer").getDeclaredMethod("getHandle").invoke(player);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException |
+                 ClassNotFoundException e) {
             e.printStackTrace();
             return;
         }
@@ -117,7 +119,22 @@ public class VirtualCartography_Latest extends VirtualCartography {
         container.checkReachable = false;
 
         try {
-            Virtual.sendPacketMethod.invoke(human.b, new PacketPlayOutOpenWindow(id, Containers.r, IChatBaseComponent.ChatSerializer.a("{\"text\":\"Cartography\"}")));
+            if (playerConnectionField == null) {
+                playerConnectionField = Arrays.stream(human.getClass().getDeclaredFields()).filter(field -> field.getType().getName().toLowerCase(Locale.ROOT).contains("playerconnection")).findFirst().orElse(null);
+
+                if (playerConnectionField == null) {
+                    this.plugin.error("Couldn't find PlayerConnection field! (Modded environment?)");
+                    Arrays.stream(human.getClass().getDeclaredFields()).forEach(field -> this.plugin.log(field.getType() + " -> " + field.getName()));
+                    this.plugin.warn("Please forward this to the developer of ServerSystem!");
+                    return;
+                }
+
+                playerConnectionField.setAccessible(true);
+            }
+
+            PlayerConnection playerConnection = (PlayerConnection) playerConnectionField.get(human);
+
+            Virtual.sendPacketMethod.invoke(playerConnection, new PacketPlayOutOpenWindow(id, Containers.r, IChatBaseComponent.ChatSerializer.a("{\"text\":\"Cartography\"}")));
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             return;

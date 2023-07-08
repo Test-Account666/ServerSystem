@@ -1,5 +1,6 @@
 package me.entity303.serversystem.actionbar;
 
+import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
 import net.minecraft.network.chat.ChatMessageType;
 import net.minecraft.network.chat.IChatBaseComponent;
@@ -9,16 +10,21 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Locale;
 import java.util.UUID;
 
 public class ActionBar_Latest extends ActionBar {
     private final String nmsVersion;
+    private final ServerSystem plugin;
     private Method getHandleMethod = null;
     private Method sendPacketMethod = null;
     private Field playerConnectionField = null;
 
     public ActionBar_Latest(String nmsVersion) {
         this.nmsVersion = nmsVersion;
+
+        this.plugin = ServerSystem.getPlugin(ServerSystem.class);
     }
 
     @Override
@@ -61,11 +67,17 @@ public class ActionBar_Latest extends ActionBar {
 
         if (entityPlayer == null) return;
 
-        if (this.playerConnectionField == null) try {
-            this.playerConnectionField = entityPlayer.getClass().getDeclaredField("b");
+        if (this.playerConnectionField == null) {
+            this.playerConnectionField = Arrays.stream(entityPlayer.getClass().getDeclaredFields()).filter(field -> field.getType().getName().toLowerCase(Locale.ROOT).contains("playerconnection")).findFirst().orElse(null);
+
+            if (this.playerConnectionField == null) {
+                this.plugin.error("Couldn't find PlayerConnection field! (Modded environment?)");
+                Arrays.stream(entityPlayer.getClass().getDeclaredFields()).forEach(field -> this.plugin.log(field.getType() + " -> " + field.getName()));
+                this.plugin.warn("Please forward this to the developer of ServerSystem!");
+                return;
+            }
+
             this.playerConnectionField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
         }
 
         Object playerConnection = null;

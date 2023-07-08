@@ -17,6 +17,7 @@ import org.bukkit.inventory.InventoryView;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.Locale;
 
 public class VirtualStoneCutter_Latest extends VirtualStoneCutter {
 
@@ -120,7 +121,22 @@ public class VirtualStoneCutter_Latest extends VirtualStoneCutter {
         container.checkReachable = false;
 
         try {
-            Virtual.sendPacketMethod.invoke(human.b, new PacketPlayOutOpenWindow(id, Containers.x, IChatBaseComponent.ChatSerializer.a("{\"text\":\"Stonecutter\"}")));
+            if (playerConnectionField == null) {
+                playerConnectionField = Arrays.stream(human.getClass().getDeclaredFields()).filter(field -> field.getType().getName().toLowerCase(Locale.ROOT).contains("playerconnection")).findFirst().orElse(null);
+
+                if (playerConnectionField == null) {
+                    this.plugin.error("Couldn't find PlayerConnection field! (Modded environment?)");
+                    Arrays.stream(human.getClass().getDeclaredFields()).forEach(field -> this.plugin.log(field.getType() + " -> " + field.getName()));
+                    this.plugin.warn("Please forward this to the developer of ServerSystem!");
+                    return;
+                }
+
+                playerConnectionField.setAccessible(true);
+            }
+
+            PlayerConnection playerConnection = (PlayerConnection) playerConnectionField.get(human);
+
+            Virtual.sendPacketMethod.invoke(playerConnection, new PacketPlayOutOpenWindow(id, Containers.x, IChatBaseComponent.ChatSerializer.a("{\"text\":\"Stonecutter\"}")));
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             return;
