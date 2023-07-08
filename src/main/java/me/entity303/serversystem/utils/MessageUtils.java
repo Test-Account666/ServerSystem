@@ -9,6 +9,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.MetadataValue;
 
 import java.lang.reflect.Method;
 import java.util.UUID;
@@ -178,5 +179,25 @@ public class MessageUtils {
 
     public double getMaxHealth(Player player) {
         return this.plugin.getVersionManager().isV119() ? player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() : player.getMaxHealth();
+    }
+
+    public boolean isAwayFromKeyboard(Player player) {
+        boolean awayFromKeyboard = false;
+
+        for (MetadataValue metadataValue : player.getMetadata("afk")) {
+            if (metadataValue == null)
+                continue;
+
+            if (metadataValue.getOwningPlugin() == null)
+                continue;
+
+            if (!metadataValue.getOwningPlugin().getName().equalsIgnoreCase("ServerSystem"))
+                continue;
+
+            awayFromKeyboard = metadataValue.asBoolean();
+            break;
+        }
+
+        return awayFromKeyboard;
     }
 }
