@@ -379,12 +379,13 @@ Messages:
       Target: "&2[&7MSG&2] &3<SENDER> &7-> &5You &7>> &2<MESSAGE>"
       SocialSpy: "&2[&7MSG&2] &3<SENDER> &7-> &5<TARGET> &7>> &2<MESSAGE>"
       Deactivated: "&4<TARGET> &cdeactivated msg messages!"
+      Afk: "&4<TARGET> &cis afk, he might not respond!"
     ConvertFromEssentials:
       WarnNotTested: "&cWarning!! &cThis feature is &4not tested&c! &4Expect Bugs/Errors/Misc problems! &cWarning!!<BREAK>&7If you still want to use this feature, just type this command again!"
       Start: "Starting conversion from Essentials..."
       Failed:
         NoDirectory: "&cError while converting! It seems like there is no data from Essentials!"
-        Unknown: "&cError while converting! Look console for more information! Or send this error: &4<TARGET> &cwith the console report in the support discord (&4https://discord.gg/TbnyUrJ)"
+        Unknown: "&cError while converting! Look console for more information! Or send this error: &4<TARGET> &cwith the console report in the support discord (&4https://discord.gg/dBhfCzdZxq)"
       Finished: "Conversion finished!"
     ConvertToEssentials:
       WarnNotTested: "&cWarning!! &cThis feature is &4not tested&c! &4Expect Bugs/Errors/Misc problems! &cWarning!!<BREAK>&7If you still want to use this feature, just type this command again!"
@@ -437,10 +438,6 @@ Messages:
       Premium: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4You got kicked!<BREAK>&6Reason: &cBecause a premium player needed to join, you were kicked!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
     Reply: "&cYou did not pm someone, yet"
     BalTop: "&2[]&7--------------------------------&2[]<BREAK>&2Baltop<BREAK>&2[]&7--------------------------------&2[]<BREAK>&61.<FIRST><BREAK>&62.<SECOND><BREAK>&63.<THIRD><BREAK>&64.<FOURTH><BREAK>&65.<FIFTH><BREAK>&66.<SIXTH><BREAK>&67.<SEVENTH><BREAK>&69.<NINTH><BREAK>&610.<TENTH><BREAK>&2[]&7--------------------------------&2[]<BREAK>&2Baltop<BREAK>&2[]&7--------------------------------&2[]"
-    AFK:
-      Kick: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4You got kicked!<BREAK>&6Reason: You were afk for more than <MINUTES> minutes!<BREAK>&6By: &c<SENDER><BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
-      Afk: "You are now afk!"
-      NotAfk: "You are no longer afk!"
     Maintenance:
       NoJoin: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4You got kicked!<BREAK>&6The server is currently under maintenance!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
       Kick: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4You got kicked!<BREAK>&6Reason: &cThe server is now under maintenance!<BREAK>&6By: &c<SENDER><BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
@@ -491,6 +488,10 @@ Messages:
     Freeze:
       Freeze: "You froze &2<TARGET>&7!"
       UnFreeze: "You unfroze &2<TARGET>&7!"
+    Afk:
+      Enabled: "You are now afk!"
+      Disabled: "You are no longer afk!"
+      Kick: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4You got kicked!<BREAK>&6Reason: &cYou were afk for too long!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
   Misc:
     ServerFull: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4The Server is full!<BREAK>&cTo join anyway, you need the permission &4<PERMISSION>&c!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
     JoinMessage:

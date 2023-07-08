@@ -5,8 +5,9 @@ import me.entity303.serversystem.listener.chat.ChatListenerWithPrefix;
 import me.entity303.serversystem.listener.chat.ChatListenerWithoutPrefix;
 import me.entity303.serversystem.listener.command.CommandListener;
 import me.entity303.serversystem.listener.join.JoinListener;
-import me.entity303.serversystem.listener.move.freeze.FreezeListener;
+import me.entity303.serversystem.listener.AwayFromKeyboardListener;
 import me.entity303.serversystem.listener.move.MoveListener;
+import me.entity303.serversystem.listener.move.freeze.FreezeListener;
 import me.entity303.serversystem.listener.vanish.*;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.Bukkit;
@@ -15,6 +16,7 @@ import org.bukkit.event.Listener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class EventManager {
     private final ServerSystem serverSystem;
@@ -50,14 +52,14 @@ public class EventManager {
         this.re(new GameModeChangeListener(this.serverSystem));
         this.re(new ServerPingListener(this.serverSystem));
 
-        boolean resetGameMode = this.serverSystem.getConfigReader().getBoolean("worldChange.resetgamemode");
-        boolean resetGodMode = this.serverSystem.getConfigReader().getBoolean("worldChange.resetgod");
-        boolean resetFly = this.serverSystem.getConfigReader().getBoolean("worldChange.resetfly");
+        boolean resetGameMode = this.serverSystem.getConfigReader().getBoolean("worldChange.resetGameMode");
+        boolean resetGodMode = this.serverSystem.getConfigReader().getBoolean("worldChange.resetGod");
+        boolean resetFly = this.serverSystem.getConfigReader().getBoolean("worldChange.resetFly");
 
         if (resetGameMode || resetGodMode || resetFly)
             this.re(new WorldChangeListener(this.serverSystem, resetGameMode, resetGodMode, resetFly));
 
-        if (this.serverSystem.getConfigReader().getBoolean("deactivateentitycollision"))
+        if (this.serverSystem.getConfigReader().getBoolean("deactivateEntityCollision"))
             Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.re(new EntitySpawnListener(this.serverSystem)), 5L);
 
         if (this.serverSystem.getConfigReader().getBoolean("no-redstone"))
@@ -66,9 +68,19 @@ public class EventManager {
         if (this.serverSystem.getConfigReader().getBoolean("spawn.respawn"))
             this.re(new RespawnListener(this.serverSystem));
 
-        //TODO: Test this
         this.re(new UnlimitedListener());
         this.re(new FreezeListener(this.serverSystem));
+
+        if (this.serverSystem.getConfigReader().getBoolean("afk.enabled")) {
+            long maxDuration = this.serverSystem.getConfigReader().getLong("afk.maxDuration");
+            maxDuration = TimeUnit.SECONDS.toMillis(maxDuration);
+
+            long kickDuration = this.serverSystem.getConfigReader().getLong("afk.kickDuration");
+            kickDuration = TimeUnit.SECONDS.toMillis(kickDuration);
+            kickDuration += maxDuration;
+
+            this.re(new AwayFromKeyboardListener(this.serverSystem, maxDuration, kickDuration));
+        }
     }
 
     public void re(Listener listener) {

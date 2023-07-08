@@ -379,12 +379,13 @@ Messages:
       Target: "&2[&7MSG&2] &3<SENDER> &7-> &5Dir &7>> &2<MESSAGE>"
       SocialSpy: "&2[&7SocialSpy&2] &3<SENDER> &7-> &5<TARGET> &7>> &2<MESSAGE>"
       Deactivated: "&cDer Spieler &4<TARGET> &chat msg Nachrichten deaktiviert!"
+      Afk: "&cDer Spieler &4<TARGET> &cist Afk, er wird dir möglicherweise nicht antworten!"
     ConvertFromEssentials:
       WarnNotTested: "&cWarnung!! &cDieses Feature wurde &4nicht getestet&c! &4Erwarte Bugs/Fehler/Sonstige Probleme! &cWarnung!!<BREAK>&7Solltest du dieses Feature dennoch nutzen wollen, gib den Befehl einfach noch einmal ein!"
       Start: "Starte Konvertierung von Essentials..."
       Failed:
         NoDirectory: "&cFehler bei der Konvertierung! Es scheint als gäbe es keine Essentials Daten!"
-        Unknown: "&cFehler bei der Konvertierung! Siehe Konsole für mehr Daten! Oder schicke folgenden Fehler: &4<TARGET> &cund die Fehlermeldung der Konsole in den Support Discord (&4https://discord.gg/TbnyUrJ)"
+        Unknown: "&cFehler bei der Konvertierung! Siehe Konsole für mehr Daten! Oder schicke folgenden Fehler: &4<TARGET> &cund die Fehlermeldung der Konsole in den Support Discord (&4https://discord.gg/dBhfCzdZxq)"
       Finished: "Die Konvertierung wurde beendet!"
     ConvertToEssentials:
       WarnNotTested: "&cWarnung!! &cDieses Feature wurde &4nicht getestet&c! &4Erwarte Bugs/Fehler/Sonstige Probleme! &cWarnung!!<BREAK>&7Solltest du dieses Feature dennoch nutzen wollen, gib den Befehl einfach noch einmal ein!"
@@ -437,10 +438,6 @@ Messages:
       Premium: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDu wurdest gekickt, um einem Premium Spieler Platz zu machen!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
     Reply: "&cDu hast bisher noch mit niemanden geschrieben!"
     BalTop: "&2[]&7--------------------------------&2[]<BREAK>&2Baltop<BREAK>&2[]&7--------------------------------&2[]<BREAK>&61.<FIRST><BREAK>&62.<SECOND><BREAK>&63.<THIRD><BREAK>&64.<FOURTH><BREAK>&65.<FIFTH><BREAK>&66.<SIXTH><BREAK>&67.<SEVENTH><BREAK>&68.<EIGHTH><BREAK>&69.<NINTH><BREAK>&610.<TENTH><BREAK>&2[]&7--------------------------------&2[]<BREAK>&2Baltop<BREAK>&2[]&7--------------------------------&2[]"
-    AFK:
-      Kick: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDu warst länger als <MINUTES> Minuten Inaktiv!<BREAK>&6Von: &c<SENDER><BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
-      Afk: "Du bist nun afk!"
-      NotAfk: "Du bist nun nicht mehr afk!"
     Maintenance:
       NoJoin: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Die Wartungen sind zurzeit aktiv!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
       Kick: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDie Wartungen wurden aktiviert!<BREAK>&6Von: &c<SENDER><BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
@@ -491,6 +488,10 @@ Messages:
     Freeze:
       Freeze: "Du hast den Spieler &2<TARGET> &7eingefroren!"
       UnFreeze: "Du hast den Spieler &2<TARGET> &7aufgetaut!"
+    Afk:
+      Enabled: "Du bist nun Afk!"
+      Disabled: "Du bist nicht mehr Afk!"
+      Kick: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDu warst zu lange Afk!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
   Misc:
     ServerFull: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4Der Server ist voll!<BREAK>&cUm trotzdem beitreten zu können, benötigst du die Permission &4<PERMISSION>&c!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
     JoinMessage:

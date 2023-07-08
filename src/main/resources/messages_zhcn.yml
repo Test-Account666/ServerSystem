@@ -386,12 +386,13 @@ Messages:
       Target: "&2[&7悄悄话&2] &3<SENDER> &7-> &5你 &7>> &2<MESSAGE>"
       SocialSpy: "&2[&7悄悄话监听&2] &3<SENDER> &7-> &5<TARGET> &7>> &2<MESSAGE>"
       Deactivated: "&4<TARGET> &c拒收悄悄话!"
+      Afk: "&4<TARGET> &c正在挂机，ta可能无法及时回复！"
     ConvertFromEssentials:
       WarnNotTested: "&c&l警告!! &7| &c该功能 &4&6从未被 &c测试过&c! &4可能会出现错误和其他不可预知的问题 &7| &c&l警告!!<BREAK>&7如果你坚持进行数据转移操作, 请再次输入该命令!"
       Start: "Starting conversion from Essentials..."
       Failed:
         NoDirectory: "&c数据转移时出现问题! 似乎Essentials中没有数据!" #此处可能出现了原文错误,译文可能不准确 原句"It seems like there is now data from Essentials"
-        Unknown: "&c数据转移时出现错误! 请查询控制台以获得更多信息! <BREAK>&c或将此消息: &4<TARGET> &c与控制台反馈信息一同反馈到Discord (&4https://discord.gg/TbnyUrJ)"
+        Unknown: "&c数据转移时出现错误! 请查询控制台以获得更多信息! <BREAK>&c或将此消息: &4<TARGET> &c与控制台反馈信息一同反馈到Discord (&4https://discord.gg/dBhfCzdZxq)"
       Finished: "数据转移完毕!"
     ConvertToEssentials:
       WarnNotTested: "&c警告！！&c该功能还 &4未经过测试&c! &4可能存在 BUG、错误或其他的问题! &c警告！！<BREAK>&7如果你仍需要使用该功能，请再次输入一遍本指令"
@@ -444,10 +445,6 @@ Messages:
       Premium: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4您已被踢出服务器!<BREAK>&6原因: &c为高级用户提供预留空间!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
     Reply: "&c还没人对你说悄悄话呢"
     BalTop: "&2[]&7--------------------------------&2[]<BREAK>&2金钱排行榜<BREAK>&2[]&7--------------------------------&2[]<BREAK>&61.<FIRST><BREAK>&62.<SECOND><BREAK>&63.<THIRD><BREAK>&64.<FOURTH><BREAK>&65.<FIFTH><BREAK>&66.<SIXTH><BREAK>&67.<SEVENTH><BREAK>&69.<NINTH><BREAK>&610.<TENTH><BREAK>&2[]&7--------------------------------&2[]<BREAK>&2Baltop<BREAK>&2[]&7--------------------------------&2[]"
-    AFK:
-      Kick: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4您已被踢出服务器!<BREAK>&6原因: 别在服务器里挂机!您本次挂机时长超过了 <MINUTES> 分钟!<BREAK>&6执行者: &c<SENDER><BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
-      Afk: "你开始挂机了!"
-      NotAfk: "欢迎回来!"
     Maintenance:
       NoJoin: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4您已被踢出服务器!<BREAK>&6服务器正在维护，请稍候!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
       Kick: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4您已被踢出服务器!<BREAK>&6Reason: &c服务器正在维护，请稍候!<BREAK>&6执行者: &c<SENDER><BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
@@ -496,6 +493,10 @@ Messages:
     Freeze:
       Freeze: "你冻结了&2<TARGET>&7!"
       UnFreeze: "你解冻了&2<TARGET>&7!"
+    Afk:
+      Enabled: "你挂机了喔~（擦刀"
+      Disabled: "欢迎回来 ^w^"
+      Kick: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&7&l[&c&l!&7&l]&4你已被踢出服务器!<BREAK>&6原因: &c别挂机了（盯）<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
   Misc:
     ServerFull: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4服务器已满!<BREAK>&c如果想要使用预留通道,你需要权限 &4<PERMISSION>&c!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
     JoinMessage:

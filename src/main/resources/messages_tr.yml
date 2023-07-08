@@ -375,12 +375,13 @@ Messages:
       Sender: "&8[&7MSG&8] &3Sen &7-> &5<TARGET> &7>> &2<MESSAGE>"
       Target: "&8[&7MSG&8] &3<SENDER> &7-> &5Sen &7>> &2<MESSAGE>"
       SocialSpy: "&8[&7SocialSpy&8] &3<SENDER> &7-> &5<TARGET> &7>> &2<MESSAGE>"
+      Afk: "&4<TARGET> &cis afk, he might not respond!"
     ConvertFromEssentials:
       WarnNotTested: "&cUyarı!! &cBu özellik henüz &4test edilmedi&c! &4Açık/Hata/vb. problemler beklenir! &cUyarı!!<BREAK>&7Hala bu özelliği kullanmak istiyorsanız, bu komutu tekrar girin!"
       Start: "Starting conversion from Essentials..."
       Failed:
         NoDirectory: "&cÇevirilemedi! Görünüşe göre Essentials verisi yok!"
-        Unknown: "&cÇevirme işleminde hata! Daha fazla detay için konsola bakın! Ya da bu hatayı: &4<TARGET> &ckonsol raporu ile birlikte discord desteğe gönderin: (&4https://discord.gg/TbnyUrJ)"
+        Unknown: "&cÇevirme işleminde hata! Daha fazla detay için konsola bakın! Ya da bu hatayı: &4<TARGET> &ckonsol raporu ile birlikte discord desteğe gönderin: (&4https://discord.gg/dBhfCzdZxq)"
       Finished: "Çevirme işlemi bitti!"
     ConvertToEssentials:
       WarnNotTested: "&cUyarı!! &cBu özellik &4test edilmemiştir&c! &4Hatalar/Hatalar/Çeşitli sorunlar bekleniyor! &cUyarı!!<BREAK>&7Bu özelliği hâlâ kullanmak istiyorsanız, bu komutu tekrar yazmanız yeterli!"
@@ -433,10 +434,6 @@ Messages:
       Premium: "&8[]&7--------------------------------&8[]<BREAK>&2SUNUCU<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Sebep: &cPremium oyuncunun giriş yapması gerekiyordu, sunucudan atıldın!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SUNUCU<BREAK>&8[]&7--------------------------------&8[]"
     Reply: "&cHenüz birine özel mesaj göndermedin."
     BalTop: "&8[]&7--------------------------------&8[]<BREAK>&2BalTop<BREAK>&8[]&7--------------------------------&8[]<BREAK>&61.<FIRST><BREAK>&62.<SECOND><BREAK>&63.<THIRD><BREAK>&64.<FOURTH><BREAK>&65.<FIFTH><BREAK>&66.<SIXTH><BREAK>&67.<SEVENTH><BREAK>&69.<NINTH><BREAK>&610.<TENTH><BREAK>&8[]&7--------------------------------&8[]<BREAK>&2BalTop<BREAK>&8[]&7--------------------------------&8[]"
-    AFK:
-      Kick: "&8[]&7--------------------------------&8[]<BREAK>&2SUNUCU<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Sunucudan atıldın!<BREAK>&6Sebep: <MINUTES> dakikadan uzun süredir klavyeden uzaktasın!<BREAK>&6Atan: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SUNUCU<BREAK>&8[]&7--------------------------------&8[]"
-      Afk: "Artık AFKsın!"
-      NotAfk: "Artık AFK değilsin!"
     Maintenance:
       NoJoin: "&8[]&7--------------------------------&8[]<BREAK>&2SUNUCU<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Sunucudan atıldın!<BREAK>&6Sunucu şu anda bakımda!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SUNUCU<BREAK>&8[]&7--------------------------------&8[]"
       Kick: "&8[]&7--------------------------------&8[]<BREAK>&2SUNUCU<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Sunucudan atıldın!<BREAK>&6Sebep: &cSunucu şu anda bakımda!<BREAK>&6Atan: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SUNUCU<BREAK>&8[]&7--------------------------------&8[]"
@@ -482,6 +479,10 @@ Messages:
     Freeze:
       Freeze: "&2<TARGET>&7'yi dondurdun!"
       UnFreeze: "&2<TARGET>&7'yi çözdün!"
+    Afk:
+      Enabled: "Şu anda afksın!"
+      Disabled: "Artık afk değilsin!"
+      Kick: "&8[]&7--------------------------------&8[]<BREAK>&2SUNUCU<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Sunucudan atıldın!<BREAK>&6Sebep: &cÇok uzun süre afktin<BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SUNUCU<BREAK>&8[]&7--------------------------------&8[]"
   Misc:
     ServerFull: "&8[]&7--------------------------------&8[]<BREAK>&2SUNUCU<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Sunucu dolu!<BREAK>&cYine de girmek istiyorsan, &4<PERMISSION> &ciznine ihtiyacın var!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SUNUCU<BREAK>&8[]&7--------------------------------&8[]"
     JoinMessage:

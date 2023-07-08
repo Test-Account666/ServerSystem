@@ -386,6 +386,7 @@ Messages:
       Target: "&8[&cMSG&2] &3<SENDER> &7-> &cTy &7>> &2<MESSAGE>"
       SocialSpy: "&8[&cSocialSpy&2] &3<SENDER> &7-> &c<TARGET> &7>> &2<MESSAGE>"
       Deactivated: "&4<TARGET> &cdeaktivoval msg zprávy"
+      Afk: "&4<TARGET> je nyní AFK, nemusí odpovídat!"
     ConvertFromEssentials:
       WarnNotTested: "&cVarování!! &cTento příkaz ještě &4nebyl testováný&c! &4Omluvte
         veškeré problémy! &cVarování!!<BREAK>&7Pokud chceš použít tento příkaz, napiš
@@ -394,7 +395,7 @@ Messages:
       Failed:
         NoDirectory: "&cError při konvertování! V Essentials nejsou žádné data!"
         Unknown: "&cError při konvertování! Podívej se do konsole pro bližší info!
-          Nebo pošli error: &4<TARGET> &cs obrázkem konsole na tento discord (&4https://discord.gg/TbnyUrJ)"
+          Nebo pošli error: &4<TARGET> &cs obrázkem konsole na tento discord (&4https://discord.gg/dBhfCzdZxq)"
       Finished: "Konvertování dokončeno!"
     ConvertToEssentials:
       WarnNotTested: "&cVarování!! &cTato funkce &4není testována&c! &4Očekávej Chyby/Errory/Ostatní problémy! &cVarování!!<BREAK>&7Pokud stále chceš tuto funkci využít, napiš příkaz ještě jednou!"
@@ -452,11 +453,6 @@ Messages:
         <BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]"
     Reply: "&cJeště jsi nikoho neoznačil"
     BalTop: "&8[]&7--------------------------------&8[]<BREAK>&2Baltop<BREAK>&8[]&7--------------------------------&8[]<BREAK>&61.<FIRST><BREAK>&62.<SECOND><BREAK>&63.<THIRD><BREAK>&64.<FOURTH><BREAK>&65.<FIFTH><BREAK>&66.<SIXTH><BREAK>&67.<SEVENTH><BREAK>&68.<EIGHTH><BREAK>&69.<NINTH><BREAK>&610.<TENTH><BREAK>&8[]&7--------------------------------&8[]<BREAK>&2Baltop<BREAK>&8[]&7--------------------------------&8[]"
-    AFK:
-      Kick: "&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl
-        jsi vyhozen ze serveru!<BREAK>&6Důvod: &cJsi AFK déle jak <MINUTES> minut!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]"
-      Afk: "Nyní si AFK!"
-      NotAfk: "Už nejsi AFK!"
     Maintenance:
       NoJoin: "&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Byl
         jsi vyhozen ze serveru!<BREAK>&cServer je momentálně v údržbě!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]"
@@ -509,6 +505,11 @@ Messages:
     Freeze:
       Freeze: "Zmrazil jsi &2<TARGET>&7!"
       UnFreeze: "Odmrazil jsi &2<TARGET>&7!"
+    Afk:
+      Enabled: "Nyní jste AFK!"
+      Disabled: "Už nejste AFK!"
+      Kick: "&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl
+              jsi vyhozen ze serveru!<BREAK>&6Důvod: &cByli jste příliš dlouho AFK<BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]"
   Misc:
     ServerFull: "&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Server
       je plný!<BREAK>&cK přojení potřebuješ permissi &4<PERMISSION>&c!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]"
