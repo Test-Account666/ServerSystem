@@ -11,6 +11,8 @@ import org.bukkit.inventory.ItemStack;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -37,7 +39,11 @@ public class DefaultConfigReader implements ConfigReader {
         if (!this.validateConfig()) {
             plugin.warn("One or more errors with your '" + file.getName() + "' file were found and fixed, a backup was made before doing this!");
             try {
-                FileUtils.copyFile(file, new File("plugins" + File.separator + "ServerSystem", file.getName() + ".backup-" + System.currentTimeMillis()));
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm-ss");
+                LocalDateTime now = LocalDateTime.now();
+                String date = dtf.format(now);
+
+                FileUtils.copyFile(file, new File("plugins" + File.separator + "ServerSystem", file.getName() + ".backup-" + date));
             } catch (IOException e) {
                 e.printStackTrace();
                 plugin.error("An error occurred while backing up, changes only saved internally/temporary!");
