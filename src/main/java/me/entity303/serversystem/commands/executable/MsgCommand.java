@@ -42,6 +42,9 @@ public class MsgCommand extends MessageUtils implements CommandExecutor {
                     return;
                 }
 
+                if (this.isAwayFromKeyboard(target))
+                    cs.sendMessage(this.getPrefix() + this.getMessage("Msg.Afk", label, cmd.getName(), cs, target));
+
                 if (cs instanceof Player) {
                     ManagerMute muteManager = this.plugin.getMuteManager();
                     Player player = (Player) cs;
