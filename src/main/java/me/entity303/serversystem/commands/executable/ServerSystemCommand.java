@@ -42,6 +42,9 @@ public class ServerSystemCommand extends MessageUtils implements CommandExecutor
                 return true;
             }
             this.plugin.onDisable();
+
+            this.plugin.reloadConfigValidating();
+
             this.plugin.onEnable();
             cs.sendMessage(this.getPrefix() + this.getMessage("ServerSystem.Reload", label, cmd.getName(), cs, null));
             return true;
