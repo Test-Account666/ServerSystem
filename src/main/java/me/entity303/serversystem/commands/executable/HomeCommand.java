@@ -75,7 +75,7 @@ public class HomeCommand implements CommandExecutor {
             return true;
         }
 
-        if (this.plugin.getConfigReader().getBoolean("teleportation.home.enabledelay") && !this.plugin.getPermissions().hasPerm(cs, "home.bypassdelay", true)) {
+        if (this.plugin.getConfigReader().getBoolean("teleportation.home.enableDelay") && !this.plugin.getPermissions().hasPerm(cs, "home.bypassdelay", true)) {
             this.plugin.getTeleportMap().put(((Player) cs), Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
                 OfflinePlayer player = ((OfflinePlayer) cs).getPlayer();
                 if (player.isOnline()) {

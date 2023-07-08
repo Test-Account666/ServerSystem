@@ -22,7 +22,7 @@ public class VaultHookManager {
             return;
         }
 
-        if (!this.plugin.getConfigReader().getBoolean("economy.hookintovault")) {
+        if (!this.plugin.getConfigReader().getBoolean("economy.hookIntoVault")) {
             this.plugin.log("ServerSystem will not hook into Vault! Hooking is disabled!");
             return;
         }
@@ -44,7 +44,7 @@ public class VaultHookManager {
         ServicesManager sm = Bukkit.getServicesManager();
         if (!this.plugin.getConfigReader().getBoolean("economy.enabled")) return;
 
-        if (!this.plugin.getConfigReader().getBoolean("economy.hookintovault")) {
+        if (!this.plugin.getConfigReader().getBoolean("economy.hookIntoVault")) {
             this.plugin.log("ServerSystem will not hook! Hooking is disabled!");
             return;
         }
@@ -70,7 +70,7 @@ public class VaultHookManager {
     public void unhook() {
         if (!this.plugin.getConfigReader().getBoolean("economy.enabled")) return;
 
-        if (!this.plugin.getConfigReader().getBoolean("economy.hookintovault")) return;
+        if (!this.plugin.getConfigReader().getBoolean("economy.hookIntoVault")) return;
         ServicesManager sm = this.plugin.getServer().getServicesManager();
         if (this.economy != null) {
             sm.unregister(Economy.class, this.economy);

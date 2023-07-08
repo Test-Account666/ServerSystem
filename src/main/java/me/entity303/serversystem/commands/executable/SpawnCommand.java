@@ -46,7 +46,7 @@ public class SpawnCommand extends MessageUtils implements CommandExecutor {
         location.setYaw((float) cfg.getDouble("Spawn.Yaw"));
         location.setPitch((float) cfg.getDouble("Spawn.Pitch"));
         location.setWorld(Bukkit.getWorld(cfg.getString("Spawn.World")));
-        if (!this.plugin.getConfigReader().getBoolean("teleportation.spawn.enabledelay") || this.isAllowed(cs, "spawn.bypassdelay", true)) {
+        if (!this.plugin.getConfigReader().getBoolean("teleportation.spawn.enableDelay") || this.isAllowed(cs, "spawn.bypassdelay", true)) {
 
             Teleport.teleport((Player) cs, location);
 

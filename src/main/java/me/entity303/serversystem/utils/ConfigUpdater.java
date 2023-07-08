@@ -545,14 +545,14 @@ public class ConfigUpdater extends MessageUtils {
             msgDEConfig.set("Messages.Normal.ConvertFromEssentials.WarnNotTested", "&cWarnung!! &cDieses Feature wurde &4nicht getestet&c! &4Erwarte Bugs/Fehler/Sonstige Probleme! &cWarnung!!<BREAK>&7Solltest du dieses Feature dennoch nutzen wollen, gib den Befehl einfach noch einmal ein!");
             msgDEConfig.set("Messages.Normal.ConvertFromEssentials.Start", "Starte Konvertierung von Essentials...");
             msgDEConfig.set("Messages.Normal.ConvertFromEssentials.Failed.NoDirectory", "&cFehler bei der Konvertierung! Es scheint als gäbe es keine Essentials Daten!");
-            msgDEConfig.set("Messages.Normal.ConvertFromEssentials.Failed.Unknown", "&cFehler bei der Konvertierung! Siehe Konsole für mehr Daten! Oder schicke folgenden Fehler: &4<TARGET> &cund die Fehlermeldung der Konsole in den Support Discord (&4https://discord.gg/TbnyUrJ)");
+            msgDEConfig.set("Messages.Normal.ConvertFromEssentials.Failed.Unknown", "&cFehler bei der Konvertierung! Siehe Konsole für mehr Daten! Oder schicke folgenden Fehler: &4<TARGET> &cund die Fehlermeldung der Konsole in den Support Discord (&4https://discord.gg/dBhfCzdZxq)");
             msgDEConfig.set("Messages.Normal.ConvertFromEssentials.Finished", "Die Konvertierung wurde beendet!");
 
 
             msgENConfig.set("Messages.Normal.ConvertFromEssentials.WarnNotTested", "&cWarning!! &cThis feature is &4not tested&c! &4Expect Bugs/Errors/Misc problems! &cWarning!!<BREAK>&7If you still want to use this feature, just type this command again!");
             msgENConfig.set("Messages.Normal.ConvertFromEssentials.Start", "Starting convertion from Essentials...");
             msgENConfig.set("Messages.Normal.ConvertFromEssentials.Failed.NoDirectory", "&cError while converting! It seems like there is now data from Essentials!");
-            msgENConfig.set("Messages.Normal.ConvertFromEssentials.Failed.Unknown", "&cError while converting! Look console for more information! Or send this error: &4<TARGET> &cwith the console report in the support discord (&4https://discord.gg/TbnyUrJ)");
+            msgENConfig.set("Messages.Normal.ConvertFromEssentials.Failed.Unknown", "&cError while converting! Look console for more information! Or send this error: &4<TARGET> &cwith the console report in the support discord (&4https://discord.gg/dBhfCzdZxq)");
             msgENConfig.set("Messages.Normal.ConvertFromEssentials.Finished", "Convertion finished!");
 
 
@@ -560,13 +560,13 @@ public class ConfigUpdater extends MessageUtils {
                 msgConfig.set("Messages.Normal.ConvertFromEssentials.WarnNotTested", "&cWarnung!! &cDieses Feature wurde &4nicht getestet&c! &4Erwarte Bugs/Fehler/Sonstige Probleme! &cWarnung!!<BREAK>&7Solltest du dieses Feature dennoch nutzen wollen, gib den Befehl einfach noch einmal ein!");
                 msgConfig.set("Messages.Normal.ConvertFromEssentials.Start", "Starte Konvertierung von Essentials...");
                 msgConfig.set("Messages.Normal.ConvertFromEssentials.Failed.NoDirectory", "&cFehler bei der Konvertierung! Es scheint als gäbe es keine Essentials Daten!");
-                msgConfig.set("Messages.Normal.ConvertFromEssentials.Failed.Unknown", "&cFehler bei der Konvertierung! Siehe Konsole für mehr Daten! Oder schicke folgenden Fehler: &4<TARGET> &cund die Fehlermeldung der Konsole in den Support Discord (&4https://discord.gg/TbnyUrJ)");
+                msgConfig.set("Messages.Normal.ConvertFromEssentials.Failed.Unknown", "&cFehler bei der Konvertierung! Siehe Konsole für mehr Daten! Oder schicke folgenden Fehler: &4<TARGET> &cund die Fehlermeldung der Konsole in den Support Discord (&4https://discord.gg/dBhfCzdZxq)");
                 msgConfig.set("Messages.Normal.ConvertFromEssentials.Finished", "Die Konvertierung wurde beendet!");
             } else {
                 msgConfig.set("Messages.Normal.ConvertFromEssentials.WarnNotTested", "&cWarning!! &cThis feature is &4not tested&c! &4Expect Bugs/Errors/Misc problems! &cWarning!!<BREAK>&7If you still want to use this feature, just type this command again!");
                 msgConfig.set("Messages.Normal.ConvertFromEssentials.Start", "Starting convertion from Essentials...");
                 msgConfig.set("Messages.Normal.ConvertFromEssentials.Failed.NoDirectory", "&cError while converting! It seems like there is now data from Essentials!");
-                msgConfig.set("Messages.Normal.ConvertFromEssentials.Failed.Unknown", "&cError while converting! Look console for more information! Or send this error: &4<TARGET> &cwith the console report in the support discord (&4https://discord.gg/TbnyUrJ)");
+                msgConfig.set("Messages.Normal.ConvertFromEssentials.Failed.Unknown", "&cError while converting! Look console for more information! Or send this error: &4<TARGET> &cwith the console report in the support discord (&4https://discord.gg/dBhfCzdZxq)");
                 msgConfig.set("Messages.Normal.ConvertFromEssentials.Finished", "Convertion finished!");
             }
 
@@ -1071,8 +1071,8 @@ public class ConfigUpdater extends MessageUtils {
             ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
 
-            this.plugin.getConfigReader().set("kit.giveonfirstspawn", false);
-            this.plugin.getConfigReader().set("kit.givenkit", "starter");
+            this.plugin.getConfigReader().set("kit.giveOnFirstSpawn", false);
+            this.plugin.getConfigReader().set("kit.givenKit", "starter");
             this.plugin.getConfigReader().set("version", "3.8");
 
 
@@ -1577,7 +1577,7 @@ public class ConfigUpdater extends MessageUtils {
 
             this.plugin.getConfigReader().set("economy.enabled", true);
 
-            this.plugin.getConfigReader().set("bansystem.enabled", true);
+            this.plugin.getConfigReader().set("banSystem.enabled", true);
 
             this.plugin.getConfigReader().set("version", "4.3");
 
@@ -2002,7 +2002,7 @@ public class ConfigUpdater extends MessageUtils {
             ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
 
-            this.plugin.getConfigReader().set("economy.createaccountonjoin", false);
+            this.plugin.getConfigReader().set("economy.createAccountOnJoin", false);
             this.plugin.getConfigReader().set("version", "4.9");
 
             //permissionConfig.set("Permissions.rules.permission", "server.rules");
@@ -2056,8 +2056,8 @@ public class ConfigUpdater extends MessageUtils {
             ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
 
-            this.plugin.getConfigReader().set("fly.stopwhenhit", false);
-            this.plugin.getConfigReader().set("fly.disablewhenhit", false);
+            this.plugin.getConfigReader().set("fly.stopWhenHit", false);
+            this.plugin.getConfigReader().set("fly.disableWhenHit", false);
 
             this.plugin.getConfigReader().set("version", "5.0");
 
@@ -2451,7 +2451,7 @@ public class ConfigUpdater extends MessageUtils {
             ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
             ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
-            this.plugin.getConfigReader().set("messagebyitembreak", false);
+            this.plugin.getConfigReader().set("messageByItemBreak", false);
             this.plugin.getConfigReader().set("version", "5.5");
 
 
@@ -2536,7 +2536,7 @@ public class ConfigUpdater extends MessageUtils {
             ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
             this.plugin.getConfigReader().set("betterafkscheduler", true);
-            this.plugin.getConfigReader().set("deactivateentitycollision", true);
+            this.plugin.getConfigReader().set("deactivateEntityCollision", true);
             this.plugin.getConfigReader().set("version", "5.6");
 
 
@@ -2737,9 +2737,9 @@ public class ConfigUpdater extends MessageUtils {
             ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
 
-            this.plugin.getConfigReader().set("worldChange.resetgamemode", false);
-            this.plugin.getConfigReader().set("worldChange.resetfly", false);
-            this.plugin.getConfigReader().set("worldChange.resetgod", false);
+            this.plugin.getConfigReader().set("worldChange.resetGameMode", false);
+            this.plugin.getConfigReader().set("worldChange.resetFly", false);
+            this.plugin.getConfigReader().set("worldChange.resetGod", false);
 
             this.plugin.getConfigReader().set("version", "5.9");
 

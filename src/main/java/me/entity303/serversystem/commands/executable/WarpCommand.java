@@ -60,7 +60,7 @@ public class WarpCommand extends MessageUtils implements CommandExecutor {
             return true;
         }
 
-        if (this.plugin.getConfigReader().getBoolean("teleportation.warp.enabledelay") && !this.isAllowed(cs, "warp.bypassdelay", true)) {
+        if (this.plugin.getConfigReader().getBoolean("teleportation.warp.enableDelay") && !this.isAllowed(cs, "warp.bypassdelay", true)) {
             this.plugin.getTeleportMap().put(((Player) cs), Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
                 OfflinePlayer player = ((OfflinePlayer) cs).getPlayer();
                 if (player.isOnline()) {

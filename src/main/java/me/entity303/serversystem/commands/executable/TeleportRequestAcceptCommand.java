@@ -49,7 +49,7 @@ public class TeleportRequestAcceptCommand implements CommandExecutor {
         }
 
         if (!tpaData.isTpahere()) {
-            if (!this.plugin.getConfigReader().getBoolean("teleportation.tpa.enabledelay") || this.plugin.getPermissions().hasPerm(tpaData.getSender().getPlayer(), "tpaccept.bypassdelay", true)) {
+            if (!this.plugin.getConfigReader().getBoolean("teleportation.tpa.enableDelay") || this.plugin.getPermissions().hasPerm(tpaData.getSender().getPlayer(), "tpaccept.bypassdelay", true)) {
                 Player player = tpaData.getSender().getPlayer();
                 cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.Sender"));
                 tpaData.getSender().getPlayer().sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.Target"));
@@ -75,7 +75,7 @@ public class TeleportRequestAcceptCommand implements CommandExecutor {
             tpaData.getSender().getPlayer().sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.Target"));
             tpaData.getSender().getPlayer().sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.Teleporting"));
         } else {
-            if (!this.plugin.getConfigReader().getBoolean("teleportation.tpa.enabledelay") || this.plugin.getPermissions().hasPerm(cs, "tpaccept.bypassdelay", true)) {
+            if (!this.plugin.getConfigReader().getBoolean("teleportation.tpa.enableDelay") || this.plugin.getPermissions().hasPerm(cs, "tpaccept.bypassdelay", true)) {
                 cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.Sender"));
                 tpaData.getSender().getPlayer().sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.Target"));
                 Player player = ((Player) cs);

@@ -43,11 +43,11 @@ public class JoinListener extends MessageUtils implements Listener {
             Bukkit.getScheduler().runTaskLater(this.plugin, () -> e.getPlayer().sendMessage("§2Dieser Server nutzt ServerSystem <3"), 3 * 20);
 
         if (!e.getPlayer().hasPlayedBefore() || e.getPlayer().getLastPlayed() == System.currentTimeMillis())
-            if (this.plugin.getConfigReader().getBoolean("kit.giveonfirstspawn"))
-                if (this.plugin.getKitsManager().doesKitExist(this.plugin.getConfigReader().getString("kit.givenkit")))
-                    Bukkit.getScheduler().runTaskLater(this.plugin, () -> this.plugin.getKitsManager().giveKit(e.getPlayer(), this.plugin.getConfigReader().getString("kit.givenkit")), 20);
+            if (this.plugin.getConfigReader().getBoolean("kit.giveOnFirstSpawn"))
+                if (this.plugin.getKitsManager().doesKitExist(this.plugin.getConfigReader().getString("kit.givenKit")))
+                    Bukkit.getScheduler().runTaskLater(this.plugin, () -> this.plugin.getKitsManager().giveKit(e.getPlayer(), this.plugin.getConfigReader().getString("kit.givenKit")), 20);
                 else
-                    Bukkit.getScheduler().runTaskLater(this.plugin, () -> e.getPlayer().sendMessage(this.getPrefix() + this.getMessage("Kit.DoesntExist", "kit", "kit", e.getPlayer().getName(), null).replace("<KIT>", this.plugin.getConfigReader().getString("kit.givenkit").toUpperCase())), 20);
+                    Bukkit.getScheduler().runTaskLater(this.plugin, () -> e.getPlayer().sendMessage(this.getPrefix() + this.getMessage("Kit.DoesntExist", "kit", "kit", e.getPlayer().getName(), null).replace("<KIT>", this.plugin.getConfigReader().getString("kit.givenKit").toUpperCase())), 20);
 
         if (!this.plugin.getPermissions().hasPerm(e.getPlayer(), "vanish.see", true))
             for (UUID uuid : this.plugin.getVanish().getVanishList()) {
@@ -77,7 +77,7 @@ public class JoinListener extends MessageUtils implements Listener {
         AtomicBoolean messaged = new AtomicBoolean(false);
 
         if (e.getPlayer().getLastPlayed() == e.getPlayer().getFirstPlayed() || !e.getPlayer().hasPlayedBefore()) {
-            if (this.plugin.getConfigReader().getBoolean("spawn.firstlogintp"))
+            if (this.plugin.getConfigReader().getBoolean("spawn.firstLoginTp"))
                 Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
                     File spawnFile = new File("plugins//ServerSystem", "spawn.yml");
                     if (!spawnFile.exists()) {
