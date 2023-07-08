@@ -2,59 +2,64 @@ metrics: true
 
 console: "Console"
 
-specialsudo: true
-advancedinvsee: true
+afk:
+  enabled: true
+  maxDuration: 300
+  kickDuration: 300
+
+specialSudo: true
+advancedInvSee: true
 clientsideOpSpoof: true
 
-messagebyitembreak: false
+messageByItemBreak: false
 
 fly:
-  stopwhenhit: false
-  disablewhenhit: false
+  stopWhenHit: false
+  disableWhenHit: false
 
 worldChange:
-  resetgamemode: false
-  resetfly: false
-  resetgod: false
+  resetGameMode: false
+  resetFly: false
+  resetGod: false
 
-deactivateentitycollision: true
+deactivateEntityCollision: true
 
 kit:
-  giveonfirstspawn: false
-  givenkit: "starter"
+  giveOnFirstSpawn: false
+  givenKit: "starter"
 
 teleportation:
   spawn:
     delay: 3
-    enabledelay: true
+    enableDelay: true
   tpa:
     delay: 3
-    enabledelay: true
+    enableDelay: true
   home:
     delay: 3
-    enabledelay: true
+    enableDelay: true
   warp:
     delay: 3
-    enabledelay: true
+    enableDelay: true
 
 economy:
   enabled: true
-  createaccountonjoin: false
-  hookintovault: true
-  startingmoney: "1000.0"
-  displayformat: "<MONEY><CURRENCY>"
-  moneyformat: "<FIRST><SEPARATOR><LAST>"
+  createAccountOnJoin: false
+  hookIntoVault: true
+  startingMoney: "1000.0"
+  displayFormat: "<MONEY><CURRENCY>"
+  moneyFormat: "<FIRST><SEPARATOR><LAST>"
   separator: ","
   currency:
     singular: "$"
     plural: "$"
   thousand: "."
-bansystem:
+banSystem:
   enabled: true
-  dateformat: "<DAY>.<MONTH>.<YEAR> <HOUR>:<MINUTE>"
+  dateFormat: "<DAY>.<MONTH>.<YEAR> <HOUR>:<MINUTE>"
 spawn:
   tp: true
-  firstlogintp: true
+  firstLoginTp: true
   respawn: true
   forceRespawn: false
 chat:
@@ -65,23 +70,23 @@ chat:
 swapCommands:
   enabled: false
   example:
-    fromplugin: "ServerSystem"
-    toplugin: "BanSystem"
-    tocommand: "example"
+    fromPlugin: "ServerSystem"
+    toPlugin: "BanSystem"
+    toCommand: "example"
   example2:
-    fromplugin: "examplePlugin"
-    toplugin: "example2Plugin"
-    tocommand: "example3"
+    fromPlugin: "examplePlugin"
+    toPlugin: "example2Plugin"
+    toCommand: "example3"
   example3:
-    fromplugin: "SomeExamplePluginAgain"
-    toplugin: "ServerSystem"
-    tocommand: "example3"
+    fromPlugin: "SomeExamplePluginAgain"
+    toPlugin: "ServerSystem"
+    toCommand: "example3"
 #This will NOT deactivate the "module", e.g. the bansystem will STILL BE ACTIVE!
 #This will also NOT deactivate the whole "command group", e.g. 'r' will NOT DEACTIVATE 'reply'
 #This is different from deactivating a command via command.yml!
 #You can disable commands from other plugins, not just ServerSystem
 #Deactivating a command will not give opportunity to other plugins to register this command, it's simply going to get removed!
-deactivatedcommands:
+deactivatedCommands:
   enabled: false
   example: "ServerSystem"
   example1: "ServerSystem"
@@ -102,18 +107,18 @@ mysql:
   database: "ServerSystem"
   economy:
     enabled: true
-    servername: "global"
-  bansystem: true
+    serverName: "global"
+  banSystem: true
 
 sqlite:
   use: true
   economy: true
-  bansystem: true
+  banSystem: true
 
 h2:
   use: false
   economy: true
-  bansystem: true
+  banSystem: true
 
 #Do NOT change this!
 version: "6.4"
