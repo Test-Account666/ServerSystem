@@ -65,14 +65,7 @@ public class SignCommand extends MessageUtils implements CommandExecutor {
 
         message = Arrays.stream(args).map(arg -> textColor + ChatColor.translateAlternateColorCodes('&', arg) + " ").collect(Collectors.joining());
 
-        System.out.println(signFormat);
-
         for (String lore : signFormat.split("\\n")) {
-            System.out.println(lore.replace("<DATE>", localDate.format(dateFormatter))
-                    .replace("<TIME>", localDate.format(timeFormatter))
-                    .replace("<SENDER>", cs.getName())
-                    .replace("<MESSAGE>", message));
-
             loreList.add(lore.replace("<DATE>", localDate.format(dateFormatter))
                     .replace("<TIME>", localDate.format(timeFormatter))
                     .replace("<SENDER>", cs.getName())
