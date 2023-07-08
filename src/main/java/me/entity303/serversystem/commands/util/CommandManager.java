@@ -38,14 +38,16 @@ public final class CommandManager {
 
     public Command getCommand(String command) {
         Object result = null;
-        result = /*this.getPrivateField(this.serverSystem.getServer().getPluginManager(), "commandMap")*/this.getCommandMap();
+        result = this.getCommandMap();
         SimpleCommandMap commandMap = (SimpleCommandMap) result;
         return commandMap.getCommand(command.toLowerCase(Locale.ROOT));
     }
 
     public void rc(String command, CommandExecutor executor, TabCompleter tabCompleter) {
-        if (executor == null) System.out.println("Executor!");
-        if (command == null) System.out.println("Command?!");
+        if (executor == null)
+            this.serverSystem.error("CommandExecutor does not exist, please forward this message to the plugin author!");
+        if (command == null)
+            this.serverSystem.error("Command does not exist, please forward this message to the plugin author!");
 
         if (tabCompleter == null)
             if (executor instanceof TabCompleter)
@@ -262,6 +264,7 @@ public final class CommandManager {
     }
 
     public void registerCommands() {
+        this.rc("afk", new AwayFromKeyboardCommand(this.serverSystem), null);
         this.rc("unlimited", new UnlimitedCommand(this.serverSystem), null);
         this.rc("clearchat", new ClearChatCommand(this.serverSystem), null);
         this.rc("back", new BackCommand(this.serverSystem), null);
@@ -313,12 +316,11 @@ public final class CommandManager {
         this.rc("sun", new SunCommand(this.serverSystem), new WorldTabCompleter());
         this.rc("rain", new RainCommand(this.serverSystem), new WorldTabCompleter());
         this.rc("disposal", new DisposalCommand(this.serverSystem), null);
-        this.rc("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null ? new EditSignPlotSquaredCommand(this.serverSystem) : new EditSignCommand(this.serverSystem), null);
         this.rc("teamchat", new TeamChatCommand(this.serverSystem), null);
         this.rc("sign", new SignCommand(this.serverSystem), null);
         this.rc("unsign", new UnSignCommand(this.serverSystem), null);
         this.rc("tppos", new TeleportPositionCommand(this.serverSystem), null);
-        if (this.serverSystem.getConfigReader().getBoolean("bansystem.enabled")) {
+        if (this.serverSystem.getConfigReader().getBoolean("banSystem.enabled")) {
             this.rc("ban", new BanCommand(this.serverSystem), new BanTabCompleter(this.serverSystem));
             this.rc("unban", new UnBanCommand(this.serverSystem), new UnBanTabCompleter(this.serverSystem));
             this.rc("mute", new MuteCommand(this.serverSystem), new MuteTabCompleter(this.serverSystem));
@@ -446,18 +448,6 @@ public final class CommandManager {
         CommandMap commandMap = null;
         try {
             if (Bukkit.getPluginManager() instanceof SimplePluginManager) {
-                /*System.out.println("PluginManager:");
-                for (Field field : ((SimplePluginManager) Bukkit.getPluginManager()).getClass().getDeclaredFields()) {
-                    System.out.println(field.getName() + " -> " + field.getType().getName());
-                }
-                System.out.println("Plugin:");
-                for (Field field : serverSystem.getClass().getDeclaredFields()) {
-                    System.out.println(field.getName() + " -> " + field.getType().getName());
-                }
-                System.out.println("SimplePluginManager:");
-                for (Field field : SimplePluginManager.class.getDeclaredFields()) {
-                    System.out.println(field.getName() + " -> " + field.getType().getName());
-                }*/
                 Field f = ((SimplePluginManager) Bukkit.getPluginManager()).getClass().getDeclaredField("commandMap");
                 f.setAccessible(true);
 
