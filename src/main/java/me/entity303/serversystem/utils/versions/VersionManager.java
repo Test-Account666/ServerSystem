@@ -4,6 +4,8 @@ import me.entity303.serversystem.actionbar.ActionBar_1_16;
 import me.entity303.serversystem.actionbar.ActionBar_Latest;
 import me.entity303.serversystem.actionbar.ActionBar_v1_12_R1_to_v1_15_R1;
 import me.entity303.serversystem.actionbar.ActionBar_v1_8_R3_to_v1_11_R1;
+import me.entity303.serversystem.commands.executable.EditSignCommand;
+import me.entity303.serversystem.commands.executable.EditSignPlotSquaredCommand;
 import me.entity303.serversystem.commands.executable.SkullCommand;
 import me.entity303.serversystem.commands.executable.SkullNewerCommand;
 import me.entity303.serversystem.listener.vanish.*;
@@ -113,7 +115,10 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Latest(this.serverSystem));
             this.serverSystem.getVersionStuff().setTeleport(new Teleport_Latest(this.serverSystem));
             this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer_Latest());
-            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null), 5L);
+            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
+                this.serverSystem.getCommandManager().rc("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null ? new EditSignPlotSquaredCommand(this.serverSystem) : new EditSignCommand(this.serverSystem), null);
+                this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null);
+            }, 5L);
         } else if (version.contains("1.19")) {
             this.serverSystem.getVersionStuff().setActionBar(new ActionBar_Latest(this.nmsVersion));
             this.v117 = true;
@@ -136,7 +141,10 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Latest(this.serverSystem));
             this.serverSystem.getVersionStuff().setTeleport(new Teleport_Latest(this.serverSystem));
             this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer_Latest());
-            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null), 5L);
+            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
+                this.serverSystem.getCommandManager().rc("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null ? new EditSignPlotSquaredCommand(this.serverSystem) : new EditSignCommand(this.serverSystem), null);
+                this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null);
+            }, 5L);
         } else if (version.contains("1.18")) {
             this.serverSystem.getVersionStuff().setActionBar(new ActionBar_Latest(this.nmsVersion));
             this.v117 = true;
@@ -159,7 +167,10 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Latest(this.serverSystem));
             this.serverSystem.getVersionStuff().setTeleport(new Teleport_Latest(this.serverSystem));
             this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer_Latest());
-            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null), 5L);
+            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
+                this.serverSystem.getCommandManager().rc("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null ? new EditSignPlotSquaredCommand(this.serverSystem) : new EditSignCommand(this.serverSystem), null);
+                this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null);
+            }, 5L);
         } else if (version.contains("1.17")) {
             this.serverSystem.getVersionStuff().setActionBar(new ActionBar_Latest(this.nmsVersion));
             this.v117 = true;
@@ -182,7 +193,10 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Latest(this.serverSystem));
             this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_16_R1_to_v1_17_R1(this.serverSystem));
             this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer_Latest());
-            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null), 5L);
+            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
+                this.serverSystem.getCommandManager().rc("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null ? new EditSignPlotSquaredCommand(this.serverSystem) : new EditSignCommand(this.serverSystem), null);
+                this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null);
+            }, 5L);
         } else if (version.contains("1.16.R3")) {
             this.serverSystem.getVersionStuff().setActionBar(new ActionBar_1_16(this.nmsVersion));
             this.v116 = true;
@@ -205,7 +219,10 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_16_R1_to_v1_17_R1(this.serverSystem));
             this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer_Latest());
-            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null), 5L);
+            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
+                this.serverSystem.getCommandManager().rc("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null ? new EditSignPlotSquaredCommand(this.serverSystem) : new EditSignCommand(this.serverSystem), null);
+                this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null);
+            }, 5L);
         } else if (version.contains("1.16.R2")) {
             this.serverSystem.getVersionStuff().setActionBar(new ActionBar_1_16(this.nmsVersion));
             this.v116 = true;
@@ -228,7 +245,10 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_16_R1_to_v1_17_R1(this.serverSystem));
             this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer_Latest());
-            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null), 5L);
+            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
+                this.serverSystem.getCommandManager().rc("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null ? new EditSignPlotSquaredCommand(this.serverSystem) : new EditSignCommand(this.serverSystem), null);
+                this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null);
+            }, 5L);
         } else if (version.contains("1.16")) {
             this.serverSystem.getVersionStuff().setActionBar(new ActionBar_1_16(this.nmsVersion));
             this.v116 = true;
@@ -250,7 +270,10 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_16_R1_to_v1_17_R1(this.serverSystem));
             this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer_Latest());
-            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null), 5L);
+            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
+                this.serverSystem.getCommandManager().rc("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null ? new EditSignPlotSquaredCommand(this.serverSystem) : new EditSignCommand(this.serverSystem), null);
+                this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null);
+            }, 5L);
         } else if (version.contains("1.15")) {
             this.serverSystem.getVersionStuff().setActionBar(new ActionBar_v1_12_R1_to_v1_15_R1(this.nmsVersion));
             this.v114 = true;
@@ -271,7 +294,10 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_9_R1_to_v1_15_R1(this.serverSystem));
             this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer_Latest());
-            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null), 5L);
+            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
+                this.serverSystem.getCommandManager().rc("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null ? new EditSignPlotSquaredCommand(this.serverSystem) : new EditSignCommand(this.serverSystem), null);
+                this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null);
+            }, 5L);
         } else if (version.contains("1.14")) {
             this.serverSystem.getVersionStuff().setActionBar(new ActionBar_v1_12_R1_to_v1_15_R1(this.nmsVersion));
             this.v114 = true;
@@ -292,7 +318,10 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_9_R1_to_v1_15_R1(this.serverSystem));
             this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer_Latest());
-            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null), 5L);
+            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
+                this.serverSystem.getCommandManager().rc("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null ? new EditSignPlotSquaredCommand(this.serverSystem) : new EditSignCommand(this.serverSystem), null);
+                this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null);
+            }, 5L);
         } else if (version.contains("1.13.R2")) {
             this.serverSystem.getVersionStuff().setActionBar(new ActionBar_v1_12_R1_to_v1_15_R1(this.nmsVersion));
             this.v113 = true;
@@ -307,7 +336,10 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_9_R1_to_v1_15_R1(this.serverSystem));
             this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer_v1_13_R1());
-            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null), 5L);
+            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
+                this.serverSystem.getCommandManager().rc("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null ? new EditSignPlotSquaredCommand(this.serverSystem) : new EditSignCommand(this.serverSystem), null);
+                this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null);
+            }, 5L);
         } else if (version.contains("1.13")) {
             this.serverSystem.getVersionStuff().setActionBar(new ActionBar_v1_12_R1_to_v1_15_R1(this.nmsVersion));
             this.v113 = true;
@@ -322,7 +354,10 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_9_R1_to_v1_15_R1(this.serverSystem));
             this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer_v1_13_R1());
-            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null), 5L);
+            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
+                this.serverSystem.getCommandManager().rc("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null ? new EditSignPlotSquaredCommand(this.serverSystem) : new EditSignCommand(this.serverSystem), null);
+                this.serverSystem.getCommandManager().rc("skull", new SkullNewerCommand(this.serverSystem), null);
+            }, 5L);
         } else if (version.contains("1.12")) {
             this.serverSystem.getVersionStuff().setActionBar(new ActionBar_v1_12_R1_to_v1_15_R1(this.nmsVersion));
             this.v112 = true;
@@ -336,7 +371,10 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_9_R1_to_v1_15_R1(this.serverSystem));
             this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer_v1_12_R1());
-            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.serverSystem.getCommandManager().rc("skull", new SkullCommand(this.serverSystem), null), 5L);
+            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
+                this.serverSystem.getCommandManager().rc("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null ? new EditSignPlotSquaredCommand(this.serverSystem) : new EditSignCommand(this.serverSystem), null);
+                this.serverSystem.getCommandManager().rc("skull", new SkullCommand(this.serverSystem), null);
+            }, 5L);
         } else if (version.contains("1.11")) {
             this.serverSystem.getVersionStuff().setActionBar(new ActionBar_v1_8_R3_to_v1_11_R1(this.nmsVersion));
             this.v119 = true;
@@ -348,7 +386,10 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_9_R1_to_v1_15_R1(this.serverSystem));
             this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer_v1_11_R1());
-            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.serverSystem.getCommandManager().rc("skull", new SkullCommand(this.serverSystem), null), 5L);
+            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
+                this.serverSystem.getCommandManager().rc("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null ? new EditSignPlotSquaredCommand(this.serverSystem) : new EditSignCommand(this.serverSystem), null);
+                this.serverSystem.getCommandManager().rc("skull", new SkullCommand(this.serverSystem), null);
+            }, 5L);
         } else if (version.contains("1.10")) {
             this.serverSystem.getVersionStuff().setActionBar(new ActionBar_v1_8_R3_to_v1_11_R1(this.nmsVersion));
             this.v119 = true;
@@ -360,7 +401,10 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_9_R1_to_v1_15_R1(this.serverSystem));
             this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer_v1_10_R1());
-            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.serverSystem.getCommandManager().rc("skull", new SkullCommand(this.serverSystem), null), 5L);
+            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
+                this.serverSystem.getCommandManager().rc("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null ? new EditSignPlotSquaredCommand(this.serverSystem) : new EditSignCommand(this.serverSystem), null);
+                this.serverSystem.getCommandManager().rc("skull", new SkullCommand(this.serverSystem), null);
+            }, 5L);
         } else if (version.contains("1.9.R2")) {
             this.serverSystem.getVersionStuff().setActionBar(new ActionBar_v1_8_R3_to_v1_11_R1(this.nmsVersion));
             this.v119 = true;
@@ -372,7 +416,10 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_9_R1_to_v1_15_R1(this.serverSystem));
             this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer_v1_9_R2());
-            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.serverSystem.getCommandManager().rc("skull", new SkullCommand(this.serverSystem), null), 5L);
+            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
+                this.serverSystem.getCommandManager().rc("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null ? new EditSignPlotSquaredCommand(this.serverSystem) : new EditSignCommand(this.serverSystem), null);
+                this.serverSystem.getCommandManager().rc("skull", new SkullCommand(this.serverSystem), null);
+            }, 5L);
         } else if (version.contains("1.9")) {
             this.serverSystem.getVersionStuff().setActionBar(new ActionBar_v1_8_R3_to_v1_11_R1(this.nmsVersion));
             this.v119 = true;
@@ -385,7 +432,10 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_9_R1_to_v1_15_R1(this.serverSystem));
             this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer_v1_9_R1());
-            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.serverSystem.getCommandManager().rc("skull", new SkullCommand(this.serverSystem), null), 5L);
+            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
+                this.serverSystem.getCommandManager().rc("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null ? new EditSignPlotSquaredCommand(this.serverSystem) : new EditSignCommand(this.serverSystem), null);
+                this.serverSystem.getCommandManager().rc("skull", new SkullCommand(this.serverSystem), null);
+            }, 5L);
         } else if (version.contains("1.8")) {
 
             if (!this.is188())
@@ -408,7 +458,10 @@ public class VersionManager {
             this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Old(this.serverSystem));
             this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_8_R3());
             this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer_v1_8_R3());
-            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.serverSystem.getCommandManager().rc("skull", new SkullCommand(this.serverSystem), null), 5L);
+            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
+                this.serverSystem.getCommandManager().rc("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null ? new EditSignPlotSquaredCommand(this.serverSystem) : new EditSignCommand(this.serverSystem), null);
+                this.serverSystem.getCommandManager().rc("skull", new SkullCommand(this.serverSystem), null);
+            }, 5L);
         } else {
             this.serverSystem.warn("Unsupported version detected! Continue with your own risk! Support may not guaranteed!");
             this.serverSystem.getVersionStuff().setActionBar(new ActionBar_Latest(this.nmsVersion));
