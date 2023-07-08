@@ -24,7 +24,7 @@ import me.entity303.serversystem.placeholderapi.ServerSystemExpansion;
 import me.entity303.serversystem.utils.*;
 import me.entity303.serversystem.utils.versions.VersionManager;
 import me.entity303.serversystem.utils.versions.VersionStuff;
-import me.entity303.serversystem.vanish.MetaValue;
+import me.entity303.serversystem.utils.MetaValue;
 import me.entity303.serversystem.vanish.Vanish;
 import me.entity303.serversystem.vault.Vault;
 import me.entity303.serversystem.vault.VaultHookManager;
@@ -53,6 +53,8 @@ import java.lang.reflect.*;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static me.entity303.serversystem.bansystem.TimeUnit.*;
@@ -197,6 +199,126 @@ public final class ServerSystem extends JavaPlugin {
     public void onLoad() {
         this.loadConfigs();
 
+        FileConfiguration cfg = YamlConfiguration.loadConfiguration(new File("plugins" + File.separator + "ServerSystem", "config.yml"));
+
+        if (!cfg.isSet("specialSudo"))
+            if (cfg.isSet("specialsudo")) {
+                File serverSystemFolder = new File("plugins//ServerSystem");
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm-ss");
+                LocalDateTime now = LocalDateTime.now();
+                String date = dtf.format(now);
+
+                try {
+                    FileUtils.copyDirectory(serverSystemFolder, new File("plugins//ServerSystem-Backups//ServerSystem-Backup-" + date));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                cfg.set("deactivateEntityCollision", cfg.get("deactivateentitycollision"));
+
+                cfg.set("specialSudo", cfg.get("specialsudo"));
+
+                cfg.set("advancedInvSee", cfg.get("advancedinvsee"));
+
+                cfg.set("messageByItemBreak", cfg.get("messagebyitembreak"));
+
+                cfg.set("fly.stopWhenHit", cfg.get("fly.stopwhenhit"));
+                cfg.set("fly.disableWhenHit", cfg.get("fly.disablewhenhit"));
+
+                cfg.set("worldChange.resetGameMode", cfg.get("worldChange.resetgamemode"));
+                cfg.set("worldChange.resetFly", cfg.get("worldChange.resetfly"));
+                cfg.set("worldChange.resetGod", cfg.get("worldChange.resetgod"));
+
+                cfg.set("kit.giveOnFirstSpawn", cfg.get("kit.giveonfirstspawn"));
+                cfg.set("kit.givenKit", cfg.get("kit.givenkit"));
+
+                cfg.set("teleportation.spawn.enableDelay", cfg.get("teleportation.spawn.enabledelay"));
+                cfg.set("teleportation.tpa.enableDelay", cfg.get("teleportation.tpa.enabledelay"));
+                cfg.set("teleportation.home.enableDelay", cfg.get("teleportation.home.enabledelay"));
+                cfg.set("teleportation.warp.enableDelay", cfg.get("teleportation.warp.enabledelay"));
+
+                cfg.set("economy.createAccountOnJoin", cfg.get("economy.createaccountonjoin"));
+                cfg.set("economy.hookIntoVault", cfg.get("economy.hookintovault"));
+                cfg.set("economy.startingMoney", cfg.get("economy.startingmoney"));
+                cfg.set("economy.displayFormat", cfg.get("economy.displayformat"));
+                cfg.set("economy.moneyFormat", cfg.get("economy.moneyformat"));
+
+                cfg.set("banSystem.enabled", cfg.get("bansystem.enabled"));
+                cfg.set("banSystem.dateFormat", cfg.get("bansystem.dateformat"));
+
+                cfg.set("spawn.firstLoginTp", cfg.get("spawn.firstlogintp"));
+
+                for (String commandName : cfg.getConfigurationSection("swapCommands").getKeys(false)) {
+                    if (commandName.toLowerCase().contains("enabled"))
+                        continue;
+
+                    for (String key : cfg.getConfigurationSection("swapCommands." + commandName).getKeys(false)) {
+                        cfg.set(("swapCommands." + commandName + "." + key)
+                                .replace("fromplugin", "fromPlugin")
+                                .replace("toplugin", "toPlugin")
+                                .replace("tocommand", "toCommand"), cfg.get("swapCommands." + commandName + "." + key));
+
+                        cfg.set("swapCommands." + commandName + "." + key, null);
+                    }
+                }
+
+                for (String key : cfg.getConfigurationSection("deactivatedcommands").getKeys(false)) {
+                    key = "deactivatedcommands." + key;
+
+                    cfg.set(key
+                            .replace("deactivatedcommands", "deactivatedCommands"), cfg.get(key));
+                }
+
+                cfg.set("mysql.economy.serverName", cfg.get("mysql.economy.servername"));
+                cfg.set("mysql.banSystem", cfg.get("mysql.bansystem"));
+
+                cfg.set("sqlite.banSystem", cfg.get("sqlite.bansystem"));
+
+                cfg.set("h2.banSystem", cfg.get("h2.bansystem"));
+
+                cfg.set("specialsudo", null);
+                cfg.set("advancedinvsee", null);
+                cfg.set("messagebyitembreak", null);
+                cfg.set("fly.stopwhenhit", null);
+                cfg.set("fly.disablewhenhit", null);
+                cfg.set("fly.fly", null);
+                cfg.set("worldChange.resetgamemode", null);
+                cfg.set("worldChange.resetfly", null);
+                cfg.set("worldChange.resetgod", null);
+                cfg.set("kit.giveonfirstspawn", null);
+                cfg.set("kit.givenkit", null);
+                cfg.set("teleportation.spawn.enabledelay", null);
+                cfg.set("teleportation.tpa.enabledelay", null);
+                cfg.set("teleportation.home.enabledelay", null);
+                cfg.set("teleportation.warp.enabledelay", null);
+                cfg.set("economy.createaccountonjoin", null);
+                cfg.set("economy.hookintovault", null);
+                cfg.set("economy.startingmoney", null);
+                cfg.set("economy.displayformat", null);
+                cfg.set("economy.moneyformat", null);
+                cfg.set("bansystem", null);
+                cfg.set("spawn.firstlogintp", null);
+                cfg.set("mysql.economy.servername", null);
+                cfg.set("mysql.bansystem", null);
+                cfg.set("sqlite.bansystem", null);
+                cfg.set("h2.bansystem", null);
+                cfg.set("deactivatedcommands", null);
+                cfg.set("deactivateentitycollision", null);
+
+                try {
+                    cfg.save(new File("plugins" + File.separator + "ServerSystem", "config.yml"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                this.loadConfigs();
+
+                this.warn("ServerSystem just fixed your config.yml!");
+                this.warn("Please check your config.yml file and make sure everything is fine!");
+                this.warn("If not, please contact me: https://discord.gg/dBhfCzdZxq");
+                this.warn("A backup was saved at: " + new File("plugins//ServerSystem-Backups//ServerSystem-Backup-" + date).getAbsolutePath());
+            }
+
         ConfigUpdater updater = new ConfigUpdater(this);
 
         if (updater.configUpdateNeeded(this.getConfigReader().getString("version"))) {
@@ -318,8 +440,8 @@ public final class ServerSystem extends JavaPlugin {
         minuteName = this.getBanSystem("MinuteName");
         secondName = this.getBanSystem("SecondName");
 
-        this.disableFlightOnHit = this.getConfigReader().getBoolean("fly.disablewhenhit");
-        this.stopFlightOnHit = this.getConfigReader().getBoolean("fly.stopwhenhit");
+        this.disableFlightOnHit = this.getConfigReader().getBoolean("fly.disableWhenHit");
+        this.stopFlightOnHit = this.getConfigReader().getBoolean("fly.stopWhenHit");
 
         if (this.disableFlightOnHit)
             this.stopFlightOnHit = true;
@@ -333,9 +455,9 @@ public final class ServerSystem extends JavaPlugin {
 
         this.startDeactivatingCommands();
 
-        this.specialSudo = this.getConfigReader().getBoolean("specialsudo", true);
+        this.specialSudo = this.getConfigReader().getBoolean("specialSudo", true);
 
-        this.advancedInvsee = this.getConfigReader().getBoolean("advancedinvsee", true);
+        this.advancedInvsee = this.getConfigReader().getBoolean("advancedInvSee", true);
 
         this.clientsideOp = this.getConfigReader().getBoolean("clientsideOpSpoof", true);
 
@@ -353,11 +475,11 @@ public final class ServerSystem extends JavaPlugin {
     }
 
     private void startDeactivatingCommands() {
-        if (this.getConfigReader().getBoolean("deactivatedcommands.enabled"))
-            Bukkit.getScheduler().runTaskLater(this, () -> this.getConfigReader().getConfigurationSection("deactivatedcommands").getKeys(false).forEach(cmd -> {
+        if (this.getConfigReader().getBoolean("deactivatedCommands.enabled"))
+            Bukkit.getScheduler().runTaskLater(this, () -> this.getConfigReader().getConfigurationSection("deactivatedCommands").getKeys(false).forEach(cmd -> {
                 if (!cmd.equalsIgnoreCase("enabled")) {
-                    this.log("Deactivating command " + cmd + " from plugin " + this.getConfigReader().getString("deactivatedcommands." + cmd) + "!");
-                    this.commandManager.deactivateBukkitCommand(cmd.toLowerCase(), this.getConfigReader().getString("deactivatedcommands." + cmd).toLowerCase());
+                    this.log("Deactivating command " + cmd + " from plugin " + this.getConfigReader().getString("deactivatedCommands." + cmd) + "!");
+                    this.commandManager.deactivateBukkitCommand(cmd.toLowerCase(), this.getConfigReader().getString("deactivatedCommands." + cmd).toLowerCase());
                 }
             }), 40L);
     }
@@ -366,9 +488,9 @@ public final class ServerSystem extends JavaPlugin {
         if (this.getConfigReader().getBoolean("swapCommands.enabled"))
             Bukkit.getScheduler().runTaskLater(this, () -> this.getConfigReader().getConfigurationSection("swapCommands").getKeys(false).forEach(cmdFrom -> {
                 if (!cmdFrom.equalsIgnoreCase("enabled")) {
-                    String pluginFrom = this.getConfigReader().getString("swapCommands." + cmdFrom + ".fromplugin");
-                    String cmdTo = this.getConfigReader().getString("swapCommands." + cmdFrom + ".tocommand");
-                    String pluginTo = this.getConfigReader().getString("swapCommands." + cmdFrom + ".toplugin");
+                    String pluginFrom = this.getConfigReader().getString("swapCommands." + cmdFrom + ".fromPlugin");
+                    String cmdTo = this.getConfigReader().getString("swapCommands." + cmdFrom + ".toCommand");
+                    String pluginTo = this.getConfigReader().getString("swapCommands." + cmdFrom + ".toPlugin");
 
                     this.log("Swapping command " + cmdFrom + " from plugin " + pluginFrom + " to command " + cmdTo + " from plugin " + pluginTo + "!");
 
@@ -509,14 +631,14 @@ public final class ServerSystem extends JavaPlugin {
 
     public void setupEconomyBanSystem() {
         String dateFormat;
-        dateFormat = this.getConfigReader().getString("bansystem.dateformat");
+        dateFormat = this.getConfigReader().getString("banSystem.dateFormat");
 
 
         String currencySingular = this.getConfigReader().getString("economy.currency.singular");
         String currencyPlural = this.getConfigReader().getString("economy.currency.plural");
-        String startingMoney = this.getConfigReader().getString("economy.startingmoney");
-        String displayFormat = this.getConfigReader().getString("economy.displayformat");
-        String moneyFormat = this.getConfigReader().getString("economy.moneyformat");
+        String startingMoney = this.getConfigReader().getString("economy.startingMoney");
+        String displayFormat = this.getConfigReader().getString("economy.displayFormat");
+        String moneyFormat = this.getConfigReader().getString("economy.moneyFormat");
         String separator = this.getConfigReader().getString("economy.separator");
         String thousands = this.getConfigReader().getString("economy.thousand");
 
@@ -537,28 +659,28 @@ public final class ServerSystem extends JavaPlugin {
             this.economyManager = new EconomyManager_Disabled("", "", "", "", "", "", "", this);
         }
 
-        if (!this.getConfigReader().getBoolean("bansystem.enabled")) {
+        if (!this.getConfigReader().getBoolean("banSystem.enabled")) {
             this.log("BanSystem disabled! Not using it...");
             this.banManager = new BanManager_Disabled(new File(""), "", this);
             this.muteManager = new MuteManager_Disabled(new File(""), "", this);
         }
 
-        if (this.getConfigReader().getBoolean("economy.enabled") || this.getConfigReader().getBoolean("bansystem.enabled")) {
+        if (this.getConfigReader().getBoolean("economy.enabled") || this.getConfigReader().getBoolean("banSystem.enabled")) {
             if (this.getConfigReader().getBoolean("mysql.use")) {
                 this.log("MySQL enabled, using it...");
                 if (this.getConfigReader().getBoolean("mysql.economy.enabled") && this.getConfigReader().getBoolean("economy.enabled")) {
-                    this.log("Using economy with MySQL...");
+                    this.log("Using Economy with MySQL...");
                     if (this.economyManager != null)
                         this.error("You cannot have two databases at the same time for economy activated!");
                     else {
-                        this.setServerName(this.getConfigReader().getString("mysql.economy.servername"));
+                        this.setServerName(this.getConfigReader().getString("mysql.economy.serverName"));
                         this.economyManager = new EconomyManager_MySQL(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, this);
                     }
                 }
-                if (this.getConfigReader().getBoolean("mysql.bansystem") && this.getConfigReader().getBoolean("bansystem.enabled")) {
-                    this.log("Using bansystem with MySQL...");
+                if (this.getConfigReader().getBoolean("mysql.banSystem") && this.getConfigReader().getBoolean("banSystem.enabled")) {
+                    this.log("Using BanSystem with MySQL...");
                     if (this.banManager != null || this.muteManager != null)
-                        this.error("You cannot have two databases at the same time for bansystem activated!");
+                        this.error("You cannot have two databases at the same time for BanSystem activated!");
                     else {
                         this.banManager = new BanManager_MySQL(dateFormat, this);
                         this.muteManager = new MuteManager_MySQL(this, dateFormat);
@@ -569,17 +691,17 @@ public final class ServerSystem extends JavaPlugin {
             if (this.getConfigReader().getBoolean("h2.use")) {
                 this.log("H2 enabled, using it...");
                 if (this.getConfigReader().getBoolean("h2.economy") && this.getConfigReader().getBoolean("economy.enabled")) {
-                    this.log("Using economy with H2...");
+                    this.log("Using Economy with H2...");
                     if (this.economyManager != null)
                         this.error("You cannot have two databases at the same time for economy activated!");
                     else
                         this.economyManager = new EconomyManager_H2(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, this);
                 }
 
-                if (this.getConfigReader().getBoolean("h2.bansystem") && this.getConfigReader().getBoolean("bansystem.enabled")) {
-                    this.log("Using bansystem with H2...");
+                if (this.getConfigReader().getBoolean("h2.banSystem") && this.getConfigReader().getBoolean("banSystem.enabled")) {
+                    this.log("Using BanSystem with H2...");
                     if (this.banManager != null || this.muteManager != null)
-                        this.error("You cannot have two databases at the same time for bansystem activated!");
+                        this.error("You cannot have two databases at the same time for BanSystem activated!");
                     else {
                         this.banManager = new BanManager_H2(dateFormat, this);
                         this.muteManager = new MuteManager_H2(this, dateFormat);
@@ -590,17 +712,17 @@ public final class ServerSystem extends JavaPlugin {
             if (this.getConfigReader().getBoolean("sqlite.use")) {
                 this.log("SQLite enabled, using it...");
                 if (this.getConfigReader().getBoolean("sqlite.economy") && this.getConfigReader().getBoolean("economy.enabled")) {
-                    this.log("Using economy with SQLite...");
+                    this.log("Using Economy with SQLite...");
                     if (this.economyManager != null)
                         this.error("You cannot have two databases at the same time for economy activated!");
                     else
                         this.economyManager = new EconomyManager_SQLite(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, this);
                 }
 
-                if (this.getConfigReader().getBoolean("sqlite.bansystem") && this.getConfigReader().getBoolean("bansystem.enabled")) {
-                    this.log("Using bansystem with SQLite...");
+                if (this.getConfigReader().getBoolean("sqlite.banSystem") && this.getConfigReader().getBoolean("banSystem.enabled")) {
+                    this.log("Using BanSystem with SQLite...");
                     if (this.banManager != null || this.muteManager != null)
-                        this.error("You cannot have two databases at the same time for bansystem activated!");
+                        this.error("You cannot have two databases at the same time for BanSystem activated!");
                     else {
                         this.banManager = new BanManager_SQLite(dateFormat, this);
                         this.muteManager = new MuteManager_SQLite(this, dateFormat);
@@ -609,11 +731,11 @@ public final class ServerSystem extends JavaPlugin {
             }
 
             if (this.economyManager == null) {
-                this.warn("Not using any database for economy...");
+                this.warn("Not using any database for Economy...");
                 this.economyManager = new EconomyManager(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, this);
             }
             if (this.banManager == null) {
-                this.warn("Not using any database for bansystem...");
+                this.warn("Not using any database for BanSystem...");
                 this.banManager = new BanManager(new File("plugins//ServerSystem", "bans.yml"), dateFormat, this);
             }
             if (this.muteManager == null)
