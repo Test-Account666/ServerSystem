@@ -48,12 +48,14 @@ public class AwayFromKeyboardCommand extends MessageUtils implements CommandExec
         }
 
         if (!awayFromKeyboard) {
+            ((Player) cs).removeMetadata("afk", this.plugin);
             ((Player) cs).setMetadata("afk", this.plugin.getMetaValue().getMetaValue(true));
 
             cs.sendMessage(this.getPrefix() + this.getMessage("Afk.Enabled", label, cmd.getName(), cs, null));
             return true;
         }
 
+        ((Player) cs).removeMetadata("afk", this.plugin);
         ((Player) cs).setMetadata("afk", this.plugin.getMetaValue().getMetaValue(false));
 
         cs.sendMessage(this.getPrefix() + this.getMessage("Afk.Disabled", label, cmd.getName(), cs, null));

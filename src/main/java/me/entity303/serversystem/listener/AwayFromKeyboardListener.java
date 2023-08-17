@@ -53,6 +53,7 @@ public class AwayFromKeyboardListener implements Listener {
                     continue;
                 }
 
+                player.removeMetadata("afk", this.plugin);
                 player.setMetadata("afk", this.plugin.getMetaValue().getMetaValue(true));
 
                 player.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage("afk", "afk", player, null, "Afk.Enabled"));
@@ -68,6 +69,7 @@ public class AwayFromKeyboardListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
+        e.getPlayer().removeMetadata("afk", this.plugin);
         e.getPlayer().setMetadata("afk", this.plugin.getMetaValue().getMetaValue(false));
 
         long currentTime = System.currentTimeMillis();
@@ -84,14 +86,12 @@ public class AwayFromKeyboardListener implements Listener {
 
         this.awayFromKeyboardMap.put(e.getPlayer().getUniqueId(), currentTime);
 
-        if (!e.getPlayer().hasMetadata("afk"))
-            return;
-
         boolean awayFromKeyboard = this.isAwayFromKeyboard(e.getPlayer());
 
         if (!awayFromKeyboard)
             return;
 
+        e.getPlayer().removeMetadata("afk", this.plugin);
         e.getPlayer().setMetadata("afk", this.plugin.getMetaValue().getMetaValue(false));
 
         e.getPlayer().sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage("afk", "afk", e.getPlayer(), null, "Afk.Disabled"));
