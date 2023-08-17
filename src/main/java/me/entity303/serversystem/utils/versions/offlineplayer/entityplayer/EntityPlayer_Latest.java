@@ -35,16 +35,18 @@ public class EntityPlayer_Latest extends MessageUtils implements EntityPlayer {
 
         GameProfile gameProfile = new GameProfile(offlinePlayer.getUniqueId(), offlinePlayer.getName());
 
-        final int[] count = {0};
-
-        //World.f
         Field worldResourceKeyField = Arrays.stream(World.class.getDeclaredFields()).filter(field -> {
             if (!field.getType().getName().equalsIgnoreCase("net.minecraft.resources.ResourceKey"))
                 return false;
 
-            count[0] += 1;
+            try {
+                String name = field.get(null).toString();
 
-            return count[0] == 2;
+                return name.toLowerCase().contains("overworld");
+            } catch (IllegalAccessException e) {
+                return false;
+            }
+
         }).findFirst().orElse(null);
 
         ResourceKey<World> worldResourceKey = null;
