@@ -11,6 +11,10 @@ specialSudo: true
 advancedInvSee: true
 clientsideOpSpoof: true
 
+invseeAndEndechest:
+  tryOfflineCommandOnPlayerQuit: true
+  tryOnlineCommandOnPlayerJoin: true
+
 messageByItemBreak: false
 
 fly:

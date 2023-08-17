@@ -14,15 +14,19 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -321,6 +325,48 @@ public class InvseeCommand extends MessageUtils implements CommandExecutor, List
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        this.cachedCustomInventories.remove(e.getPlayer());
+        Inventory inventory = null;
+
+        if (this.cachedCustomInventories.containsKey(e.getPlayer())) {
+            inventory = this.cachedCustomInventories.get(e.getPlayer());
+
+            this.cachedCustomInventories.remove(e.getPlayer());
+        }
+
+        if (inventory == null)
+            inventory = e.getPlayer().getInventory();
+
+        boolean tryOfflineCommand = this.plugin.getConfigReader().getBoolean("invseeAndEndechest.tryOfflineCommandOnPlayerQuit");
+
+        if (tryOfflineCommand)
+            this.tryOfflineInventorySee(inventory, e.getPlayer());
+    }
+
+    private void tryOfflineInventorySee(Inventory inventory, Player target) {
+        for (HumanEntity human : new ArrayList<>(inventory.getViewers())) {
+            ItemStack cursorStack = human.getItemOnCursor();
+
+            human.setItemOnCursor(null);
+
+            human.closeInventory();
+
+            Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+                Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+                    human.setItemOnCursor(cursorStack);
+                }, 2L);
+
+                if (!(human instanceof Player))
+                    return;
+
+                Player player = (Player) human;
+
+                if (!this.isAllowed(player, "offlineinvsee", true))
+                    return;
+
+                player.chat("/offlineinvsee " + target.getName());
+            }, 2L);
+
+            human.sendMessage(this.getPrefix() + this.getMessage("InvSee.PlayerWentOffline", "invsee", "invsee", human, target));
+        }
     }
 }

@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -83,13 +84,38 @@ public class OfflineEnderChestCommand extends MessageUtils implements TabExecuto
 
     @EventHandler
     public void onAsyncPreLogin(AsyncPlayerPreLoginEvent e) {
+        boolean tryOnlineCommand = this.plugin.getConfigReader().getBoolean("invseeAndEndechest.tryOnlineCommandOnPlayerJoin");
+
         Player target = this.cachedInventories.keySet().stream().filter(player -> player.getUniqueId().toString().equalsIgnoreCase(e.getUniqueId().toString())).findFirst().orElse(null);
         if (target != null) {
             target.saveData();
             Bukkit.getScheduler().runTask(this.plugin, () -> {
                 for (HumanEntity human : new ArrayList<>(target.getEnderChest().getViewers())) {
+                    ItemStack cursorStack = human.getItemOnCursor();
+
+                    if (tryOnlineCommand)
+                        human.setItemOnCursor(null);
+
                     human.closeInventory();
-                    human.sendMessage(this.getPrefix() + this.getMessage("OfflineEnderChest.PlayerCameOnline", "invsee", "invsee", human, target));
+
+                    if (tryOnlineCommand)
+                        Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+                            Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+                                human.setItemOnCursor(cursorStack);
+                            }, 2L);
+
+                            if (!(human instanceof Player))
+                                return;
+
+                            Player player = (Player) human;
+
+                            if (!this.isAllowed(player, "enderchest.others", true))
+                                return;
+
+                            player.chat("/enderchest " + target.getName());
+                        }, 2L);
+
+                    human.sendMessage(this.getPrefix() + this.getMessage("OfflineEnderChest.PlayerCameOnline", "offlineenderchest", "offlineenderchest", human, target));
                 }
 
                 this.cachedInventories.remove(target);
