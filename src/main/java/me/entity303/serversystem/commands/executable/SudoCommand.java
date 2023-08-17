@@ -1,9 +1,9 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.interceptors.SudoInterceptor;
 import me.entity303.serversystem.utils.MessageUtils;
 import me.entity303.serversystem.utils.Morpher;
+import me.entity303.serversystem.utils.interceptors.SudoInterceptor;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.implementation.MethodCall;
 import net.bytebuddy.implementation.MethodDelegation;
@@ -15,7 +15,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.permissions.PermissibleBase;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -114,18 +116,22 @@ public class SudoCommand extends MessageUtils implements CommandExecutor {
             }
 
             if (!failed) try {
+                Field permField = Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".entity.CraftHumanEntity").getDeclaredField("perm");
+
+                permField.setAccessible(true);
+
+                PermissibleBase permissibleBase = (PermissibleBase) permField.get(target);
+
                 target = (Player) dynamicType.getDeclaredConstructors()[0].newInstance(Bukkit.getServer(), this.getHandleMethod.invoke(target));
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+
+                permField.set(target, permissibleBase);
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                     ClassNotFoundException | NoSuchFieldException e) {
                 e.printStackTrace();
             }
         }
 
-        if (this.isAllowed(target, "sudo.exempt", true)) {
-            if (cs instanceof Player) {
-                cs.sendMessage(this.getPrefix() + this.getMessage("Sudo", label, cmd.getName(), cs, target));
-                return true;
-            }
-            StringBuilder msgBuilder = new StringBuilder();
+        /*StringBuilder msgBuilder = new StringBuilder();
             for (int i = 1; args.length > i; i++) msgBuilder.append(args[i]).append(" ");
 
             String msg = msgBuilder.toString().trim();
@@ -145,6 +151,9 @@ public class SudoCommand extends MessageUtils implements CommandExecutor {
                     command.execute(target, first, msg.substring(first.length() + 1).trim().split(" "));
             } else
                 target.chat(msg.toString().trim());
+            return true;*/
+        if (this.isAllowed(target, "sudo.exempt", true)) if (cs instanceof Player) {
+            cs.sendMessage(this.getPrefix() + this.getMessage("Sudo", label, cmd.getName(), cs, target));
             return true;
         }
         StringBuilder msg = new StringBuilder();
@@ -159,8 +168,15 @@ public class SudoCommand extends MessageUtils implements CommandExecutor {
                 PlayerCommandPreprocessEvent commandEvent = new PlayerCommandPreprocessEvent(target, msg.toString().trim());
                 Bukkit.getPluginManager().callEvent(commandEvent);
                 return true;
-            } else
-                command.execute(target, first, msg.substring(first.length() + 1).trim().split(" "));
+            } else {
+                String[] sudoArgs = msg.substring(first.length() + 1).trim().split(" ");
+
+                if (sudoArgs.length < 2)
+                    if (sudoArgs[0].isEmpty())
+                        sudoArgs = new String[0];
+
+                command.execute(target, first, sudoArgs);
+            }
         } else
             target.chat(msg.toString().trim());
         return true;
