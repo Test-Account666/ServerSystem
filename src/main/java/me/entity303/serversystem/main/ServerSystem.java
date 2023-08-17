@@ -24,7 +24,6 @@ import me.entity303.serversystem.placeholderapi.ServerSystemExpansion;
 import me.entity303.serversystem.utils.*;
 import me.entity303.serversystem.utils.versions.VersionManager;
 import me.entity303.serversystem.utils.versions.VersionStuff;
-import me.entity303.serversystem.utils.MetaValue;
 import me.entity303.serversystem.vanish.Vanish;
 import me.entity303.serversystem.vault.Vault;
 import me.entity303.serversystem.vault.VaultHookManager;
@@ -755,6 +754,7 @@ public final class ServerSystem extends JavaPlugin {
         File msgTRFile = new File("plugins//ServerSystem", "messages_tr.yml");
         File msgZHCNFile = new File("plugins//ServerSystem", "messages_zhcn.yml");
         File msgITFile = new File("plugins//ServerSystem", "messages_it.yml");
+        File msgRUFile = new File("plugins//ServerSystem", "messages_ru.yml");
         File msgFile = new File("plugins//ServerSystem", "messages.yml");
         File commandsFile = new File("plugins//ServerSystem", "commands.yml");
         File aliasesFile = new File("plugins//ServerSystem", "aliases.yml");
@@ -774,6 +774,8 @@ public final class ServerSystem extends JavaPlugin {
         if (!msgZHCNFile.exists()) this.saveResource("messages_zhcn.yml", false);
 
         if (msgITFile.exists()) this.saveResource("messages_it.yml", false);
+
+        if (msgRUFile.exists()) this.saveResource("messages_ru.yml", false);
 
         if (!rulesFile.exists()) {
             String locale = System.getProperty("user.language");
@@ -816,6 +818,11 @@ public final class ServerSystem extends JavaPlugin {
             }
             else if (locale.toLowerCase(Locale.ROOT).contains("it")) try {
                 Files.copy(msgITFile, new File("plugins//ServerSystem", "messages.yml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            else if (locale.toLowerCase(Locale.ROOT).contains("ru")) try {
+                Files.copy(msgRUFile, new File("plugins//ServerSystem", "messages.yml"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
