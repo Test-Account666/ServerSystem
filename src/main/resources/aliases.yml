@@ -96,7 +96,7 @@ Aliases:
   kick:
     aliases: "No Aliases"
   money:
-    aliases: "balance"
+    aliases: "balance, bal"
   tpa:
     aliases: "No Aliases"
   tpahere:
@@ -140,7 +140,7 @@ Aliases:
   rain:
     aliases: "regen, storm, sturm"
   disposal:
-    aliases: "No Aliases"
+    aliases: "trash, trashcan"
   editsign:
     aliases: "editschild, schild"
   kickall:
