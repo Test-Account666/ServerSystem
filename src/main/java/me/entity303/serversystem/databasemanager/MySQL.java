@@ -1,11 +1,9 @@
 package me.entity303.serversystem.databasemanager;
 
 import me.entity303.serversystem.main.ServerSystem;
+import org.bukkit.Bukkit;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class MySQL {
     private final ServerSystem plugin;
@@ -14,6 +12,7 @@ public class MySQL {
     private final String username;
     private final String password;
     private final String database;
+    private int scheduleId = -1;
 
     private Connection con;
 
@@ -35,6 +34,24 @@ public class MySQL {
         } catch (SQLException throwables2) {
             throwables2.printStackTrace();
         }
+
+        if (this.scheduleId != -1)
+            Bukkit.getScheduler().cancelTask(this.scheduleId);
+
+        Bukkit.getScheduler().scheduleAsyncRepeatingTask(this.plugin, () -> {
+            try {
+                Statement statement = this.con.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT 1");
+                resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                Bukkit.getScheduler().cancelTask(this.scheduleId);
+
+                scheduleId = -1;
+
+                this.plugin.error("Error while executing keep alive command, not retrying");
+            }
+        }, 20 * 10, 20 * 10);
     }
 
     public void close() {
