@@ -223,3 +223,5 @@ Aliases:
     aliases: "No Aliases"
   freeze:
     aliases: "unfreeze"
+  afk:
+    aliases: "No Aliases"

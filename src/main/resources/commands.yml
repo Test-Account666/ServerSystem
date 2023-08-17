@@ -109,3 +109,4 @@ baltop: true
 unlimited: true
 seen: true
 freeze: true
+afk: true
