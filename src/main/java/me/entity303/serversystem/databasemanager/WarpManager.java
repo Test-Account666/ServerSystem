@@ -1,163 +1,166 @@
 package me.entity303.serversystem.databasemanager;
 
 import me.entity303.serversystem.main.ServerSystem;
+import me.entity303.serversystem.utils.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class WarpManager {
-    private final ServerSystem plugin;
-    private Connection connection;
+    private final FileConfiguration cfg;
+    private final File warpFile = new File("plugins" + File.separator + "ServerSystem", "warps.yml");
 
     public WarpManager(ServerSystem plugin) {
-        this.plugin = plugin;
-        this.open();
+        this.cfg = YamlConfiguration.loadConfiguration(this.warpFile);
+
+        File legacyWarpsFile = new File("plugins//ServerSystem", "warps.h2.mv.db");
+
+        if (!legacyWarpsFile.exists())
+            return;
+
+        plugin.log("Found legacy warp database!");
+        plugin.log("Trying to convert...");
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm-ss");
+        LocalDateTime now = LocalDateTime.now();
+        String date = dtf.format(now);
 
         try {
-            this.connection.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS warps (\n" +
-                    "  Name VARCHAR(100),\n" +
-                    "  World VARCHAR(100),\n" +
-                    "  X DECIMAL(100, 30),\n" +
-                    "  Y DECIMAL(100, 30),\n" +
-                    "  Z DECIMAL(100, 30),\n" +
-                    "  Yaw DECIMAL(100, 30),\n" +
-                    "  Pitch DECIMAL(100, 30)\n" +
-                    ")");
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
+            FileUtils.copyFile(legacyWarpsFile, new File("plugins" + File.separator + "ServerSystem", legacyWarpsFile.getName() + ".backup-" + date));
+        } catch (IOException e) {
+            e.printStackTrace();
 
-    protected boolean initialize() {
+            plugin.error("Failed to convert legacy warp database!");
+            return;
+        }
+
+        LegacyWarpManager legacyWarpManager = new LegacyWarpManager(plugin);
+
         try {
-            Class.forName("org.h2.Driver");
-            return true;
-        } catch (ClassNotFoundException var2) {
-            this.plugin.error("H2 driver class missing: " + var2.getMessage() + ".");
-            return false;
-        }
-    }
+            List<String> warps = legacyWarpManager.getWarps();
 
-    public boolean open() {
-        if (this.initialize()) try {
-            this.connection = DriverManager.getConnection("jdbc:h2:file:" + new File("plugins//ServerSystem", "warps.h2").getAbsolutePath());
-            return true;
-        } catch (SQLException var2) {
-            this.plugin.error("Could not establish an H2 connection, SQLException: " + var2.getMessage());
-            return false;
+            for (String warp : warps)
+                this.addWarp(warp, legacyWarpManager.getWarp(warp));
+
+            legacyWarpManager.close();
+
+            legacyWarpsFile.delete();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+
+            plugin.error("Failed to convert legacy warp database!");
+            return;
         }
-        else return false;
+
+        plugin.log("Legacy warp database was successfully converted!");
     }
 
     public void addWarp(String name, Location location) {
         if (this.doesWarpExist(name)) return;
         name = name.toLowerCase();
-        try {
-            String x = this.trimString(String.valueOf(location.getX()));
-            String y = this.trimString(String.valueOf(location.getY()));
-            String z = this.trimString(String.valueOf(location.getZ()));
-            String yaw = this.trimString(String.valueOf(location.getYaw()));
-            String pitch = this.trimString(String.valueOf(location.getPitch()));
-            this.connection.createStatement().executeUpdate("INSERT INTO warps (Name, World, X, Y, Z, Yaw, Pitch) VALUES ('" + name + "','" + location.getWorld().getName() + "','" + x + "','" + y + "','" + z + "','" + yaw + "','" + pitch + "')");
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
+        double x = location.getX();
+        double y = location.getY();
+        double z = location.getZ();
+        double yaw = location.getYaw();
+        double pitch = location.getPitch();
 
-    private String trimString(String string) {
-        return string.split("\\.")[1].length() > 100 ? string.split("\\.")[0] + "." + string.split("\\.")[1].substring(100) : string;
+        this.cfg.set("Warps." + name + ".X", x);
+        this.cfg.set("Warps." + name + ".Y", y);
+        this.cfg.set("Warps." + name + ".Z", z);
+        this.cfg.set("Warps." + name + ".Yaw", yaw);
+        this.cfg.set("Warps." + name + ".Pitch", pitch);
+        this.cfg.set("Warps." + name + ".World", location.getWorld().getName());
+
+        try {
+            this.cfg.save(this.warpFile);
+            this.cfg.load(this.warpFile);
+        } catch (IOException | InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
     }
 
     public Location getWarp(String name) {
         name = name.toLowerCase();
-        Location location = null;
-        ResultSet resultSet = null;
-        try {
-            resultSet = this.connection.createStatement().executeQuery("SELECT * FROM warps WHERE Name='" + name + "'");
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        while (true) try {
-            if (!resultSet.next()) break;
-            double x = resultSet.getDouble("X");
-            double y = resultSet.getDouble("Y");
-            double z = resultSet.getDouble("Z");
-            double yaw = resultSet.getDouble("Yaw");
-            double pitch = resultSet.getDouble("Pitch");
-            String worldName = resultSet.getString("World");
-            location = new Location(Bukkit.getWorld(worldName), x, y, z, (float) yaw, (float) pitch);
-            break;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return location;
+        if (!this.doesWarpExist(name))
+            return null;
+
+        double x = this.cfg.getDouble("Warps." + name + ".X");
+        double y = this.cfg.getDouble("Warps." + name + ".Y");
+        double z = this.cfg.getDouble("Warps." + name + ".Z");
+
+        double yaw = this.cfg.getDouble("Warps." + name + ".Yaw");
+        double pitch = this.cfg.getDouble("Warps." + name + ".Pitch");
+
+        String worldName = this.cfg.getString("Warps." + name + ".World");
+
+        assert worldName != null;
+        World world = Bukkit.getWorld(worldName);
+
+        return new Location(world, x, y, z, (float) yaw, (float) pitch);
     }
 
     public void deleteWarp(String name) {
         name = name.toLowerCase();
+
+        if (!this.warpFile.exists())
+            return;
+
+        this.cfg.set("Warps." + name, null);
+
         try {
-            this.connection.createStatement().executeUpdate("DELETE FROM warps WHERE Name='" + name + "'");
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            this.cfg.save(this.warpFile);
+
+            this.cfg.load(this.warpFile);
+        } catch (IOException | InvalidConfigurationException e) {
+            e.printStackTrace();
         }
     }
 
     public boolean doesWarpExist(String name) {
         name = name.toLowerCase();
-        ResultSet rs = null;
-        try {
-            rs = this.connection.createStatement().executeQuery("SELECT * FROM warps WHERE Name='" + name + "'");
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        try {
-            while (rs.next()) return true;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return false;
+
+        if (!this.warpFile.exists())
+            return false;
+
+        if (!this.cfg.isSet("Warps." + name))
+            return false;
+
+        String worldName = this.cfg.getString("Warps." + name + ".World");
+
+        if (worldName == null)
+            return false;
+
+        World world = Bukkit.getWorld(worldName);
+
+        if (world == null)
+            return false;
+
+        return true;
     }
 
     public List<String> getWarps() {
         List<String> warps = new ArrayList<>();
 
-        ResultSet resultSet = null;
+        if (!this.warpFile.exists())
+            return warps;
 
-        try {
-            resultSet = this.connection.createStatement().executeQuery("SELECT Name FROM warps");
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+        for (String warpName : this.cfg.getConfigurationSection("Warps").getKeys(false)) {
+            if (!this.doesWarpExist(warpName))
+                continue;
 
-        if (resultSet != null) while (true) {
-            try {
-                if (!resultSet.next()) break;
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-
-            try {
-                if (warps.contains(resultSet.getString("Name"))) continue;
-                warps.add(resultSet.getString("Name"));
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
+            warps.add(warpName);
         }
 
         return warps;
-    }
-
-    public void close() {
-        try {
-            this.connection.close();
-        } catch (Exception ignored) {
-        }
     }
 }
