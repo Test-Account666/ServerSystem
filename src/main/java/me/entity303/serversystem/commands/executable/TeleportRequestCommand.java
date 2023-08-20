@@ -50,7 +50,7 @@ public class TeleportRequestCommand extends MessageUtils implements CommandExecu
             } else this.plugin.getTpaDataMap().remove(targetPlayer);
         }
 
-        if (!this.plugin.wantsTP(targetPlayer)) {
+        if (!this.plugin.getWantsTeleport().wantsTeleport(targetPlayer)) {
             cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, targetPlayer, "Tpa.TeleportationDisabled"));
             return true;
         }

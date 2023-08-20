@@ -7,12 +7,15 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
-public class WantsTP {
+public class LegacyWantsTP {
     private final ServerSystem plugin;
     Connection connection;
 
-    public WantsTP(ServerSystem plugin) {
+    public LegacyWantsTP(ServerSystem plugin) {
         this.plugin = plugin;
         this.open();
         try {
@@ -41,6 +44,31 @@ public class WantsTP {
             return false;
         }
         else return false;
+    }
+
+    public Map<UUID, Boolean> listWantsTp() {
+        ResultSet resultSet = this.query("SELECT * FROM wantsTP");
+
+        if (resultSet == null)
+            return new HashMap<>();
+
+        Map<UUID, Boolean> wantsTpMap = new HashMap<>();
+
+        try {
+            while (resultSet.next()) {
+                String uuidString = resultSet.getString("UUID");
+
+                UUID uuid = UUID.fromString(uuidString);
+
+                Boolean wantsTp = Boolean.parseBoolean(resultSet.getString("wants"));
+
+                wantsTpMap.put(uuid, wantsTp);
+            }
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+
+        return wantsTpMap;
     }
 
     public void update(String query) {

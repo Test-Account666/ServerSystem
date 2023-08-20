@@ -50,7 +50,7 @@ public class TeleportRequestHereCommand extends MessageUtils implements CommandE
             } else this.plugin.getTpaDataMap().remove(targetPlayer);
         }
 
-        if (!this.plugin.wantsTP(targetPlayer)) {
+        if (!this.plugin.getWantsTeleport().wantsTeleport(targetPlayer)) {
             cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, null, "TpaHere.TeleportationDisabled"));
             return true;
         }

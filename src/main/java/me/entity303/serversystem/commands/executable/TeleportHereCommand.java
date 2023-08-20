@@ -35,7 +35,7 @@ public class TeleportHereCommand extends MessageUtils implements CommandExecutor
             cs.sendMessage(this.getPrefix() + this.getNoTarget(args[0]));
             return true;
         }
-        if (!this.plugin.wantsTP(target)) {
+        if (!this.plugin.getWantsTeleport().wantsTeleport(target)) {
             cs.sendMessage(this.getPrefix() + this.getMessage("Tphere.NoTeleportations", label, cmd.getName(), cs, target));
             return true;
         }

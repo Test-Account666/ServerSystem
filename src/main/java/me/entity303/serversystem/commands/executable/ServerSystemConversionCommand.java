@@ -97,7 +97,7 @@ public class ServerSystemConversionCommand extends MessageUtils implements Comma
             if (this.plugin.getVanish().isVanish(offlinePlayer))
                 user.setVanished(true);
 
-            if (!this.plugin.wantsTP(offlinePlayer))
+            if (!this.plugin.getWantsTeleport().wantsTeleport(offlinePlayer))
                 user.setTeleportEnabled(false);
 
             //TODO: Convert bans and mutes

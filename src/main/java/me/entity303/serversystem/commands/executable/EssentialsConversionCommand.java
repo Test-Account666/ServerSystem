@@ -118,7 +118,7 @@ public class EssentialsConversionCommand extends MessageUtils implements Command
 
                     this.plugin.getVanish().setVanish(offlineUser.isVanished(), offlineUser.getConfigUUID());
 
-                    this.plugin.setWantsTP(Bukkit.getOfflinePlayer(offlineUser.getUUID()), offlineUser.isTeleportEnabled());
+                    this.plugin.getWantsTeleport().setWantsTeleport(Bukkit.getOfflinePlayer(offlineUser.getUUID()), offlineUser.isTeleportEnabled());
                 } catch (Exception e) {
                     this.plugin.error("Failed to process userdata '" + userData.getName() + "'!");
                 }

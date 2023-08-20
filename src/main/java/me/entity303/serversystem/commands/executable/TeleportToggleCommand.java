@@ -24,11 +24,11 @@ public class TeleportToggleCommand extends MessageUtils implements CommandExecut
                 cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(label, cmd.getName(), cs, null, "TpToggle"));
                 return true;
             }
-            if (this.plugin.wantsTP(((Player) cs))) {
-                this.plugin.setWantsTP(((Player) cs), false);
+            if (this.plugin.getWantsTeleport().wantsTeleport(((Player) cs))) {
+                this.plugin.getWantsTeleport().setWantsTeleport(((Player) cs), false);
                 cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, null, "TpToggle.Self.DeActivated"));
             } else {
-                this.plugin.setWantsTP(((Player) cs), true);
+                this.plugin.getWantsTeleport().setWantsTeleport(((Player) cs), true);
                 cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, null, "TpToggle.Self.Activated"));
             }
             return true;
@@ -39,12 +39,12 @@ public class TeleportToggleCommand extends MessageUtils implements CommandExecut
             return true;
         }
 
-        if (this.plugin.wantsTP(targetPlayer)) {
-            this.plugin.setWantsTP(targetPlayer, false);
+        if (this.plugin.getWantsTeleport().wantsTeleport(targetPlayer)) {
+            this.plugin.getWantsTeleport().setWantsTeleport(targetPlayer, false);
             cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, targetPlayer, "TpToggle.Others.DeActivated.Sender"));
             targetPlayer.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, targetPlayer, "TpToggle.Others.DeActivated.Target"));
         } else {
-            this.plugin.setWantsTP(targetPlayer, true);
+            this.plugin.getWantsTeleport().setWantsTeleport(targetPlayer, true);
             cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, targetPlayer, "TpToggle.Others.Activated.Sender"));
             targetPlayer.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, targetPlayer, "TpToggle.Others.Activated.Target"));
         }

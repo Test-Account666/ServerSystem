@@ -40,7 +40,7 @@ public class TeleportCommand extends MessageUtils implements CommandExecutor {
                 cs.sendMessage(this.getPrefix() + this.getNoTarget(args[0]));
                 return true;
             }
-            if (target != cs) if (!this.plugin.wantsTP(target)) {
+            if (target != cs) if (!this.plugin.getWantsTeleport().wantsTeleport(target)) {
                 cs.sendMessage(this.getPrefix() + this.getMessage("Tp.NoTeleportations", label, cmd.getName(), cs, target));
                 return true;
             }
@@ -58,7 +58,7 @@ public class TeleportCommand extends MessageUtils implements CommandExecutor {
             cs.sendMessage(this.getPrefix() + this.getNoTarget(args[0]));
             return true;
         }
-        if (target1 != cs) if (!this.plugin.wantsTP(target1)) {
+        if (target1 != cs) if (!this.plugin.getWantsTeleport().wantsTeleport(target1)) {
             cs.sendMessage(this.getPrefix() + this.getMessage("Tp.NoTeleportations", label, cmd.getName(), cs, target1));
             return true;
         }
@@ -67,7 +67,7 @@ public class TeleportCommand extends MessageUtils implements CommandExecutor {
             cs.sendMessage(this.getPrefix() + this.getNoTarget(args[1]));
             return true;
         }
-        if (target2 != cs) if (!this.plugin.wantsTP(target2)) {
+        if (target2 != cs) if (!this.plugin.getWantsTeleport().wantsTeleport(target2)) {
             cs.sendMessage(this.getPrefix() + this.getMessage("Tp.NoTeleportations", label, cmd.getName(), cs, target2));
             return true;
         }
