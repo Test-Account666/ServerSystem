@@ -14,6 +14,7 @@ import me.entity303.serversystem.config.DefaultConfigReader;
 import me.entity303.serversystem.config.NonValidatingConfigReader;
 import me.entity303.serversystem.databasemanager.HomeManager;
 import me.entity303.serversystem.databasemanager.MySQL;
+import me.entity303.serversystem.databasemanager.WantsTeleport;
 import me.entity303.serversystem.databasemanager.WarpManager;
 import me.entity303.serversystem.economy.*;
 import me.entity303.serversystem.events.EventManager;
@@ -29,7 +30,6 @@ import me.entity303.serversystem.vault.Vault;
 import me.entity303.serversystem.vault.VaultHookManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -50,8 +50,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.*;
 import java.net.URL;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -95,7 +93,7 @@ public final class ServerSystem extends JavaPlugin {
     private boolean clientsideOp = true;
     private Vanish vanish;
     private MetaValue metaValue;
-    private WantsTP wantsTP;
+    private WantsTeleport wantsTeleport;
     private KitsManager kitsManager;
     private ServerSystemTimer timer;
     private ManagerBan banManager;
@@ -156,27 +154,8 @@ public final class ServerSystem extends JavaPlugin {
             this.configReader.save();
     }
 
-    public boolean wantsTP(OfflinePlayer player) {
-        ResultSet resultSet = this.wantsTP.query("SELECT wants FROM wantsTP WHERE UUID='" + player.getUniqueId() + "'");
-        if (resultSet != null) while (true) {
-            try {
-                if (!resultSet.next()) break;
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-            try {
-                return Boolean.parseBoolean(resultSet.getString("wants"));
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-        }
-        else this.error("ResultSet null");
-        return true;
-    }
-
-    public void setWantsTP(OfflinePlayer player, Boolean wants) {
-        this.wantsTP.update("DELETE FROM wantsTP WHERE UUID='" + player.getUniqueId() + "'");
-        this.wantsTP.update("INSERT INTO wantsTP (UUID, wants) VALUES ('" + player.getUniqueId() + "','" + wants.toString() + "')");
+    public WantsTeleport getWantsTeleport() {
+        return this.wantsTeleport;
     }
 
     private void check() {
@@ -416,7 +395,7 @@ public final class ServerSystem extends JavaPlugin {
                     this.tpaDataMap.remove(player);
         }, 20L, 20L);
 
-        this.wantsTP = new WantsTP(this);
+        this.wantsTeleport = new WantsTeleport(this);
         this.timer = new ServerSystemTimer();
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this.timer, 1000L, 50L);
 
@@ -648,7 +627,9 @@ public final class ServerSystem extends JavaPlugin {
             String password = this.getConfigReader().getString("mysql.password");
             String database = this.getConfigReader().getString("mysql.database");
 
-            this.mySQL = new MySQL(hostname, port, username, password, database, this);
+            boolean mariadb = this.getConfigReader().getBoolean("mysql.mariadb");
+
+            this.mySQL = new MySQL(hostname, port, username, password, database, mariadb, this);
             this.mySQL.connect();
             this.mySQL.createTable();
         }
@@ -865,9 +846,6 @@ public final class ServerSystem extends JavaPlugin {
             e.printStackTrace();
         }
 
-        this.log("Closing wantsTP database...");
-        if (this.wantsTP != null)
-            this.wantsTP.close();
         this.log("Closing banManager database...");
         if (this.banManager != null)
             this.banManager.close();
@@ -880,9 +858,6 @@ public final class ServerSystem extends JavaPlugin {
         this.log("Closing MySQL...");
         if (this.mySQL != null)
             this.mySQL.close();
-        this.log("Closing warp database...");
-        if (this.warpManager != null)
-            this.warpManager.close();
 
         this.banManager = null;
         this.muteManager = null;
