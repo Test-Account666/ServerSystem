@@ -12,16 +12,18 @@ public class MySQL {
     private final String username;
     private final String password;
     private final String database;
+    private final boolean mariadb;
     private int scheduleId = -1;
 
     private Connection con;
 
-    public MySQL(String hostname, String port, String username, String password, String database, ServerSystem plugin) {
+    public MySQL(String hostname, String port, String username, String password, String database, boolean mariadb, ServerSystem plugin) {
         this.hostname = hostname;
         this.port = port;
         this.username = username;
         this.password = password;
         this.database = database;
+        this.mariadb = mariadb;
         this.plugin = plugin;
     }
 
@@ -29,16 +31,27 @@ public class MySQL {
         if (this.isConnected())
             return;
 
-        try {
-            this.con = DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database + "?autoReconnect=true", this.username, this.password);
-        } catch (SQLException throwables2) {
-            throwables2.printStackTrace();
-        }
+        if (this.mariadb)
+            try {
+                Class.forName("serversystem.libs.mariadb.org.mariadb.jdbc.Driver");
+                this.con = DriverManager.getConnection("jdbc:mariadb://" + this.hostname + ":" + this.port + "/" + this.database + "?autoReconnect=true", this.username, this.password);
+            } catch (SQLException | ClassNotFoundException throwables2) {
+                throwables2.printStackTrace();
+            }
+        else
+            try {
+                this.con = DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database + "?autoReconnect=true", this.username, this.password);
+            } catch (SQLException throwables2) {
+                throwables2.printStackTrace();
+            }
 
         if (this.scheduleId != -1)
             Bukkit.getScheduler().cancelTask(this.scheduleId);
 
         Bukkit.getScheduler().scheduleAsyncRepeatingTask(this.plugin, () -> {
+            if (!this.isConnected())
+                return;
+
             try {
                 Statement statement = this.con.createStatement();
                 ResultSet resultSet = statement.executeQuery("SELECT 1");
@@ -47,7 +60,7 @@ public class MySQL {
                 e.printStackTrace();
                 Bukkit.getScheduler().cancelTask(this.scheduleId);
 
-                scheduleId = -1;
+                this.scheduleId = -1;
 
                 this.plugin.error("Error while executing keep alive command, not retrying");
             }
