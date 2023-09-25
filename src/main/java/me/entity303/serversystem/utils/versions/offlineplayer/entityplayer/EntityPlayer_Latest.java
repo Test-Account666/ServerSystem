@@ -59,13 +59,43 @@ public class EntityPlayer_Latest extends MessageUtils implements EntityPlayer {
 
         try {
 
-            if (this.entityPlayerConstructor != null)
+            if (this.entityPlayerConstructor != null) {
+
+                int lastParameter = this.entityPlayerConstructor.getParameterCount() - 1;
+
+                if (this.entityPlayerConstructor.getParameterTypes()[lastParameter].getName().contains("ClientInformation"))
+                    try {
+                        Class clientInformationClass = Class.forName("net.minecraft.server.level.ClientInformation");
+
+                        Method createDefaultMethod = Arrays.stream(clientInformationClass.getDeclaredMethods()).filter(method -> method.getReturnType().getName().contains("ClientInformation")).findFirst().orElse(null);
+
+                        return this.entityPlayerConstructor.newInstance(MinecraftServer.getServer(), (WorldServer) EntityPlayer_Latest.getWorldServerMethod.invoke(MinecraftServer.getServer(), worldResourceKey), gameProfile, createDefaultMethod.invoke(null));
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+
                 return this.entityPlayerConstructor.newInstance(MinecraftServer.getServer(), (WorldServer) EntityPlayer_Latest.getWorldServerMethod.invoke(MinecraftServer.getServer(), worldResourceKey), gameProfile, null);
+            }
 
             try {
                 return new net.minecraft.server.level.EntityPlayer(MinecraftServer.getServer(), (WorldServer) EntityPlayer_Latest.getWorldServerMethod.invoke(MinecraftServer.getServer(), worldResourceKey), gameProfile);
             } catch (NoSuchMethodError ignored) {
                 this.entityPlayerConstructor = (Constructor<net.minecraft.server.level.EntityPlayer>) net.minecraft.server.level.EntityPlayer.class.getConstructors()[0];
+
+                int lastParameter = this.entityPlayerConstructor.getParameterCount() - 1;
+
+                if (this.entityPlayerConstructor.getParameterTypes()[lastParameter].getName().contains("ClientInformation"))
+                    try {
+                        Class clientInformationClass = Class.forName("net.minecraft.server.level.ClientInformation");
+
+                        Method createDefaultMethod = Arrays.stream(clientInformationClass.getDeclaredMethods()).filter(method -> method.getReturnType().getName().contains("ClientInformation")).findFirst().orElse(null);
+
+                        return this.entityPlayerConstructor.newInstance(MinecraftServer.getServer(), (WorldServer) EntityPlayer_Latest.getWorldServerMethod.invoke(MinecraftServer.getServer(), worldResourceKey), gameProfile, createDefaultMethod.invoke(null));
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
 
                 return this.entityPlayerConstructor.newInstance(MinecraftServer.getServer(), (WorldServer) EntityPlayer_Latest.getWorldServerMethod.invoke(MinecraftServer.getServer(), worldResourceKey), gameProfile, null);
             }

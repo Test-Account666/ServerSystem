@@ -244,6 +244,9 @@ public class VersionStuff {
                 if (aMethod == null) {
                     Field field = Arrays.stream(playerConnection.getClass().getDeclaredFields()).filter(field1 -> field1.getType().getName().toLowerCase(Locale.ROOT).contains("networkdispatcher") || field1.getType().getName().toLowerCase(Locale.ROOT).contains("networkmanager")).findFirst().orElse(null);
 
+                    if (field == null) //Since 1.20.2 the field is located in SuperClass
+                        field = Arrays.stream(playerConnection.getClass().getSuperclass().getDeclaredFields()).filter(field1 -> field1.getType().getName().toLowerCase(Locale.ROOT).contains("networkdispatcher") || field1.getType().getName().toLowerCase(Locale.ROOT).contains("networkmanager")).findFirst().orElse(null);
+
                     if (field == null) {
                         this.serverSystem.error("Couldn't find NetworkManager field!");
                         return;
