@@ -40,7 +40,7 @@ public class SignListener extends MessageUtils implements Listener {
     public void onWarpSignInteract(PlayerInteractEvent e) {
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK)
             if (e.getClickedBlock() != null)
-                if (e.getClickedBlock().getType().name().contains("SIGN")) {
+                if (e.getClickedBlock().getType().name().endsWith("_SIGN")) try {
                     Sign sign = (Sign) e.getClickedBlock().getState();
                     if (sign.getLine(0).equalsIgnoreCase(ChatColor.GRAY + "[" + ChatColor.DARK_AQUA + "Warp" + ChatColor.GRAY + "]")) {
                         if (sign.getLine(1).startsWith("§4")) {
@@ -59,6 +59,10 @@ public class SignListener extends MessageUtils implements Listener {
                     }
                     if (sign.getLine(0).equalsIgnoreCase(ChatColor.GRAY + "[" + ChatColor.DARK_AQUA + "Disposal" + ChatColor.GRAY + "]"))
                         e.getPlayer().chat("/disposal");
+                } catch (ClassCastException exception) {
+                    exception.printStackTrace();
+                    this.plugin.error("Found block " + e.getClickedBlock().getType().name() + " which isn't a sign!");
+                    this.plugin.error("Please report this to the plugin author!");
                 }
     }
 }
