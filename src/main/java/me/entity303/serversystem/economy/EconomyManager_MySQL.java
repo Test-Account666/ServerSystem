@@ -128,6 +128,8 @@ public class EconomyManager_MySQL extends ManagerEconomy {
                 + " VALUES ('" + player.getUniqueId() +
                 "','" + this.server + "','" + doubles[0] + "')");
 
+        this.moneyCache.remove(player);
+
     }
 
     @Override
