@@ -51,7 +51,15 @@ Also you can just disable commands, if you like.
 
 %serversystem_vanish% -> Shows if the player is in vanish
 
-%serversystem_god% -> Shows if the player is in god mode</pre>
+%serversystem_god% -> Shows if the player is in god mode
+
+%serversystem_onlineplayers% -> Shows online player count, excluding players you cannot see (Aka. vanish)
+
+%baltop_formattedmoney_X% -> Shows the formatted balance of top place X (1 - 10)
+
+%baltop_money_X% -> Shows the unformatted balance of top place X (1 - 10)
+
+%baltop_player_X% -> Shows the player name of top place X (1 - 10)</pre>
 </details>
 
 How do I install this plugin?
@@ -113,7 +121,15 @@ Du kannst außerdem auch einfach Commands deaktivieren, wenn du möchtest.
 
 %serversystem_vanish% -> Zeigt ob der Spieler im Vanish ist
 
-%serversystem_god% -> Zeigt ob der Spieler im GodMode ist</pre>
+%serversystem_god% -> Zeigt ob der Spieler im GodMode ist
+
+%serversystem_onlineplayers% -> Zeigst online Spieler Anzahl, ausgenommen von Spielern, die du nicht sehen kannst (Aka. vanish)
+
+%baltop_formattedmoney_X% -> Zeigt den formatierten Kontostand von Top Platz X (1 - 10)
+
+%baltop_money_X% -> Zeigt den unformatierten Kontostand von Top Platz X (1 - 10)
+
+%baltop_player_X% -> Zeigt den Spielernamen von Top Platz X (1 - 10)</pre>
 </details>
  
 
