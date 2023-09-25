@@ -4,6 +4,7 @@ import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -17,15 +18,19 @@ import java.util.UUID;
 
 public class AwayFromKeyboardListener implements Listener {
     private final ServerSystem plugin;
-    private final HashMap<UUID, Long> awayFromKeyboardMap = new HashMap<>();
+    private final HashMap<String, Long> awayFromKeyboardMap = new HashMap<>();
+    private long maxDuration;
+    private long kickDuration;
 
 
     public AwayFromKeyboardListener(ServerSystem plugin, long maxDuration, long kickDuration) {
         this.plugin = plugin;
+        this.maxDuration = maxDuration;
+        this.kickDuration = kickDuration;
 
         Bukkit.getScheduler().scheduleAsyncRepeatingTask(this.plugin, () -> {
-            for (Map.Entry<UUID, Long> entry : new HashSet<>(this.awayFromKeyboardMap.entrySet())) {
-                UUID uuid = entry.getKey();
+            for (Map.Entry<String, Long> entry : new HashSet<>(this.awayFromKeyboardMap.entrySet())) {
+                UUID uuid = UUID.fromString(entry.getKey());
                 long duration = System.currentTimeMillis() - entry.getValue();
 
                 if (duration < maxDuration)
@@ -34,7 +39,7 @@ public class AwayFromKeyboardListener implements Listener {
                 Player player = Bukkit.getPlayer(uuid);
 
                 if (player == null) {
-                    this.awayFromKeyboardMap.remove(uuid);
+                    this.awayFromKeyboardMap.remove(uuid.toString());
                     continue;
                 }
 
@@ -47,7 +52,7 @@ public class AwayFromKeyboardListener implements Listener {
                         continue;
 
                     Bukkit.getScheduler().runTask(this.plugin, () -> {
-                        this.awayFromKeyboardMap.remove(uuid);
+                        this.awayFromKeyboardMap.remove(uuid.toString());
                         player.kickPlayer(this.plugin.getMessages().getMessage("afk", "afk", player, null, "Afk.Kick"));
                     });
                     continue;
@@ -58,13 +63,16 @@ public class AwayFromKeyboardListener implements Listener {
 
                 player.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage("afk", "afk", player, null, "Afk.Enabled"));
             }
-        }, 1L, 1L);
+        }, 20L, 20L);
+
+
+        for (Player all : Bukkit.getOnlinePlayers()) this.onJoin(new PlayerJoinEvent(all, ""));
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
         e.getPlayer().removeMetadata("afk", this.plugin);
-        this.awayFromKeyboardMap.remove(e.getPlayer().getUniqueId());
+        this.awayFromKeyboardMap.remove(e.getPlayer().getUniqueId().toString());
     }
 
     @EventHandler
@@ -73,20 +81,20 @@ public class AwayFromKeyboardListener implements Listener {
         e.getPlayer().setMetadata("afk", this.plugin.getMetaValue().getMetaValue(false));
 
         long currentTime = System.currentTimeMillis();
-        this.awayFromKeyboardMap.put(e.getPlayer().getUniqueId(), currentTime);
+        this.awayFromKeyboardMap.put(e.getPlayer().getUniqueId().toString(), currentTime);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onMove(PlayerMoveEvent e) {
-        if (e.getFrom().getYaw() == e.getTo().getYaw())
-            if (e.getFrom().getPitch() == e.getTo().getPitch())
+        if (e.getPlayer().getLocation().getYaw() == e.getTo().getYaw())
+            if (e.getPlayer().getLocation().getPitch() == e.getTo().getPitch())
                 return;
+
+        boolean awayFromKeyboard = this.isAwayFromKeyboard(e.getPlayer());
 
         long currentTime = System.currentTimeMillis();
 
-        this.awayFromKeyboardMap.put(e.getPlayer().getUniqueId(), currentTime);
-
-        boolean awayFromKeyboard = this.isAwayFromKeyboard(e.getPlayer());
+        this.awayFromKeyboardMap.put(e.getPlayer().getUniqueId().toString(), currentTime);
 
         if (!awayFromKeyboard)
             return;
@@ -112,6 +120,12 @@ public class AwayFromKeyboardListener implements Listener {
 
             awayFromKeyboard = metadataValue.asBoolean();
             break;
+        }
+
+        if (this.awayFromKeyboardMap.containsKey(player.getUniqueId().toString())) {
+            long duration = System.currentTimeMillis() - this.awayFromKeyboardMap.get(player.getUniqueId().toString());
+
+            return awayFromKeyboard && duration > this.maxDuration;
         }
 
         return awayFromKeyboard;
