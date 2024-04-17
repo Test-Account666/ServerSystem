@@ -2,13 +2,13 @@ package me.entity303.serversystem.commands.executable;
 
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 
-public class RestartCommand extends MessageUtils implements CommandExecutor {
+public class RestartCommand extends CommandUtils implements CommandExecutorOverload {
     private Boolean restarting = false;
 
     public RestartCommand(ServerSystem plugin) {
@@ -16,52 +16,111 @@ public class RestartCommand extends MessageUtils implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command command, String label, String[] args) {
-        if (!this.isAllowed(cs, "restart")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("restart")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "restart")) {
+            var permission = this.plugin.getPermissions().getPermission("restart");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
         if (this.restarting) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("Restart.AlreadyRestarting", command.getName(), command.getName(), cs, null));
+            var label1 = command.getName();
+            var command1 = command.getName();
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label1, command1, commandSender, null, "Restart.AlreadyRestarting"));
             return true;
         }
         this.restarting = true;
-        String[] sek = {"10"};
-        Bukkit.broadcastMessage(this.getPrefix() + this.getMessage("Restart.RestartTimer", command.getName(), command.getName(), cs, null).replace("<TIME>", sek[0]));
+        var sek = new String[] { "10" };
+        var label12 = command.getName();
+        var command12 = command.getName();
+        Bukkit.broadcastMessage(this.plugin.getMessages().getPrefix() +
+                                this.plugin.getMessages().getMessage(label12, command12, commandSender, null, "Restart.RestartTimer").replace("<TIME>", sek[0]));
         sek[0] = "9";
         Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-            Bukkit.broadcastMessage(this.getPrefix() + this.getMessage("Restart.RestartTimer", command.getName(), command.getName(), cs, null).replace("<TIME>", sek[0]));
+            var label11 = command.getName();
+            var command11 = command.getName();
+            Bukkit.broadcastMessage(this.plugin.getMessages().getPrefix() +
+                                    this.plugin.getMessages().getMessage(label11, command11, commandSender, null, "Restart.RestartTimer").replace("<TIME>", sek[0]));
             sek[0] = "8";
             Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                Bukkit.broadcastMessage(this.getPrefix() + this.getMessage("Restart.RestartTimer", command.getName(), command.getName(), cs, null).replace("<TIME>", sek[0]));
+                var label10 = command.getName();
+                var command10 = command.getName();
+                Bukkit.broadcastMessage(this.plugin.getMessages().getPrefix() +
+                                        this.plugin.getMessages().getMessage(label10, command10, commandSender, null, "Restart.RestartTimer").replace("<TIME>", sek[0]));
                 sek[0] = "7";
                 Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                    Bukkit.broadcastMessage(this.getPrefix() + this.getMessage("Restart.RestartTimer", command.getName(), command.getName(), cs, null).replace("<TIME>", sek[0]));
+                    var label9 = command.getName();
+                    var command9 = command.getName();
+                    Bukkit.broadcastMessage(this.plugin.getMessages().getPrefix() +
+                                            this.plugin.getMessages().getMessage(label9, command9, commandSender, null, "Restart.RestartTimer").replace("<TIME>", sek[0]));
                     sek[0] = "6";
                     Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                        Bukkit.broadcastMessage(this.getPrefix() + this.getMessage("Restart.RestartTimer", command.getName(), command.getName(), cs, null).replace("<TIME>", sek[0]));
+                        var label8 = command.getName();
+                        var command8 = command.getName();
+                        Bukkit.broadcastMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                                   .getMessage(label8, command8, commandSender, null, "Restart.RestartTimer")
+                                                                                                   .replace("<TIME>", sek[0]));
                         sek[0] = "5";
                         Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                            Bukkit.broadcastMessage(this.getPrefix() + this.getMessage("Restart.RestartTimer", command.getName(), command.getName(), cs, null).replace("<TIME>", sek[0]));
+                            var label7 = command.getName();
+                            var command7 = command.getName();
+                            Bukkit.broadcastMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                                       .getMessage(label7, command7, commandSender, null,
+                                                                                                                   "Restart.RestartTimer")
+                                                                                                       .replace("<TIME>", sek[0]));
                             sek[0] = "4";
                             Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                                Bukkit.broadcastMessage(this.getPrefix() + this.getMessage("Restart.RestartTimer", command.getName(), command.getName(), cs, null).replace("<TIME>", sek[0]));
+                                var label6 = command.getName();
+                                var command6 = command.getName();
+                                Bukkit.broadcastMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                                           .getMessage(label6, command6, commandSender, null,
+                                                                                                                       "Restart.RestartTimer")
+                                                                                                           .replace("<TIME>", sek[0]));
                                 sek[0] = "3";
                                 Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                                    Bukkit.broadcastMessage(this.getPrefix() + this.getMessage("Restart.RestartTimer", command.getName(), command.getName(), cs, null).replace("<TIME>", sek[0]));
+                                    var label5 = command.getName();
+                                    var command5 = command.getName();
+                                    Bukkit.broadcastMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                                               .getMessage(label5, command5, commandSender, null,
+                                                                                                                           "Restart.RestartTimer")
+                                                                                                               .replace("<TIME>", sek[0]));
                                     sek[0] = "2";
                                     Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                                        Bukkit.broadcastMessage(this.getPrefix() + this.getMessage("Restart.RestartTimer", command.getName(), command.getName(), cs, null).replace("<TIME>", sek[0]));
+                                        var label4 = command.getName();
+                                        var command4 = command.getName();
+                                        Bukkit.broadcastMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                                                   .getMessage(label4, command4, commandSender, null,
+                                                                                                                               "Restart.RestartTimer")
+                                                                                                                   .replace("<TIME>", sek[0]));
                                         sek[0] = "1";
                                         Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                                            Bukkit.broadcastMessage(this.getPrefix() + this.getMessage("Restart.RestartTimer", command.getName(), command.getName(), cs, null).replace("<TIME>", sek[0]));
+                                            var label3 = command.getName();
+                                            var command3 = command.getName();
+                                            Bukkit.broadcastMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                                                       .getMessage(label3, command3,
+                                                                                                                                   commandSender, null,
+                                                                                                                                   "Restart.RestartTimer")
+                                                                                                                       .replace("<TIME>", sek[0]));
                                             sek[0] = "0";
                                             Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                                                Bukkit.broadcastMessage(this.getPrefix() + this.getMessage("Restart.RestartTimer", command.getName(), command.getName(), cs, null).replace("<TIME>", sek[0]));
+                                                var label2 = command.getName();
+                                                var command2 = command.getName();
+                                                Bukkit.broadcastMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                                                           .getMessage(label2, command2,
+                                                                                                                                       commandSender, null,
+                                                                                                                                       "Restart.RestartTimer")
+                                                                                                                           .replace("<TIME>", sek[0]));
                                                 sek[0] = "10";
                                                 Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                                                    Bukkit.broadcastMessage(this.getPrefix() + this.getMessage("Restart.RestartMessage", command.getName(), command.getName(), cs, null).replace("<TIME>", "0"));
-                                                    Bukkit.getScheduler().runTaskLater(this.plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "stop"), 20);
+                                                    var label1 = command.getName();
+                                                    var command1 = command.getName();
+                                                    Bukkit.broadcastMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                                                               .getMessage(label1, command1,
+                                                                                                                                           commandSender,
+                                                                                                                                           null,
+                                                                                                                                           "Restart.RestartMessage")
+                                                                                                                               .replace("<TIME>", "0"));
+                                                    Bukkit.getScheduler()
+                                                          .runTaskLater(this.plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "stop"), 20);
                                                 }, 20);
                                             }, 20);
                                         }, 20);

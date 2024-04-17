@@ -1,31 +1,37 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class InteractCommand extends MessageUtils implements CommandExecutor {
+public class InteractCommand extends CommandUtils implements CommandExecutorOverload {
 
     public InteractCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
-        if (this.plugin.getVanish().getAllowInteract().contains(cs)) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.getMessage("Interact.DeActivated", label, cmd.getName(), cs, null));
-            this.plugin.getVanish().getAllowInteract().remove(cs);
+
+        if (this.plugin.getVanish().getAllowInteract().contains(commandSender)) {
+
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Interact.DeActivated"));
+            this.plugin.getVanish().getAllowInteract().remove(commandSender);
         } else {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.getMessage("Interact.Activated", label, cmd.getName(), cs, null));
-            this.plugin.getVanish().getAllowInteract().add(((Player) cs));
+
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Interact.Activated"));
+            this.plugin.getVanish().getAllowInteract().add(((Player) commandSender));
         }
+
         return true;
     }
 }

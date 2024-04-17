@@ -6,6 +6,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -23,7 +24,8 @@ public class EconomyManager_H2 extends ManagerEconomy {
     private final String separator;
     private Connection connection;
 
-    public EconomyManager_H2(String currencySingular, String currencyPlural, String startingMoney, String displayFormat, String moneyFormat, String separator, String thousands, ServerSystem plugin) {
+    public EconomyManager_H2(String currencySingular, String currencyPlural, String startingMoney, String displayFormat, String moneyFormat, String separator,
+                             String thousands, ServerSystem plugin) {
         super(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, plugin);
         this.currencySingular = currencySingular;
         this.currencyPlural = currencyPlural;
@@ -39,6 +41,19 @@ public class EconomyManager_H2 extends ManagerEconomy {
         }
     }
 
+    public boolean open() {
+        if (this.initialize())
+            try {
+                this.connection = DriverManager.getConnection("jdbc:h2:file:" + new File("plugins//ServerSystem", "economy.h2").getAbsolutePath());
+                return true;
+            } catch (SQLException var2) {
+                this.plugin.error("Could not establish an H2 connection, SQLException: " + var2.getMessage());
+                return false;
+            }
+        else
+            return false;
+    }
+
     protected boolean initialize() {
         try {
             Class.forName("org.h2.Driver");
@@ -47,17 +62,6 @@ public class EconomyManager_H2 extends ManagerEconomy {
             this.plugin.error("H2 driver class missing: " + var2.getMessage() + ".");
             return false;
         }
-    }
-
-    public boolean open() {
-        if (this.initialize()) try {
-            this.connection = DriverManager.getConnection("jdbc:h2:file:" + new File("plugins//ServerSystem", "economy.h2").getAbsolutePath());
-            return true;
-        } catch (SQLException var2) {
-            this.plugin.error("Could not establish an H2 connection, SQLException: " + var2.getMessage());
-            return false;
-        }
-        else return false;
     }
 
     @Override
@@ -92,14 +96,14 @@ public class EconomyManager_H2 extends ManagerEconomy {
 
     @Override
     public String format(double money) {
-        String moneyStr = String.format(Locale.US, "%1$,.2f", money);
+        var moneyStr = String.format(Locale.US, "%1$,.2f", money);
 
         moneyStr = moneyStr.replace(",", "<THOUSAND>");
 
-        String moneyString = moneyStr.split("\\.")[0] + "." + moneyStr.split("\\.")[1];
+        var moneyString = moneyStr.split("\\.")[0] + "." + moneyStr.split("\\.")[1];
         String formattedMoney;
-        String first = "0";
-        String last = "00";
+        var first = "0";
+        var last = "00";
         try {
             first = moneyString.split("\\.")[0];
             last = moneyString.split("\\.")[1];
@@ -107,17 +111,17 @@ public class EconomyManager_H2 extends ManagerEconomy {
 
         }
 
-        if (last.length() == 1) last = last + "0";
-        formattedMoney = this.moneyFormat.
-                replace("<FIRST>", first).
-                replace("<LAST>", last).
-                replace("<SEPARATOR>", this.separator).
-                replace("<THOUSAND>", this.getThousands());
+        if (last.length() == 1)
+            last = last + "0";
+        formattedMoney = this.moneyFormat.replace("<FIRST>", first)
+                                         .replace("<LAST>", last)
+                                         .replace("<SEPARATOR>", this.separator)
+                                         .replace("<THOUSAND>", this.getThousands());
 
 
-        boolean plural = false;
+        var plural = false;
 
-        double moneyWorth = money;
+        var moneyWorth = money;
 
         if (money < 0)
             moneyWorth = money * -1;
@@ -127,7 +131,7 @@ public class EconomyManager_H2 extends ManagerEconomy {
 
         if (money > 1)
             plural = true;
-        return this.displayFormat.replace("<MONEY>", formattedMoney).replace("<CURRENCY>", plural ? this.currencyPlural : this.currencySingular);
+        return this.displayFormat.replace("<MONEY>", formattedMoney).replace("<CURRENCY>", plural? this.currencyPlural : this.currencySingular);
     }
 
     @Override
@@ -162,7 +166,8 @@ public class EconomyManager_H2 extends ManagerEconomy {
 
     @Override
     public boolean hasEnoughMoney(OfflinePlayer player, double amount) {
-        if (player == null) return false;
+        if (player == null)
+            return false;
         amount = Double.parseDouble(String.format("%.2f", amount).replace(",", "."));
 
         return this.getMoneyAsNumber(player) >= amount;
@@ -170,8 +175,10 @@ public class EconomyManager_H2 extends ManagerEconomy {
 
     @Override
     public void makeTransaction(OfflinePlayer sender, OfflinePlayer target, double amount) {
-        if (sender == null) return;
-        if (target == null) return;
+        if (sender == null)
+            return;
+        if (target == null)
+            return;
         amount = Double.parseDouble(String.format("%.2f", amount).replace(",", "."));
 
         this.removeMoney(sender, amount);
@@ -181,16 +188,21 @@ public class EconomyManager_H2 extends ManagerEconomy {
     @Override
     public void setMoney(OfflinePlayer player, double amount) {
         this.moneyCache.remove(player);
-        double[] doubles = new double[]{amount};
+        var doubles = new double[] { amount };
 
-        if (player == null) return;
+        if (player == null)
+            return;
         doubles[0] = Double.parseDouble(String.format("%.2f", doubles[0]).replace(",", "."));
 
         this.deleteAccountSync(player);
         try {
-            this.connection.createStatement().executeUpdate("INSERT INTO `Economy` (UUID, Balance)"
-                    + " VALUES ('" + player.getUniqueId() +
-                    "','" + doubles[0] + "')");
+            var query = "INSERT INTO Economy (UUID, Balance) VALUES (?, ?)";
+            var preparedStatement = this.connection.prepareStatement(query);
+            preparedStatement.setString(1, player.getUniqueId().toString());
+            preparedStatement.setBigDecimal(2, new BigDecimal(String.valueOf(doubles[0])));
+            preparedStatement.executeUpdate();
+            preparedStatement.closeOnCompletion();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -199,17 +211,22 @@ public class EconomyManager_H2 extends ManagerEconomy {
 
     @Override
     public void removeMoney(OfflinePlayer player, double amount) {
-        double[] doubles = new double[]{amount};
+        var doubles = new double[] { amount };
 
-        if (player == null) return;
+        if (player == null)
+            return;
         doubles[0] = Double.parseDouble(String.format("%.2f", doubles[0]).replace(",", "."));
 
-        double balance = this.getMoneyAsNumber(player) - doubles[0];
+        var balance = this.getMoneyAsNumber(player) - doubles[0];
         this.deleteAccountSync(player);
         try {
-            this.connection.createStatement().executeUpdate("INSERT INTO `Economy` (UUID, Balance)"
-                    + " VALUES ('" + player.getUniqueId() +
-                    "','" + balance + "')");
+            var query = "INSERT INTO Economy (UUID, Balance) VALUES (?, ?)";
+            var preparedStatement = this.connection.prepareStatement(query);
+            preparedStatement.setString(1, player.getUniqueId().toString());
+            preparedStatement.setBigDecimal(2, new BigDecimal(balance));
+            preparedStatement.executeUpdate();
+            preparedStatement.closeOnCompletion();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -219,16 +236,22 @@ public class EconomyManager_H2 extends ManagerEconomy {
 
     @Override
     public void addMoney(OfflinePlayer player, double amount) {
-        double[] doubles = new double[]{amount};
+        var doubles = new double[] { amount };
 
-        if (player == null) return;
+        if (player == null)
+            return;
         doubles[0] = Double.parseDouble(String.format("%.2f", doubles[0]).replace(",", "."));
 
-        double balance = this.getMoneyAsNumber(player) + doubles[0];
+        var balance = this.getMoneyAsNumber(player) + doubles[0];
         this.deleteAccountSync(player);
         try {
-            this.connection.createStatement().executeUpdate("INSERT INTO `Economy` (UUID, Balance)"
-                    + " VALUES ('" + player.getUniqueId() + "','" + balance + "')");
+            var query = "INSERT INTO Economy (UUID, Balance) VALUES (?, ?)";
+            var preparedStatement = this.connection.prepareStatement(query);
+            preparedStatement.setString(1, player.getUniqueId().toString());
+            preparedStatement.setBigDecimal(2, new BigDecimal(balance));
+            preparedStatement.executeUpdate();
+            preparedStatement.closeOnCompletion();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -238,13 +261,21 @@ public class EconomyManager_H2 extends ManagerEconomy {
 
     @Override
     public void createAccount(OfflinePlayer player) {
-        if (this.hasAccount(player)) return;
+        if (this.hasAccount(player))
+            return;
         this.moneyCache.put(player, Double.valueOf(this.startingMoney));
         this.accountCache.put(player, true);
 
-        if (player == null) return;
+        if (player == null)
+            return;
         try {
-            this.connection.createStatement().executeUpdate("INSERT INTO `Economy` (UUID, Balance) VALUES ('" + player.getUniqueId() + "','" + this.startingMoney + "')");
+            var query = "INSERT INTO Economy (UUID, Balance) VALUES (?, ?)";
+            var preparedStatement = this.connection.prepareStatement(query);
+            preparedStatement.setString(1, player.getUniqueId().toString());
+            preparedStatement.setBigDecimal(2, new BigDecimal(this.startingMoney));
+            preparedStatement.executeUpdate();
+            preparedStatement.closeOnCompletion();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -253,13 +284,20 @@ public class EconomyManager_H2 extends ManagerEconomy {
 
     @Override
     public void deleteAccount(OfflinePlayer player) {
-        if (!this.hasAccount(player)) return;
+        if (!this.hasAccount(player))
+            return;
         this.moneyCache.remove(player);
         this.accountCache.put(player, false);
 
-        if (player == null) return;
+        if (player == null)
+            return;
         try {
-            this.connection.createStatement().executeUpdate("DELETE FROM Economy WHERE UUID='" + player.getUniqueId() + "'");
+            var query = "DELETE FROM Economy WHERE UUID=?";
+            var preparedStatement = this.connection.prepareStatement(query);
+            preparedStatement.setString(1, player.getUniqueId().toString());
+            preparedStatement.executeUpdate();
+            preparedStatement.closeOnCompletion();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -267,9 +305,13 @@ public class EconomyManager_H2 extends ManagerEconomy {
     }
 
     private void deleteAccountSync(OfflinePlayer player) {
-        if (player == null) return;
+        if (player == null)
+            return;
         try {
-            this.connection.createStatement().executeUpdate("DELETE FROM Economy WHERE UUID='" + player.getUniqueId() + "'");
+            var query = "DELETE FROM Economy WHERE UUID=?";
+            var preparedStatement = this.connection.prepareStatement(query);
+            preparedStatement.setString(1, player.getUniqueId().toString());
+            preparedStatement.executeUpdate();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -287,8 +329,11 @@ public class EconomyManager_H2 extends ManagerEconomy {
 
     @Override
     public Double getMoneyAsNumber(OfflinePlayer player) {
-        if (Bukkit.isPrimaryThread()) if (this.moneyCache.containsKey(player)) return this.moneyCache.get(player);
-        if (player == null) return 0.0D;
+        if (Bukkit.isPrimaryThread())
+            if (this.moneyCache.containsKey(player))
+                return this.moneyCache.get(player);
+        if (player == null)
+            return 0.0D;
         ResultSet resultSet = null;
         try {
             resultSet = this.connection.createStatement().executeQuery("SELECT * FROM Economy WHERE UUID = '" + player.getUniqueId() + "'");
@@ -297,10 +342,12 @@ public class EconomyManager_H2 extends ManagerEconomy {
         }
         try {
             try {
-                if (resultSet.isClosed()) return 0.0D;
+                if (resultSet.isClosed())
+                    return 0.0D;
             } catch (AbstractMethodError ignored) {
             }
-            if (!resultSet.next()) return 0.0D;
+            if (!resultSet.next())
+                return 0.0D;
             Double money = Double.parseDouble(String.format("%.2f", resultSet.getDouble("Balance")).replace(",", "."));
             resultSet.close();
             this.moneyCache.put(player, money);
@@ -319,8 +366,11 @@ public class EconomyManager_H2 extends ManagerEconomy {
 
     @Override
     public boolean hasAccount(OfflinePlayer player) {
-        if (Bukkit.isPrimaryThread()) if (this.accountCache.containsKey(player)) return this.accountCache.get(player);
-        if (player == null) return false;
+        if (Bukkit.isPrimaryThread())
+            if (this.accountCache.containsKey(player))
+                return this.accountCache.get(player);
+        if (player == null)
+            return false;
         ResultSet rs = null;
         try {
             rs = this.connection.createStatement().executeQuery("SELECT * FROM Economy WHERE UUID = '" + player.getUniqueId() + "'");
@@ -328,13 +378,16 @@ public class EconomyManager_H2 extends ManagerEconomy {
             throwables.printStackTrace();
         }
         try {
-            if (rs == null) return false;
+            if (rs == null)
+                return false;
             try {
-                if (rs.isClosed()) return false;
+                if (rs.isClosed())
+                    return false;
             } catch (AbstractMethodError ignored) {
             }
-            if (!rs.next()) return false;
-            boolean has = rs.getString("UUID") != null;
+            if (!rs.next())
+                return false;
+            var has = rs.getString("UUID") != null;
             this.accountCache.put(player, has);
             return has;
         } catch (SQLException throwables) {
@@ -346,15 +399,11 @@ public class EconomyManager_H2 extends ManagerEconomy {
 
     @Override
     public LinkedHashMap<OfflinePlayer, Double> getTopTen() {
-        LinkedHashMap<OfflinePlayer, Double> topTen = new LinkedHashMap<>();
+        var topTen = new LinkedHashMap<OfflinePlayer, Double>();
         try {
-            ResultSet resultSet = this.connection.createStatement().executeQuery(
-                    "SELECT * " +
-                    "FROM Economy " +
-                    "ORDER BY Balance desc " +
-                    "LIMIT 10");
+            var resultSet = this.connection.createStatement().executeQuery("SELECT * " + "FROM Economy " + "ORDER BY Balance desc " + "LIMIT 10");
             while (resultSet.next()) {
-                UUID uuid = UUID.fromString(resultSet.getString("UUID"));
+                var uuid = UUID.fromString(resultSet.getString("UUID"));
                 Double balance = Double.parseDouble(String.format("%.2f", resultSet.getDouble("Balance")).replace(",", "."));
                 topTen.put(Bukkit.getOfflinePlayer(uuid), balance);
             }

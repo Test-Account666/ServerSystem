@@ -1,36 +1,46 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.databasemanager.WarpManager;
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class DeleteWarpCommand extends MessageUtils implements CommandExecutor {
+public class DeleteWarpCommand extends CommandUtils implements CommandExecutorOverload {
 
     public DeleteWarpCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!this.isAllowed(cs, "delwarp")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("delwarp")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "delwarp")) {
+            var permission = this.plugin.getPermissions().getPermission("delwarp");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
-        if (args.length <= 0) {
-            cs.sendMessage(this.getPrefix() + this.getSyntax("DelWarp", label, cmd.getName(), cs, null));
+
+        if (arguments.length == 0) {
+            commandSender.sendMessage(
+                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "DelWarp"));
             return true;
         }
-        String name = args[0].toLowerCase();
-        WarpManager warpManager = this.plugin.getWarpManager();
+
+        var name = arguments[0].toLowerCase();
+        var warpManager = this.plugin.getWarpManager();
         if (!warpManager.doesWarpExist(name)) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("DelWarp.WarpDoesntExists", label, cmd.getName(), cs, null).replace("<WARP>", name.toUpperCase()));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                         .getMessage(commandLabel, command, commandSender, null,
+                                                                                                     "DelWarp.WarpDoesntExists")
+                                                                                         .replace("<WARP>", name.toUpperCase()));
             return true;
         }
+
         warpManager.deleteWarp(name);
-        cs.sendMessage(this.getPrefix() + this.getMessage("DelWarp.Success", label, cmd.getName(), cs, null).replace("<WARP>", name.toUpperCase()));
+
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                     .getMessage(commandLabel, command, commandSender, null, "DelWarp.Success")
+                                                                                     .replace("<WARP>", name.toUpperCase()));
         return true;
     }
 }

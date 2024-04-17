@@ -1,65 +1,100 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class VanishCommand extends MessageUtils implements CommandExecutor {
+public class VanishCommand extends CommandUtils implements CommandExecutorOverload {
 
     public VanishCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (args.length == 0) {
-            if (!this.plugin.getPermissions().hasPerm(cs, "vanish.self")) {
-                cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().Perm("vanish.self")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (arguments.length == 0) {
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "vanish.self")) {
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                          this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().getPermission("vanish.self")));
                 return true;
             }
-            if (!(cs instanceof Player)) {
-                cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(label, cmd.getName(), cs, null, "Vanish"));
+
+            if (!(commandSender instanceof Player player)) {
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                          this.plugin.getMessages().getSyntax(commandLabel, command.getName(), commandSender, null, "Vanish"));
                 return true;
             }
-            if (this.plugin.getVanish().isVanish(((Player) cs))) {
-                this.plugin.getVanish().setVanishData(((Player) cs), false);
-                this.plugin.getVanish().setVanish(false, ((Player) cs));
-                cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, null, "Vanish.Self.DeActivated"));
-                Bukkit.getOnlinePlayers().forEach(all -> all.showPlayer(((Player) cs)));
-            } else {
-                this.plugin.getVanish().setVanishData(((Player) cs), true);
-                this.plugin.getVanish().setVanish(true, ((Player) cs));
-                cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, null, "Vanish.Self.Activated"));
-                Bukkit.getOnlinePlayers().stream().filter(player -> !this.plugin.getPermissions().hasPerm(player, "vanish.see", true)).forEachOrdered(player -> player.hidePlayer(((Player) cs)));
-            }
+
+            var vanish = !this.plugin.getVanish().isVanish(player);
+
+            this.setVanish(player, !vanish, commandSender, command, commandLabel);
+
             return true;
         }
-        if (!this.plugin.getPermissions().hasPerm(cs, "vanish.others")) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().Perm("vanish.others")));
+
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "vanish.others")) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().getPermission("vanish.others")));
             return true;
         }
-        Player targetPlayer = this.getPlayer(cs, args[0]);
+
+        var targetPlayer = this.getPlayer(commandSender, arguments[0]);
         if (targetPlayer == null) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(args[0]));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
             return true;
         }
-        if (this.plugin.getVanish().isVanish(targetPlayer)) {
-            this.plugin.getVanish().setVanishData(targetPlayer, false);
-            this.plugin.getVanish().setVanish(false, targetPlayer);
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, targetPlayer, "Vanish.Others.DeActivated.Sender"));
-            targetPlayer.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, targetPlayer, "Vanish.Others.DeActivated.Target"));
-            Bukkit.getOnlinePlayers().forEach(all -> all.showPlayer(targetPlayer));
-        } else {
-            this.plugin.getVanish().setVanishData(targetPlayer, true);
-            this.plugin.getVanish().setVanish(true, targetPlayer);
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, targetPlayer, "Vanish.Others.Activated.Sender"));
-            targetPlayer.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, targetPlayer, "Vanish.Others.Activated.Target"));
-            Bukkit.getOnlinePlayers().stream().filter(player -> !this.plugin.getPermissions().hasPerm(player, "vanish.see", true)).forEachOrdered(player -> player.hidePlayer(targetPlayer));
-        }
+
+        var vanish = !this.plugin.getVanish().isVanish(targetPlayer);
+
+        this.setVanish(targetPlayer, vanish, commandSender, command, commandLabel);
         return true;
+    }
+
+    private void setVanish(Player targetPlayer, boolean vanish, CommandSender commandSender, Command command, String commandLabel) {
+        this.plugin.getVanish().setVanishData(targetPlayer, vanish);
+        this.plugin.getVanish().setVanish(vanish, targetPlayer);
+
+        if (!vanish)
+            Bukkit.getOnlinePlayers().forEach(all -> all.showPlayer(targetPlayer));
+
+        if (vanish)
+            Bukkit.getOnlinePlayers()
+                  .stream()
+                  .filter(player -> !this.plugin.getPermissions().hasPermission(player, "vanish.see", true))
+                  .forEachOrdered(player -> player.hidePlayer(targetPlayer));
+
+        if (targetPlayer == commandSender) {
+            if (vanish) {
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                          this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "Vanish.Self.Activated"));
+                return;
+            }
+
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "Vanish.Self.DeActivated"));
+
+            return;
+        }
+
+        if (vanish) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                         .getMessage(commandLabel, command.getName(), commandSender, targetPlayer,
+                                                                                                     "Vanish.Others.Activated.Sender"));
+            targetPlayer.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                        .getMessage(commandLabel, command.getName(), commandSender, targetPlayer,
+                                                                                                    "Vanish.Others.Activated.Target"));
+            return;
+        }
+
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                     .getMessage(commandLabel, command.getName(), commandSender, targetPlayer,
+                                                                                                 "Vanish.Others.DeActivated.Sender"));
+        targetPlayer.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                    .getMessage(commandLabel, command.getName(), commandSender, targetPlayer,
+                                                                                                "Vanish.Others.DeActivated.Target"));
     }
 }

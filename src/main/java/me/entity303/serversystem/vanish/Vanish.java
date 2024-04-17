@@ -22,22 +22,26 @@ public class Vanish {
     }
 
     public List<Player> getAllowInteract() {
-        if (!this.plugin.getCommandManager().isInteractActive()) return new ArrayList<>(Bukkit.getOnlinePlayers());
+        if (!this.plugin.getCommandManager().isInteractActive())
+            return new ArrayList<>(Bukkit.getOnlinePlayers());
         return this.allowInteract;
     }
 
     public List<Player> getAllowChat() {
-        if (!this.plugin.getCommandManager().isChatActive()) return new ArrayList<>(Bukkit.getOnlinePlayers());
+        if (!this.plugin.getCommandManager().isChatActive())
+            return new ArrayList<>(Bukkit.getOnlinePlayers());
         return this.allowChat;
     }
 
     public List<Player> getAllowDrop() {
-        if (!this.plugin.getCommandManager().isDropActive()) return new ArrayList<>(Bukkit.getOnlinePlayers());
+        if (!this.plugin.getCommandManager().isDropActive())
+            return new ArrayList<>(Bukkit.getOnlinePlayers());
         return this.allowDrop;
     }
 
     public List<Player> getAllowPickup() {
-        if (!this.plugin.getCommandManager().isPickupActive()) return new ArrayList<>(Bukkit.getOnlinePlayers());
+        if (!this.plugin.getCommandManager().isPickupActive())
+            return new ArrayList<>(Bukkit.getOnlinePlayers());
         return this.allowPickup;
     }
 
@@ -45,22 +49,22 @@ public class Vanish {
         return this.vanishList;
     }
 
+    public Boolean isVanish(OfflinePlayer player) {
+        return player.isOnline()? this.isVanish(player.getPlayer()) : Boolean.valueOf(this.vanishList.contains(player.getUniqueId()));
+    }
+
     public Boolean isVanish(Player player) {
-        if (player == null) this.plugin.error("Player cannot be null!");
+        if (player == null)
+            this.plugin.error("Player cannot be null!");
         player.getMetadata("Vanish");
         return player.getMetadata("Vanish").stream().anyMatch(metadataValue -> metadataValue.asBoolean() || this.vanishList.contains(player.getUniqueId()));
     }
 
-    public Boolean isVanish(OfflinePlayer player) {
-        return player.isOnline() ? this.isVanish(player.getPlayer()) : Boolean.valueOf(this.vanishList.contains(player.getUniqueId()));
-    }
-
     public void setVanishData(Player player, Boolean vanish) {
-        if (vanish) {
-            if (!this.vanishList.contains(player.getUniqueId()))
-                this.vanishList.add(player.getUniqueId());
-        } else
+        if (!vanish)
             this.vanishList.remove(player.getUniqueId());
+        else if (!this.vanishList.contains(player.getUniqueId()))
+            this.vanishList.add(player.getUniqueId());
 
         player.setMetadata("Vanish", this.plugin.getMetaValue().getMetaValue(vanish));
         player.setMetadata("vanished", this.plugin.getMetaValue().getMetaValue(vanish));

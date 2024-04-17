@@ -50,5 +50,5 @@ public interface ConfigReader {
 
     ConfigurationSection getConfigurationSection(String path);
 
-    boolean isConfigurationSection(String  path);
+    boolean isConfigurationSection(String path);
 }

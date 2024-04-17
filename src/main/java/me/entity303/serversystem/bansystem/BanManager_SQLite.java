@@ -26,10 +26,21 @@ public class BanManager_SQLite extends ManagerBan {
         this.plugin = plugin;
         this.open();
         try {
-            this.connection.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS BannedPlayers (BannedUUID VARCHAR(100), SenderUUID VARCHAR(100), Reason VARCHAR(100), UnbanTime BIGINT(1))");
+            this.connection.createStatement()
+                           .executeUpdate(
+                                   "CREATE TABLE IF NOT EXISTS BannedPlayers (BannedUUID VARCHAR(100), SenderUUID VARCHAR(100), Reason VARCHAR(100), UnbanTime BIGINT(1))");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+    }
+
+    private void open() {
+        if (this.initialize())
+            try {
+                this.connection = DriverManager.getConnection("jdbc:sqlite:" + new File("plugins//ServerSystem", "bans.sqlite").getAbsolutePath());
+            } catch (SQLException var2) {
+                this.plugin.error("Could not establish an SQLite connection, SQLException: " + var2.getMessage());
+            }
     }
 
     protected boolean initialize() {
@@ -39,14 +50,6 @@ public class BanManager_SQLite extends ManagerBan {
         } catch (ClassNotFoundException var2) {
             this.plugin.error("Class not found in initialize(): " + var2);
             return false;
-        }
-    }
-
-    private void open() {
-        if (this.initialize()) try {
-            this.connection = DriverManager.getConnection("jdbc:sqlite:" + new File("plugins//ServerSystem", "bans.sqlite").getAbsolutePath());
-        } catch (SQLException var2) {
-            this.plugin.error("Could not establish an SQLite connection, SQLException: " + var2.getMessage());
         }
     }
 
@@ -66,16 +69,19 @@ public class BanManager_SQLite extends ManagerBan {
             throwables.printStackTrace();
         }
 
-        while (true) try {
-            if (resultSet == null) break;
-            if (!resultSet.next()) break;
-            String uuid = resultSet.getString("BannedUUID");
+        while (true)
+            try {
+                if (resultSet == null)
+                    break;
+                if (!resultSet.next())
+                    break;
+                var uuid = resultSet.getString("BannedUUID");
 
-            if (this.checkPlayerInSQLite(uuid))
-                playerNames.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+                if (this.checkPlayerInSQLite(uuid))
+                    playerNames.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
         return playerNames;
     }
@@ -94,7 +100,8 @@ public class BanManager_SQLite extends ManagerBan {
             unbanTime = this.getUnbanTime(uuid.toString());
             senderUUID = this.getUUIDSender(uuid.toString());
             unbanDate = this.convertLongToDate(unbanTime);
-        } else return null;
+        } else
+            return null;
 
         return new Ban(bannedUUID, reason, senderUUID, unbanTime, unbanDate);
     }
@@ -111,38 +118,44 @@ public class BanManager_SQLite extends ManagerBan {
 
     @Override
     public String convertLongToDate(Long l) {
-        if (l < 1) return this.getBanSystem("PermaBan");
-        Calendar c = Calendar.getInstance();
+        if (l < 1)
+            return this.getBanSystem("PermaBan");
+        var c = Calendar.getInstance();
 
         c.setTimeInMillis(l);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy:MM:dd:kk:mm:ss");
-        String[] dates = dateFormat.format(c.getTime()).split(":");
+        var dateFormat = new SimpleDateFormat("yyyy:MM:dd:kk:mm:ss");
+        var dates = dateFormat.format(c.getTime()).split(":");
 
-        String year = dates[0];
-        String month = dates[1];
-        String day = dates[2];
-        String hour = dates[3];
-        String minute = dates[4];
-        String second = dates[5];
+        var year = dates[0];
+        var month = dates[1];
+        var day = dates[2];
+        var hour = dates[3];
+        var minute = dates[4];
+        var second = dates[5];
 
-        if (month.chars().count() == 1) month = "0" + month;
+        if (month.chars().count() == 1)
+            month = "0" + month;
 
-        if (day.chars().count() == 1) day = "0" + day;
+        if (day.chars().count() == 1)
+            day = "0" + day;
 
-        if (hour.chars().count() == 1) hour = "0" + hour;
+        if (hour.chars().count() == 1)
+            hour = "0" + hour;
 
-        if (minute.chars().count() == 1) minute = "0" + minute;
+        if (minute.chars().count() == 1)
+            minute = "0" + minute;
 
-        if (second.chars().count() == 1) second = "0" + second;
+        if (second.chars().count() == 1)
+            second = "0" + second;
 
-        return this.getDateFormat().
-                replace("<YEAR>", year).
-                replace("<MONTH>", month).
-                replace("<DAY>", day).
-                replace("<HOUR>", hour).
-                replace("<MINUTE>", minute).
-                replace("<SECOND>", second);
+        return this.getDateFormat()
+                   .replace("<YEAR>", year)
+                   .replace("<MONTH>", month)
+                   .replace("<DAY>", day)
+                   .replace("<HOUR>", hour)
+                   .replace("<MINUTE>", minute)
+                   .replace("<SECOND>", second);
     }
 
     @Override
@@ -163,7 +176,8 @@ public class BanManager_SQLite extends ManagerBan {
             throwables.printStackTrace();
         }
         try {
-            while (rs.next()) return true;
+            while (rs.next())
+                return true;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -178,7 +192,8 @@ public class BanManager_SQLite extends ManagerBan {
             throwables.printStackTrace();
         }
         try {
-            while (rs.next()) return rs.getString("Reason");
+            while (rs.next())
+                return rs.getString("Reason");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -194,7 +209,8 @@ public class BanManager_SQLite extends ManagerBan {
             throwables.printStackTrace();
         }
         try {
-            while (rs.next()) return rs.getLong("UnbanTime");
+            while (rs.next())
+                return rs.getLong("UnbanTime");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -209,7 +225,8 @@ public class BanManager_SQLite extends ManagerBan {
             throwables.printStackTrace();
         }
         try {
-            while (rs.next()) return rs.getString("SenderUUID");
+            while (rs.next())
+                return rs.getString("SenderUUID");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -218,11 +235,21 @@ public class BanManager_SQLite extends ManagerBan {
 
     @Override
     public Ban createBan(UUID banned, String senderUUID, String reason, Long howLong, TimeUnit timeUnit) {
-        if (this.isBanned(banned)) this.unBan(banned);
-        long unbanTime = System.currentTimeMillis() + (howLong * timeUnit.getValue());
-        if (howLong < 1) unbanTime = -1L;
+        if (this.isBanned(banned))
+            this.unBan(banned);
+        var unbanTime = System.currentTimeMillis() + (howLong * timeUnit.getValue());
+        if (howLong < 1)
+            unbanTime = -1L;
         try {
-            this.connection.createStatement().executeUpdate("INSERT INTO `BannedPlayers` (BannedUUID, SenderUUID, Reason, UnbanTime) VALUES ('" + banned + "','" + senderUUID + "','" + reason + "','" + unbanTime + "')");
+            var query = "INSERT INTO `BannedPlayers` (BannedUUID, SenderUUID, Reason, UnbanTime) VALUES (?, ?, ?, ?)";
+            var preparedStatement = this.connection.prepareStatement(query);
+            preparedStatement.setString(1, banned.toString());
+            preparedStatement.setString(2, senderUUID);
+            preparedStatement.setString(3, reason);
+            preparedStatement.setString(4, String.valueOf(unbanTime));
+            preparedStatement.executeUpdate();
+            preparedStatement.closeOnCompletion();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -232,7 +259,11 @@ public class BanManager_SQLite extends ManagerBan {
     @Override
     public void unBan(UUID banned) {
         try {
-            this.connection.createStatement().executeUpdate("DELETE FROM BannedPlayers WHERE BannedUUID='" + banned.toString() + "'");
+            var query = "DELETE FROM BannedPlayers WHERE BannedUUID=?";
+            var preparedStatement = this.connection.prepareStatement(query);
+            preparedStatement.setString(1, banned.toString());
+            preparedStatement.executeUpdate();
+            preparedStatement.closeOnCompletion();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

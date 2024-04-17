@@ -1,79 +1,85 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
+import me.entity303.serversystem.utils.CommandUtils;
 import me.entity303.serversystem.utils.DummyCommandSender;
-import me.entity303.serversystem.utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
-import org.bukkit.entity.HumanEntity;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class OfflineEnderChestCommand extends MessageUtils implements TabExecutor, Listener {
+public class OfflineEnderChestCommand extends CommandUtils implements CommandExecutorOverload, TabCompleter, Listener {
     private final HashMap<Player, Inventory> cachedInventories = new HashMap<>();
 
     public OfflineEnderChestCommand(ServerSystem plugin) {
         super(plugin);
 
-        plugin.getEventManager().re(this);
+        plugin.getEventManager().registerEvent(this);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!this.isAllowed(cs, "offlineenderchest")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("offlineenderchest")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] argument) {
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "offlineenderchest")) {
+            var permission = this.plugin.getPermissions().getPermission("offlineenderchest");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
 
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.getPrefix() + this.getOnlyPlayer());
+        if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
 
-        if (args.length == 0) {
-            cs.sendMessage(this.getPrefix() + this.getSyntax("OfflineEnderChest", label, cmd.getName(), cs, null));
+        if (argument.length == 0) {
+            commandSender.sendMessage(
+                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "OfflineEnderChest"));
             return true;
         }
 
-        OfflinePlayer offlineTarget = Bukkit.getOfflinePlayer(args[0]);
+        var offlineTarget = Bukkit.getOfflinePlayer(argument[0]);
 
         if (!offlineTarget.hasPlayedBefore()) {
-            String name = offlineTarget.getName();
-            if (name == null) name = args[0];
-            cs.sendMessage(this.getPrefix() + this.getMessage("OfflineEnderChest.NeverPlayed", label, cmd.getName(), cs, new DummyCommandSender(name)));
+            var name = offlineTarget.getName();
+            if (name == null)
+                name = argument[0];
+            CommandSender target = new DummyCommandSender(name);
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "OfflineEnderChest.NeverPlayed"));
             return true;
         }
 
         if (offlineTarget.isOnline()) {
-            if (this.getPlayer(cs, args[0]) == null) {
-                ((Player) cs).openInventory(offlineTarget.getPlayer().getEnderChest());
+            if (this.getPlayer(commandSender, argument[0]) == null) {
+                ((Player) commandSender).openInventory(offlineTarget.getPlayer().getEnderChest());
                 return true;
             }
-            cs.sendMessage(this.getPrefix() + this.getMessage("OfflineEnderChest.PlayerIsOnline", label, cmd.getName(), cs, offlineTarget.getPlayer()));
+            CommandSender target = offlineTarget.getPlayer();
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "OfflineEnderChest.PlayerIsOnline"));
             return true;
         }
 
-        Player player = this.getHookedPlayer(offlineTarget);
+        var player = this.getHookedPlayer(offlineTarget);
 
         this.cachedInventories.put(player, player.getEnderChest());
 
-        ((Player) cs).openInventory(player.getEnderChest());
+        ((Player) commandSender).openInventory(player.getEnderChest());
 
-        AtomicInteger taskId = new AtomicInteger(-1);
+        var taskId = new AtomicInteger(-1);
 
         taskId.set(Bukkit.getScheduler().scheduleSyncRepeatingTask(this.plugin, () -> {
-            if (((Player) cs).getOpenInventory().getTopInventory() != player.getEnderChest()) {
+            if (((Player) commandSender).getOpenInventory().getTopInventory() != player.getEnderChest()) {
                 if (!player.isOnline())
                     player.saveData();
                 Bukkit.getScheduler().cancelTask(taskId.get());
@@ -84,14 +90,18 @@ public class OfflineEnderChestCommand extends MessageUtils implements TabExecuto
 
     @EventHandler
     public void onAsyncPreLogin(AsyncPlayerPreLoginEvent e) {
-        boolean tryOnlineCommand = this.plugin.getConfigReader().getBoolean("invseeAndEndechest.tryOnlineCommandOnPlayerJoin");
+        var tryOnlineCommand = this.plugin.getConfigReader().getBoolean("invseeAndEndechest.tryOnlineCommandOnPlayerJoin");
 
-        Player target = this.cachedInventories.keySet().stream().filter(player -> player.getUniqueId().toString().equalsIgnoreCase(e.getUniqueId().toString())).findFirst().orElse(null);
+        var target = this.cachedInventories.keySet()
+                                           .stream()
+                                           .filter(player -> player.getUniqueId().toString().equalsIgnoreCase(e.getUniqueId().toString()))
+                                           .findFirst()
+                                           .orElse(null);
         if (target != null) {
             target.saveData();
             Bukkit.getScheduler().runTask(this.plugin, () -> {
-                for (HumanEntity human : new ArrayList<>(target.getEnderChest().getViewers())) {
-                    ItemStack cursorStack = human.getItemOnCursor();
+                for (var human : new ArrayList<>(target.getEnderChest().getViewers())) {
+                    var cursorStack = human.getItemOnCursor();
 
                     if (tryOnlineCommand)
                         human.setItemOnCursor(null);
@@ -100,22 +110,20 @@ public class OfflineEnderChestCommand extends MessageUtils implements TabExecuto
 
                     if (tryOnlineCommand)
                         Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                            Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                                human.setItemOnCursor(cursorStack);
-                            }, 2L);
+                            Bukkit.getScheduler().runTaskLater(this.plugin, () -> human.setItemOnCursor(cursorStack), 2L);
 
-                            if (!(human instanceof Player))
+                            if (!(human instanceof Player player))
                                 return;
 
-                            Player player = (Player) human;
-
-                            if (!this.isAllowed(player, "enderchest.others", true))
+                            if (!this.plugin.getPermissions().hasPermission(player, "enderchest.others", true))
                                 return;
 
-                            player.chat("/enderchest " + target.getName());
+                            player.chat("/enderchest " + target);
                         }, 2L);
 
-                    human.sendMessage(this.getPrefix() + this.getMessage("OfflineEnderChest.PlayerCameOnline", "offlineenderchest", "offlineenderchest", human, target));
+                    human.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                         .getMessage("offlineenderchest", "offlineenderchest", human, target,
+                                                                                                     "OfflineEnderChest.PlayerCameOnline"));
                 }
 
                 this.cachedInventories.remove(target);
@@ -125,17 +133,24 @@ public class OfflineEnderChestCommand extends MessageUtils implements TabExecuto
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        if (!this.isAllowed(sender, "offlineenderchest", true))
+        if (!this.plugin.getPermissions().hasPermission(sender, "offlineenderchest", true))
             return Collections.singletonList("");
 
-        List<String> players = Arrays.stream(Bukkit.getOfflinePlayers()).filter(offlinePlayer -> !offlinePlayer.isOnline()).map(OfflinePlayer::getName).collect(Collectors.toList());
+        return GetOfflinePlayers(args);
+    }
+
+    static List<String> GetOfflinePlayers(String... args) {
+        var players = Arrays.stream(Bukkit.getOfflinePlayers())
+                            .filter(offlinePlayer -> !offlinePlayer.isOnline())
+                            .map(OfflinePlayer::getName)
+                            .collect(Collectors.toList());
 
         List<String> possiblePlayers = new ArrayList<>();
 
-        for (String player : players)
+        for (var player : players)
             if (player.toLowerCase(Locale.ROOT).startsWith(args[0].toLowerCase(Locale.ROOT)))
                 possiblePlayers.add(player);
 
-        return !possiblePlayers.isEmpty() ? possiblePlayers : players;
+        return !possiblePlayers.isEmpty()? possiblePlayers : players;
     }
 }

@@ -15,13 +15,13 @@ public class BanManager_Disabled extends ManagerBan {
     }
 
     @Override
-    public List<String> getBannedPlayerNames() {
-        return new ArrayList<>();
+    public boolean isBanned(UUID uuid) {
+        return false;
     }
 
     @Override
-    public boolean isBanned(UUID uuid) {
-        return false;
+    public List<String> getBannedPlayerNames() {
+        return new ArrayList<>();
     }
 
     @Override

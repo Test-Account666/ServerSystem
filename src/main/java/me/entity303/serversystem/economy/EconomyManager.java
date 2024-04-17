@@ -25,7 +25,8 @@ public class EconomyManager extends ManagerEconomy {
     private final String separator;
     private final String thousand;
 
-    public EconomyManager(String currencySingular, String currencyPlural, String startingMoney, String displayFormat, String moneyFormat, String separator, String thousand, ServerSystem plugin) {
+    public EconomyManager(String currencySingular, String currencyPlural, String startingMoney, String displayFormat, String moneyFormat, String separator,
+                          String thousand, ServerSystem plugin) {
         super(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousand, plugin);
 
         this.file = new File("plugins//ServerSystem", "economy.yml");
@@ -39,33 +40,21 @@ public class EconomyManager extends ManagerEconomy {
         this.thousand = thousand;
     }
 
+    public String getThousand() {
+        return this.thousand;
+    }
+
     @Override
     public String format(double money) {
-        String moneyStr = String.format(Locale.US, "%1$,.2f", money);
+        var moneyStr = String.format(Locale.US, "%1$,.2f", money);
 
         moneyStr = moneyStr.replace(",", "<THOUSAND>");
 
-        String moneyString = moneyStr.split("\\.")[0] + "." + moneyStr.split("\\.")[1];
-        String formattedMoney;
-        String first = "0";
-        String last = "00";
-        try {
-            first = moneyString.split("\\.")[0];
-            last = moneyString.split("\\.")[1];
-        } catch (Exception ignored) {
+        var formattedMoney = this.getFormattedMoney(moneyStr);
 
-        }
+        var plural = false;
 
-        if (last.length() == 1) last = last + "0";
-        formattedMoney = this.moneyFormat.
-                replace("<FIRST>", first).
-                replace("<LAST>", last).
-                replace("<SEPARATOR>", this.separator).
-                replace("<THOUSAND>", this.getThousands());
-
-        boolean plural = false;
-
-        double moneyWorth = money;
+        var moneyWorth = money;
 
         if (money < 0)
             moneyWorth = money * -1;
@@ -76,7 +65,28 @@ public class EconomyManager extends ManagerEconomy {
         if (money > 1)
             plural = true;
 
-        return this.displayFormat.replace("<MONEY>", formattedMoney).replace("<CURRENCY>", plural ? this.currencyPlural : this.currencySingular);
+        return this.displayFormat.replace("<MONEY>", formattedMoney).replace("<CURRENCY>", plural? this.currencyPlural : this.currencySingular);
+    }
+
+    private String getFormattedMoney(String moneyStr) {
+        var moneyString = moneyStr.split("\\.")[0] + "." + moneyStr.split("\\.")[1];
+        String formattedMoney;
+        var first = "0";
+        var last = "00";
+        try {
+            first = moneyString.split("\\.")[0];
+            last = moneyString.split("\\.")[1];
+        } catch (Exception ignored) {
+
+        }
+
+        if (last.length() == 1)
+            last = last + "0";
+        formattedMoney = this.moneyFormat.replace("<FIRST>", first)
+                                         .replace("<LAST>", last)
+                                         .replace("<SEPARATOR>", this.separator)
+                                         .replace("<THOUSAND>", this.getThousands());
+        return formattedMoney;
     }
 
     @Override
@@ -118,15 +128,18 @@ public class EconomyManager extends ManagerEconomy {
 
     @Override
     public void makeTransaction(OfflinePlayer sender, OfflinePlayer target, double amount) {
-        if (sender == null) return;
-        if (target == null) return;
+        if (sender == null)
+            return;
+        if (target == null)
+            return;
         this.removeMoney(sender, amount);
         this.addMoney(target, amount);
     }
 
     @Override
     public void setMoney(OfflinePlayer player, double amount) {
-        if (player == null) return;
+        if (player == null)
+            return;
         this.cfg.set("Money." + player.getUniqueId(), String.valueOf(amount));
 
 
@@ -143,12 +156,14 @@ public class EconomyManager extends ManagerEconomy {
             e.printStackTrace();
         }
 
-        if (player.isOnline()) this.setMoney(player.getPlayer(), amount);
+        if (player.isOnline())
+            this.setMoney(player.getPlayer(), amount);
     }
 
     @Override
     public void removeMoney(OfflinePlayer player, double amount) {
-        if (player == null) return;
+        if (player == null)
+            return;
         this.cfg.set("Money." + player.getUniqueId(), String.valueOf(this.getMoneyAsNumber(player) - amount));
 
         try {
@@ -164,12 +179,14 @@ public class EconomyManager extends ManagerEconomy {
             e.printStackTrace();
         }
 
-        if (player.isOnline()) this.removeMoney(player.getPlayer(), amount);
+        if (player.isOnline())
+            this.removeMoney(player.getPlayer(), amount);
     }
 
     @Override
     public void addMoney(OfflinePlayer player, double amount) {
-        if (player == null) return;
+        if (player == null)
+            return;
         this.cfg.set("Money." + player.getUniqueId(), String.valueOf(this.getMoneyAsNumber(player) + amount));
 
 
@@ -186,12 +203,14 @@ public class EconomyManager extends ManagerEconomy {
             e.printStackTrace();
         }
 
-        if (player.isOnline()) this.addMoney(player.getPlayer(), amount);
+        if (player.isOnline())
+            this.addMoney(player.getPlayer(), amount);
     }
 
     @Override
     public void createAccount(OfflinePlayer player) {
-        if (player == null) return;
+        if (player == null)
+            return;
         this.cfg.set("Money." + player.getUniqueId(), String.valueOf(this.startingMoney));
 
 
@@ -211,7 +230,8 @@ public class EconomyManager extends ManagerEconomy {
 
     @Override
     public void deleteAccount(OfflinePlayer player) {
-        if (player == null) return;
+        if (player == null)
+            return;
         this.cfg.set("Money." + player.getUniqueId(), null);
 
         try {
@@ -239,9 +259,11 @@ public class EconomyManager extends ManagerEconomy {
 
     @Override
     public Double getMoneyAsNumber(OfflinePlayer player) {
-        if (player == null) return 0.0D;
+        if (player == null)
+            return 0.0D;
         try {
-            if (!this.file.exists()) return 0.0;
+            if (!this.file.exists())
+                return 0.0;
             return Double.valueOf(this.cfg.getString("Money." + player.getUniqueId()));
         } catch (NullPointerException ignored) {
             return 0.0;
@@ -250,9 +272,11 @@ public class EconomyManager extends ManagerEconomy {
 
     @Override
     public String getMoney(OfflinePlayer player) {
-        if (player == null) return this.format(0.0D);
+        if (player == null)
+            return this.format(0.0D);
         try {
-            if (!this.file.exists()) return this.format(0.0D);
+            if (!this.file.exists())
+                return this.format(0.0D);
             return this.format(Double.parseDouble(this.cfg.getString("Money." + player.getUniqueId())));
         } catch (Exception ignored) {
             return this.format(0.0D);
@@ -261,9 +285,11 @@ public class EconomyManager extends ManagerEconomy {
 
     @Override
     public boolean hasAccount(OfflinePlayer player) {
-        if (player == null) return false;
+        if (player == null)
+            return false;
         try {
-            if (!this.file.exists()) return false;
+            if (!this.file.exists())
+                return false;
             return (this.cfg.getString("Money." + player.getUniqueId()) != null && !this.cfg.getString("Money." + player.getUniqueId()).equalsIgnoreCase("null"));
         } catch (NullPointerException ignored) {
             return false;
@@ -279,7 +305,8 @@ public class EconomyManager extends ManagerEconomy {
     ///////////////////////////////////
 
     public void save(Player player, String balance) {
-        if (player == null) return;
+        if (player == null)
+            return;
         balance = String.format("%.2f", Double.parseDouble(balance)).replace(",", ".");
         this.cfg.set("Money." + player.getUniqueId(), balance);
 
@@ -298,30 +325,37 @@ public class EconomyManager extends ManagerEconomy {
 
     @Override
     public void fetchTopTen() {
-        if (!this.topTen.isEmpty()) this.topTen.clear();
-        HashMap<OfflinePlayer, Double> topTenMoneyHash = new HashMap<>();
+        if (!this.topTen.isEmpty())
+            this.topTen.clear();
+        var topTenMoneyHash = new HashMap<OfflinePlayer, Double>();
+
+        if (this.cfg.getConfigurationSection("Money") == null)
+            return;
+
         this.cfg.getConfigurationSection("Money").getKeys(false).forEach(uuid -> {
             Double money = this.cfg.getDouble("Money." + uuid);
             topTenMoneyHash.put(Bukkit.getOfflinePlayer(UUID.fromString(uuid)), money);
         });
 
-        LinkedHashMap<OfflinePlayer, Double> topTenMoneyHashSorted = new LinkedHashMap<>();
+        if (topTenMoneyHash.isEmpty())
+            return;
+
+        LinkedHashMap<OfflinePlayer, Double> topTenMoneyHashSorted;
 
         topTenMoneyHashSorted = topTenMoneyHash.entrySet()
-                .stream()
-                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                        LinkedHashMap::new));
+                                               .stream()
+                                               .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                                               .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
 
-        LinkedHashMap<OfflinePlayer, Double> topTenMoney = new LinkedHashMap<>();
+        var topTenMoney = new LinkedHashMap<OfflinePlayer, Double>();
 
-        Iterator<Map.Entry<OfflinePlayer, Double>> iterator = topTenMoneyHashSorted.entrySet().iterator();
+        var iterator = topTenMoneyHashSorted.entrySet().iterator();
 
-        int i = 0;
+        var i = 0;
 
         while (i < 10) {
             i = i + 1;
-            Map.Entry<OfflinePlayer, Double> entry = iterator.next();
+            var entry = iterator.next();
             topTenMoney.put(entry.getKey(), entry.getValue());
         }
 
@@ -358,9 +392,6 @@ public class EconomyManager extends ManagerEconomy {
         return this.currencyPlural;
     }
 
-    public String getThousand() {
-        return this.thousand;
-    }
 
     @Override
     public LinkedHashMap<OfflinePlayer, Double> getTopTen() {

@@ -13,7 +13,9 @@ public class AsyncUnbanEvent extends Event {
     private final String reason;
 
     public AsyncUnbanEvent(CommandSender sender, OfflinePlayer target) {
-        this(sender, target, ServerSystem.getPlugin(ServerSystem.class).getMessages().getMessageWithStringTarget("unban", "unban", sender, target.getName(), "Ban.DefaultReason"));
+        this(sender, target, ServerSystem.getPlugin(ServerSystem.class)
+                                         .getMessages()
+                                         .getMessageWithStringTarget("unban", "unban", sender, target.getName(), "Ban.DefaultReason"));
     }
 
     public AsyncUnbanEvent(CommandSender sender, OfflinePlayer target, String reason) {
@@ -36,7 +38,7 @@ public class AsyncUnbanEvent extends Event {
     }
 
     public String getReason() {
-        return reason;
+        return this.reason;
     }
 
     @Override

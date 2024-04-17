@@ -26,10 +26,25 @@ public class MuteManager_H2 extends ManagerMute {
         this.dateFormat = dateFormat;
         this.open();
         try {
-            this.connection.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS MutedPlayers (BannedUUID VARCHAR(100), SenderUUID VARCHAR(100), Reason VARCHAR(100), Shadow INT(1), UnbanTime BIGINT(1))");
+            this.connection.createStatement()
+                           .executeUpdate(
+                                   "CREATE TABLE IF NOT EXISTS MutedPlayers (BannedUUID VARCHAR(100), SenderUUID VARCHAR(100), Reason VARCHAR(100), Shadow INT, UnbanTime BIGINT)");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+    }
+
+    public boolean open() {
+        if (this.initialize())
+            try {
+                this.connection = DriverManager.getConnection("jdbc:h2:file:" + new File("plugins//ServerSystem", "mutes.h2").getAbsolutePath());
+                return true;
+            } catch (SQLException var2) {
+                this.plugin.error("Could not establish an H2 connection, SQLException: " + var2.getMessage());
+                return false;
+            }
+        else
+            return false;
     }
 
     protected boolean initialize() {
@@ -42,41 +57,149 @@ public class MuteManager_H2 extends ManagerMute {
         }
     }
 
-    public boolean open() {
-        if (this.initialize()) try {
-            this.connection = DriverManager.getConnection("jdbc:h2:file:" + new File("plugins//ServerSystem", "mutes.h2").getAbsolutePath());
-            return true;
-        } catch (SQLException var2) {
-            this.plugin.error("Could not establish an H2 connection, SQLException: " + var2.getMessage());
-            return false;
-        }
-        else return false;
-    }
-
     @Override
     public Mute getMute(OfflinePlayer player) {
-        if (!this.checkPlayerInH2(player.getUniqueId().toString())) return null;
-        String SenderUUID = this.getUUIDSender(player.getUniqueId().toString());
-        String mutedUUID = player.getUniqueId().toString();
-        Long unmuteTime = this.getUnmuteTime(player.getUniqueId().toString());
-        String unbanDate = this.convertLongToDate(this.getUnmuteTime(player.getUniqueId().toString()));
-        String reason = this.getReason(player.getUniqueId().toString());
-        boolean shadow = this.shadowBan(player.getUniqueId().toString());
+        if (!this.checkPlayerInH2(player.getUniqueId().toString()))
+            return null;
+        var SenderUUID = this.getUUIDSender(player.getUniqueId().toString());
+        var mutedUUID = player.getUniqueId().toString();
+        var unmuteTime = this.getUnmuteTime(player.getUniqueId().toString());
+        var unbanDate = this.convertLongToDate(this.getUnmuteTime(player.getUniqueId().toString()));
+        var reason = this.getReason(player.getUniqueId().toString());
+        var shadow = this.shadowBan(player.getUniqueId().toString());
 
-        if (shadow) return new Mute(SenderUUID, mutedUUID, unmuteTime, unbanDate, reason, true);
+        if (shadow)
+            return new Mute(SenderUUID, mutedUUID, unmuteTime, unbanDate, reason, true);
         else
             return new Mute(SenderUUID, mutedUUID, unmuteTime, unbanDate, reason);
     }
 
     @Override
     public void removeMute(UUID mutedUUID) {
-        if (!this.checkPlayerInH2(mutedUUID.toString())) return;
+        if (!this.checkPlayerInH2(mutedUUID.toString()))
+            return;
 
         try {
-            this.connection.createStatement().executeUpdate("DELETE FROM MutedPlayers WHERE BannedUUID='" + mutedUUID + "'");
+            var query = "DELETE FROM MutedPlayers WHERE BannedUUID=?";
+            var preparedStatement = this.connection.prepareStatement(query);
+            preparedStatement.setString(1, String.valueOf(mutedUUID));
+            preparedStatement.executeUpdate();
+            preparedStatement.closeOnCompletion();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+    }
+
+    @Override
+    public Mute addMute(UUID mutedUUID, String senderUUID, String reason, Long howLong, TimeUnit timeUnit) {
+        return this.addMute(mutedUUID, senderUUID, reason, false, howLong, timeUnit);
+    }
+
+    @Override
+    public Mute addMute(UUID mutedUUID, String senderUUID, String reason, boolean shadow, Long howLong, TimeUnit timeUnit) {
+        if (this.isMuted(Bukkit.getOfflinePlayer(mutedUUID)))
+            this.removeMute(mutedUUID);
+
+        var unbanTime = System.currentTimeMillis() + (howLong * timeUnit.getValue());
+        if (howLong < 1)
+            unbanTime = -1L;
+        try {
+            var query = "INSERT INTO MutedPlayers (BannedUUID, SenderUUID, Reason, Shadow, UnbanTime) VALUES (?, ?, ?, ?, ?)";
+            var preparedStatement = this.connection.prepareStatement(query);
+            preparedStatement.setString(1, String.valueOf(mutedUUID));
+            preparedStatement.setString(2, senderUUID);
+            preparedStatement.setString(3, reason);
+            preparedStatement.setInt(4, shadow? 1 : 0);
+            preparedStatement.setLong(5, unbanTime);
+            preparedStatement.executeUpdate();
+            preparedStatement.closeOnCompletion();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return new Mute(mutedUUID.toString(), senderUUID, unbanTime, this.convertLongToDate(unbanTime), reason, shadow);
+    }
+
+    @Override
+    public Mute addMute(Mute mute) {
+        var mutedUUID = UUID.fromString(mute.getMUTED_UUID());
+        var senderUUID = mute.getSENDER_UUID();
+        var reason = mute.getREASON();
+
+        if (this.isMuted(Bukkit.getOfflinePlayer(mutedUUID)))
+            this.removeMute(mutedUUID);
+        long unbanTime = mute.getUNMUTE_TIME();
+        if (unbanTime < 1)
+            unbanTime = -1L;
+        try {
+            var query = "INSERT INTO MutedPlayers (BannedUUID, SenderUUID, Reason, Shadow, UnbanTime) VALUES (?, ?, ?, ?, ?)";
+            var preparedStatement = this.connection.prepareStatement(query);
+            preparedStatement.setString(1, String.valueOf(mutedUUID));
+            preparedStatement.setString(2, senderUUID);
+            preparedStatement.setString(3, reason);
+            preparedStatement.setInt(4, 1);
+            preparedStatement.setLong(5, unbanTime);
+            preparedStatement.executeUpdate();
+            preparedStatement.closeOnCompletion();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return mute;
+    }
+
+    @Override
+    public String getDateFormat() {
+        return this.dateFormat;
+    }
+
+    @Override
+    public String convertLongToDate(Long l) {
+        if (l < 1)
+            return this.getBanSystem("PermaBan");
+        var c = Calendar.getInstance();
+
+        c.setTimeInMillis(l);
+
+        var dateFormat = new SimpleDateFormat("yyyy:MM:dd:kk:mm:ss");
+        var dates = dateFormat.format(c.getTime()).split(":");
+
+        var year = dates[0];
+        var month = dates[1];
+        var day = dates[2];
+        var hour = dates[3];
+        var minute = dates[4];
+        var second = dates[5];
+
+        if (month.chars().count() == 1)
+            month = "0" + month;
+
+        if (day.chars().count() == 1)
+            day = "0" + day;
+
+        if (hour.chars().count() == 1)
+            hour = "0" + hour;
+
+        if (minute.chars().count() == 1)
+            minute = "0" + minute;
+
+        if (second.chars().count() == 1)
+            second = "0" + second;
+
+        return this.getDateFormat()
+                   .replace("<YEAR>", year)
+                   .replace("<MONTH>", month)
+                   .replace("<DAY>", day)
+                   .replace("<HOUR>", hour)
+                   .replace("<MINUTE>", minute)
+                   .replace("<SECOND>", second);
+    }
+
+    @Override
+    public boolean isMuted(OfflinePlayer player) {
+        return this.checkPlayerInH2(player.getUniqueId().toString());
     }
 
     @Override
@@ -85,20 +208,25 @@ public class MuteManager_H2 extends ManagerMute {
 
         ResultSet resultSet = null;
         try {
+            //noinspection SqlResolve
             resultSet = this.connection.createStatement().executeQuery("SELECT BannedUUID from MutedPlayers");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
 
-        while (true) try {
-            if (resultSet == null) break;
-            if (!resultSet.next()) break;
-            String uuid = resultSet.getString("BannedUUID");
+        while (true)
+            try {
+                if (resultSet == null)
+                    break;
+                if (!resultSet.next())
+                    break;
+                var uuid = resultSet.getString("BannedUUID");
 
-            if (this.checkPlayerInH2(uuid)) playerNames.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+                if (this.checkPlayerInH2(uuid))
+                    playerNames.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
         return playerNames;
     }
@@ -119,57 +247,12 @@ public class MuteManager_H2 extends ManagerMute {
             throwables.printStackTrace();
         }
         try {
-            while (rs.next()) return true;
+            while (rs.next())
+                return true;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return false;
-    }
-
-    private boolean shadowBan(String uuid) {
-        ResultSet rs = null;
-        try {
-            rs = this.connection.createStatement().executeQuery("SELECT * FROM MutedPlayers WHERE BannedUUID='" + uuid + "'");
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        try {
-            while (rs.next()) return rs.getInt("Shadow") == 1;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private String getReason(String uuid) {
-        ResultSet rs = null;
-        try {
-            rs = this.connection.createStatement().executeQuery("SELECT * FROM MutedPlayers WHERE BannedUUID='" + uuid + "'");
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        try {
-            while (rs.next()) return rs.getString("Reason");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-
-    private Long getUnmuteTime(String uuid) {
-        ResultSet rs = null;
-        try {
-            rs = this.connection.createStatement().executeQuery("SELECT * FROM MutedPlayers WHERE BannedUUID='" + uuid + "'");
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        try {
-            while (rs.next()) return rs.getLong("UnbanTime");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     private String getUUIDSender(String uuid) {
@@ -180,110 +263,59 @@ public class MuteManager_H2 extends ManagerMute {
             throwables.printStackTrace();
         }
         try {
-            while (rs.next()) return rs.getString("SenderUUID");
+            while (rs.next())
+                return rs.getString("SenderUUID");
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    @Override
-    public Mute addMute(UUID mutedUUID, String senderUUID, String reason, Long howLong, TimeUnit timeUnit) {
-        if (this.isMuted(Bukkit.getOfflinePlayer(mutedUUID))) this.removeMute(mutedUUID);
-        long unbanTime = System.currentTimeMillis() + (howLong * timeUnit.getValue());
-        if (howLong < 1) unbanTime = -1L;
-
+    private Long getUnmuteTime(String uuid) {
+        ResultSet rs = null;
         try {
-            this.connection.createStatement().executeUpdate("INSERT INTO `MutedPlayers`" +
-                    " (BannedUUID, SenderUUID, Reason, Shadow, UnbanTime) VALUES ('"
-                    + mutedUUID + "','" + senderUUID + "',"
-                    + "'" + reason + "'" + "," + 0 + ",'" + unbanTime + "')");
+            rs = this.connection.createStatement().executeQuery("SELECT * FROM MutedPlayers WHERE BannedUUID='" + uuid + "'");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-
-        return new Mute(mutedUUID.toString(), senderUUID, unbanTime, this.convertLongToDate(unbanTime), reason);
+        try {
+            while (rs.next())
+                return rs.getLong("UnbanTime");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    @Override
-    public Mute addMute(UUID mutedUUID, String senderUUID, String reason, boolean shadow, Long howLong, TimeUnit timeUnit) {
-        if (this.isMuted(Bukkit.getOfflinePlayer(mutedUUID))) this.removeMute(mutedUUID);
-        long unbanTime = System.currentTimeMillis() + (howLong * timeUnit.getValue());
-        if (howLong < 1) unbanTime = -1L;
+    private String getReason(String uuid) {
+        ResultSet rs = null;
         try {
-            this.connection.createStatement().executeUpdate("INSERT INTO `MutedPlayers`" +
-                    " (BannedUUID, SenderUUID, Reason, Shadow, UnbanTime) VALUES ('"
-                    + mutedUUID + "','" + senderUUID + "',"
-                    + "'" + reason + "'" + "," + 1 + ",'" + unbanTime + "')");
+            rs = this.connection.createStatement().executeQuery("SELECT * FROM MutedPlayers WHERE BannedUUID='" + uuid + "'");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return new Mute(mutedUUID.toString(), senderUUID, unbanTime, this.convertLongToDate(unbanTime), reason, shadow);
+        try {
+            while (rs.next())
+                return rs.getString("Reason");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    @Override
-    public Mute addMute(Mute mute) {
-        UUID mutedUUID = UUID.fromString(mute.getMUTED_UUID());
-        String senderUUID = mute.getSENDER_UUID();
-        String reason = mute.getREASON();
-
-        if (this.isMuted(Bukkit.getOfflinePlayer(mutedUUID))) this.removeMute(mutedUUID);
-        long unbanTime = mute.getUNMUTE_TIME();
-        if (unbanTime < 1) unbanTime = -1L;
+    private boolean shadowBan(String uuid) {
+        ResultSet rs = null;
         try {
-            this.connection.createStatement().executeUpdate("INSERT INTO `MutedPlayers`" +
-                    " (BannedUUID, SenderUUID, Reason, Shadow, UnbanTime) VALUES ('"
-                    + mutedUUID + "','" + senderUUID + "',"
-                    + "'" + reason + "'" + "," + 1 + ",'" + unbanTime + "')");
+            rs = this.connection.createStatement().executeQuery("SELECT * FROM MutedPlayers WHERE BannedUUID='" + uuid + "'");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return mute;
-    }
-
-    @Override
-    public String getDateFormat() {
-        return this.dateFormat;
-    }
-
-    @Override
-    public String convertLongToDate(Long l) {
-        if (l < 1) return this.getBanSystem("PermaBan");
-        Calendar c = Calendar.getInstance();
-
-        c.setTimeInMillis(l);
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy:MM:dd:kk:mm:ss");
-        String[] dates = dateFormat.format(c.getTime()).split(":");
-
-        String year = dates[0];
-        String month = dates[1];
-        String day = dates[2];
-        String hour = dates[3];
-        String minute = dates[4];
-        String second = dates[5];
-
-        if (month.chars().count() == 1) month = "0" + month;
-
-        if (day.chars().count() == 1) day = "0" + day;
-
-        if (hour.chars().count() == 1) hour = "0" + hour;
-
-        if (minute.chars().count() == 1) minute = "0" + minute;
-
-        if (second.chars().count() == 1) second = "0" + second;
-
-        return this.getDateFormat().
-                replace("<YEAR>", year).
-                replace("<MONTH>", month).
-                replace("<DAY>", day).
-                replace("<HOUR>", hour).
-                replace("<MINUTE>", minute).
-                replace("<SECOND>", second);
-    }
-
-    @Override
-    public boolean isMuted(OfflinePlayer player) {
-        return this.checkPlayerInH2(player.getUniqueId().toString());
+        try {
+            while (rs.next())
+                return rs.getInt("Shadow") == 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

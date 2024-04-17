@@ -4,6 +4,7 @@ import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,9 +22,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.HashSet;
@@ -31,11 +30,11 @@ import java.util.HashSet;
 import static me.entity303.serversystem.commands.executable.UnlimitedCommand.isUnlimited;
 
 public class UnlimitedListener implements Listener {
-    private final HashSet<Player> openInventory = new HashSet<>();
+    private final HashSet<HumanEntity> openInventory = new HashSet<>();
 
     @EventHandler
     public void onOpen(InventoryOpenEvent e) {
-        this.openInventory.add((Player) e.getPlayer());
+        this.openInventory.add(e.getPlayer());
     }
 
     @EventHandler
@@ -45,33 +44,31 @@ public class UnlimitedListener implements Listener {
 
     @EventHandler
     public void onInvClick(InventoryClickEvent e) {
-        if (e.getClickedInventory() instanceof PlayerInventory) {
-            PlayerInventory playerInventory = (PlayerInventory) e.getClickedInventory();
-            if (playerInventory.getHolder() == e.getWhoClicked()) this.openInventory.add((Player) e.getWhoClicked());
-        }
+        if (e.getClickedInventory() instanceof PlayerInventory playerInventory)
+            if (playerInventory.getHolder() == e.getWhoClicked())
+                this.openInventory.add(e.getWhoClicked());
     }
 
     @EventHandler
     public void onProjectileLaunch(ProjectileLaunchEvent e) {
-        if (e.getEntity().getShooter() instanceof Player) {
-            Player player = (Player) e.getEntity().getShooter();
+        if (e.getEntity().getShooter() instanceof Player player) {
 
             if (player.getGameMode() == GameMode.CREATIVE)
                 return;
 
-            if (player.getInventory().getItemInHand() == null)
+            if (player.getInventory().getItemInMainHand() == null)
                 return;
 
-            if (player.getInventory().getItemInHand().getType() == Material.AIR)
+            if (player.getInventory().getItemInMainHand().getType() == Material.AIR)
                 return;
 
-            if (player.getInventory().getItemInHand().getType() == Material.BOW)
+            if (player.getInventory().getItemInMainHand().getType() == Material.BOW)
                 return;
 
-            if (player.getInventory().getItemInHand().getType().name().equalsIgnoreCase("CROSSBOW"))
+            if (player.getInventory().getItemInMainHand().getType().name().equalsIgnoreCase("CROSSBOW"))
                 return;
 
-            ItemStack itemStack = player.getInventory().getItemInHand();
+            var itemStack = player.getInventory().getItemInMainHand();
 
             if (isUnlimited(itemStack)) {
                 itemStack.setAmount(itemStack.getAmount() + 1);
@@ -86,7 +83,7 @@ public class UnlimitedListener implements Listener {
             return;
 
         if (isUnlimited(e.getItem())) {
-            ItemStack itemStack = e.getPlayer().getInventory().getItemInHand();
+            var itemStack = e.getPlayer().getInventory().getItemInMainHand();
             itemStack.setAmount(itemStack.getAmount() + 1);
             e.getPlayer().updateInventory();
         }
@@ -113,10 +110,11 @@ public class UnlimitedListener implements Listener {
             if (e.isCancelled())
                 return;
 
-            int slot = e.getPlayer().getInventory().getHeldItemSlot();
-            ItemStack itemStack = e.getItem().clone();
-            for (int i = 0; i < 20; i++)
-                Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> e.getPlayer().getInventory().setItem(slot, itemStack), 1L + i);
+            var slot = e.getPlayer().getInventory().getHeldItemSlot();
+            var itemStack = e.getItem().clone();
+            for (var i = 0; i < 20; i++)
+                Bukkit.getScheduler()
+                      .runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> e.getPlayer().getInventory().setItem(slot, itemStack), 1L + i);
             return;
         }
 
@@ -129,8 +127,8 @@ public class UnlimitedListener implements Listener {
         if (e.isCancelled())
             return;
 
-        ItemStack itemStack = e.getItem().clone();
-        int slot = e.getPlayer().getInventory().getHeldItemSlot();
+        var itemStack = e.getItem().clone();
+        var slot = e.getPlayer().getInventory().getHeldItemSlot();
 
         Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> e.getPlayer().getInventory().setItem(slot, itemStack), 1L);
         Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> e.getPlayer().getInventory().setItem(slot, itemStack), 2L);
@@ -144,7 +142,7 @@ public class UnlimitedListener implements Listener {
 
         if (this.openInventory.contains(e.getPlayer())) {
             if (e.getPlayer().getGameMode() == GameMode.CREATIVE) {
-                ItemStack itemStack = e.getItemDrop().getItemStack().clone();
+                var itemStack = e.getItemDrop().getItemStack().clone();
                 itemStack.setAmount(itemStack.getMaxStackSize());
                 e.getPlayer().setItemOnCursor(itemStack);
 
@@ -155,7 +153,7 @@ public class UnlimitedListener implements Listener {
             }
 
             if (e.getPlayer().getOpenInventory().getCursor() == null || e.getPlayer().getOpenInventory().getCursor().getType() == Material.AIR) {
-                ItemStack itemStack = e.getItemDrop().getItemStack();
+                var itemStack = e.getItemDrop().getItemStack();
                 if (itemStack.getAmount() > itemStack.getType().getMaxStackSize())
                     itemStack.setAmount(itemStack.getMaxStackSize());
 
@@ -165,26 +163,30 @@ public class UnlimitedListener implements Listener {
                 return;
             }
 
-            ItemStack itemStack = e.getPlayer().getOpenInventory().getCursor();
+            var itemStack = e.getPlayer().getOpenInventory().getCursor();
             itemStack.setAmount(itemStack.getAmount() + 1);
             Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> e.getPlayer().updateInventory(), 5L);
             return;
         }
 
-        if (e.getPlayer().getInventory().getItemInHand() == null || e.getPlayer().getInventory().getItemInHand().getType() == Material.AIR || e.getPlayer().getInventory().getItemInHand().getAmount() <= 0) {
+        if (e.getPlayer().getInventory().getItemInMainHand() == null || e.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR ||
+            e.getPlayer().getInventory().getItemInMainHand().getAmount() <= 0) {
             e.getPlayer().getInventory().setItemInHand(e.getItemDrop().getItemStack());
             e.getPlayer().updateInventory();
             return;
         }
 
-        e.getPlayer().getInventory().getItemInHand().setAmount(e.getPlayer().getInventory().getItemInHand().getAmount() + e.getItemDrop().getItemStack().getAmount());
+        e.getPlayer()
+         .getInventory()
+         .getItemInMainHand()
+         .setAmount(e.getPlayer().getInventory().getItemInMainHand().getAmount() + e.getItemDrop().getItemStack().getAmount());
         e.getPlayer().updateInventory();
     }
 
     @EventHandler
     public void onDispense(BlockDispenseEvent e) {
         if (isUnlimited(e.getItem())) {
-            Inventory inventory = ((InventoryHolder) e.getBlock().getState()).getInventory();
+            var inventory = ((InventoryHolder) e.getBlock().getState()).getInventory();
             Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> inventory.addItem(e.getItem()), 1L);
         }
     }
@@ -200,17 +202,16 @@ public class UnlimitedListener implements Listener {
         if (e.getPlayer().getGameMode() == GameMode.SURVIVAL || e.getPlayer().getGameMode() == GameMode.ADVENTURE)
             if (isUnlimited(e.getItemInHand())) {
                 e.getItemInHand().setAmount(e.getItemInHand().getAmount() + 1);
-                Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> e.getItemInHand().setAmount(e.getItemInHand().getAmount() - 1), 1L);
+                Bukkit.getScheduler()
+                      .runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> e.getItemInHand().setAmount(e.getItemInHand().getAmount() - 1), 1L);
                 e.getPlayer().updateInventory();
             }
     }
 
     @EventHandler
     public void onEntitySpawn(EntitySpawnEvent e) {
-        if (e.getEntity() instanceof Item) {
-            Item item = (Item) e.getEntity();
+        if (e.getEntity() instanceof Item item)
             if (isUnlimited(item.getItemStack()))
                 ServerSystem.getPlugin(ServerSystem.class).getVersionStuff().getNbtViewer().removeTag("unlimited", item.getItemStack());
-        }
     }
 }

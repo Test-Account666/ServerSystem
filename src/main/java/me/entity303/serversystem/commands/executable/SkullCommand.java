@@ -2,66 +2,63 @@ package me.entity303.serversystem.commands.executable;
 
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
-public class SkullCommand extends MessageUtils implements CommandExecutor {
+public class SkullCommand extends CommandUtils implements CommandExecutorOverload {
 
     public SkullCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.getPrefix() + this.getOnlyPlayer());
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
-        if (args.length == 0) {
-            if (!this.isAllowed(cs, "skull.self")) {
-                cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("skull.self")));
+        if (arguments.length == 0) {
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "skull.self")) {
+                var permission = this.plugin.getPermissions().getPermission("skull.self");
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
                 return true;
             }
-            ItemStack skull = new ItemStack(Material.getMaterial("SKULL_ITEM"), 1, (short) 3);
-            SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-            skullMeta.setOwner(cs.getName());
+            var skull = new ItemStack(Material.PLAYER_HEAD, 1);
+            var skullMeta = (SkullMeta) skull.getItemMeta();
+            skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(((Player) commandSender).getUniqueId()));
             skull.setItemMeta(skullMeta);
-            if (!((Player) cs).getInventory().contains(skull)) ((Player) cs).getInventory().addItem(skull);
-            else
-                for (ItemStack itemStack : ((Player) cs).getInventory().getContents())
-                    if (itemStack == skull) itemStack.setAmount(itemStack.getAmount() + 1);
-            cs.sendMessage(this.getPrefix() + this.getMessage("Skull.Self", label, cmd.getName(), cs, null));
-        } else if (this.isAllowed(cs, "skull.others")) {
-            ItemStack skull = new ItemStack(Material.getMaterial("SKULL_ITEM"), 1, (short) 3);
-            SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-            skullMeta.setOwner(Bukkit.getOfflinePlayer(args[0]).getName());
+            ((Player) commandSender).getInventory().addItem(skull);
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Skull.Self"));
+        } else if (this.plugin.getPermissions().hasPermission(commandSender, "skull.others", true)) {
+            var skull = new ItemStack(Material.PLAYER_HEAD, 1);
+            var skullMeta = (SkullMeta) skull.getItemMeta();
+            skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(arguments[0]));
             skull.setItemMeta(skullMeta);
-            if (!((Player) cs).getInventory().contains(skull)) ((Player) cs).getInventory().addItem(skull);
-            else
-                for (ItemStack itemStack : ((Player) cs).getInventory().getContents())
-                    if (itemStack == skull) itemStack.setAmount(itemStack.getAmount() + 1);
-            cs.sendMessage(this.getPrefix() + this.getMessageWithStringTarget("Skull.Others", label, cmd.getName(), cs, args[0]));
+            ((Player) commandSender).getInventory().addItem(skull);
+            
+            commandSender.sendMessage(
+                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(commandLabel, command, commandSender, arguments[0], "Skull.Others"));
         } else {
-            if (!this.isAllowed(cs, "skull.self")) {
-                cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("skull.others")));
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "skull.self")) {
+                var permission = this.plugin.getPermissions().getPermission("skull.others");
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
                 return true;
             }
-            ItemStack skull = new ItemStack(Material.getMaterial("SKULL_ITEM"), 1, (short) 3);
-            SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-            skullMeta.setOwner(cs.getName());
+            var skull = new ItemStack(Material.PLAYER_HEAD, 1);
+            var skullMeta = (SkullMeta) skull.getItemMeta();
+            skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(((Player) commandSender).getUniqueId()));
             skull.setItemMeta(skullMeta);
-            if (!((Player) cs).getInventory().contains(skull)) ((Player) cs).getInventory().addItem(skull);
-            else
-                for (ItemStack itemStack : ((Player) cs).getInventory().getContents())
-                    if (itemStack == skull) itemStack.setAmount(itemStack.getAmount() + 1);
-            cs.sendMessage(this.getPrefix() + this.getMessage("skull.self", label, cmd.getName(), cs, null));
+            ((Player) commandSender).getInventory().addItem(skull);
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "skull.self"));
         }
         return true;
     }

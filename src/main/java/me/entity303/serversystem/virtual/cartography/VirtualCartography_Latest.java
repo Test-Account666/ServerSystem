@@ -24,10 +24,11 @@ public class VirtualCartography_Latest extends VirtualCartography {
     @Override
     public void openCartography(Player player) {
         if (Virtual.getInventoryMethod == null) {
-            Virtual.getInventoryMethod = Arrays.stream(EntityHuman.class.getDeclaredMethods()).
-                    filter(method -> method.getReturnType().getName().equalsIgnoreCase(PlayerInventory.class.getName())).
-                    filter(method -> method.getParameters().length <= 0)
-                    .findFirst().orElse(null);
+            Virtual.getInventoryMethod = Arrays.stream(EntityHuman.class.getDeclaredMethods())
+                                               .filter(method -> method.getReturnType().getName().equalsIgnoreCase(PlayerInventory.class.getName()))
+                                               .filter(method -> method.getParameters().length == 0)
+                                               .findFirst()
+                                               .orElse(null);
 
 
             if (Virtual.getInventoryMethod == null) {
@@ -44,10 +45,11 @@ public class VirtualCartography_Latest extends VirtualCartography {
         }
 
         if (Virtual.sendPacketMethod == null) {
-            Virtual.sendPacketMethod = Arrays.stream(PlayerConnection.class.getMethods()).
-                    filter(method -> method.getParameters().length == 1).
-                    filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(Packet.class.getName())).
-                    findFirst().orElse(null);
+            Virtual.sendPacketMethod = Arrays.stream(PlayerConnection.class.getMethods())
+                                             .filter(method -> method.getParameters().length == 1)
+                                             .filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(Packet.class.getName()))
+                                             .findFirst()
+                                             .orElse(null);
 
             if (Virtual.sendPacketMethod == null) {
                 try {
@@ -63,8 +65,9 @@ public class VirtualCartography_Latest extends VirtualCartography {
 
         if (Virtual.containerField == null) {
             Virtual.containerField = Arrays.stream(EntityHuman.class.getDeclaredFields())
-                    .filter(field -> field.getType().getName().equalsIgnoreCase(Container.class.getName()))
-                    .findFirst().orElse(null);
+                                           .filter(field -> field.getType().getName().equalsIgnoreCase(Container.class.getName()))
+                                           .findFirst()
+                                           .orElse(null);
 
             if (Virtual.containerField == null) {
                 try {
@@ -79,10 +82,11 @@ public class VirtualCartography_Latest extends VirtualCartography {
         }
 
         if (Virtual.initMenuMethod == null) {
-            Virtual.initMenuMethod = Arrays.stream(EntityPlayer.class.getDeclaredMethods()).
-                    filter(method -> method.getParameters().length == 1).
-                    filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(Container.class.getName())).
-                    findFirst().orElse(null);
+            Virtual.initMenuMethod = Arrays.stream(EntityPlayer.class.getDeclaredMethods())
+                                           .filter(method -> method.getParameters().length == 1)
+                                           .filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(Container.class.getName()))
+                                           .findFirst()
+                                           .orElse(null);
 
             if (Virtual.initMenuMethod == null) {
                 try {
@@ -96,17 +100,18 @@ public class VirtualCartography_Latest extends VirtualCartography {
             Virtual.initMenuMethod.setAccessible(true);
         }
 
-        EntityPlayer human = null;
+        EntityPlayer human;
         try {
-            human = (EntityPlayer) Class.forName("org.bukkit.craftbukkit." + this.getVersion() + ".entity.CraftPlayer").getDeclaredMethod("getHandle").invoke(player);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException |
-                 ClassNotFoundException e) {
+            human = (EntityPlayer) Class.forName("org.bukkit.craftbukkit." + this.getVersion() + ".entity.CraftPlayer")
+                                        .getDeclaredMethod("getHandle")
+                                        .invoke(player);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
             e.printStackTrace();
             return;
         }
 
-        int id = human.nextContainerCounter();
-        ContainerCartography container = null;
+        var id = human.nextContainerCounter();
+        ContainerCartography container;
         try {
             container = new ContainerCartography(id, (PlayerInventory) Virtual.getInventoryMethod.invoke(human), (ContainerAccess) this.getWrapper(player));
         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -120,7 +125,10 @@ public class VirtualCartography_Latest extends VirtualCartography {
 
         try {
             if (playerConnectionField == null) {
-                playerConnectionField = Arrays.stream(human.getClass().getDeclaredFields()).filter(field -> field.getType().getName().toLowerCase(Locale.ROOT).contains("playerconnection")).findFirst().orElse(null);
+                playerConnectionField = Arrays.stream(human.getClass().getDeclaredFields())
+                                              .filter(field -> field.getType().getName().toLowerCase(Locale.ROOT).contains("playerconnection"))
+                                              .findFirst()
+                                              .orElse(null);
 
                 if (playerConnectionField == null) {
                     this.plugin.error("Couldn't find PlayerConnection field! (Modded environment?)");
@@ -132,9 +140,10 @@ public class VirtualCartography_Latest extends VirtualCartography {
                 playerConnectionField.setAccessible(true);
             }
 
-            PlayerConnection playerConnection = (PlayerConnection) playerConnectionField.get(human);
+            var playerConnection = (PlayerConnection) playerConnectionField.get(human);
 
-            Virtual.sendPacketMethod.invoke(playerConnection, new PacketPlayOutOpenWindow(id, Containers.r, IChatBaseComponent.ChatSerializer.a("{\"text\":\"Cartography\"}")));
+            Virtual.sendPacketMethod.invoke(playerConnection,
+                                            new PacketPlayOutOpenWindow(id, Containers.r, IChatBaseComponent.ChatSerializer.a("{\"text\":\"Cartography\"}")));
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             return;

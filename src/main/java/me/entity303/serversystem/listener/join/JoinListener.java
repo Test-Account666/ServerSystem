@@ -1,8 +1,9 @@
 package me.entity303.serversystem.listener.join;
 
+import me.entity303.serversystem.commands.executable.SpawnCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import me.entity303.serversystem.utils.Teleport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -15,15 +16,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class JoinListener extends MessageUtils implements Listener {
+public class JoinListener extends CommandUtils implements Listener {
 
     public JoinListener(ServerSystem plugin) {
         super(plugin);
@@ -35,151 +33,223 @@ public class JoinListener extends MessageUtils implements Listener {
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
-        if (!this.plugin.getEconomyManager().hasAccount(e.getPlayer()))
-            this.plugin.getEconomyManager().createAccount(e.getPlayer());
+    public void onJoin(PlayerJoinEvent event) {
+        if (!this.plugin.getEconomyManager().hasAccount(event.getPlayer()))
+            this.plugin.getEconomyManager().createAccount(event.getPlayer());
 
-        if (e.getPlayer().getName().equalsIgnoreCase("TestAccount666") || e.getPlayer().getName().equalsIgnoreCase("TestThetic"))
-            Bukkit.getScheduler().runTaskLater(this.plugin, () -> e.getPlayer().sendMessage("§2Dieser Server nutzt ServerSystem <3"), 3 * 20);
+        if (event.getPlayer().getName().equalsIgnoreCase("TestAccount666") || event.getPlayer().getName().equalsIgnoreCase("TestThetic"))
+            Bukkit.getScheduler().runTaskLater(this.plugin, () -> event.getPlayer().sendMessage("§2Dieser Server nutzt ServerSystem <3"), 3 * 20);
 
-        if (!e.getPlayer().hasPlayedBefore() || e.getPlayer().getLastPlayed() == System.currentTimeMillis())
-            if (this.plugin.getConfigReader().getBoolean("kit.giveOnFirstSpawn"))
-                if (this.plugin.getKitsManager().doesKitExist(this.plugin.getConfigReader().getString("kit.givenKit")))
-                    Bukkit.getScheduler().runTaskLater(this.plugin, () -> this.plugin.getKitsManager().giveKit(e.getPlayer(), this.plugin.getConfigReader().getString("kit.givenKit")), 20);
-                else
-                    Bukkit.getScheduler().runTaskLater(this.plugin, () -> e.getPlayer().sendMessage(this.getPrefix() + this.getMessage("Kit.DoesntExist", "kit", "kit", e.getPlayer().getName(), null).replace("<KIT>", this.plugin.getConfigReader().getString("kit.givenKit").toUpperCase())), 20);
+        this.HandleStarterKit(event.getPlayer());
 
-        if (!this.plugin.getPermissions().hasPerm(e.getPlayer(), "vanish.see", true))
-            for (UUID uuid : this.plugin.getVanish().getVanishList()) {
-                Player player = Bukkit.getPlayer(uuid);
-                if (player == null) continue;
-                e.getPlayer().hidePlayer(player);
-            }
-        else
-            Bukkit.getScheduler().runTaskLater(this.plugin, () -> this.plugin.getVanish().getVanishList().stream().map(Bukkit::getPlayer).filter(Objects::nonNull).forEach(player -> this.plugin.getVersionStuff().getVanishPacket().setVanish(player, true)), 20L);
+        this.HandleVanishedPlayers(event.getPlayer());
 
-        if (this.plugin.getVanish().getVanishList().contains(e.getPlayer().getUniqueId())) {
-            e.setJoinMessage(null);
+        this.HandleVanish(event.getPlayer(), event);
+
+        this.HandleJoinMessage(event.getPlayer(), event);
+
+        var messaged = new AtomicBoolean(false);
+
+        this.HandleFirstLogin(event.getPlayer(), messaged);
+
+        this.HandleLogin(event.getPlayer(), messaged);
+
+        if (this.plugin.getMessages().getBoolean("Messages.Misc.JoinMessage.SendMessageToPlayer"))
+            event.getPlayer().sendMessage(this.plugin.getMessages().getMiscMessage("Join", "Join", event.getPlayer(), null, "JoinMessage.MessageToPlayer"));
+    }
+
+    private void HandleStarterKit(Player player) {
+        if (player.hasPlayedBefore() && player.getLastPlayed() != System.currentTimeMillis())
+            return;
+
+        if (!this.plugin.getConfigReader().getBoolean("kit.giveOnFirstSpawn"))
+            return;
+
+        if (!this.plugin.getKitsManager().doesKitExist(this.plugin.getConfigReader().getString("kit.givenKit"))) {
             Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                this.plugin.getVanish().setVanishData(e.getPlayer(), true);
-                this.plugin.getVanish().setVanish(true, e.getPlayer());
-            }, 10L);
-            e.getPlayer().sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage("vanish", "vanish", e.getPlayer().getName(), null, "Vanish.StillActivated"));
-            Bukkit.getOnlinePlayers().stream().filter(player -> !this.plugin.getPermissions().hasPerm(player, "vanish.see", true)).forEachOrdered(player -> player.hidePlayer(e.getPlayer()));
-            e.setJoinMessage(null);
+                var sender = player.getName();
+                player.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                      .getMessage("kit", "kit", sender, null, "Kit.DoesntExist")
+                                                                                      .replace("<KIT>", this.plugin.getConfigReader()
+                                                                                                                   .getString("kit.givenKit")
+                                                                                                                   .toUpperCase()));
+            }, 20);
+            return;
         }
-        if (this.plugin.getMessages().getCfg().getBoolean("Messages.Misc.JoinMessage.Change") && !this.plugin.getVanish().getVanishList().contains(e.getPlayer().getUniqueId()))
-            if (this.plugin.getMessages().getCfg().getBoolean("Messages.Misc.JoinMessage.Send"))
-                e.setJoinMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.getMessages().getCfg().getString("Messages.Misc.JoinMessage.Message")).replace("<PLAYER>", e.getPlayer().getName()).replace("<PLAYERDISPLAY>", e.getPlayer().getDisplayName()).replace("<SENDER>", e.getPlayer().getName()).replace("<SENDERDISPLAY>", e.getPlayer().getDisplayName()));
-            else
-                e.setJoinMessage(null);
 
-        AtomicBoolean messaged = new AtomicBoolean(false);
+        Bukkit.getScheduler()
+              .runTaskLater(this.plugin, () -> this.plugin.getKitsManager().giveKit(player, this.plugin.getConfigReader().getString("kit.givenKit")), 20);
+    }
 
-        if (e.getPlayer().getLastPlayed() == e.getPlayer().getFirstPlayed() || !e.getPlayer().hasPlayedBefore()) {
+    private void HandleVanishedPlayers(Player player) {
+        if (!this.plugin.getPermissions().hasPermission(player, "vanish.see", true)) {
+            for (var uuid : this.plugin.getVanish().getVanishList()) {
+                var vanishedPlayer = Bukkit.getPlayer(uuid);
+                if (vanishedPlayer == null)
+                    continue;
+                player.hidePlayer(vanishedPlayer);
+            }
+
+            return;
+        }
+
+        Bukkit.getScheduler()
+              .runTaskLater(this.plugin, () -> this.plugin.getVanish()
+                                                          .getVanishList()
+                                                          .stream()
+                                                          .map(Bukkit::getPlayer)
+                                                          .filter(Objects::nonNull)
+                                                          .forEach(vanishedPlayer -> this.plugin.getVersionStuff()
+                                                                                                .getVanishPacket()
+                                                                                                .setVanish(vanishedPlayer, true)), 20L);
+    }
+
+    private void HandleVanish(Player player, PlayerJoinEvent event) {
+        if (this.plugin.getVanish().getVanishList().contains(player.getUniqueId())) {
+            event.setJoinMessage(null);
+            Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+                this.plugin.getVanish().setVanishData(player, true);
+                this.plugin.getVanish().setVanish(true, player);
+            }, 10L);
+
+            player.sendMessage(this.plugin.getMessages().getPrefix() +
+                               this.plugin.getMessages().getMessage("vanish", "vanish", player.getName(), null, "Vanish.StillActivated"));
+
+            Bukkit.getOnlinePlayers()
+                  .stream()
+                  .filter(allPlayers -> !this.plugin.getPermissions().hasPermission(allPlayers, "vanish.see", true))
+                  .forEachOrdered(allPlayers -> allPlayers.hidePlayer(player));
+
+            event.setJoinMessage(null);
+        }
+    }
+
+    private void HandleJoinMessage(Player player, PlayerJoinEvent event) {
+        if (this.plugin.getMessages().getCfg().getBoolean("Messages.Misc.JoinMessage.Change") &&
+            !this.plugin.getVanish().getVanishList().contains(player.getUniqueId())) {
+            if (!this.plugin.getMessages().getCfg().getBoolean("Messages.Misc.JoinMessage.Send")) {
+                event.setJoinMessage(null);
+                return;
+            }
+
+            event.setJoinMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.getMessages().getCfg().getString("Messages.Misc.JoinMessage.Message"))
+                                          .replace("<PLAYER>", player.getName())
+                                          .replace("<PLAYERDISPLAY>", player.getDisplayName())
+                                          .replace("<SENDER>", player.getName())
+                                          .replace("<SENDERDISPLAY>", player.getDisplayName()));
+        }
+    }
+
+    private void HandleFirstLogin(Player player, AtomicBoolean messaged) {
+        if (player.getLastPlayed() == player.getFirstPlayed() || !player.hasPlayedBefore())
             if (this.plugin.getConfigReader().getBoolean("spawn.firstLoginTp"))
                 Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                    File spawnFile = new File("plugins//ServerSystem", "spawn.yml");
+                    var spawnFile = new File("plugins//ServerSystem", "spawn.yml");
                     if (!spawnFile.exists()) {
                         if (!messaged.get()) {
-                            e.getPlayer().sendMessage(this.getPrefix() + this.getMessage("Spawn.NoSpawn", "spawn", "spawn", e.getPlayer().getName(), null));
+                            var sender = player.getName();
+                            player.sendMessage(this.plugin.getMessages().getPrefix() +
+                                               this.plugin.getMessages().getMessage("spawn", "spawn", sender, null, "Spawn.NoSpawn"));
                             messaged.set(true);
                         }
                     } else {
-                        FileConfiguration cfg = YamlConfiguration.loadConfiguration(spawnFile);
-                        if (Bukkit.getWorld(cfg.getString("Spawn.World")) == null) if (!messaged.get())
-                            e.getPlayer().sendMessage(this.getPrefix() + this.getMessage("Spawn.NoSpawn", "spawn", "spawn", e.getPlayer().getName(), null));
-                        Location location = e.getPlayer().getLocation().clone();
-                        location.setX(cfg.getDouble("Spawn.X"));
-                        location.setY(cfg.getDouble("Spawn.Y"));
-                        location.setZ(cfg.getDouble("Spawn.Z"));
-                        location.setYaw((float) cfg.getDouble("Spawn.Yaw"));
-                        location.setPitch((float) cfg.getDouble("Spawn.Pitch"));
-                        location.setWorld(Bukkit.getWorld(cfg.getString("Spawn.World")));
+                        var location = this.GetSpawnLocation(player, messaged, spawnFile);
 
-                        Teleport.teleport(e.getPlayer(), location);
+                        Teleport.teleport(player, location);
                     }
                 }, 20 * 3L);
-        } else if (this.plugin.getConfigReader().getBoolean("spawn.tp")) {
-            File spawnFile = new File("plugins//ServerSystem", "spawn.yml");
-            if (!spawnFile.exists()) {
-                if (!messaged.get()) {
-                    e.getPlayer().sendMessage(this.getPrefix() + this.getMessage("Spawn.NoSpawn", "spawn", "spawn", e.getPlayer().getName(), null));
-                    messaged.set(true);
-                }
-            } else {
-                FileConfiguration cfg = YamlConfiguration.loadConfiguration(spawnFile);
-                if (Bukkit.getWorld(cfg.getString("Spawn.World")) == null) if (!messaged.get())
-                    e.getPlayer().sendMessage(this.getPrefix() + this.getMessage("Spawn.NoSpawn", "spawn", "spawn", e.getPlayer().getName(), null));
-                Location location = e.getPlayer().getLocation().clone();
-                location.setX(cfg.getDouble("Spawn.X"));
-                location.setY(cfg.getDouble("Spawn.Y"));
-                location.setZ(cfg.getDouble("Spawn.Z"));
-                location.setYaw((float) cfg.getDouble("Spawn.Yaw"));
-                location.setPitch((float) cfg.getDouble("Spawn.Pitch"));
-                location.setWorld(Bukkit.getWorld(cfg.getString("Spawn.World")));
+    }
 
-                LinkedList<Entity> passengers = new LinkedList<>();
-                for (Entity passenger : e.getPlayer().getPassengers()) {
-                    passenger.eject();
-                    passengers.add(passenger);
-                }
+    private void HandleLogin(Player player, AtomicBoolean messaged) {
+        if (!this.plugin.getConfigReader().getBoolean("spawn.tp"))
+            return;
 
-                e.getPlayer().teleport(location);
-
-                Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-for (Entity passenger : passengers)
-                    e.getPlayer().addPassenger(passenger);
-}, 10L);
+        var spawnFile = new File("plugins//ServerSystem", "spawn.yml");
+        if (!spawnFile.exists()) {
+            if (!messaged.get()) {
+                var sender = player.getName();
+                player.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage("spawn", "spawn", sender, null, "Spawn.NoSpawn"));
+                messaged.set(true);
             }
+            return;
         }
 
-        if (this.plugin.getMessages().getBoolean("Messages.Misc.JoinMessage.SendMessageToPlayer"))
-            e.getPlayer().sendMessage(this.getMiscMessage("JoinMessage.MessageToPlayer", "Join", "Join", e.getPlayer(), null));
+        var location = this.GetSpawnLocation(player, messaged, spawnFile);
+
+        var passengers = new LinkedList<Entity>();
+        for (var passenger : player.getPassengers()) {
+            passenger.eject();
+            passengers.add(passenger);
+        }
+
+        player.teleport(location);
+
+        Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+            for (var passenger : passengers)
+                player.addPassenger(passenger);
+        }, 10L);
+    }
+
+    private Location GetSpawnLocation(Player player, AtomicBoolean messaged, File spawnFile) {
+        FileConfiguration cfg = YamlConfiguration.loadConfiguration(spawnFile);
+        if (Bukkit.getWorld(Objects.requireNonNull(cfg.getString("Spawn.World"))) == null)
+            if (!messaged.get()) {
+                var sender = player.getName();
+                player.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage("spawn", "spawn", sender, null, "Spawn.NoSpawn"));
+            }
+
+        var location = player.getLocation().clone();
+        SpawnCommand.GetSpawnLocation(cfg, location);
+
+        return location;
+    }
+
+    private void changeName(String name, Player player, boolean colored) {
+        if (!colored)
+            this.changeName(name, player);
+        else
+            try {
+                name = ChatColor.translateAlternateColorCodes('&', name);
+                var getHandle = player.getClass().getMethod("getHandle");
+                var entityPlayer = getHandle.invoke(player);
+
+                var profile = entityPlayer.getClass().getMethod("getProfile").invoke(entityPlayer);
+                var ff = profile.getClass().getDeclaredField("name");
+                ff.setAccessible(true);
+                ff.set(profile, name);
+                player.setCustomName(name);
+                player.setDisplayName(name);
+                for (var p : Bukkit.getOnlinePlayers()) {
+                    p.hidePlayer(player);
+                    p.showPlayer(player);
+                }
+                if (this.plugin.getVanish().isVanish(player))
+                    this.plugin.getVanish().setVanish(true, player);
+            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException |
+                     NoSuchFieldException e) {
+                e.printStackTrace();
+            }
     }
 
     private void changeName(String name, Player player) {
         try {
-            Method getHandle = player.getClass().getMethod("getHandle");
-            Object entityPlayer = getHandle.invoke(player);
+            var getHandle = player.getClass().getMethod("getHandle");
+            var entityPlayer = getHandle.invoke(player);
 
-            Object profile = entityPlayer.getClass().getMethod("getProfile").invoke(entityPlayer);
-            Field ff = profile.getClass().getDeclaredField("name");
+            var profile = entityPlayer.getClass().getMethod("getProfile").invoke(entityPlayer);
+            var ff = profile.getClass().getDeclaredField("name");
             ff.setAccessible(true);
             ff.set(profile, name);
             player.setCustomName(name);
             player.setDisplayName(name);
-            for (Player p : Bukkit.getOnlinePlayers()) {
+            for (var p : Bukkit.getOnlinePlayers()) {
                 p.hidePlayer(player);
                 p.showPlayer(player);
             }
-            if (this.plugin.getVanish().isVanish(player)) this.plugin.getVanish().setVanish(true, player);
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException |
-                 InvocationTargetException | NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void changeName(String name, Player player, boolean colored) {
-        if (!colored) this.changeName(name, player);
-        else try {
-            name = ChatColor.translateAlternateColorCodes('&', name);
-            Method getHandle = player.getClass().getMethod("getHandle");
-            Object entityPlayer = getHandle.invoke(player);
-
-            Object profile = entityPlayer.getClass().getMethod("getProfile").invoke(entityPlayer);
-            Field ff = profile.getClass().getDeclaredField("name");
-            ff.setAccessible(true);
-            ff.set(profile, name);
-            player.setCustomName(name);
-            player.setDisplayName(name);
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                p.hidePlayer(player);
-                p.showPlayer(player);
-            }
-            if (this.plugin.getVanish().isVanish(player)) this.plugin.getVanish().setVanish(true, player);
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException |
-                 InvocationTargetException | NoSuchFieldException e) {
+            if (this.plugin.getVanish().isVanish(player))
+                this.plugin.getVanish().setVanish(true, player);
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException |
+                 NoSuchFieldException e) {
             e.printStackTrace();
         }
     }

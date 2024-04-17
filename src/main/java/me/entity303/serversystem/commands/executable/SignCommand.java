@@ -2,13 +2,12 @@ package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,66 +16,74 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SignCommand extends MessageUtils implements CommandExecutor {
+public class SignCommand extends CommandUtils implements CommandExecutorOverload {
 
     public SignCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!this.isAllowed(cs, "sign")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("sign")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "sign")) {
+            var permission = this.plugin.getPermissions().getPermission("sign");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.getPrefix() + this.getOnlyPlayer());
+        if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
-        ((Player) cs).getInventory().getItemInHand();
-        if (((Player) cs).getInventory().getItemInHand().getType() == Material.AIR) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("Sign.NoItem", label, cmd.getName(), cs, null));
+        ((Player) commandSender).getInventory().getItemInMainHand();
+        if (((Player) commandSender).getInventory().getItemInMainHand().getType() == Material.AIR) {
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Sign.NoItem"));
             return true;
         }
-        ItemMeta meta = ((Player) cs).getInventory().getItemInHand().getItemMeta();
+        var meta = ((Player) commandSender).getInventory().getItemInMainHand().getItemMeta();
         if (meta.hasLore()) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("Sign.AlreadySigned", label, cmd.getName(), cs, null));
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Sign.AlreadySigned"));
             return true;
         }
-        if (args.length <= 0) {
-            cs.sendMessage(this.getPrefix() + this.getSyntax("Sign", label, cmd.getName(), cs, null));
+        if (arguments.length == 0) {
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Sign"));
             return true;
         }
         List<String> loreList = new ArrayList<>();
 
-        String signFormat = this.getMessage("Sign.Format", label, cmd.getName(), cs, null);
+        var command4 = command.getName();
+        var signFormat = this.plugin.getMessages().getMessage(commandLabel, command4, commandSender, null, "Sign.Format");
 
-        String dateFormat = this.getMessage("Sign.DateFormat", label, cmd.getName(), cs, null);
+        var command3 = command.getName();
+        var dateFormat = this.plugin.getMessages().getMessage(commandLabel, command3, commandSender, null, "Sign.DateFormat");
 
-        String timeFormat = this.getMessage("Sign.TimeFormat", label, cmd.getName(), cs, null);
+        var command2 = command.getName();
+        var timeFormat = this.plugin.getMessages().getMessage(commandLabel, command2, commandSender, null, "Sign.TimeFormat");
 
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(timeFormat);
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateFormat);
-        LocalDateTime localDate = LocalDateTime.now();
+        var timeFormatter = DateTimeFormatter.ofPattern(timeFormat);
+        var dateFormatter = DateTimeFormatter.ofPattern(dateFormat);
+        var localDate = LocalDateTime.now();
 
         String message;
 
-        String textColor = this.getMessage("Sign.TextColor", label, cmd.getName(), cs, null);
+        var command1 = command.getName();
+        var textColor = this.plugin.getMessages().getMessage(commandLabel, command1, commandSender, null, "Sign.TextColor");
 
-        message = Arrays.stream(args).map(arg -> textColor + ChatColor.translateAlternateColorCodes('&', arg) + " ").collect(Collectors.joining());
+        message = Arrays.stream(arguments).map(arg -> textColor + ChatColor.translateAlternateColorCodes('&', arg) + " ").collect(Collectors.joining());
 
-        for (String lore : signFormat.split("\\n")) {
+        for (var lore : signFormat.split("\\n"))
             loreList.add(lore.replace("<DATE>", localDate.format(dateFormatter))
-                    .replace("<TIME>", localDate.format(timeFormatter))
-                    .replace("<SENDER>", cs.getName())
-                    .replace("<MESSAGE>", message));
-        }
+                             .replace("<TIME>", localDate.format(timeFormatter))
+                             .replace("<SENDER>", commandSender.getName())
+                             .replace("<MESSAGE>", message));
 
         meta.setLore(loreList);
 
-        ((Player) cs).getInventory().getItemInHand().setItemMeta(meta);
-        ((Player) cs).updateInventory();
-        cs.sendMessage(this.getPrefix() + this.getMessage("Sign.Success", label, cmd.getName(), cs, null));
+        ((Player) commandSender).getInventory().getItemInMainHand().setItemMeta(meta);
+        ((Player) commandSender).updateInventory();
+        
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Sign.Success"));
         return true;
     }
 }

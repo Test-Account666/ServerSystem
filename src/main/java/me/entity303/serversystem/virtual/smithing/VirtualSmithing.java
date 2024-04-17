@@ -1,7 +1,7 @@
 package me.entity303.serversystem.virtual.smithing;
 
-import me.entity303.serversystem.virtual.containeraccess.ContainerAccessWrapper;
 import me.entity303.serversystem.virtual.Virtual;
+import me.entity303.serversystem.virtual.containeraccess.ContainerAccessWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -15,14 +15,14 @@ public abstract class VirtualSmithing extends Virtual {
 
     protected ContainerAccessWrapper getWrapper(Player player) {
         try {
-            Class clazz = Class.forName("me.entity303.serversystem.virtual.containeraccess.ContainerAccess_" + this.getVersion());
+            var clazz = Class.forName("me.entity303.serversystem.virtual.containeraccess.ContainerAccess_" + this.getVersion());
             return (ContainerAccessWrapper) clazz.getConstructor(Player.class).newInstance(player);
         } catch (ClassNotFoundException ignored) {
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
             e.printStackTrace();
         }
         try {
-            Class clazz = Class.forName("me.entity303.serversystem.virtual.containeraccess.ContainerAccess_Latest");
+            var clazz = Class.forName("me.entity303.serversystem.virtual.containeraccess.ContainerAccess_Latest");
             return (ContainerAccessWrapper) clazz.getConstructor(Player.class).newInstance(player);
         } catch (ClassNotFoundException ignored) {
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
@@ -32,12 +32,13 @@ public abstract class VirtualSmithing extends Virtual {
     }
 
     protected String getVersion() {
-        if (this.version == null) try {
-            this.version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            e.printStackTrace();
-            return null;
-        }
+        if (this.version == null)
+            try {
+                this.version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                e.printStackTrace();
+                return null;
+            }
         return this.version;
     }
 }

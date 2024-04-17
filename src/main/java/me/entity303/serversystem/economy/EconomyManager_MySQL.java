@@ -20,7 +20,8 @@ public class EconomyManager_MySQL extends ManagerEconomy {
     private final String separator;
     private final String server;
 
-    public EconomyManager_MySQL(String currencySingular, String currencyPlural, String startingMoney, String displayFormat, String moneyFormat, String separator, String thousands, ServerSystem plugin) {
+    public EconomyManager_MySQL(String currencySingular, String currencyPlural, String startingMoney, String displayFormat, String moneyFormat, String separator,
+                                String thousands, ServerSystem plugin) {
         super(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, plugin);
         this.currencySingular = currencySingular;
         this.currencyPlural = currencyPlural;
@@ -33,14 +34,14 @@ public class EconomyManager_MySQL extends ManagerEconomy {
 
     @Override
     public String format(double money) {
-        String moneyStr = String.format(Locale.US, "%1$,.2f", money);
+        var moneyStr = String.format(Locale.US, "%1$,.2f", money);
 
         moneyStr = moneyStr.replace(",", "<THOUSAND>");
 
-        String moneyString = moneyStr.split("\\.")[0] + "." + moneyStr.split("\\.")[1];
+        var moneyString = moneyStr.split("\\.")[0] + "." + moneyStr.split("\\.")[1];
         String formattedMoney;
-        String first = "0";
-        String last = "00";
+        var first = "0";
+        var last = "00";
         try {
             first = moneyString.split("\\.")[0];
             last = moneyString.split("\\.")[1];
@@ -48,17 +49,17 @@ public class EconomyManager_MySQL extends ManagerEconomy {
 
         }
 
-        if (last.length() == 1) last = last + "0";
-        formattedMoney = this.moneyFormat.
-                replace("<FIRST>", first).
-                replace("<LAST>", last).
-                replace("<SEPARATOR>", this.separator).
-                replace("<THOUSAND>", this.getThousands());
+        if (last.length() == 1)
+            last = last + "0";
+        formattedMoney = this.moneyFormat.replace("<FIRST>", first)
+                                         .replace("<LAST>", last)
+                                         .replace("<SEPARATOR>", this.separator)
+                                         .replace("<THOUSAND>", this.getThousands());
 
 
-        boolean plural = false;
+        var plural = false;
 
-        double moneyWorth = money;
+        var moneyWorth = money;
 
         if (money < 0)
             moneyWorth = money * -1;
@@ -68,7 +69,7 @@ public class EconomyManager_MySQL extends ManagerEconomy {
 
         if (money > 1)
             plural = true;
-        return this.displayFormat.replace("<MONEY>", formattedMoney).replace("<CURRENCY>", plural ? this.currencyPlural : this.currencySingular);
+        return this.displayFormat.replace("<MONEY>", formattedMoney).replace("<CURRENCY>", plural? this.currencyPlural : this.currencySingular);
     }
 
     @Override
@@ -103,15 +104,18 @@ public class EconomyManager_MySQL extends ManagerEconomy {
 
     @Override
     public boolean hasEnoughMoney(OfflinePlayer player, double amount) {
-        if (player == null) return false;
+        if (player == null)
+            return false;
         amount = Double.parseDouble(String.format("%.2f", amount).replace(",", "."));
         return this.getMoneyAsNumber(player) >= amount;
     }
 
     @Override
     public void makeTransaction(OfflinePlayer sender, OfflinePlayer target, double amount) {
-        if (sender == null) return;
-        if (target == null) return;
+        if (sender == null)
+            return;
+        if (target == null)
+            return;
         amount = Double.parseDouble(String.format("%.2f", amount).replace(",", "."));
         this.removeMoney(sender, amount);
         this.addMoney(target, amount);
@@ -119,14 +123,16 @@ public class EconomyManager_MySQL extends ManagerEconomy {
 
     @Override
     public void setMoney(OfflinePlayer player, double amount) {
-        double[] doubles = new double[]{amount};
+        var doubles = new double[] { amount };
 
-        if (player == null) return;
+        if (player == null)
+            return;
         doubles[0] = Double.parseDouble(String.format("%.2f", doubles[0]).replace(",", "."));
         this.deleteAccountSync(player);
-        this.getPlugin().getMySQL().executeUpdate("INSERT INTO `Economy` (UUID, Server, Balance)"
-                + " VALUES ('" + player.getUniqueId() +
-                "','" + this.server + "','" + doubles[0] + "')");
+        this.getPlugin()
+            .getMySQL()
+            .executeUpdate(
+                    "INSERT INTO `Economy` (UUID, Server, Balance)" + " VALUES ('" + player.getUniqueId() + "','" + this.server + "','" + doubles[0] + "')");
 
         this.moneyCache.remove(player);
 
@@ -134,31 +140,32 @@ public class EconomyManager_MySQL extends ManagerEconomy {
 
     @Override
     public void removeMoney(OfflinePlayer player, double amount) {
-        double[] doubles = new double[]{amount};
+        var doubles = new double[] { amount };
 
-        if (player == null) return;
+        if (player == null)
+            return;
         doubles[0] = Double.parseDouble(String.format("%.2f", doubles[0]).replace(",", "."));
-        double balance = this.getMoneyAsNumber(player) - doubles[0];
+        var balance = this.getMoneyAsNumber(player) - doubles[0];
         this.deleteAccountSync(player);
-        this.getPlugin().getMySQL().executeUpdate("INSERT INTO `Economy` (UUID, Server, Balance)"
-                + " VALUES ('" + player.getUniqueId() +
-                "','" + this.server + "','"
-                + balance + "')");
+        this.getPlugin()
+            .getMySQL()
+            .executeUpdate("INSERT INTO `Economy` (UUID, Server, Balance)" + " VALUES ('" + player.getUniqueId() + "','" + this.server + "','" + balance + "')");
         this.moneyCache.remove(player);
 
     }
 
     @Override
     public void addMoney(OfflinePlayer player, double amount) {
-        double[] doubles = new double[]{amount};
+        var doubles = new double[] { amount };
 
-        if (player == null) return;
+        if (player == null)
+            return;
         doubles[0] = Double.parseDouble(String.format("%.2f", doubles[0]).replace(",", "."));
-        double balance = this.getMoneyAsNumber(player) + doubles[0];
+        var balance = this.getMoneyAsNumber(player) + doubles[0];
         this.deleteAccountSync(player);
-        this.getPlugin().getMySQL().executeUpdate("INSERT INTO `Economy` (UUID, Server, Balance)"
-                + " VALUES ('" + player.getUniqueId() +
-                "','" + this.server + "','" + balance + "')");
+        this.getPlugin()
+            .getMySQL()
+            .executeUpdate("INSERT INTO `Economy` (UUID, Server, Balance)" + " VALUES ('" + player.getUniqueId() + "','" + this.server + "','" + balance + "')");
         this.moneyCache.remove(player);
 
     }
@@ -173,14 +180,19 @@ public class EconomyManager_MySQL extends ManagerEconomy {
         if (player == null)
             return;
 
-        this.getPlugin().getMySQL().executeUpdate("INSERT INTO `Economy` (UUID, Server, Balance) VALUES ('" + player.getUniqueId() + "','" + this.server + "','" + this.startingMoney + "')");
+        this.getPlugin()
+            .getMySQL()
+            .executeUpdate(
+                    "INSERT INTO `Economy` (UUID, Server, Balance) VALUES ('" + player.getUniqueId() + "','" + this.server + "','" + this.startingMoney + "')");
     }
 
     @Override
     public void deleteAccount(OfflinePlayer player) {
-        if (!this.hasAccount(player)) return;
+        if (!this.hasAccount(player))
+            return;
 
-        if (player == null) return;
+        if (player == null)
+            return;
         this.getPlugin().getMySQL().executeUpdate("DELETE FROM Economy WHERE UUID='" + player.getUniqueId() + "'" + " AND Server = '" + this.server + "'");
 
         this.moneyCache.remove(player);
@@ -188,7 +200,8 @@ public class EconomyManager_MySQL extends ManagerEconomy {
     }
 
     private void deleteAccountSync(OfflinePlayer player) {
-        if (player == null) return;
+        if (player == null)
+            return;
         this.getPlugin().getMySQL().executeUpdate("DELETE FROM Economy WHERE UUID='" + player.getUniqueId() + "'" + " AND Server = '" + this.server + "'");
     }
 
@@ -204,15 +217,21 @@ public class EconomyManager_MySQL extends ManagerEconomy {
 
     @Override
     public Double getMoneyAsNumber(OfflinePlayer player) {
-        if (player == null) return 0.0D;
-        if (Bukkit.isPrimaryThread()) if (this.moneyCache.containsKey(player)) return this.moneyCache.get(player);
-        ResultSet resultSet = this.getPlugin().getMySQL().getResult("SELECT * FROM Economy WHERE UUID = '" + player.getUniqueId() + "' AND Server = '" + this.server + "'");
+        if (player == null)
+            return 0.0D;
+        if (Bukkit.isPrimaryThread())
+            if (this.moneyCache.containsKey(player))
+                return this.moneyCache.get(player);
+        var resultSet =
+                this.getPlugin().getMySQL().getResult("SELECT * FROM Economy WHERE UUID = '" + player.getUniqueId() + "' AND Server = '" + this.server + "'");
         try {
             try {
-                if (resultSet.isClosed()) return 0.0D;
+                if (resultSet.isClosed())
+                    return 0.0D;
             } catch (AbstractMethodError ignored) {
             }
-            if (!resultSet.next()) return 0.0D;
+            if (!resultSet.next())
+                return 0.0D;
             Double money = Double.parseDouble(String.format("%.2f", resultSet.getDouble("Balance")).replace(",", "."));
             resultSet.close();
             this.moneyCache.put(player, money);
@@ -236,7 +255,7 @@ public class EconomyManager_MySQL extends ManagerEconomy {
         if (Bukkit.isPrimaryThread())
             if (this.accountCache.containsKey(player))
                 return this.accountCache.get(player);
-        ResultSet rs = null;
+        ResultSet rs;
         rs = this.plugin.getMySQL().getResult("SELECT * FROM Economy WHERE UUID = '" + player.getUniqueId() + "'" + " AND Server = '" + this.server + "'");
         try {
             if (rs == null)
@@ -248,9 +267,9 @@ public class EconomyManager_MySQL extends ManagerEconomy {
             }
             if (!rs.next())
                 return false;
-            String uuid = rs.getString("UUID");
+            var uuid = rs.getString("UUID");
             rs.close();
-            boolean has = uuid != null;
+            var has = uuid != null;
             this.accountCache.put(player, has);
             return has;
         } catch (SQLException throwables) {
@@ -302,29 +321,26 @@ public class EconomyManager_MySQL extends ManagerEconomy {
 
     @Override
     public LinkedHashMap<OfflinePlayer, Double> getTopTen() {
-        LinkedHashMap<OfflinePlayer, Double> topTen = new LinkedHashMap<>();
+        var topTen = new LinkedHashMap<OfflinePlayer, Double>();
         ResultSet resultSet = null;
         try {
-            resultSet = this.plugin.getMySQL().getResult(
-                    "SELECT * " +
-                            "FROM Economy " +
-                            "WHERE Server='" + this.server + "' " +
-                            "ORDER BY Balance desc " +
-                            "LIMIT 10");
+            resultSet = this.plugin.getMySQL()
+                                   .getResult("SELECT * " + "FROM Economy " + "WHERE Server='" + this.server + "' " + "ORDER BY Balance desc " + "LIMIT 10");
             while (resultSet.next()) {
-                UUID uuid = UUID.fromString(resultSet.getString("UUID"));
+                var uuid = UUID.fromString(resultSet.getString("UUID"));
                 Double balance = Double.parseDouble(String.format("%.2f", resultSet.getDouble("Balance")).replace(",", "."));
                 topTen.put(Bukkit.getOfflinePlayer(uuid), balance);
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (resultSet != null) try {
-                if (!resultSet.isClosed())
-                    resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            if (resultSet != null)
+                try {
+                    if (!resultSet.isClosed())
+                        resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
         }
         return topTen;
     }

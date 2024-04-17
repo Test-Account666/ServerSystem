@@ -1,13 +1,12 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.TpaData;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TeleportRequestDenyCommand implements CommandExecutor {
+public class TeleportRequestDenyCommand implements CommandExecutorOverload {
     private final ServerSystem plugin;
 
     public TeleportRequestDenyCommand(ServerSystem plugin) {
@@ -15,34 +14,39 @@ public class TeleportRequestDenyCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (this.plugin.getPermissions().getCfg().getBoolean("Permissions.tpdeny.required"))
-            if (!this.plugin.getPermissions().hasPerm(cs, "tpdeny.permission")) {
-                cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().Perm("tpdeny.permission")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (this.plugin.getPermissions().getConfiguration().getBoolean("Permissions.tpdeny.required"))
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "tpdeny.permission")) {
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                          this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().getPermission("tpdeny.permission")));
                 return true;
             }
 
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+        if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
 
-        if (!this.plugin.getTpaDataMap().containsKey(cs)) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, null, "TpDeny.NoTpa"));
+        if (!this.plugin.getTpaDataMap().containsKey(commandSender)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "TpDeny.NoTpa"));
             return true;
         }
 
-        TpaData tpaData = this.plugin.getTpaDataMap().get(cs);
+        var tpaData = this.plugin.getTpaDataMap().get(commandSender);
 
         if (tpaData.getEnd() <= System.currentTimeMillis()) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, null, "TpDeny.NoTpa"));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "TpDeny.NoTpa"));
             return true;
         }
 
-        cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpDeny.Sender"));
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                  this.plugin.getMessages().getMessageWithStringTarget(commandLabel, command.getName(), commandSender, tpaData.getSender().getName(), "TpDeny.Sender"));
         if (tpaData.getSender().isOnline())
-            tpaData.getSender().getPlayer().sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpDeny.Target"));
-        this.plugin.getTpaDataMap().remove(cs);
+            tpaData.getSender()
+                   .getPlayer()
+                   .sendMessage(this.plugin.getMessages().getPrefix() +
+                                this.plugin.getMessages().getMessageWithStringTarget(commandLabel, command.getName(), commandSender, tpaData.getSender().getName(), "TpDeny.Target"));
+        this.plugin.getTpaDataMap().remove(commandSender);
         return true;
     }
 }

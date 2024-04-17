@@ -4,7 +4,6 @@ import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.Bukkit;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Scanner;
 import java.util.function.Consumer;
@@ -20,8 +19,10 @@ public class UpdateChecker {
 
     public void getVersion(final Consumer<String> consumer) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, () -> {
-            try (InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.resourceId).openStream(); Scanner scanner = new Scanner(inputStream)) {
-                if (scanner.hasNext()) consumer.accept(scanner.next());
+            try (var inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.resourceId).openStream();
+                 var scanner = new Scanner(inputStream)) {
+                if (scanner.hasNext())
+                    consumer.accept(scanner.next());
             } catch (IOException exception) {
                 this.plugin.error("Cannot look for updates: " + exception.getMessage());
             }

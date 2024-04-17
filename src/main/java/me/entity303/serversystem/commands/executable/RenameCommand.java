@@ -2,54 +2,58 @@ package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-public class RenameCommand extends MessageUtils implements CommandExecutor {
+public class RenameCommand extends CommandUtils implements CommandExecutorOverload {
 
     public RenameCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!this.isAllowed(cs, "rename")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("rename")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "rename")) {
+            var permission = this.plugin.getPermissions().getPermission("rename");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.getPrefix() + this.getOnlyPlayer());
-            return true;
-        }
-
-        if (args.length <= 0) {
-            cs.sendMessage(this.getPrefix() + this.getSyntax("Rename", label, cmd.getName(), cs, null));
+        if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
 
-        ((Player) cs).getInventory().getItemInHand();
-        if (((Player) cs).getInventory().getItemInHand().getType() == Material.AIR) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("Rename.NoItem", label, cmd.getName(), cs, null));
+        if (arguments.length == 0) {
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Rename"));
             return true;
         }
-        ItemStack handStack = ((Player) cs).getInventory().getItemInHand();
-        StringBuilder nameBuilder = new StringBuilder();
-        for (String arg : args) nameBuilder.append(arg).append(" ");
 
-        String name = ChatColor.translateAlternateColorCodes('&', nameBuilder.toString().trim());
+        ((Player) commandSender).getInventory().getItemInMainHand();
+        if (((Player) commandSender).getInventory().getItemInMainHand().getType() == Material.AIR) {
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Rename.NoItem"));
+            return true;
+        }
+        var handStack = ((Player) commandSender).getInventory().getItemInMainHand();
+        var nameBuilder = new StringBuilder();
+        for (var arg : arguments)
+            nameBuilder.append(arg).append(" ");
 
-        ItemMeta meta = handStack.getItemMeta();
+        var name = ChatColor.translateAlternateColorCodes('&', nameBuilder.toString().trim());
+
+        var meta = handStack.getItemMeta();
         meta.setDisplayName(name);
 
         handStack.setItemMeta(meta);
 
-        cs.sendMessage(this.getPrefix() + this.getMessage("Rename.Success", label, cmd.getName(), cs, null).replace("<NAME>", name));
+        
+        commandSender.sendMessage(
+                this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Rename.Success").replace("<NAME>", name));
         return true;
     }
 }

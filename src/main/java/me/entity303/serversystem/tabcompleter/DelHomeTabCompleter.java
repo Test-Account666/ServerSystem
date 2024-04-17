@@ -22,20 +22,23 @@ public class DelHomeTabCompleter implements TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!(cs instanceof Player)) return Collections.singletonList("");
+        if (!(cs instanceof Player))
+            return Collections.singletonList("");
 
         if (args.length == 1) {
-            File f = new File("plugins//ServerSystem//Homes", ((Player) cs).getUniqueId() + ".yml");
+            var f = new File("plugins//ServerSystem//Homes", ((Player) cs).getUniqueId() + ".yml");
             FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
-            if (!f.exists()) return Collections.singletonList("");
+            if (!f.exists())
+                return Collections.singletonList("");
             List<String> homes = new ArrayList<>(cfg.getConfigurationSection("Homes").getKeys(false));
 
-            if (homes.size() >= 1) {
+            if (!homes.isEmpty()) {
                 List<String> tabs = new ArrayList<>();
-                for (String home : homes)
-                    if (home.toLowerCase().startsWith(args[0].toLowerCase())) tabs.add(home.toUpperCase());
+                for (var home : homes)
+                    if (home.toLowerCase().startsWith(args[0].toLowerCase()))
+                        tabs.add(home.toUpperCase());
 
-                return tabs.size() > 0 ? tabs : homes;
+                return !tabs.isEmpty()? tabs : homes;
             }
         }
 

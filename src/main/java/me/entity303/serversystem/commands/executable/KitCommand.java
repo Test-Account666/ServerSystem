@@ -1,95 +1,103 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class KitCommand extends MessageUtils implements CommandExecutor {
+public class KitCommand extends CommandUtils implements CommandExecutorOverload {
 
     public KitCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (args.length == 0) {
-            cs.sendMessage(this.getPrefix() + this.getSyntax("Kit", label, cmd.getName(), cs, null));
-            return true;
-        }
-        if (args.length == 1) {
-
-            if (!(cs instanceof Player)) {
-                cs.sendMessage(this.getPrefix() + this.getSyntax("Kit", label, cmd.getName(), cs, null));
-                return true;
-            }
-
-            if (!this.plugin.getKitsManager().doesKitExist(args[0])) {
-                cs.sendMessage(this.getPrefix() + this.getMessage("Kit.DoesntExist", label, cmd.getName(), cs, null).replace("<KIT>", args[0].toUpperCase()));
-                return true;
-            }
-
-            if (!this.plugin.getKitsManager().isKitAllowed(cs, args[0], false)) {
-                cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("kit.self").replace("<KIT>", args[0].toLowerCase())));
-                return true;
-            }
-
-            if (this.plugin.getKitsManager().isKitDelayed(((Player) cs), args[0]) && !this.isAllowed(cs, "kit.bypassdelay", true)) {
-                String message = this.getMessage("Kit.OnDelay", label, cmd.getName(), cs, null).replace("<KIT>", args[0].toUpperCase());
-
-                long delay = this.plugin.getKitsManager().getPlayerLastDelay(((Player) cs).getUniqueId().toString(), args[0]) + this.plugin.getKitsManager().getKitDelay(args[0]);
-
-                if (message.contains("<MINUTES>")) {
-                    this.plugin.log("Found <MINUTES> tag in kit OnDelay message, this outdated, please go with the new <DATE> format!");
-                    long calc = delay - System.currentTimeMillis();
-                    double minutes = ((calc / 1000D) / 60D);
-                    cs.sendMessage(this.getPrefix() + this.getMessage("Kit.OnDelay", label, cmd.getName(), cs, null).replace("<KIT>", args[0].toUpperCase()).replace("<MINUTES>", new DecimalFormat("#.##").format(minutes)));
-                    return true;
-                }
-
-                SimpleDateFormat dateFormat = new SimpleDateFormat(this.getMessage("Kit.TimeFormat", label, cmd.getName(), cs, null));
-
-                Date date = new Date(delay);
-
-                cs.sendMessage(this.getPrefix() + this.getMessage("Kit.OnDelay", label, cmd.getName(), cs, null).replace("<KIT>", args[0].toUpperCase()).replace("<DATE>", dateFormat.format(date)));
-                return true;
-            }
-
-            this.plugin.getKitsManager().setDelay(((Player) cs).getUniqueId().toString(), args[0], System.currentTimeMillis());
-
-            this.plugin.getKitsManager().giveKit(((Player) cs), args[0]);
-            cs.sendMessage(this.getPrefix() + this.getMessage("Kit.Success.Self", label, cmd.getName(), cs, null).replace("<KIT>", args[0].toUpperCase()));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (arguments.length == 0) {
+            commandSender.sendMessage(
+                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Kit"));
             return true;
         }
 
-        String kitName = args[0];
+        if (arguments.length == 1) {
+            if (!(commandSender instanceof Player player)) {
+                commandSender.sendMessage(
+                        this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Kit"));
+                return true;
+            }
 
-        Player target = this.getPlayer(cs, args[1]);
+            this.GiveKit(player, arguments[0], commandSender, command, commandLabel, commandSender.getName());
+            return true;
+        }
 
+        var kitName = arguments[0];
+        var target = this.getPlayer(commandSender, arguments[1]);
+
+        this.GiveKit(target, kitName, commandSender, command, commandLabel, arguments[1]);
+        return true;
+    }
+
+    private void GiveKit(Player target, String kitName, CommandSender commandSender, Command command, String commandLabel, String targetName) {
         if (target == null) {
-            cs.sendMessage(this.getPrefix() + this.getNoTarget(args[1]));
-            return true;
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(targetName));
+            return;
         }
 
         if (!this.plugin.getKitsManager().doesKitExist(kitName)) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("Kit.DoesntExist", label, cmd.getName(), cs, target).replace("<KIT>", kitName.toUpperCase()));
-            return true;
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                         .getMessage(commandLabel, command, commandSender, target,
+                                                                                                     "Kit.DoesntExist")
+                                                                                         .replace("<KIT>", kitName.toUpperCase()));
+            return;
         }
 
-        if (!this.plugin.getKitsManager().isKitAllowed(cs, kitName, true)) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm(this.Perm("kit.others").replace("<KIT>", kitName.toLowerCase()))));
-            return true;
-        }
+        var others = target != commandSender;
+
+        if (!this.plugin.getKitsManager().isKitAllowed(commandSender, kitName, others))
+            return;
+
+        if (this.plugin.getKitsManager().isKitDelayed(target, kitName))
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "kit.bypassdelay", true)) {
+                var delay = this.plugin.getKitsManager().getPlayerLastDelay(target.getUniqueId().toString(), kitName) +
+                            this.plugin.getKitsManager().getKitDelay(kitName);
+
+                var dateFormat =
+                        new SimpleDateFormat(this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "Kit.TimeFormat"));
+                var date = new Date(delay);
+
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                             .getMessage(commandLabel, command, commandSender, target,
+                                                                                                         "Kit.OnDelay")
+                                                                                             .replace("<KIT>", kitName.toUpperCase())
+                                                                                             .replace("<DATE>", dateFormat.format(date)));
+                return;
+            }
 
         this.plugin.getKitsManager().giveKit(target, kitName);
-        cs.sendMessage(this.getPrefix() + this.getMessage("Kit.Success.Others.Sender", label, cmd.getName(), cs, target).replace("<KIT>", kitName.toUpperCase()));
-        target.sendMessage(this.getPrefix() + this.getMessage("Kit.Success.Others.Target", label, cmd.getName(), cs, target).replace("<KIT>", kitName.toUpperCase()));
-        return true;
+
+        if (!others) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                         .getMessage(commandLabel, command, commandSender, target,
+                                                                                                     "Kit.Success.Self")
+                                                                                         .replace("<KIT>", kitName.toUpperCase()));
+            return;
+        }
+
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                     .getMessage(commandLabel, command, commandSender, target,
+                                                                                                 "Kit.Success.Others.Sender")
+                                                                                     .replace("<KIT>", kitName.toUpperCase()));
+
+        target.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                              .getMessage(commandLabel, command, commandSender, target,
+                                                                                          "Kit.Success.Others.Target")
+                                                                              .replace("<KIT>", kitName.toUpperCase()));
     }
 }
+
+

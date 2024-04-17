@@ -14,46 +14,26 @@ import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Locale;
 
 public class DefaultConfigReader implements ConfigReader {
+    private final ServerSystem plugin;
     private final File file;
     private final FileConfiguration cfg;
     private FileConfiguration originalCfg = null;
     private DefaultConfigReader newReader = null;
 
     public DefaultConfigReader(File file, ServerSystem plugin) {
+        this.plugin = plugin;
         this.file = file;
         this.cfg = YamlConfiguration.loadConfiguration(file);
-        if (plugin.getResource(file.getName()) != null)
-            this.originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource(file.getName())));
-        else if (file.getName().equalsIgnoreCase("messages.yml"))
-            if (plugin.getResource("messages_" + this.cfg.getString("language") + ".yml") != null)
-                this.originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("messages_" + this.cfg.getString("language") + ".yml")));
-            else {
-                this.originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("messages_en.yml")));
-                plugin.error("Couldn't find default message.yml for language'" + this.cfg.getString("language") + "'!");
-                plugin.log("Using english...");
-            }
+        this.FetchInternalConfig();
 
-        if (!this.validateConfig()) {
-            plugin.warn("One or more errors with your '" + file.getName() + "' file were found and fixed, a backup was made before doing this!");
-            try {
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm-ss");
-                LocalDateTime now = LocalDateTime.now();
-                String date = dtf.format(now);
+        if (this.validateConfig())
+            return;
 
-                FileUtils.copyFile(file, new File("plugins" + File.separator + "ServerSystem", file.getName() + ".backup-" + date));
-            } catch (IOException e) {
-                e.printStackTrace();
-                plugin.error("An error occurred while backing up, changes only saved internally/temporary!");
-                return;
-            }
-
-            this.save();
-
-            this.reload();
-        }
+        this.CreateBackupAndSave();
     }
 
     public static ConfigReader loadConfiguration(File file) {
@@ -64,53 +44,76 @@ public class DefaultConfigReader implements ConfigReader {
         return new DefaultConfigReader(file, serverSystem);
     }
 
+    private void CreateBackupAndSave() {
+        this.plugin.warn("One or more errors with your '" + this.file.getName() + "' file were found and fixed, a backup was made before doing this!");
+        try {
+            var dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm-ss");
+            var now = LocalDateTime.now();
+            var date = dtf.format(now);
+
+            FileUtils.copyFile(this.file, new File("plugins" + File.separator + "ServerSystem", this.file.getName() + ".backup-" + date));
+        } catch (IOException e) {
+            e.printStackTrace();
+            this.plugin.error("An error occurred while backing up, changes only saved internally/temporary!");
+            return;
+        }
+
+        this.save();
+
+        this.reload();
+    }
+
+    private void FetchInternalConfig() {
+        if (this.plugin.getResource(this.file.getName()) != null)
+            this.originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(this.plugin.getResource(this.file.getName())));
+        else if (this.file.getName().equalsIgnoreCase("messages.yml"))
+            if (this.plugin.getResource("messages_" + this.cfg.getString("language") + ".yml") != null)
+                this.originalCfg = YamlConfiguration.loadConfiguration(
+                        new InputStreamReader(this.plugin.getResource("messages_" + this.cfg.getString("language") + ".yml")));
+            else {
+                this.originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(this.plugin.getResource("messages_en.yml")));
+                this.plugin.error("Couldn't find default message.yml for language'" + this.cfg.getString("language") + "'!");
+                this.plugin.log("Using english...");
+            }
+    }
+
     protected boolean validateConfig() {
-        boolean fixed = false;
-        for (String keys : this.originalCfg.getConfigurationSection("").getKeys(true))
-            if (!keys.toLowerCase(Locale.ROOT).contains("example"))
-                if (!this.cfg.isSet(keys)) {
-                    ServerSystem.getPlugin(ServerSystem.class).warn("Fixing missing config entry '" + keys + "' in file '" + this.file.getName() + "'");
-                    this.cfg.set(keys, this.originalCfg.get(keys));
-                    fixed = true;
-                } else {
-                    Object object = this.cfg.get(keys);
-                    Object supposedToBeObject = this.originalCfg.get(keys);
-                    if (supposedToBeObject instanceof String) if (!(object instanceof String)) {
-                        ServerSystem.getPlugin(ServerSystem.class).warn("Fixing invalid config entry '" + keys + "' in file '" + this.file.getName() + "' (Should be a string, but isn't)");
-                        this.cfg.set(keys, supposedToBeObject);
-                        fixed = true;
-                    }
+        var fixed = false;
 
-                    if (supposedToBeObject instanceof Integer) if (!(object instanceof Integer)) {
-                        ServerSystem.getPlugin(ServerSystem.class).warn("Fixing invalid config entry '" + keys + "' in file '" + this.file.getName() + "' (Should be an integer, but isn't)");
-                        this.cfg.set(keys, supposedToBeObject);
-                        fixed = true;
-                    }
+        var typeWarnings = new HashMap<Class<?>, String>();
+        typeWarnings.put(String.class, "Should be a string, but isn't");
+        typeWarnings.put(Integer.class, "Should be an integer, but isn't");
+        typeWarnings.put(Long.class, "Should be a long, but isn't");
+        typeWarnings.put(Boolean.class, "Should be a boolean, but isn't");
+        typeWarnings.put(Double.class, "Should be a double, but isn't");
+        typeWarnings.put(ItemStack.class, "Should be an ItemStack, but isn't");
 
-                    if (supposedToBeObject instanceof Long) if (!(object instanceof Long)) {
-                        ServerSystem.getPlugin(ServerSystem.class).warn("Fixing invalid config entry '" + keys + "' in file '" + this.file.getName() + "' (Should be a long, but isn't)");
-                        this.cfg.set(keys, supposedToBeObject);
-                        fixed = true;
-                    }
+        for (var key : this.originalCfg.getConfigurationSection("").getKeys(true)) {
+            if (key.toLowerCase(Locale.ROOT).contains("example"))
+                continue;
 
-                    if (supposedToBeObject instanceof Boolean) if (!(object instanceof Boolean)) {
-                        ServerSystem.getPlugin(ServerSystem.class).warn("Fixing invalid config entry '" + keys + "' in file '" + this.file.getName() + "' (Should be a boolean, but isn't)");
-                        this.cfg.set(keys, supposedToBeObject);
-                        fixed = true;
-                    }
+            if (!this.cfg.isSet(key)) {
+                this.plugin.warn("Fixing missing config entry '" + key + "' in file '" + this.file.getName() + "'");
+                this.cfg.set(key, this.originalCfg.get(key));
+                fixed = true;
+                continue;
+            }
 
-                    if (supposedToBeObject instanceof Double) if (!(object instanceof Double)) {
-                        ServerSystem.getPlugin(ServerSystem.class).warn("Fixing invalid config entry '" + keys + "' in file '" + this.file.getName() + "' (Should be a double, but isn't)");
-                        this.cfg.set(keys, supposedToBeObject);
-                        fixed = true;
-                    }
+            var object = this.cfg.get(key);
+            var supposedToBeObject = this.originalCfg.get(key);
+            var objectType = object.getClass();
+            var supposedType = supposedToBeObject.getClass();
 
-                    if (supposedToBeObject instanceof ItemStack) if (!(object instanceof ItemStack)) {
-                        ServerSystem.getPlugin(ServerSystem.class).warn("Fixing invalid config entry '" + keys + "' in file '" + this.file.getName() + "' (Should be an ItemStack, but isn't)");
-                        this.cfg.set(keys, supposedToBeObject);
-                        fixed = true;
-                    }
-                }
+            if (objectType.isAssignableFrom(supposedType))
+                continue;
+
+            var warningMessage = typeWarnings.get(supposedType);
+            if (warningMessage != null) {
+                this.plugin.warn("Fixing invalid config entry '" + key + "' in file '" + this.file.getName() + "' (" + warningMessage + ")");
+                this.cfg.set(key, supposedToBeObject);
+                fixed = true;
+            }
+        }
         return !fixed;
     }
 
@@ -233,23 +236,6 @@ public class DefaultConfigReader implements ConfigReader {
     }
 
     @Override
-    public boolean isConfigurationSection(String path) {
-        if (this.newReader != null)
-            return this.newReader.isConfigurationSection(path);
-        return this.cfg.isConfigurationSection(path);
-    }
-
-    @Override
-    public ConfigurationSection getConfigurationSection(String path) {
-        if (this.newReader != null)
-            return this.newReader.getConfigurationSection(path);
-
-        this.setIfNotSet(path);
-
-        return this.cfg.getConfigurationSection(path);
-    }
-
-    @Override
     public void save() {
         if (this.newReader != null) {
             this.newReader.save();
@@ -286,72 +272,93 @@ public class DefaultConfigReader implements ConfigReader {
         }
     }
 
+    @Override
+    public ConfigurationSection getConfigurationSection(String path) {
+        if (this.newReader != null)
+            return this.newReader.getConfigurationSection(path);
+
+        this.setIfNotSet(path);
+
+        return this.cfg.getConfigurationSection(path);
+    }
+
+    @Override
+    public boolean isConfigurationSection(String path) {
+        if (this.newReader != null)
+            return this.newReader.isConfigurationSection(path);
+        return this.cfg.isConfigurationSection(path);
+    }
+
     private void setIfNotSet(String path) {
         if (this.originalCfg == null)
             return;
 
-        if (!this.cfg.isSet(path))
-            if (this.originalCfg.isSet(path)) {
-                String partialPath = "";
-                int periods = (int) Arrays.stream(path.split("")).filter(s -> s.equalsIgnoreCase(".")).count();
-                for (int i = 0; i <= periods; i++) {
-                    String internalPath = path;
-                    for (int i1 = 0; i1 < i; i1++)
-                        internalPath = internalPath.substring(0, internalPath.lastIndexOf('.'));
-                    if (this.cfg.isSet(internalPath)) {
-                        partialPath = internalPath;
-                        break;
-                    }
-                }
+        if (this.cfg.isSet(path))
+            return;
 
-                if (partialPath.endsWith("."))
-                    partialPath = partialPath.substring(0, partialPath.length() - 1);
+        if (!this.originalCfg.isSet(path))
+            return;
 
-                if (partialPath.startsWith("."))
-                    partialPath = partialPath.substring(1);
-
-                if (partialPath.equalsIgnoreCase("")) {
-                    this.cfg.set(path, this.originalCfg.get(path));
-                    try {
-                        this.cfg.save(this.file);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        this.cfg.load(this.file);
-                    } catch (IOException | InvalidConfigurationException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    ConfigurationSection section = this.cfg.getConfigurationSection(partialPath);
-
-                    if (section == null) {
-                        this.cfg.set(path, this.originalCfg.get(path));
-                        try {
-                            this.cfg.save(this.file);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        try {
-                            this.cfg.load(this.file);
-                        } catch (IOException | InvalidConfigurationException e) {
-                            e.printStackTrace();
-                        }
-                        return;
-                    }
-
-                    section.set(partialPath, this.originalCfg.get(path));
-                    try {
-                        this.cfg.save(this.file);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        this.cfg.load(this.file);
-                    } catch (IOException | InvalidConfigurationException e) {
-                        e.printStackTrace();
-                    }
-                }
+        var partialPath = "";
+        var periods = (int) Arrays.stream(path.split("")).filter(s -> s.equalsIgnoreCase(".")).count();
+        for (var i = 0; i <= periods; i++) {
+            var internalPath = path;
+            for (var i1 = 0; i1 < i; i1++)
+                internalPath = internalPath.substring(0, internalPath.lastIndexOf('.'));
+            if (this.cfg.isSet(internalPath)) {
+                partialPath = internalPath;
+                break;
             }
+        }
+
+        if (partialPath.endsWith("."))
+            partialPath = partialPath.substring(0, partialPath.length() - 1);
+
+        if (partialPath.startsWith("."))
+            partialPath = partialPath.substring(1);
+
+        if (partialPath.equalsIgnoreCase("")) {
+            this.cfg.set(path, this.originalCfg.get(path));
+            try {
+                this.cfg.save(this.file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                this.cfg.load(this.file);
+            } catch (IOException | InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
+        var section = this.cfg.getConfigurationSection(partialPath);
+
+        if (section == null) {
+            this.cfg.set(path, this.originalCfg.get(path));
+            try {
+                this.cfg.save(this.file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                this.cfg.load(this.file);
+            } catch (IOException | InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
+        section.set(partialPath, this.originalCfg.get(path));
+        try {
+            this.cfg.save(this.file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            this.cfg.load(this.file);
+        } catch (IOException | InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
     }
 }

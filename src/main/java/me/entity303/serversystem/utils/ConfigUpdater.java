@@ -1,10 +1,7 @@
 package me.entity303.serversystem.utils;
 
-import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.config.ConfigReader;
 import me.entity303.serversystem.config.NonValidatingConfigReader;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.jsoup.Connection;
+import me.entity303.serversystem.main.ServerSystem;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,21 +13,22 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class ConfigUpdater extends MessageUtils {
+public class ConfigUpdater extends CommandUtils {
 
     public ConfigUpdater(ServerSystem plugin) {
         super(plugin);
     }
 
-    public void updateConfig(String version) throws IOException, InvalidConfigurationException {
-        if (version.equalsIgnoreCase(this.plugin.CONFIG_VERSION)) return;
+    public void updateConfig(String version) {
+        if (version.equalsIgnoreCase(this.plugin.CONFIG_VERSION))
+            return;
 
         this.plugin.log("Updating configs!");
 
-        File serverSystemFolder = new File("plugins//ServerSystem");
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm-ss");
-        LocalDateTime now = LocalDateTime.now();
-        String date = dtf.format(now);
+        var serverSystemFolder = new File("plugins//ServerSystem");
+        var dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm-ss");
+        var now = LocalDateTime.now();
+        var date = dtf.format(now);
 
         try {
             this.copyFolder(serverSystemFolder.toPath(), new File("plugins//ServerSystem-Backups//ServerSystem-Backup-" + date).toPath(), date);
@@ -41,17 +39,17 @@ public class ConfigUpdater extends MessageUtils {
         if (version.equalsIgnoreCase("2.5")) {
             this.plugin.log("Updating config version 2.5 to 2.6...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
 
             this.plugin.getConfigReader().set("version", "2.6");
 
@@ -151,17 +149,17 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("2.6")) {
             this.plugin.log("Updating config version 2.6 to 2.7...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
 
             this.plugin.getConfigReader().set("version", "2.7");
 
@@ -246,17 +244,17 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("2.7")) {
             this.plugin.log("Updating config version 2.7 to 2.8...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
 
             this.plugin.getConfigReader().set("version", "2.8");
 
@@ -366,17 +364,17 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("2.8")) {
             this.plugin.log("Updating config version 2.8 to 2.9...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
 
             this.plugin.getConfigReader().set("version", "2.9");
 
@@ -454,17 +452,17 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("2.9")) {
             this.plugin.log("Updating config version 2.9 to 3.0...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
 
             this.plugin.getConfigReader().set("version", "3.0");
 
@@ -524,17 +522,17 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("3.0")) {
             this.plugin.log("Updating config version 3.0 to 3.1...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
 
             this.plugin.getConfigReader().set("version", "3.1");
 
@@ -542,31 +540,43 @@ public class ConfigUpdater extends MessageUtils {
             permissionConfig.set("Permissions.convertfromessentials", "server.convertfromessentials");
 
 
-            msgDEConfig.set("Messages.Normal.ConvertFromEssentials.WarnNotTested", "&cWarnung!! &cDieses Feature wurde &4nicht getestet&c! &4Erwarte Bugs/Fehler/Sonstige Probleme! &cWarnung!!<BREAK>&7Solltest du dieses Feature dennoch nutzen wollen, gib den Befehl einfach noch einmal ein!");
+            msgDEConfig.set("Messages.Normal.ConvertFromEssentials.WarnNotTested",
+                            "&cWarnung!! &cDieses Feature wurde &4nicht getestet&c! &4Erwarte Bugs/Fehler/Sonstige Probleme! &cWarnung!!<BREAK>&7Solltest du dieses Feature dennoch nutzen wollen, gib den Befehl einfach noch einmal ein!");
             msgDEConfig.set("Messages.Normal.ConvertFromEssentials.Start", "Starte Konvertierung von Essentials...");
-            msgDEConfig.set("Messages.Normal.ConvertFromEssentials.Failed.NoDirectory", "&cFehler bei der Konvertierung! Es scheint als gäbe es keine Essentials Daten!");
-            msgDEConfig.set("Messages.Normal.ConvertFromEssentials.Failed.Unknown", "&cFehler bei der Konvertierung! Siehe Konsole für mehr Daten! Oder schicke folgenden Fehler: &4<TARGET> &cund die Fehlermeldung der Konsole in den Support Discord (&4https://discord.gg/dBhfCzdZxq)");
+            msgDEConfig.set("Messages.Normal.ConvertFromEssentials.Failed.NoDirectory",
+                            "&cFehler bei der Konvertierung! Es scheint als gäbe es keine Essentials Daten!");
+            msgDEConfig.set("Messages.Normal.ConvertFromEssentials.Failed.Unknown",
+                            "&cFehler bei der Konvertierung! Siehe Konsole für mehr Daten! Oder schicke folgenden Fehler: &4<TARGET> &cund die Fehlermeldung der Konsole in den Support Discord (&4https://discord.gg/dBhfCzdZxq)");
             msgDEConfig.set("Messages.Normal.ConvertFromEssentials.Finished", "Die Konvertierung wurde beendet!");
 
 
-            msgENConfig.set("Messages.Normal.ConvertFromEssentials.WarnNotTested", "&cWarning!! &cThis feature is &4not tested&c! &4Expect Bugs/Errors/Misc problems! &cWarning!!<BREAK>&7If you still want to use this feature, just type this command again!");
+            msgENConfig.set("Messages.Normal.ConvertFromEssentials.WarnNotTested",
+                            "&cWarning!! &cThis feature is &4not tested&c! &4Expect Bugs/Errors/Misc problems! &cWarning!!<BREAK>&7If you still want to use this feature, just type this command again!");
             msgENConfig.set("Messages.Normal.ConvertFromEssentials.Start", "Starting convertion from Essentials...");
-            msgENConfig.set("Messages.Normal.ConvertFromEssentials.Failed.NoDirectory", "&cError while converting! It seems like there is now data from Essentials!");
-            msgENConfig.set("Messages.Normal.ConvertFromEssentials.Failed.Unknown", "&cError while converting! Look console for more information! Or send this error: &4<TARGET> &cwith the console report in the support discord (&4https://discord.gg/dBhfCzdZxq)");
+            msgENConfig.set("Messages.Normal.ConvertFromEssentials.Failed.NoDirectory",
+                            "&cError while converting! It seems like there is now data from Essentials!");
+            msgENConfig.set("Messages.Normal.ConvertFromEssentials.Failed.Unknown",
+                            "&cError while converting! Look console for more information! Or send this error: &4<TARGET> &cwith the console report in the support discord (&4https://discord.gg/dBhfCzdZxq)");
             msgENConfig.set("Messages.Normal.ConvertFromEssentials.Finished", "Convertion finished!");
 
 
             if (msgConfig.getString("language").equalsIgnoreCase("de")) {
-                msgConfig.set("Messages.Normal.ConvertFromEssentials.WarnNotTested", "&cWarnung!! &cDieses Feature wurde &4nicht getestet&c! &4Erwarte Bugs/Fehler/Sonstige Probleme! &cWarnung!!<BREAK>&7Solltest du dieses Feature dennoch nutzen wollen, gib den Befehl einfach noch einmal ein!");
+                msgConfig.set("Messages.Normal.ConvertFromEssentials.WarnNotTested",
+                              "&cWarnung!! &cDieses Feature wurde &4nicht getestet&c! &4Erwarte Bugs/Fehler/Sonstige Probleme! &cWarnung!!<BREAK>&7Solltest du dieses Feature dennoch nutzen wollen, gib den Befehl einfach noch einmal ein!");
                 msgConfig.set("Messages.Normal.ConvertFromEssentials.Start", "Starte Konvertierung von Essentials...");
-                msgConfig.set("Messages.Normal.ConvertFromEssentials.Failed.NoDirectory", "&cFehler bei der Konvertierung! Es scheint als gäbe es keine Essentials Daten!");
-                msgConfig.set("Messages.Normal.ConvertFromEssentials.Failed.Unknown", "&cFehler bei der Konvertierung! Siehe Konsole für mehr Daten! Oder schicke folgenden Fehler: &4<TARGET> &cund die Fehlermeldung der Konsole in den Support Discord (&4https://discord.gg/dBhfCzdZxq)");
+                msgConfig.set("Messages.Normal.ConvertFromEssentials.Failed.NoDirectory",
+                              "&cFehler bei der Konvertierung! Es scheint als gäbe es keine Essentials Daten!");
+                msgConfig.set("Messages.Normal.ConvertFromEssentials.Failed.Unknown",
+                              "&cFehler bei der Konvertierung! Siehe Konsole für mehr Daten! Oder schicke folgenden Fehler: &4<TARGET> &cund die Fehlermeldung der Konsole in den Support Discord (&4https://discord.gg/dBhfCzdZxq)");
                 msgConfig.set("Messages.Normal.ConvertFromEssentials.Finished", "Die Konvertierung wurde beendet!");
             } else {
-                msgConfig.set("Messages.Normal.ConvertFromEssentials.WarnNotTested", "&cWarning!! &cThis feature is &4not tested&c! &4Expect Bugs/Errors/Misc problems! &cWarning!!<BREAK>&7If you still want to use this feature, just type this command again!");
+                msgConfig.set("Messages.Normal.ConvertFromEssentials.WarnNotTested",
+                              "&cWarning!! &cThis feature is &4not tested&c! &4Expect Bugs/Errors/Misc problems! &cWarning!!<BREAK>&7If you still want to use this feature, just type this command again!");
                 msgConfig.set("Messages.Normal.ConvertFromEssentials.Start", "Starting convertion from Essentials...");
-                msgConfig.set("Messages.Normal.ConvertFromEssentials.Failed.NoDirectory", "&cError while converting! It seems like there is now data from Essentials!");
-                msgConfig.set("Messages.Normal.ConvertFromEssentials.Failed.Unknown", "&cError while converting! Look console for more information! Or send this error: &4<TARGET> &cwith the console report in the support discord (&4https://discord.gg/dBhfCzdZxq)");
+                msgConfig.set("Messages.Normal.ConvertFromEssentials.Failed.NoDirectory",
+                              "&cError while converting! It seems like there is now data from Essentials!");
+                msgConfig.set("Messages.Normal.ConvertFromEssentials.Failed.Unknown",
+                              "&cError while converting! Look console for more information! Or send this error: &4<TARGET> &cwith the console report in the support discord (&4https://discord.gg/dBhfCzdZxq)");
                 msgConfig.set("Messages.Normal.ConvertFromEssentials.Finished", "Convertion finished!");
             }
 
@@ -600,17 +610,17 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("3.1")) {
             this.plugin.log("Updating config version 3.1 to 3.2...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
 
             this.plugin.getConfigReader().set("version", "3.2");
 
@@ -648,17 +658,17 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("3.2")) {
             this.plugin.log("Updating config version 3.2 to 3.3...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
 
             this.plugin.getConfigReader().set("version", "3.3");
 
@@ -699,17 +709,17 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("3.3")) {
             this.plugin.log("Updating config version 3.3 to 3.4...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
 
             this.plugin.getConfigReader().set("version", "3.4");
 
@@ -766,19 +776,19 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("3.4")) {
             this.plugin.log("Updating config version 3.4 to 3.5...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
             this.plugin.getConfigReader().set("version", "3.5");
 
@@ -842,21 +852,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("3.5")) {
             this.plugin.log("Updating config version 3.5 to 3.6...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
             this.plugin.getConfigReader().set("version", "3.6");
 
@@ -866,23 +876,26 @@ public class ConfigUpdater extends MessageUtils {
 
             msgDEConfig.set("Messages.Normal.Home.InstantTeleporting", "Du wurdest zum Home &8<HOME> &7teleportiert!");
 
-            msgDEConfig.set("Messages.Misc.ServerFull", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Der Server ist voll!<BREAK>&cUm trotzdem beitreten zu können, benötigst du die Permission &4<PERMISSION>&c!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            msgDEConfig.set("Messages.Misc.ServerFull",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Der Server ist voll!<BREAK>&cUm trotzdem beitreten zu können, benötigst du die Permission &4<PERMISSION>&c!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
 
 
             msgENConfig.set("Messages.Normal.Home.InstantTeleporting", "You were teleported to your home &8<HOME>&7!");
 
-            msgENConfig.set("Messages.Misc.ServerFull", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4The Server is full!<BREAK>&cTo join anyway, you need the permission &4<PERMISSION>&c!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            msgENConfig.set("Messages.Misc.ServerFull",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4The Server is full!<BREAK>&cTo join anyway, you need the permission &4<PERMISSION>&c!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
 
 
             if (msgConfig.getString("language").equalsIgnoreCase("de")) {
                 msgConfig.set("Messages.Normal.Home.InstantTeleporting", "Du wurdest zum Home &8<HOME> &7teleportiert!");
 
-                msgConfig.set("Messages.Misc.ServerFull", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Der Server ist voll!<BREAK>&cUm trotzdem beitreten zu können, benötigst du die Permission &4<PERMISSION>&c!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
-            } else if (msgConfig.getString("language").equalsIgnoreCase("cz")) {
-            } else {
+                msgConfig.set("Messages.Misc.ServerFull",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Der Server ist voll!<BREAK>&cUm trotzdem beitreten zu können, benötigst du die Permission &4<PERMISSION>&c!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            } else if (!msgConfig.getString("language").equalsIgnoreCase("cz")) {
                 msgConfig.set("Messages.Normal.Home.InstantTeleporting", "You were teleported to your home &8<HOME>&7!");
 
-                msgConfig.set("Messages.Misc.ServerFull", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4The Server is full!<BREAK>&cTo join anyway, you need the permission &4<PERMISSION>&c!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Misc.ServerFull",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4The Server is full!<BREAK>&cTo join anyway, you need the permission &4<PERMISSION>&c!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
             }
 
 
@@ -914,21 +927,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("3.6")) {
             this.plugin.log("Updating config version 3.6 to 3.7...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
             this.plugin.getConfigReader().set("version", "3.7");
 
@@ -1054,21 +1067,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("3.7")) {
             this.plugin.log("Updating config version 3.7 to 3.8...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
 
             this.plugin.getConfigReader().set("kit.giveOnFirstSpawn", false);
@@ -1082,7 +1095,8 @@ public class ConfigUpdater extends MessageUtils {
 
 
             msgDEConfig.set("Messages.Normal.ServerSystem.Update.Checking", "Suche nach Updates...");
-            msgDEConfig.set("Messages.Normal.ServerSystem.Update.NewVersion", "Eine neue Version wurde gefunden (<VERSION>)! Starte den Server neu, um das Update zu installieren!");
+            msgDEConfig.set("Messages.Normal.ServerSystem.Update.NewVersion",
+                            "Eine neue Version wurde gefunden (<VERSION>)! Starte den Server neu, um das Update zu installieren!");
             msgDEConfig.set("Messages.Normal.ServerSystem.Update.LatestVersion", "Du nutzt die neueste Version von ServerSystem!");
 
 
@@ -1098,7 +1112,8 @@ public class ConfigUpdater extends MessageUtils {
 
             if (msgConfig.getString("language").equalsIgnoreCase("de")) {
                 msgConfig.set("Messages.Normal.ServerSystem.Update.Checking", "Suche nach Updates...");
-                msgConfig.set("Messages.Normal.ServerSystem.Update.NewVersion", "Eine neue Version wurde gefunden (<VERSION>)! Starte den Server neu, um das Update zu installieren!");
+                msgConfig.set("Messages.Normal.ServerSystem.Update.NewVersion",
+                              "Eine neue Version wurde gefunden (<VERSION>)! Starte den Server neu, um das Update zu installieren!");
                 msgConfig.set("Messages.Normal.ServerSystem.Update.LatestVersion", "Du nutzt die neueste Version von ServerSystem!");
             } else if (msgConfig.getString("language").equalsIgnoreCase("cz")) {
                 msgConfig.set("Messages.Normal.ServerSystem.Update.Checking", "Hledám updaty...");
@@ -1141,21 +1156,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("3.8")) {
             this.plugin.log("Updating config version 3.8 to 3.9...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
 
             this.plugin.getConfigReader().set("version", "3.9");
@@ -1191,8 +1206,10 @@ public class ConfigUpdater extends MessageUtils {
             msgDEConfig.set("Messages.Normal.Weather.RainStarted", "Du hast den Regen in der Welt &8<WORLD> &7gestartet!");
             msgDEConfig.set("Messages.Normal.Weather.NoWorld", "&cDie Welt &4<WORLD> &cexistiert nicht!");
 
-            msgDEConfig.set("Messages.Normal.KickedByHigher.Admin", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDu wurdest gekickt, um einem Admin Platz zu machen!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
-            msgDEConfig.set("Messages.Normal.KickedByHigher.Premium", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDu wurdest gekickt, um einem Premium Spieler Platz zu machen!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            msgDEConfig.set("Messages.Normal.KickedByHigher.Admin",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDu wurdest gekickt, um einem Admin Platz zu machen!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            msgDEConfig.set("Messages.Normal.KickedByHigher.Premium",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDu wurdest gekickt, um einem Premium Spieler Platz zu machen!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
 
             msgDEConfig.set("Messages.Normal.Reply", "&cDu hast bisher noch mit niemanden geschrieben!");
 
@@ -1208,8 +1225,10 @@ public class ConfigUpdater extends MessageUtils {
             msgENConfig.set("Messages.Normal.Weather.RainStarted", "You started the rain in world &8<WORLD>&7!");
             msgENConfig.set("Messages.Normal.Weather.NoWorld", "&cThe world &4<WORLD> &cdoes not exist!");
 
-            msgENConfig.set("Messages.Normal.KickedByHigher.Admin", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Reason: &cBecause an admin needed to join, you were kicked!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
-            msgENConfig.set("Messages.Normal.KickedByHigher.Premium", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Reason: &cBecause a premium player needed to join, you were kicked!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            msgENConfig.set("Messages.Normal.KickedByHigher.Admin",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Reason: &cBecause an admin needed to join, you were kicked!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            msgENConfig.set("Messages.Normal.KickedByHigher.Premium",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Reason: &cBecause a premium player needed to join, you were kicked!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
 
             msgENConfig.set("Messages.Normal.Reply", "&cYou did not pm someone, yet");
 
@@ -1225,8 +1244,10 @@ public class ConfigUpdater extends MessageUtils {
             msgCZConfig.set("Messages.Normal.Weather.RainStarted", "Zapnul si déšť ve světě &8<WORLD>&7!");
             msgCZConfig.set("Messages.Normal.Weather.NoWorld", "&cSvět &4<WORLD> &cneexistuje!");
 
-            msgCZConfig.set("Messages.Normal.KickedByHigher.Admin", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl jsi vyhozen ze serveru!<BREAK>&6Důvod: &cProtože se připojil admin, byl si vyhozen!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
-            msgCZConfig.set("Messages.Normal.KickedByHigher.Premium", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl jsi vyhozen ze serveru!<BREAK>&6Důvod: &cProtože se připojilo premium, byl si vyhozen!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            msgCZConfig.set("Messages.Normal.KickedByHigher.Admin",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl jsi vyhozen ze serveru!<BREAK>&6Důvod: &cProtože se připojil admin, byl si vyhozen!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            msgCZConfig.set("Messages.Normal.KickedByHigher.Premium",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl jsi vyhozen ze serveru!<BREAK>&6Důvod: &cProtože se připojilo premium, byl si vyhozen!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
 
             msgCZConfig.set("Messages.Normal.Reply", "&cJeště si nikoho neoznačil");
 
@@ -1243,8 +1264,10 @@ public class ConfigUpdater extends MessageUtils {
                 msgConfig.set("Messages.Normal.Weather.RainStarted", "Du hast den Regen in der Welt &8<WORLD> &7gestartet!");
                 msgConfig.set("Messages.Normal.Weather.NoWorld", "&cDie Welt &4<WORLD> &cexistiert nicht!");
 
-                msgConfig.set("Messages.Normal.KickedByHigher.Admin", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDu wurdest gekickt, um einem Admin Platz zu machen!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
-                msgConfig.set("Messages.Normal.KickedByHigher.Premium", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDu wurdest gekickt, um einem Premium Spieler Platz zu machen!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.KickedByHigher.Admin",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDu wurdest gekickt, um einem Admin Platz zu machen!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.KickedByHigher.Premium",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDu wurdest gekickt, um einem Premium Spieler Platz zu machen!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
 
                 msgConfig.set("Messages.Normal.Reply", "&cDu hast bisher noch mit niemanden geschrieben!");
 
@@ -1260,8 +1283,10 @@ public class ConfigUpdater extends MessageUtils {
                 msgConfig.set("Messages.Normal.Weather.RainStarted", "Zapnul si déšť ve světě &8<WORLD>&7!");
                 msgConfig.set("Messages.Normal.Weather.NoWorld", "&cSvět &4<WORLD> &cneexistuje!");
 
-                msgConfig.set("Messages.Normal.KickedByHigher.Admin", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl jsi vyhozen ze serveru!<BREAK>&6Důvod: &cProtože se připojil admin, byl si vyhozen!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
-                msgConfig.set("Messages.Normal.KickedByHigher.Premium", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl jsi vyhozen ze serveru!<BREAK>&6Důvod: &cProtože se připojilo premium, byl si vyhozen!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.KickedByHigher.Admin",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl jsi vyhozen ze serveru!<BREAK>&6Důvod: &cProtože se připojil admin, byl si vyhozen!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.KickedByHigher.Premium",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl jsi vyhozen ze serveru!<BREAK>&6Důvod: &cProtože se připojilo premium, byl si vyhozen!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
 
                 msgConfig.set("Messages.Normal.Reply", "&cJeště si nikoho neoznačil");
             } else {
@@ -1276,8 +1301,10 @@ public class ConfigUpdater extends MessageUtils {
                 msgConfig.set("Messages.Normal.Weather.RainStarted", "You started the rain in world &8<WORLD>&7!");
                 msgConfig.set("Messages.Normal.Weather.NoWorld", "&cThe world &4<WORLD> &cdoes not exist!");
 
-                msgConfig.set("Messages.Normal.KickedByHigher.Admin", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Reason: &cBecause an admin needed to join, you were kicked!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
-                msgConfig.set("Messages.Normal.KickedByHigher.Premium", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Reason: &cBecause a premium player needed to join, you were kicked!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.KickedByHigher.Admin",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Reason: &cBecause an admin needed to join, you were kicked!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.KickedByHigher.Premium",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Reason: &cBecause a premium player needed to join, you were kicked!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
 
                 msgConfig.set("Messages.Normal.Reply", "&cYou did not pm someone, yet");
             }
@@ -1313,21 +1340,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("3.9")) {
             this.plugin.log("Updating config version 3.9 to 4.0...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
 
             this.plugin.getConfigReader().set("version", "4.0");
@@ -1396,21 +1423,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("4.0")) {
             this.plugin.log("Updating config version 4.0 to 4.1...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
 
             this.plugin.getConfigReader().set("version", "4.1");
@@ -1420,21 +1447,27 @@ public class ConfigUpdater extends MessageUtils {
             permissionConfig.set("Permissions.baltop.permission", "server.baltop");
 
 
-            msgDEConfig.set("Messages.Normal.BalTop", "&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]<BREAK>&61.<FIRST><BREAK>&62.<SECOND><BREAK>&63.<THIRD><BREAK>&64.<FOURTH><BREAK>&65.<FIFTH><BREAK>&66.<SIXTH><BREAK>&67.<SEVENTH><BREAK>&68.<EIGHTH><BREAK>&69.<NINTH><BREAK>&610.<TENTH><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]");
+            msgDEConfig.set("Messages.Normal.BalTop",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]<BREAK>&61.<FIRST><BREAK>&62.<SECOND><BREAK>&63.<THIRD><BREAK>&64.<FOURTH><BREAK>&65.<FIFTH><BREAK>&66.<SIXTH><BREAK>&67.<SEVENTH><BREAK>&68.<EIGHTH><BREAK>&69.<NINTH><BREAK>&610.<TENTH><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]");
 
 
-            msgENConfig.set("Messages.Normal.BalTop", "&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]<BREAK>&61.<FIRST><BREAK>&62.<SECOND><BREAK>&63.<THIRD><BREAK>&64.<FOURTH><BREAK>&65.<FIFTH><BREAK>&66.<SIXTH><BREAK>&67.<SEVENTH><BREAK>&68.<EIGHTH><BREAK>&69.<NINTH><BREAK>&610.<TENTH><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]");
+            msgENConfig.set("Messages.Normal.BalTop",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]<BREAK>&61.<FIRST><BREAK>&62.<SECOND><BREAK>&63.<THIRD><BREAK>&64.<FOURTH><BREAK>&65.<FIFTH><BREAK>&66.<SIXTH><BREAK>&67.<SEVENTH><BREAK>&68.<EIGHTH><BREAK>&69.<NINTH><BREAK>&610.<TENTH><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]");
 
 
-            msgCZConfig.set("Messages.Normal.BalTop", "&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]<BREAK>&61.<FIRST><BREAK>&62.<SECOND><BREAK>&63.<THIRD><BREAK>&64.<FOURTH><BREAK>&65.<FIFTH><BREAK>&66.<SIXTH><BREAK>&67.<SEVENTH><BREAK>&68.<EIGHTH><BREAK>&69.<NINTH><BREAK>&610.<TENTH><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]");
+            msgCZConfig.set("Messages.Normal.BalTop",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]<BREAK>&61.<FIRST><BREAK>&62.<SECOND><BREAK>&63.<THIRD><BREAK>&64.<FOURTH><BREAK>&65.<FIFTH><BREAK>&66.<SIXTH><BREAK>&67.<SEVENTH><BREAK>&68.<EIGHTH><BREAK>&69.<NINTH><BREAK>&610.<TENTH><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]");
 
 
             if (msgConfig.getString("language").equalsIgnoreCase("de"))
-                msgConfig.set("Messages.Normal.BalTop", "&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]<BREAK>&61.<FIRST><BREAK>&62.<SECOND><BREAK>&63.<THIRD><BREAK>&64.<FOURTH><BREAK>&65.<FIFTH><BREAK>&66.<SIXTH><BREAK>&67.<SEVENTH><BREAK>&68.<EIGHTH><BREAK>&69.<NINTH><BREAK>&610.<TENTH><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.BalTop",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]<BREAK>&61.<FIRST><BREAK>&62.<SECOND><BREAK>&63.<THIRD><BREAK>&64.<FOURTH><BREAK>&65.<FIFTH><BREAK>&66.<SIXTH><BREAK>&67.<SEVENTH><BREAK>&68.<EIGHTH><BREAK>&69.<NINTH><BREAK>&610.<TENTH><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]");
             else if (msgConfig.getString("language").equalsIgnoreCase("cz"))
-                msgConfig.set("Messages.Normal.BalTop", "&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]<BREAK>&61.<FIRST><BREAK>&62.<SECOND><BREAK>&63.<THIRD><BREAK>&64.<FOURTH><BREAK>&65.<FIFTH><BREAK>&66.<SIXTH><BREAK>&67.<SEVENTH><BREAK>&68.<EIGHTH><BREAK>&69.<NINTH><BREAK>&610.<TENTH><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.BalTop",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]<BREAK>&61.<FIRST><BREAK>&62.<SECOND><BREAK>&63.<THIRD><BREAK>&64.<FOURTH><BREAK>&65.<FIFTH><BREAK>&66.<SIXTH><BREAK>&67.<SEVENTH><BREAK>&68.<EIGHTH><BREAK>&69.<NINTH><BREAK>&610.<TENTH><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]");
             else
-                msgConfig.set("Messages.Normal.BalTop", "&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]<BREAK>&61.<FIRST><BREAK>&62.<SECOND><BREAK>&63.<THIRD><BREAK>&64.<FOURTH><BREAK>&65.<FIFTH><BREAK>&66.<SIXTH><BREAK>&67.<SEVENTH><BREAK>&68.<EIGHTH><BREAK>&69.<NINTH><BREAK>&610.<TENTH><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.BalTop",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]<BREAK>&61.<FIRST><BREAK>&62.<SECOND><BREAK>&63.<THIRD><BREAK>&64.<FOURTH><BREAK>&65.<FIFTH><BREAK>&66.<SIXTH><BREAK>&67.<SEVENTH><BREAK>&68.<EIGHTH><BREAK>&69.<NINTH><BREAK>&610.<TENTH><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Baltop<BREAK>&8[]&7--------------------------------&8[]");
 
 
             aliasConfig.set("Aliases.baltop.aliases", "No Aliases");
@@ -1473,21 +1506,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("4.1")) {
             this.plugin.log("Updating config version 4.1 to 4.2...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
 
             this.plugin.getConfigReader().set("version", "4.2");
@@ -1496,31 +1529,37 @@ public class ConfigUpdater extends MessageUtils {
             permissionConfig.set("Permissions.noafk", "server.noafk");
 
 
-            msgDEConfig.set("Messages.Normal.AFK.Kick", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDu warst länger als 10 Minuten Inaktiv!<BREAK>&6Von: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            msgDEConfig.set("Messages.Normal.AFK.Kick",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDu warst länger als 10 Minuten Inaktiv!<BREAK>&6Von: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
             msgDEConfig.set("Messages.Normal.AFK.Afk", "Du bist nun afk!");
             msgDEConfig.set("Messages.Normal.AFK.NotAfk", "Du bist nun nicht mehr afk!");
 
 
-            msgENConfig.set("Messages.Normal.AFK.Kick", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Reason: You were afk for more than 10 minutes!<BREAK>&6By: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            msgENConfig.set("Messages.Normal.AFK.Kick",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Reason: You were afk for more than 10 minutes!<BREAK>&6By: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
             msgENConfig.set("Messages.Normal.AFK.Afk", "You are now afk!");
             msgENConfig.set("Messages.Normal.AFK.NotAfk", "You are no longer afk!");
 
 
-            msgCZConfig.set("Messages.Normal.AFK.Kick", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl jsi vyhozen ze serveru!<BREAK>&6Důvod: &cSi AFK dýl jak 10 minut!<BREAK>&6Od: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            msgCZConfig.set("Messages.Normal.AFK.Kick",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl jsi vyhozen ze serveru!<BREAK>&6Důvod: &cSi AFK dýl jak 10 minut!<BREAK>&6Od: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
             msgCZConfig.set("Messages.Normal.AFK.Afk", "Nyní si AFK!");
             msgCZConfig.set("Messages.Normal.AFK.NotAfk", "Už nejsi AFK!");
 
 
             if (msgConfig.getString("language").equalsIgnoreCase("de")) {
-                msgConfig.set("Messages.Normal.AFK.Kick", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDu warst länger als 10 Minuten Inaktiv!<BREAK>&6Von: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.AFK.Kick",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDu warst länger als 10 Minuten Inaktiv!<BREAK>&6Von: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
                 msgConfig.set("Messages.Normal.AFK.Afk", "Du bist nun afk!");
                 msgConfig.set("Messages.Normal.AFK.NotAfk", "Du bist nun nicht mehr afk!");
             } else if (msgConfig.getString("language").equalsIgnoreCase("cz")) {
-                msgConfig.set("Messages.Normal.AFK.Kick", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl jsi vyhozen ze serveru!<BREAK>&6Důvod: &cSi AFK dýl jak 10 minut!<BREAK>&6Od: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.AFK.Kick",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl jsi vyhozen ze serveru!<BREAK>&6Důvod: &cSi AFK dýl jak 10 minut!<BREAK>&6Od: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
                 msgConfig.set("Messages.Normal.AFK.Afk", "Nyní si AFK!");
                 msgConfig.set("Messages.Normal.AFK.NotAfk", "Už nejsi AFK!");
             } else {
-                msgConfig.set("Messages.Normal.AFK.Kick", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Reason: You were afk for more than 10 minutes!<BREAK>&6By: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.AFK.Kick",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Reason: You were afk for more than 10 minutes!<BREAK>&6By: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
                 msgConfig.set("Messages.Normal.AFK.Afk", "You are now afk!");
                 msgConfig.set("Messages.Normal.AFK.NotAfk", "You are no longer afk!");
             }
@@ -1556,21 +1595,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("4.2")) {
             this.plugin.log("Updating config version 4.2 to 4.3...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
             this.plugin.getConfigReader().set("afksystem", true);
             this.plugin.getConfigReader().set("setplayerlistname", true);
@@ -1612,21 +1651,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("4.3")) {
             this.plugin.log("Updating config version 4.3 to 4.4...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
             this.plugin.getConfigReader().set("metrics", true);
 
@@ -1636,38 +1675,50 @@ public class ConfigUpdater extends MessageUtils {
             permissionConfig.set("Permissions.maintenance.join", "server.maintenance.join");
 
 
-            msgDEConfig.set("Messages.Normal.Maintenance.NoJoin", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&cDie Wartungen sind zurzeit aktiv!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
-            msgDEConfig.set("Messages.Normal.Maintenance.Kick", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDie Wartungen wurden aktiviert!<BREAK>&6Von: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            msgDEConfig.set("Messages.Normal.Maintenance.NoJoin",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&cDie Wartungen sind zurzeit aktiv!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            msgDEConfig.set("Messages.Normal.Maintenance.Kick",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDie Wartungen wurden aktiviert!<BREAK>&6Von: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
             msgDEConfig.set("Messages.Normal.Maintenance.Activated", "Du hast die Wartungen aktiviert!");
             msgDEConfig.set("Messages.Normal.Maintenance.Deactivated", "Du hast die Wartungen deaktiviert!");
 
 
-            msgENConfig.set("Messages.Normal.Maintenance.NoJoin", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&cThe server is currently under maintenance!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
-            msgENConfig.set("Messages.Normal.Maintenance.Kick", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Reason: &cThe server is now under maintenance!<BREAK>&6By: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            msgENConfig.set("Messages.Normal.Maintenance.NoJoin",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&cThe server is currently under maintenance!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            msgENConfig.set("Messages.Normal.Maintenance.Kick",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Reason: &cThe server is now under maintenance!<BREAK>&6By: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
             msgENConfig.set("Messages.Normal.Maintenance.Activated", "The server is now under maintenance!");
             msgENConfig.set("Messages.Normal.Maintenance.Deactivated", "The server is no longer under maintenance!");
 
 
-            msgCZConfig.set("Messages.Normal.Maintenance.NoJoin", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Byl jsi vyhozen ze serveru!<BREAK>&cServer je momentálně v údržbě!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
-            msgCZConfig.set("Messages.Normal.Maintenance.Kick", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Byl jsi vyhozen ze serveru!<BREAK>&6Důvod: &cServer je nyní v údržbě!<BREAK>&6By: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            msgCZConfig.set("Messages.Normal.Maintenance.NoJoin",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Byl jsi vyhozen ze serveru!<BREAK>&cServer je momentálně v údržbě!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            msgCZConfig.set("Messages.Normal.Maintenance.Kick",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Byl jsi vyhozen ze serveru!<BREAK>&6Důvod: &cServer je nyní v údržbě!<BREAK>&6By: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
             msgCZConfig.set("Messages.Normal.Maintenance.Activated", "Server je nyní v údržbě!");
             msgCZConfig.set("Messages.Normal.Maintenance.Deactivated", "Server již není v údržbě!");
 
 
             if (msgConfig.getString("language").equalsIgnoreCase("de")) {
-                msgConfig.set("Messages.Normal.Maintenance.NoJoin", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&cDie Wartungen sind zurzeit aktiv!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
-                msgConfig.set("Messages.Normal.Maintenance.Kick", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDie Wartungen wurden aktiviert!<BREAK>&6Von: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.Maintenance.NoJoin",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&cDie Wartungen sind zurzeit aktiv!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.Maintenance.Kick",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDie Wartungen wurden aktiviert!<BREAK>&6Von: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
                 msgConfig.set("Messages.Normal.Maintenance.Activated", "Du hast die Wartungen aktiviert!");
                 msgConfig.set("Messages.Normal.Maintenance.Deactivated", "Du hast die Wartungen deaktiviert!");
 
             } else if (msgConfig.getString("language").equalsIgnoreCase("cz")) {
-                msgConfig.set("Messages.Normal.Maintenance.NoJoin", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Byl jsi vyhozen ze serveru!<BREAK>&cServer je momentálně v údržbě!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
-                msgConfig.set("Messages.Normal.Maintenance.Kick", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Byl jsi vyhozen ze serveru!<BREAK>&6Důvod: &cServer je nyní v údržbě!<BREAK>&6By: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.Maintenance.NoJoin",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Byl jsi vyhozen ze serveru!<BREAK>&cServer je momentálně v údržbě!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.Maintenance.Kick",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Byl jsi vyhozen ze serveru!<BREAK>&6Důvod: &cServer je nyní v údržbě!<BREAK>&6By: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
                 msgConfig.set("Messages.Normal.Maintenance.Activated", "Server je nyní v údržbě!");
                 msgConfig.set("Messages.Normal.Maintenance.Deactivated", "Server již není v údržbě!");
             } else {
-                msgConfig.set("Messages.Normal.Maintenance.NoJoin", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&cThe server is currently under maintenance!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
-                msgConfig.set("Messages.Normal.Maintenance.Kick", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Reason: &cThe server is now under maintenance!<BREAK>&6By: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.Maintenance.NoJoin",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&cThe server is currently under maintenance!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.Maintenance.Kick",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Reason: &cThe server is now under maintenance!<BREAK>&6By: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
                 msgConfig.set("Messages.Normal.Maintenance.Activated", "The server is now under maintenance!");
                 msgConfig.set("Messages.Normal.Maintenance.Deactivated", "The server is no longer under maintenance!");
 
@@ -1710,21 +1761,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("4.4")) {
             this.plugin.log("Updating config version 4.4 to 4.5...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
             this.plugin.getConfigReader().set("afkkick", 5.0);
             this.plugin.getConfigReader().set("afktime", 2.5);
@@ -1733,21 +1784,27 @@ public class ConfigUpdater extends MessageUtils {
 
             //permissionConfig.set("Permissions.maintenance.toggle", "server.maintenance.toggle");
 
-            msgDEConfig.set("Messages.Normal.AFK.Kick", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDu warst länger als <MINUTES> Minuten Inaktiv!<BREAK>&6Von: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            msgDEConfig.set("Messages.Normal.AFK.Kick",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDu warst länger als <MINUTES> Minuten Inaktiv!<BREAK>&6Von: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
 
 
-            msgENConfig.set("Messages.Normal.AFK.Kick", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Reason: You were afk for more than <MINUTES> minutes!<BREAK>&6By: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            msgENConfig.set("Messages.Normal.AFK.Kick",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Reason: You were afk for more than <MINUTES> minutes!<BREAK>&6By: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
 
 
-            msgCZConfig.set("Messages.Normal.AFK.Kick", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl jsi vyhozen ze serveru!<BREAK>&6Důvod: &cSi AFK dýl jak <MINUTES> minut!<BREAK>&6Od: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+            msgCZConfig.set("Messages.Normal.AFK.Kick",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl jsi vyhozen ze serveru!<BREAK>&6Důvod: &cSi AFK dýl jak <MINUTES> minut!<BREAK>&6Od: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
 
 
             if (msgConfig.getString("language").equalsIgnoreCase("de"))
-                msgConfig.set("Messages.Normal.AFK.Kick", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDu warst länger als <MINUTES> Minuten Inaktiv!<BREAK>&6Von: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.AFK.Kick",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDu warst länger als <MINUTES> Minuten Inaktiv!<BREAK>&6Von: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
             else if (msgConfig.getString("language").equalsIgnoreCase("cz"))
-                msgConfig.set("Messages.Normal.AFK.Kick", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl jsi vyhozen ze serveru!<BREAK>&6Důvod: &cSi AFK dýl jak <MINUTES> minut!<BREAK>&6Od: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.AFK.Kick",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl jsi vyhozen ze serveru!<BREAK>&6Důvod: &cSi AFK dýl jak <MINUTES> minut!<BREAK>&6Od: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
             else
-                msgConfig.set("Messages.Normal.AFK.Kick", "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Reason: You were afk for more than <MINUTES> minutes!<BREAK>&6By: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.AFK.Kick",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4You got kicked!<BREAK>&6Reason: You were afk for more than <MINUTES> minutes!<BREAK>&6By: &c<SENDER><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3SERVER<BREAK>&8[]&7--------------------------------&8[]");
 
 
             permissionConfig.save();
@@ -1780,21 +1837,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("4.5")) {
             this.plugin.log("Updating config version 4.5 to 4.6...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
             this.plugin.getConfigReader().set("afkoptions.blockspawners", false);
             this.plugin.getConfigReader().set("afkoptions.blockexpchange", true);
@@ -1835,21 +1892,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("4.6")) {
             this.plugin.log("Updating config version 4.6 to 4.7...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
 
             this.plugin.getConfigReader().set("version", "4.7");
@@ -1911,21 +1968,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("4.7")) {
             this.plugin.log("Updating config version 4.7 to 4.8...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
 
             this.plugin.getConfigReader().set("version", "4.8");
@@ -1934,19 +1991,25 @@ public class ConfigUpdater extends MessageUtils {
             permissionConfig.set("Permissions.rules.permission", "server.rules");
 
 
-            msgDEConfig.set("Messages.Normal.Rules", "&8[]&7--------------------------------&8[]<BREAK>&3Regeln<BREAK>&8[]&7--------------------------------&8[]<BREAK>&6<RULES><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Regeln<BREAK>&8[]&7--------------------------------&8[]");
+            msgDEConfig.set("Messages.Normal.Rules",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3Regeln<BREAK>&8[]&7--------------------------------&8[]<BREAK>&6<RULES><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Regeln<BREAK>&8[]&7--------------------------------&8[]");
 
 
-            msgENConfig.set("Messages.Normal.Rules", "&8[]&7--------------------------------&8[]<BREAK>&3Rules<BREAK>&8[]&7--------------------------------&8[]<BREAK>&6<RULES><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Rules<BREAK>&8[]&7--------------------------------&8[]");
+            msgENConfig.set("Messages.Normal.Rules",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3Rules<BREAK>&8[]&7--------------------------------&8[]<BREAK>&6<RULES><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Rules<BREAK>&8[]&7--------------------------------&8[]");
 
-            msgCZConfig.set("Messages.Normal.Rules", "&8[]&7--------------------------------&8[]<BREAK>&3Pravidla<BREAK>&8[]&7--------------------------------&8[]<BREAK>&6<RULES><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Pravidla<BREAK>&8[]&7--------------------------------&8[]");
+            msgCZConfig.set("Messages.Normal.Rules",
+                            "&8[]&7--------------------------------&8[]<BREAK>&3Pravidla<BREAK>&8[]&7--------------------------------&8[]<BREAK>&6<RULES><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Pravidla<BREAK>&8[]&7--------------------------------&8[]");
 
             if (msgConfig.getString("language").equalsIgnoreCase("de"))
-                msgConfig.set("Messages.Normal.Rules", "&8[]&7--------------------------------&8[]<BREAK>&3Regeln<BREAK>&8[]&7--------------------------------&8[]<BREAK>&6<RULES><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Regeln<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.Rules",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3Regeln<BREAK>&8[]&7--------------------------------&8[]<BREAK>&6<RULES><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Regeln<BREAK>&8[]&7--------------------------------&8[]");
             else if (msgConfig.getString("language").equalsIgnoreCase("cz"))
-                msgConfig.set("Messages.Normal.Rules", "&8[]&7--------------------------------&8[]<BREAK>&3Pravidla<BREAK>&8[]&7--------------------------------&8[]<BREAK>&6<RULES><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Pravidla<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.Rules",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3Pravidla<BREAK>&8[]&7--------------------------------&8[]<BREAK>&6<RULES><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Pravidla<BREAK>&8[]&7--------------------------------&8[]");
             else
-                msgConfig.set("Messages.Normal.Rules", "&8[]&7--------------------------------&8[]<BREAK>&3Rules<BREAK>&8[]&7--------------------------------&8[]<BREAK>&6<RULES><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Rules<BREAK>&8[]&7--------------------------------&8[]");
+                msgConfig.set("Messages.Normal.Rules",
+                              "&8[]&7--------------------------------&8[]<BREAK>&3Rules<BREAK>&8[]&7--------------------------------&8[]<BREAK>&6<RULES><BREAK>&8[]&7--------------------------------&8[]<BREAK>&3Rules<BREAK>&8[]&7--------------------------------&8[]");
 
 
             aliasConfig.set("Aliases.rules.aliases", "regeln");
@@ -1985,21 +2048,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("4.8")) {
             this.plugin.log("Updating config version 4.8 to 4.9...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
 
             this.plugin.getConfigReader().set("economy.createAccountOnJoin", false);
@@ -2039,21 +2102,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("4.9")) {
             this.plugin.log("Updating config version 4.9 to 5.0...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
 
             this.plugin.getConfigReader().set("fly.stopWhenHit", false);
@@ -2096,7 +2159,7 @@ public class ConfigUpdater extends MessageUtils {
             aliasConfig.set("Aliases.rename.aliases", "No Aliases");
 
 
-            boolean delKit = commandsConfig.getBoolean("deletekit");
+            var delKit = commandsConfig.getBoolean("deletekit");
 
             commandsConfig.set("deletekit", null);
             commandsConfig.set("delkit", delKit);
@@ -2133,21 +2196,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("5.0")) {
             this.plugin.log("Updating config version 5.0 to 5.1...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
 
             this.plugin.getConfigReader().set("version", "5.1");
@@ -2222,21 +2285,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("5.1")) {
             this.plugin.log("Updating config version 5.1 to 5.2...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
             this.plugin.getConfigReader().set("economy.thousand", ".");
             this.plugin.getConfigReader().set("version", "5.2");
@@ -2272,21 +2335,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("5.2")) {
             this.plugin.log("Updating config version 5.2 to 5.3...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
             this.plugin.getConfigReader().set("version", "5.3");
 
@@ -2356,21 +2419,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("5.3")) {
             this.plugin.log("Updating config version 5.3 to 5.4...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
             this.plugin.getConfigReader().set("version", "5.4");
 
@@ -2435,21 +2498,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("5.4")) {
             this.plugin.log("Updating config version 5.4 to 5.5...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
             this.plugin.getConfigReader().set("messageByItemBreak", false);
             this.plugin.getConfigReader().set("version", "5.5");
@@ -2519,21 +2582,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("5.5")) {
             this.plugin.log("Updating config version 5.5 to 5.6...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
             this.plugin.getConfigReader().set("betterafkscheduler", true);
             this.plugin.getConfigReader().set("deactivateEntityCollision", true);
@@ -2592,21 +2655,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("5.6")) {
             this.plugin.log("Updating config version 5.6 to 5.7...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
             this.plugin.getConfigReader().set("version", "5.7");
 
@@ -2669,21 +2732,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("5.7")) {
             this.plugin.log("Updating config version 5.7 to 5.8...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
             this.plugin.getConfigReader().set("version", "5.8");
 
@@ -2720,21 +2783,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("5.8")) {
             this.plugin.log("Updating config version 5.8 to 5.9...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
 
             this.plugin.getConfigReader().set("worldChange.resetGameMode", false);
@@ -2787,21 +2850,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("5.9")) {
             this.plugin.log("Updating config version 5.9 to 6.0...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
 
             this.plugin.getConfigReader().set("version", "6.0");
@@ -2839,21 +2902,21 @@ public class ConfigUpdater extends MessageUtils {
         } else if (version.equalsIgnoreCase("6.0")) {
             this.plugin.log("Updating config version 6.0 to 6.1...");
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
-            File msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
-            File msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var msgENFile = new File("plugins//ServerSystem", "messages_en.yml");
+            var msgDEFile = new File("plugins//ServerSystem", "messages_de.yml");
+            var msgCZFile = new File("plugins//ServerSystem", "messages_cz.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
-            ConfigReader msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
-            ConfigReader msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var msgENConfig = NonValidatingConfigReader.loadConfiguration(msgENFile);
+            var msgDEConfig = NonValidatingConfigReader.loadConfiguration(msgDEFile);
+            var msgCZConfig = NonValidatingConfigReader.loadConfiguration(msgCZFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
 
             this.plugin.getConfigReader().set("spawn.respawn", true);
@@ -2892,7 +2955,8 @@ public class ConfigUpdater extends MessageUtils {
             return;
         }
 
-        if (this.updateFromWeb(version)) return;
+        if (this.updateFromWeb(version))
+            return;
 
         this.plugin.warn("Unknown config version detected (" + version + ")!");
         this.plugin.warn("Deleting ServerSystem files...");
@@ -2905,17 +2969,13 @@ public class ConfigUpdater extends MessageUtils {
         this.plugin.onLoad();
     }
 
-    public boolean configUpdateNeeded(String version) {
-        return !version.equalsIgnoreCase(this.plugin.CONFIG_VERSION);
-    }
-
     public void copyFolder(Path src, Path dest, String date) throws IOException {
         FileUtils.copyDirectory(src.toFile(), dest.toFile());
     }
 
     public boolean updateFromWeb(String version) {
         this.plugin.log("Checking for config updates...");
-        Document doc = null;
+        Document doc;
         try {
             doc = Jsoup.connect("http://pluginsupport.zapto.org:80/PluginSupport/Config-Updates/ServerSystem").referrer("ServerSystem").timeout(30000).get();
         } catch (Exception e) {
@@ -2924,29 +2984,39 @@ public class ConfigUpdater extends MessageUtils {
             return true;
         }
 
-        if (doc == null) return false;
+        if (doc == null)
+            return false;
 
         try {
-            doc = Jsoup.connect("http://pluginsupport.zapto.org:80/PluginSupport/Config-Updates/ServerSystem/" + version).referrer("ServerSystem").timeout(30000).get();
+            doc = Jsoup.connect("http://pluginsupport.zapto.org:80/PluginSupport/Config-Updates/ServerSystem/" + version)
+                       .referrer("ServerSystem")
+                       .timeout(30000)
+                       .get();
         } catch (IOException e) {
             return false;
         }
 
         if (doc != null) {
-            File configUpdaterDir = new File("plugins/ServerSystem/ConfigUpdater");
-            if (!configUpdaterDir.exists()) configUpdaterDir.mkdir();
+            var configUpdaterDir = new File("plugins/ServerSystem/ConfigUpdater");
+            if (!configUpdaterDir.exists())
+                configUpdaterDir.mkdir();
 
             Element element;
-            for (Element f : doc.getAllElements()) {
-                String s = f.attr("href");
+            for (var f : doc.getAllElements()) {
+                var s = f.attr("href");
                 if (s.equalsIgnoreCase("changes.yml") || s.equalsIgnoreCase("changes"))
                     try {
-                        File downloadFile = new File(configUpdaterDir, s);
-                        if (downloadFile.exists()) downloadFile.delete();
+                        var downloadFile = new File(configUpdaterDir, s);
+                        if (downloadFile.exists())
+                            downloadFile.delete();
                         //Open a URL Stream
-                        Connection.Response resultUpdateFile = Jsoup.connect("http://pluginsupport.zapto.org:80/PluginSupport/Config-Updates/ServerSystem/" + version + "/" + s).referrer("ServerSystem").timeout(30000).ignoreContentType(true).execute();
+                        var resultUpdateFile = Jsoup.connect("http://pluginsupport.zapto.org:80/PluginSupport/Config-Updates/ServerSystem/" + version + "/" + s)
+                                                    .referrer("ServerSystem")
+                                                    .timeout(30000)
+                                                    .ignoreContentType(true)
+                                                    .execute();
                         // output here
-                        FileOutputStream out = (new FileOutputStream(new File(configUpdaterDir, s)));
+                        var out = (new FileOutputStream(new File(configUpdaterDir, s)));
                         out.write(resultUpdateFile.bodyAsBytes());
                         out.close();
                         break;
@@ -2956,31 +3026,31 @@ public class ConfigUpdater extends MessageUtils {
                     }
             }
 
-            File permissionFile = new File("plugins//ServerSystem", "permissions.yml");
-            File msgFile = new File("plugins//ServerSystem", "messages.yml");
-            File aliasFile = new File("plugins//ServerSystem", "aliases.yml");
-            File commandsFile = new File("plugins//ServerSystem", "commands.yml");
+            var permissionFile = new File("plugins//ServerSystem", "permissions.yml");
+            var msgFile = new File("plugins//ServerSystem", "messages.yml");
+            var aliasFile = new File("plugins//ServerSystem", "aliases.yml");
+            var commandsFile = new File("plugins//ServerSystem", "commands.yml");
 
-            ConfigReader permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
-            ConfigReader msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
-            ConfigReader aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
-            ConfigReader commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
+            var permissionConfig = NonValidatingConfigReader.loadConfiguration(permissionFile);
+            var msgConfig = NonValidatingConfigReader.loadConfiguration(msgFile);
+            var aliasConfig = NonValidatingConfigReader.loadConfiguration(aliasFile);
+            var commandsConfig = NonValidatingConfigReader.loadConfiguration(commandsFile);
 
-            File changesFile = new File(configUpdaterDir, "changes.yml");
-            ConfigReader cfg = NonValidatingConfigReader.loadConfiguration(changesFile);
+            var changesFile = new File(configUpdaterDir, "changes.yml");
+            var cfg = NonValidatingConfigReader.loadConfiguration(changesFile);
 
-            String newVersion = cfg.getString("Changes.Config.Change.version");
+            var newVersion = cfg.getString("Changes.Config.Change.version");
 
             this.plugin.log("Updating config version " + version + " to " + newVersion + "...");
 
             if (cfg.isConfigurationSection("Changes.Messages"))
-                for (String language : cfg.getConfigurationSection("Changes.Messages").getKeys(false)) {
+                for (var language : cfg.getConfigurationSection("Changes.Messages").getKeys(false)) {
                     if (msgConfig.getString("language").equalsIgnoreCase(language)) {
-                        boolean errored = false;
+                        var errored = false;
                         try {
-                            for (String action : cfg.getConfigurationSection("Changes.Messages." + language).getKeys(false)) {
+                            for (var action : cfg.getConfigurationSection("Changes.Messages." + language).getKeys(false)) {
                                 if (action.equalsIgnoreCase("remove")) {
-                                    for (String key : cfg.getConfigurationSection("Changes.Messages." + language + "." + action).getKeys(false)) {
+                                    for (var key : cfg.getConfigurationSection("Changes.Messages." + language + "." + action).getKeys(false)) {
                                         key = key.replace(";", ".");
                                         msgConfig.set(key, null);
                                     }
@@ -2988,8 +3058,8 @@ public class ConfigUpdater extends MessageUtils {
                                 }
 
                                 if (action.equalsIgnoreCase("change"))
-                                    for (String key : cfg.getConfigurationSection("Changes.Messages." + language + "." + action).getKeys(false)) {
-                                        String origin = key;
+                                    for (var key : cfg.getConfigurationSection("Changes.Messages." + language + "." + action).getKeys(false)) {
+                                        var origin = key;
                                         key = key.replace(";", ".");
                                         msgConfig.set(key, cfg.get("Changes.Messages." + language + "." + action + "." + origin));
                                     }
@@ -3000,17 +3070,18 @@ public class ConfigUpdater extends MessageUtils {
                             errored = true;
                         }
 
-                        if (!errored) msgConfig.save();
+                        if (!errored)
+                            msgConfig.save();
                     }
 
-                    File toWriteFile = new File("plugins/ServerSystem", "messages_" + language + ".yml");
-                    ConfigReader toWriteConfig = NonValidatingConfigReader.loadConfiguration(toWriteFile);
+                    var toWriteFile = new File("plugins/ServerSystem", "messages_" + language + ".yml");
+                    var toWriteConfig = NonValidatingConfigReader.loadConfiguration(toWriteFile);
 
-                    boolean errored = false;
+                    var errored = false;
                     try {
-                        for (String action : cfg.getConfigurationSection("Changes.Messages." + language).getKeys(false)) {
+                        for (var action : cfg.getConfigurationSection("Changes.Messages." + language).getKeys(false)) {
                             if (action.equalsIgnoreCase("remove")) {
-                                for (String key : cfg.getConfigurationSection("Changes.Messages." + language + "." + action).getKeys(false)) {
+                                for (var key : cfg.getConfigurationSection("Changes.Messages." + language + "." + action).getKeys(false)) {
                                     key = key.replace(";", ".");
                                     toWriteConfig.set(key, null);
                                 }
@@ -3018,8 +3089,8 @@ public class ConfigUpdater extends MessageUtils {
                             }
 
                             if (action.equalsIgnoreCase("change"))
-                                for (String key : cfg.getConfigurationSection("Changes.Messages." + language + "." + action).getKeys(false)) {
-                                    String origin = key;
+                                for (var key : cfg.getConfigurationSection("Changes.Messages." + language + "." + action).getKeys(false)) {
+                                    var origin = key;
                                     key = key.replace(";", ".");
                                     toWriteConfig.set(key, cfg.get("Changes.Messages." + language + "." + action + "." + origin));
                                 }
@@ -3030,15 +3101,16 @@ public class ConfigUpdater extends MessageUtils {
                         errored = true;
                     }
 
-                    if (!errored) toWriteConfig.save();
+                    if (!errored)
+                        toWriteConfig.save();
                 }
 
 
             if (cfg.isConfigurationSection("Changes.Permissions")) {
-                for (String action : cfg.getConfigurationSection("Changes.Permissions").getKeys(false))
+                for (var action : cfg.getConfigurationSection("Changes.Permissions").getKeys(false))
                     try {
                         if (action.equalsIgnoreCase("remove")) {
-                            for (String key : cfg.getConfigurationSection("Changes.Permissions." + action).getKeys(false)) {
+                            for (var key : cfg.getConfigurationSection("Changes.Permissions." + action).getKeys(false)) {
                                 key = key.replace(";", ".");
                                 permissionConfig.set(key, null);
                             }
@@ -3046,8 +3118,8 @@ public class ConfigUpdater extends MessageUtils {
                         }
 
                         if (action.equalsIgnoreCase("change"))
-                            for (String key : cfg.getConfigurationSection("Changes.Permissions." + action).getKeys(false)) {
-                                String origin = key;
+                            for (var key : cfg.getConfigurationSection("Changes.Permissions." + action).getKeys(false)) {
+                                var origin = key;
                                 key = key.replace(";", ".");
                                 permissionConfig.set(key, cfg.get("Changes.Permissions." + action + "." + origin));
                             }
@@ -3061,10 +3133,10 @@ public class ConfigUpdater extends MessageUtils {
 
 
             if (cfg.isConfigurationSection("Changes.Commands")) {
-                for (String action : cfg.getConfigurationSection("Changes.Commands").getKeys(false))
+                for (var action : cfg.getConfigurationSection("Changes.Commands").getKeys(false))
                     try {
                         if (action.equalsIgnoreCase("remove")) {
-                            for (String key : cfg.getConfigurationSection("Changes.Commands." + action).getKeys(false)) {
+                            for (var key : cfg.getConfigurationSection("Changes.Commands." + action).getKeys(false)) {
                                 key = key.replace(";", ".");
                                 commandsConfig.set(key, null);
                             }
@@ -3072,8 +3144,8 @@ public class ConfigUpdater extends MessageUtils {
                         }
 
                         if (action.equalsIgnoreCase("change"))
-                            for (String key : cfg.getConfigurationSection("Changes.Commands." + action).getKeys(false)) {
-                                String origin = key;
+                            for (var key : cfg.getConfigurationSection("Changes.Commands." + action).getKeys(false)) {
+                                var origin = key;
                                 key = key.replace(";", ".");
                                 commandsConfig.set(key, cfg.get("Changes.Commands." + action + "." + origin));
                             }
@@ -3086,10 +3158,10 @@ public class ConfigUpdater extends MessageUtils {
             }
 
             if (cfg.isConfigurationSection("Changes.Aliases")) {
-                for (String action : cfg.getConfigurationSection("Changes.Aliases").getKeys(false))
+                for (var action : cfg.getConfigurationSection("Changes.Aliases").getKeys(false))
                     try {
                         if (action.equalsIgnoreCase("remove")) {
-                            for (String key : cfg.getConfigurationSection("Changes.Aliases." + action).getKeys(false)) {
+                            for (var key : cfg.getConfigurationSection("Changes.Aliases." + action).getKeys(false)) {
                                 key = key.replace(";", ".");
                                 aliasConfig.set(key, null);
                             }
@@ -3097,8 +3169,8 @@ public class ConfigUpdater extends MessageUtils {
                         }
 
                         if (action.equalsIgnoreCase("change"))
-                            for (String key : cfg.getConfigurationSection("Changes.Aliases." + action).getKeys(false)) {
-                                String origin = key;
+                            for (var key : cfg.getConfigurationSection("Changes.Aliases." + action).getKeys(false)) {
+                                var origin = key;
                                 key = key.replace(";", ".");
                                 aliasConfig.set(key, cfg.get("Changes.Aliases." + action + "." + origin));
                             }
@@ -3111,10 +3183,10 @@ public class ConfigUpdater extends MessageUtils {
             }
 
             if (cfg.isConfigurationSection("Changes.Config")) {
-                for (String action : cfg.getConfigurationSection("Changes.Config").getKeys(false))
+                for (var action : cfg.getConfigurationSection("Changes.Config").getKeys(false))
                     try {
                         if (action.equalsIgnoreCase("remove")) {
-                            for (String key : cfg.getConfigurationSection("Changes.Config." + action).getKeys(false)) {
+                            for (var key : cfg.getConfigurationSection("Changes.Config." + action).getKeys(false)) {
                                 key = key.replace(";", ".");
                                 this.plugin.getConfigReader().set(key, null);
                             }
@@ -3122,8 +3194,8 @@ public class ConfigUpdater extends MessageUtils {
                         }
 
                         if (action.equalsIgnoreCase("change"))
-                            for (String key : cfg.getConfigurationSection("Changes.Config." + action).getKeys(false)) {
-                                String origin = key;
+                            for (var key : cfg.getConfigurationSection("Changes.Config." + action).getKeys(false)) {
+                                var origin = key;
                                 key = key.replace(";", ".");
                                 this.plugin.getConfigReader().set(key, cfg.get("Changes.Config." + action + "." + origin));
                             }
@@ -3144,5 +3216,9 @@ public class ConfigUpdater extends MessageUtils {
             return true;
         }
         return false;
+    }
+
+    public boolean configUpdateNeeded(String version) {
+        return !version.equalsIgnoreCase(this.plugin.CONFIG_VERSION);
     }
 }

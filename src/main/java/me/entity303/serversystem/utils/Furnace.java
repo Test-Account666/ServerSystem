@@ -5,13 +5,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-public class Furnace extends MessageUtils {
+public class Furnace extends CommandUtils {
     private final Map<Material, String> furnaceMap;
 
     public Furnace(ServerSystem plugin) {
@@ -354,13 +352,12 @@ public class Furnace extends MessageUtils {
 
     public ItemStack getResult(ItemStack input) {
         if (this.furnaceMap.get(input.getType()) == null) {
-            Iterator<Recipe> recipeIterator = Bukkit.recipeIterator();
+            var recipeIterator = Bukkit.recipeIterator();
             while (recipeIterator.hasNext()) {
-                Recipe recipe = recipeIterator.next();
-                if (recipe instanceof FurnaceRecipe) {
-                    FurnaceRecipe furnaceRecipe = (FurnaceRecipe) recipe;
+                var recipe = recipeIterator.next();
+                if (recipe instanceof FurnaceRecipe furnaceRecipe) {
                     if (furnaceRecipe.getInput().getType() == input.getType()) {
-                        furnaceMap.put(furnaceRecipe.getInput().getType(), furnaceRecipe.getResult().getType().name());
+                        this.furnaceMap.put(furnaceRecipe.getInput().getType(), furnaceRecipe.getResult().getType().name());
                         return furnaceRecipe.getResult();
                     }
                 }
@@ -368,22 +365,7 @@ public class Furnace extends MessageUtils {
             return null;
         }
 
-        String type = this.furnaceMap.get(input.getType()).toUpperCase();
-
-        if (type.equalsIgnoreCase("TERRACOTTA") && !this.plugin.getVersionManager().isTerracotta())
-            type = "HARDENED_CLAY";
-
-        if (type.equalsIgnoreCase("CACTUS_GREEN") && !this.plugin.getVersionManager().isV113())
-            return new ItemStack(Material.INK_SAC, (short) 2);
-
-        if (type.equalsIgnoreCase("LIME_DYE") && !this.plugin.getVersionManager().isV113())
-            return new ItemStack(Material.INK_SAC, (short) 10);
-
-        if (type.equalsIgnoreCase("LAPIS_LAZULI") && !this.plugin.getVersionManager().isV113())
-            return new ItemStack(Material.INK_SAC, (short) 4);
-
-        if (type.equalsIgnoreCase("SMOOTH_BRICK") && !this.plugin.getVersionManager().isV113())
-            return new ItemStack(Material.getMaterial("SMOOTH_BRICK"), (short) 2);
+        var type = this.furnaceMap.get(input.getType()).toUpperCase();
 
         return new ItemStack(Material.getMaterial(type));
     }

@@ -81,7 +81,7 @@ Permissions:
     required: false
     permission: "server.disposal"
   extinguish:
-    self:  "server.extinguish.self"
+    self: "server.extinguish.self"
     others: "server.extinguish.others"
   feed:
     self: "server.feed.self"
@@ -90,12 +90,12 @@ Permissions:
     self:
       survival: "server.gamemode.survival.self"
       creative: "server.gamemode.creative.self"
-      adventure:  "server.gamemode.adventure.self"
+      adventure: "server.gamemode.adventure.self"
       spectator: "server.gamemode.spectator.self"
     others:
       survival: "server.gamemode.survival.others"
       creative: "server.gamemode.creative.others"
-      adventure:  "server.gamemode.adventure.others"
+      adventure: "server.gamemode.adventure.others"
       spectator: "server.gamemode.spectator.others"
   hat:
     required: true
@@ -116,7 +116,7 @@ Permissions:
   restart: "server.restart"
   editschild:
     players: "server.schild"
-#Only for PlotSquared!
+    #Only for PlotSquared!
     admin: "server.schild.admin"
   sign: "server.sign"
   smelt: "server.smelt"

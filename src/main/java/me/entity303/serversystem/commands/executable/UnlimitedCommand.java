@@ -1,57 +1,55 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class UnlimitedCommand extends MessageUtils implements CommandExecutor {
+public class UnlimitedCommand extends CommandUtils implements CommandExecutorOverload {
 
     public UnlimitedCommand(ServerSystem plugin) {
         super(plugin);
     }
 
-    public static boolean isUnlimited(ItemStack itemStack) {
-        return ServerSystem.getPlugin(ServerSystem.class).getVersionStuff().getNbtViewer().isTagSet("unlimited", itemStack);
-    }
-
     @Override
-    public boolean onCommand(CommandSender cs, Command command, String label, String[] args) {
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.getPrefix() + this.getOnlyPlayer());
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!(commandSender instanceof Player player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
 
-        if (!this.isAllowed(cs, "unlimited")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission("unlimited"));
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "unlimited")) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission("unlimited"));
             return true;
         }
 
-        if (((Player) cs).getInventory().getItemInHand() == null) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("Unlimited.NoItem", label, command.getName(), cs, null));
+        if (player.getInventory().getItemInMainHand() == null || player.getInventory().getItemInMainHand().getType() == Material.AIR) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "Unlimited.NoItem"));
             return true;
         }
 
-        if (((Player) cs).getInventory().getItemInHand().getType() == Material.AIR) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("Unlimited.NoItem", label, command.getName(), cs, null));
-            return true;
-        }
-
-        ItemStack itemStack = ((Player) cs).getInventory().getItemInHand();
+        var itemStack = player.getInventory().getItemInMainHand();
 
         if (UnlimitedCommand.isUnlimited(itemStack)) {
             this.plugin.getVersionStuff().getNbtViewer().removeTag("unlimited", itemStack);
-            cs.sendMessage(this.getPrefix() + this.getMessage("Unlimited.LimitedNow", label, command.getName(), cs, null));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "Unlimited.LimitedNow"));
             return true;
         }
 
         this.plugin.getVersionStuff().getNbtViewer().setTag("unlimited", itemStack);
 
-        cs.sendMessage(this.getPrefix() + this.getMessage("Unlimited.UnlimitedNow", label, command.getName(), cs, null));
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                  this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "Unlimited.UnlimitedNow"));
         return true;
+    }
+
+    public static boolean isUnlimited(ItemStack itemStack) {
+        return ServerSystem.getPlugin(ServerSystem.class).getVersionStuff().getNbtViewer().isTagSet("unlimited", itemStack);
     }
 }

@@ -8,38 +8,9 @@ import java.util.LinkedHashMap;
 
 public class EconomyManager_Disabled extends ManagerEconomy {
 
-    public EconomyManager_Disabled(String currencySingular, String currencyPlural, String startingMoney, String displayFormat, String moneyFormat, String separator, String thousands, ServerSystem plugin) {
+    public EconomyManager_Disabled(String currencySingular, String currencyPlural, String startingMoney, String displayFormat, String moneyFormat,
+                                   String separator, String thousands, ServerSystem plugin) {
         super(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, plugin);
-    }
-
-    @Override
-    public String getMoneyFormat() {
-        return "";
-    }
-
-    @Override
-    public String getSeparator() {
-        return "";
-    }
-
-    @Override
-    public String getStartingMoney() {
-        return "";
-    }
-
-    @Override
-    public String getDisplayFormat() {
-        return "";
-    }
-
-    @Override
-    public String getCurrencySingular() {
-        return "";
-    }
-
-    @Override
-    public String getCurrencyPlural() {
-        return "";
     }
 
     @Override
@@ -138,12 +109,6 @@ public class EconomyManager_Disabled extends ManagerEconomy {
     }
 
     @Override
-    public LinkedHashMap<OfflinePlayer, Double> getTopTen() {
-
-        return new LinkedHashMap<>();
-    }
-
-    @Override
     public void fetchTopTen() {
 
     }
@@ -151,5 +116,41 @@ public class EconomyManager_Disabled extends ManagerEconomy {
     @Override
     public void close() {
 
+    }
+
+    @Override
+    public String getMoneyFormat() {
+        return "";
+    }
+
+    @Override
+    public String getSeparator() {
+        return "";
+    }
+
+    @Override
+    public String getStartingMoney() {
+        return "";
+    }
+
+    @Override
+    public String getDisplayFormat() {
+        return "";
+    }
+
+    @Override
+    public String getCurrencySingular() {
+        return "";
+    }
+
+    @Override
+    public String getCurrencyPlural() {
+        return "";
+    }
+
+    @Override
+    public LinkedHashMap<OfflinePlayer, Double> getTopTen() {
+
+        return new LinkedHashMap<>();
     }
 }

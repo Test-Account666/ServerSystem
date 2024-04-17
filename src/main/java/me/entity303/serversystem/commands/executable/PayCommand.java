@@ -1,41 +1,40 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class PayCommand extends MessageUtils implements CommandExecutor {
+public class PayCommand extends CommandUtils implements CommandExecutorOverload {
 
     public PayCommand(ServerSystem plugin) {
         super(plugin);
     }
 
-    private ServerSystem getPlugin() {
-        return this.plugin;
-    }
-
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (this.plugin.getPermissions().getCfg().getBoolean("Permissions.pay.required"))
-            if (!this.isAllowed(cs, "pay.permission")) {
-                cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("pay.permission")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (this.plugin.getPermissions().getConfiguration().getBoolean("Permissions.pay.required"))
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "pay.permission")) {
+                var permission = this.plugin.getPermissions().getPermission("pay.permission");
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
                 return true;
             }
-        if (args.length <= 1) {
-            cs.sendMessage(this.getPrefix() + this.getSyntax("Pay", label, cmd.getName(), cs, null));
+
+        if (arguments.length <= 1) {
+            commandSender.sendMessage(
+                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Pay"));
             return true;
         }
-        Player target = this.getPlayer(cs, args[0]);
+        var target = this.getPlayer(commandSender, arguments[0]);
         if (target == null) {
-            cs.sendMessage(this.getPrefix() + this.getNoTarget(args[0]));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
             return true;
         }
 
-        if (target == cs) {
-            cs.sendMessage(this.getPrefix() + this.getNoTarget(args[0]));
+        if (target == commandSender) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
             return true;
         }
 
@@ -44,30 +43,56 @@ public class PayCommand extends MessageUtils implements CommandExecutor {
 
         double amount;
         try {
-            amount = Double.parseDouble(args[1]);
+            amount = Double.parseDouble(arguments[1]);
         } catch (NumberFormatException ignored) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("Pay.NotANumber", label, cmd.getName(), cs, target).replace("<NUMBER>", args[1]));
+
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                         .getMessage(commandLabel, command, commandSender, target,
+                                                                                                     "Pay.NotANumber")
+                                                                                         .replace("<NUMBER>", arguments[1]));
             return true;
         }
-        if (cs instanceof Player) {
-            if (this.plugin.getEconomyManager().hasAccount((Player) cs))
-                this.plugin.getEconomyManager().createAccount((Player) cs);
-            if (!this.getPlugin().getEconomyManager().hasEnoughMoney((Player) cs, amount)) {
-                cs.sendMessage(this.getPrefix() + this.getMessage("Pay.NotEnough", label, cmd.getName(), cs, target));
+        if (commandSender instanceof Player) {
+            if (this.plugin.getEconomyManager().hasAccount((Player) commandSender))
+                this.plugin.getEconomyManager().createAccount((Player) commandSender);
+            if (!this.getPlugin().getEconomyManager().hasEnoughMoney((Player) commandSender, amount)) {
+
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                          this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Pay.NotEnough"));
                 return true;
             }
             if (amount <= 0) {
-                cs.sendMessage(this.getPrefix() + this.getMessage("Pay.ToLessAmount", label, cmd.getName(), cs, target));
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                          this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Pay.ToLessAmount"));
                 return true;
             }
-            cs.sendMessage(this.getPrefix() + this.getMessage("Pay.Success.Self", label, cmd.getName(), cs, target).replace("<AMOUNT>", this.getPlugin().getEconomyManager().format(amount)));
-            this.getPlugin().getEconomyManager().makeTransaction((Player) cs, target, amount);
-            target.sendMessage(this.getPrefix() + this.getMessage("Pay.Success.Others", label, cmd.getName(), cs, target).replace("<AMOUNT>", this.getPlugin().getEconomyManager().format(amount)));
+
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                         .getMessage(commandLabel, command.getName(), commandSender, target,
+                                                                                                     "Pay.Success.Self")
+                                                                                         .replace("<AMOUNT>",
+                                                                                                  this.getPlugin().getEconomyManager().format(amount)));
+            this.getPlugin().getEconomyManager().makeTransaction((Player) commandSender, target, amount);
+
+            target.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                  .getMessage(commandLabel, command, commandSender, target, "Pay.Success.Others")
+                                                                                  .replace("<AMOUNT>", this.getPlugin().getEconomyManager().format(amount)));
             return true;
         }
-        cs.sendMessage(this.getPrefix() + this.getMessage("Pay.Success.Self", label, cmd.getName(), cs, target).replace("<AMOUNT>", this.getPlugin().getEconomyManager().format(amount)));
+
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                     .getMessage(commandLabel, command.getName(), commandSender, target,
+                                                                                                 "Pay.Success.Self")
+                                                                                     .replace("<AMOUNT>", this.getPlugin().getEconomyManager().format(amount)));
         this.getPlugin().getEconomyManager().addMoney(target, amount);
-        target.sendMessage(this.getPrefix() + this.getMessage("Pay.Success.Others", label, cmd.getName(), cs, target).replace("<AMOUNT>", this.getPlugin().getEconomyManager().format(amount)));
+
+        target.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                              .getMessage(commandLabel, command, commandSender, target, "Pay.Success.Others")
+                                                                              .replace("<AMOUNT>", this.getPlugin().getEconomyManager().format(amount)));
         return true;
+    }
+
+    private ServerSystem getPlugin() {
+        return this.plugin;
     }
 }

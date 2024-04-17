@@ -27,13 +27,13 @@ public class Mute {
     }
 
     public static Mute fromString(String muteString) {
-        String[] strings = muteString.split("§!§");
-        String mutedUUID = strings[0];
-        String senderUUID = strings[1];
-        boolean shadow = Boolean.parseBoolean(strings[2]);
-        String reason = strings[3];
+        var strings = muteString.split("§!§");
+        var mutedUUID = strings[0];
+        var senderUUID = strings[1];
+        var shadow = Boolean.parseBoolean(strings[2]);
+        var reason = strings[3];
         Long unmuteTime = Long.parseLong(strings[4]);
-        String unmuteDate = strings[5];
+        var unmuteDate = strings[5];
 
         return new Mute(mutedUUID, senderUUID, unmuteTime, unmuteDate, reason, shadow);
     }

@@ -15,10 +15,6 @@ public class AbstractServerSystemEconomy extends AbstractEconomy {
         this.plugin = plugin;
     }
 
-    private ServerSystem getPlugin() {
-        return this.plugin;
-    }
-
     @Override
     public boolean isEnabled() {
         return true;
@@ -44,6 +40,10 @@ public class AbstractServerSystemEconomy extends AbstractEconomy {
         return this.getPlugin().getEconomyManager().format(v);
     }
 
+    private ServerSystem getPlugin() {
+        return this.plugin;
+    }
+
     @Override
     public String currencyNamePlural() {
         return this.getPlugin().getEconomyManager().getCurrencyPlural();
@@ -57,53 +57,64 @@ public class AbstractServerSystemEconomy extends AbstractEconomy {
     @Override
     public boolean hasAccount(String s) {
         OfflinePlayer player = Bukkit.getPlayer(s);
-        if (player == null) player = Bukkit.getOfflinePlayer(s);
+        if (player == null)
+            player = Bukkit.getOfflinePlayer(s);
         return this.getPlugin().getEconomyManager().hasAccount(player);
     }
 
     @Override
     public boolean hasAccount(String s, String s1) {
         OfflinePlayer player = Bukkit.getPlayer(s);
-        if (player == null) player = Bukkit.getOfflinePlayer(s);
+        if (player == null)
+            player = Bukkit.getOfflinePlayer(s);
         return this.getPlugin().getEconomyManager().hasAccount(player);
     }
 
     @Override
     public double getBalance(String s) {
         OfflinePlayer player = Bukkit.getPlayer(s);
-        if (player == null) player = Bukkit.getOfflinePlayer(s);
-        if (!this.getPlugin().getEconomyManager().hasAccount(player)) return 0.0;
+        if (player == null)
+            player = Bukkit.getOfflinePlayer(s);
+        if (!this.getPlugin().getEconomyManager().hasAccount(player))
+            return 0.0;
         return this.getPlugin().getEconomyManager().getMoneyAsNumber(player);
     }
 
     @Override
     public double getBalance(String s, String s1) {
         OfflinePlayer player = Bukkit.getPlayer(s);
-        if (player == null) player = Bukkit.getOfflinePlayer(s);
-        if (!this.getPlugin().getEconomyManager().hasAccount(player)) return 0.0;
+        if (player == null)
+            player = Bukkit.getOfflinePlayer(s);
+        if (!this.getPlugin().getEconomyManager().hasAccount(player))
+            return 0.0;
         return this.getPlugin().getEconomyManager().getMoneyAsNumber(player);
     }
 
     @Override
     public boolean has(String s, double v) {
         OfflinePlayer player = Bukkit.getPlayer(s);
-        if (player == null) player = Bukkit.getOfflinePlayer(s);
-        if (!this.getPlugin().getEconomyManager().hasAccount(player)) return false;
+        if (player == null)
+            player = Bukkit.getOfflinePlayer(s);
+        if (!this.getPlugin().getEconomyManager().hasAccount(player))
+            return false;
         return this.getPlugin().getEconomyManager().hasEnoughMoney(player, v);
     }
 
     @Override
     public boolean has(String s, String s1, double v) {
         OfflinePlayer player = Bukkit.getPlayer(s);
-        if (player == null) player = Bukkit.getOfflinePlayer(s);
-        if (!this.getPlugin().getEconomyManager().hasAccount(player)) return false;
+        if (player == null)
+            player = Bukkit.getOfflinePlayer(s);
+        if (!this.getPlugin().getEconomyManager().hasAccount(player))
+            return false;
         return this.getPlugin().getEconomyManager().hasEnoughMoney(player, v);
     }
 
     @Override
     public EconomyResponse withdrawPlayer(String s, double v) {
         OfflinePlayer player = Bukkit.getPlayer(s);
-        if (player == null) player = Bukkit.getOfflinePlayer(s);
+        if (player == null)
+            player = Bukkit.getOfflinePlayer(s);
         if (!this.getPlugin().getEconomyManager().hasAccount(player))
             return new EconomyResponse(v, 0.0, EconomyResponse.ResponseType.FAILURE, "No account found for player " + s);
         if (!this.getPlugin().getEconomyManager().hasEnoughMoney(player, v))
@@ -115,7 +126,8 @@ public class AbstractServerSystemEconomy extends AbstractEconomy {
     @Override
     public EconomyResponse withdrawPlayer(String s, String s1, double v) {
         OfflinePlayer player = Bukkit.getPlayer(s);
-        if (player == null) player = Bukkit.getOfflinePlayer(s);
+        if (player == null)
+            player = Bukkit.getOfflinePlayer(s);
         if (!this.getPlugin().getEconomyManager().hasAccount(player))
             return new EconomyResponse(v, 0.0, EconomyResponse.ResponseType.FAILURE, "No account found for player " + s);
         if (!this.getPlugin().getEconomyManager().hasEnoughMoney(player, v))
@@ -127,7 +139,8 @@ public class AbstractServerSystemEconomy extends AbstractEconomy {
     @Override
     public EconomyResponse depositPlayer(String s, double v) {
         OfflinePlayer player = Bukkit.getPlayer(s);
-        if (player == null) player = Bukkit.getOfflinePlayer(s);
+        if (player == null)
+            player = Bukkit.getOfflinePlayer(s);
         if (!this.getPlugin().getEconomyManager().hasAccount(player))
             return new EconomyResponse(v, 0.0, EconomyResponse.ResponseType.FAILURE, "No account found for player " + s);
         this.getPlugin().getEconomyManager().addMoney(player, v);
@@ -137,7 +150,8 @@ public class AbstractServerSystemEconomy extends AbstractEconomy {
     @Override
     public EconomyResponse depositPlayer(String s, String s1, double v) {
         OfflinePlayer player = Bukkit.getPlayer(s);
-        if (player == null) player = Bukkit.getOfflinePlayer(s);
+        if (player == null)
+            player = Bukkit.getOfflinePlayer(s);
         if (!this.getPlugin().getEconomyManager().hasAccount(player))
             return new EconomyResponse(v, 0.0, EconomyResponse.ResponseType.FAILURE, "No account found for player " + s);
         this.getPlugin().getEconomyManager().addMoney(player, v);
@@ -192,7 +206,8 @@ public class AbstractServerSystemEconomy extends AbstractEconomy {
     @Override
     public boolean createPlayerAccount(String s) {
         OfflinePlayer player = Bukkit.getPlayer(s);
-        if (player == null) player = Bukkit.getOfflinePlayer(s);
+        if (player == null)
+            player = Bukkit.getOfflinePlayer(s);
         this.getPlugin().getEconomyManager().createAccount(player);
         return true;
     }
@@ -200,7 +215,8 @@ public class AbstractServerSystemEconomy extends AbstractEconomy {
     @Override
     public boolean createPlayerAccount(String s, String s1) {
         OfflinePlayer player = Bukkit.getPlayer(s);
-        if (player == null) player = Bukkit.getOfflinePlayer(s);
+        if (player == null)
+            player = Bukkit.getOfflinePlayer(s);
         this.getPlugin().getEconomyManager().createAccount(player);
         return true;
     }

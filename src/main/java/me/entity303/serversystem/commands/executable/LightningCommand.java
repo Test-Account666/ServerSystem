@@ -1,32 +1,35 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
-import org.bukkit.block.Block;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class LightningCommand extends MessageUtils implements CommandExecutor {
+import java.util.Objects;
+
+public class LightningCommand extends CommandUtils implements CommandExecutorOverload {
 
     public LightningCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!this.isAllowed(cs, "lightning")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("lightning")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "lightning")) {
+            var permission = this.plugin.getPermissions().getPermission("lightning");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.getOnlyPlayer());
+
+        if (!(commandSender instanceof Player player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
-        Player player = (Player) cs;
-        Block block = player.getTargetBlock(null, 60);
-        block.getLocation().getWorld().strikeLightning(block.getLocation());
+
+        var block = player.getTargetBlock(null, 60);
+        Objects.requireNonNull(block.getLocation().getWorld()).strikeLightning(block.getLocation());
         return true;
     }
 }

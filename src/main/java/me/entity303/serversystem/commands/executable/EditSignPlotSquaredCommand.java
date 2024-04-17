@@ -2,18 +2,16 @@ package me.entity303.serversystem.commands.executable;
 
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.intellectualcrafters.plot.api.PlotAPI;
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Method;
-
-public class EditSignPlotSquaredCommand implements CommandExecutor {
+//NOTE: I'll probably delete this at some point
+@Deprecated(forRemoval = true) public class EditSignPlotSquaredCommand implements CommandExecutorOverload {
     private final ServerSystem plugin;
 
     public EditSignPlotSquaredCommand(ServerSystem plugin) {
@@ -21,133 +19,124 @@ public class EditSignPlotSquaredCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] arguments) {
         if (this.plugin.getVersionStuff().getSignEdit() == null) {
-            sender.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotAvailable", label, cmd.getName(), sender, null));
+            sender.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotAvailable", commandLabel, command.getName(), sender, null));
             return true;
         }
-        if (!(sender instanceof Player)) {
+
+        if (!(sender instanceof Player player)) {
             sender.sendMessage(this.getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
-        Player p = (Player) sender;
+
         if (this.isLatestPlotSquared()) {
-            if (!this.isAllowed(p, "editschild.players")) {
-                p.sendMessage(this.getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().Perm("editschild.players")));
+            if (!this.plugin.getPermissions().hasPermission(player, "editschild.players")) {
+                player.sendMessage(
+                        this.getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().getPermission("editschild.players")));
                 return true;
             }
 
-            Block block = p.getTargetBlock(null, 5);
-            if (block.getState() instanceof Sign) {
-                if (!this.isPlotWorldLatest(p)) {
-                    Sign sign = (Sign) block.getState();
-                    this.plugin.getVersionStuff().getSignEdit().editSign(p, sign);
-                    return true;
-                }
-
-
-                if ((this.isPlayerInPlotLatest(p) || ((this.isAllowed(p, "editschild.admin")))))
-                    if (((this.isPlayerInPlotLatest(p)) && (this.getLatestPlot(p.getLocation()).isOwner(p.getUniqueId()))) || ((this.isAllowed(p, "editschild.admin")))) {
-                        Sign sign = (Sign) block.getState();
-                        this.plugin.getVersionStuff().getSignEdit().editSign(p, sign);
-                    } else
-                        p.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotYourPlot", label, cmd.getName(), sender, null));
-                else
-                    p.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotInPlot", label, cmd.getName(), sender, null));
-            } else
-                p.sendMessage(this.getPrefix() + this.getMessage("EditSign.SignNeeded", label, cmd.getName(), sender, null));
-
-        } else if (this.newerPlotSquared()) {
-            if (!this.isAllowed(p, "editschild.players")) {
-                p.sendMessage(this.getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().Perm("editschild.players")));
+            var block = player.getTargetBlock(null, 5);
+            if (!(block.getState() instanceof Sign sign)) {
+                player.sendMessage(this.getPrefix() + this.getMessage("EditSign.SignNeeded", commandLabel, command.getName(), sender, null));
                 return true;
             }
 
-            Block block = p.getTargetBlock(null, 5);
-            if (block.getState() instanceof Sign) {
-                if (!this.isPlotWorld(p)) {
-                    Sign sign = (Sign) block.getState();
-                    this.plugin.getVersionStuff().getSignEdit().editSign(p, sign);
-                    return true;
-                }
-
-
-                if ((this.isPlayerInPlot(p) || ((this.isAllowed(p, "editschild.admin")))))
-                    if (((this.isPlayerInPlot(p)) && (this.getPlot(p.getLocation()).isOwner(p.getUniqueId()))) || ((this.isAllowed(p, "editschild.admin")))) {
-                        Sign sign = (Sign) block.getState();
-                        this.plugin.getVersionStuff().getSignEdit().editSign(p, sign);
-                    } else
-                        p.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotYourPlot", label, cmd.getName(), sender, null));
-                else
-                    p.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotInPlot", label, cmd.getName(), sender, null));
-            } else
-                p.sendMessage(this.getPrefix() + this.getMessage("EditSign.SignNeeded", label, cmd.getName(), sender, null));
-
-        } else {
-            PlotAPI papi = new PlotAPI();
-            if (!this.isAllowed(p, "editschild.players")) {
-                p.sendMessage(this.getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().Perm("editschild.players")));
+            if (!this.isPlotWorldLatest(player)) {
+                this.plugin.getVersionStuff().getSignEdit().editSign(player, sign);
                 return true;
             }
-            Block block = p.getTargetBlock(null, 5);
-            if (block.getState() instanceof Sign) {
-                if (!papi.isPlotWorld(p.getWorld())) {
-                    Sign sign = (Sign) block.getState();
-                    this.plugin.getVersionStuff().getSignEdit().editSign(p, sign);
-                    return true;
-                }
-                if ((papi.getPlot(p.getTargetBlock(null, 5).getLocation()) != null) || ((this.isAllowed(p, "editschild.admin"))))
-                    if (((papi.isInPlot(p)) && (papi.getPlot(p.getLocation()).isOwner(p.getUniqueId()))) || ((this.isAllowed(p, "editschild.admin")))) {
-                        Sign sign = (Sign) block.getState();
-                        this.plugin.getVersionStuff().getSignEdit().editSign(p, sign);
-                    } else
-                        p.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotYourPlot", label, cmd.getName(), sender, null));
-                else
-                    p.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotInPlot", label, cmd.getName(), sender, null));
-            } else
-                p.sendMessage(this.getPrefix() + this.getMessage("EditSign.SignNeeded", label, cmd.getName(), sender, null));
 
+
+            if ((!this.isPlayerInPlotLatest(player) && ((!this.plugin.getPermissions().hasPermission(player, "editschild.admin"))))) {
+                player.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotInPlot", commandLabel, command.getName(), sender, null));
+                return true;
+            }
+
+            if (((!this.isPlayerInPlotLatest(player)) || (!this.getLatestPlot(player.getLocation()).isOwner(player.getUniqueId()))) &&
+                ((!this.plugin.getPermissions().hasPermission(player, "editschild.admin")))) {
+                player.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotYourPlot", commandLabel, command.getName(), sender, null));
+                return true;
+            }
+
+            this.plugin.getVersionStuff().getSignEdit().editSign(player, sign);
+            return true;
         }
+
+        if (this.newerPlotSquared()) {
+            if (!this.plugin.getPermissions().hasPermission(player, "editschild.players")) {
+                player.sendMessage(
+                        this.getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().getPermission("editschild.players")));
+                return true;
+            }
+
+            var block = player.getTargetBlock(null, 5);
+            if (!(block.getState() instanceof Sign sign)) {
+                player.sendMessage(this.getPrefix() + this.getMessage("EditSign.SignNeeded", commandLabel, command.getName(), sender, null));
+                return true;
+            }
+
+            if (!this.isPlotWorld(player)) {
+                this.plugin.getVersionStuff().getSignEdit().editSign(player, sign);
+                return true;
+            }
+
+
+            if ((!this.isPlayerInPlot(player) && ((!this.plugin.getPermissions().hasPermission(player, "editschild.admin"))))) {
+                player.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotInPlot", commandLabel, command.getName(), sender, null));
+                return true;
+            }
+
+            if (((!this.isPlayerInPlot(player)) || (!this.getPlot(player.getLocation()).isOwner(player.getUniqueId()))) &&
+                ((!this.plugin.getPermissions().hasPermission(player, "editschild.admin")))) {
+                player.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotYourPlot", commandLabel, command.getName(), sender, null));
+                return true;
+            }
+
+            this.plugin.getVersionStuff().getSignEdit().editSign(player, sign);
+            return true;
+        }
+
+        var plotAPI = new PlotAPI();
+
+        if (!this.plugin.getPermissions().hasPermission(player, "editschild.players")) {
+            player.sendMessage(this.getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().getPermission("editschild.players")));
+            return true;
+        }
+
+        var block = player.getTargetBlock(null, 5);
+        if (!(block.getState() instanceof Sign sign)) {
+            player.sendMessage(this.getPrefix() + this.getMessage("EditSign.SignNeeded", commandLabel, command.getName(), sender, null));
+            return true;
+        }
+
+        if (!plotAPI.isPlotWorld(player.getWorld())) {
+            this.plugin.getVersionStuff().getSignEdit().editSign(player, sign);
+            return true;
+        }
+
+        if ((plotAPI.getPlot(player.getTargetBlock(null, 5).getLocation()) == null) &&
+            ((!this.plugin.getPermissions().hasPermission(player, "editschild.admin")))) {
+            player.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotInPlot", commandLabel, command.getName(), sender, null));
+            return true;
+        } else if (((!plotAPI.isInPlot(player)) || (!plotAPI.getPlot(player.getLocation()).isOwner(player.getUniqueId()))) &&
+                   ((!this.plugin.getPermissions().hasPermission(player, "editschild.admin")))) {
+            player.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotYourPlot", commandLabel, command.getName(), sender, null));
+            return true;
+        }
+
+        this.plugin.getVersionStuff().getSignEdit().editSign(player, sign);
+
         return true;
     }
 
-    public com.plotsquared.core.plot.Plot getLatestPlot(Location location) {
-        try {
-            Method getLocationMethod = Class.forName("com.plotsquared.bukkit.util.BukkitUtil").getDeclaredMethod("getLocation", Location.class);
-            getLocationMethod.setAccessible(true);
-            Object plotLocation = getLocationMethod.invoke(null, location);
-            Method getPlotMethod = plotLocation.getClass().getDeclaredMethod("getPlot");
-            Object plot = getPlotMethod.invoke(plotLocation);
-            return (com.plotsquared.core.plot.Plot) plot;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public String getPrefix() {
+        return this.plugin.getMessages().getPrefix();
     }
 
-    public boolean isPlotWorldLatest(Player player) {
-        try {
-            Method getLocationMethod = Class.forName("com.plotsquared.bukkit.util.BukkitUtil").getDeclaredMethod("getLocation", Location.class);
-            getLocationMethod.setAccessible(true);
-            Object plotLocation = getLocationMethod.invoke(null, player.getLocation());
-            Method getPlotAreaMethod = plotLocation.getClass().getDeclaredMethod("getPlotArea");
-            Object plotArea = getPlotAreaMethod.invoke(plotLocation);
-            return plotArea != null;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public boolean isPlotWorld(Player player) {
-        try {
-            Location location = player.getLocation();
-            com.github.intellectualsites.plotsquared.plot.object.Location plotLocation = new com.github.intellectualsites.plotsquared.plot.object.Location(location.getWorld().getName(), (int) location.getX(), (int) location.getY(), (int) location.getZ());
-            if (plotLocation.getPlotArea().getPlots().size() >= 1) return true;
-        } catch (Exception ignored) {
-            return false;
-        }
-        return false;
+    public String getMessage(String action, String label, String command, CommandSender sender, CommandSender target) {
+        return this.plugin.getMessages().getMessage(label, command, sender, target, action);
     }
 
     public boolean isLatestPlotSquared() {
@@ -159,6 +148,38 @@ public class EditSignPlotSquaredCommand implements CommandExecutor {
         return true;
     }
 
+    public boolean isPlotWorldLatest(Player player) {
+        try {
+            var getLocationMethod = Class.forName("com.plotsquared.bukkit.util.BukkitUtil").getDeclaredMethod("getLocation", Location.class);
+            getLocationMethod.setAccessible(true);
+            var plotLocation = getLocationMethod.invoke(null, player.getLocation());
+            var getPlotAreaMethod = plotLocation.getClass().getDeclaredMethod("getPlotArea");
+            var plotArea = getPlotAreaMethod.invoke(plotLocation);
+            return plotArea != null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean isPlayerInPlotLatest(Player player) {
+        return this.getLatestPlot(player.getLocation()) != null;
+    }
+
+    public com.plotsquared.core.plot.Plot getLatestPlot(Location location) {
+        try {
+            var getLocationMethod = Class.forName("com.plotsquared.bukkit.util.BukkitUtil").getDeclaredMethod("getLocation", Location.class);
+            getLocationMethod.setAccessible(true);
+            var plotLocation = getLocationMethod.invoke(null, location);
+            var getPlotMethod = plotLocation.getClass().getDeclaredMethod("getPlot");
+            var plot = getPlotMethod.invoke(plotLocation);
+            return (com.plotsquared.core.plot.Plot) plot;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public boolean newerPlotSquared() {
         try {
             Class.forName("com.intellectualcrafters.plot.api.PlotAPI");
@@ -168,28 +189,32 @@ public class EditSignPlotSquaredCommand implements CommandExecutor {
         return false;
     }
 
-    public Plot getPlot(Location location) {
-        com.github.intellectualsites.plotsquared.plot.object.Location plotLocation = new com.github.intellectualsites.plotsquared.plot.object.Location(location.getWorld().getName(), (int) location.getX(), (int) location.getY(), (int) location.getZ());
-        return plotLocation.getPlot();
-    }
-
-    public boolean isPlayerInPlotLatest(Player player) {
-        return this.getLatestPlot(player.getLocation()) != null;
+    public boolean isPlotWorld(Player player) {
+        try {
+            var location = player.getLocation();
+            var plotLocation =
+                    new com.github.intellectualsites.plotsquared.plot.object.Location(location.getWorld().getName(), (int) location.getX(), (int) location.getY(),
+                                                                                      (int) location.getZ());
+            if (!plotLocation.getPlotArea().getPlots().isEmpty())
+                return true;
+        } catch (Exception ignored) {
+            return false;
+        }
+        return false;
     }
 
     public boolean isPlayerInPlot(Player player) {
         return this.getPlot(player.getLocation()) != null;
     }
 
-    public String getPrefix() {
-        return this.plugin.getMessages().getPrefix();
-    }
-
-    public String getMessage(String action, String label, String command, CommandSender sender, CommandSender target) {
-        return this.plugin.getMessages().getMessage(label, command, sender, target, action);
+    public Plot getPlot(Location location) {
+        var plotLocation =
+                new com.github.intellectualsites.plotsquared.plot.object.Location(location.getWorld().getName(), (int) location.getX(), (int) location.getY(),
+                                                                                  (int) location.getZ());
+        return plotLocation.getPlot();
     }
 
     public boolean isAllowed(CommandSender cs, String action) {
-        return this.plugin.getPermissions().hasPerm(cs, action);
+        return this.plugin.getPermissions().hasPermission(cs, action);
     }
 }

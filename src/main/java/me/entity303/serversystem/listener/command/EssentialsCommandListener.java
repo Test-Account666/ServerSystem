@@ -4,7 +4,6 @@ import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.commands.IEssentialsCommand;
 import com.earth2me.essentials.commands.NotEnoughArgumentsException;
 import me.entity303.serversystem.main.ServerSystem;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -26,21 +25,24 @@ public class EssentialsCommandListener implements Listener {
 
     @EventHandler
     public void onNewEssentialsCommand(PlayerCommandPreprocessEvent e) {
-        String com = e.getMessage().split(" ")[0].replaceFirst("/", "").toLowerCase();
+        var com = e.getMessage().split(" ")[0].replaceFirst("/", "").toLowerCase();
         if (this.essentialsCommandMap.containsKey(com)) {
             e.setCancelled(true);
             List<String> args = new ArrayList<>();
 
-            if (e.getMessage().split(" ").length >= 2) for (int i = 1; i < e.getMessage().split(" ").length; i++)
-                args.add(i - 1, e.getMessage().split(" ")[i]);
+            if (e.getMessage().split(" ").length >= 2)
+                for (var i = 1; i < e.getMessage().split(" ").length; i++)
+                    args.add(i - 1, e.getMessage().split(" ")[i]);
 
-            String command = this.essentialsCommandMap.get(com);
-            PluginCommand essentialsCommand = this.plugin.getServer().getPluginCommand("essentials:" + command);
+            var command = this.essentialsCommandMap.get(com);
+            var essentialsCommand = this.plugin.getServer().getPluginCommand("essentials:" + command);
 
             IEssentialsCommand cmd;
 
             try {
-                cmd = (IEssentialsCommand) Essentials.class.getClassLoader().loadClass("com.earth2me.essentials.commands.Command" + essentialsCommand.getName()).newInstance();
+                cmd = (IEssentialsCommand) Essentials.class.getClassLoader()
+                                                           .loadClass("com.earth2me.essentials.commands.Command" + essentialsCommand.getName())
+                                                           .newInstance();
             } catch (InstantiationException | IllegalAccessException | ClassNotFoundException instantiationException) {
                 if (!instantiationException.getMessage().isEmpty())
                     e.getPlayer().sendMessage(instantiationException.getMessage());
@@ -52,13 +54,16 @@ public class EssentialsCommandListener implements Listener {
             cmd.setEssentialsModule(null);
 
             try {
-                cmd.run(this.essentials.getServer(), this.essentials.getUser(e.getPlayer().getUniqueId()), essentialsCommand.getName(), essentialsCommand, args.toArray(new String[0]));
+                cmd.run(this.essentials.getServer(), this.essentials.getUser(e.getPlayer().getUniqueId()), essentialsCommand.getName(), essentialsCommand,
+                        args.toArray(new String[0]));
             } catch (NotEnoughArgumentsException exception) {
                 e.getPlayer().sendMessage(essentialsCommand.getDescription());
                 e.getPlayer().sendMessage(essentialsCommand.getUsage().replaceAll("<command>", com));
-                if (!exception.getMessage().isEmpty()) e.getPlayer().sendMessage(exception.getMessage());
+                if (!exception.getMessage().isEmpty())
+                    e.getPlayer().sendMessage(exception.getMessage());
             } catch (Exception exception) {
-                if (!exception.getMessage().isEmpty()) e.getPlayer().sendMessage(exception.getMessage());
+                if (!exception.getMessage().isEmpty())
+                    e.getPlayer().sendMessage(exception.getMessage());
                 else
                     exception.printStackTrace();
             }

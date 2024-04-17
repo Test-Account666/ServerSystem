@@ -1,12 +1,12 @@
 package me.entity303.serversystem.listener;
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 
-public class ItemDamageListener extends MessageUtils implements Listener {
+public class ItemDamageListener extends CommandUtils implements Listener {
 
     public ItemDamageListener(ServerSystem plugin) {
         super(plugin);
@@ -14,8 +14,17 @@ public class ItemDamageListener extends MessageUtils implements Listener {
 
     @EventHandler
     public void onItemDamage(PlayerItemDamageEvent e) {
-        int damageValue = e.getItem().getType().getMaxDurability() - (e.getItem().getDurability() + e.getDamage());
-        if (damageValue <= 20 && damageValue != -1)
-            this.plugin.getVersionStuff().getActionBar().sendActionBar(e.getPlayer(), this.getMessage("ItemBreaking", "break", "break", e.getPlayer(), null).replace("\"", "\\\"").replace("<ITEM>", e.getItem().getType().name()).replace("<DURABILITY>", String.valueOf(damageValue + 1)).replace("<MAXDURABILITY>", String.valueOf(e.getItem().getType().getMaxDurability() + 1)));
+        var currentDurability = e.getItem().getType().getMaxDurability() - e.getDamage();
+        if (currentDurability > 20 || currentDurability <= -1)
+            return;
+
+        this.plugin.getVersionStuff()
+                   .getActionBar()
+                   .sendActionBar(e.getPlayer(), this.plugin.getMessages()
+                                                            .getMessage("break", "break", e.getPlayer(), null, "ItemBreaking")
+                                                            .replace("\"", "\\\"")
+                                                            .replace("<ITEM>", e.getItem().getType().name())
+                                                            .replace("<DURABILITY>", String.valueOf(currentDurability + 1))
+                                                            .replace("<MAXDURABILITY>", String.valueOf(e.getItem().getType().getMaxDurability() + 1)));
     }
 }

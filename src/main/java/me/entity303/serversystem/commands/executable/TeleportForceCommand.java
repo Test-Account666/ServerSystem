@@ -3,68 +3,77 @@ package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import me.entity303.serversystem.utils.Teleport;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TeleportForceCommand extends MessageUtils implements CommandExecutor {
+public class TeleportForceCommand extends CommandUtils implements CommandExecutorOverload {
 
     public TeleportForceCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (args.length == 0) {
-            if (this.isAllowed(cs, "tpo.self", true) || this.isAllowed(cs, "tpo.others", true)) {
-                cs.sendMessage(this.getPrefix() + this.getSyntax("Tpo", label, cmd.getName(), cs, null));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (arguments.length == 0) {
+            if (this.plugin.getPermissions().hasPermission(commandSender, "tpo.self", true) || this.plugin.getPermissions().hasPermission(commandSender, "tpo.others", true)) {
+                
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Tpo"));
                 return true;
             }
-            this.plugin.log(ChatColor.translateAlternateColorCodes('&', this.plugin.getMessages().getCfg().getString("Messages.Misc.NoPermissionInfo")).replace("<SENDER>", cs.getName()));
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("tpo.self") + " || " + this.Perm("tpo.others")));
+            this.plugin.log(ChatColor.translateAlternateColorCodes('&', this.plugin.getMessages().getCfg().getString("Messages.Misc.NoPermissionInfo"))
+                                     .replace("<SENDER>", commandSender.getName()));
+            var permission = this.plugin.getPermissions().getPermission("tpo.self") + " || " + this.plugin.getPermissions().getPermission("tpo.others");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
-        if (args.length == 1) {
-            if ((!(cs instanceof Player))) {
-                cs.sendMessage(this.getPrefix() + this.getSyntax("Tpo", label, cmd.getName(), cs, null));
+        if (arguments.length == 1) {
+            if ((!(commandSender instanceof Player))) {
+                
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Tpo"));
                 return true;
             }
-            if (!this.isAllowed(cs, "tpo.self")) {
-                cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("tpo.self")));
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "tpo.self")) {
+                var permission = this.plugin.getPermissions().getPermission("tpo.self");
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
                 return true;
             }
-            Player target = this.getPlayer(cs, args[0]);
+            var target = this.getPlayer(commandSender, arguments[0]);
             if (target == null) {
-                cs.sendMessage(this.getPrefix() + this.getNoTarget(args[0]));
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
                 return true;
             }
 
-            Teleport.teleport((Player) cs, target);
+            Teleport.teleport((Player) commandSender, target);
 
-            cs.sendMessage(this.getPrefix() + this.getMessage("Tpo.Self", label, cmd.getName(), cs, target));
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Tpo.Self"));
             return true;
         }
-        if (!this.isAllowed(cs, "tpo.others")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("tpo.others")));
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "tpo.others")) {
+            var permission = this.plugin.getPermissions().getPermission("tpo.others");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
-        Player target1 = this.getPlayer(cs, args[0]);
+        var target1 = this.getPlayer(commandSender, arguments[0]);
         if (target1 == null) {
-            cs.sendMessage(this.getPrefix() + this.getNoTarget(args[0]));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
             return true;
         }
-        Player target2 = this.getPlayer(cs, args[1]);
+        var target2 = this.getPlayer(commandSender, arguments[1]);
         if (target2 == null) {
-            cs.sendMessage(this.getPrefix() + this.getNoTarget(args[1]));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[1]));
             return true;
         }
 
         Teleport.teleport(target1, target2);
 
-        cs.sendMessage(this.getPrefix() + this.getMessage("Tpo.Others", label, cmd.getName(), cs, target1).replace("<TARGET2>", target2.getName()));
+        
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                  this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target1, "Tpo.Others").replace("<TARGET2>", target2.getName()));
         return true;
     }
 }

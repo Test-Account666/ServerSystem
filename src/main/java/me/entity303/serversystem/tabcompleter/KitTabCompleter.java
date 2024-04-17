@@ -20,7 +20,9 @@ public class KitTabCompleter implements TabCompleter {
         if (args.length == 1) {
             List<String> kits = new ArrayList<>(this.plugin.getKitsManager().getKitNames());
             List<String> tab = new ArrayList<>();
-            for (String kit : kits) if (this.plugin.getKitsManager().isKitAllowed(cs, kit, false, true)) tab.add(kit);
+            for (var kit : kits)
+                if (this.plugin.getKitsManager().isKitAllowed(cs, kit, false, true))
+                    tab.add(kit);
             return tab;
         }
         return null;

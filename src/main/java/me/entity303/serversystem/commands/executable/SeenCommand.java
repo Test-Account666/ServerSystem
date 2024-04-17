@@ -1,21 +1,21 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.List;
 
-public class SeenCommand extends MessageUtils implements TabExecutor {
+import static me.entity303.serversystem.commands.executable.OfflineEnderChestCommand.GetOfflinePlayers;
+
+public class SeenCommand extends CommandUtils implements TabExecutor {
     //TODO: Seen Command, hopp hopp, Hutch meckert
 
     public SeenCommand(ServerSystem plugin) {
@@ -24,49 +24,51 @@ public class SeenCommand extends MessageUtils implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!this.isAllowed(sender, "seen")) {
-            sender.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("seen")));
+        if (!this.plugin.getPermissions().hasPermission(sender, "seen")) {
+            var permission = this.plugin.getPermissions().getPermission("seen");
+            sender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
 
-        if (args.length <= 0) {
-            sender.sendMessage(this.getPrefix() + this.getSyntax("Seen", label, command.getName(), sender, null));
+        if (args.length == 0) {
+            var command1 = command.getName();
+            sender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(label, command1, sender, null, "Seen"));
             return true;
         }
 
-        OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
+        var target = Bukkit.getOfflinePlayer(args[0]);
         if (target.getLastPlayed() <= 0) {
-            sender.sendMessage(this.getPrefix() + this.getMessageWithStringTarget("Seen.PlayerNeverPlayed", label, command.getName(), sender, target.getName()));
+            var command1 = command.getName();
+            var target1 = target.getName();
+            sender.sendMessage(this.plugin.getMessages().getPrefix() +
+                               this.plugin.getMessages().getMessageWithStringTarget(label, command1, sender, target1, "Seen.PlayerNeverPlayed"));
             return true;
         }
 
-        long lastPlayed = target.getLastPlayed();
+        var lastPlayed = target.getLastPlayed();
 
         if (target.isOnline())
             lastPlayed = System.currentTimeMillis();
 
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(this.getMessageWithStringTarget("Seen.TimeFormat", label, command.getName(), sender, target.getName()));
+        var command2 = command.getName();
+        var target2 = target.getName();
+        var dtf = DateTimeFormatter.ofPattern(this.plugin.getMessages().getMessageWithStringTarget(label, command2, sender, target2, "Seen.TimeFormat"));
 
-        LocalDateTime date = Instant.ofEpochMilli(lastPlayed).atZone(ZoneId.systemDefault()).toLocalDateTime();
-        String format = dtf.format(date);
+        var date = Instant.ofEpochMilli(lastPlayed).atZone(ZoneId.systemDefault()).toLocalDateTime();
+        var format = dtf.format(date);
 
-        sender.sendMessage(this.getPrefix() + this.getMessageWithStringTarget("Seen.LastSeen", label, command.getName(), sender, target.getName()).replace("<TIME>", format));
+        var command1 = command.getName();
+        var target1 = target.getName();
+        sender.sendMessage(this.plugin.getMessages().getPrefix() +
+                           this.plugin.getMessages().getMessageWithStringTarget(label, command1, sender, target1, "Seen.LastSeen").replace("<TIME>", format));
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        if (!this.isAllowed(sender, "seen", true))
+        if (!this.plugin.getPermissions().hasPermission(sender, "seen", true))
             return Collections.singletonList("");
 
-        List<String> players = Arrays.stream(Bukkit.getOfflinePlayers()).filter(offlinePlayer -> !offlinePlayer.isOnline()).map(OfflinePlayer::getName).collect(Collectors.toList());
-
-        List<String> possiblePlayers = new ArrayList<>();
-
-        for (String player : players)
-            if (player.toLowerCase(Locale.ROOT).startsWith(args[0].toLowerCase(Locale.ROOT)))
-                possiblePlayers.add(player);
-
-        return !possiblePlayers.isEmpty() ? possiblePlayers : players;
+        return GetOfflinePlayers(args);
     }
 }

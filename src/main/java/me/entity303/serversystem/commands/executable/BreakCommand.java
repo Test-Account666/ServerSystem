@@ -1,70 +1,80 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class BreakCommand extends MessageUtils implements CommandExecutor {
+public class BreakCommand extends CommandUtils implements CommandExecutorOverload {
 
     public BreakCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.getPrefix() + this.getOnlyPlayer());
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!(commandSender instanceof Player player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
 
-        if (!this.isAllowed(cs, "break.use")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("break.use")));
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "break.use")) {
+            var permission = this.plugin.getPermissions().getPermission("break.use");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
 
-        Player player = (Player) cs;
-        Block block = player.getTargetBlock(null, 10);
+        var block = player.getTargetBlock(null, 10);
         if (block.getType() == Material.AIR) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("Break.NoBlockFound", label, cmd.getName(), cs, null));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Break.NoBlockFound"));
             return true;
         }
 
-        if (block.getType() == Material.BEDROCK) if (!this.isAllowed(cs, "break.bedrock")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("break.bedrock")));
-            return true;
-        }
+        if (block.getType() == Material.BEDROCK)
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "break.bedrock")) {
+                var permission = this.plugin.getPermissions().getPermission("break.bedrock");
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+                return true;
+            }
 
         if (block.getType() == Material.BARRIER) {
-            if (!this.isAllowed(cs, "break.barrier")) {
-                cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("break.barrier")));
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "break.barrier")) {
+                var permission = this.plugin.getPermissions().getPermission("break.barrier");
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
                 return true;
             }
             return true;
         }
 
         if (block.getType() == Material.COMMAND_BLOCK || block.getType() == Material.CHAIN_COMMAND_BLOCK || block.getType() == Material.REPEATING_COMMAND_BLOCK) {
-            if (!this.isAllowed(cs, "break.commandblock")) {
-                cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("break.commandblock")));
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "break.commandblock")) {
+                var permission = this.plugin.getPermissions().getPermission("break.commandblock");
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
                 return true;
             }
             return true;
         }
 
         if (block.getType() == Material.STRUCTURE_BLOCK) {
-            if (!this.isAllowed(cs, "break.structureblock")) {
-                cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("break.structureblock")));
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "break.structureblock")) {
+                var permission = this.plugin.getPermissions().getPermission("break.structureblock");
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
                 return true;
             }
             return true;
         }
 
         block.setType(Material.AIR);
-        cs.sendMessage(this.getPrefix() + this.getMessage("Break.BlockBroke", label, cmd.getName(), cs, null).replace("<X>", String.valueOf(block.getX())).replace("<Y>", String.valueOf(block.getY())).replace("<Z>", String.valueOf(block.getZ())));
+
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                     .getMessage(commandLabel, command, commandSender, null, "Break.BlockBroke")
+                                                                                     .replace("<X>", String.valueOf(block.getX()))
+                                                                                     .replace("<Y>", String.valueOf(block.getY()))
+                                                                                     .replace("<Z>", String.valueOf(block.getZ())));
         return true;
     }
 }

@@ -1,72 +1,61 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ExtinguishCommand extends MessageUtils implements CommandExecutor {
+public class ExtinguishCommand extends CommandUtils implements CommandExecutorOverload {
 
     public ExtinguishCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (args.length == 0) if (cs instanceof Player) {
-            Player p = (Player) cs;
-            if (this.isAllowed(p, "extinguish.self")) {
-                p.setFireTicks(0);
-                p.sendMessage(this.getPrefix() + this.getMessage("Extinguish.Self", label, cmd.getName(), cs, null));
-            } else cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("extinguish.self")));
-        } else
-            cs.sendMessage(this.getPrefix() + this.getSyntax("Extinguish", label, cmd.getName(), cs, null));
-        else if (this.isAllowed(cs, "extinguish.others")) {
-            Player target = this.getPlayer(cs, args[0]);
-            if (target != null) {
-                target.setFireTicks(0);
-                target.sendMessage(this.getPrefix() + this.getMessage("Extinguish.Others.Target", label, cmd.getName(), cs, target));
-                cs.sendMessage(this.getPrefix() + this.getMessage("Extinguish.Others.Sender", label, cmd.getName(), cs, target));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (arguments.length == 0) {
+            if (!(commandSender instanceof Player player)) {
+                commandSender.sendMessage(
+                        this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Extinguish"));
+                return true;
             }
-        } else if (cs instanceof Player) {
-            Player p = (Player) cs;
-            if (this.isAllowed(p, "extinguish.self")) {
-                p.setFireTicks(0);
-                p.sendMessage(this.getPrefix() + this.getMessage("Extinguish.Self", label, cmd.getName(), cs, null));
-            } else cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("extinguish.others")));
-        } else cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("extinguish.others")));
+
+            if (!this.plugin.getPermissions().hasPermission(player, "extinguish.self")) {
+                var permission = this.plugin.getPermissions().getPermission("extinguish.self");
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+                return true;
+            }
+
+            player.setFireTicks(0);
+
+            player.sendMessage(
+                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Extinguish.Self"));
+            return true;
+        }
+
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "extinguish.others")) {
+            var permission = this.plugin.getPermissions().getPermission("extinguish.others");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+            return true;
+        }
+
+        var target = this.getPlayer(commandSender, arguments[0]);
+        if (target == null)
+            return true;
+
+        target.setFireTicks(0);
+
+        target.sendMessage(this.plugin.getMessages().getPrefix() +
+                           this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Extinguish.Others.Target"));
+
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                  this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Extinguish.Others.Sender"));
         return true;
     }
 
-    @Override
     public String getPrefix() {
         return this.plugin.getMessages().getPrefix();
-    }
-
-    @Override
-    public String getMessage(String action, String label, String command, CommandSender sender, CommandSender target) {
-        return this.plugin.getMessages().getMessage(label, command, sender, target, action);
-    }
-
-    @Override
-    public boolean isAllowed(CommandSender cs, String action) {
-        return this.plugin.getPermissions().hasPerm(cs, action);
-    }
-
-    @Override
-    public String Perm(String action) {
-        return this.plugin.getPermissions().Perm(action);
-    }
-
-    @Override
-    public String getNoPermission(String permission) {
-        return this.plugin.getMessages().getNoPermission(permission);
-    }
-
-    @Override
-    public String getSyntax(String action, String label, String command, CommandSender sender, CommandSender target) {
-        return this.plugin.getMessages().getSyntax(label, command, sender, target, action);
     }
 }

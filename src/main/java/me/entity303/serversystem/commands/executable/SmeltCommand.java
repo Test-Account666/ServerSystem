@@ -1,84 +1,88 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-
-import java.util.Iterator;
 
 
-public class SmeltCommand extends MessageUtils implements CommandExecutor {
+public class SmeltCommand extends CommandUtils implements CommandExecutorOverload {
 
     public SmeltCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.getPrefix() + this.getOnlyPlayer());
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
 
-        if (!this.isAllowed(cs, "smelt")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("smelt")));
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "smelt")) {
+            var permission = this.plugin.getPermissions().getPermission("smelt");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
 
-        ((Player) cs).getInventory().getItemInHand();
+        ((Player) commandSender).getInventory().getItemInMainHand();
 
         try {
-            if (((Player) cs).getInventory().getItemInHand().getType() == Material.AIR) {
-                cs.sendMessage(this.getPrefix() + this.getMessage("Smelt.NoItem", label, cmd.getName(), cs, null));
+            if (((Player) commandSender).getInventory().getItemInMainHand().getType() == Material.AIR) {
+                
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Smelt.NoItem"));
                 return true;
             }
         } catch (Exception ignored) {
         }
 
-        boolean recipeFound = false;
+        var recipeFound = false;
         ItemStack end = null;
 
-        Iterator<Recipe> recipeIterator = Bukkit.recipeIterator();
+        var recipeIterator = Bukkit.recipeIterator();
 
         while (recipeIterator.hasNext()) {
-            Recipe recipe = recipeIterator.next();
-            if (recipe instanceof FurnaceRecipe) {
-                FurnaceRecipe furnaceRecipe = (FurnaceRecipe) recipe;
-                if (furnaceRecipe.getInput().getType() == ((Player) cs).getInventory().getItemInHand().getType()) {
+            var recipe = recipeIterator.next();
+            if (recipe instanceof FurnaceRecipe furnaceRecipe)
+                if (furnaceRecipe.getInput().getType() == ((Player) commandSender).getInventory().getItemInMainHand().getType()) {
                     end = furnaceRecipe.getResult();
                     recipeFound = true;
                     break;
                 }
-            }
         }
 
         if (recipeFound) {
-            ((Player) cs).getInventory().getItemInHand().setType(end.getType());
-            ((Player) cs).getInventory().getItemInHand().setDurability(end.getDurability());
-            cs.sendMessage(this.getPrefix() + this.getMessage("Smelt.Success", label, cmd.getName(), cs, null).replace("<ITEM>", end.getType() + ":" + end.getDurability()));
+            ((Player) commandSender).getInventory().getItemInMainHand().setType(end.getType());
+            ((Player) commandSender).getInventory().getItemInMainHand().setDurability(end.getDurability());
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                         .getMessage(commandLabel, command, commandSender, null, "Smelt.Success")
+                                                                                         .replace("<ITEM>", end.getType() + ":" + end.getDurability()));
             return true;
         }
 
 
-        ItemStack result = this.plugin.getFurnace().getResult(((Player) cs).getInventory().getItemInHand());
+        var result = this.plugin.getFurnace().getResult(((Player) commandSender).getInventory().getItemInMainHand());
 
         if (result != null) {
             end = result;
-            ((Player) cs).getInventory().getItemInHand().setType(end.getType());
-            ((Player) cs).getInventory().getItemInHand().setDurability(end.getDurability());
-            cs.sendMessage(this.getPrefix() + this.getMessage("Smelt.Success", label, cmd.getName(), cs, null).replace("<ITEM>", end.getType() + ":" + end.getDurability()));
+            ((Player) commandSender).getInventory().getItemInMainHand().setType(end.getType());
+            ((Player) commandSender).getInventory().getItemInMainHand().setDurability(end.getDurability());
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                         .getMessage(commandLabel, command, commandSender, null, "Smelt.Success")
+                                                                                         .replace("<ITEM>", end.getType() + ":" + end.getDurability()));
             return true;
         }
 
-        cs.sendMessage(this.getPrefix() + this.getMessage("Smelt.NotSmeltable", label, cmd.getName(), cs, null));
+        
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Smelt.NotSmeltable"));
         return true;
     }
 

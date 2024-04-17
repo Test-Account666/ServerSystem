@@ -1,45 +1,55 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class KickCommand extends MessageUtils implements CommandExecutor {
+public class KickCommand extends CommandUtils implements CommandExecutorOverload {
 
     public KickCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!this.isAllowed(cs, "kick.use")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("kick.use")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "kick.use")) {
+            var permission = this.plugin.getPermissions().getPermission("kick.use");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
-        if (args.length == 0) {
-            cs.sendMessage(this.getPrefix() + this.getSyntax("Kick", label, cmd.getName(), cs, null));
+        if (arguments.length == 0) {
+
+            commandSender.sendMessage(
+                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Kick"));
             return true;
         }
-        Player target = this.getPlayer(cs, args[0]);
+
+        var target = this.getPlayer(commandSender, arguments[0]);
         if (target == null) {
-            cs.sendMessage(this.getPrefix() + this.getNoTarget(args[0]));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
             return true;
         }
-        if (this.isAllowed(target, "kick.exempt", true)) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("Kick.CannotKick", label, cmd.getName(), cs, target));
+
+        if (this.plugin.getPermissions().hasPermission(target, "kick.exempt", true)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Kick.CannotKick"));
             return true;
         }
-        String reason = this.getMessage("Kick.DefaultReason", label, cmd.getName(), cs, target);
-        if (args.length > 1)
-            reason = IntStream.range(1, args.length).mapToObj(i -> args[i] + " ").collect(Collectors.joining());
-        target.kickPlayer(this.getMessage("Kick.Kick", label, cmd.getName(), cs, target).replace("<REASON>", reason));
-        cs.sendMessage(this.getPrefix() + this.getMessage("Kick.Success", label, cmd.getName(), cs, target));
+
+        var reason = this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Kick.DefaultReason");
+
+        if (arguments.length > 1)
+            reason = IntStream.range(1, arguments.length).mapToObj(i -> arguments[i] + " ").collect(Collectors.joining());
+
+        target.kickPlayer(this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Kick.Kick").replace("<REASON>", reason));
+
+        commandSender.sendMessage(
+                this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Kick.Success"));
         return true;
     }
 }

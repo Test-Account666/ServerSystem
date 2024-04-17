@@ -29,14 +29,20 @@ public class MuteManager extends ManagerMute {
     }
 
     @Override
+    public Mute getMute(OfflinePlayer player) {
+        return this.getMute(player.getUniqueId());
+    }
+
+    @Override
     public void removeMute(UUID mutedUUID) {
-        if (!this.isMuted(Bukkit.getOfflinePlayer(mutedUUID))) return;
+        if (!this.isMuted(Bukkit.getOfflinePlayer(mutedUUID)))
+            return;
         this.cfg.set("Muted." + mutedUUID, null);
 
         this.save();
 
         try {
-            Mute nullMute = new Mute(null, null, null, null, null);
+            var nullMute = new Mute(null, null, null, null, null);
         } catch (Exception ignored) {
         }
 
@@ -45,9 +51,11 @@ public class MuteManager extends ManagerMute {
 
     @Override
     public Mute addMute(UUID mutedUUID, String senderUUID, String reason, Long howLong, TimeUnit timeUnit) {
-        if (this.isMuted(Bukkit.getOfflinePlayer(mutedUUID))) this.removeMute(mutedUUID);
-        long unbanTime = System.currentTimeMillis() + (howLong * timeUnit.getValue());
-        if (howLong < 1) unbanTime = -1L;
+        if (this.isMuted(Bukkit.getOfflinePlayer(mutedUUID)))
+            this.removeMute(mutedUUID);
+        var unbanTime = System.currentTimeMillis() + (howLong * timeUnit.getValue());
+        if (howLong < 1)
+            unbanTime = -1L;
         this.cfg.set("Muted." + mutedUUID + ".Sender", senderUUID);
         this.cfg.set("Muted." + mutedUUID + ".Reason", reason);
         this.cfg.set("Muted." + mutedUUID + ".Shadow", false);
@@ -55,7 +63,7 @@ public class MuteManager extends ManagerMute {
 
         this.save();
 
-        Mute mute = new Mute(mutedUUID.toString(), senderUUID, unbanTime, this.convertLongToDate(unbanTime), reason);
+        var mute = new Mute(mutedUUID.toString(), senderUUID, unbanTime, this.convertLongToDate(unbanTime), reason);
 
         this.reload();
         return mute;
@@ -63,9 +71,11 @@ public class MuteManager extends ManagerMute {
 
     @Override
     public Mute addMute(UUID mutedUUID, String senderUUID, String reason, boolean shadow, Long howLong, TimeUnit timeUnit) {
-        if (this.isMuted(Bukkit.getOfflinePlayer(mutedUUID))) this.removeMute(mutedUUID);
-        long unbanTime = System.currentTimeMillis() + (howLong * timeUnit.getValue());
-        if (howLong < 1) unbanTime = -1L;
+        if (this.isMuted(Bukkit.getOfflinePlayer(mutedUUID)))
+            this.removeMute(mutedUUID);
+        var unbanTime = System.currentTimeMillis() + (howLong * timeUnit.getValue());
+        if (howLong < 1)
+            unbanTime = -1L;
         this.cfg.set("Muted." + mutedUUID + ".Sender", senderUUID);
         this.cfg.set("Muted." + mutedUUID + ".Reason", "No reason when shadow");
         this.cfg.set("Muted." + mutedUUID + ".Shadow", shadow);
@@ -73,7 +83,7 @@ public class MuteManager extends ManagerMute {
 
         this.save();
 
-        Mute mute = new Mute(mutedUUID.toString(), senderUUID, unbanTime, this.convertLongToDate(unbanTime), reason, shadow);
+        var mute = new Mute(mutedUUID.toString(), senderUUID, unbanTime, this.convertLongToDate(unbanTime), reason, shadow);
 
         this.reload();
         return mute;
@@ -81,12 +91,13 @@ public class MuteManager extends ManagerMute {
 
     @Override
     public Mute addMute(Mute mute) {
-        UUID mutedUUID = UUID.fromString(mute.getMUTED_UUID());
-        String senderUUID = mute.getSENDER_UUID();
-        boolean shadow = mute.isSHADOW();
+        var mutedUUID = UUID.fromString(mute.getMUTED_UUID());
+        var senderUUID = mute.getSENDER_UUID();
+        var shadow = mute.isSHADOW();
         long unbanTime = mute.getUNMUTE_TIME();
 
-        if (this.isMuted(Bukkit.getOfflinePlayer(mutedUUID))) this.removeMute(mutedUUID);
+        if (this.isMuted(Bukkit.getOfflinePlayer(mutedUUID)))
+            this.removeMute(mutedUUID);
         this.cfg.set("Muted." + mutedUUID + ".Sender", senderUUID);
         this.cfg.set("Muted." + mutedUUID + ".Reason", "No reason when shadow");
         this.cfg.set("Muted." + mutedUUID + ".Shadow", shadow);
@@ -105,54 +116,68 @@ public class MuteManager extends ManagerMute {
 
     @Override
     public String convertLongToDate(Long l) {
-        if (l < 1) return this.getBanSystem("PermaBan");
-        Calendar c = Calendar.getInstance();
+        if (l < 1)
+            return this.getBanSystem("PermaBan");
+        var c = Calendar.getInstance();
 
         c.setTimeInMillis(l);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy:MM:dd:kk:mm:ss");
-        String[] dates = dateFormat.format(c.getTime()).split(":");
+        var dateFormat = new SimpleDateFormat("yyyy:MM:dd:kk:mm:ss");
+        var dates = dateFormat.format(c.getTime()).split(":");
 
-        String year = dates[0];
-        String month = dates[1];
-        String day = dates[2];
-        String hour = dates[3];
-        String minute = dates[4];
-        String second = dates[5];
+        var year = dates[0];
+        var month = dates[1];
+        var day = dates[2];
+        var hour = dates[3];
+        var minute = dates[4];
+        var second = dates[5];
 
-        if (month.chars().count() == 1) month = "0" + month;
+        if (month.chars().count() == 1)
+            month = "0" + month;
 
-        if (day.chars().count() == 1) day = "0" + day;
+        if (day.chars().count() == 1)
+            day = "0" + day;
 
-        if (hour.chars().count() == 1) hour = "0" + hour;
+        if (hour.chars().count() == 1)
+            hour = "0" + hour;
 
-        if (minute.chars().count() == 1) minute = "0" + minute;
+        if (minute.chars().count() == 1)
+            minute = "0" + minute;
 
-        if (second.chars().count() == 1) second = "0" + second;
+        if (second.chars().count() == 1)
+            second = "0" + second;
 
-        return this.getDateFormat().
-                replace("<YEAR>", year).
-                replace("<MONTH>", month).
-                replace("<DAY>", day).
-                replace("<HOUR>", hour).
-                replace("<MINUTE>", minute).
-                replace("<SECOND>", second);
+        return this.getDateFormat()
+                   .replace("<YEAR>", year)
+                   .replace("<MONTH>", month)
+                   .replace("<DAY>", day)
+                   .replace("<HOUR>", hour)
+                   .replace("<MINUTE>", minute)
+                   .replace("<SECOND>", second);
     }
 
     @Override
     public boolean isMuted(OfflinePlayer player) {
-        if (!this.muteFile.exists()) return false;
+        if (!this.muteFile.exists())
+            return false;
         return this.getMute(player) != null;
     }
 
     @Override
     public List<String> getMutedPlayerNames() {
-        if (this.cfg.getConfigurationSection("Muted") == null) return new ArrayList<>();
+        if (this.cfg.getConfigurationSection("Muted") == null)
+            return new ArrayList<>();
         this.cfg.getConfigurationSection("Muted").getKeys(false);
-        if (this.cfg.getConfigurationSection("Muted").getKeys(false).size() <= 0) return new ArrayList<>();
+        if (this.cfg.getConfigurationSection("Muted").getKeys(false).isEmpty())
+            return new ArrayList<>();
 
         try {
-            return this.cfg.getConfigurationSection("Muted").getKeys(false).stream().map(uuid -> Bukkit.getOfflinePlayer(UUID.fromString(uuid))).map(OfflinePlayer::getName).collect(Collectors.toList());
+            return this.cfg.getConfigurationSection("Muted")
+                           .getKeys(false)
+                           .stream()
+                           .map(uuid -> Bukkit.getOfflinePlayer(UUID.fromString(uuid)))
+                           .map(OfflinePlayer::getName)
+                           .collect(Collectors.toList());
         } catch (Exception e) {
             e.printStackTrace();
             return new ArrayList<>();
@@ -164,13 +189,9 @@ public class MuteManager extends ManagerMute {
 
     }
 
-    @Override
-    public Mute getMute(OfflinePlayer player) {
-        return this.getMute(player.getUniqueId());
-    }
-
     public Mute getMute(UUID uuid) {
-        if (!this.muteFile.exists()) return null;
+        if (!this.muteFile.exists())
+            return null;
         try {
             Mute mute;
             String uuidSender;
@@ -180,7 +201,7 @@ public class MuteManager extends ManagerMute {
             String reason;
             boolean shadow;
 
-            String str = "Muted." + uuid.toString() + ".";
+            var str = "Muted." + uuid.toString() + ".";
             uuidSender = this.cfg.getString(str + "Sender");
             uuidMuted = uuid.toString();
             try {
@@ -192,12 +213,17 @@ public class MuteManager extends ManagerMute {
             reason = this.cfg.getString(str + "Reason");
             shadow = this.cfg.getBoolean(str + "Shadow");
 
-            if (uuidSender == null) return null;
-            if (uuidMuted == null) return null;
-            if (unmute_date == null) return null;
-            if (reason == null) return null;
+            if (uuidSender == null)
+                return null;
+            if (uuidMuted == null)
+                return null;
+            if (unmute_date == null)
+                return null;
+            if (reason == null)
+                return null;
 
-            if (shadow) mute = new Mute(uuidSender, uuidMuted, unmute_time, unmute_date, reason, true);
+            if (shadow)
+                mute = new Mute(uuidSender, uuidMuted, unmute_time, unmute_date, reason, true);
             else
                 mute = new Mute(uuidSender, uuidMuted, unmute_time, unmute_date, reason);
 

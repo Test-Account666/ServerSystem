@@ -1,9 +1,9 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -11,38 +11,40 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CreateKitCommand extends MessageUtils implements CommandExecutor {
+public class CreateKitCommand extends CommandUtils implements CommandExecutorOverload {
 
     public CreateKitCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!this.isAllowed(cs, "createkit")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("createkit")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "createkit")) {
+            var permission = this.plugin.getPermissions().getPermission("createkit");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
 
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.getPrefix() + this.getOnlyPlayer());
+        if (!(commandSender instanceof Player player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
 
-        if (args.length <= 0) {
-            cs.sendMessage(this.getPrefix() + this.getSyntax("CreateKit", label, cmd.getName(), cs, null));
+        if (arguments.length == 0) {
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "CreateKit"));
             return true;
         }
 
-        if (this.plugin.getKitsManager().doesKitExist(args[0])) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("CreateKit.AlreadyExist", label, cmd.getName(), cs, null).replace("<KIT>", args[0].toUpperCase()));
+        if (this.plugin.getKitsManager().doesKitExist(arguments[0])) {
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "CreateKit.AlreadyExist").replace("<KIT>", arguments[0].toUpperCase()));
             return true;
         }
-
-        Player player = ((Player) cs);
 
         Map<Integer, ItemStack> kit = new HashMap<>();
-        for (int i = 0; i < 41; i++) {
+        for (var i = 0; i < 41; i++) {
             if (i <= 35) {
                 kit.put(i, player.getInventory().getItem(i));
                 continue;
@@ -66,8 +68,7 @@ public class CreateKitCommand extends MessageUtils implements CommandExecutor {
                 continue;
             }
             try {
-                if (!this.plugin.getVersionManager().is188()) kit.put(i, player.getInventory().getItemInOffHand());
-                else kit.put(i, null);
+                kit.put(i, player.getInventory().getItemInOffHand());
                 break;
             } catch (Exception ignored) {
                 break;
@@ -76,14 +77,17 @@ public class CreateKitCommand extends MessageUtils implements CommandExecutor {
 
         long delay = 0;
 
-        if (args.length > 1) try {
-            delay = Long.parseLong(args[1]);
-            delay = (delay * 60) * 1000;
-        } catch (NumberFormatException ignored) {
-        }
+        if (arguments.length > 1)
+            try {
+                delay = Long.parseLong(arguments[1]);
+                delay = (delay * 60) * 1000;
+            } catch (NumberFormatException ignored) {
+            }
 
-        this.plugin.getKitsManager().addKit(args[0].toLowerCase(), kit, delay);
-        cs.sendMessage(this.getPrefix() + this.getMessage("CreateKit.Success", label, cmd.getName(), cs, null).replace("<KIT>", args[0].toUpperCase()));
+        this.plugin.getKitsManager().addKit(arguments[0].toLowerCase(), kit, delay);
+        
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                  this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "CreateKit.Success").replace("<KIT>", arguments[0].toUpperCase()));
         return true;
     }
 }

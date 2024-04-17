@@ -1,85 +1,89 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
+import me.entity303.serversystem.utils.CommandUtils;
 import me.entity303.serversystem.utils.DummyCommandSender;
-import me.entity303.serversystem.utils.MessageUtils;
 import me.entity303.serversystem.utils.Teleport;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.List;
 
-public class OfflineTeleportHereCommand extends MessageUtils implements TabExecutor {
+import static me.entity303.serversystem.commands.executable.OfflineEnderChestCommand.GetOfflinePlayers;
+
+public class OfflineTeleportHereCommand extends CommandUtils implements CommandExecutorOverload, TabCompleter {
 
     public OfflineTeleportHereCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!this.isAllowed(cs, "offlineteleporthere")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("offlineteleporthere")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "offlineteleporthere")) {
+            var permission = this.plugin.getPermissions().getPermission("offlineteleporthere");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
 
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.getPrefix() + this.getOnlyPlayer());
+        if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
 
-        if (args.length == 0) {
-            cs.sendMessage(this.getPrefix() + this.getSyntax("OfflineTeleportHere", label, cmd.getName(), cs, null));
+        if (arguments.length == 0) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "OfflineTeleportHere"));
             return true;
         }
 
-        OfflinePlayer offlineTarget = Bukkit.getOfflinePlayer(args[0]);
+        var offlineTarget = Bukkit.getOfflinePlayer(arguments[0]);
 
         if (!offlineTarget.hasPlayedBefore()) {
-            String name = offlineTarget.getName();
-            if (name == null) name = args[0];
-            cs.sendMessage(this.getPrefix() + this.getMessage("OfflineTeleportHere.NeverPlayed", label, cmd.getName(), cs, new DummyCommandSender(name)));
+            var name = offlineTarget.getName();
+            if (name == null)
+                name = arguments[0];
+            CommandSender target = new DummyCommandSender(name);
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "OfflineTeleportHere.NeverPlayed"));
             return true;
         }
 
         if (offlineTarget.isOnline()) {
-            if (this.getPlayer(cs, offlineTarget.getUniqueId()) == null) {
+            if (this.getPlayer(commandSender, offlineTarget.getUniqueId()) == null) {
 
-                Teleport.teleport(offlineTarget.getPlayer(), (Player) cs);
+                Teleport.teleport(offlineTarget.getPlayer(), (Player) commandSender);
 
-                cs.sendMessage(this.getPrefix() + this.getMessage("OfflineTeleportHere.Success", label, cmd.getName(), cs, offlineTarget.getPlayer()));
+                CommandSender target = offlineTarget.getPlayer();
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                          this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "OfflineTeleportHere.Success"));
                 return true;
             }
-            cs.sendMessage(this.getPrefix() + this.getMessage("OfflineTeleportHere.PlayerIsOnline", label, cmd.getName(), cs, offlineTarget.getPlayer()));
+            CommandSender target = offlineTarget.getPlayer();
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "OfflineTeleportHere.PlayerIsOnline"));
             return true;
         }
 
-        Player player = this.getHookedPlayer(offlineTarget);
+        var player = this.getHookedPlayer(offlineTarget);
 
-        this.plugin.getVersionStuff().getTeleport().teleport(player, ((Player) cs).getLocation());
+        this.plugin.getVersionStuff().getTeleport().teleport(player, ((Player) commandSender).getLocation());
 
         player.saveData();
-        cs.sendMessage(this.getPrefix() + this.getMessage("OfflineTeleportHere.Success", label, cmd.getName(), cs, player));
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                  this.plugin.getMessages().getMessage(commandLabel, command, commandSender, player, "OfflineTeleportHere.Success"));
         return true;
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        if (!this.isAllowed(sender, "offlineteleporthere", true))
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "offlineteleporthere", true))
             return Collections.singletonList("");
 
-        List<String> players = Arrays.stream(Bukkit.getOfflinePlayers()).filter(offlinePlayer -> !offlinePlayer.isOnline()).map(OfflinePlayer::getName).collect(Collectors.toList());
-
-        List<String> possiblePlayers = new ArrayList<>();
-
-        for (String player : players)
-            if (player.toLowerCase(Locale.ROOT).startsWith(args[0].toLowerCase(Locale.ROOT)))
-                possiblePlayers.add(player);
-
-        return !possiblePlayers.isEmpty() ? possiblePlayers : players;
+        return GetOfflinePlayers(arguments);
     }
 }

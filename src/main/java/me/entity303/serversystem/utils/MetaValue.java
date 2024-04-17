@@ -19,32 +19,32 @@ public class MetaValue {
 
             @Override
             public int asInt() {
-                return value ? 1 : 0;
+                return value? 1 : 0;
             }
 
             @Override
             public float asFloat() {
-                return value ? 1 : 0;
+                return value? 1 : 0;
             }
 
             @Override
             public double asDouble() {
-                return value ? 1 : 0;
+                return value? 1 : 0;
             }
 
             @Override
             public long asLong() {
-                return value ? 1 : 0;
+                return value? 1 : 0;
             }
 
             @Override
             public short asShort() {
-                return value ? (short) 1 : (short) 0;
+                return value? (short) 1 : (short) 0;
             }
 
             @Override
             public byte asByte() {
-                return value ? (byte) 1 : (byte) 0;
+                return value? (byte) 1 : (byte) 0;
             }
 
             @Override
@@ -54,7 +54,7 @@ public class MetaValue {
 
             @Override
             public String asString() {
-                return value ? "true" : "false";
+                return value? "true" : "false";
             }
 
             @Override

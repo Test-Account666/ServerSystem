@@ -1,34 +1,38 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 
-public class TeamChatCommand extends MessageUtils implements CommandExecutor {
+public class TeamChatCommand extends CommandUtils implements CommandExecutorOverload {
 
     public TeamChatCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!this.isAllowed(cs, "teamchat.send")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("teamchat.send")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "teamchat.send")) {
+            var permission = this.plugin.getPermissions().getPermission("teamchat.send");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
-        if (args.length < 1) {
-            cs.sendMessage(this.getPrefix() + this.getSyntax("TeamChat", label, cmd.getName(), cs, null));
+        if (arguments.length < 1) {
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "TeamChat"));
             return true;
         }
-        String msg = Arrays.stream(args).map(word -> word + " ").collect(Collectors.joining());
-        Bukkit.broadcast(this.getMessage("TeamChat", label, cmd.getName(), cs, null).replace("<MESSAGE>", msg), this.Perm("teamchat.recieve"));
+        var msg = Arrays.stream(arguments).map(word -> word + " ").collect(Collectors.joining());
+        
+        Bukkit.broadcast(this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "TeamChat").replace("<MESSAGE>", msg),
+                         this.plugin.getPermissions().getPermission("teamchat.recieve"));
         return true;
     }
 }

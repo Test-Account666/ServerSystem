@@ -1,32 +1,34 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class StackCommand extends MessageUtils implements CommandExecutor {
+public class StackCommand extends CommandUtils implements CommandExecutorOverload {
 
     public StackCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (args.length == 0) {
-            if (!(cs instanceof Player)) {
-                cs.sendMessage(this.getPrefix() + this.getOnlyPlayer());
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (arguments.length == 0) {
+            if (!(commandSender instanceof Player)) {
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
                 return true;
             }
-            if (!this.isAllowed(cs, "stack")) {
-                cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("stack")));
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "stack")) {
+                var permission = this.plugin.getPermissions().getPermission("stack");
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
                 return true;
             }
-            ((Player) cs).getInventory().getItemInHand();
-            ((Player) cs).getInventory().getItemInHand().setAmount(((Player) cs).getInventory().getItemInHand().getMaxStackSize());
-            cs.sendMessage(this.getPrefix() + this.getMessage("Stack.Success", label, cmd.getName(), cs, null));
+            ((Player) commandSender).getInventory().getItemInMainHand();
+            ((Player) commandSender).getInventory().getItemInMainHand().setAmount(((Player) commandSender).getInventory().getItemInMainHand().getMaxStackSize());
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Stack.Success"));
         }
         return true;
     }

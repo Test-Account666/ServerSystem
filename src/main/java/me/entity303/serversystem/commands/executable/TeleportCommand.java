@@ -3,78 +3,97 @@ package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import me.entity303.serversystem.utils.Teleport;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TeleportCommand extends MessageUtils implements CommandExecutor {
+public class TeleportCommand extends CommandUtils implements CommandExecutorOverload {
 
     public TeleportCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (args.length == 0) {
-            if (!this.isAllowed(cs, "tp.self", true) && !this.isAllowed(cs, "tp.others", true)) {
-                this.plugin.log(ChatColor.translateAlternateColorCodes('&', this.plugin.getMessages().getCfg().getString("Messages.Misc.NoPermissionInfo")).replace("<SENDER>", cs.getName()));
-                cs.sendMessage(this.getPrefix() + this.getNoPermission("tp.self || tp.others"));
-                return true;
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (arguments.length == 0) {
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "tp.self", true)) {
+                if (!this.plugin.getPermissions().hasPermission(commandSender, "tp.others", true)) {
+                    this.plugin.log(ChatColor.translateAlternateColorCodes('&', this.plugin.getMessages().getCfg().getString("Messages.Misc.NoPermissionInfo"))
+                                             .replace("<SENDER>", commandSender.getName()));
+                    commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission("tp.self || tp.others"));
+                    return true;
+                }
             }
-            cs.sendMessage(this.getPrefix() + this.getSyntax("Tp", label, cmd.getName(), cs, null));
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Tp"));
             return true;
-        } else if (args.length == 1) {
-            if ((!(cs instanceof Player))) {
-                cs.sendMessage(this.getPrefix() + this.getSyntax("Tp", label, cmd.getName(), cs, null));
+        } else if (arguments.length == 1) {
+            if ((!(commandSender instanceof Player))) {
+                
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Tp"));
                 return true;
             }
-            if (!this.isAllowed(cs, "tp.self")) {
-                cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("tp.self")));
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "tp.self")) {
+                var permission = this.plugin.getPermissions().getPermission("tp.self");
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
                 return true;
             }
-            Player target = this.getPlayer(cs, args[0]);
+            var target = this.getPlayer(commandSender, arguments[0]);
             if (target == null) {
-                cs.sendMessage(this.getPrefix() + this.getNoTarget(args[0]));
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
                 return true;
             }
-            if (target != cs) if (!this.plugin.getWantsTeleport().wantsTeleport(target)) {
-                cs.sendMessage(this.getPrefix() + this.getMessage("Tp.NoTeleportations", label, cmd.getName(), cs, target));
-                return true;
-            }
+            if (target != commandSender)
+                if (!this.plugin.getWantsTeleport().wantsTeleport(target)) {
+                    
+                    commandSender.sendMessage(
+                            this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Tp.NoTeleportations"));
+                    return true;
+                }
 
-            Teleport.teleport((Player) cs, target);
+            Teleport.teleport((Player) commandSender, target);
 
-            cs.sendMessage(this.getPrefix() + this.getMessage("Tp.Self", label, cmd.getName(), cs, target));
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Tp.Self"));
             return true;
-        } else if (!this.isAllowed(cs, "tp.others")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("tp.others")));
+        } else if (!this.plugin.getPermissions().hasPermission(commandSender, "tp.others")) {
+            var permission = this.plugin.getPermissions().getPermission("tp.others");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
-        Player target1 = this.getPlayer(cs, args[0]);
+        var target1 = this.getPlayer(commandSender, arguments[0]);
         if (target1 == null) {
-            cs.sendMessage(this.getPrefix() + this.getNoTarget(args[0]));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
             return true;
         }
-        if (target1 != cs) if (!this.plugin.getWantsTeleport().wantsTeleport(target1)) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("Tp.NoTeleportations", label, cmd.getName(), cs, target1));
-            return true;
-        }
-        Player target2 = this.getPlayer(cs, args[1]);
+        if (target1 != commandSender)
+            if (!this.plugin.getWantsTeleport().wantsTeleport(target1)) {
+                
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target1, "Tp.NoTeleportations"));
+                return true;
+            }
+        var target2 = this.getPlayer(commandSender, arguments[1]);
         if (target2 == null) {
-            cs.sendMessage(this.getPrefix() + this.getNoTarget(args[1]));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[1]));
             return true;
         }
-        if (target2 != cs) if (!this.plugin.getWantsTeleport().wantsTeleport(target2)) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("Tp.NoTeleportations", label, cmd.getName(), cs, target2));
-            return true;
-        }
+        if (target2 != commandSender)
+            if (!this.plugin.getWantsTeleport().wantsTeleport(target2)) {
+                
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target2, "Tp.NoTeleportations"));
+                return true;
+            }
 
         Teleport.teleport(target1, target2);
 
-        cs.sendMessage(this.getPrefix() + this.getMessage("Tp.Others", label, cmd.getName(), cs, target1).replace("<TARGET2>", target2.getName()).replace("<TARGET2DISPLAY>", target2.getDisplayName()));
+        
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                     .getMessage(commandLabel, command, commandSender, target1, "Tp.Others")
+                                                                                     .replace("<TARGET2>", target2.getName())
+                                                                                     .replace("<TARGET2DISPLAY>", target2.getDisplayName()));
         return true;
     }
 }

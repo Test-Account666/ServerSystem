@@ -1,35 +1,42 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
-public class IpCommand extends MessageUtils implements CommandExecutor {
+import java.util.Objects;
+
+public class IpCommand extends CommandUtils implements CommandExecutorOverload {
 
     public IpCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!this.isAllowed(cs, "ip")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("ip")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "ip")) {
+            var permission = this.plugin.getPermissions().getPermission("ip");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
-        if (args.length <= 0) {
-            cs.sendMessage(this.getPrefix() + this.getSyntax("Ip", label, cmd.getName(), cs, null));
+
+        if (arguments.length == 0) {
+            commandSender.sendMessage(
+                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Ip"));
             return true;
         }
-        Player target = this.getPlayer(cs, args[0]);
+        var target = this.getPlayer(commandSender, arguments[0]);
         if (target == null) {
-            cs.sendMessage(this.getPrefix() + this.getNoTarget(args[0]));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
             return true;
         }
-        String ip = target.getAddress().getAddress().toString().split("/")[1];
-        cs.sendMessage(this.getPrefix() + this.getMessage("Ip", label, cmd.getName(), cs, target).replace("<IP>", ip));
+
+        var ip = Objects.requireNonNull(target.getAddress()).getAddress().toString().split("/")[1];
+
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                  this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Ip").replace("<IP>", ip));
         return true;
     }
 }

@@ -1,14 +1,13 @@
 package me.entity303.serversystem.listener;
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 
-public class WorldChangeListener extends MessageUtils implements Listener {
+public class WorldChangeListener extends CommandUtils implements Listener {
     private final boolean resetGameMode;
     private final boolean resetGodMode;
     private final boolean resetFly;
@@ -22,18 +21,23 @@ public class WorldChangeListener extends MessageUtils implements Listener {
 
     @EventHandler
     public void onWorldChange(PlayerChangedWorldEvent e) {
-        if (this.resetGameMode) if (!this.isAllowed(e.getPlayer(), "worldchange.bypassreset.gamemode", true))
-            e.getPlayer().setGameMode(Bukkit.getDefaultGameMode());
-        if (this.resetGodMode) if (!this.isAllowed(e.getPlayer(), "worldchange.bypassreset.god", true))
-            this.plugin.getGodList().remove(e.getPlayer());
-        if (this.resetFly) if (!this.isAllowed(e.getPlayer(), "worldchange.bypassreset.fly", true)) {
-            e.getPlayer().setFlying(false);
-            e.getPlayer().setAllowFlight(false);
-        }
+        if (this.resetGameMode)
+            if (!this.plugin.getPermissions().hasPermission(e.getPlayer(), "worldchange.bypassreset.gamemode", true))
+                e.getPlayer().setGameMode(Bukkit.getDefaultGameMode());
+        if (this.resetGodMode)
+            if (!this.plugin.getPermissions().hasPermission(e.getPlayer(), "worldchange.bypassreset.god", true))
+                this.plugin.getGodList().remove(e.getPlayer());
+        if (this.resetFly)
+            if (!this.plugin.getPermissions().hasPermission(e.getPlayer(), "worldchange.bypassreset.fly", true)) {
+                e.getPlayer().setFlying(false);
+                e.getPlayer().setAllowFlight(false);
+            }
 
         Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-            if (!this.isAllowed(e.getPlayer(), "vanish.see", true)) for (Player all : Bukkit.getOnlinePlayers())
-                if (this.plugin.getVanish().isVanish(all)) e.getPlayer().hidePlayer(all);
+            if (!this.plugin.getPermissions().hasPermission(e.getPlayer(), "vanish.see", true))
+                for (var all : Bukkit.getOnlinePlayers())
+                    if (this.plugin.getVanish().isVanish(all))
+                        e.getPlayer().hidePlayer(all);
         }, 1L);
     }
 }

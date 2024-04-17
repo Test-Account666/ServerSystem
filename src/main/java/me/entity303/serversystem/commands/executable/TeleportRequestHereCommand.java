@@ -1,74 +1,81 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import me.entity303.serversystem.utils.TpaData;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TeleportRequestHereCommand extends MessageUtils implements CommandExecutor {
+public class TeleportRequestHereCommand extends CommandUtils implements CommandExecutorOverload {
 
     public TeleportRequestHereCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (this.plugin.getPermissions().getCfg().getBoolean("Permissions.tpahere.required"))
-            if (!this.plugin.getPermissions().hasPerm(cs, "tpahere.permission")) {
-                cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().Perm("tpahere.permission")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (this.plugin.getPermissions().getConfiguration().getBoolean("Permissions.tpahere.required"))
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "tpahere.permission")) {
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                          this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().getPermission("tpahere.permission")));
                 return true;
             }
 
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+        if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
 
-        if (args.length <= 0) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(label, cmd.getName(), cs, null, "Tpahere"));
+        if (arguments.length == 0) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command.getName(), commandSender, null, "Tpahere"));
             return true;
         }
 
-        Player targetPlayer = this.getPlayer(cs, args[0]);
+        var targetPlayer = this.getPlayer(commandSender, arguments[0]);
         if (targetPlayer == null) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(args[0]));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
             return true;
         }
 
         if (this.plugin.getTpaDataMap().containsKey(targetPlayer)) {
-            TpaData tpaData = this.plugin.getTpaDataMap().get(targetPlayer);
+            var tpaData = this.plugin.getTpaDataMap().get(targetPlayer);
             if (tpaData.getEnd() < System.currentTimeMillis()) {
-                cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, targetPlayer, "Tpa.PendingTpa"));
+                commandSender.sendMessage(
+                        this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, targetPlayer, "Tpa.PendingTpa"));
                 return true;
-            } else this.plugin.getTpaDataMap().remove(targetPlayer);
+            } else
+                this.plugin.getTpaDataMap().remove(targetPlayer);
         }
 
         if (!this.plugin.getWantsTeleport().wantsTeleport(targetPlayer)) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, null, "TpaHere.TeleportationDisabled"));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "TpaHere.TeleportationDisabled"));
             return true;
         }
 
-        cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, targetPlayer, "TpaHere.Sender"));
-        targetPlayer.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, targetPlayer, "TpaHere.Target"));
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, targetPlayer, "TpaHere.Sender"));
+        targetPlayer.sendMessage(
+                this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, targetPlayer, "TpaHere.Target"));
 
-        TextComponent accept = new TextComponent(this.plugin.getMessages().getMessage(label, cmd.getName(), cs, targetPlayer, "TpaHere.Accept", true).replace("&", "§"));
-        accept.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(this.plugin.getMessages().getMessage(label, cmd.getName(), cs, targetPlayer, "TpaHere.Accept", true).replace("&", "§")).create()));
+        var accept = new TextComponent(this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, targetPlayer, "TpaHere.Accept", true).replace("&", "§"));
+        accept.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(
+                this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, targetPlayer, "TpaHere.Accept", true).replace("&", "§")).create()));
         accept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpaccept"));
         targetPlayer.spigot().sendMessage(accept);
 
-        TextComponent deny = new TextComponent(this.plugin.getMessages().getMessage(label, cmd.getName(), cs, targetPlayer, "TpaHere.Deny", true).replace("&", "§"));
-        deny.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(this.plugin.getMessages().getMessage(label, cmd.getName(), cs, targetPlayer, "TpaHere.Deny", true).replace("&", "§")).create()));
+        var deny = new TextComponent(this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, targetPlayer, "TpaHere.Deny", true).replace("&", "§"));
+        deny.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(
+                this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, targetPlayer, "TpaHere.Deny", true).replace("&", "§")).create()));
         deny.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpdeny"));
         targetPlayer.spigot().sendMessage(deny);
 
-        this.plugin.getTpaDataMap().put(targetPlayer, new TpaData(true, ((Player) cs), System.currentTimeMillis() + 120000L));
+        this.plugin.getTpaDataMap().put(targetPlayer, new TpaData(true, ((Player) commandSender), System.currentTimeMillis() + 120000L));
         return true;
     }
 }

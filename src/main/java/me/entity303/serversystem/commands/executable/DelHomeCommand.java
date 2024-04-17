@@ -1,8 +1,8 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DelHomeCommand implements CommandExecutor {
+public class DelHomeCommand implements CommandExecutorOverload {
     private final ServerSystem plugin;
 
     public DelHomeCommand(ServerSystem plugin) {
@@ -21,41 +21,49 @@ public class DelHomeCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
-        if (this.plugin.getPermissions().getCfg().getBoolean("Permissions.delhome.required"))
-            if (!this.plugin.getPermissions().hasPerm(cs, "delhome.permission")) {
-                cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().Perm("delhome.permission")));
+
+        if (this.plugin.getPermissions().getConfiguration().getBoolean("Permissions.delhome.required"))
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "delhome.permission")) {
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                          this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().getPermission("delhome.permission")));
                 return true;
             }
 
-        if (args.length <= 0) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(label, cmd.getName(), cs, null, "DelHome"));
+        if (arguments.length == 0) {
+            commandSender.sendMessage(
+                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command.getName(), commandSender, null, "DelHome"));
             return true;
         }
 
-        File homeFile = new File("plugins//ServerSystem//Homes", ((Player) cs).getUniqueId() + ".yml");
+        var homeFile = new File("plugins//ServerSystem//Homes", ((Player) commandSender).getUniqueId() + ".yml");
         FileConfiguration homeCfg = YamlConfiguration.loadConfiguration(homeFile);
 
         if (!homeFile.exists()) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, null, "DelHome.NoHomes"));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "DelHome.NoHomes"));
             return true;
         }
 
         if (homeFile.exists()) {
             List<String> homes = new ArrayList<>(homeCfg.getConfigurationSection("Homes").getKeys(false));
-            if (homes.size() <= 0) {
-                cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, null, "DelHome.NoHomes"));
+            if (homes.isEmpty()) {
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                          this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "DelHome.NoHomes"));
                 return true;
             }
         }
 
 
-        homeCfg.set("Homes." + args[0].toUpperCase(), null);
-        cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, null, "DelHome.Success").replace("<HOME>", args[0].toUpperCase()));
+        homeCfg.set("Homes." + arguments[0].toUpperCase(), null);
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                     .getMessage(commandLabel, command.getName(), commandSender, null,
+                                                                                                 "DelHome.Success")
+                                                                                     .replace("<HOME>", arguments[0].toUpperCase()));
 
         try {
             homeCfg.save(homeFile);

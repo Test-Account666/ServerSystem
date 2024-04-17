@@ -1,17 +1,17 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class PingCommand extends MessageUtils implements CommandExecutor {
-    private Method getHandleMethod;
+public class PingCommand extends CommandUtils implements CommandExecutorOverload {
     private Field pingField;
     private Method getPingMethod;
 
@@ -19,94 +19,91 @@ public class PingCommand extends MessageUtils implements CommandExecutor {
         super(plugin);
     }
 
+    @Override
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (arguments.length == 0) {
+            if (!(commandSender instanceof Player)) {
+
+                commandSender.sendMessage(
+                        this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Ping"));
+                return true;
+            }
+
+            if (this.plugin.getPermissions().getConfiguration().getBoolean("Permissions.ping.self.required"))
+                if (!this.plugin.getPermissions().hasPermission(commandSender, "ping.self.permission")) {
+                    var permission = this.plugin.getPermissions().getPermission("ping.self.permission");
+                    commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+                    return true;
+                }
+
+            this.sendPing((Player) commandSender, commandLabel);
+            return true;
+        }
+
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "ping.others", true)) {
+            var permission = this.plugin.getPermissions().getPermission("ping.others");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+            return true;
+        }
+
+        var target = this.getPlayer(commandSender, arguments[0]);
+        if (target == null) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
+            return true;
+        }
+
+        var ping = this.getPing(target);
+
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                     .getMessage(commandLabel, command, commandSender, target, "Ping.Others")
+                                                                                     .replace("<PING>", String.valueOf(ping)));
+        return true;
+    }
+
     private void sendPing(Player player, String label) {
         try {
-            if (this.getHandleMethod == null) {
-                this.getHandleMethod = player.getClass().getDeclaredMethod("getHandle");
-                this.getHandleMethod.setAccessible(true);
-            }
+            var ping = this.getPing(player);
 
-            Object entityPlayer = this.getHandleMethod.invoke(player);
-
-            if (this.pingField == null && this.getPingMethod == null) {
-                try {
-                    this.pingField = entityPlayer.getClass().getDeclaredField("ping");
-                } catch (NoSuchFieldError | NoSuchFieldException e) {
-                    this.getPingMethod = Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".entity.CraftPlayer").getDeclaredMethod("getPing");
-                }
-                if (this.pingField != null)
-                    this.pingField.setAccessible(true);
-            }
-
-            int ping;
-
-            if (this.getPingMethod != null)
-                ping = (int) this.getPingMethod.invoke(player);
-            else
-                ping = this.pingField.getInt(entityPlayer);
-
-            player.sendMessage(this.getPrefix() + this.getMessage("Ping.Self", label, "ping", player.getName(), null).replace("<PING>", String.valueOf(Math.max(ping, 0))));
+            player.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                  .getMessage(label, "ping", player, null, "Ping.Self")
+                                                                                  .replace("<PING>", String.valueOf(Math.max(ping, 0))));
         } catch (Exception e) {
-            player.sendMessage(this.getPrefix() + this.getMessage("Ping.Self", label, "ping", player.getName(), null).replace("<PING>", String.valueOf(666)));
+            player.sendMessage(this.plugin.getMessages().getPrefix() +
+                               this.plugin.getMessages().getMessage(label, "ping", player, null, "Ping.Self").replace("<PING>", String.valueOf(666)));
         }
     }
 
     private int getPing(Player player) {
         try {
-            if (this.getHandleMethod == null) {
-                this.getHandleMethod = player.getClass().getDeclaredMethod("getHandle");
-                this.getHandleMethod.setAccessible(true);
-            }
-            Object entityPlayer = this.getHandleMethod.invoke(player);
-            if (this.pingField == null && this.getPingMethod == null) {
-                try {
-                    this.pingField = entityPlayer.getClass().getDeclaredField("ping");
-                } catch (NoSuchFieldError | NoSuchFieldException e) {
-                    this.getPingMethod = Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".entity.CraftPlayer").getDeclaredMethod("getPing");
-                }
-                if (this.pingField != null)
-                    this.pingField.setAccessible(true);
-            }
-
-            int ping;
-
-            if (this.getPingMethod != null)
-                ping = (int) this.getPingMethod.invoke(player);
-            else
-                ping = this.pingField.getInt(entityPlayer);
-
-            return Math.max(ping, 0);
+            return this.getPingInternal(player);
         } catch (Exception e) {
-            return 1;
+            return 666;
         }
     }
 
-    @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (args.length == 0) {
-            if (!(cs instanceof Player)) {
-                cs.sendMessage(this.getPrefix() + this.getSyntax("Ping", label, cmd.getName(), cs, null));
-                return true;
+    private int getPingInternal(Player player) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        if (this.plugin.getVersionStuff().getGetHandleMethod() == null)
+            this.plugin.getVersionStuff().FetchGetHandleMethod();
+
+        var entityPlayer = this.plugin.getVersionStuff().getGetHandleMethod().invoke(player);
+        if (this.pingField == null && this.getPingMethod == null) {
+            try {
+                this.pingField = entityPlayer.getClass().getDeclaredField("ping");
+            } catch (NoSuchFieldError | NoSuchFieldException e) {
+                this.getPingMethod = Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".entity.CraftPlayer")
+                                          .getDeclaredMethod("getPing");
             }
-            if (this.plugin.getPermissions().getCfg().getBoolean("Permissions.ping.self.required"))
-                if (!this.isAllowed(cs, "ping.self.permission")) {
-                    cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("ping.self.permission")));
-                    return true;
-                }
-            this.sendPing((Player) cs, label);
-            return true;
+            if (this.pingField != null)
+                this.pingField.setAccessible(true);
         }
-        if (!this.isAllowed(cs, "ping.others", true)) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("ping.others")));
-            return true;
-        }
-        Player target = this.getPlayer(cs, args[0]);
-        if (target == null) {
-            cs.sendMessage(this.getPrefix() + this.getNoTarget(args[0]));
-            return true;
-        }
-        int ping = this.getPing(target);
-        cs.sendMessage(this.getPrefix() + this.getMessage("Ping.Others", label, cmd.getName(), cs, target).replace("<PING>", String.valueOf(ping)));
-        return true;
+
+        var ping = 666;
+
+        if (this.getPingMethod != null)
+            ping = (int) this.getPingMethod.invoke(player);
+        else
+            ping = this.pingField.getInt(entityPlayer);
+
+        return Math.max(ping, 0);
     }
 }

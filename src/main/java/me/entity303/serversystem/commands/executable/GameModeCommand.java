@@ -1,98 +1,144 @@
 package me.entity303.serversystem.commands.executable;
 
-
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.ChatColor;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class GameModeCommand extends MessageUtils implements CommandExecutor {
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+public class GameModeCommand extends CommandUtils implements CommandExecutorOverload {
     private final ServerSystem plugin;
 
     public GameModeCommand(ServerSystem plugin) {
         super(plugin);
         this.plugin = plugin;
+
+        var gameModeCreativeCommand = new GameModeCreativeCommmand(this.plugin, this);
+        var gameModeSurvivalCommand = new GameModeSurvivalCommand(this.plugin, this);
+        var gameModeAdventureCommand = new GameModeAdventureCommand(this.plugin, this);
+        var gameModeSpectatorCommand = new GameModeSpectatorCommand(this.plugin, this);
+
+        plugin.getCommandManager().registerCommand("gmc", gameModeCreativeCommand, null);
+        plugin.getCommandManager().registerCommand("gms", gameModeSurvivalCommand, null);
+        plugin.getCommandManager().registerCommand("gma", gameModeAdventureCommand, null);
+        plugin.getCommandManager().registerCommand("gmsp", gameModeSpectatorCommand, null);
+    }
+
+    @SuppressWarnings("DuplicatedCode")
+    public static boolean ExecuteGameMode(CommandSender commandSender, Command command, String commandLabel, String[] arguments, String gameMode,
+                                          GameModeCommand gameModeCommand) {
+        if (arguments.length == 0)
+            arguments = new String[] { gameMode };
+        else if (arguments.length == 1)
+            arguments = new String[] { gameMode, arguments[0] };
+        else {
+            List<String> argumentList = new LinkedList<>();
+
+            Collections.addAll(argumentList, arguments);
+
+            argumentList.add(0, gameMode);
+
+            arguments = argumentList.toArray(new String[0]);
+        }
+
+        return gameModeCommand.onCommand(commandSender, command, commandLabel, arguments);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!this.isAllowed(cs, "gamemode.self.creative", true) && !this.isAllowed(cs, "gamemode.self.survival", true) && !this.isAllowed(cs, "gamemode.self.spectator", true) && !this.isAllowed(cs, "gamemode.self.adventure", true) && !this.isAllowed(cs, "gamemode.others.creative", true) && !this.isAllowed(cs, "gamemode.others.survival", true) && !this.isAllowed(cs, "gamemode.others.spectator", true) && !this.isAllowed(cs, "gamemode.others.adventure", true)) {
-            this.plugin.log(ChatColor.translateAlternateColorCodes('&', this.plugin.getMessages().getCfg().getString("Messages.Misc.NoPermissionInfo")).replace("<SENDER>", cs.getName()));
-            cs.sendMessage(this.getPrefix() + this.getNoPermission("gamemode"));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!this.hasPermission(commandSender, arguments)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission("gamemode"));
             return true;
         }
-        if (args.length == 0) {
-            cs.sendMessage(this.getPrefix() + this.getSyntax("GameMode", label, cmd.getName(), cs, null));
+
+        if (arguments.length == 0) {
+            commandSender.sendMessage(
+                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "GameMode"));
             return true;
-        } else if (args.length == 1) {
-            if (!(cs instanceof Player)) {
-                cs.sendMessage(this.getPrefix() + this.getSyntax("GameMode", label, cmd.getName(), cs, null));
-                return true;
-            }
-            Player p = (Player) cs;
-            if ("1".equalsIgnoreCase(args[0]) || "c".equalsIgnoreCase(args[0]) || "creative".equalsIgnoreCase(args[0]) || "k".equalsIgnoreCase(args[0]) || "kreativ".equalsIgnoreCase(args[0]))
-                if (this.isAllowed(cs, "gamemode.self.creative")) {
-                    p.setGameMode(GameMode.CREATIVE);
-                    p.sendMessage(this.getPrefix() + this.getMessage("GameMode.Changed.Self", label, cmd.getName(), cs, null).replace("<MODE>", this.getMode(((Player) cs).getGameMode())));
-                } else cs.sendMessage(this.getNoPermission(this.Perm("gamemode.self.creative")));
-            else if ("2".equalsIgnoreCase(args[0]) || "a".equalsIgnoreCase(args[0]) || "adventure".equalsIgnoreCase(args[0]) || "abenteuer".equalsIgnoreCase(args[0]))
-                if (this.isAllowed(cs, "gamemode.self.adventure")) {
-                    p.setGameMode(GameMode.ADVENTURE);
-                    p.sendMessage(this.getPrefix() + this.getMessage("GameMode.Changed.Self", label, cmd.getName(), cs, null).replace("<MODE>", this.getMode(((Player) cs).getGameMode())));
-                } else cs.sendMessage(this.getNoPermission(this.Perm("gamemode.self.adventure")));
-            else if ("3".equalsIgnoreCase(args[0]) || "sp".equalsIgnoreCase(args[0]) || "spectator".equalsIgnoreCase(args[0]) || "z".equalsIgnoreCase(args[0]) || "zuschauer".equalsIgnoreCase(args[0]))
-                if (this.isAllowed(cs, "gamemode.self.spectator")) {
-                    p.setGameMode(GameMode.SPECTATOR);
-                    p.sendMessage(this.getPrefix() + this.getMessage("GameMode.Changed.Self", label, cmd.getName(), cs, null).replace("<MODE>", this.getMode(((Player) cs).getGameMode())));
-                } else cs.sendMessage(this.getNoPermission(this.Perm("gamemode.self.spectator")));
-            else if ("0".equalsIgnoreCase(args[0]) || "s".equalsIgnoreCase(args[0]) || "survival".equalsIgnoreCase(args[0]) || "ü".equalsIgnoreCase(args[0]) || "überleben".equalsIgnoreCase(args[0]))
-                if (this.isAllowed(cs, "gamemode.self.survival")) {
-                    p.setGameMode(GameMode.SURVIVAL);
-                    p.sendMessage(this.getPrefix() + this.getMessage("GameMode.Changed.Self", label, cmd.getName(), cs, null).replace("<MODE>", this.getMode(((Player) cs).getGameMode())));
-                } else cs.sendMessage(this.getNoPermission(this.Perm("gamemode.self.survival")));
-            else
-                cs.sendMessage(this.getPrefix() + this.getMessage("GameMode.NotGameMode", label, cmd.getName(), cs, null).replace("<MODE>", args[0].toUpperCase()));
-            return true;
-        } else {
-            Player target = this.getPlayer(cs, args[1]);
-            if (target != null)
-                if ("1".equalsIgnoreCase(args[0]) || "c".equalsIgnoreCase(args[0]) || "creative".equalsIgnoreCase(args[0]) || "k".equalsIgnoreCase(args[0]) || "kreativ".equalsIgnoreCase(args[0]))
-                    if (this.isAllowed(cs, "gamemode.others.creative")) {
-                        target.setGameMode(GameMode.CREATIVE);
-                        target.sendMessage(this.getPrefix() + this.getMessage("GameMode.Changed.Others.Target", label, cmd.getName(), cs, target).replace("<MODE>", this.getMode((target.getGameMode()))));
-                        cs.sendMessage(this.getPrefix() + this.getMessage("GameMode.Changed.Others.Sender", label, cmd.getName(), cs, target).replace("<MODE>", this.getMode((target.getGameMode()))));
-                    } else cs.sendMessage(this.getNoPermission(this.Perm("gamemode.others.creative")));
-                else if ("2".equalsIgnoreCase(args[0]) || "a".equalsIgnoreCase(args[0]) || "adventure".equalsIgnoreCase(args[0]) || "abenteuer".equalsIgnoreCase(args[0]))
-                    if (this.isAllowed(cs, "gamemode.others.adventure")) {
-                        target.setGameMode(GameMode.ADVENTURE);
-                        target.sendMessage(this.getPrefix() + this.getMessage("GameMode.Changed.Others.Target", label, cmd.getName(), cs, target).replace("<MODE>", this.getMode((target.getGameMode()))));
-                        cs.sendMessage(this.getPrefix() + this.getMessage("GameMode.Changed.Others.Sender", label, cmd.getName(), cs, target).replace("<MODE>", this.getMode((target.getGameMode()))));
-                    } else cs.sendMessage(this.getNoPermission(this.Perm("gamemode.others.adventure")));
-                else if ("3".equalsIgnoreCase(args[0]) || "sp".equalsIgnoreCase(args[0]) || "spectator".equalsIgnoreCase(args[0]) || "z".equalsIgnoreCase(args[0]) || "zuschauer".equalsIgnoreCase(args[0]))
-                    if (this.isAllowed(cs, "gamemode.others.spectator")) {
-                        target.setGameMode(GameMode.SPECTATOR);
-                        target.sendMessage(this.getPrefix() + this.getMessage("GameMode.Changed.Others.Target", label, cmd.getName(), cs, target).replace("<MODE>", this.getMode((target.getGameMode()))));
-                        cs.sendMessage(this.getPrefix() + this.getMessage("GameMode.Changed.Others.Sender", label, cmd.getName(), cs, target).replace("<MODE>", this.getMode((target.getGameMode()))));
-                    } else cs.sendMessage(this.getNoPermission(this.Perm("gamemode.others.spectator")));
-                else if ("0".equalsIgnoreCase(args[0]) || "s".equalsIgnoreCase(args[0]) || "survival".equalsIgnoreCase(args[0]) || "ü".equalsIgnoreCase(args[0]) || "überleben".equalsIgnoreCase(args[0]))
-                    if (this.isAllowed(cs, "gamemode.others.survival")) {
-                        target.setGameMode(GameMode.SURVIVAL);
-                        target.sendMessage(this.getPrefix() + this.getMessage("GameMode.Changed.Others.Target", label, cmd.getName(), cs, target).replace("<MODE>", this.getMode((target.getGameMode()))));
-                        cs.sendMessage(this.getPrefix() + this.getMessage("GameMode.Changed.Others.Sender", label, cmd.getName(), cs, target).replace("<MODE>", this.getMode((target.getGameMode()))));
-                    } else cs.sendMessage(this.getNoPermission(this.Perm("gamemode.others.survival")));
-                else
-                    cs.sendMessage(this.getPrefix() + this.getMessage("GameMode.NotGameMode", label, cmd.getName(), cs, target).replace("<MODE>", args[0].toUpperCase()));
-            else
-                cs.sendMessage(this.getPrefix() + this.getNoTarget(args[1]));
         }
+
+        var gameMode = this.parseGameMode(arguments[0]);
+        if (gameMode == null) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                         .getMessage(commandLabel, command, commandSender, null,
+                                                                                                     "GameMode.NotGameMode")
+                                                                                         .replace("<MODE>", arguments[0].toUpperCase()));
+            return true;
+        }
+
+        if (arguments.length == 1) {
+            this.changeGameMode(commandSender, gameMode, command, commandLabel);
+            return true;
+        }
+
+        var target = this.getPlayer(commandSender, arguments[1]);
+        if (target == null) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[1]));
+            return true;
+        }
+
+        this.changeGameMode(target, gameMode, commandSender, command, commandLabel);
         return true;
     }
 
-    private String getMode(GameMode gamemode) {
-        return this.plugin.getMessages().getCfg().getString("Messages.Misc.GameModes." + gamemode.name());
+    private boolean hasPermission(CommandSender sender, String... arguments) {
+        var permission = arguments.length == 1? "gamemode.self." : "gamemode.others.";
+
+        var parsedGameMode = this.parseGameMode(arguments[0]);
+
+        assert parsedGameMode != null;
+        permission += this.getGameModeName(parsedGameMode).toLowerCase();
+        return this.plugin.getPermissions().hasPermission(sender, permission, true);
+    }
+
+    private GameMode parseGameMode(String argument) {
+        return switch (argument.toLowerCase()) {
+            case "1", "c", "creative", "k", "kreativ" -> GameMode.CREATIVE;
+            case "2", "a", "adventure", "abenteuer" -> GameMode.ADVENTURE;
+            case "3", "sp", "spectator", "z", "zuschauer" -> GameMode.SPECTATOR;
+            case "0", "s", "survival", "ü", "überleben" -> GameMode.SURVIVAL;
+            default -> null;
+        };
+    }
+
+    private void changeGameMode(CommandSender sender, GameMode gameMode, Command command, String commandLabel) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, sender, null, "GameMode"));
+            return;
+        }
+        player.setGameMode(gameMode);
+        player.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                              .getMessage(commandLabel, command, sender, null, "GameMode.Changed.Self")
+                                                                              .replace("<MODE>", this.getGameModeName(gameMode)));
+    }
+
+    private void changeGameMode(Player target, GameMode gameMode, CommandSender sender, Command command, String commandLabel) {
+        target.setGameMode(gameMode);
+        target.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                              .getMessage(commandLabel, command.getName(), sender, target,
+                                                                                          "GameMode.Changed.Others.Target")
+                                                                              .replace("<MODE>", this.getGameModeName(gameMode)));
+        sender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                              .getMessage(commandLabel, command.getName(), sender, target,
+                                                                                          "GameMode.Changed.Others.Sender")
+                                                                              .replace("<MODE>", this.getGameModeName(gameMode)));
+    }
+
+    private String getGameModeName(GameMode gameMode) {
+        return switch (gameMode) {
+            case CREATIVE -> "Creative";
+            case ADVENTURE -> "Adventure";
+            case SPECTATOR -> "Spectator";
+            case SURVIVAL -> "Survival";
+        };
     }
 }
+
+
+

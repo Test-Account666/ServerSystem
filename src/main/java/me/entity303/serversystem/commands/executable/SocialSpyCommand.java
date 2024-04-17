@@ -1,35 +1,38 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class SocialSpyCommand extends MessageUtils implements CommandExecutor {
+public class SocialSpyCommand extends CommandUtils implements CommandExecutorOverload {
 
     public SocialSpyCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.getPrefix() + this.getOnlyPlayer());
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
-        if (!this.isAllowed(cs, "socialspy")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("socialspy")));
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "socialspy")) {
+            var permission = this.plugin.getPermissions().getPermission("socialspy");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
-        if (this.plugin.getSocialSpy().contains(cs)) {
-            this.plugin.getSocialSpy().remove(cs);
-            cs.sendMessage(this.getPrefix() + this.getMessage("SocialSpyToggle.Deactivated", label, cmd.getName(), cs, null));
+        if (this.plugin.getSocialSpy().contains(commandSender)) {
+            this.plugin.getSocialSpy().remove(commandSender);
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "SocialSpyToggle.Deactivated"));
             return true;
         }
-        this.plugin.getSocialSpy().add((Player) cs);
-        cs.sendMessage(this.getPrefix() + this.getMessage("SocialSpyToggle.Activated", label, cmd.getName(), cs, null));
+        this.plugin.getSocialSpy().add((Player) commandSender);
+        
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "SocialSpyToggle.Activated"));
         return true;
     }
 }

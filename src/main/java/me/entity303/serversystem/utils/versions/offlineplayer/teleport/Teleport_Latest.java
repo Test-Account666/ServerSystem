@@ -1,7 +1,7 @@
 package me.entity303.serversystem.utils.versions.offlineplayer.teleport;
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import net.minecraft.core.BlockPosition;
 import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.world.entity.Entity;
@@ -14,9 +14,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-public class Teleport_Latest extends MessageUtils implements Teleport {
+public class Teleport_Latest extends CommandUtils implements Teleport {
+    private final Field worldField = null;
     private Method setLocationMethod = null;
-    private Field worldField = null;
     private Method getHandleMethod = null;
     private Method teleportToMethod = null;
 
@@ -27,20 +27,23 @@ public class Teleport_Latest extends MessageUtils implements Teleport {
     @Override
     public void teleport(Player player, Location location) {
         try {
-            this.setLocationMethod = net.minecraft.world.entity.Entity.class.getDeclaredMethod("a", double.class, double.class, double.class, float.class, float.class);
+            this.setLocationMethod =
+                    net.minecraft.world.entity.Entity.class.getDeclaredMethod("a", double.class, double.class, double.class, float.class, float.class);
         } catch (NoSuchMethodException ex) {
             ex.printStackTrace();
         }
 
 
-        if (this.getHandleMethod == null) try {
-            this.getHandleMethod = Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".CraftWorld").getDeclaredMethod("getHandle");
-        } catch (NoSuchMethodException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return;
-        }
+        if (this.getHandleMethod == null)
+            try {
+                this.getHandleMethod =
+                        Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".CraftWorld").getDeclaredMethod("getHandle");
+            } catch (NoSuchMethodException | ClassNotFoundException e) {
+                e.printStackTrace();
+                return;
+            }
 
-        EntityPlayer entity = null;
+        EntityPlayer entity;
         try {
             entity = (EntityPlayer) this.plugin.getVersionStuff().getGetHandleMethod().invoke(player);
         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -48,7 +51,7 @@ public class Teleport_Latest extends MessageUtils implements Teleport {
             return;
         }
 
-        Object worldServer = null;
+        Object worldServer;
         try {
             worldServer = this.getHandleMethod.invoke(location.getWorld());
         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -57,7 +60,11 @@ public class Teleport_Latest extends MessageUtils implements Teleport {
         }
 
         if (this.teleportToMethod == null) {
-            this.teleportToMethod = Arrays.stream(Entity.class.getDeclaredMethods()).filter(method -> method.getParameterTypes().length == 2).filter(method -> method.getParameterTypes()[0] == World.class && method.getParameterTypes()[1] == BlockPosition.class).findFirst().orElse(null);
+            this.teleportToMethod = Arrays.stream(Entity.class.getDeclaredMethods())
+                                          .filter(method -> method.getParameterTypes().length == 2)
+                                          .filter(method -> method.getParameterTypes()[0] == World.class && method.getParameterTypes()[1] == BlockPosition.class)
+                                          .findFirst()
+                                          .orElse(null);
 
             if (this.teleportToMethod == null) {
                 try {

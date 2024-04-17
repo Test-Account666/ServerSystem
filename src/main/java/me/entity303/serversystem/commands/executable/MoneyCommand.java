@@ -1,53 +1,74 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class MoneyCommand extends MessageUtils implements CommandExecutor {
+public class MoneyCommand extends CommandUtils implements CommandExecutorOverload {
 
     public MoneyCommand(ServerSystem plugin) {
         super(plugin);
     }
 
-    private ServerSystem getPlugin() {
-        return this.plugin;
-    }
-
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
-            if (args.length <= 0) {
-                if (!(cs instanceof Player)) {
-                    cs.sendMessage(this.getPrefix() + this.getSyntax("Money", label, cmd.getName(), cs, null));
+            if (arguments.length == 0) {
+                if (!(commandSender instanceof Player)) {
+
+                    commandSender.sendMessage(
+                            this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Money"));
                     return;
                 }
-                if (this.plugin.getPermissions().getCfg().getBoolean("Permissions.money.self.required"))
-                    if (!this.isAllowed(cs, "money.self.permission")) {
-                        cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("money.self.permission")));
+                if (this.plugin.getPermissions().getConfiguration().getBoolean("Permissions.money.self.required"))
+                    if (!this.plugin.getPermissions().hasPermission(commandSender, "money.self.permission")) {
+                        var permission = this.plugin.getPermissions().getPermission("money.self.permission");
+                        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
                         return;
                     }
-                if (!this.getPlugin().getEconomyManager().hasAccount((OfflinePlayer) cs))
-                    this.getPlugin().getEconomyManager().createAccount((OfflinePlayer) cs);
-                cs.sendMessage(this.getPrefix() + this.getMessage("Money.Self", label, cmd.getName(), cs, null).replace("<BALANCE>", this.getPlugin().getEconomyManager().format(this.getPlugin().getEconomyManager().getMoneyAsNumber((Player) cs))));
+                if (!this.getPlugin().getEconomyManager().hasAccount((OfflinePlayer) commandSender))
+                    this.getPlugin().getEconomyManager().createAccount((OfflinePlayer) commandSender);
+
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                             .getMessage(commandLabel, command, commandSender, null, "Money.Self")
+                                                                                             .replace("<BALANCE>", this.getPlugin()
+                                                                                                                       .getEconomyManager()
+                                                                                                                       .format(this.getPlugin()
+                                                                                                                                   .getEconomyManager()
+                                                                                                                                   .getMoneyAsNumber(
+                                                                                                                                           (Player) commandSender))));
                 return;
             }
-            if (!this.isAllowed(cs, "money.others")) {
-                cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("money.others")));
+
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "money.others")) {
+                var permission = this.plugin.getPermissions().getPermission("money.others");
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
                 return;
             }
-            Player target = this.getPlayer(cs, args[0]);
+
+            var target = this.getPlayer(commandSender, arguments[0]);
             if (target == null) {
-                cs.sendMessage(this.getPrefix() + this.getNoTarget(args[0]));
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
                 return;
             }
-            cs.sendMessage(this.getPrefix() + this.getMessage("Money.Others", label, cmd.getName(), cs, target).replace("<BALANCE>", this.getPlugin().getEconomyManager().format(this.getPlugin().getEconomyManager().getMoneyAsNumber(target))));
+
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                         .getMessage(commandLabel, command, commandSender, target, "Money.Others")
+                                                                                         .replace("<BALANCE>", this.getPlugin()
+                                                                                                                   .getEconomyManager()
+                                                                                                                   .format(this.getPlugin()
+                                                                                                                               .getEconomyManager()
+                                                                                                                               .getMoneyAsNumber(target))));
         });
         return true;
+    }
+
+    private ServerSystem getPlugin() {
+        return this.plugin;
     }
 }

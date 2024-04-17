@@ -28,26 +28,30 @@ public class BanManager extends ManagerBan {
     }
 
     @Override
+    public boolean isBanned(UUID uuid) {
+        if (!this.banFile.exists())
+            return false;
+        return this.getBanByUUID(uuid) != null;
+    }
+
+    @Override
     public List<String> getBannedPlayerNames() {
         List<String> playerNameList = new ArrayList<>();
-        if (this.cfg.getConfigurationSection("Banned") == null) return new ArrayList<>();
+        if (this.cfg.getConfigurationSection("Banned") == null)
+            return new ArrayList<>();
         this.cfg.getConfigurationSection("Banned").getKeys(false);
 
-        if (this.cfg.getConfigurationSection("Banned").getKeys(false).size() <= 0) return new ArrayList<>();
-        for (String uuid : this.cfg.getConfigurationSection("Banned").getKeys(false))
+        if (this.cfg.getConfigurationSection("Banned").getKeys(false).isEmpty())
+            return new ArrayList<>();
+        for (var uuid : this.cfg.getConfigurationSection("Banned").getKeys(false))
             playerNameList.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName());
         return playerNameList;
     }
 
     @Override
-    public boolean isBanned(UUID uuid) {
-        if (!this.banFile.exists()) return false;
-        return this.getBanByUUID(uuid) != null;
-    }
-
-    @Override
     public Ban getBanByUUID(UUID uuid) {
-        if (!this.banFile.exists()) return null;
+        if (!this.banFile.exists())
+            return null;
         try {
             Ban ban;
             String uuidSender;
@@ -56,7 +60,7 @@ public class BanManager extends ManagerBan {
             String unban_date;
             String reason;
 
-            String str = "Banned." + uuid.toString() + ".";
+            var str = "Banned." + uuid.toString() + ".";
             uuidSender = this.cfg.getString(str + "Sender");
             uuidBanned = uuid.toString();
             try {
@@ -67,10 +71,14 @@ public class BanManager extends ManagerBan {
             unban_date = this.convertLongToDate(unban_time);
             reason = this.cfg.getString(str + "Reason");
 
-            if (uuidSender == null) return null;
-            if (uuidBanned == null) return null;
-            if (unban_date == null) return null;
-            if (reason == null) return null;
+            if (uuidSender == null)
+                return null;
+            if (uuidBanned == null)
+                return null;
+            if (unban_date == null)
+                return null;
+            if (reason == null)
+                return null;
             ban = new Ban(uuid, reason, uuidSender, unban_time, unban_date);
 
             return ban;
@@ -91,38 +99,44 @@ public class BanManager extends ManagerBan {
 
     @Override
     public String convertLongToDate(Long l) {
-        if (l < 1) return this.getBanSystem("PermaBan");
-        Calendar c = Calendar.getInstance();
+        if (l < 1)
+            return this.getBanSystem("PermaBan");
+        var c = Calendar.getInstance();
 
         c.setTimeInMillis(l);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy:MM:dd:kk:mm:ss");
-        String[] dates = dateFormat.format(c.getTime()).split(":");
+        var dateFormat = new SimpleDateFormat("yyyy:MM:dd:kk:mm:ss");
+        var dates = dateFormat.format(c.getTime()).split(":");
 
-        String year = dates[0];
-        String month = dates[1];
-        String day = dates[2];
-        String hour = dates[3];
-        String minute = dates[4];
-        String second = dates[5];
+        var year = dates[0];
+        var month = dates[1];
+        var day = dates[2];
+        var hour = dates[3];
+        var minute = dates[4];
+        var second = dates[5];
 
-        if (month.chars().count() == 1) month = "0" + month;
+        if (month.chars().count() == 1)
+            month = "0" + month;
 
-        if (day.chars().count() == 1) day = "0" + day;
+        if (day.chars().count() == 1)
+            day = "0" + day;
 
-        if (hour.chars().count() == 1) hour = "0" + hour;
+        if (hour.chars().count() == 1)
+            hour = "0" + hour;
 
-        if (minute.chars().count() == 1) minute = "0" + minute;
+        if (minute.chars().count() == 1)
+            minute = "0" + minute;
 
-        if (second.chars().count() == 1) second = "0" + second;
+        if (second.chars().count() == 1)
+            second = "0" + second;
 
-        return this.getDateFormat().
-                replace("<YEAR>", year).
-                replace("<MONTH>", month).
-                replace("<DAY>", day).
-                replace("<HOUR>", hour).
-                replace("<MINUTE>", minute).
-                replace("<SECOND>", second);
+        return this.getDateFormat()
+                   .replace("<YEAR>", year)
+                   .replace("<MONTH>", month)
+                   .replace("<DAY>", day)
+                   .replace("<HOUR>", hour)
+                   .replace("<MINUTE>", minute)
+                   .replace("<SECOND>", second);
     }
 
     @Override
@@ -135,19 +149,13 @@ public class BanManager extends ManagerBan {
         this.dateFormat = dateFormat;
     }
 
-    public File getBanFile() {
-        return this.banFile;
-    }
-
-    public FileConfiguration getCfg() {
-        return this.cfg;
-    }
-
     @Override
     public Ban createBan(UUID banned, String senderUUID, String reason, Long howLong, TimeUnit timeUnit) {
-        if (this.isBanned(banned)) this.unBan(banned);
-        long unbanTime = System.currentTimeMillis() + (howLong * timeUnit.getValue());
-        if (howLong < 1) unbanTime = -1L;
+        if (this.isBanned(banned))
+            this.unBan(banned);
+        var unbanTime = System.currentTimeMillis() + (howLong * timeUnit.getValue());
+        if (howLong < 1)
+            unbanTime = -1L;
         this.getCfg().set("Banned." + banned.toString() + ".Sender", senderUUID);
         this.getCfg().set("Banned." + banned + ".Reason", reason);
         this.getCfg().set("Banned." + banned + ".unbanTime", Long.toString(unbanTime));
@@ -157,7 +165,7 @@ public class BanManager extends ManagerBan {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Ban ban = new Ban(banned, reason, senderUUID, unbanTime, this.convertLongToDate(unbanTime));
+        var ban = new Ban(banned, reason, senderUUID, unbanTime, this.convertLongToDate(unbanTime));
 
         try {
             this.getCfg().load(this.banFile);
@@ -170,7 +178,7 @@ public class BanManager extends ManagerBan {
 
     @Override
     public void unBan(UUID banned) {
-        Ban ban = this.getBanByUUID(banned);
+        var ban = this.getBanByUUID(banned);
         this.getCfg().set("Banned." + banned.toString() + ".Sender", null);
         this.getCfg().set("Banned." + banned + ".Reason", null);
         this.getCfg().set("Banned." + banned + ".unbanTime", null);
@@ -192,5 +200,13 @@ public class BanManager extends ManagerBan {
     @Override
     public void close() {
 
+    }
+
+    public File getBanFile() {
+        return this.banFile;
+    }
+
+    public FileConfiguration getCfg() {
+        return this.cfg;
     }
 }

@@ -1,12 +1,7 @@
 package me.entity303.serversystem.bansystem;
 
 public enum TimeUnit {
-    YEAR(31540000000L, "YEAR"),
-    MONTH(2630000000L, "MONTH"),
-    WEEK(604800000L, "WEEK"),
-    DAY(86400000L, "DAY"),
-    HOUR(3600000L, "HOUR"),
-    MINUTE(60000L, "MINUTE"),
+    YEAR(31540000000L, "YEAR"), MONTH(2630000000L, "MONTH"), WEEK(604800000L, "WEEK"), DAY(86400000L, "DAY"), HOUR(3600000L, "HOUR"), MINUTE(60000L, "MINUTE"),
     SECOND(1000L, "SECOND");
 
     public static String yearName = "YEAR";
@@ -25,34 +20,32 @@ public enum TimeUnit {
     }
 
     public static String getName(TimeUnit timeUnit) {
-        switch (timeUnit) {
-            case YEAR:
-                return TimeUnit.yearName;
-            case MONTH:
-                return TimeUnit.monthName;
-            case WEEK:
-                return TimeUnit.weekName;
-            case DAY:
-                return TimeUnit.dayName;
-            case HOUR:
-                return TimeUnit.hourName;
-            case MINUTE:
-                return TimeUnit.minuteName;
-            case SECOND:
-                return TimeUnit.secondName;
-            default:
-                return null;
-        }
+        return switch (timeUnit) {
+            case YEAR -> TimeUnit.yearName;
+            case MONTH -> TimeUnit.monthName;
+            case WEEK -> TimeUnit.weekName;
+            case DAY -> TimeUnit.dayName;
+            case HOUR -> TimeUnit.hourName;
+            case MINUTE -> TimeUnit.minuteName;
+            case SECOND -> TimeUnit.secondName;
+        };
     }
 
     public static TimeUnit getFromName(String name) {
-        if (name.equalsIgnoreCase(TimeUnit.yearName)) return TimeUnit.YEAR;
-        else if (name.equalsIgnoreCase(TimeUnit.monthName)) return TimeUnit.MONTH;
-        else if (name.equalsIgnoreCase(TimeUnit.weekName)) return TimeUnit.WEEK;
-        else if (name.equalsIgnoreCase(TimeUnit.dayName)) return TimeUnit.DAY;
-        else if (name.equalsIgnoreCase(TimeUnit.hourName)) return TimeUnit.HOUR;
-        else if (name.equalsIgnoreCase(TimeUnit.minuteName)) return TimeUnit.MINUTE;
-        else if (name.equalsIgnoreCase(TimeUnit.secondName)) return TimeUnit.SECOND;
+        if (name.equalsIgnoreCase(TimeUnit.yearName))
+            return TimeUnit.YEAR;
+        else if (name.equalsIgnoreCase(TimeUnit.monthName))
+            return TimeUnit.MONTH;
+        else if (name.equalsIgnoreCase(TimeUnit.weekName))
+            return TimeUnit.WEEK;
+        else if (name.equalsIgnoreCase(TimeUnit.dayName))
+            return TimeUnit.DAY;
+        else if (name.equalsIgnoreCase(TimeUnit.hourName))
+            return TimeUnit.HOUR;
+        else if (name.equalsIgnoreCase(TimeUnit.minuteName))
+            return TimeUnit.MINUTE;
+        else if (name.equalsIgnoreCase(TimeUnit.secondName))
+            return TimeUnit.SECOND;
         return null;
     }
 
@@ -66,8 +59,6 @@ public enum TimeUnit {
 
     @Override
     public String toString() {
-        return "TimeUnit{" +
-                "value=" + this.value +
-                '}';
+        return "TimeUnit{" + "value=" + this.value + '}';
     }
 }

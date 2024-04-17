@@ -1,72 +1,72 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DisenchantCommand implements CommandExecutor {
+public class DisenchantCommand implements CommandExecutorOverload {
     private final ServerSystem plugin;
 
     public DisenchantCommand(ServerSystem plugin) {
         this.plugin = plugin;
     }
 
-    private void removeEnchantments(ItemStack item) {
-        if (item != null) {
-            item.getEnchantments();
-            for (Enchantment e : item.getEnchantments().keySet()) item.removeEnchantment(e);
-        }
-    }
-
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!(commandSender instanceof Player p)) {
+            commandSender.sendMessage(this.getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
 
-        Player p = (Player) cs;
-        if (!this.isAllowed(p, "disenchant")) {
-            p.sendMessage(this.getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().Perm("disenchant")));
+        if (!this.plugin.getPermissions().hasPermission(p, "disenchant")) {
+            p.sendMessage(this.getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().getPermission("disenchant")));
             return true;
         }
 
-        if (args.length == 0) {
-            p.getInventory().getItemInHand();
-            this.removeEnchantments(p.getInventory().getItemInHand());
-            p.sendMessage(this.getPrefix() + this.getMessage("DisEnchant.Hand", label, cmd.getName(), cs, null));
+        if (arguments.length == 0) {
+            p.getInventory().getItemInMainHand();
+            this.removeEnchantments(p.getInventory().getItemInMainHand());
+            p.sendMessage(this.getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "DisEnchant.Hand"));
             return true;
         }
 
-        ItemStack[] inv = p.getInventory().getContents();
-        if ("all".equalsIgnoreCase(args[0])) {
-            for (ItemStack items : inv) this.removeEnchantments(items);
-            p.sendMessage(this.getPrefix() + this.getMessage("DisEnchant.All", label, cmd.getName(), cs, null));
+        var inv = p.getInventory().getContents();
+        if ("all".equalsIgnoreCase(arguments[0])) {
+            for (var items : inv)
+                this.removeEnchantments(items);
+
+            p.sendMessage(this.getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "DisEnchant.All"));
             return true;
         }
 
-        List<ItemStack> itms = new ArrayList<>();
+        List<ItemStack> itemsList = new ArrayList<>();
 
-        for (ItemStack items : inv) {
-            if (items == null) continue;
-            if (items.getType() == Material.getMaterial(args[0].toUpperCase())) itms.add(items);
+        for (var items : inv) {
+            if (items == null)
+                continue;
+            if (items.getType() == Material.getMaterial(arguments[0].toUpperCase()))
+                itemsList.add(items);
         }
 
-        if (itms.size() <= 0) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("DisEnchant.NotInInv", label, cmd.getName(), cs, null).replace("<TYPE>", args[0]));
+        if (itemsList.isEmpty()) {
+            var command1 = command.getName();
+            commandSender.sendMessage(this.getPrefix() + this.plugin.getMessages()
+                                                                    .getMessage(commandLabel, command1, commandSender, null, "DisEnchant.NotInInv")
+                                                                    .replace("<TYPE>", arguments[0]));
             return true;
         }
 
-        itms.forEach(this::removeEnchantments);
-        p.sendMessage(this.getPrefix() + this.getMessage("DisEnchant.Type", label, cmd.getName(), cs, null).replace("<TYPE>", args[0]));
+        itemsList.forEach(this::removeEnchantments);
+        p.sendMessage(this.getPrefix() + this.plugin.getMessages()
+                                                    .getMessage(commandLabel, command.getName(), commandSender, null, "DisEnchant.Type")
+                                                    .replace("<TYPE>", arguments[0]));
         return true;
     }
 
@@ -74,11 +74,11 @@ public class DisenchantCommand implements CommandExecutor {
         return this.plugin.getMessages().getPrefix();
     }
 
-    private String getMessage(String action, String label, String command, CommandSender sender, CommandSender target) {
-        return this.plugin.getMessages().getMessage(label, command, sender, target, action);
-    }
-
-    private boolean isAllowed(CommandSender cs, String permission) {
-        return this.plugin.getPermissions().hasPerm(cs, permission);
+    private void removeEnchantments(ItemStack item) {
+        if (item != null) {
+            item.getEnchantments();
+            for (var e : item.getEnchantments().keySet())
+                item.removeEnchantment(e);
+        }
     }
 }

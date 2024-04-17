@@ -1,7 +1,8 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import me.entity303.serversystem.utils.Morpher;
 import me.entity303.serversystem.utils.interceptors.invsee.InvseeGetItemInterceptor;
 import me.entity303.serversystem.utils.interceptors.invsee.InvseeSetItemInterceptor;
@@ -12,15 +13,12 @@ import net.bytebuddy.implementation.bind.annotation.Morph;
 import net.bytebuddy.matcher.ElementMatchers;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.lang.reflect.Constructor;
@@ -31,119 +29,137 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class InvseeCommand extends MessageUtils implements CommandExecutor, Listener {
+public class InvseeCommand extends CommandUtils implements CommandExecutorOverload, Listener {
     private final HashMap<Player, PlayerInventory> cachedCustomInventories = new HashMap<>();
+    private final Method getInventoryMethodNew = null;
     private Class playerInventoryNmsClass = null;
     private Constructor craftInventoryPlayerConstructor = null;
     private boolean onceFired = false;
     private Method getInventoryMethod = null;
     private Method getHandleMethod = null;
-    private Method getInventoryMethodNew = null;
 
     public InvseeCommand(ServerSystem plugin) {
         super(plugin);
 
-        this.plugin.getEventManager().re(this);
+        this.plugin.getEventManager().registerEvent(this);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (this.onceFired || !this.plugin.isAdvancedInvsee()) return this.onCommand0(cs, cmd, label, args);
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (this.onceFired || !this.plugin.isAdvancedInvsee())
+            return this.onCommand0(commandSender, command, commandLabel, arguments);
 
-        if (!this.isAllowed(cs, "invsee.use")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("invsee.use")));
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "invsee.use")) {
+            var permission = this.plugin.getPermissions().getPermission("invsee.use");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
 
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.getPrefix() + this.getOnlyPlayer());
+        if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
 
-        if (args.length == 0) {
-            cs.sendMessage(this.getPrefix() + this.getSyntax("Invsee", label, cmd.getName(), cs, null));
+        if (arguments.length == 0) {
+
+            commandSender.sendMessage(
+                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Invsee"));
             return true;
         }
 
-        Player targetPlayer = this.getPlayer(cs, args[0]);
+        var targetPlayer = this.getPlayer(commandSender, arguments[0]);
         if (targetPlayer == null) {
-            cs.sendMessage(this.getPrefix() + this.getNoTarget(args[0]));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
             return true;
         }
 
-        if (this.playerInventoryNmsClass == null) try {
-            this.playerInventoryNmsClass = Class.forName("net.minecraft.server." + this.plugin.getVersionManager().getNMSVersion() + ".PlayerInventory");
-        } catch (ClassNotFoundException e) {
-            if (this.playerInventoryNmsClass == null) try {
-                this.playerInventoryNmsClass = Class.forName("net.minecraft.world.entity.player.PlayerInventory");
-            } catch (ClassNotFoundException ex) {
-                ex.addSuppressed(e);
-                ex.printStackTrace();
-                this.onceFired = true;
-                return this.onCommand0(cs, cmd, label, args);
+        if (this.playerInventoryNmsClass == null)
+            try {
+                this.playerInventoryNmsClass = Class.forName("net.minecraft.server." + this.plugin.getVersionManager().getNMSVersion() + ".PlayerInventory");
+            } catch (ClassNotFoundException e) {
+                if (this.playerInventoryNmsClass == null)
+                    try {
+                        this.playerInventoryNmsClass = Class.forName("net.minecraft.world.entity.player.PlayerInventory");
+                    } catch (ClassNotFoundException ex) {
+                        ex.addSuppressed(e);
+                        ex.printStackTrace();
+                        this.onceFired = true;
+                        return this.onCommand0(commandSender, command, commandLabel, arguments);
+                    }
             }
-        }
 
-        if (this.getInventoryMethod == null) try {
-            this.getInventoryMethod = Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".inventory.CraftInventoryPlayer").getDeclaredMethod("getInventory");
-        } catch (NoSuchMethodException | ClassNotFoundException e) {
-            e.printStackTrace();
-            this.onceFired = true;
-            return this.onCommand0(cs, cmd, label, args);
-        }
+        if (this.getInventoryMethod == null)
+            try {
+                this.getInventoryMethod =
+                        Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".inventory.CraftInventoryPlayer")
+                             .getDeclaredMethod("getInventory");
+            } catch (NoSuchMethodException | ClassNotFoundException e) {
+                e.printStackTrace();
+                this.onceFired = true;
+                return this.onCommand0(commandSender, command, commandLabel, arguments);
+            }
 
-        if (this.getHandleMethod == null) try {
-            this.getHandleMethod = Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".entity.CraftPlayer").getDeclaredMethod("getHandle");
-        } catch (NoSuchMethodException | ClassNotFoundException e) {
-            e.printStackTrace();
-            this.onceFired = true;
-            return this.onCommand0(cs, cmd, label, args);
-        }
+        if (this.getHandleMethod == null)
+            try {
+                this.getHandleMethod = Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".entity.CraftPlayer")
+                                            .getDeclaredMethod("getHandle");
+            } catch (NoSuchMethodException | ClassNotFoundException e) {
+                e.printStackTrace();
+                this.onceFired = true;
+                return this.onCommand0(commandSender, command, commandLabel, arguments);
+            }
 
-        if (this.craftInventoryPlayerConstructor == null) try {
-            this.craftInventoryPlayerConstructor = Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".inventory.CraftInventoryPlayer").getConstructors()[0];
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            this.onceFired = true;
-            return this.onCommand0(cs, cmd, label, args);
-        }
+        if (this.craftInventoryPlayerConstructor == null)
+            try {
+                this.craftInventoryPlayerConstructor =
+                        Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".inventory.CraftInventoryPlayer")
+                             .getConstructors()[0];
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                this.onceFired = true;
+                return this.onCommand0(commandSender, command, commandLabel, arguments);
+            }
 
-        PlayerInventory playerInventory = null;
+        PlayerInventory playerInventory;
         if (this.cachedCustomInventories.containsKey(targetPlayer))
             playerInventory = this.cachedCustomInventories.get(targetPlayer);
         else
-            playerInventory = this.createCustomInventory(targetPlayer, cs);
+            playerInventory = this.createCustomInventory(targetPlayer, commandSender);
 
-        if (playerInventory == null) return this.onCommand0(cs, cmd, label, args);
+        if (playerInventory == null)
+            return this.onCommand0(commandSender, command, commandLabel, arguments);
 
-        ((Player) cs).openInventory(playerInventory);
+        ((Player) commandSender).openInventory(playerInventory);
 
-        PlayerInventory finalPlayerInventory = playerInventory;
-        AtomicInteger taskId = new AtomicInteger(0);
+        var finalPlayerInventory = playerInventory;
+        var taskId = new AtomicInteger(0);
         taskId.set(Bukkit.getScheduler().scheduleSyncRepeatingTask(this.plugin, () -> {
-            if (((Player) cs).getOpenInventory().getTopInventory() == finalPlayerInventory)
-                ((Player) cs).updateInventory();
-            else Bukkit.getScheduler().cancelTask(taskId.get());
+            if (((Player) commandSender).getOpenInventory().getTopInventory() == finalPlayerInventory)
+                ((Player) commandSender).updateInventory();
+            else
+                Bukkit.getScheduler().cancelTask(taskId.get());
         }, 10L, 10L));
         return true;
     }
 
     private boolean onCommand0(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!this.isAllowed(cs, "invsee.use")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("invsee.use")));
+        if (!this.plugin.getPermissions().hasPermission(cs, "invsee.use")) {
+            var permission = this.plugin.getPermissions().getPermission("invsee.use");
+            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
         if (!(cs instanceof Player)) {
-            cs.sendMessage(this.getPrefix() + this.getOnlyPlayer());
+            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
         if (args.length == 0) {
-            cs.sendMessage(this.getPrefix() + this.getSyntax("Invsee", label, cmd.getName(), cs, null));
+            var command = cmd.getName();
+            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(label, command, cs, null, "Invsee"));
             return true;
         }
-        Player targetPlayer = this.getPlayer(cs, args[0]);
+        var targetPlayer = this.getPlayer(cs, args[0]);
         if (targetPlayer == null) {
-            cs.sendMessage(this.getPrefix() + this.getNoTarget(args[0]));
+            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(args[0]));
             return true;
         }
         ((Player) cs).openInventory(targetPlayer.getInventory());
@@ -151,7 +167,7 @@ public class InvseeCommand extends MessageUtils implements CommandExecutor, List
     }
 
     public PlayerInventory createCustomInventory(Player targetPlayer, CommandSender cs) {
-        Object handle = null;
+        Object handle;
         try {
             handle = this.getHandleMethod.invoke(cs);
         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -166,9 +182,9 @@ public class InvseeCommand extends MessageUtils implements CommandExecutor, List
             this.playerInventoryNmsClass.getDeclaredMethod("getItem", int.class);
         } catch (NoSuchMethodException | NoSuchMethodError e) {
             Method getSizeMethod = null;
-            for (Method method : this.playerInventoryNmsClass.getDeclaredMethods())
+            for (var method : this.playerInventoryNmsClass.getDeclaredMethods())
                 if (method.getReturnType().getName().equalsIgnoreCase(int.class.getName()))
-                    if (method.getParameters().length <= 0)
+                    if (method.getParameters().length == 0)
                         try {
                             if ((int) method.invoke(this.getInventoryMethod.invoke(targetPlayer.getInventory())) == 41) {
                                 getSizeMethod = method;
@@ -180,7 +196,7 @@ public class InvseeCommand extends MessageUtils implements CommandExecutor, List
 
 
             Method getItemMethod = null;
-            for (Method method : this.playerInventoryNmsClass.getDeclaredMethods())
+            for (var method : this.playerInventoryNmsClass.getDeclaredMethods())
                 if (method.getParameters().length == 1)
                     if (method.getParameters()[0].getType().getName().equalsIgnoreCase(int.class.getName()))
                         if (method.getReturnType().getName().toLowerCase(Locale.ROOT).contains("itemstack"))
@@ -190,7 +206,7 @@ public class InvseeCommand extends MessageUtils implements CommandExecutor, List
                             }
 
             Method setItemMethod = null;
-            for (Method method : this.playerInventoryNmsClass.getDeclaredMethods())
+            for (var method : this.playerInventoryNmsClass.getDeclaredMethods())
                 if (method.getReturnType().getName().equalsIgnoreCase(void.class.getName()))
                     if (method.getParameters().length == 2)
                         if (method.getParameters()[0].getType().getName().equalsIgnoreCase(int.class.getName()))
@@ -206,7 +222,7 @@ public class InvseeCommand extends MessageUtils implements CommandExecutor, List
             customPlayerInventory = this.createNormal(handle, targetPlayer, cs);
 
 
-        PlayerInventory playerInventory = null;
+        PlayerInventory playerInventory;
         try {
             playerInventory = (PlayerInventory) this.craftInventoryPlayerConstructor.newInstance(customPlayerInventory);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
@@ -220,51 +236,46 @@ public class InvseeCommand extends MessageUtils implements CommandExecutor, List
     private Object createNew(Object handle, Method setItemMethod, Method getItemMethod, Method getSizeMethod, Player targetPlayer, CommandSender cs) {
         Object customPlayerInventory;
         try {
-            customPlayerInventory = new ByteBuddy()
-                    .subclass(this.playerInventoryNmsClass)
+            customPlayerInventory = new ByteBuddy().subclass(this.playerInventoryNmsClass)
 
-                    .method(ElementMatchers.isDeclaredBy(this.playerInventoryNmsClass)
-                            .and(ElementMatchers.named("setItem"))
-                            .or(ElementMatchers.is(setItemMethod)))
-                    .intercept(MethodDelegation.withDefaultConfiguration().
-                            withBinders(Morph.Binder.install(Morpher.class)).
-                            to(new InvseeSetItemInterceptor(this.plugin, targetPlayer, (Player) cs)))
+                                                   .method(ElementMatchers.isDeclaredBy(this.playerInventoryNmsClass)
+                                                                          .and(ElementMatchers.named("setItem"))
+                                                                          .or(ElementMatchers.is(setItemMethod)))
+                                                   .intercept(MethodDelegation.withDefaultConfiguration()
+                                                                              .withBinders(Morph.Binder.install(Morpher.class))
+                                                                              .to(new InvseeSetItemInterceptor(this.plugin, targetPlayer, (Player) cs)))
 
-                    .method((ElementMatchers.isDeclaredBy(this.playerInventoryNmsClass)
-                            .and(ElementMatchers.named("getItem")))
-                            .or(ElementMatchers.is(getItemMethod)))
-                    .intercept(MethodDelegation.withDefaultConfiguration().
-                            withBinders(Morph.Binder.install(Morpher.class)).
-                            to(new InvseeGetItemInterceptor(this.plugin, targetPlayer)))
+                                                   .method((ElementMatchers.isDeclaredBy(this.playerInventoryNmsClass).and(ElementMatchers.named("getItem"))).or(
+                                                           ElementMatchers.is(getItemMethod)))
+                                                   .intercept(MethodDelegation.withDefaultConfiguration()
+                                                                              .withBinders(Morph.Binder.install(Morpher.class))
+                                                                              .to(new InvseeGetItemInterceptor(this.plugin, targetPlayer)))
 
-                    .method(ElementMatchers.isDeclaredBy(this.playerInventoryNmsClass)
-                            .and(ElementMatchers.named("getOwner")))
-                    .intercept(FixedValue.value(cs))
+                                                   .method(ElementMatchers.isDeclaredBy(this.playerInventoryNmsClass).and(ElementMatchers.named("getOwner")))
+                                                   .intercept(FixedValue.value(cs))
 
-                    .method((ElementMatchers.isDeclaredBy(this.playerInventoryNmsClass))
-                            .and(ElementMatchers.named("getSize")))
-                    .intercept(FixedValue.value(45))
+                                                   .method((ElementMatchers.isDeclaredBy(this.playerInventoryNmsClass)).and(ElementMatchers.named("getSize")))
+                                                   .intercept(FixedValue.value(45))
 
-                    .method(ElementMatchers.is(getSizeMethod))
-                    .intercept(FixedValue.value(45))
+                                                   .method(ElementMatchers.is(getSizeMethod))
+                                                   .intercept(FixedValue.value(45))
 
-                    .method(ElementMatchers.isDeclaredBy(this.playerInventoryNmsClass)
+                                                   .method(ElementMatchers.isDeclaredBy(this.playerInventoryNmsClass)
 
-                            .and(ElementMatchers.not(ElementMatchers.named("getSize")))
-                            .and(ElementMatchers.not(ElementMatchers.is(getSizeMethod)))
-                            .and(ElementMatchers.not(ElementMatchers.named("getOwner")))
+                                                                          .and(ElementMatchers.not(ElementMatchers.named("getSize")))
+                                                                          .and(ElementMatchers.not(ElementMatchers.is(getSizeMethod)))
+                                                                          .and(ElementMatchers.not(ElementMatchers.named("getOwner")))
 
-                            .and(ElementMatchers.not(ElementMatchers.named("setItem")))
-                            .and(ElementMatchers.not(ElementMatchers.is(setItemMethod)))
-                            .and(ElementMatchers.not(ElementMatchers.named("getItem")))
-                            .and(ElementMatchers.not(ElementMatchers.is(getItemMethod))))
-                    .intercept(MethodDelegation.to(this.getInventoryMethod.invoke(targetPlayer.getInventory())))
+                                                                          .and(ElementMatchers.not(ElementMatchers.named("setItem")))
+                                                                          .and(ElementMatchers.not(ElementMatchers.is(setItemMethod)))
+                                                                          .and(ElementMatchers.not(ElementMatchers.named("getItem")))
+                                                                          .and(ElementMatchers.not(ElementMatchers.is(getItemMethod))))
+                                                   .intercept(MethodDelegation.to(this.getInventoryMethod.invoke(targetPlayer.getInventory())))
 
-                    .make()
-                    .load(this.getClass().getClassLoader())
-                    .getLoaded()
-                    .getConstructors()[0]
-                    .newInstance(handle);
+                                                   .make()
+                                                   .load(this.getClass().getClassLoader())
+                                                   .getLoaded()
+                                                   .getConstructors()[0].newInstance(handle);
 
             return customPlayerInventory;
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
@@ -277,43 +288,37 @@ public class InvseeCommand extends MessageUtils implements CommandExecutor, List
     private Object createNormal(Object handle, Player targetPlayer, CommandSender cs) {
         Object customPlayerInventory;
         try {
-            customPlayerInventory = new ByteBuddy()
-                    .subclass(this.playerInventoryNmsClass)
+            customPlayerInventory = new ByteBuddy().subclass(this.playerInventoryNmsClass)
 
-                    .method(ElementMatchers.isDeclaredBy(this.playerInventoryNmsClass)
-                            .and(ElementMatchers.named("setItem")))
-                    .intercept(MethodDelegation.withDefaultConfiguration().
-                            withBinders(Morph.Binder.install(Morpher.class)).
-                            to(new InvseeSetItemInterceptor(this.plugin, targetPlayer, (Player) cs)))
+                                                   .method(ElementMatchers.isDeclaredBy(this.playerInventoryNmsClass).and(ElementMatchers.named("setItem")))
+                                                   .intercept(MethodDelegation.withDefaultConfiguration()
+                                                                              .withBinders(Morph.Binder.install(Morpher.class))
+                                                                              .to(new InvseeSetItemInterceptor(this.plugin, targetPlayer, (Player) cs)))
 
-                    .method((ElementMatchers.isDeclaredBy(this.playerInventoryNmsClass)
-                            .and(ElementMatchers.named("getItem"))))
-                    .intercept(MethodDelegation.withDefaultConfiguration().
-                            withBinders(Morph.Binder.install(Morpher.class)).
-                            to(new InvseeGetItemInterceptor(this.plugin, targetPlayer)))
+                                                   .method((ElementMatchers.isDeclaredBy(this.playerInventoryNmsClass).and(ElementMatchers.named("getItem"))))
+                                                   .intercept(MethodDelegation.withDefaultConfiguration()
+                                                                              .withBinders(Morph.Binder.install(Morpher.class))
+                                                                              .to(new InvseeGetItemInterceptor(this.plugin, targetPlayer)))
 
-                    .method(ElementMatchers.isDeclaredBy(this.playerInventoryNmsClass)
-                            .and(ElementMatchers.named("getOwner")))
-                    .intercept(FixedValue.value(cs))
+                                                   .method(ElementMatchers.isDeclaredBy(this.playerInventoryNmsClass).and(ElementMatchers.named("getOwner")))
+                                                   .intercept(FixedValue.value(cs))
 
-                    .method((ElementMatchers.isDeclaredBy(this.playerInventoryNmsClass))
-                            .and(ElementMatchers.named("getSize")))
-                    .intercept(FixedValue.value(45))
+                                                   .method((ElementMatchers.isDeclaredBy(this.playerInventoryNmsClass)).and(ElementMatchers.named("getSize")))
+                                                   .intercept(FixedValue.value(45))
 
-                    .method(ElementMatchers.isDeclaredBy(this.playerInventoryNmsClass)
+                                                   .method(ElementMatchers.isDeclaredBy(this.playerInventoryNmsClass)
 
-                            .and(ElementMatchers.not(ElementMatchers.named("getSize")))
-                            .and(ElementMatchers.not(ElementMatchers.named("getOwner")))
+                                                                          .and(ElementMatchers.not(ElementMatchers.named("getSize")))
+                                                                          .and(ElementMatchers.not(ElementMatchers.named("getOwner")))
 
-                            .and(ElementMatchers.not(ElementMatchers.named("setItem")))
-                            .and(ElementMatchers.not(ElementMatchers.named("getItem"))))
-                    .intercept(MethodDelegation.to(this.getInventoryMethod.invoke(targetPlayer.getInventory())))
+                                                                          .and(ElementMatchers.not(ElementMatchers.named("setItem")))
+                                                                          .and(ElementMatchers.not(ElementMatchers.named("getItem"))))
+                                                   .intercept(MethodDelegation.to(this.getInventoryMethod.invoke(targetPlayer.getInventory())))
 
-                    .make()
-                    .load(this.getClass().getClassLoader())
-                    .getLoaded()
-                    .getConstructors()[0]
-                    .newInstance(handle);
+                                                   .make()
+                                                   .load(this.getClass().getClassLoader())
+                                                   .getLoaded()
+                                                   .getConstructors()[0].newInstance(handle);
 
             return customPlayerInventory;
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
@@ -336,37 +341,37 @@ public class InvseeCommand extends MessageUtils implements CommandExecutor, List
         if (inventory == null)
             inventory = e.getPlayer().getInventory();
 
-        boolean tryOfflineCommand = this.plugin.getConfigReader().getBoolean("invseeAndEndechest.tryOfflineCommandOnPlayerQuit");
+        var tryOfflineCommand = this.plugin.getConfigReader().getBoolean("invseeAndEndechest.tryOfflineCommandOnPlayerQuit");
 
         if (tryOfflineCommand)
             this.tryOfflineInventorySee(inventory, e.getPlayer());
     }
 
     private void tryOfflineInventorySee(Inventory inventory, Player target) {
-        for (HumanEntity human : new ArrayList<>(inventory.getViewers())) {
-            ItemStack cursorStack = human.getItemOnCursor();
+        for (var human : new ArrayList<>(inventory.getViewers())) {
+            if (human.getUniqueId().toString().equalsIgnoreCase(target.getUniqueId().toString()))
+                continue;
+
+            var cursorStack = human.getItemOnCursor();
 
             human.setItemOnCursor(null);
 
             human.closeInventory();
 
             Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                    human.setItemOnCursor(cursorStack);
-                }, 2L);
+                Bukkit.getScheduler().runTaskLater(this.plugin, () -> human.setItemOnCursor(cursorStack), 2L);
 
-                if (!(human instanceof Player))
+                if (!(human instanceof Player player))
                     return;
 
-                Player player = (Player) human;
-
-                if (!this.isAllowed(player, "offlineinvsee", true))
+                if (!this.plugin.getPermissions().hasPermission(player, "offlineinvsee", true))
                     return;
 
                 player.chat("/offlineinvsee " + target.getName());
             }, 2L);
 
-            human.sendMessage(this.getPrefix() + this.getMessage("InvSee.PlayerWentOffline", "invsee", "invsee", human, target));
+            human.sendMessage(
+                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage("invsee", "invsee", human, target, "InvSee.PlayerWentOffline"));
         }
     }
 }

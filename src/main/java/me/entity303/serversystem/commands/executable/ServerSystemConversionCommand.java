@@ -2,19 +2,13 @@ package me.entity303.serversystem.commands.executable;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
-import com.earth2me.essentials.Warps;
-import me.entity303.serversystem.databasemanager.HomeManager;
-import me.entity303.serversystem.databasemanager.WarpManager;
-import me.entity303.serversystem.economy.ManagerEconomy;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.FileUtils;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import net.ess3.api.MaxMoneyException;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 
 import java.io.File;
@@ -22,9 +16,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 
-public class ServerSystemConversionCommand extends MessageUtils implements CommandExecutor {
+public class ServerSystemConversionCommand extends CommandUtils implements CommandExecutorOverload {
     private boolean starting = false;
 
     public ServerSystemConversionCommand(ServerSystem plugin) {
@@ -32,25 +25,29 @@ public class ServerSystemConversionCommand extends MessageUtils implements Comma
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!this.isAllowed(cs, "converttoessentials")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("converttoessentials")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "converttoessentials")) {
+            var permission = this.plugin.getPermissions().getPermission("converttoessentials");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
 
         if (!this.starting) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("ConvertToEssentials.WarnNotTested", label, cmd.getName(), cs, null));
+            
+            commandSender.sendMessage(
+                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "ConvertToEssentials.WarnNotTested"));
             this.starting = true;
             Bukkit.getScheduler().runTaskLater(this.plugin, () -> this.starting = false, 20 * 10);
             return true;
         }
 
-        cs.sendMessage(this.getPrefix() + this.getMessage("ConvertToEssentials.Start", label, cmd.getName(), cs, null));
+        var command1 = command.getName();
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command1, commandSender, null, "ConvertToEssentials.Start"));
 
-        File essentialsDirectory = new File("plugins//Essentials");
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm-ss");
-        LocalDateTime now = LocalDateTime.now();
-        String backupDate = dtf.format(now);
+        var essentialsDirectory = new File("plugins//Essentials");
+        var dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm-ss");
+        var now = LocalDateTime.now();
+        var backupDate = dtf.format(now);
 
         try {
             FileUtils.copyFile(essentialsDirectory, new File("plugins//Essentials-Backups//Essentials-Backup-" + backupDate));
@@ -58,12 +55,12 @@ public class ServerSystemConversionCommand extends MessageUtils implements Comma
             e.printStackTrace();
         }
 
-        Essentials essentials = (Essentials) Bukkit.getServer().getPluginManager().getPlugin("Essentials");
+        var essentials = (Essentials) Bukkit.getServer().getPluginManager().getPlugin("Essentials");
 
-        boolean error = false;
+        var error = false;
 
-        for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
-            ManagerEconomy economy = this.plugin.getEconomyManager();
+        for (var offlinePlayer : Bukkit.getOfflinePlayers()) {
+            var economy = this.plugin.getEconomyManager();
 
             double balance = economy.getMoneyAsNumber(offlinePlayer);
 
@@ -85,11 +82,11 @@ public class ServerSystemConversionCommand extends MessageUtils implements Comma
             }
 
 
-            HomeManager homeManager = this.plugin.getHomeManager();
+            var homeManager = this.plugin.getHomeManager();
 
-            for (Map.Entry<String, Location> home : homeManager.getHomes(offlinePlayer).entrySet()) {
-                String name = home.getKey();
-                Location location = home.getValue();
+            for (var home : homeManager.getHomes(offlinePlayer).entrySet()) {
+                var name = home.getKey();
+                var location = home.getValue();
 
                 user.setHome(name, location);
             }
@@ -105,12 +102,12 @@ public class ServerSystemConversionCommand extends MessageUtils implements Comma
             user.save();
         }
 
-        Warps warps = essentials.getWarps();
+        var warps = essentials.getWarps();
 
         if (warps != null) {
-            WarpManager warpManager = this.plugin.getWarpManager();
+            var warpManager = this.plugin.getWarpManager();
 
-            for (String warp : warpManager.getWarps())
+            for (var warp : warpManager.getWarps())
                 try {
                     warps.setWarp(warp, warpManager.getWarp(warp));
                 } catch (Exception e) {
@@ -122,11 +119,14 @@ public class ServerSystemConversionCommand extends MessageUtils implements Comma
         //TODO: Convert kits
 
         if (error) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("ConvertToEssentials.FinishedWithErrors", label, cmd.getName(), cs, null));
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "ConvertToEssentials.FinishedWithErrors"));
             return true;
         }
 
-        cs.sendMessage(this.getPrefix() + this.getMessage("ConvertToEssentials.Finished", label, cmd.getName(), cs, null));
+        
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "ConvertToEssentials.Finished"));
         return true;
     }
 }

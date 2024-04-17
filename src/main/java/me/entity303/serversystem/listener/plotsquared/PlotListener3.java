@@ -9,10 +9,10 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class PlotListener3 {
+@SuppressWarnings("UnstableApiUsage") public class PlotListener3 {
 
     public PlotListener3() {
-        Class clazz = null;
+        Class clazz;
         try {
             clazz = Class.forName("com.plotsquared.core.api.PlotAPI");
         } catch (ClassNotFoundException e) {
@@ -20,17 +20,16 @@ public class PlotListener3 {
             return;
         }
 
-        Object plotAPI = null;
+        Object plotAPI;
 
         try {
             plotAPI = clazz.getConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
             return;
         }
 
-        Method registerListenerMethod = null;
+        Method registerListenerMethod;
         try {
             registerListenerMethod = clazz.getDeclaredMethod("registerListener", Object.class);
         } catch (NoSuchMethodException e) {
@@ -47,8 +46,8 @@ public class PlotListener3 {
 
     @Subscribe
     public void onPlayerEnterPlot(PlayerEnterPlotEvent e) {
-        Long l = e.getPlot().getFlag((TimeFlag.TIME_DISABLED));
-        Player player = (Player) e.getPlotPlayer().getPlatformPlayer();
+        var l = e.getPlot().getFlag((TimeFlag.TIME_DISABLED));
+        var player = (Player) e.getPlotPlayer().getPlatformPlayer();
         if (l > -9000000000L)
             PlotListener.TIME_MAP.put(player, l);
         else
@@ -57,7 +56,7 @@ public class PlotListener3 {
 
     @Subscribe
     public void onPlayerLeavePlot(PlayerLeavePlotEvent e) {
-        Player player = (Player) e.getPlotPlayer().getPlatformPlayer();
+        var player = (Player) e.getPlotPlayer().getPlatformPlayer();
         PlotListener.TIME_MAP.remove(player);
     }
 }

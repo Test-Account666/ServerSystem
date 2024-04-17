@@ -1,52 +1,60 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TeleportToggleCommand extends MessageUtils implements CommandExecutor {
+public class TeleportToggleCommand extends CommandUtils implements CommandExecutorOverload {
 
     public TeleportToggleCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (args.length == 0) {
-            if (!this.plugin.getPermissions().hasPerm(cs, "tptoggle.self")) {
-                cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().Perm("tptoggle.self")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (arguments.length == 0) {
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "tptoggle.self")) {
+                commandSender.sendMessage(
+                        this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().getPermission("tptoggle.self")));
                 return true;
             }
-            if (!(cs instanceof Player)) {
-                cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(label, cmd.getName(), cs, null, "TpToggle"));
+            if (!(commandSender instanceof Player)) {
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command.getName(),
+                                                                                                                      commandSender, null, "TpToggle"));
                 return true;
             }
-            if (this.plugin.getWantsTeleport().wantsTeleport(((Player) cs))) {
-                this.plugin.getWantsTeleport().setWantsTeleport(((Player) cs), false);
-                cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, null, "TpToggle.Self.DeActivated"));
+            if (this.plugin.getWantsTeleport().wantsTeleport(((Player) commandSender))) {
+                this.plugin.getWantsTeleport().setWantsTeleport(((Player) commandSender), false);
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                          this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "TpToggle.Self.DeActivated"));
             } else {
-                this.plugin.getWantsTeleport().setWantsTeleport(((Player) cs), true);
-                cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, null, "TpToggle.Self.Activated"));
+                this.plugin.getWantsTeleport().setWantsTeleport(((Player) commandSender), true);
+                commandSender.sendMessage(
+                        this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "TpToggle.Self.Activated"));
             }
             return true;
         }
-        Player targetPlayer = this.getPlayer(cs, args[0]);
+        var targetPlayer = this.getPlayer(commandSender, arguments[0]);
         if (targetPlayer == null) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(args[0]));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
             return true;
         }
 
         if (this.plugin.getWantsTeleport().wantsTeleport(targetPlayer)) {
             this.plugin.getWantsTeleport().setWantsTeleport(targetPlayer, false);
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, targetPlayer, "TpToggle.Others.DeActivated.Sender"));
-            targetPlayer.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, targetPlayer, "TpToggle.Others.DeActivated.Target"));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, targetPlayer, "TpToggle.Others.DeActivated.Sender"));
+            targetPlayer.sendMessage(this.plugin.getMessages().getPrefix() +
+                                     this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, targetPlayer, "TpToggle.Others.DeActivated.Target"));
         } else {
             this.plugin.getWantsTeleport().setWantsTeleport(targetPlayer, true);
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, targetPlayer, "TpToggle.Others.Activated.Sender"));
-            targetPlayer.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, targetPlayer, "TpToggle.Others.Activated.Target"));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, targetPlayer, "TpToggle.Others.Activated.Sender"));
+            targetPlayer.sendMessage(this.plugin.getMessages().getPrefix() +
+                                     this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, targetPlayer, "TpToggle.Others.Activated.Target"));
         }
         return true;
     }

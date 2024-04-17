@@ -1,32 +1,44 @@
 package me.entity303.serversystem.commands.executable;
 
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 
-public class CommandSpyCommand extends MessageUtils implements CommandExecutor {
+public class CommandSpyCommand extends CommandUtils implements CommandExecutorOverload {
 
     public CommandSpyCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (this.isAllowed(cs, "commandspy")) if (cs instanceof Player) if (!this.plugin.getCmdSpy().contains(cs)) {
-            this.plugin.getCmdSpy().add((Player) cs);
-            cs.sendMessage(this.getPrefix() + this.getMessage("CommandSpy.Activated", label, cmd.getName(), cs, null));
-        } else {
-            this.plugin.getCmdSpy().remove(cs);
-            cs.sendMessage(this.getPrefix() + this.getMessage("CommandSpy.Deactivated", label, cmd.getName(), cs, null));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "commandspy")) {
+            var permission = this.plugin.getPermissions().getPermission("commandspy");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+            return true;
         }
-        else cs.sendMessage(this.getPrefix() + this.getOnlyPlayer());
-        else
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("commandspy")));
+
+        if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+            return true;
+        }
+
+        if (!this.plugin.getCmdSpy().contains(commandSender)) {
+            this.plugin.getCmdSpy().add((Player) commandSender);
+
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "CommandSpy.Activated"));
+        } else {
+            this.plugin.getCmdSpy().remove(commandSender);
+
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "CommandSpy.Deactivated"));
+        }
         return true;
     }
 }

@@ -1,113 +1,81 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.Plugin;
 
-import java.util.Objects;
-
-public class FreezeCommand extends MessageUtils implements CommandExecutor {
-    private Object namespacedKey;
-    private boolean persistent = false;
-    private boolean checked = false;
+public class FreezeCommand extends CommandUtils implements CommandExecutorOverload {
+    private final NamespacedKey namespacedKey;
 
     public FreezeCommand(ServerSystem plugin) {
         super(plugin);
-        try {
-            Class clazz = Class.forName("org.bukkit.NamespacedKey");
-            this.namespacedKey = clazz.getConstructor(Plugin.class, String.class).newInstance(plugin, "freeze");
-        } catch (Throwable ignored) {
-            this.namespacedKey = null;
-        }
+
+        this.namespacedKey = new NamespacedKey(plugin, "freeze");
     }
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
-        if (!this.checked) {
-            this.checked = true;
-
-            try {
-                Class.forName("org.bukkit.persistence.PersistentDataHolder");
-                this.persistent = true;
-            } catch (ClassNotFoundException | NoClassDefFoundError ignored) {
-            }
-        }
-
-        if (!this.isAllowed(commandSender, "freeze")) {
-            commandSender.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("freeze")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "freeze")) {
+            var permission = this.plugin.getPermissions().getPermission("freeze");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
 
-        if (args.length <= 0) {
-            commandSender.sendMessage(this.getPrefix() + this.getSyntax("Freeze", label, command.getName(), commandSender, null));
+        if (arguments.length == 0) {
+            var command1 = command.getName();
+            commandSender.sendMessage(
+                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command1, commandSender, null, "Freeze"));
             return true;
         }
 
-        Player target = Bukkit.getPlayer(args[0]);
+        var target = Bukkit.getPlayer(arguments[0]);
 
         if (target == null) {
-            commandSender.sendMessage(this.getPrefix() + this.getNoTarget(args[0]));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
             return true;
         }
 
         if (this.isFrozen(target)) {
             this.unFreeze(target);
-            commandSender.sendMessage(this.getPrefix() + this.getMessage("Freeze.UnFreeze", label, command.getName(), commandSender, target));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Freeze.UnFreeze"));
             return true;
         }
 
         this.freeze(target);
-        commandSender.sendMessage(this.getPrefix() + this.getMessage("Freeze.Freeze", label, command.getName(), commandSender, target));
+
+        commandSender.sendMessage(
+                this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Freeze.Freeze"));
 
         return true;
     }
 
     private boolean isFrozen(Player player) {
-        if (this.persistent) {
-            org.bukkit.persistence.PersistentDataHolder dataHolder = (org.bukkit.persistence.PersistentDataHolder) player;
-
-            if (!dataHolder.getPersistentDataContainer().has((org.bukkit.NamespacedKey) this.namespacedKey, org.bukkit.persistence.PersistentDataType.BYTE))
-                return false;
-
-            byte frozen = dataHolder.getPersistentDataContainer().get((org.bukkit.NamespacedKey) this.namespacedKey, org.bukkit.persistence.PersistentDataType.BYTE);
-            return frozen >= 1;
-        }
-
-        if (!player.hasMetadata("freeze"))
-            return false;
-
-        return Objects.requireNonNull(player.getMetadata("freeze").stream().findFirst().orElse(null)).asBoolean();
-    }
-
-    private void freeze(Player player) {
-        if (this.persistent) {
-            org.bukkit.persistence.PersistentDataHolder dataHolder = (org.bukkit.persistence.PersistentDataHolder) player;
-
-            dataHolder.getPersistentDataContainer().set((org.bukkit.NamespacedKey) this.namespacedKey, org.bukkit.persistence.PersistentDataType.BYTE, (byte) 1);
-            return;
-        }
-
-        MetadataValue metadataValue = new FixedMetadataValue(this.plugin, true);
-        player.setMetadata("freeze", metadataValue);
+        return isFrozen(player, this.namespacedKey);
     }
 
     private void unFreeze(Player player) {
-        if (this.persistent) {
-            org.bukkit.persistence.PersistentDataHolder dataHolder = (org.bukkit.persistence.PersistentDataHolder) player;
+        player.getPersistentDataContainer().set((org.bukkit.NamespacedKey) this.namespacedKey, org.bukkit.persistence.PersistentDataType.BYTE, (byte) 0);
+    }
 
-            dataHolder.getPersistentDataContainer().set((org.bukkit.NamespacedKey) this.namespacedKey, org.bukkit.persistence.PersistentDataType.BYTE, (byte) 0);
-            return;
-        }
+    private void freeze(Player player) {
+        player.getPersistentDataContainer().set((org.bukkit.NamespacedKey) this.namespacedKey, org.bukkit.persistence.PersistentDataType.BYTE, (byte) 1);
+    }
 
-        MetadataValue metadataValue = new FixedMetadataValue(this.plugin, true);
-        player.removeMetadata("freeze", this.plugin);
-        player.setMetadata("freeze", metadataValue);
+    public static boolean isFrozen(Player player, NamespacedKey namespacedKey) {
+        if (!player.getPersistentDataContainer().has(namespacedKey, org.bukkit.persistence.PersistentDataType.BYTE))
+            return false;
+
+        var frozen = player.getPersistentDataContainer().get(namespacedKey, org.bukkit.persistence.PersistentDataType.BYTE);
+
+        if (frozen == null)
+            return false;
+
+        return frozen >= 1;
     }
 }

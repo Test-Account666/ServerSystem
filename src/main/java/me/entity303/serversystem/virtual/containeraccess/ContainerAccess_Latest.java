@@ -22,14 +22,12 @@ public class ContainerAccess_Latest extends ContainerAccessWrapper implements Co
 
     public ContainerAccess_Latest(Player player) throws NoSuchMethodException {
         if (ContainerAccess_Latest.getWorldMethod == null) {
-            ContainerAccess_Latest.getWorldMethod = Arrays.stream(EntityPlayer.class.getDeclaredMethods())
-                    .filter(method -> method.getParameters().length <= 0)
-                    .filter(method -> {
-                        String[] splitted = method.getReturnType().getName().toLowerCase(Locale.ROOT).split("\\.");
+            ContainerAccess_Latest.getWorldMethod =
+                    Arrays.stream(EntityPlayer.class.getDeclaredMethods()).filter(method -> method.getParameters().length == 0).filter(method -> {
+                        var splitted = method.getReturnType().getName().toLowerCase(Locale.ROOT).split("\\.");
 
                         return splitted[splitted.length - 1].contains("world");
-                    })
-                    .findFirst().orElse(null);
+                    }).findFirst().orElse(null);
 
             if (ContainerAccess_Latest.getWorldMethod == null)
                 throw new NoSuchMethodException("Couldn't find method 'getWorld' in class " + EntityPlayer.class.getName());
@@ -37,19 +35,22 @@ public class ContainerAccess_Latest extends ContainerAccessWrapper implements Co
 
         this.player = player;
         try {
-            this.human = (EntityPlayer) Class.forName("org.bukkit.craftbukkit." + this.getVersion() + ".entity.CraftPlayer").getDeclaredMethod("getHandle").invoke(player);
+            this.human = (EntityPlayer) Class.forName("org.bukkit.craftbukkit." + this.getVersion() + ".entity.CraftPlayer")
+                                             .getDeclaredMethod("getHandle")
+                                             .invoke(player);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     protected String getVersion() {
-        if (this.version == null) try {
-            this.version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            e.printStackTrace();
-            return null;
-        }
+        if (this.version == null)
+            try {
+                this.version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                e.printStackTrace();
+                return null;
+            }
         return this.version;
     }
 
@@ -70,6 +71,7 @@ public class ContainerAccess_Latest extends ContainerAccessWrapper implements Co
 
     @Override
     public <T> Optional<T> a(BiFunction<World, BlockPosition, T> biFunction) {
-        return Optional.of(biFunction.apply(this.getWorld(), new BlockPosition(this.player.getLocation().getBlockX(), this.player.getLocation().getBlockY(), this.player.getLocation().getBlockZ())));
+        return Optional.of(biFunction.apply(this.getWorld(), new BlockPosition(this.player.getLocation().getBlockX(), this.player.getLocation().getBlockY(),
+                                                                               this.player.getLocation().getBlockZ())));
     }
 }

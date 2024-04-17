@@ -1,76 +1,87 @@
 package me.entity303.serversystem.commands.executable;
 
-
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
-public class HealCommand extends MessageUtils implements CommandExecutor {
+public class HealCommand extends CommandUtils implements CommandExecutorOverload {
 
     public HealCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (args.length == 0) {
-            if (!(cs instanceof Player)) {
-                cs.sendMessage(this.getPrefix() + this.getSyntax("Heal", label, cmd.getName(), cs, null));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (arguments.length == 0) {
+            if (!(commandSender instanceof Player player)) {
+                commandSender.sendMessage(
+                        this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Heal"));
                 return true;
             }
-            if (!this.isAllowed(cs, "heal.self")) {
-                cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("heal.self")));
+
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "heal.self")) {
+                var permission = this.plugin.getPermissions().getPermission("heal.self");
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
                 return true;
             }
-            if (((Player) cs).getMaxHealth() < 1) {
-                cs.sendMessage(this.getPrefix() + this.getMessage("Heal.NotHealable", label, cmd.getName(), cs, null));
-                return true;
-            }
-            ((Player) cs).setHealth(((Player) cs).getMaxHealth());
-            ((Player) cs).setFoodLevel(20);
-            ((Player) cs).setExhaustion(0);
-            ((Player) cs).setFireTicks(0);
-            for (PotionEffect effect : new ArrayList<>(((Player) cs).getActivePotionEffects()))
-                ((Player) cs).removePotionEffect(effect.getType());
-            cs.sendMessage(this.getPrefix() + this.getMessage("Heal.Self", label, cmd.getName(), cs, null));
-        } else if (this.isAllowed(cs, "heal.others")) {
-            Player target = this.getPlayer(cs, args[0]);
-            if (target == null) {
-                cs.sendMessage(this.getPrefix() + this.getNoTarget(args[0]));
-                return true;
-            }
-            if (target.getMaxHealth() < 1) {
-                cs.sendMessage(this.getPrefix() + this.getMessage("Heal.NotHealable", label, cmd.getName(), cs, target));
-                return true;
-            }
-            target.setHealth(target.getMaxHealth());
-            target.setFoodLevel(20);
-            target.setExhaustion(0);
-            target.setFireTicks(0);
-            for (PotionEffect effect : new ArrayList<>(target.getActivePotionEffects()))
-                target.removePotionEffect(effect.getType());
-            target.sendMessage(this.getPrefix() + this.getMessage("Heal.Others.Target", label, cmd.getName(), cs, target));
-            cs.sendMessage(this.getPrefix() + this.getMessage("Heal.Others.Sender", label, cmd.getName(), cs, target));
-        } else if (cs instanceof Player) {
-            if (!this.isAllowed(cs, "heal.self", true)) {
-                cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("heal.others")));
-                return true;
-            }
-            if (((Player) cs).getMaxHealth() < 1) {
-                cs.sendMessage(this.getPrefix() + this.getMessage("Heal.NotHealable", label, cmd.getName(), cs, null));
-                return true;
-            }
-            ((Player) cs).setHealth(((Player) cs).getMaxHealth());
-            ((Player) cs).setFoodLevel(20);
-            ((Player) cs).setExhaustion(0);
-            cs.sendMessage(this.getPrefix() + this.getMessage("Heal.Self", label, cmd.getName(), cs, null));
-        } else cs.sendMessage(this.getPrefix() + this.getSyntax("Heal", label, cmd.getName(), cs, null));
+
+            this.HealPlayer(commandSender, player, command, commandLabel);
+            return true;
+        }
+
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "heal.others")) {
+            commandSender.sendMessage(
+                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Heal"));
+            return true;
+        }
+
+        var target = this.getPlayer(commandSender, arguments[0]);
+        if (target == null) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
+            return true;
+        }
+
+        this.HealPlayer(commandSender, target, command, commandLabel);
         return true;
     }
+
+    private void HealPlayer(CommandSender commandSender, Player target, Command command, String commandLabel) {
+        var maxHealth = Objects.requireNonNull(target.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue();
+
+        if (maxHealth < 1.0) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Heal.NotHealable"));
+            return;
+        }
+
+        target.setHealth(maxHealth);
+        target.setFoodLevel(20);
+        target.setExhaustion(0);
+        target.setSaturation(20);
+
+        target.setFireTicks(0);
+        for (var effect : new ArrayList<>(target.getActivePotionEffects()))
+            target.removePotionEffect(effect.getType());
+
+        if (commandSender == target) {
+            commandSender.sendMessage(
+                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Heal.Self"));
+
+            return;
+        }
+
+        target.sendMessage(
+                this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Heal.Others.Target"));
+
+        commandSender.sendMessage(
+                this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Heal.Others.Sender"));
+    }
 }
+

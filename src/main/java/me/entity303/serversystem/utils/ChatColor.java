@@ -1,33 +1,10 @@
 package me.entity303.serversystem.utils;
 
-import me.entity303.serversystem.main.ServerSystem;
-
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum ChatColor {
-    BLACK,
-    DARK_BLUE,
-    DARK_GREEN,
-    DARK_AQUA,
-    DARK_RED,
-    DARK_PURPLE,
-    GOLD,
-    GRAY,
-    DARK_GRAY,
-    BLUE,
-    GREEN,
-    AQUA,
-    RED,
-    LIGHT_PURPLE,
-    YELLOW,
-    WHITE,
-    MAGIC,
-    BOLD,
-    STRIKETHROUGH,
-    UNDERLINE,
-    ITALIC,
-    RESET;
+    BLACK, DARK_BLUE, DARK_GREEN, DARK_AQUA, DARK_RED, DARK_PURPLE, GOLD, GRAY, DARK_GRAY, BLUE, GREEN, AQUA, RED, LIGHT_PURPLE, YELLOW, WHITE, MAGIC, BOLD,
+    STRIKETHROUGH, UNDERLINE, ITALIC, RESET;
 
     public static final char COLOR_CHAR = '§';
     public static final Pattern REPLACE_ALL_PATTERN;
@@ -45,10 +22,29 @@ public enum ChatColor {
         this.chatColor = org.bukkit.ChatColor.valueOf(this.name());
     }
 
+    public static String translateAlternateColorCodes(char altColorChar, String textToTranslate) {
+        if (textToTranslate.contains(altColorChar + "#"))
+            try {
+                textToTranslate = ChatColor.replaceHexColor(altColorChar, textToTranslate);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        return org.bukkit.ChatColor.translateAlternateColorCodes(altColorChar, textToTranslate);
+    }
+
+    public static String replaceHexColor(char altColorChar, String input) {
+        var matcher = Pattern.compile(ChatColor.RGB_PATTERN.replace("&", String.valueOf(altColorChar))).matcher(input);
+        while (matcher.find())
+            input = input.replace(matcher.group(), ChatColor.of(matcher.group()));
+
+        return input;
+    }
+
     public static String of(String input) {
-        StringBuilder inputBuilder = new StringBuilder("§x");
-        String[] arr = input.split("");
-        for (String a : arr) {
+        var inputBuilder = new StringBuilder("§x");
+        var arr = input.split("");
+        for (var a : arr) {
             if (a.contains("#") || a.contains("&"))
                 continue;
             inputBuilder.append(org.bukkit.ChatColor.getByChar(a));
@@ -58,31 +54,12 @@ public enum ChatColor {
         return input;
     }
 
-    public static String replaceHexColor(char altColorChar, String input) {
-        Matcher matcher = Pattern.compile(ChatColor.RGB_PATTERN.replace("&", String.valueOf(altColorChar))).matcher(input);
-        while (matcher.find())
-            input = input.replace(matcher.group(), ChatColor.of(matcher.group()));
-
-        return input;
-    }
-
-    public static String translateAlternateColorCodes(char altColorChar, String textToTranslate) {
-        if (textToTranslate.contains(altColorChar + "#")) try {
-            if (ServerSystem.getPlugin(ServerSystem.class).getVersionManager().isV116())
-                textToTranslate = ChatColor.replaceHexColor(altColorChar, textToTranslate);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return org.bukkit.ChatColor.translateAlternateColorCodes(altColorChar, textToTranslate);
+    @Override
+    public String toString() {
+        return this.getChatColor().toString();
     }
 
     public org.bukkit.ChatColor getChatColor() {
         return this.chatColor;
-    }
-
-    @Override
-    public String toString() {
-        return this.getChatColor().toString();
     }
 }

@@ -1,42 +1,64 @@
 package me.entity303.serversystem.commands.executable;
 
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class HatCommand extends MessageUtils implements CommandExecutor {
+public class HatCommand extends CommandUtils implements CommandExecutorOverload {
 
     public HatCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (cs instanceof Player) {
-            if (this.plugin.getPermissions().getCfg().getBoolean("Permissions.hat.required"))
-                if (!this.isAllowed(cs, "hat.permission")) {
-                    cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("hat.permission")));
-                    return true;
-                }
-            ((Player) cs).getInventory().getItemInHand().getType();
-            if (((Player) cs).getInventory().getItemInHand().getType() != Material.AIR) {
-                if (((Player) cs).getInventory().getHelmet() != null)
-                    ((Player) cs).getInventory().addItem(((Player) cs).getInventory().getHelmet());
-                ((Player) cs).getInventory().setHelmet(((Player) cs).getInventory().getItemInHand());
-                ((Player) cs).getInventory().removeItem(((Player) cs).getInventory().getItemInHand());
-                cs.sendMessage(this.getPrefix() + this.getMessage("Hat.Success.NewHat", label, cmd.getName(), cs, null).replace("<TYPE>", ((Player) cs).getInventory().getHelmet().getType().toString()));
-            } else if (((Player) cs).getInventory().getHelmet() != null) {
-                ((Player) cs).getInventory().addItem(((Player) cs).getInventory().getHelmet());
-                cs.sendMessage(this.getPrefix() + this.getMessage("Hat.Success.HatRemoved", label, cmd.getName(), cs, null).replace("<TYPE>", ((Player) cs).getInventory().getHelmet().getType().toString()));
-                ((Player) cs).getInventory().setHelmet(new ItemStack(Material.AIR));
-            } else cs.sendMessage(this.getPrefix() + this.getMessage("Hat.NoItem", label, cmd.getName(), cs, null));
-        } else cs.sendMessage(this.getPrefix() + this.getOnlyPlayer());
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!(commandSender instanceof Player player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+            return true;
+        }
+
+        if (this.plugin.getPermissions().getConfiguration().getBoolean("Permissions.hat.required"))
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "hat.permission")) {
+                var permission = this.plugin.getPermissions().getPermission("hat.permission");
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+                return true;
+            }
+
+        if (player.getInventory().getItemInMainHand().getType() != Material.AIR) {
+            if (player.getInventory().getHelmet() != null)
+                player.getInventory().addItem(player.getInventory().getHelmet());
+
+            player.getInventory().setHelmet(player.getInventory().getItemInMainHand());
+            player.getInventory().removeItem(player.getInventory().getItemInMainHand());
+
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                         .getMessage(commandLabel, command, commandSender, null,
+                                                                                                     "Hat.Success.NewHat")
+                                                                                         .replace("<TYPE>",
+                                                                                                  player.getInventory().getHelmet().getType().toString()));
+            return true;
+        }
+
+        if (player.getInventory().getHelmet() == null) {
+            commandSender.sendMessage(
+                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Hat.NoItem"));
+            return true;
+        }
+
+        player.getInventory().addItem(player.getInventory().getHelmet());
+
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                     .getMessage(commandLabel, command, commandSender, null,
+                                                                                                 "Hat.Success.HatRemoved")
+                                                                                     .replace("<TYPE>", player.getInventory().getHelmet().getType().toString()));
+
+        player.getInventory().setHelmet(new ItemStack(Material.AIR));
         return true;
     }
 }

@@ -16,14 +16,16 @@ import java.util.stream.Collectors;
 public class HomeManager {
 
     public Map<String, Location> getHomes(OfflinePlayer player) {
-        File homeFile = new File("plugins//ServerSystem//Homes", player.getUniqueId() + ".yml");
+        var homeFile = new File("plugins//ServerSystem//Homes", player.getUniqueId() + ".yml");
         FileConfiguration homeCfg = YamlConfiguration.loadConfiguration(homeFile);
 
-        if (!homeFile.exists()) return new HashMap<>();
+        if (!homeFile.exists())
+            return new HashMap<>();
 
         if (homeFile.exists()) {
             List<String> homes = new ArrayList<>(homeCfg.getConfigurationSection("Homes").getKeys(false));
-            if (homes.size() <= 0) return new HashMap<>();
+            if (homes.isEmpty())
+                return new HashMap<>();
 
             return homes.stream().collect(Collectors.toMap(home -> home, home -> (Location) homeCfg.get("Homes." + home.toUpperCase()), (a, b) -> b));
         }
@@ -31,27 +33,31 @@ public class HomeManager {
     }
 
     public List<String> getHomeNames(OfflinePlayer player) {
-        File homeFile = new File("plugins//ServerSystem//Homes", player.getUniqueId() + ".yml");
+        var homeFile = new File("plugins//ServerSystem//Homes", player.getUniqueId() + ".yml");
         FileConfiguration homeCfg = YamlConfiguration.loadConfiguration(homeFile);
 
-        if (!homeFile.exists()) return new ArrayList<>();
+        if (!homeFile.exists())
+            return new ArrayList<>();
 
         if (homeFile.exists()) {
             List<String> homes = new ArrayList<>(homeCfg.getConfigurationSection("Homes").getKeys(false));
-            if (homes.size() <= 0) return new ArrayList<>();
+            if (homes.isEmpty())
+                return new ArrayList<>();
         }
         return new ArrayList<>();
     }
 
     public HomeManager deleteHome(OfflinePlayer player, String home) {
-        File homeFile = new File("plugins//ServerSystem//Homes", player.getUniqueId() + ".yml");
+        var homeFile = new File("plugins//ServerSystem//Homes", player.getUniqueId() + ".yml");
         FileConfiguration homeCfg = YamlConfiguration.loadConfiguration(homeFile);
 
-        if (!homeFile.exists()) return this;
+        if (!homeFile.exists())
+            return this;
 
         if (homeFile.exists()) {
             List<String> homes = new ArrayList<>(homeCfg.getConfigurationSection("Homes").getKeys(false));
-            if (homes.size() <= 0) return this;
+            if (homes.isEmpty())
+                return this;
         }
 
         homeCfg.set("Homes." + home.toUpperCase(), null);

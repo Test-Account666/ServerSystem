@@ -1,12 +1,12 @@
 package me.entity303.serversystem.listener.vanish;
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 
-public class GameModeChangeListener extends MessageUtils implements Listener {
+public class GameModeChangeListener extends CommandUtils implements Listener {
 
     public GameModeChangeListener(ServerSystem plugin) {
         super(plugin);

@@ -9,16 +9,14 @@ import net.bytebuddy.implementation.bind.annotation.This;
 import org.bukkit.command.CommandSender;
 
 public class SudoInterceptor {
-    private CommandSender commandSender;
+    private final CommandSender commandSender;
 
     public SudoInterceptor(CommandSender commandSender) {
         this.commandSender = commandSender;
     }
 
     @RuntimeType
-    public void intercept(@This Object obj,
-                          @AllArguments Object[] allArguments,
-                          @Morph Morpher morpher) {
+    public void intercept(@This Object obj, @AllArguments Object[] allArguments, @Morph Morpher morpher) {
         SudoCommand.sendMessage(this.commandSender, allArguments);
     }
 }

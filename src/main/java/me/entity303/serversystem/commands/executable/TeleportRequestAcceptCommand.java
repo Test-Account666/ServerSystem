@@ -3,15 +3,14 @@ package me.entity303.serversystem.commands.executable;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
 import me.entity303.serversystem.utils.Teleport;
-import me.entity303.serversystem.utils.TpaData;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TeleportRequestAcceptCommand implements CommandExecutor {
+public class TeleportRequestAcceptCommand implements CommandExecutorOverload {
     private final ServerSystem plugin;
 
     public TeleportRequestAcceptCommand(ServerSystem plugin) {
@@ -19,87 +18,138 @@ public class TeleportRequestAcceptCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (this.plugin.getPermissions().getCfg().getBoolean("Permissions.tpaccept.required"))
-            if (!this.plugin.getPermissions().hasPerm(cs, "tpaccept.permission")) {
-                cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().Perm("tpaccept.permission")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (this.plugin.getPermissions().getConfiguration().getBoolean("Permissions.tpaccept.required"))
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "tpaccept.permission")) {
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                          this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().getPermission("tpaccept.permission")));
                 return true;
             }
 
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+        if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
 
-        if (!this.plugin.getTpaDataMap().containsKey(cs)) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, null, "TpAccept.NoTpa"));
+        if (!this.plugin.getTpaDataMap().containsKey(commandSender)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "TpAccept.NoTpa"));
             return true;
         }
 
-        TpaData tpaData = this.plugin.getTpaDataMap().get(cs);
+        var tpaData = this.plugin.getTpaDataMap().get(commandSender);
 
         if (tpaData.getEnd() <= System.currentTimeMillis()) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(label, cmd.getName(), cs, null, "TpAccept.NoTpa"));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "TpAccept.NoTpa"));
             return true;
         }
 
         if (!tpaData.getSender().isOnline()) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.AlreadyOffline"));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                         .getMessageWithStringTarget(commandLabel, command.getName(),
+                                                                                                                     commandSender, tpaData.getSender().getName(),
+                                                                                                                     "TpAccept.AlreadyOffline"));
             return true;
         }
 
         if (!tpaData.isTpahere()) {
-            if (!this.plugin.getConfigReader().getBoolean("teleportation.tpa.enableDelay") || this.plugin.getPermissions().hasPerm(tpaData.getSender().getPlayer(), "tpaccept.bypassdelay", true)) {
-                Player player = tpaData.getSender().getPlayer();
-                cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.Sender"));
-                tpaData.getSender().getPlayer().sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.Target"));
+            if (!this.plugin.getConfigReader().getBoolean("teleportation.tpa.enableDelay") ||
+                this.plugin.getPermissions().hasPermission(tpaData.getSender().getPlayer(), "tpaccept.bypassdelay", true)) {
+                var player = tpaData.getSender().getPlayer();
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                          this.plugin.getMessages().getMessageWithStringTarget(commandLabel, command.getName(), commandSender, tpaData.getSender().getName(), "TpAccept.Sender"));
+                tpaData.getSender()
+                       .getPlayer()
+                       .sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                       .getMessageWithStringTarget(commandLabel, command.getName(), commandSender,
+                                                                                                                   tpaData.getSender().getName(),
+                                                                                                                   "TpAccept.Target"));
 
-                Teleport.teleport(player, (Player) cs);
+                Teleport.teleport(player, (Player) commandSender);
 
-                player.sendMessage(this.plugin.getMessages().getPrefix() + ChatColor.translateAlternateColorCodes('&', TeleportRequestAcceptCommand.this.plugin.getMessages().getCfg().getString("Messages.Misc.Teleportation.Success")));
-                this.plugin.getTpaDataMap().remove(cs);
+                player.sendMessage(this.plugin.getMessages().getPrefix() + ChatColor.translateAlternateColorCodes('&',
+                                                                                                                  TeleportRequestAcceptCommand.this.plugin.getMessages()
+                                                                                                                                                          .getCfg()
+                                                                                                                                                          .getString(
+                                                                                                                                                                  "Messages.Misc.Teleportation.Success")));
+                this.plugin.getTpaDataMap().remove(commandSender);
                 return true;
             }
             this.plugin.getTeleportMap().put(tpaData.getSender().getPlayer(), Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
                 OfflinePlayer player = tpaData.getSender().getPlayer();
-                if (player.isOnline() && ((OfflinePlayer) cs).isOnline()) {
+                if (player.isOnline() && ((OfflinePlayer) commandSender).isOnline()) {
 
-                    Teleport.teleport(player.getPlayer(), (Player) cs);
+                    Teleport.teleport(player.getPlayer(), (Player) commandSender);
 
-                    player.getPlayer().sendMessage(TeleportRequestAcceptCommand.this.plugin.getMessages().getPrefix() + ChatColor.translateAlternateColorCodes('&', TeleportRequestAcceptCommand.this.plugin.getMessages().getCfg().getString("Messages.Misc.Teleportation.Success")));
+                    player.getPlayer()
+                          .sendMessage(TeleportRequestAcceptCommand.this.plugin.getMessages().getPrefix() + ChatColor.translateAlternateColorCodes('&',
+                                                                                                                                                   TeleportRequestAcceptCommand.this.plugin.getMessages()
+                                                                                                                                                                                           .getCfg()
+                                                                                                                                                                                           .getString(
+                                                                                                                                                                                                   "Messages.Misc.Teleportation.Success")));
                     TeleportRequestAcceptCommand.this.plugin.getTeleportMap().remove(player);
-                    TeleportRequestAcceptCommand.this.plugin.getTpaDataMap().remove(cs);
+                    TeleportRequestAcceptCommand.this.plugin.getTpaDataMap().remove(commandSender);
                 }
             }, 20L * this.plugin.getConfigReader().getInt("teleportation.tpa.delay")));
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.Sender"));
-            tpaData.getSender().getPlayer().sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.Target"));
-            tpaData.getSender().getPlayer().sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.Teleporting"));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessageWithStringTarget(commandLabel, command.getName(), commandSender, tpaData.getSender().getName(), "TpAccept.Sender"));
+            tpaData.getSender()
+                   .getPlayer()
+                   .sendMessage(this.plugin.getMessages().getPrefix() +
+                                this.plugin.getMessages().getMessageWithStringTarget(commandLabel, command.getName(), commandSender, tpaData.getSender().getName(), "TpAccept.Target"));
+            tpaData.getSender()
+                   .getPlayer()
+                   .sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                   .getMessageWithStringTarget(commandLabel, command.getName(), commandSender,
+                                                                                                               tpaData.getSender().getName(),
+                                                                                                               "TpAccept.Teleporting"));
         } else {
-            if (!this.plugin.getConfigReader().getBoolean("teleportation.tpa.enableDelay") || this.plugin.getPermissions().hasPerm(cs, "tpaccept.bypassdelay", true)) {
-                cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.Sender"));
-                tpaData.getSender().getPlayer().sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.Target"));
-                Player player = ((Player) cs);
+            if (!this.plugin.getConfigReader().getBoolean("teleportation.tpa.enableDelay") ||
+                this.plugin.getPermissions().hasPermission(commandSender, "tpaccept.bypassdelay", true)) {
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                          this.plugin.getMessages().getMessageWithStringTarget(commandLabel, command.getName(), commandSender, tpaData.getSender().getName(), "TpAccept.Sender"));
+                tpaData.getSender()
+                       .getPlayer()
+                       .sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
+                                                                                       .getMessageWithStringTarget(commandLabel, command.getName(), commandSender,
+                                                                                                                   tpaData.getSender().getName(),
+                                                                                                                   "TpAccept.Target"));
+                var player = ((Player) commandSender);
 
                 Teleport.teleport(player.getPlayer(), tpaData.getSender().getPlayer());
 
-                player.getPlayer().sendMessage(this.plugin.getMessages().getPrefix() + ChatColor.translateAlternateColorCodes('&', TeleportRequestAcceptCommand.this.plugin.getMessages().getCfg().getString("Messages.Misc.Teleportation.Success")));
-                this.plugin.getTpaDataMap().remove(cs);
+                player.getPlayer()
+                      .sendMessage(this.plugin.getMessages().getPrefix() + ChatColor.translateAlternateColorCodes('&',
+                                                                                                                  TeleportRequestAcceptCommand.this.plugin.getMessages()
+                                                                                                                                                          .getCfg()
+                                                                                                                                                          .getString(
+                                                                                                                                                                  "Messages.Misc.Teleportation.Success")));
+                this.plugin.getTpaDataMap().remove(commandSender);
                 return true;
             }
-            this.plugin.getTeleportMap().put(((Player) cs), Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                OfflinePlayer player = ((OfflinePlayer) cs).getPlayer();
+            this.plugin.getTeleportMap().put(((Player) commandSender), Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+                OfflinePlayer player = ((OfflinePlayer) commandSender).getPlayer();
                 if (player.isOnline() && tpaData.getSender().isOnline()) {
 
                     Teleport.teleport(player.getPlayer(), tpaData.getSender().getPlayer());
 
-                    player.getPlayer().sendMessage(TeleportRequestAcceptCommand.this.plugin.getMessages().getPrefix() + ChatColor.translateAlternateColorCodes('&', TeleportRequestAcceptCommand.this.plugin.getMessages().getCfg().getString("Messages.Misc.Teleportation.Success")));
+                    player.getPlayer()
+                          .sendMessage(TeleportRequestAcceptCommand.this.plugin.getMessages().getPrefix() + ChatColor.translateAlternateColorCodes('&',
+                                                                                                                                                   TeleportRequestAcceptCommand.this.plugin.getMessages()
+                                                                                                                                                                                           .getCfg()
+                                                                                                                                                                                           .getString(
+                                                                                                                                                                                                   "Messages.Misc.Teleportation.Success")));
                     TeleportRequestAcceptCommand.this.plugin.getTeleportMap().remove(player);
-                    TeleportRequestAcceptCommand.this.plugin.getTpaDataMap().remove(cs);
+                    TeleportRequestAcceptCommand.this.plugin.getTpaDataMap().remove(commandSender);
                 }
             }, 20L * this.plugin.getConfigReader().getInt("teleportation.tpa.delay")));
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.Sender"));
-            tpaData.getSender().getPlayer().sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.Target"));
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessageWithStringTarget(label, cmd.getName(), cs, tpaData.getSender().getName(), "TpAccept.Teleporting"));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessageWithStringTarget(commandLabel, command.getName(), commandSender, tpaData.getSender().getName(), "TpAccept.Sender"));
+            tpaData.getSender()
+                   .getPlayer()
+                   .sendMessage(this.plugin.getMessages().getPrefix() +
+                                this.plugin.getMessages().getMessageWithStringTarget(commandLabel, command.getName(), commandSender, tpaData.getSender().getName(), "TpAccept.Target"));
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessageWithStringTarget(commandLabel, command.getName(), commandSender, tpaData.getSender().getName(), "TpAccept.Teleporting"));
         }
         return true;
     }

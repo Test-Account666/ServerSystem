@@ -2,7 +2,6 @@ package me.entity303.serversystem.vault;
 
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
-import org.bukkit.plugin.RegisteredServiceProvider;
 
 import static org.bukkit.Bukkit.getServer;
 
@@ -16,13 +15,15 @@ public class Vault {
     }
 
     private void setupChat() {
-        RegisteredServiceProvider<Chat> chatProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
-        if (chatProvider != null) this.chat = chatProvider.getProvider();
+        var chatProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
+        if (chatProvider != null)
+            this.chat = chatProvider.getProvider();
     }
 
     private void setupPermissions() {
-        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
-        if (permissionProvider != null) this.permission = permissionProvider.getProvider();
+        var permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+        if (permissionProvider != null)
+            this.permission = permissionProvider.getProvider();
     }
 
     public Permission getPermission() {

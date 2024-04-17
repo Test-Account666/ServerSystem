@@ -1,45 +1,55 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.meta.ItemMeta;
 
 
-public class UnSignCommand extends MessageUtils implements CommandExecutor {
+public class UnSignCommand extends CommandUtils implements CommandExecutorOverload {
 
     public UnSignCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!this.isAllowed(cs, "unsign")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("unsign")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "unsign")) {
+            var permission = this.plugin.getPermissions().getPermission("unsign");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.getPrefix() + this.getOnlyPlayer());
+
+        if (!(commandSender instanceof Player player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
-        ((Player) cs).getInventory().getItemInHand();
-        if (((Player) cs).getInventory().getItemInHand().getType() == Material.AIR) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("UnSign.NoItem", label, cmd.getName(), cs, null));
+
+        player.getInventory().getItemInMainHand();
+        if (player.getInventory().getItemInMainHand().getType() == Material.AIR) {
+            commandSender.sendMessage(
+                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "UnSign.NoItem"));
             return true;
         }
-        ItemMeta meta = ((Player) cs).getInventory().getItemInHand().getItemMeta();
+
+        var meta = player.getInventory().getItemInMainHand().getItemMeta();
+        assert meta != null;
         if (!meta.hasLore()) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("UnSign.NotSigned", label, cmd.getName(), cs, null));
+            commandSender.sendMessage(
+                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "UnSign.NotSigned"));
             return true;
         }
+
         meta.setLore(null);
-        ((Player) cs).getInventory().getItemInHand().setItemMeta(meta);
-        ((Player) cs).updateInventory();
-        cs.sendMessage(this.getPrefix() + this.getMessage("UnSign.Success", label, cmd.getName(), cs, null));
+
+        player.getInventory().getItemInMainHand().setItemMeta(meta);
+        player.updateInventory();
+
+        commandSender.sendMessage(
+                this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "UnSign.Success"));
         return true;
     }
 }

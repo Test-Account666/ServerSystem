@@ -7,13 +7,11 @@ import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
@@ -23,9 +21,9 @@ import java.util.UUID;
 import java.util.zip.GZIPOutputStream;
 
 /**
- * bStats collects some data for plugin authors.
- * <p>
- * Check out https://bStats.org/ to learn more about bStats!
+ bStats collects some data for plugin authors.
+ <p>
+ Check out <a href="https://bStats.org/">...</a> to learn more about bStats!
  */
 public class MetricsLite {
     // The version of this bStats class
@@ -45,9 +43,8 @@ public class MetricsLite {
         // You can use the property to disable the check in your test environment
         if (System.getProperty("bstats.relocatecheck") == null || !System.getProperty("bstats.relocatecheck").equals("false")) {
             // Maven's Relocate is clever and changes strings, too. So we have to use this little "trick" ... :D
-            final String defaultPackage = new String(
-                    new byte[]{'o', 'r', 'g', '.', 'b', 's', 't', 'a', 't', 's', '.', 'b', 'u', 'k', 'k', 'i', 't'});
-            final String examplePackage = new String(new byte[]{'y', 'o', 'u', 'r', '.', 'p', 'a', 'c', 'k', 'a', 'g', 'e'});
+            final var defaultPackage = new String(new byte[] { 'o', 'r', 'g', '.', 'b', 's', 't', 'a', 't', 's', '.', 'b', 'u', 'k', 'k', 'i', 't' });
+            final var examplePackage = new String(new byte[] { 'y', 'o', 'u', 'r', '.', 'p', 'a', 'c', 'k', 'a', 'g', 'e' });
             // We want to make sure nobody just copy & pastes the example and use the wrong package names
             if (MetricsLite.class.getPackage().getName().equals(defaultPackage) || MetricsLite.class.getPackage().getName().equals(examplePackage))
                 throw new IllegalStateException("bStats Metrics class has not been relocated correctly!");
@@ -62,21 +59,22 @@ public class MetricsLite {
     private final boolean enabled;
 
     /**
-     * Class constructor.
-     *
-     * @param plugin   The plugin which stats should be submitted.
-     * @param pluginId The id of the plugin.
-     *                 It can be found at <a href="https://bstats.org/what-is-my-plugin-id">What is my plugin id?</a>
+     Class constructor.
+
+     @param plugin The plugin which stats should be submitted.
+     @param pluginId The id of the plugin.
+     It can be found at <a href="https://bstats.org/what-is-my-plugin-id">What is my plugin id?</a>
      */
     public MetricsLite(ServerSystem plugin, int pluginId) {
-        if (plugin == null) throw new IllegalArgumentException("Plugin cannot be null!");
+        if (plugin == null)
+            throw new IllegalArgumentException("Plugin cannot be null!");
         this.plugin = plugin;
         this.pluginId = pluginId;
 
         // Get the config file
-        File bStatsFolder = new File(plugin.getDataFolder().getParentFile(), "bStats");
-        File configFile = new File(bStatsFolder, "config.yml");
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
+        var bStatsFolder = new File(plugin.getDataFolder().getParentFile(), "bStats");
+        var configFile = new File(bStatsFolder, "config.yml");
+        var config = YamlConfiguration.loadConfiguration(configFile);
 
         // Check if the config file exists
         if (!config.isSet("serverUuid")) {
@@ -93,12 +91,13 @@ public class MetricsLite {
             config.addDefault("logResponseStatusText", false);
 
             // Inform the server owners about bStats
-            config.options().header(
-                    "bStats collects some data for plugin authors like how many servers are using their plugins.\n" +
-                            "To honor their work, you should not disable it.\n" +
-                            "This has nearly no effect on the server performance!\n" +
-                            "Check out https://bStats.org/ to learn more :)"
-            ).copyDefaults(true);
+            config.options()
+                  .header("""
+                          bStats collects some data for plugin authors like how many servers are using their plugins.
+                          To honor their work, you should not disable it.
+                          This has nearly no effect on the server performance!
+                          Check out https://bStats.org/ to learn more :)""")
+                  .copyDefaults(true);
             try {
                 config.save(configFile);
             } catch (IOException ignored) {
@@ -112,9 +111,9 @@ public class MetricsLite {
         MetricsLite.logSentData = config.getBoolean("logSentData", false);
         MetricsLite.logResponseStatusText = config.getBoolean("logResponseStatusText", false);
         if (this.enabled) {
-            boolean found = false;
+            var found = false;
             // Search for all other bStats Metrics classes to see if we are the first one
-            for (Class<?> service : Bukkit.getServicesManager().getKnownServices())
+            for (var service : Bukkit.getServicesManager().getKnownServices())
                 try {
                     service.getField("B_STATS_VERSION"); // Our identifier :)
                     found = true; // We aren't the first
@@ -124,86 +123,16 @@ public class MetricsLite {
             // Register our service
             Bukkit.getServicesManager().register(MetricsLite.class, this, plugin, ServicePriority.Normal);
             // We are the first!
-            if (!found) this.startSubmitting();
+            if (!found)
+                this.startSubmitting();
         }
     }
 
     /**
-     * Sends the data to the bStats server.
-     *
-     * @param plugin Any plugin. It's just used to get a logger instance.
-     * @param data   The data to send.
-     * @throws Exception If the request failed.
-     */
-    private static void sendData(ServerSystem plugin, JsonObject data) throws Exception {
-        if (data == null) throw new IllegalArgumentException("Data cannot be null!");
-        if (Bukkit.isPrimaryThread())
-            throw new IllegalAccessException("This method must not be called from the main thread!");
-        if (MetricsLite.logSentData) plugin.log("Sending data to bStats: " + data);
-        HttpsURLConnection connection = (HttpsURLConnection) new URL(MetricsLite.URL).openConnection();
-
-        // Compress the data to save bandwidth
-        byte[] compressedData = MetricsLite.compress(data.toString());
-
-        // Add headers
-        connection.setRequestMethod("POST");
-        connection.addRequestProperty("Accept", "application/json");
-        connection.addRequestProperty("Connection", "close");
-        connection.addRequestProperty("Content-Encoding", "gzip"); // We gzip our request
-        connection.addRequestProperty("Content-Length", String.valueOf(compressedData.length));
-        connection.setRequestProperty("Content-Type", "application/json"); // We send our data in JSON format
-        connection.setRequestProperty("User-Agent", "MC-Server/" + MetricsLite.B_STATS_VERSION);
-
-        // Send data
-        connection.setDoOutput(true);
-        try (DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream())) {
-            outputStream.write(compressedData);
-        }
-
-        StringBuilder builder = new StringBuilder();
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-            String line;
-            while ((line = bufferedReader.readLine()) != null) builder.append(line);
-        } catch (IOException e) {
-            if (!e.getMessage().toLowerCase().contains("code: 429")) {
-                e.printStackTrace();
-                return;
-            }
-        }
-
-        if (MetricsLite.logResponseStatusText) plugin.log("Sent data to bStats and received response: " + builder);
-    }
-
-    /**
-     * Gzips the given String.
-     *
-     * @param str The string to gzip.
-     * @return The gzipped String.
-     * @throws IOException If the compression failed.
-     */
-    private static byte[] compress(final String str) throws IOException {
-        if (str == null) return null;
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try (GZIPOutputStream gzip = new GZIPOutputStream(outputStream)) {
-            gzip.write(str.getBytes(StandardCharsets.UTF_8));
-        }
-        return outputStream.toByteArray();
-    }
-
-    /**
-     * Checks if bStats is enabled.
-     *
-     * @return Whether bStats is enabled or not.
-     */
-    public boolean isEnabled() {
-        return this.enabled;
-    }
-
-    /**
-     * Starts the Scheduler which submits our data every 30 minutes.
+     Starts the Scheduler which submits our data every 30 minutes.
      */
     private void startSubmitting() {
-        final Timer timer = new Timer(true); // We use a timer cause the Bukkit scheduler is affected by server lags
+        final var timer = new Timer(true); // We use a timer cause the Bukkit scheduler is affected by server lags
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -222,105 +151,40 @@ public class MetricsLite {
     }
 
     /**
-     * Gets the plugin specific data.
-     * This method is called using Reflection.
-     *
-     * @return The plugin specific data.
-     */
-    public JsonObject getPluginData() {
-        JsonObject data = new JsonObject();
-
-        String pluginName = this.plugin.getDescription().getName();
-        String pluginVersion = this.plugin.getDescription().getVersion();
-
-        data.addProperty("pluginName", pluginName); // Append the name of the plugin
-        data.addProperty("id", this.pluginId); // Append the id of the plugin
-        data.addProperty("pluginVersion", pluginVersion); // Append the version of the plugin
-        data.add("customCharts", new JsonArray());
-
-        return data;
-    }
-
-    /**
-     * Gets the server specific data.
-     *
-     * @return The server specific data.
-     */
-    private JsonObject getServerData() {
-        // Minecraft specific data
-        int playerAmount;
-        try {
-            // Around MC 1.8 the return type was changed to a collection from an array,
-            // This fixes java.lang.NoSuchMethodError: org.bukkit.Bukkit.getOnlinePlayers()Ljava/util/Collection;
-            Method onlinePlayersMethod = Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers");
-            playerAmount = onlinePlayersMethod.getReturnType().equals(Collection.class)
-                    ? ((Collection<?>) onlinePlayersMethod.invoke(Bukkit.getServer())).size()
-                    : ((Player[]) onlinePlayersMethod.invoke(Bukkit.getServer())).length;
-        } catch (Exception e) {
-            playerAmount = Bukkit.getOnlinePlayers().size(); // Just use the new method if the Reflection failed
-        }
-        int onlineMode = Bukkit.getOnlineMode() ? 1 : 0;
-        String bukkitVersion = Bukkit.getVersion();
-        String bukkitName = Bukkit.getName();
-
-        // OS/Java specific data
-        String javaVersion = System.getProperty("java.version");
-        String osName = System.getProperty("os.name");
-        String osArch = System.getProperty("os.arch");
-        String osVersion = System.getProperty("os.version");
-        int coreCount = Runtime.getRuntime().availableProcessors();
-
-        JsonObject data = new JsonObject();
-
-        data.addProperty("serverUUID", MetricsLite.serverUUID);
-
-        data.addProperty("playerAmount", playerAmount);
-        data.addProperty("onlineMode", onlineMode);
-        data.addProperty("bukkitVersion", bukkitVersion);
-        data.addProperty("bukkitName", bukkitName);
-
-        data.addProperty("javaVersion", javaVersion);
-        data.addProperty("osName", osName);
-        data.addProperty("osArch", osArch);
-        data.addProperty("osVersion", osVersion);
-        data.addProperty("coreCount", coreCount);
-
-        return data;
-    }
-
-    /**
-     * Collects the data and sends it afterwards.
+     Collects the data and sends it afterwards.
      */
     private void submitData() {
-        final JsonObject data = this.getServerData();
+        final var data = this.getServerData();
 
-        JsonArray pluginData = new JsonArray();
+        var pluginData = new JsonArray();
         // Search for all other bStats Metrics classes to get their plugin data
-        for (Class<?> service : Bukkit.getServicesManager().getKnownServices())
+        for (var service : Bukkit.getServicesManager().getKnownServices())
             try {
                 service.getField("B_STATS_VERSION"); // Our identifier :)
 
-                for (RegisteredServiceProvider<?> provider : Bukkit.getServicesManager().getRegistrations(service))
+                for (var provider : Bukkit.getServicesManager().getRegistrations(service))
                     try {
-                        Object plugin = provider.getService().getMethod("getPluginData").invoke(provider.getProvider());
+                        var plugin = provider.getService().getMethod("getPluginData").invoke(provider.getProvider());
                         // old bstats version compatibility
-                        if (plugin instanceof JsonObject) pluginData.add((JsonObject) plugin);
-                        else try {
-                            Class<?> jsonObjectJsonSimple = Class.forName("org.json.simple.JSONObject");
-                            if (plugin.getClass().isAssignableFrom(jsonObjectJsonSimple)) {
-                                Method jsonStringGetter = jsonObjectJsonSimple.getDeclaredMethod("toJSONString");
-                                jsonStringGetter.setAccessible(true);
-                                String jsonString = (String) jsonStringGetter.invoke(plugin);
-                                JsonObject object = new JsonParser().parse(jsonString).getAsJsonObject();
-                                pluginData.add(object);
+                        if (plugin instanceof JsonObject)
+                            pluginData.add((JsonObject) plugin);
+                        else
+                            try {
+                                var jsonObjectJsonSimple = Class.forName("org.json.simple.JSONObject");
+                                if (plugin.getClass().isAssignableFrom(jsonObjectJsonSimple)) {
+                                    var jsonStringGetter = jsonObjectJsonSimple.getDeclaredMethod("toJSONString");
+                                    jsonStringGetter.setAccessible(true);
+                                    var jsonString = (String) jsonStringGetter.invoke(plugin);
+                                    var object = new JsonParser().parse(jsonString).getAsJsonObject();
+                                    pluginData.add(object);
+                                }
+                            } catch (ClassNotFoundException e) {
+                                // minecraft version 1.14+
+                                if (MetricsLite.logFailedRequests) {
+                                    this.plugin.error("Encountered unexpected exception: " + e.getMessage());
+                                    e.printStackTrace();
+                                }
                             }
-                        } catch (ClassNotFoundException e) {
-                            // minecraft version 1.14+
-                            if (MetricsLite.logFailedRequests) {
-                                this.plugin.error("Encountered unexpected exception: " + e.getMessage());
-                                e.printStackTrace();
-                            }
-                        }
                     } catch (NullPointerException | NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
                     }
             } catch (NoSuchFieldException ignored) {
@@ -341,6 +205,152 @@ public class MetricsLite {
                 }
             }
         }).start();
+    }
+
+    /**
+     Gets the server specific data.
+
+     @return The server specific data.
+     */
+    private JsonObject getServerData() {
+        // Minecraft specific data
+        int playerAmount;
+        try {
+            // Around MC 1.8 the return type was changed to a collection from an array,
+            // This fixes java.lang.NoSuchMethodError: org.bukkit.Bukkit.getOnlinePlayers()Ljava/util/Collection;
+            var onlinePlayersMethod = Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers");
+            playerAmount = onlinePlayersMethod.getReturnType().equals(Collection.class)?
+                           ((Collection<?>) onlinePlayersMethod.invoke(Bukkit.getServer())).size() :
+                           ((Player[]) onlinePlayersMethod.invoke(Bukkit.getServer())).length;
+        } catch (Exception e) {
+            playerAmount = Bukkit.getOnlinePlayers().size(); // Just use the new method if the Reflection failed
+        }
+        var onlineMode = Bukkit.getOnlineMode()? 1 : 0;
+        var bukkitVersion = Bukkit.getVersion();
+        var bukkitName = Bukkit.getName();
+
+        // OS/Java specific data
+        var javaVersion = System.getProperty("java.version");
+        var osName = System.getProperty("os.name");
+        var osArch = System.getProperty("os.arch");
+        var osVersion = System.getProperty("os.version");
+        var coreCount = Runtime.getRuntime().availableProcessors();
+
+        var data = new JsonObject();
+
+        data.addProperty("serverUUID", MetricsLite.serverUUID);
+
+        data.addProperty("playerAmount", playerAmount);
+        data.addProperty("onlineMode", onlineMode);
+        data.addProperty("bukkitVersion", bukkitVersion);
+        data.addProperty("bukkitName", bukkitName);
+
+        data.addProperty("javaVersion", javaVersion);
+        data.addProperty("osName", osName);
+        data.addProperty("osArch", osArch);
+        data.addProperty("osVersion", osVersion);
+        data.addProperty("coreCount", coreCount);
+
+        return data;
+    }
+
+    /**
+     Sends the data to the bStats server.
+
+     @param plugin Any plugin. It's just used to get a logger instance.
+     @param data The data to send.
+
+     @throws Exception If the request failed.
+     */
+    private static void sendData(ServerSystem plugin, JsonObject data) throws Exception {
+        if (data == null)
+            throw new IllegalArgumentException("Data cannot be null!");
+        if (Bukkit.isPrimaryThread())
+            throw new IllegalAccessException("This method must not be called from the main thread!");
+        if (MetricsLite.logSentData)
+            plugin.log("Sending data to bStats: " + data);
+        var connection = (HttpsURLConnection) new URL(MetricsLite.URL).openConnection();
+
+        // Compress the data to save bandwidth
+        var compressedData = MetricsLite.compress(data.toString());
+
+        // Add headers
+        connection.setRequestMethod("POST");
+        connection.addRequestProperty("Accept", "application/json");
+        connection.addRequestProperty("Connection", "close");
+        connection.addRequestProperty("Content-Encoding", "gzip"); // We gzip our request
+        connection.addRequestProperty("Content-Length", String.valueOf(compressedData.length));
+        connection.setRequestProperty("Content-Type", "application/json"); // We send our data in JSON format
+        connection.setRequestProperty("User-Agent", "MC-Server/" + MetricsLite.B_STATS_VERSION);
+
+        // Send data
+        connection.setDoOutput(true);
+        try (var outputStream = new DataOutputStream(connection.getOutputStream())) {
+            outputStream.write(compressedData);
+        }
+
+        var builder = new StringBuilder();
+        try (var bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null)
+                builder.append(line);
+        } catch (IOException e) {
+            if (!e.getMessage().toLowerCase().contains("code: 429")) {
+                e.printStackTrace();
+                return;
+            }
+        }
+
+        if (MetricsLite.logResponseStatusText)
+            plugin.log("Sent data to bStats and received response: " + builder);
+    }
+
+    /**
+     Gzips the given String.
+
+     @param str The string to gzip.
+
+     @return The gzipped String.
+
+     @throws IOException If the compression failed.
+     */
+    private static byte[] compress(final String str) throws IOException {
+        if (str == null)
+            return null;
+        var outputStream = new ByteArrayOutputStream();
+        try (var gzip = new GZIPOutputStream(outputStream)) {
+            gzip.write(str.getBytes(StandardCharsets.UTF_8));
+        }
+        return outputStream.toByteArray();
+    }
+
+    /**
+     Checks if bStats is enabled.
+
+     @return Whether bStats is enabled or not.
+     */
+    public boolean isEnabled() {
+        return this.enabled;
+    }
+
+    /**
+     Gets the plugin specific data.
+     This method is called using Reflection.
+
+     @return The plugin specific data.
+     */
+    public JsonObject getPluginData() {
+        var data = new JsonObject();
+
+        var pluginName = this.plugin.getDescription().getName();
+        var pluginVersion = this.plugin.getDescription().getVersion();
+
+        data.addProperty("pluginName", pluginName); // Append the name of the plugin
+        data.addProperty("id", this.pluginId); // Append the id of the plugin
+        data.addProperty("pluginVersion", pluginVersion); // Append the version of the plugin
+        data.add("customCharts", new JsonArray());
+
+        return data;
     }
 
 }

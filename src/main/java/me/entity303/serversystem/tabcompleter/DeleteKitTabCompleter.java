@@ -1,7 +1,7 @@
 package me.entity303.serversystem.tabcompleter;
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -9,7 +9,7 @@ import org.bukkit.command.TabCompleter;
 import java.util.Collections;
 import java.util.List;
 
-public class DeleteKitTabCompleter extends MessageUtils implements TabCompleter {
+public class DeleteKitTabCompleter extends CommandUtils implements TabCompleter {
 
     public DeleteKitTabCompleter(ServerSystem plugin) {
         super(plugin);
@@ -18,7 +18,8 @@ public class DeleteKitTabCompleter extends MessageUtils implements TabCompleter 
     @Override
     public List<String> onTabComplete(CommandSender cs, Command cmd, String label, String[] args) {
         if (args.length == 1)
-            if (this.isAllowed(cs, "deletekit", true)) return this.plugin.getKitsManager().getKitNames();
+            if (this.plugin.getPermissions().hasPermission(cs, "deletekit", true))
+                return this.plugin.getKitsManager().getKitNames();
         return Collections.singletonList("");
     }
 }

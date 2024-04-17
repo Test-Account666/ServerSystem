@@ -1,15 +1,14 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 
 
-public class DisposalCommand implements CommandExecutor {
+public class DisposalCommand implements CommandExecutorOverload {
     private final ServerSystem plugin;
 
     public DisposalCommand(ServerSystem plugin) {
@@ -17,18 +16,24 @@ public class DisposalCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!(commandSender instanceof Player player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
+
         if (this.plugin.getMessages().getCfg().getBoolean("Permissions.disposal.required"))
-            if (!this.plugin.getPermissions().hasPerm(cs, "disposal.permission")) {
-                cs.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().Perm("disposal.permission")));
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "disposal.permission")) {
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                          this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().getPermission("disposal.permission")));
                 return true;
             }
-        Inventory disposal = Bukkit.getServer().createInventory(null, 54, this.plugin.getMessages().getMiscMessage(label, cmd.getName(), cs, null, "DisposalName"));
-        ((Player) cs).openInventory(disposal);
+
+        var disposal = Bukkit.getServer()
+                             .createInventory(null, 54,
+                                              this.plugin.getMessages().getMiscMessage(commandLabel, command.getName(), commandSender, null, "DisposalName"));
+
+        player.openInventory(disposal);
         return true;
     }
 }

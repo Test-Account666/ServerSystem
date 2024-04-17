@@ -14,7 +14,8 @@ public abstract class ManagerEconomy {
     protected final HashMap<OfflinePlayer, Boolean> accountCache = new HashMap<>();
     protected LinkedHashMap<OfflinePlayer, Double> topTen = new LinkedHashMap<>();
 
-    public ManagerEconomy(String currencySingular, String currencyPlural, String startingMoney, String displayFormat, String moneyFormat, String separator, String thousands, ServerSystem plugin) {
+    public ManagerEconomy(String currencySingular, String currencyPlural, String startingMoney, String displayFormat, String moneyFormat, String separator,
+                          String thousands, ServerSystem plugin) {
         this.plugin = plugin;
         this.thousands = thousands;
     }

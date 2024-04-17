@@ -1,18 +1,20 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
 
 import java.util.*;
 
-public class RecipeCommand extends MessageUtils implements CommandExecutor {
+public class RecipeCommand extends CommandUtils implements CommandExecutorOverload {
     private final static List<Player> recipeList = new ArrayList<>();
 
     public RecipeCommand(ServerSystem plugin) {
@@ -24,36 +26,39 @@ public class RecipeCommand extends MessageUtils implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (this.plugin.getPermissions().getCfg().getBoolean("Permissions.recipe.required"))
-            if (!this.isAllowed(cs, "recipe.permission")) {
-                cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("recipe.permission")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (this.plugin.getPermissions().getConfiguration().getBoolean("Permissions.recipe.required"))
+            if (!this.plugin.getPermissions().hasPermission(commandSender, "recipe.permission")) {
+                var permission = this.plugin.getPermissions().getPermission("recipe.permission");
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
                 return true;
             }
-        if (!(cs instanceof Player)) {
-            cs.sendMessage(this.getPrefix() + this.getOnlyPlayer());
+        if (!(commandSender instanceof Player player)) {
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
             return true;
         }
-        Player player = (Player) cs;
-        if (args.length <= 0) {
-            ItemStack stack = player.getInventory().getItemInHand();
+        if (arguments.length == 0) {
+            var stack = player.getInventory().getItemInMainHand();
             if (stack.getType() == Material.AIR) {
-                cs.sendMessage(this.getPrefix() + this.getMessage("Recipe.NoItem", label, cmd.getName(), cs, null));
+                
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Recipe.NoItem"));
                 return true;
             }
-            List<Recipe> recipeList = Bukkit.getRecipesFor(stack);
+            var recipeList = Bukkit.getRecipesFor(stack);
             if (recipeList.isEmpty()) {
-                cs.sendMessage(this.getPrefix() + this.getMessage("Recipe.NoRecipe", label, cmd.getName(), cs, null).replace("<MATERIAL>", stack.getType().name()));
+                
+                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                          this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Recipe.NoRecipe").replace("<MATERIAL>", stack.getType().name()));
                 return true;
             }
-            RecipeCommand.recipeList.add((Player) cs);
-            Recipe recipe = recipeList.get(0);
-            if (recipe instanceof ShapelessRecipe) {
-                ShapelessRecipe shapelessRecipe = (ShapelessRecipe) recipe;
-                InventoryView inventoryView = player.openWorkbench(player.getLocation(), true);
-                Inventory craftingInventory = inventoryView.getTopInventory();
-                ItemStack[] contents = new ItemStack[10];
-                for (int i = 0; i < 10; i++) contents[i] = null;
+            RecipeCommand.recipeList.add((Player) commandSender);
+            var recipe = recipeList.get(0);
+            if (recipe instanceof ShapelessRecipe shapelessRecipe) {
+                var inventoryView = player.openWorkbench(player.getLocation(), true);
+                var craftingInventory = inventoryView.getTopInventory();
+                var contents = new ItemStack[10];
+                for (var i = 0; i < 10; i++)
+                    contents[i] = null;
 
                 for (int i = 1, i1 = 0; i < Math.min(shapelessRecipe.getIngredientList().size() + 1, 11); i++, i1++)
                     contents[i] = this.normalize(shapelessRecipe.getIngredientList().get(i1));
@@ -62,33 +67,36 @@ public class RecipeCommand extends MessageUtils implements CommandExecutor {
                 return true;
             }
 
-            if (recipe instanceof ShapedRecipe) {
-                ShapedRecipe shapedRecipe = (ShapedRecipe) recipe;
-                InventoryView inventoryView = player.openWorkbench(player.getLocation(), true);
-                Inventory craftingInventory = inventoryView.getTopInventory();
-                ItemStack[] contents = new ItemStack[10];
-                for (int i = 0; i < 10; i++) contents[i] = null;
+            if (recipe instanceof ShapedRecipe shapedRecipe) {
+                var inventoryView = player.openWorkbench(player.getLocation(), true);
+                var craftingInventory = inventoryView.getTopInventory();
+                var contents = new ItemStack[10];
+                for (var i = 0; i < 10; i++)
+                    contents[i] = null;
 
                 Map<Character, ItemStack> ingredient = new LinkedHashMap<>();
 
-                String[] rows = shapedRecipe.getShape();
+                var rows = shapedRecipe.getShape();
 
                 List<String> alphabet = new ArrayList<>(Arrays.asList("abcdefghijklmnopqrstuvwxyz".split("")));
 
-                for (String row : rows) for (String character : row.split("")) alphabet.remove(character);
-
-                for (String row : rows) {
-                    StringBuilder rowEdit = new StringBuilder(row);
-                    int rowLength = row.split("").length;
+                for (var row : rows)
                     for (String character : row.split(""))
-                        if (character.equalsIgnoreCase(" ")) ingredient.put(character.charAt(0), null);
+                        alphabet.remove(character);
+
+                for (var row : rows) {
+                    var rowEdit = new StringBuilder(row);
+                    var rowLength = row.split("").length;
+                    for (var character : row.split(""))
+                        if (character.equalsIgnoreCase(" "))
+                            ingredient.put(character.charAt(0), null);
                         else
                             ingredient.put(character.charAt(0), shapedRecipe.getIngredientMap().get(character.charAt(0)));
 
-                    String usedCharacter = "";
+                    var usedCharacter = "";
 
-                    for (int i = rowLength; i < 3; i++)
-                        for (String character : alphabet)
+                    for (var i = rowLength; i < 3; i++)
+                        for (var character : alphabet)
                             if (!rowEdit.toString().contains(character)) {
                                 rowEdit.append(character);
                                 ingredient.put(character.charAt(0), null);
@@ -96,12 +104,14 @@ public class RecipeCommand extends MessageUtils implements CommandExecutor {
                                 break;
                             }
 
-                    for (String character : usedCharacter.split("")) alphabet.remove(character);
+                    for (var character : usedCharacter.split(""))
+                        alphabet.remove(character);
                 }
 
-                int i = 1;
-                for (ItemStack itemStack : ingredient.values()) {
-                    if (i >= 10) break;
+                var i = 1;
+                for (var itemStack : ingredient.values()) {
+                    if (i >= 10)
+                        break;
                     contents[i] = this.normalize(itemStack);
                     i += 1;
                 }
@@ -110,44 +120,50 @@ public class RecipeCommand extends MessageUtils implements CommandExecutor {
                 return true;
             }
 
-            cs.sendMessage(this.getPrefix() + this.getMessage("Recipe.NoRecipe", label, cmd.getName(), cs, null).replace("<MATERIAL>", stack.getType().name()));
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Recipe.NoRecipe").replace("<MATERIAL>", stack.getType().name()));
             return true;
         }
 
-        String name = args[0].toUpperCase().split(":")[0];
-        int subId = 0;
-        if (name.contains(":")) try {
-            subId = Integer.parseInt(args[0].split(":")[1]);
-        } catch (Exception ignored) {
-        }
-        Material material = Material.getMaterial(name);
+        var name = arguments[0].toUpperCase().split(":")[0];
+        var subId = 0;
+        if (name.contains(":"))
+            try {
+            } catch (Exception ignored) {
+            }
+        var material = Material.getMaterial(name);
         if (material == null) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("Recipe.InvalidMaterial", label, cmd.getName(), cs, null).replace("<MATERIAL>", name));
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Recipe.InvalidMaterial").replace("<MATERIAL>", name));
             return true;
         }
 
-        ItemStack stack = new ItemStack(material);
+        var stack = new ItemStack(material);
 
         if (stack.getType() == Material.AIR) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("Recipe.InvalidMaterial", label, cmd.getName(), cs, null).replace("<MATERIAL>", name));
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Recipe.InvalidMaterial").replace("<MATERIAL>", name));
             return true;
         }
 
-        if (!this.plugin.getVersionManager().isV119()) stack.setDurability((short) subId);
-
-        List<Recipe> recipeList = Bukkit.getRecipesFor(stack);
+        var recipeList = Bukkit.getRecipesFor(stack);
         if (recipeList.isEmpty()) {
-            cs.sendMessage(this.getPrefix() + this.getMessage("Recipe.NoRecipe", label, cmd.getName(), cs, null).replace("<MATERIAL>", name));
+            
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Recipe.NoRecipe").replace("<MATERIAL>", name));
             return true;
         }
-        RecipeCommand.recipeList.add((Player) cs);
-        Recipe recipe = recipeList.get(0);
-        if (recipe instanceof ShapelessRecipe) {
-            ShapelessRecipe shapelessRecipe = (ShapelessRecipe) recipe;
-            InventoryView inventoryView = player.openWorkbench(player.getLocation(), true);
-            Inventory craftingInventory = inventoryView.getTopInventory();
-            ItemStack[] contents = new ItemStack[10];
-            for (int i = 0; i < 10; i++) contents[i] = null;
+        RecipeCommand.recipeList.add((Player) commandSender);
+        var recipe = recipeList.get(0);
+        if (recipe instanceof ShapelessRecipe shapelessRecipe) {
+            var inventoryView = player.openWorkbench(player.getLocation(), true);
+            var craftingInventory = inventoryView.getTopInventory();
+            var contents = new ItemStack[10];
+            for (var i = 0; i < 10; i++)
+                contents[i] = null;
 
             for (int i = 1, i1 = 0; i < Math.min(shapelessRecipe.getIngredientList().size() + 1, 11); i++, i1++)
                 contents[i] = this.normalize(shapelessRecipe.getIngredientList().get(i1));
@@ -156,33 +172,36 @@ public class RecipeCommand extends MessageUtils implements CommandExecutor {
             return true;
         }
 
-        if (recipe instanceof ShapedRecipe) {
-            ShapedRecipe shapedRecipe = (ShapedRecipe) recipe;
-            InventoryView inventoryView = player.openWorkbench(player.getLocation(), true);
-            Inventory craftingInventory = inventoryView.getTopInventory();
-            ItemStack[] contents = new ItemStack[10];
-            for (int i = 0; i < 10; i++) contents[i] = null;
+        if (recipe instanceof ShapedRecipe shapedRecipe) {
+            var inventoryView = player.openWorkbench(player.getLocation(), true);
+            var craftingInventory = inventoryView.getTopInventory();
+            var contents = new ItemStack[10];
+            for (var i = 0; i < 10; i++)
+                contents[i] = null;
 
             Map<Character, ItemStack> ingredient = new LinkedHashMap<>();
 
-            String[] rows = shapedRecipe.getShape();
+            var rows = shapedRecipe.getShape();
 
             List<String> alphabet = new ArrayList<>(Arrays.asList("abcdefghijklmnopqrstuvwxyz".split("")));
 
-            for (String row : rows) for (String character : row.split("")) alphabet.remove(character);
-
-            for (String row : rows) {
-                StringBuilder rowEdit = new StringBuilder(row);
-                int rowLength = row.split("").length;
+            for (var row : rows)
                 for (String character : row.split(""))
-                    if (character.equalsIgnoreCase(" ")) ingredient.put(character.charAt(0), null);
+                    alphabet.remove(character);
+
+            for (var row : rows) {
+                var rowEdit = new StringBuilder(row);
+                var rowLength = row.split("").length;
+                for (var character : row.split(""))
+                    if (character.equalsIgnoreCase(" "))
+                        ingredient.put(character.charAt(0), null);
                     else
                         ingredient.put(character.charAt(0), shapedRecipe.getIngredientMap().get(character.charAt(0)));
 
-                String usedCharacter = "";
+                var usedCharacter = "";
 
-                for (int i = rowLength; i < 3; i++)
-                    for (String character : alphabet)
+                for (var i = rowLength; i < 3; i++)
+                    for (var character : alphabet)
                         if (!rowEdit.toString().contains(character)) {
                             rowEdit.append(character);
                             ingredient.put(character.charAt(0), null);
@@ -190,12 +209,14 @@ public class RecipeCommand extends MessageUtils implements CommandExecutor {
                             break;
                         }
 
-                for (String character : usedCharacter.split("")) alphabet.remove(character);
+                for (var character : usedCharacter.split(""))
+                    alphabet.remove(character);
             }
 
-            int i = 1;
-            for (ItemStack itemStack : ingredient.values()) {
-                if (i >= 10) break;
+            var i = 1;
+            for (var itemStack : ingredient.values()) {
+                if (i >= 10)
+                    break;
                 contents[i] = this.normalize(itemStack);
                 i += 1;
             }
@@ -204,15 +225,14 @@ public class RecipeCommand extends MessageUtils implements CommandExecutor {
             return true;
         }
 
-        cs.sendMessage(this.getPrefix() + this.getMessage("Recipe.NoRecipe", label, cmd.getName(), cs, null).replace("<MATERIAL>", name));
+        
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
+                                  this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Recipe.NoRecipe").replace("<MATERIAL>", name));
 
         return true;
     }
 
     private ItemStack normalize(ItemStack itemStack) {
-        if (this.plugin.getVersionManager().isV119()) return itemStack;
-        if (itemStack == null) return null;
-        if (itemStack.getDurability() > 15) itemStack.setDurability((short) 0);
         return itemStack;
     }
 }

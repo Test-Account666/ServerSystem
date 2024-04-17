@@ -1,39 +1,44 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.MessageUtils;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import me.entity303.serversystem.commands.CommandExecutorOverload;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class KickAllCommand extends MessageUtils implements CommandExecutor {
+public class KickAllCommand extends CommandUtils implements CommandExecutorOverload {
 
     public KickAllCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!this.isAllowed(cs, "kickall")) {
-            cs.sendMessage(this.getPrefix() + this.getNoPermission(this.Perm("kickall")));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!this.plugin.getPermissions().hasPermission(commandSender, "kickall")) {
+            var permission = this.plugin.getPermissions().getPermission("kickall");
+            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
             return true;
         }
 
-        String reason = this.getMessage("KickAll.DefaultReason", label, cmd.getName(), cs, null);
+        var command1 = command.getName();
+        var reason = this.plugin.getMessages().getMessage(commandLabel, command1, commandSender, null, "KickAll.DefaultReason");
 
-        if (args.length > 0) reason = Arrays.stream(args).map(arg -> arg + " ").collect(Collectors.joining());
+        if (arguments.length > 0)
+            reason = Arrays.stream(arguments).map(arg -> arg + " ").collect(Collectors.joining());
 
-        for (Player all : Bukkit.getOnlinePlayers()) {
-            if (all == cs) continue;
-            all.kickPlayer(this.getMessage("KickAll.Kick", label, cmd.getName(), cs, null).replace("<REASON>", reason));
+        for (var all : Bukkit.getOnlinePlayers()) {
+            if (all == commandSender)
+                continue;
+            
+            all.kickPlayer(this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "KickAll.Kick").replace("<REASON>", reason));
         }
 
-        cs.sendMessage(this.getPrefix() + this.getMessage("KickAll.Success", label, cmd.getName(), cs, null));
+        
+        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "KickAll.Success"));
         return true;
     }
 }
