@@ -369,22 +369,6 @@ import static me.entity303.serversystem.bansystem.TimeUnit.*;
 
     @Override
     public void onLoad() {
-        var markerFile = new File("plugins" + File.separator + "ServerSystem", "marker.ignore");
-        if (!markerFile.exists()) {
-            this.warn("!!!!! BREAKING CHANGES !!!!!");
-            this.warn("As of 2.0.0, there are some breaking changes!");
-            this.warn("If you updated from 1.8.3, you should be fine.");
-            this.warn("If you're using a minecraft version below 1.17.1, this version of ServerSystem will NOT work!");
-            this.warn("Support for every version below 1.17.1 was completely dropped!");
-            this.warn("!!!!! BREAKING CHANGES !!!!!");
-
-            try {
-                markerFile.createNewFile();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
         this.loadConfigs();
 
         this.reloadConfigValidating();
@@ -520,6 +504,25 @@ import static me.entity303.serversystem.bansystem.TimeUnit.*;
         this.startUpdateCheck();
 
         this.checkServerSoftware();
+
+        Bukkit.getScheduler().runTask(this, () -> {
+            var markerFile = new File("plugins" + File.separator + "ServerSystem", "marker.ignore");
+            if (markerFile.exists())
+                return;
+
+            this.warn("!!!!! BREAKING CHANGES !!!!!");
+            this.warn("As of 2.0.0, there are some breaking changes!");
+            this.warn("If you updated from 1.8.3, you should be fine.");
+            this.warn("If you're using a minecraft version below 1.17.1, this version of ServerSystem will NOT work!");
+            this.warn("Support for every version below 1.17.1 was completely dropped!");
+            this.warn("!!!!! BREAKING CHANGES !!!!!");
+
+            try {
+                markerFile.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     private boolean SyncCommands() {
