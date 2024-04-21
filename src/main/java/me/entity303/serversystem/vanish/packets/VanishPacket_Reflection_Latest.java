@@ -75,7 +75,7 @@ public class VanishPacket_Reflection_Latest extends VanishPacket {
                                                .findFirst()
                                                .orElse(null);
 
-            if (isConnectionFieldNull(entityPlayer, this.playerConnectionField, this.plugin))
+            if (this.isConnectionFieldNull(entityPlayer, this.playerConnectionField, this.plugin))
                 return;
         }
 
@@ -93,15 +93,18 @@ public class VanishPacket_Reflection_Latest extends VanishPacket {
         }
     }
 
-    public static boolean isConnectionFieldNull(Object entityPlayer, Field playerConnectionField, ServerSystem plugin) {
+    public boolean isConnectionFieldNull(Object entityPlayer, Field playerConnectionField, ServerSystem plugin) {
         if (playerConnectionField == null) {
             plugin.error("Couldn't find PlayerConnection field! (Modded environment?)");
-            Arrays.stream(entityPlayer.getClass().getDeclaredFields()).forEach(field -> plugin.log(field.getType() + " -> " + field.getName()));
+            Arrays.stream(entityPlayer.getClass().getDeclaredFields())
+                  .forEach(field -> plugin.log(field.getType() + " -> " + field.getName()));
             plugin.warn("Please forward this to the developer of ServerSystem!");
             return true;
         }
 
-        playerConnectionField.setAccessible(true);
+        this.playerConnectionField = playerConnectionField;
+
+        this.playerConnectionField.setAccessible(true);
         return false;
     }
 }

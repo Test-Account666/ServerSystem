@@ -39,15 +39,12 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import javax.crypto.Cipher;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.*;
 
@@ -318,12 +315,135 @@ import static me.entity303.serversystem.bansystem.TimeUnit.*;
         return this.commandManager;
     }
 
+    private boolean checkMainServerForUpdates(String currentVersion, boolean autoUpdate) {
+        var foundVersion = this.getDescription().getVersion();
+
+        Document doc;
+        try {
+            doc = Jsoup.connect("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem")
+                       .referrer("ServerSystem")
+                       .timeout(30000)
+                       .get();
+        } catch (IOException e) {
+            this.error("An error occurred while trying to connect to the updater!");
+            //e.printStackTrace();
+            this.log("Please ignore this error. The update server is currently down. Please be patient");
+            return false;
+        }
+
+        for (var remoteFile : doc.getElementsContainingOwnText(".jar")) {
+            var remoteFileName = remoteFile.attr("href");
+            remoteFileName = remoteFileName.substring(0, remoteFileName.lastIndexOf('.'));
+            foundVersion = remoteFileName;
+        }
+
+        var isFoundVersionMoreRecent = this.isFoundVersionMoreRecent(foundVersion, currentVersion);
+
+        if (!isFoundVersionMoreRecent || currentVersion.equalsIgnoreCase(foundVersion)) {
+            if (this.onceTold)
+                return true;
+
+            this.log("You are using the latest version of ServerSystem <3");
+            this.onceTold = true;
+            return true;
+        }
+
+        this.warn("There is a new version available! (" + foundVersion + ")");
+        if (!autoUpdate) {
+            if (!this.getConfigReader().getBoolean("updates.notifyOnJoin"))
+                return true;
+
+            if (!foundVersion.equalsIgnoreCase(this.newVersion))
+                this.newVersion = foundVersion;
+
+            if (this.registered)
+                return true;
+
+            this.registered = true;
+            this.getEventManager().registerEvent(new JoinUpdateListener(this));
+            return true;
+        }
+
+        this.log("Auto-updating!");
+        this.log("(You need to restart the server so the update can take effect)");
+        try {
+            var resultImageResponse = Jsoup.connect("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem/" + foundVersion + ".jar")
+                                           .referrer("ServerSystem")
+                                           .timeout(30000)
+                                           .ignoreContentType(true)
+                                           .execute();
+
+            var in = new BufferedInputStream(
+                    new URL("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem/" + foundVersion + ".jar").openStream());
+            var fileOutputStream = new FileOutputStream(new File("plugins/update", this.JAR_NAME));
+            var dataBuffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1)
+                fileOutputStream.write(dataBuffer, 0, bytesRead);
+
+            in.close();
+            fileOutputStream.close();
+            return true;
+        } catch (Exception e) {
+            this.error("Error while trying downloading the update!");
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void error(String text) {
+        Bukkit.getConsoleSender()
+              .sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&4Error&8] [&4ServerSystem&8] &7>> &4" + text));
+    }
+
+    public void log(String text) {
+        Bukkit.getConsoleSender()
+              .sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&aInfo&8] [&aServerSystem&8] &7>> &a" + text));
+    }
+
+    private boolean isFoundVersionMoreRecent(String foundVersion, String currentVersion) {
+        var foundVersionSplit = foundVersion.split("\\.");
+
+        if (foundVersionSplit.length < 3)
+            return false;
+
+        var foundVersionMajor = Long.parseLong(foundVersionSplit[0]);
+        var foundVersionMinor = Long.parseLong(foundVersionSplit[1]);
+        var foundVersionPatch = Long.parseLong(foundVersionSplit[2]);
+
+        var currentVersionSplit = currentVersion.split("\\.");
+
+        if (currentVersionSplit.length < 3)
+            return true;
+
+        var currentVersionMajor = Long.parseLong(currentVersionSplit[0]);
+        var currentVersionMinor = Long.parseLong(currentVersionSplit[1]);
+        var currentVersionPatch = Long.parseLong(currentVersionSplit[2]);
+
+
+        if (currentVersionMajor < foundVersionMajor)
+            return true;
+
+        if (currentVersionMinor < foundVersionMinor)
+            return true;
+
+        return currentVersionPatch < foundVersionPatch;
+    }
+
     @Override
     public void saveDefaultConfig() {
         super.saveDefaultConfig();
         this.configReader = new NonValidatingConfigReader(new File("plugins" + File.separator + "ServerSystem", "config.yml"), this);
     }
 
+    public void warn(String text) {
+        Bukkit.getConsoleSender()
+              .sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&cWarning&8] [&cServerSystem&8] &7>> &c" + text));
+    }
+
+    public ConfigReader getConfigReader() {
+        return this.configReader;
+    }
 
     @Override
     public void reloadConfig() {
@@ -333,6 +453,9 @@ import static me.entity303.serversystem.bansystem.TimeUnit.*;
             this.configReader = new NonValidatingConfigReader(new File("plugins" + File.separator + "ServerSystem", "config.yml"), this);
     }
 
+    public EventManager getEventManager() {
+        return this.eventManager;
+    }
 
     public void reloadConfigValidating() {
         if (this.configReader == null || this.configReader instanceof NonValidatingConfigReader) {
@@ -384,8 +507,6 @@ import static me.entity303.serversystem.bansystem.TimeUnit.*;
 
     @Override
     public void onEnable() {
-        this.fixKeyLength();
-
         if (!new File("plugins//update").exists())
             new File("plugins//update").mkdirs();
 
@@ -528,8 +649,8 @@ import static me.entity303.serversystem.bansystem.TimeUnit.*;
     private boolean SyncCommands() {
         if (this.syncCommandsMethod == null)
             try {
-                this.syncCommandsMethod =
-                        Class.forName("org.bukkit.craftbukkit." + this.versionManager.getNMSVersion() + ".CraftServer").getDeclaredMethod("syncCommands");
+                this.syncCommandsMethod = Class.forName("org.bukkit.craftbukkit." + this.versionManager.getNMSVersion() + ".CraftServer")
+                                               .getDeclaredMethod("syncCommands");
                 this.syncCommandsMethod.setAccessible(true);
             } catch (NoSuchMethodException | ClassNotFoundException e) {
                 e.printStackTrace();
@@ -548,60 +669,73 @@ import static me.entity303.serversystem.bansystem.TimeUnit.*;
 
     private void startDeactivatingCommands() {
         if (this.getConfigReader().getBoolean("deactivatedCommands.enabled"))
-            Bukkit.getScheduler().runTaskLater(this, () -> this.getConfigReader().getConfigurationSection("deactivatedCommands").getKeys(false).forEach(cmd -> {
-                if (!cmd.equalsIgnoreCase("enabled")) {
-                    this.log("Deactivating command " + cmd + " from plugin " + this.getConfigReader().getString("deactivatedCommands." + cmd) + "!");
-                    this.commandManager.deactivateBukkitCommand(cmd.toLowerCase(), this.getConfigReader().getString("deactivatedCommands." + cmd).toLowerCase());
-                }
-            }), 40L);
+            Bukkit.getScheduler()
+                  .runTaskLater(this,
+                                () -> this.getConfigReader().getConfigurationSection("deactivatedCommands").getKeys(false).forEach(cmd -> {
+                                    if (!cmd.equalsIgnoreCase("enabled")) {
+                                        this.log("Deactivating command " + cmd + " from plugin " +
+                                                 this.getConfigReader().getString("deactivatedCommands." + cmd) + "!");
+                                        this.commandManager.deactivateBukkitCommand(cmd.toLowerCase(), this.getConfigReader()
+                                                                                                           .getString(
+                                                                                                                   "deactivatedCommands." +
+                                                                                                                   cmd)
+                                                                                                           .toLowerCase());
+                                    }
+                                }), 40L);
     }
 
 
     private void startSwappingCommands() {
         if (this.getConfigReader().getBoolean("swapCommands.enabled"))
-            Bukkit.getScheduler().runTaskLater(this, () -> this.getConfigReader().getConfigurationSection("swapCommands").getKeys(false).forEach(cmdFrom -> {
-                if (!cmdFrom.equalsIgnoreCase("enabled")) {
-                    var pluginFrom = this.getConfigReader().getString("swapCommands." + cmdFrom + ".fromPlugin");
-                    var cmdTo = this.getConfigReader().getString("swapCommands." + cmdFrom + ".toCommand");
-                    var pluginTo = this.getConfigReader().getString("swapCommands." + cmdFrom + ".toPlugin");
+            Bukkit.getScheduler()
+                  .runTaskLater(this,
+                                () -> this.getConfigReader().getConfigurationSection("swapCommands").getKeys(false).forEach(cmdFrom -> {
+                                    if (!cmdFrom.equalsIgnoreCase("enabled")) {
+                                        var pluginFrom = this.getConfigReader().getString("swapCommands." + cmdFrom + ".fromPlugin");
+                                        var cmdTo = this.getConfigReader().getString("swapCommands." + cmdFrom + ".toCommand");
+                                        var pluginTo = this.getConfigReader().getString("swapCommands." + cmdFrom + ".toPlugin");
 
-                    this.log("Swapping command " + cmdFrom + " from plugin " + pluginFrom + " to command " + cmdTo + " from plugin " + pluginTo + "!");
+                                        this.log("Swapping command " + cmdFrom + " from plugin " + pluginFrom + " to command " + cmdTo +
+                                                 " from plugin " + pluginTo + "!");
 
-                    var cmdFromToLower = pluginFrom.toLowerCase() + ":" + cmdFrom.toLowerCase();
+                                        var cmdFromToLower = pluginFrom.toLowerCase() + ":" + cmdFrom.toLowerCase();
 
-                    var commandFrom = Bukkit.getPluginCommand(cmdFromToLower);
-                    var commandToPluginCommand = Bukkit.getPluginCommand(pluginTo.toLowerCase() + ":" + cmdTo.toLowerCase());
+                                        var commandFrom = Bukkit.getPluginCommand(cmdFromToLower);
+                                        var commandToPluginCommand =
+                                                Bukkit.getPluginCommand(pluginTo.toLowerCase() + ":" + cmdTo.toLowerCase());
 
-                    if (commandFrom == null) {
-                        this.warn("Command " + cmdFrom + " does not exist in plugin " + pluginFrom + "!");
-                        return;
-                    }
+                                        if (commandFrom == null) {
+                                            this.warn("Command " + cmdFrom + " does not exist in plugin " + pluginFrom + "!");
+                                            return;
+                                        }
 
-                    if (commandToPluginCommand == null) {
-                        this.warn("Command " + cmdTo + " does not exist in plugin " + pluginTo + "!");
-                        return;
-                    }
+                                        if (commandToPluginCommand == null) {
+                                            this.warn("Command " + cmdTo + " does not exist in plugin " + pluginTo + "!");
+                                            return;
+                                        }
 
-                    commandFrom.setExecutor(commandToPluginCommand.getExecutor());
-                    commandFrom.setTabCompleter(commandToPluginCommand.getTabCompleter());
-                    commandFrom.setPermission(commandToPluginCommand.getPermission());
-                    commandFrom.setPermissionMessage(commandToPluginCommand.getPermissionMessage());
-                    commandFrom.setDescription(commandToPluginCommand.getDescription());
+                                        commandFrom.setExecutor(commandToPluginCommand.getExecutor());
+                                        commandFrom.setTabCompleter(commandToPluginCommand.getTabCompleter());
+                                        commandFrom.setPermission(commandToPluginCommand.getPermission());
+                                        commandFrom.setPermissionMessage(commandToPluginCommand.getPermissionMessage());
+                                        commandFrom.setDescription(commandToPluginCommand.getDescription());
 
-                    if (pluginTo.equalsIgnoreCase("Essentials")) {
-                        if (this.essentialsCommandListener == null) {
-                            var essentialsPlugin = JavaPlugin.getProvidingPlugin(this.getServer().getPluginManager().getPlugin("Essentials").getClass());
-                            var essentials = (Essentials) essentialsPlugin;
-                            this.essentialsCommandListener = new EssentialsCommandListener(essentials, this);
-                            this.getEventManager().registerEvent(this.essentialsCommandListener);
-                        }
-                        if (this.getServer().getPluginCommand(cmdFromToLower) == this.getServer().getPluginCommand(cmdFrom.toLowerCase()))
-                            this.essentialsCommandListener.addCommand(cmdFrom, cmdTo);
-                        else
-                            this.essentialsCommandListener.addCommand(pluginFrom + ":" + cmdFrom, cmdTo);
-                    }
-                }
-            }), 60L);
+                                        if (pluginTo.equalsIgnoreCase("Essentials")) {
+                                            if (this.essentialsCommandListener == null) {
+                                                var essentialsPlugin = JavaPlugin.getProvidingPlugin(
+                                                        this.getServer().getPluginManager().getPlugin("Essentials").getClass());
+                                                var essentials = (Essentials) essentialsPlugin;
+                                                this.essentialsCommandListener = new EssentialsCommandListener(essentials, this);
+                                                this.getEventManager().registerEvent(this.essentialsCommandListener);
+                                            }
+                                            if (this.getServer().getPluginCommand(cmdFromToLower) ==
+                                                this.getServer().getPluginCommand(cmdFrom.toLowerCase()))
+                                                this.essentialsCommandListener.addCommand(cmdFrom, cmdTo);
+                                            else
+                                                this.essentialsCommandListener.addCommand(pluginFrom + ":" + cmdFrom, cmdTo);
+                                        }
+                                    }
+                                }), 60L);
     }
 
 
@@ -609,105 +743,67 @@ import static me.entity303.serversystem.bansystem.TimeUnit.*;
         if (this.getConfigReader().getBoolean("updates.check"))
             Bukkit.getScheduler().scheduleAsyncRepeatingTask(this, () -> {
                 var autoUpdate = this.getConfigReader().getBoolean("updates.autoUpdate");
-                var version = this.getDescription().getVersion();
 
-                Document doc = null;
-                try {
-                    doc = Jsoup.connect("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem").referrer("ServerSystem").timeout(30000).get();
-                } catch (IOException e) {
-                    this.error("An error occurred while trying to connect to the updater!");
-                    //e.printStackTrace();
-                    this.log("Please ignore this error. The update server is currently down. Please be patient");
-                }
+                var currentVersion = this.getDescription().getVersion();
 
-                if (doc != null) {
-                    for (var f : doc.getElementsContainingOwnText(".jar")) {
-                        var s = f.attr("href");
-                        s = s.substring(0, s.lastIndexOf('.'));
-                        version = s;
-                    }
+                if (this.checkMainServerForUpdates(currentVersion, autoUpdate))
+                    return;
 
-                    if (!this.getDescription().getVersion().equalsIgnoreCase(version)) {
-                        this.warn("There is a new version available! (" + version + ")");
-                        if (autoUpdate) {
-                            this.log("Auto-updating!");
-                            this.log("(You need to restart the server so the update can take effect)");
-                            try {
-                                var resultImageResponse = Jsoup.connect("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem/" + version + ".jar")
-                                                               .referrer("ServerSystem")
-                                                               .timeout(30000)
-                                                               .ignoreContentType(true)
-                                                               .execute();
-
-                                var in = new BufferedInputStream(
-                                        new URL("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem/" + version + ".jar").openStream());
-                                var fileOutputStream = new FileOutputStream(new File("plugins/update", this.JAR_NAME));
-                                var dataBuffer = new byte[1024];
-                                int bytesRead;
-                                while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1)
-                                    fileOutputStream.write(dataBuffer, 0, bytesRead);
-
-                                in.close();
-                                fileOutputStream.close();
-                            } catch (Exception e) {
-                                this.error("Error while trying downloading the update!");
-                                e.printStackTrace();
-                            }
-                        } else if (this.getConfigReader().getBoolean("updates.notifyOnJoin")) {
-                            if (!this.registered) {
-                                this.registered = true;
-                                this.getEventManager().registerEvent(new JoinUpdateListener(this));
-                            }
-                            if (!version.equalsIgnoreCase(this.newVersion))
-                                this.newVersion = version;
-                        }
-                    } else if (!this.onceTold) {
-                        this.log("You are using the latest version of ServerSystem <3");
-                        this.onceTold = true;
-                    }
-                } else {
-                    this.log("Switching to backup updater!");
-                    var finalVersion = version;
-                    new UpdateChecker(this, "78974").getVersion(checkedVersion -> {
-                        if (checkedVersion.equalsIgnoreCase(finalVersion) || checkedVersion.equalsIgnoreCase("1.6.7"))
-                            if (!this.onceTold) {
-                                this.log("You are using the latest version of ServerSystem <3");
-                                this.onceTold = true;
-                            } else {
-                                this.warn("There is a new update available (" + checkedVersion + ")!");
-                                if (autoUpdate) {
-                                    this.log("Auto-updating!");
-                                    this.log("(You need to restart the server so the update can take effect)");
-
-                                    try (var in = new BufferedInputStream(new URL("https://api.spiget.org/v2/resources/78974/download").openStream());
-                                         var fileOutputStream = new FileOutputStream(new File("plugins/update", this.JAR_NAME))) {
-                                        var dataBuffer = new byte[1024];
-                                        int bytesRead;
-                                        while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1)
-                                            fileOutputStream.write(dataBuffer, 0, bytesRead);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                        this.error("Error while trying downloading the update!");
-                                        this.error("Please download it by yourself (https://www.spigotmc.org/resources/serversystem.78974/)!");
-                                        if (!this.registered) {
-                                            this.registered = true;
-                                            this.getEventManager().registerEvent(new JoinUpdateListener(this));
-                                        }
-                                        if (!finalVersion.equalsIgnoreCase(this.newVersion))
-                                            this.newVersion = finalVersion;
-                                    }
-                                } else if (this.getConfigReader().getBoolean("updates.notifyOnJoin")) {
-                                    if (!this.registered) {
-                                        this.registered = true;
-                                        this.getEventManager().registerEvent(new JoinUpdateListener(this));
-                                    }
-                                    if (!finalVersion.equalsIgnoreCase(this.newVersion))
-                                        this.newVersion = finalVersion;
-                                }
-                            }
-                    });
-                }
+                this.checkBackupServerForUpdates(currentVersion, autoUpdate);
             }, 80L, 7200L * 20L);
+    }
+
+    private void checkBackupServerForUpdates(String currentVersion, Boolean autoUpdate) {
+        this.log("Switching to backup updater!");
+        new UpdateChecker(this, "78974").getVersion(foundVersion -> {
+            var isFoundVersionMoreRecent = this.isFoundVersionMoreRecent(foundVersion, currentVersion);
+
+            if (!isFoundVersionMoreRecent || currentVersion.equalsIgnoreCase(foundVersion)) {
+                if (this.onceTold)
+                    return;
+
+                this.log("You are using the latest version of ServerSystem <3");
+                this.onceTold = true;
+            }
+
+            this.warn("There is a new update available (" + foundVersion + ")!");
+            if (!autoUpdate) {
+                if (!this.getConfigReader().getBoolean("updates.notifyOnJoin"))
+                    return;
+
+                if (!foundVersion.equalsIgnoreCase(this.newVersion))
+                    this.newVersion = foundVersion;
+
+                if (this.registered)
+                    return;
+
+                this.registered = true;
+                this.getEventManager().registerEvent(new JoinUpdateListener(this));
+                return;
+            }
+
+            this.log("Auto-updating!");
+            this.log("(You need to restart the server so the update can take effect)");
+
+            try (var inputStream = new BufferedInputStream(new URL("https://api.spiget.org/v2/resources/78974/download").openStream());
+                 var fileOutputStream = new FileOutputStream(new File("plugins/update", this.JAR_NAME))) {
+                var dataBuffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(dataBuffer, 0, 1024)) != -1)
+                    fileOutputStream.write(dataBuffer, 0, bytesRead);
+            } catch (IOException e) {
+                e.printStackTrace();
+                this.error("Error while trying downloading the update!");
+                this.error("Please download it by yourself (https://www.spigotmc.org/resources/serversystem.78974/)!");
+                if (!this.registered) {
+                    this.registered = true;
+                    this.getEventManager().registerEvent(new JoinUpdateListener(this));
+                }
+
+                if (!foundVersion.equalsIgnoreCase(this.newVersion))
+                    this.newVersion = foundVersion;
+            }
+        });
     }
 
 
@@ -759,7 +855,8 @@ import static me.entity303.serversystem.bansystem.TimeUnit.*;
                     else {
                         this.setServerName(this.getConfigReader().getString("mysql.economy.serverName"));
                         this.economyManager =
-                                new EconomyManager_MySQL(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, this);
+                                new EconomyManager_MySQL(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat,
+                                                         separator, thousands, this);
                     }
                 }
                 if (this.getConfigReader().getBoolean("mysql.banSystem") && this.getConfigReader().getBoolean("banSystem.enabled")) {
@@ -781,7 +878,8 @@ import static me.entity303.serversystem.bansystem.TimeUnit.*;
                         this.error("You cannot have two databases at the same time for economy activated!");
                     else
                         this.economyManager =
-                                new EconomyManager_H2(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, this);
+                                new EconomyManager_H2(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat,
+                                                      separator, thousands, this);
                 }
 
                 if (this.getConfigReader().getBoolean("h2.banSystem") && this.getConfigReader().getBoolean("banSystem.enabled")) {
@@ -803,8 +901,8 @@ import static me.entity303.serversystem.bansystem.TimeUnit.*;
                         this.error("You cannot have two databases at the same time for economy activated!");
                     else
                         this.economyManager =
-                                new EconomyManager_SQLite(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands,
-                                                          this);
+                                new EconomyManager_SQLite(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat,
+                                                          separator, thousands, this);
                 }
 
                 if (this.getConfigReader().getBoolean("sqlite.banSystem") && this.getConfigReader().getBoolean("banSystem.enabled")) {
@@ -820,7 +918,9 @@ import static me.entity303.serversystem.bansystem.TimeUnit.*;
 
             if (this.economyManager == null) {
                 this.warn("Not using any database for Economy...");
-                this.economyManager = new EconomyManager(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, this);
+                this.economyManager =
+                        new EconomyManager(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator,
+                                           thousands, this);
             }
             if (this.banManager == null) {
                 this.warn("Not using any database for BanSystem...");
@@ -1011,82 +1111,8 @@ import static me.entity303.serversystem.bansystem.TimeUnit.*;
     }
 
 
-    public void log(String text) {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&aInfo&8] [&aServerSystem&8] &7>> &a" + text));
-    }
-
-
-    public void warn(String text) {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&cWarning&8] [&cServerSystem&8] &7>> &c" + text));
-    }
-
-
-    public void error(String text) {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&4Error&8] [&4ServerSystem&8] &7>> &4" + text));
-    }
-
-
     private String getBanSystem(String action) {
         return this.getMessages().getCfg().getString("Messages.Misc.BanSystem." + action);
-    }
-
-
-    public void fixKeyLength() {
-        var errorString = "Failed manually overriding key-length permissions.";
-        int newMaxKeyLength;
-        try {
-            if ((newMaxKeyLength = Cipher.getMaxAllowedKeyLength("AES")) < 256) {
-                var c = Class.forName("javax.crypto.CryptoAllPermissionCollection");
-                var con = c.getDeclaredConstructor();
-                con.setAccessible(true);
-                var allPermissionCollection = con.newInstance();
-                var f = c.getDeclaredField("all_allowed");
-                f.setAccessible(true);
-                f.setBoolean(allPermissionCollection, true);
-
-                c = Class.forName("javax.crypto.CryptoPermissions");
-                con = c.getDeclaredConstructor();
-                con.setAccessible(true);
-                var allPermissions = con.newInstance();
-                f = c.getDeclaredField("perms");
-                f.setAccessible(true);
-                ((Map) f.get(allPermissions)).put("*", allPermissionCollection);
-
-                c = Class.forName("javax.crypto.JceSecurityManager");
-                f = c.getDeclaredField("defaultPolicy");
-                f.setAccessible(true);
-                var mf = Field.class.getDeclaredField("modifiers");
-                mf.setAccessible(true);
-                mf.setInt(f, f.getModifiers() & ~Modifier.FINAL);
-                f.set(null, allPermissions);
-
-                newMaxKeyLength = Cipher.getMaxAllowedKeyLength("AES");
-            }
-        } catch (Exception e) {
-            this.error(errorString);
-            if (ServerSystem.debug) {
-                this.error("Reason:");
-                this.error(e.getMessage());
-            }
-            return;
-        }
-        if (newMaxKeyLength < 256) {
-            this.error(errorString);
-            if (ServerSystem.debug) {
-                this.error("Reason:");
-                this.error("Unknown");
-            }
-        }
-    }
-
-
-    public EventManager getEventManager() {
-        return this.eventManager;
-    }
-
-
-    public ConfigReader getConfigReader() {
-        return this.configReader;
     }
 
 
