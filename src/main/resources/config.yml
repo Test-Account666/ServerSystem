@@ -1,4 +1,4 @@
-metricommandSender: true
+metrics: true
 
 console: "Console"
 
