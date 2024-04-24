@@ -6,23 +6,24 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+@SuppressWarnings({ "NewMethodNamingConvention", "FieldNamingConvention" })
 public class AsyncUnmuteEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    private final CommandSender sender;
-    private final OfflinePlayer target;
-    private final String reason;
+    private final CommandSender _sender;
+    private final OfflinePlayer _target;
+    private final String _reason;
 
     public AsyncUnmuteEvent(CommandSender sender, OfflinePlayer target) {
         this(sender, target, ServerSystem.getPlugin(ServerSystem.class)
-                                         .getMessages()
-                                         .getMessageWithStringTarget("unmute", "unmute", sender, target.getName(), "Mute.DefaultReason"));
+                                         .GetMessages()
+                                         .GetMessageWithStringTarget("unmute", "unmute", sender, target.getName(), "Mute.DefaultReason"));
     }
 
     public AsyncUnmuteEvent(CommandSender sender, OfflinePlayer target, String reason) {
         super(true);
-        this.sender = sender;
-        this.target = target;
-        this.reason = reason;
+        this._sender = sender;
+        this._target = target;
+        this._reason = reason;
     }
 
     public static HandlerList getHandlerList() {
@@ -30,15 +31,15 @@ public class AsyncUnmuteEvent extends Event {
     }
 
     public String getReason() {
-        return reason;
+        return this._reason;
     }
 
     public CommandSender getSender() {
-        return this.sender;
+        return this._sender;
     }
 
     public OfflinePlayer getBannedPlayer() {
-        return this.target;
+        return this._target;
     }
 
     @Override

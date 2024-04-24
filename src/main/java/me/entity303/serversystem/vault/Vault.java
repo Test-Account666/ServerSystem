@@ -6,31 +6,31 @@ import net.milkbowl.vault.permission.Permission;
 import static org.bukkit.Bukkit.getServer;
 
 public class Vault {
-    private Chat chat = null;
-    private Permission permission = null;
+    private Chat _chat = null;
+    private Permission _permission = null;
 
     public Vault() {
-        this.setupChat();
-        this.setupPermissions();
+        this.SetupChat();
+        this.SetupPermissions();
     }
 
-    private void setupChat() {
+    private void SetupChat() {
         var chatProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
         if (chatProvider != null)
-            this.chat = chatProvider.getProvider();
+            this._chat = chatProvider.getProvider();
     }
 
-    private void setupPermissions() {
+    private void SetupPermissions() {
         var permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
         if (permissionProvider != null)
-            this.permission = permissionProvider.getProvider();
+            this._permission = permissionProvider.getProvider();
     }
 
-    public Permission getPermission() {
-        return this.permission;
+    public Permission GetPermission() {
+        return this._permission;
     }
 
-    public Chat getChat() {
-        return this.chat;
+    public Chat GetChat() {
+        return this._chat;
     }
 }

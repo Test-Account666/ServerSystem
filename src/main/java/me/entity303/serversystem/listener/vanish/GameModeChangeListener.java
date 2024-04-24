@@ -13,8 +13,8 @@ public class GameModeChangeListener extends CommandUtils implements Listener {
     }
 
     @EventHandler
-    public void onGameModeChange(PlayerGameModeChangeEvent e) {
-        if (this.plugin.getVanish().isVanish(e.getPlayer()))
-            this.plugin.getVersionStuff().getVanishPacket().setVanish(e.getPlayer(), true);
+    public void OnGameModeChange(PlayerGameModeChangeEvent event) {
+        if (this._plugin.GetVanish().IsVanish(event.getPlayer()))
+            this._plugin.GetVersionStuff().GetVanishPacket().SetVanish(event.getPlayer(), true);
     }
 }

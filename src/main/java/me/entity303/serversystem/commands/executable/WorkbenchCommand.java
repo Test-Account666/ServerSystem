@@ -1,28 +1,28 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class WorkbenchCommand implements CommandExecutorOverload {
-    private final ServerSystem plugin;
+public class WorkbenchCommand implements ICommandExecutorOverload {
+    private final ServerSystem _plugin;
 
     public WorkbenchCommand(ServerSystem plugin) {
-        this.plugin = plugin;
+        this._plugin = plugin;
     }
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
         if (!(commandSender instanceof Player)) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetOnlyPlayer());
             return true;
         }
 
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "workbench")) {
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "workbench")) {
             commandSender.sendMessage(
-                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().getPermission("workbench")));
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(this._plugin.GetPermissions().GetPermission("workbench")));
             return true;
         }
 

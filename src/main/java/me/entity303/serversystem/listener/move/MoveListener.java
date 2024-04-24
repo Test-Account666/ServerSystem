@@ -7,27 +7,37 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 public class MoveListener implements Listener {
-    private final ServerSystem plugin;
+    private final ServerSystem _plugin;
 
     public MoveListener(ServerSystem plugin) {
-        this.plugin = plugin;
+        this._plugin = plugin;
     }
 
     @EventHandler
-    public void onMove(PlayerMoveEvent e) {
-        if (!this.plugin.getTeleportMap().containsKey(e.getPlayer()))
+    public void OnMove(PlayerMoveEvent event) {
+        if (!this._plugin.GetTeleportMap().containsKey(event.getPlayer()))
             return;
 
-        var x = Math.max(e.getTo().getX(), e.getFrom().getX()) - Math.min(e.getTo().getX(), e.getFrom().getX());
-        var y = Math.max(e.getTo().getY(), e.getFrom().getY()) - Math.min(e.getTo().getY(), e.getFrom().getY());
-        var z = Math.max(e.getTo().getZ(), e.getFrom().getZ()) - Math.min(e.getTo().getZ(), e.getFrom().getZ());
-        if (x > 0.1 || x < -0.1 || y > 0.2 || y < -0.2 || z > 0.1 || z < -0.1) {
-            this.plugin.getTeleportMap().get(e.getPlayer()).cancel();
-            this.plugin.getTeleportMap().remove(e.getPlayer());
-            e.getPlayer()
-             .sendMessage(this.plugin.getMessages().getPrefix() +
-                          ChatColor.translateAlternateColorCodes('&', this.plugin.getMessages().getCfg().getString("Messages.Misc.Teleportation.Failed")));
-        }
+        var xCoordinateDifference = Math.max(event.getTo().getX(), event.getFrom().getX()) - Math.min(event.getTo().getX(), event.getFrom().getX());
+        var yCoordinateDifference = Math.max(event.getTo().getY(), event.getFrom().getY()) - Math.min(event.getTo().getY(), event.getFrom().getY());
+        var zCoordinateDifference = Math.max(event.getTo().getZ(), event.getFrom().getZ()) - Math.min(event.getTo().getZ(), event.getFrom().getZ());
+        if (!this.ShouldCancelTeleport(xCoordinateDifference, yCoordinateDifference, zCoordinateDifference))
+            return;
 
+        this._plugin.GetTeleportMap().get(event.getPlayer()).cancel();
+        this._plugin.GetTeleportMap().remove(event.getPlayer());
+        event.getPlayer()
+             .sendMessage(this._plugin.GetMessages().GetPrefix() + ChatColor.TranslateAlternateColorCodes('&', this._plugin.GetMessages()
+                                                                                                                           .GetConfiguration()
+                                                                                                                           .GetString(
+                                                                                                                                   "Messages.Misc" +
+                                                                                                                                   ".Teleportation" +
+                                                                                                                                   ".Failed")));
+
+    }
+
+    private boolean ShouldCancelTeleport(double xCoordinateDifference, double yCoordinateDifference, double zCoordinateDifference) {
+        return xCoordinateDifference > 0.1 || xCoordinateDifference < -0.1 || yCoordinateDifference > 0.2 || yCoordinateDifference < -0.2 ||
+               zCoordinateDifference > 0.1 || zCoordinateDifference < -0.1;
     }
 }

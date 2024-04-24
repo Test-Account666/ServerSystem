@@ -1,6 +1,6 @@
 package me.entity303.serversystem.utils;
 
-import me.entity303.serversystem.config.ConfigReader;
+import me.entity303.serversystem.config.IConfigReader;
 import me.entity303.serversystem.config.DefaultConfigReader;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.command.CommandSender;
@@ -8,75 +8,75 @@ import org.bukkit.command.CommandSender;
 import java.io.File;
 
 public class PermissionsChecker {
-    private final ServerSystem plugin;
-    private final ConfigReader configuration;
+    private final ServerSystem _plugin;
+    private final IConfigReader _configuration;
 
     public PermissionsChecker(ServerSystem plugin) {
-        this.plugin = plugin;
+        this._plugin = plugin;
 
         var permissionsFile = new File("plugins//ServerSystem", "permissions.yml");
-        this.configuration = DefaultConfigReader.loadConfiguration(permissionsFile, this.plugin);
+        this._configuration = DefaultConfigReader.LoadConfiguration(permissionsFile, this._plugin);
     }
 
-    public boolean hasPermission(CommandSender cs, String action, boolean disableNoPermissionMessage) {
-        var permission = this.configuration.getString("Permissions." + action);
-        if (ServerSystem.debug)
-            this.plugin.log("Permission used: " + permission + "!");
+    public boolean HasPermission(CommandSender commandSender, String action, boolean disableNoPermissionMessage) {
+        var permission = this._configuration.GetString("Permissions." + action);
+        if (ServerSystem.DEBUG)
+            this._plugin.Info("Permission used: " + permission + "!");
         if (permission == null) {
-            this.plugin.error("Error in Permission: " + action);
-            this.plugin.warn("(denying permission)");
+            this._plugin.Error("Error in Permission: " + action);
+            this._plugin.Warn("(denying permission)");
             return false;
         }
         if (disableNoPermissionMessage)
-            return cs.hasPermission(permission);
+            return commandSender.hasPermission(permission);
         else
-            return this.hasPermission(cs, action);
+            return this.HasPermission(commandSender, action);
     }
 
-    public boolean hasPermission(CommandSender commandSender, String action) {
-        var permission = this.configuration.getString("Permissions." + action);
-        if (ServerSystem.debug)
-            this.plugin.log("Permission used: " + permission + "!");
+    public boolean HasPermission(CommandSender commandSender, String action) {
+        var permission = this._configuration.GetString("Permissions." + action);
+        if (ServerSystem.DEBUG)
+            this._plugin.Info("Permission used: " + permission + "!");
         if (permission == null) {
-            this.plugin.log(ChatColor.translateAlternateColorCodes('&', this.plugin.getMessages().getCfg().getString("Messages.Misc.NoPermissionInfo"))
-                                     .replace("<SENDER>", commandSender.getName()));
-            this.plugin.error("Error in Permission: " + action);
-            this.plugin.warn("(denying permission)");
+            this._plugin.Info(ChatColor.TranslateAlternateColorCodes('&', this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.NoPermissionInfo"))
+                                      .replace("<SENDER>", commandSender.getName()));
+            this._plugin.Error("Error in Permission: " + action);
+            this._plugin.Warn("(denying permission)");
             return false;
         }
         if (!commandSender.hasPermission(permission)) {
-            this.plugin.log(ChatColor.translateAlternateColorCodes('&', this.plugin.getMessages().getCfg().getString("Messages.Misc.NoPermissionInfo"))
-                                     .replace("<SENDER>", commandSender.getName()));
+            this._plugin.Info(ChatColor.TranslateAlternateColorCodes('&', this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.NoPermissionInfo"))
+                                      .replace("<SENDER>", commandSender.getName()));
             return false;
         }
         return true;
     }
 
-    public boolean hasPermissionString(CommandSender cs, String permission, boolean noFuck) {
-        if (ServerSystem.debug)
-            this.plugin.log("Permission used: " + permission + "!");
+    public boolean HasPermissionString(CommandSender commandSender, String permission, boolean noFuck) {
+        if (ServerSystem.DEBUG)
+            this._plugin.Info("Permission used: " + permission + "!");
         if (noFuck)
-            return cs.hasPermission(permission);
+            return commandSender.hasPermission(permission);
         else
-            return this.hasPermissionString(cs, permission);
+            return this.HasPermissionString(commandSender, permission);
     }
 
-    public boolean hasPermissionString(CommandSender cs, String permission) {
-        if (ServerSystem.debug)
-            this.plugin.log("Permission used: " + permission + "!");
-        if (!cs.hasPermission(permission)) {
-            this.plugin.log(ChatColor.translateAlternateColorCodes('&', this.plugin.getMessages().getCfg().getString("Messages.Misc.NoPermissionInfo"))
-                                     .replace("<SENDER>", cs.getName()));
+    public boolean HasPermissionString(CommandSender commandSender, String permission) {
+        if (ServerSystem.DEBUG)
+            this._plugin.Info("Permission used: " + permission + "!");
+        if (!commandSender.hasPermission(permission)) {
+            this._plugin.Info(ChatColor.TranslateAlternateColorCodes('&', this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.NoPermissionInfo"))
+                                      .replace("<SENDER>", commandSender.getName()));
             return false;
         }
         return true;
     }
 
-    public String getPermission(String action) {
-        return this.configuration.getString("Permissions." + action);
+    public String GetPermission(String action) {
+        return this._configuration.GetString("Permissions." + action);
     }
 
-    public ConfigReader getConfiguration() {
-        return this.configuration;
+    public IConfigReader GetConfiguration() {
+        return this._configuration;
     }
 }

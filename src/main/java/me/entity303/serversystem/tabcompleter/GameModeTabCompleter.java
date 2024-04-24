@@ -1,18 +1,18 @@
 package me.entity303.serversystem.tabcompleter;
 
+import me.entity303.serversystem.commands.ITabCompleterOverload;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameModeTabCompleter implements TabCompleter {
+public class GameModeTabCompleter implements ITabCompleterOverload {
 
     @Override
-    public List<String> onTabComplete(CommandSender cs, Command cmd, String alias, String[] args) {
-        if (cmd.getName().equalsIgnoreCase("gamemode"))
-            if (args.length == 1) {
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (command.getName().equalsIgnoreCase("gamemode"))
+            if (arguments.length == 1) {
                 List<String> gamemodes = new ArrayList<>();
                 gamemodes.add("0");
                 gamemodes.add("1");
@@ -35,7 +35,7 @@ public class GameModeTabCompleter implements TabCompleter {
                 gamemodes.add("zuschauer");
                 List<String> tabList = new ArrayList<>();
                 for (var gamemode : gamemodes)
-                    if (gamemode.toLowerCase().startsWith(args[0].toLowerCase()))
+                    if (gamemode.toLowerCase().startsWith(arguments[0].toLowerCase()))
                         tabList.add(gamemode);
                 return tabList.isEmpty()? gamemodes : tabList;
             }

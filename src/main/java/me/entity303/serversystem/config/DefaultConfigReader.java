@@ -16,68 +16,70 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
-public class DefaultConfigReader implements ConfigReader {
-    private final ServerSystem plugin;
-    private final File file;
-    private final FileConfiguration cfg;
-    private FileConfiguration originalCfg = null;
-    private DefaultConfigReader newReader = null;
+public class DefaultConfigReader implements IConfigReader {
+    private static final Pattern SPLIT_PATTERN = Pattern.compile("");
+    private final ServerSystem _plugin;
+    private final File _file;
+    private final FileConfiguration _configuration;
+    private FileConfiguration _originalCfg = null;
+    private DefaultConfigReader _newReader = null;
 
     public DefaultConfigReader(File file, ServerSystem plugin) {
-        this.plugin = plugin;
-        this.file = file;
-        this.cfg = YamlConfiguration.loadConfiguration(file);
+        this._plugin = plugin;
+        this._file = file;
+        this._configuration = YamlConfiguration.loadConfiguration(file);
         this.FetchInternalConfig();
 
-        if (this.validateConfig())
+        if (this.ValidateConfig())
             return;
 
         this.CreateBackupAndSave();
     }
 
-    public static ConfigReader loadConfiguration(File file) {
-        return loadConfiguration(file, ServerSystem.getPlugin(ServerSystem.class));
+    public static IConfigReader LoadConfiguration(File file) {
+        return LoadConfiguration(file, ServerSystem.getPlugin(ServerSystem.class));
     }
 
-    public static ConfigReader loadConfiguration(File file, ServerSystem serverSystem) {
+    public static IConfigReader LoadConfiguration(File file, ServerSystem serverSystem) {
         return new DefaultConfigReader(file, serverSystem);
     }
 
     private void CreateBackupAndSave() {
-        this.plugin.warn("One or more errors with your '" + this.file.getName() + "' file were found and fixed, a backup was made before doing this!");
+        this._plugin.Warn("One or more errors with your '" + this._file.getName() + "' file were found and fixed, a backup was made before doing this!");
         try {
             var dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm-ss");
             var now = LocalDateTime.now();
             var date = dtf.format(now);
 
-            FileUtils.copyFile(this.file, new File("plugins" + File.separator + "ServerSystem", this.file.getName() + ".backup-" + date));
-        } catch (IOException e) {
-            e.printStackTrace();
-            this.plugin.error("An error occurred while backing up, changes only saved internally/temporary!");
+            FileUtils.CopyFile(this._file, new File("plugins" + File.separator + "ServerSystem", this._file.getName() + ".backup-" + date));
+        } catch (IOException exception) {
+            exception.printStackTrace();
+            this._plugin.Error("An error occurred while backing up, changes only saved internally/temporary!");
             return;
         }
 
-        this.save();
+        this.Save();
 
-        this.reload();
+        this.Reload();
     }
 
     private void FetchInternalConfig() {
-        if (this.plugin.getResource(this.file.getName()) != null)
-            this.originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(this.plugin.getResource(this.file.getName())));
-        else if (this.file.getName().equalsIgnoreCase("messages.yml"))
-            if (this.plugin.getResource("messages_" + this.cfg.getString("language") + ".yml") != null)
-                this.originalCfg = YamlConfiguration.loadConfiguration(
-                        new InputStreamReader(this.plugin.getResource("messages_" + this.cfg.getString("language") + ".yml")));
+        if (this._plugin.getResource(this._file.getName()) != null)
+            this._originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(this._plugin.getResource(this._file.getName())));
+        else if (this._file.getName().equalsIgnoreCase("messages.yml"))
+            if (this._plugin.getResource("messages_" + this._configuration.getString("language") + ".yml") != null)
+                this._originalCfg = YamlConfiguration.loadConfiguration(
+                        new InputStreamReader(this._plugin.getResource("messages_" + this._configuration.getString("language") + ".yml")));
             else {
-                this.originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(this.plugin.getResource("messages_en.yml")));
-                this.plugin.error("Couldn't find default message.yml for language'" + this.cfg.getString("language") + "'!");
-                this.plugin.log("Using english...");
+                this._originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(this._plugin.getResource("messages_en.yml")));
+                this._plugin.Error("Couldn't find default message.yml for language'" + this._configuration.getString("language") + "'!");
+                this._plugin.Info("Using english...");
             }
     }
 
-    protected boolean validateConfig() {
+    protected boolean ValidateConfig() {
         var fixed = false;
 
         var typeWarnings = new HashMap<Class<?>, String>();
@@ -88,19 +90,19 @@ public class DefaultConfigReader implements ConfigReader {
         typeWarnings.put(Double.class, "Should be a double, but isn't");
         typeWarnings.put(ItemStack.class, "Should be an ItemStack, but isn't");
 
-        for (var key : this.originalCfg.getConfigurationSection("").getKeys(true)) {
+        for (var key : this._originalCfg.getConfigurationSection("").getKeys(true)) {
             if (key.toLowerCase(Locale.ROOT).contains("example"))
                 continue;
 
-            if (!this.cfg.isSet(key)) {
-                this.plugin.warn("Fixing missing config entry '" + key + "' in file '" + this.file.getName() + "'");
-                this.cfg.set(key, this.originalCfg.get(key));
+            if (!this._configuration.isSet(key)) {
+                this._plugin.Warn("Fixing missing config entry '" + key + "' in file '" + this._file.getName() + "'");
+                this._configuration.set(key, this._originalCfg.get(key));
                 fixed = true;
                 continue;
             }
 
-            var object = this.cfg.get(key);
-            var supposedToBeObject = this.originalCfg.get(key);
+            var object = this._configuration.get(key);
+            var supposedToBeObject = this._originalCfg.get(key);
             var objectType = object.getClass();
             var supposedType = supposedToBeObject.getClass();
 
@@ -109,8 +111,8 @@ public class DefaultConfigReader implements ConfigReader {
 
             var warningMessage = typeWarnings.get(supposedType);
             if (warningMessage != null) {
-                this.plugin.warn("Fixing invalid config entry '" + key + "' in file '" + this.file.getName() + "' (" + warningMessage + ")");
-                this.cfg.set(key, supposedToBeObject);
+                this._plugin.Warn("Fixing invalid config entry '" + key + "' in file '" + this._file.getName() + "' (" + warningMessage + ")");
+                this._configuration.set(key, supposedToBeObject);
                 fixed = true;
             }
         }
@@ -118,194 +120,251 @@ public class DefaultConfigReader implements ConfigReader {
     }
 
     @Override
-    public FileConfiguration getCfg() {
-        return this.cfg;
+    public FileConfiguration GetConfiguration() {
+        return this._configuration;
     }
 
     @Override
-    public File getFile() {
-        return this.file;
+    public File GetFile() {
+        return this._file;
     }
 
     @Override
-    public Object get(String path, Object def) {
-        if (this.newReader != null)
-            return this.newReader.get(path, def);
+    public Object GetObject(String path, Object def) {
+        var other = this;
+        while (true) {
+            if (other._newReader != null) {
+                other = other._newReader;
+                continue;
+            }
 
-        this.setIfNotSet(path);
-        return this.cfg.get(path, def);
+            other.SetIfNotSet(path);
+            return other._configuration.get(path, def);
+        }
     }
 
     @Override
-    public Object get(String path) {
-        return this.get(path, false);
+    public Object GetObject(String path) {
+        return this.GetObject(path, false);
     }
 
     @Override
-    public boolean getBoolean(String path, boolean def) {
-        if (this.newReader != null)
-            return this.newReader.getBoolean(path, def);
+    public boolean GetBoolean(String path, boolean def) {
+        var other = this;
+        while (true) {
+            if (other._newReader != null) {
+                other = other._newReader;
+                continue;
+            }
 
-        this.setIfNotSet(path);
-        return this.cfg.getBoolean(path, def);
+            other.SetIfNotSet(path);
+            return other._configuration.getBoolean(path, def);
+        }
     }
 
     @Override
-    public boolean getBoolean(String path) {
-        return this.getBoolean(path, false);
+    public boolean GetBoolean(String path) {
+        return this.GetBoolean(path, false);
     }
 
     @Override
-    public String getString(String path, String def) {
-        if (this.newReader != null)
-            return this.newReader.getString(path, def);
+    public String GetString(String path, String def) {
+        var other = this;
+        while (true) {
+            if (other._newReader != null) {
+                other = other._newReader;
+                continue;
+            }
 
-        this.setIfNotSet(path);
-        return this.cfg.getString(path, def);
+            other.SetIfNotSet(path);
+            return other._configuration.getString(path, def);
+        }
     }
 
     @Override
-    public String getString(String path) {
-        return this.getString(path, null);
+    public String GetString(String path) {
+        return this.GetString(path, null);
     }
 
     @Override
-    public int getInt(String path, int def) {
-        if (this.newReader != null)
-            return this.newReader.getInt(path, def);
+    public int GetInt(String path, int def) {
+        var other = this;
+        while (true) {
+            if (other._newReader != null) {
+                other = other._newReader;
+                continue;
+            }
 
-        this.setIfNotSet(path);
-        return this.cfg.getInt(path, def);
+            other.SetIfNotSet(path);
+            return other._configuration.getInt(path, def);
+        }
     }
 
     @Override
-    public int getInt(String path) {
-        return this.getInt(path, 0);
+    public int GetInt(String path) {
+        return this.GetInt(path, 0);
     }
 
     @Override
-    public long getLong(String path, long def) {
-        if (this.newReader != null)
-            return this.newReader.getLong(path, def);
+    public long GetLong(String path, long def) {
+        var other = this;
+        while (true) {
+            if (other._newReader != null) {
+                other = other._newReader;
+                continue;
+            }
 
-        this.setIfNotSet(path);
-        return this.cfg.getLong(path, def);
+            other.SetIfNotSet(path);
+            return other._configuration.getLong(path, def);
+        }
     }
 
     @Override
-    public long getLong(String path) {
-        return this.getLong(path, 0L);
+    public long GetLong(String path) {
+        return this.GetLong(path, 0L);
     }
 
     @Override
-    public double getDouble(String path, double def) {
-        if (this.newReader != null)
-            return this.newReader.getDouble(path, def);
+    public double GetDouble(String path, double def) {
+        var other = this;
+        while (true) {
+            if (other._newReader != null) {
+                other = other._newReader;
+                continue;
+            }
 
-        this.setIfNotSet(path);
-        return this.cfg.getDouble(path, def);
+            other.SetIfNotSet(path);
+            return other._configuration.getDouble(path, def);
+        }
     }
 
     @Override
-    public double getDouble(String path) {
-        return this.getDouble(path, 0.0D);
+    public double GetDouble(String path) {
+        return this.GetDouble(path, 0.0D);
     }
 
     @Override
-    public ItemStack getItemStack(String path, ItemStack def) {
-        if (this.newReader != null)
-            return this.newReader.getItemStack(path, def);
+    public ItemStack GetItemStack(String path, ItemStack def) {
+        var other = this;
+        while (true) {
+            if (other._newReader != null) {
+                other = other._newReader;
+                continue;
+            }
 
-        this.setIfNotSet(path);
-        return this.cfg.getItemStack(path, def);
+            other.SetIfNotSet(path);
+            return other._configuration.getItemStack(path, def);
+        }
     }
 
     @Override
-    public ItemStack getItemStack(String path) {
-        return this.getItemStack(path, null);
+    public ItemStack GetItemStack(String path) {
+        return this.GetItemStack(path, null);
     }
 
     @Override
-    public void set(String path, Object object) {
-        if (this.newReader != null) {
-            this.newReader.set(path, object);
+    public void Set(String path, Object object) {
+        var other = this;
+        while (true) {
+            if (other._newReader != null) {
+                other = other._newReader;
+                continue;
+            }
+
+            other._configuration.set(path, object);
             return;
         }
-
-        this.cfg.set(path, object);
     }
 
     @Override
-    public void save() {
-        if (this.newReader != null) {
-            this.newReader.save();
+    public void Save() {
+        var other = this;
+        while (true) {
+            if (other._newReader != null) {
+                other = other._newReader;
+                continue;
+            }
+
+            try {
+                other._configuration.save(other._file);
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
             return;
         }
+    }
 
+    @Override
+    public void Reload() {
+        var other = this;
+        while (true) {
+            if (other._newReader != null) {
+                other = other._newReader;
+                continue;
+            }
+
+            try {
+                other._configuration.load(other._file);
+            } catch (IOException | InvalidConfigurationException exception) {
+                exception.printStackTrace();
+            }
+            return;
+        }
+    }
+
+    @Override
+    public void Load(File file) {
         try {
-            this.cfg.save(this.file);
-        } catch (IOException e) {
-            e.printStackTrace();
+            this._newReader = new DefaultConfigReader(file, ServerSystem.getPlugin(ServerSystem.class));
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
     }
 
     @Override
-    public void reload() {
-        if (this.newReader != null) {
-            this.newReader.reload();
-            return;
-        }
+    public ConfigurationSection GetConfigurationSection(String path) {
+        var other = this;
+        while (true) {
+            if (other._newReader != null) {
+                other = other._newReader;
+                continue;
+            }
 
-        try {
-            this.cfg.load(this.file);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
-        }
-    }
+            other.SetIfNotSet(path);
 
-    @Override
-    public void load(File file) {
-        try {
-            this.newReader = new DefaultConfigReader(file, ServerSystem.getPlugin(ServerSystem.class));
-        } catch (Exception e) {
-            e.printStackTrace();
+            return other._configuration.getConfigurationSection(path);
         }
     }
 
     @Override
-    public ConfigurationSection getConfigurationSection(String path) {
-        if (this.newReader != null)
-            return this.newReader.getConfigurationSection(path);
-
-        this.setIfNotSet(path);
-
-        return this.cfg.getConfigurationSection(path);
+    public boolean IsConfigurationSection(String path) {
+        var other = this;
+        while (true) {
+            if (other._newReader != null) {
+                other = other._newReader;
+                continue;
+            }
+            return other._configuration.isConfigurationSection(path);
+        }
     }
 
-    @Override
-    public boolean isConfigurationSection(String path) {
-        if (this.newReader != null)
-            return this.newReader.isConfigurationSection(path);
-        return this.cfg.isConfigurationSection(path);
-    }
-
-    private void setIfNotSet(String path) {
-        if (this.originalCfg == null)
+    private void SetIfNotSet(String path) {
+        if (this._originalCfg == null)
             return;
 
-        if (this.cfg.isSet(path))
+        if (this._configuration.isSet(path))
             return;
 
-        if (!this.originalCfg.isSet(path))
+        if (!this._originalCfg.isSet(path))
             return;
 
         var partialPath = "";
-        var periods = (int) Arrays.stream(path.split("")).filter(s -> s.equalsIgnoreCase(".")).count();
-        for (var i = 0; i <= periods; i++) {
+        var periods = (int) Arrays.stream(SPLIT_PATTERN.split(path)).filter(period -> period.equalsIgnoreCase(".")).count();
+        for (var index = 0; index <= periods; index++) {
             var internalPath = path;
-            for (var i1 = 0; i1 < i; i1++)
+            for (var index1 = 0; index1 < index; index1++)
                 internalPath = internalPath.substring(0, internalPath.lastIndexOf('.'));
-            if (this.cfg.isSet(internalPath)) {
+            if (this._configuration.isSet(internalPath)) {
                 partialPath = internalPath;
                 break;
             }
@@ -318,47 +377,47 @@ public class DefaultConfigReader implements ConfigReader {
             partialPath = partialPath.substring(1);
 
         if (partialPath.equalsIgnoreCase("")) {
-            this.cfg.set(path, this.originalCfg.get(path));
+            this._configuration.set(path, this._originalCfg.get(path));
             try {
-                this.cfg.save(this.file);
-            } catch (IOException e) {
-                e.printStackTrace();
+                this._configuration.save(this._file);
+            } catch (IOException exception) {
+                exception.printStackTrace();
             }
             try {
-                this.cfg.load(this.file);
-            } catch (IOException | InvalidConfigurationException e) {
-                e.printStackTrace();
+                this._configuration.load(this._file);
+            } catch (IOException | InvalidConfigurationException exception) {
+                exception.printStackTrace();
             }
             return;
         }
 
-        var section = this.cfg.getConfigurationSection(partialPath);
+        var section = this._configuration.getConfigurationSection(partialPath);
 
         if (section == null) {
-            this.cfg.set(path, this.originalCfg.get(path));
+            this._configuration.set(path, this._originalCfg.get(path));
             try {
-                this.cfg.save(this.file);
-            } catch (IOException e) {
-                e.printStackTrace();
+                this._configuration.save(this._file);
+            } catch (IOException exception) {
+                exception.printStackTrace();
             }
             try {
-                this.cfg.load(this.file);
-            } catch (IOException | InvalidConfigurationException e) {
-                e.printStackTrace();
+                this._configuration.load(this._file);
+            } catch (IOException | InvalidConfigurationException exception) {
+                exception.printStackTrace();
             }
             return;
         }
 
-        section.set(partialPath, this.originalCfg.get(path));
+        section.set(partialPath, this._originalCfg.get(path));
         try {
-            this.cfg.save(this.file);
-        } catch (IOException e) {
-            e.printStackTrace();
+            this._configuration.save(this._file);
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
         try {
-            this.cfg.load(this.file);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+            this._configuration.load(this._file);
+        } catch (IOException | InvalidConfigurationException exception) {
+            exception.printStackTrace();
         }
     }
 }

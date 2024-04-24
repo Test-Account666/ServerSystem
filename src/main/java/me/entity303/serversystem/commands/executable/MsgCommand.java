@@ -1,7 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
-public class MsgCommand extends CommandUtils implements CommandExecutorOverload {
-    public static final HashMap<CommandSender, CommandSender> reply = new HashMap<>();
+public class MsgCommand extends CommandUtils implements ICommandExecutorOverload {
+    public static final HashMap<CommandSender, CommandSender> REPLY_MAP = new HashMap<>();
 
     public MsgCommand(ServerSystem plugin) {
         super(plugin);
@@ -24,83 +24,83 @@ public class MsgCommand extends CommandUtils implements CommandExecutorOverload 
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
-            if (this.plugin.getMessages().getCfg().getBoolean("Permissions.msg.required"))
-                if (!this.plugin.getPermissions().hasPermission(commandSender, "msg.permission")) {
-                    var permission = this.plugin.getPermissions().getPermission("msg.permission");
-                    commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        Bukkit.getScheduler().runTaskAsynchronously(this._plugin, () -> {
+            if (this._plugin.GetMessages().GetConfiguration().GetBoolean("Permissions.msg.required"))
+                if (!this._plugin.GetPermissions().HasPermission(commandSender, "msg.permission")) {
+                    var permission = this._plugin.GetPermissions().GetPermission("msg.permission");
+                    commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                     return;
                 }
 
             if (arguments.length <= 1) {
                 commandSender.sendMessage(
-                        this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Msg"));
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Msg"));
                 return;
             }
 
-            var target = this.getPlayer(commandSender, arguments[0]);
+            var target = this.GetPlayer(commandSender, arguments[0]);
             if (target == null) {
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
                 return;
             }
 
-            if (isAwayFromKeyboard(target))
+            if (IsAwayFromKeyboard(target))
                 commandSender.sendMessage(
-                        this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Msg.Afk"));
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Msg.Afk"));
 
             if (commandSender instanceof Player player) {
-                var muteManager = this.plugin.getMuteManager();
-                if (muteManager.isMuted(player)) {
-                    var mute = muteManager.getMute(player);
+                var muteManager = this._plugin.GetMuteManager();
+                if (muteManager.IsMuted(player)) {
+                    var mute = muteManager.GetMute(player);
                     var unmuted = false;
-                    if (mute.getUNMUTE_TIME() > 0)
-                        if (mute.getUNMUTE_TIME() <= System.currentTimeMillis()) {
-                            muteManager.removeMute(player.getUniqueId());
+                    if (mute.GetExpireTime() > 0)
+                        if (mute.GetExpireTime() <= System.currentTimeMillis()) {
+                            muteManager.RemoveMute(player.getUniqueId());
                             unmuted = true;
                         }
                     if (!unmuted) {
-                        if (!mute.isSHADOW()) {
+                        if (!mute.IsShadow()) {
                             String senderName = null;
                             try {
-                                senderName = Bukkit.getOfflinePlayer(UUID.fromString(mute.getSENDER_UUID())).getName();
+                                senderName = Bukkit.getOfflinePlayer(UUID.fromString(mute.GetSenderUuid())).getName();
                             } catch (Exception ignored) {
                             }
                             if (senderName == null)
-                                senderName = mute.getSENDER_UUID();
-                            player.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                                  .getMessage("mute", "mute", senderName, player, "Mute.Muted")
-                                                                                                  .replace("<UNMUTE_DATE>", mute.getUNMUTE_DATE()));
+                                senderName = mute.GetSenderUuid();
+                            player.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                                  .GetMessage("mute", "mute", senderName, player, "Mute.Muted")
+                                                                                                  .replace("<UNMUTE_DATE>", mute.GetExpireDate()));
                             return;
                         }
 
-                        var msg = IntStream.range(1, arguments.length).mapToObj(i -> arguments[i] + " ").collect(Collectors.joining());
+                        var msg = IntStream.range(1, arguments.length).mapToObj(index -> arguments[index] + " ").collect(Collectors.joining());
 
                         commandSender.sendMessage(
-                                this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Msg.Sender").replace("<MESSAGE>", msg));
+                                this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Msg.Sender").replace("<MESSAGE>", msg));
                         return;
                     }
                 }
             }
-            if (this.plugin.getMsgOff().contains(target)) {
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                          this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Msg.Deactivated"));
+            if (this._plugin.GetMsgOff().contains(target)) {
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                          this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Msg.Deactivated"));
                 return;
             }
 
-            var msg = IntStream.range(1, arguments.length).mapToObj(i -> arguments[i] + " ").collect(Collectors.joining());
+            var msg = IntStream.range(1, arguments.length).mapToObj(index -> arguments[index] + " ").collect(Collectors.joining());
 
             target.sendMessage(
-                    this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, target, "Msg.Target").replace("<MESSAGE>", msg));
+                    this._plugin.GetMessages().GetMessage(commandLabel, command.getName(), commandSender, target, "Msg.Target").replace("<MESSAGE>", msg));
 
             commandSender.sendMessage(
-                    this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, target, "Msg.Sender").replace("<MESSAGE>", msg));
+                    this._plugin.GetMessages().GetMessage(commandLabel, command.getName(), commandSender, target, "Msg.Sender").replace("<MESSAGE>", msg));
 
-            for (var all : this.plugin.getSocialSpy())
-                all.sendMessage(this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Msg.SocialSpy").replace("<MESSAGE>", msg));
+            for (var all : this._plugin.GetSocialSpy())
+                all.sendMessage(this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Msg.SocialSpy").replace("<MESSAGE>", msg));
 
-            MsgCommand.reply.remove(target);
-            MsgCommand.reply.put(commandSender, target);
-            MsgCommand.reply.put(target, commandSender);
+            MsgCommand.REPLY_MAP.remove(target);
+            MsgCommand.REPLY_MAP.put(commandSender, target);
+            MsgCommand.REPLY_MAP.put(target, commandSender);
 
         });
         return true;

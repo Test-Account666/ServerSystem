@@ -1,6 +1,6 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
 import me.entity303.serversystem.utils.CommandUtils;
@@ -11,22 +11,22 @@ import java.text.DecimalFormat;
 
 import static java.lang.Runtime.getRuntime;
 
-public class LagCommand extends CommandUtils implements CommandExecutorOverload {
-    private static final DecimalFormat twoDPlaces = new DecimalFormat("#,###.##");
+public class LagCommand extends CommandUtils implements ICommandExecutorOverload {
+    private static final DecimalFormat TWO_DECIMALS_FORMAT = new DecimalFormat("#,###.##");
 
     public LagCommand(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] arguments) {
-        if (!this.plugin.getPermissions().hasPermission(sender, "lag")) {
-            var permission = this.plugin.getPermissions().getPermission("lag");
-            sender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "lag")) {
+            var permission = this._plugin.GetPermissions().GetPermission("lag");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
 
-        var tps = this.getPlugin().getTimer().getAverageTPS();
+        var tps = this._plugin.GetTimer().GetAverageTPS();
         ChatColor color;
         if (tps >= 18.0)
             color = ChatColor.GREEN;
@@ -39,20 +39,20 @@ public class LagCommand extends CommandUtils implements CommandExecutorOverload 
         var totalMemory = getRuntime().totalMemory();
         var freeMemory = getRuntime().freeMemory();
 
-        sender.sendMessage(ChatColor.GRAY + "TPS: " + color + LagCommand.formatDouble(tps));
-        sender.sendMessage(ChatColor.GRAY + "Max RAM: " + ChatColor.GOLD + maxMemory / 1048576L + " MB");
-        sender.sendMessage(ChatColor.GRAY + "Total RAM: " + ChatColor.GOLD + totalMemory / 1048576L + " MB");
-        sender.sendMessage(ChatColor.GRAY + "Free RAM: " + ChatColor.GOLD + freeMemory / 1048576L + " MB");
-        sender.sendMessage(ChatColor.GRAY + "Used RAM: " + ChatColor.GOLD + (totalMemory - freeMemory) / 1048576L + " MB");
-        sender.sendMessage(ChatColor.GRAY + "Processors: " + ChatColor.GOLD + getRuntime().availableProcessors());
+        commandSender.sendMessage(ChatColor.GRAY + "TPS: " + color + LagCommand.FormatDouble(tps));
+        commandSender.sendMessage(ChatColor.GRAY + "Max RAM: " + ChatColor.GOLD + maxMemory / 1048576L + " MB");
+        commandSender.sendMessage(ChatColor.GRAY + "Total RAM: " + ChatColor.GOLD + totalMemory / 1048576L + " MB");
+        commandSender.sendMessage(ChatColor.GRAY + "Free RAM: " + ChatColor.GOLD + freeMemory / 1048576L + " MB");
+        commandSender.sendMessage(ChatColor.GRAY + "Used RAM: " + ChatColor.GOLD + (totalMemory - freeMemory) / 1048576L + " MB");
+        commandSender.sendMessage(ChatColor.GRAY + "Processors: " + ChatColor.GOLD + getRuntime().availableProcessors());
         return true;
     }
 
-    private ServerSystem getPlugin() {
-        return this.plugin;
+    private ServerSystem GetPlugin() {
+        return this._plugin;
     }
 
-    private static String formatDouble(double value) {
-        return LagCommand.twoDPlaces.format(value);
+    private static String FormatDouble(double value) {
+        return LagCommand.TWO_DECIMALS_FORMAT.format(value);
     }
 }

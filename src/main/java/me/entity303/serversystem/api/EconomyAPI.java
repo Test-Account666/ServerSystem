@@ -7,11 +7,11 @@ import org.bukkit.OfflinePlayer;
 import java.util.LinkedHashMap;
 import java.util.concurrent.CompletableFuture;
 
-public class EconomyAPI {
-    private final ServerSystem plugin;
+@SuppressWarnings("NewMethodNamingConvention") public class EconomyAPI {
+    private final ServerSystem _plugin;
 
     public EconomyAPI(ServerSystem plugin) {
-        this.plugin = plugin;
+        this._plugin = plugin;
     }
 
     /**
@@ -20,7 +20,7 @@ public class EconomyAPI {
      @return = How much balance the player has
      */
     public CompletableFuture<Double> getMoney(OfflinePlayer player) {
-        return CompletableFuture.supplyAsync(() -> this.plugin.getEconomyManager().getMoneyAsNumber(player));
+        return CompletableFuture.supplyAsync(() -> this._plugin.GetEconomyManager().GetMoneyAsNumber(player));
     }
 
     /**
@@ -29,7 +29,7 @@ public class EconomyAPI {
      @return = How much balance the player has (formatted)
      */
     public CompletableFuture<String> getFormattedMoney(OfflinePlayer player) {
-        return CompletableFuture.supplyAsync(() -> this.plugin.getEconomyManager().getMoney(player));
+        return CompletableFuture.supplyAsync(() -> this._plugin.GetEconomyManager().GetMoney(player));
     }
 
     /**
@@ -38,7 +38,7 @@ public class EconomyAPI {
      @return = The formatted money
      */
     public String formatMoney(Double money) {
-        return this.plugin.getEconomyManager().format(money);
+        return this._plugin.GetEconomyManager().Format(money);
     }
 
     /**
@@ -47,7 +47,7 @@ public class EconomyAPI {
      @param amountToPay = The amount which is to paid by playerPaying
      */
     public void makeTransaction(OfflinePlayer playerPaying, OfflinePlayer playerReceiving, Double amountToPay) {
-        this.plugin.getEconomyManager().makeTransaction(playerPaying, playerReceiving, amountToPay);
+        this._plugin.GetEconomyManager().MakeTransaction(playerPaying, playerReceiving, amountToPay);
     }
 
     /**
@@ -56,8 +56,8 @@ public class EconomyAPI {
 
      @return = Returns if playerPaying has enough money
      */
-    public CompletableFuture<Boolean> hasEnoughMoney(OfflinePlayer playerPaying, Double amountToPay) {
-        return CompletableFuture.supplyAsync(() -> this.plugin.getEconomyManager().hasEnoughMoney(playerPaying, amountToPay));
+    public CompletableFuture<Boolean> HasEnoughMoney(OfflinePlayer playerPaying, Double amountToPay) {
+        return CompletableFuture.supplyAsync(() -> this._plugin.GetEconomyManager().HasEnoughMoney(playerPaying, amountToPay));
     }
 
     /**
@@ -65,7 +65,7 @@ public class EconomyAPI {
      @param money = The balance you want to change to
      */
     public void setMoney(OfflinePlayer player, Double money) {
-        this.plugin.getEconomyManager().setMoney(player, money);
+        this._plugin.GetEconomyManager().SetMoney(player, money);
     }
 
     /**
@@ -73,7 +73,7 @@ public class EconomyAPI {
      @param amount = The amount of money which should be removed from player's balance
      */
     public void removeMoney(OfflinePlayer player, Double amount) {
-        this.plugin.getEconomyManager().removeMoney(player, amount);
+        this._plugin.GetEconomyManager().RemoveMoney(player, amount);
     }
 
     /**
@@ -81,7 +81,7 @@ public class EconomyAPI {
      @param amount = The amount of money which should be added from player's balance
      */
     public void addMoney(OfflinePlayer player, Double amount) {
-        this.plugin.getEconomyManager().addMoney(player, amount);
+        this._plugin.GetEconomyManager().AddMoney(player, amount);
     }
 
     /**
@@ -89,39 +89,39 @@ public class EconomyAPI {
 
      @return = Returns if player has an account
      */
-    public CompletableFuture<Boolean> hasAccount(OfflinePlayer player) {
-        return CompletableFuture.supplyAsync(() -> this.plugin.getEconomyManager().hasAccount(player));
+    public CompletableFuture<Boolean> HasAccount(OfflinePlayer player) {
+        return CompletableFuture.supplyAsync(() -> this._plugin.GetEconomyManager().HasAccount(player));
     }
 
     /**
      @param player = The owner of the new account
      */
     public void createAccount(OfflinePlayer player) {
-        this.plugin.getEconomyManager().createAccount(player);
+        this._plugin.GetEconomyManager().CreateAccount(player);
     }
 
     /**
      @param player = The player which's account you want to delete
      */
     public void deleteAccount(OfflinePlayer player) {
-        this.plugin.getEconomyManager().deleteAccount(player);
+        this._plugin.GetEconomyManager().DeleteAccount(player);
     }
 
     /**
      @return = Returns you the starting money
      */
     public Double getStartingMoney() {
-        return Double.parseDouble(this.plugin.getEconomyManager().getStartingMoney());
+        return Double.parseDouble(this._plugin.GetEconomyManager().GetStartingMoney());
     }
 
     /**
      @return = Returns you the top 10 of the richest players
      */
     public LinkedHashMap<OfflinePlayer, Double> getTopTen() {
-        return new LinkedHashMap<>(this.plugin.getEconomyManager().getTopTen());
+        return new LinkedHashMap<>(this._plugin.GetEconomyManager().GetTopTen());
     }
 
     public boolean isEconomyEnabled() {
-        return !(this.plugin.getEconomyManager() instanceof EconomyManager_Disabled);
+        return !(this._plugin.GetEconomyManager() instanceof EconomyManager_Disabled);
     }
 }

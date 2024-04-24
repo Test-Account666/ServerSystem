@@ -17,56 +17,56 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class KitsManager extends CommandUtils {
-    private final File file = new File("plugins//ServerSystem", "kits.yml");
-    private final FileConfiguration cfg;
-    private final File file2 = new File("plugins//ServerSystem", "delays.yml");
-    private final FileConfiguration cfg2;
+    private final File _kitsFile = new File("plugins//ServerSystem", "kits.yml");
+    private final FileConfiguration _kitsConfiguration;
+    private final File _delaysFile = new File("plugins//ServerSystem", "delays.yml");
+    private final FileConfiguration _delaysConfiguration;
 
     public KitsManager(ServerSystem plugin) {
         super(plugin);
-        this.cfg = YamlConfiguration.loadConfiguration(this.file);
-        this.cfg2 = YamlConfiguration.loadConfiguration(this.file2);
+        this._kitsConfiguration = YamlConfiguration.loadConfiguration(this._kitsFile);
+        this._delaysConfiguration = YamlConfiguration.loadConfiguration(this._delaysFile);
     }
 
-    public void setDelay(String uuid, String name, Long current) {
-        this.cfg2.set("Players." + uuid + "." + name, current);
+    public void SetDelay(String uuid, String name, Long current) {
+        this._delaysConfiguration.set("Players." + uuid + "." + name, current);
 
         try {
-            this.cfg2.save(this.file2);
-        } catch (IOException e) {
-            e.printStackTrace();
+            this._delaysConfiguration.save(this._delaysFile);
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
 
         try {
-            this.cfg2.load(this.file2);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+            this._delaysConfiguration.load(this._delaysFile);
+        } catch (IOException | InvalidConfigurationException exception) {
+            exception.printStackTrace();
         }
     }
 
-    public boolean doesKitExist(String name) {
-        if (!this.file.exists())
+    public boolean DoesKitExist(String name) {
+        if (!this._kitsFile.exists())
             return false;
         name = name.toLowerCase();
-        return this.cfg.contains("Kits." + name);
+        return this._kitsConfiguration.contains("Kits." + name);
     }
 
-    public boolean isKitAllowed(CommandSender commandSender, String kit, boolean others) {
+    public boolean IsKitAllowed(CommandSender commandSender, String kit, boolean others) {
         try {
             if (!others) {
-                var permission = this.plugin.getPermissions().getPermission("kit.self").replace("<KIT>", kit.toLowerCase());
+                var permission = this._plugin.GetPermissions().GetPermission("kit.self").replace("<KIT>", kit.toLowerCase());
 
-                var hasPermission = this.plugin.getPermissions().hasPermissionString(commandSender, permission);
+                var hasPermission = this._plugin.GetPermissions().HasPermissionString(commandSender, permission);
 
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return hasPermission;
             } else {
-                var permission = this.plugin.getPermissions().getPermission("kit.others").replace("<KIT>", kit.toLowerCase());
+                var permission = this._plugin.GetPermissions().GetPermission("kit.others").replace("<KIT>", kit.toLowerCase());
 
-                var hasPermission = this.plugin.getPermissions().hasPermissionString(commandSender, permission);
+                var hasPermission = this._plugin.GetPermissions().HasPermissionString(commandSender, permission);
 
                 if (!hasPermission)
-                    commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+                    commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
 
                 return hasPermission;
             }
@@ -75,159 +75,159 @@ public class KitsManager extends CommandUtils {
         }
     }
 
-    public boolean isKitAllowed(CommandSender cs, String kit, boolean others, boolean noFuck) {
+    public boolean IsKitAllowed(CommandSender commandSender, String kit, boolean others, boolean noFuck) {
         try {
             if (!others)
-                return this.plugin.getPermissions()
-                                  .hasPermissionString(cs, this.plugin.getPermissions().getPermission("kit.self").replace("<KIT>", kit.toLowerCase()), noFuck);
+                return this._plugin.GetPermissions()
+                                  .HasPermissionString(commandSender, this._plugin.GetPermissions().GetPermission("kit.self").replace("<KIT>", kit.toLowerCase()), noFuck);
             else
-                return this.plugin.getPermissions()
-                                  .hasPermissionString(cs, this.plugin.getPermissions().getPermission("kit.others").replace("<KIT>", kit.toLowerCase()), noFuck);
+                return this._plugin.GetPermissions()
+                                  .HasPermissionString(commandSender, this._plugin.GetPermissions().GetPermission("kit.others").replace("<KIT>", kit.toLowerCase()), noFuck);
         } catch (NullPointerException ignored) {
             return false;
         }
     }
 
-    public KitsManager giveKit(Player player, String kitName) {
-        if (!this.file.exists())
+    public KitsManager GiveKit(Player player, String kitName) {
+        if (!this._kitsFile.exists())
             return this;
-        var kit = this.getKit(kitName);
-        if (this.getKits().isEmpty())
+        var kit = this.GetKit(kitName);
+        if (this.GetKits().isEmpty())
             return this;
-        for (var i = 0; i < 41; i++) {
-            if (kit.get(i) == null)
+        for (var index = 0; index < 41; index++) {
+            if (kit.get(index) == null)
                 continue;
 
-            if (i <= 35) {
-                if (player.getInventory().getItem(i) == null)
-                    player.getInventory().setItem(i, kit.get(i));
+            if (index <= 35) {
+                if (player.getInventory().getItem(index) == null)
+                    player.getInventory().setItem(index, kit.get(index));
                 else
-                    player.getInventory().addItem(kit.get(i));
+                    player.getInventory().addItem(kit.get(index));
                 continue;
             }
 
-            if (i == 36) {
+            if (index == 36) {
                 if (player.getInventory().getHelmet() == null)
-                    player.getInventory().setHelmet(kit.get(i));
+                    player.getInventory().setHelmet(kit.get(index));
                 else
-                    player.getInventory().addItem(kit.get(i));
+                    player.getInventory().addItem(kit.get(index));
                 continue;
             }
 
-            if (i == 37) {
+            if (index == 37) {
                 if (player.getInventory().getChestplate() == null)
-                    player.getInventory().setChestplate(kit.get(i));
+                    player.getInventory().setChestplate(kit.get(index));
                 else
-                    player.getInventory().addItem(kit.get(i));
+                    player.getInventory().addItem(kit.get(index));
                 continue;
             }
-            if (i == 38) {
+            if (index == 38) {
                 if (player.getInventory().getLeggings() == null)
-                    player.getInventory().setLeggings(kit.get(i));
+                    player.getInventory().setLeggings(kit.get(index));
                 else
-                    player.getInventory().addItem(kit.get(i));
+                    player.getInventory().addItem(kit.get(index));
                 continue;
             }
-            if (i == 39) {
+            if (index == 39) {
                 if (player.getInventory().getBoots() == null)
-                    player.getInventory().setBoots(kit.get(i));
+                    player.getInventory().setBoots(kit.get(index));
                 else
-                    player.getInventory().addItem(kit.get(i));
+                    player.getInventory().addItem(kit.get(index));
                 continue;
             }
             player.getInventory().getItemInOffHand();
-            player.getInventory().addItem(kit.get(i));
+            player.getInventory().addItem(kit.get(index));
             break;
         }
         return this;
     }
 
-    public Map<Integer, ItemStack> getKit(String name) {
+    public Map<Integer, ItemStack> GetKit(String name) {
         Map<Integer, ItemStack> kit = new HashMap<>();
-        if (!this.file.exists())
+        if (!this._kitsFile.exists())
             return new HashMap<>();
         try {
-            for (var i = 0; i < 41; i++) {
-                if (!this.cfg.contains("Kits." + name.toLowerCase() + "." + i)) {
-                    kit.put(i, null);
+            for (var index = 0; index < 41; index++) {
+                if (!this._kitsConfiguration.contains("Kits." + name.toLowerCase() + "." + index)) {
+                    kit.put(index, null);
                     continue;
                 }
-                var itemStack = this.cfg.getItemStack("Kits." + name.toLowerCase() + "." + i);
-                kit.put(i, itemStack);
+                var itemStack = this._kitsConfiguration.getItemStack("Kits." + name.toLowerCase() + "." + index);
+                kit.put(index, itemStack);
             }
         } catch (Exception ignored) {
         }
         return kit;
     }
 
-    public List<Map<Integer, ItemStack>> getKits() {
-        if (!this.file.exists())
+    public List<Map<Integer, ItemStack>> GetKits() {
+        if (!this._kitsFile.exists())
             return new ArrayList<>();
-        return this.getKitNames().stream().map(this::getKit).collect(Collectors.toList());
+        return this.GetKitNames().stream().map(this::GetKit).collect(Collectors.toList());
     }
 
-    public List<String> getKitNames() {
-        if (!this.file.exists())
+    public List<String> GetKitNames() {
+        if (!this._kitsFile.exists())
             return new ArrayList<>();
-        return new ArrayList<>(this.cfg.getConfigurationSection("Kits").getKeys(false));
+        return new ArrayList<>(this._kitsConfiguration.getConfigurationSection("Kits").getKeys(false));
     }
 
-    public boolean isKitDelayed(Player player, String name) {
-        Long delay = this.getKitDelay(name);
-        var lastEntered = this.getPlayerLastDelay(player.getUniqueId().toString(), name);
+    public boolean IsKitDelayed(Player player, String name) {
+        Long delay = this.GetKitDelay(name);
+        var lastEntered = this.GetPlayerLastDelay(player.getUniqueId().toString(), name);
         return lastEntered + delay > System.currentTimeMillis();
     }
 
-    public long getKitDelay(String name) {
-        return this.cfg.getLong("Kits." + name.toLowerCase() + ".Delay");
+    public long GetKitDelay(String name) {
+        return this._kitsConfiguration.getLong("Kits." + name.toLowerCase() + ".Delay");
     }
 
-    public Long getPlayerLastDelay(String uuid, String name) {
+    public Long GetPlayerLastDelay(String uuid, String name) {
         name = name.toLowerCase();
-        if (this.cfg2.isSet("Players." + uuid + "." + name))
-            return this.cfg2.getLong("Players." + uuid + "." + name);
+        if (this._delaysConfiguration.isSet("Players." + uuid + "." + name))
+            return this._delaysConfiguration.getLong("Players." + uuid + "." + name);
         return 0L;
     }
 
-    public KitsManager addKit(String name, Map<Integer, ItemStack> kit, Long delay) {
-        for (var i = 0; i < 41; i++) {
-            if (kit.get(i) == null)
+    public KitsManager AddKit(String name, Map<Integer, ItemStack> kit, Long delay) {
+        for (var index = 0; index < 41; index++) {
+            if (kit.get(index) == null)
                 continue;
-            var item = kit.get(i);
-            this.cfg.set("Kits." + name.toLowerCase() + "." + i, item);
+            var item = kit.get(index);
+            this._kitsConfiguration.set("Kits." + name.toLowerCase() + "." + index, item);
         }
 
-        this.cfg.set("Kits." + name.toLowerCase() + ".Delay", delay);
+        this._kitsConfiguration.set("Kits." + name.toLowerCase() + ".Delay", delay);
 
         try {
-            this.cfg.save(this.file);
-        } catch (IOException e) {
-            e.printStackTrace();
+            this._kitsConfiguration.save(this._kitsFile);
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
 
         try {
-            this.cfg.load(this.file);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+            this._kitsConfiguration.load(this._kitsFile);
+        } catch (IOException | InvalidConfigurationException exception) {
+            exception.printStackTrace();
         }
         return this;
     }
 
-    public KitsManager deleteKit(String name) {
-        if (!this.file.exists())
+    public KitsManager DeleteKit(String name) {
+        if (!this._kitsFile.exists())
             return this;
-        this.cfg.set("Kits." + name.toLowerCase(), null);
+        this._kitsConfiguration.set("Kits." + name.toLowerCase(), null);
 
         try {
-            this.cfg.save(this.file);
-        } catch (IOException e) {
-            e.printStackTrace();
+            this._kitsConfiguration.save(this._kitsFile);
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
 
         try {
-            this.cfg.load(this.file);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+            this._kitsConfiguration.load(this._kitsFile);
+        } catch (IOException | InvalidConfigurationException exception) {
+            exception.printStackTrace();
         }
         return this;
     }

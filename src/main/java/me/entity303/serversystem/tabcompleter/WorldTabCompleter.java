@@ -1,156 +1,94 @@
 package me.entity303.serversystem.tabcompleter;
 
+import me.entity303.serversystem.commands.ITabCompleterOverload;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorldTabCompleter implements TabCompleter {
-
+public class WorldTabCompleter implements ITabCompleterOverload {
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
         if (command.getName().equalsIgnoreCase("time")) {
-            List<String> newList = new ArrayList<>();
-            List<String> zeitenList = new ArrayList<>();
-            if (args.length == 1) {
-                List<String> zeiten = new ArrayList<>();
-                zeitenList.add("Day");
-                zeitenList.add("Noon");
-                zeitenList.add("Night");
-                zeitenList.add("Tag");
-                zeitenList.add("Mittag");
-                zeitenList.add("Nacht");
-                for (var zeit : zeitenList)
-                    if (zeit.toLowerCase().startsWith(args[0].toLowerCase()))
-                        zeiten.add(zeit);
-                if (!zeiten.isEmpty())
-                    return zeiten;
-                else
-                    return zeitenList;
-            } else if (args.length == 2) {
-                List<World> welten = new ArrayList<>(Bukkit.getWorlds());
-                List<String> weltenName = new ArrayList<>();
-                List<String> welt = new ArrayList<>();
-                for (var w : welten)
-                    weltenName.add(w.getName());
-                for (var world : Bukkit.getWorlds())
-                    if (world.getName().toLowerCase().startsWith(args[1].toLowerCase()))
-                        welt.add(world.getName());
-                if (!welt.isEmpty())
-                    return welt;
-                else
-                    return weltenName;
+            var possibleTimes = new ArrayList<>(List.of("day", "noon", "night", "tag", "mittag", "nacht"));
+            if (arguments.length == 1) {
+                List<String> tabCompletion = new ArrayList<>(possibleTimes);
+
+                tabCompletion.removeIf(time -> !time.startsWith(arguments[0].toLowerCase()));
+
+                return tabCompletion.isEmpty()? possibleTimes : tabCompletion;
             }
-        } else if (command.getName().equalsIgnoreCase("day")) {
-            if (args.length == 1) {
-                List<World> welten = new ArrayList<>(Bukkit.getWorlds());
-                List<String> weltenName = new ArrayList<>();
-                List<String> welt = new ArrayList<>();
-                for (var w : welten)
-                    weltenName.add(w.getName());
-                for (var world : Bukkit.getWorlds())
-                    if (world.getName().toLowerCase().startsWith(args[0].toLowerCase()))
-                        welt.add(world.getName());
-                if (!welt.isEmpty())
-                    return welt;
-                else
-                    return weltenName;
-            }
-        } else if (command.getName().equalsIgnoreCase("noon")) {
-            if (args.length == 1) {
-                List<World> welten = new ArrayList<>(Bukkit.getWorlds());
-                List<String> weltenName = new ArrayList<>();
-                List<String> welt = new ArrayList<>();
-                for (var w : welten)
-                    weltenName.add(w.getName());
-                for (var world : Bukkit.getWorlds())
-                    if (world.getName().toLowerCase().startsWith(args[0].toLowerCase()))
-                        welt.add(world.getName());
-                if (!welt.isEmpty())
-                    return welt;
-                else
-                    return weltenName;
-            }
-        } else if (command.getName().equalsIgnoreCase("night")) {
-            if (args.length == 1) {
-                List<World> welten = new ArrayList<>(Bukkit.getWorlds());
-                List<String> weltenName = new ArrayList<>();
-                List<String> welt = new ArrayList<>();
-                for (var w : welten)
-                    weltenName.add(w.getName());
-                for (var world : Bukkit.getWorlds())
-                    if (world.getName().toLowerCase().startsWith(args[0].toLowerCase()))
-                        welt.add(world.getName());
-                if (!welt.isEmpty())
-                    return welt;
-                else
-                    return weltenName;
-            }
-        } else if (command.getName().equalsIgnoreCase("sun")) {
-            if (args.length == 1) {
-                List<World> welten = new ArrayList<>(Bukkit.getWorlds());
-                List<String> weltenName = new ArrayList<>();
-                List<String> welt = new ArrayList<>();
-                for (var w : welten)
-                    weltenName.add(w.getName());
-                for (var world : Bukkit.getWorlds())
-                    if (world.getName().toLowerCase().startsWith(args[0].toLowerCase()))
-                        welt.add(world.getName());
-                if (!welt.isEmpty())
-                    return welt;
-                else
-                    return weltenName;
-            }
-        } else if (command.getName().equalsIgnoreCase("rain")) {
-            if (args.length == 1) {
-                List<World> welten = new ArrayList<>(Bukkit.getWorlds());
-                List<String> weltenName = new ArrayList<>();
-                List<String> welt = new ArrayList<>();
-                for (var w : welten)
-                    weltenName.add(w.getName());
-                for (var world : Bukkit.getWorlds())
-                    if (world.getName().toLowerCase().startsWith(args[0].toLowerCase()))
-                        welt.add(world.getName());
-                if (!welt.isEmpty())
-                    return welt;
-                else
-                    return weltenName;
-            }
-        } else if (command.getName().equalsIgnoreCase("weather"))
-            if (args.length == 1) {
-                List<String> wetterArten = new ArrayList<>();
-                wetterArten.add("Sonne");
-                wetterArten.add("Sun");
-                wetterArten.add("Sturm");
-                wetterArten.add("Storm");
-                wetterArten.add("Rain");
-                List<String> w = new ArrayList<>();
-                for (var wetter : wetterArten)
-                    if (wetter.toLowerCase().startsWith(args[0].toLowerCase()))
-                        w.add(wetter);
-                if (!w.isEmpty())
-                    return w;
-                else
-                    return wetterArten;
-            } else if (args.length == 2) {
-                List<World> welten = new ArrayList<>(Bukkit.getWorlds());
-                List<String> weltenName = new ArrayList<>();
-                List<String> welt = new ArrayList<>();
-                for (var w : welten)
-                    weltenName.add(w.getName());
-                for (var world : Bukkit.getWorlds())
-                    if (world.getName().toLowerCase().startsWith(args[0].toLowerCase()))
-                        welt.add(world.getName());
-                if (!welt.isEmpty())
-                    return welt;
-                else
-                    return weltenName;
-            }
-        return null;
+
+            if (arguments.length != 2)
+                return null;
+
+            return this.GetWorlds(arguments[1]);
+        }
+
+        if (command.getName().equalsIgnoreCase("day")) {
+            if (arguments.length != 1)
+                return null;
+
+            return this.GetWorlds(arguments[0]);
+        }
+
+        if (command.getName().equalsIgnoreCase("noon")) {
+            if (arguments.length != 1)
+                return null;
+
+            return this.GetWorlds(arguments[0]);
+        }
+        if (command.getName().equalsIgnoreCase("night")) {
+            if (arguments.length != 1)
+                return null;
+
+            return this.GetWorlds(arguments[0]);
+
+        }
+        if (command.getName().equalsIgnoreCase("sun")) {
+            if (arguments.length != 1)
+                return null;
+
+            return this.GetWorlds(arguments[0]);
+
+        }
+        if (command.getName().equalsIgnoreCase("rain")) {
+            if (arguments.length != 1)
+                return null;
+
+            return this.GetWorlds(arguments[0]);
+        }
+
+        if (!command.getName().equalsIgnoreCase("weather"))
+            return null;
+
+        if (arguments.length == 1) {
+            var weatherStates = List.of("storm", "sturm", "regen", "rain", "sun", "sonne", "clear", "klar");
+
+            var tabCompletion = new ArrayList<>(weatherStates);
+
+            tabCompletion.removeIf(weatherState -> !weatherState.startsWith(arguments[0].toLowerCase()));
+
+            return tabCompletion.isEmpty()? weatherStates : tabCompletion;
+        }
+
+        if (arguments.length != 2)
+            return null;
+
+        return this.GetWorlds(arguments[1]);
+
+    }
+
+    private List<String> GetWorlds(String argument) {
+        var worlds = Bukkit.getWorlds().stream().map(World::getName).toList();
+        List<String> tabCompletion = new ArrayList<>(worlds);
+
+        tabCompletion.removeIf(world -> !world.toLowerCase().startsWith(argument.toLowerCase()));
+
+        return tabCompletion.isEmpty()? worlds : tabCompletion;
     }
 }

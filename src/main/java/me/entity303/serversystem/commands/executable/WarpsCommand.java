@@ -1,12 +1,12 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public class WarpsCommand extends CommandUtils implements CommandExecutorOverload {
+public class WarpsCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public WarpsCommand(ServerSystem plugin) {
         super(plugin);
@@ -14,24 +14,24 @@ public class WarpsCommand extends CommandUtils implements CommandExecutorOverloa
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (this.plugin.getPermissions().getConfiguration().getBoolean("Permissions.warps.required"))
-            if (!this.plugin.getPermissions().hasPermission(commandSender, "warps.permission")) {
-                var permission = this.plugin.getPermissions().getPermission("warps.permission");
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.warps.required"))
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "warps.permission")) {
+                var permission = this._plugin.GetPermissions().GetPermission("warps.permission");
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return true;
             }
 
         var warpBuilder = new StringBuilder();
-        var separator = this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "Warps.Format.Separator");
-        var warpFormat = this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "Warps.Format.Format");
+        var separator = this._plugin.GetMessages().GetMessage(commandLabel, command.getName(), commandSender, null, "Warps.Format.Separator");
+        var warpFormat = this._plugin.GetMessages().GetMessage(commandLabel, command.getName(), commandSender, null, "Warps.Format.Format");
 
-        if (this.plugin.getWarpManager().getWarps().isEmpty()) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                      this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "Home.NoHomes"));
+        if (this._plugin.GetWarpManager().GetWarps().isEmpty()) {
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command.getName(), commandSender, null, "Home.NoHomes"));
             return true;
         }
 
-        var warps = this.plugin.getWarpManager().getWarps();
+        var warps = this._plugin.GetWarpManager().GetWarps();
 
         for (var warp : warps)
             warpBuilder.append(warpFormat.replace("<SEPERATOR>", separator).replace("<Warp>", warp));
@@ -39,12 +39,12 @@ public class WarpsCommand extends CommandUtils implements CommandExecutorOverloa
         if (warpBuilder.toString().toLowerCase().startsWith(separator))
             warpBuilder.delete(0, separator.length());
 
-        var warpMessage = this.plugin.getMessages()
-                                     .getMessage(commandLabel, command.getName(), commandSender, null, "Warps.Format.Message")
+        var warpMessage = this._plugin.GetMessages()
+                                     .GetMessage(commandLabel, command.getName(), commandSender, null, "Warps.Format.Message")
                                      .replace("<AMOUNT>", String.valueOf(warps.size()))
                                      .replace("<WARPS>", warpBuilder.toString());
 
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + warpMessage);
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + warpMessage);
         return true;
     }
 }

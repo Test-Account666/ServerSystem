@@ -1,6 +1,6 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.listener.join.JoinUpdateListener;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
@@ -18,7 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 
-public class ServerSystemCommand extends CommandUtils implements CommandExecutorOverload {
+public class ServerSystemCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public ServerSystemCommand(ServerSystem plugin) {
         super(plugin);
@@ -26,15 +26,15 @@ public class ServerSystemCommand extends CommandUtils implements CommandExecutor
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "serversystem.use")) {
-            var permission = this.plugin.getPermissions().getPermission("serversystem.use");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "serversystem.use")) {
+            var permission = this._plugin.GetPermissions().GetPermission("serversystem.use");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
 
         if (arguments.length == 0) {
             commandSender.sendMessage(
-                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "ServerSystem"));
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "ServerSystem"));
             return true;
         }
 
@@ -53,58 +53,58 @@ public class ServerSystemCommand extends CommandUtils implements CommandExecutor
     }
 
     private void ExecuteReloadCommand(CommandSender commandSender, Command command, String commandLabel) {
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "serversystem.reload")) {
-            var permission = this.plugin.getPermissions().getPermission("serversystem.reload");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "serversystem.reload")) {
+            var permission = this._plugin.GetPermissions().GetPermission("serversystem.reload");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return;
         }
-        this.plugin.onDisable();
+        this._plugin.onDisable();
 
-        this.plugin.reloadConfigValidating();
+        this._plugin.ReloadConfigValidating();
 
-        this.plugin.onEnable();
+        this._plugin.onEnable();
 
         commandSender.sendMessage(
-                this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "ServerSystem.Reload"));
+                this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "ServerSystem.Reload"));
     }
 
     private void ExecuteVersionCommand(CommandSender commandSender, Command command, String commandLabel) {
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "serversystem.version")) {
-            var permission = this.plugin.getPermissions().getPermission("serversystem.version");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "serversystem.version")) {
+            var permission = this._plugin.GetPermissions().GetPermission("serversystem.version");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return;
         }
 
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                     .getMessage(commandLabel, command, commandSender, null,
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                     .GetMessage(commandLabel, command, commandSender, null,
                                                                                                  "ServerSystem.Version")
-                                                                                     .replace("<PLUGINVERSION>", this.plugin.getDescription().getVersion())
-                                                                                     .replace("<CONFIGVERSION>", this.plugin.getConfigVersion()));
+                                                                                     .replace("<PLUGINVERSION>", this._plugin.getDescription().getVersion())
+                                                                                     .replace("<CONFIGVERSION>", this._plugin.GetConfigVersion()));
     }
 
     private void ExecuteUpdateCommand(CommandSender commandSender, Command command, String commandLabel) {
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "serversystem.update")) {
-            var permission = this.plugin.getPermissions().getPermission("serversystem.update");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "serversystem.update")) {
+            var permission = this._plugin.GetPermissions().GetPermission("serversystem.update");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return;
         }
 
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                  this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "ServerSystem.Update.Checking"));
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                  this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "ServerSystem.Update.Checking"));
 
-        Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> {
-            var version = this.plugin.getDescription().getVersion();
+        Bukkit.getScheduler().runTaskLaterAsynchronously(this._plugin, () -> {
+            var version = this._plugin.getDescription().getVersion();
 
             Document doc = null;
             try {
                 doc = Jsoup.connect("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem").referrer("ServerSystem").timeout(30000).get();
-            } catch (IOException e) {
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + ChatColor.RED + "Error while trying to check for updates!");
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + ChatColor.DARK_GREEN +
+            } catch (IOException exception) {
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + ChatColor.RED + "Error while trying to check for updates!");
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + ChatColor.DARK_GREEN +
                                           "Please ignore this error. The update server is currently down. Please be patient");
-                this.plugin.error("Error while trying to check for updates!");
-                //e.printStackTrace();
-                this.plugin.log("Please ignore this error. The update server is currently down. Please be patient");
+                this._plugin.Error("Error while trying to check for updates!");
+                //exception.printStackTrace();
+                this._plugin.Info("Please ignore this error. The update server is currently down. Please be patient");
             }
 
             if (doc != null) {
@@ -112,11 +112,11 @@ public class ServerSystemCommand extends CommandUtils implements CommandExecutor
                 return;
             }
 
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + ChatColor.RED + "Switching to backup updater!");
-            new UpdateChecker(this.plugin, "78974").getVersion(checkedVersion -> {
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + ChatColor.RED + "Switching to backup updater!");
+            new UpdateChecker(this._plugin, "78974").GetVersion(checkedVersion -> {
                 if (checkedVersion.equalsIgnoreCase(version) || checkedVersion.equalsIgnoreCase("1.6.7")) {
-                    commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                                 .getMessage(commandLabel, command, commandSender, null,
+                    commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                                 .GetMessage(commandLabel, command, commandSender, null,
                                                                                                              "ServerSystem.Update.LatestVersion"));
                     return;
                 }
@@ -127,20 +127,20 @@ public class ServerSystemCommand extends CommandUtils implements CommandExecutor
     }
 
     private void DownloadFromPrimaryServer(CommandSender commandSender, Command command, String commandLabel, Document document, String version) {
-        for (var f : document.getElementsContainingOwnText(".jar")) {
-            var foundVersion = f.attr("href");
+        for (var remoteFile : document.getElementsContainingOwnText(".jar")) {
+            var foundVersion = remoteFile.attr("href");
             foundVersion = foundVersion.substring(0, foundVersion.lastIndexOf('.'));
             version = foundVersion;
         }
 
-        if (this.plugin.getDescription().getVersion().equalsIgnoreCase(version)) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "ServerSystem.Update.LatestVersion"));
+        if (this._plugin.getDescription().getVersion().equalsIgnoreCase(version)) {
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "ServerSystem.Update.LatestVersion"));
             return;
         }
 
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                     .getMessage(commandLabel, command, commandSender, null,
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                     .GetMessage(commandLabel, command, commandSender, null,
                                                                                                  "ServerSystem.Update.NewVersion")
                                                                                      .replace("<VERSION>", version));
         try {
@@ -150,49 +150,49 @@ public class ServerSystemCommand extends CommandUtils implements CommandExecutor
                                            .ignoreContentType(true)
                                            .execute();
 
-            var in = new BufferedInputStream(new URL("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem/" + version + ".jar").openStream());
-            var fileOutputStream = new FileOutputStream(new File("plugins/update", this.plugin.JAR_NAME));
+            var inputStream = new BufferedInputStream(new URL("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem/" + version + ".jar").openStream());
+            var fileOutputStream = new FileOutputStream(new File("plugins/update", this._plugin._jarName));
             var dataBuffer = new byte[1024];
             int bytesRead;
-            while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1)
+            while ((bytesRead = inputStream.read(dataBuffer, 0, 1024)) != -1)
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
 
-            in.close();
+            inputStream.close();
             fileOutputStream.close();
-        } catch (IOException e) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + ChatColor.RED + "Error while trying to download the update!");
-            this.plugin.error("Error while trying to download the update!");
-            e.printStackTrace();
+        } catch (IOException exception) {
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + ChatColor.RED + "Error while trying to download the update!");
+            this._plugin.Error("Error while trying to download the update!");
+            exception.printStackTrace();
         }
     }
 
     private void DownloadFromBackupServer(CommandSender commandSender, Command command, String commandLabel, String checkedVersion) {
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                     .getMessage(commandLabel, command, commandSender, null,
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                     .GetMessage(commandLabel, command, commandSender, null,
                                                                                                  "ServerSystem.Update.NewVersion")
                                                                                      .replace("<VERSION>", checkedVersion));
 
 
-        try (var in = new BufferedInputStream(new URL("https://api.spiget.org/v2/resources/78974/download").openStream());
-             var fileOutputStream = new FileOutputStream(new File("plugins/update", this.plugin.JAR_NAME))) {
+        try (var inputStream = new BufferedInputStream(new URL("https://api.spiget.org/v2/resources/78974/download").openStream());
+             var fileOutputStream = new FileOutputStream(new File("plugins/update", this._plugin._jarName))) {
             var dataBuffer = new byte[1024];
             int bytesRead;
-            while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1)
+            while ((bytesRead = inputStream.read(dataBuffer, 0, 1024)) != -1)
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
-        } catch (IOException e) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + ChatColor.RED + "Error while trying to download the update!");
-            this.plugin.error("Error while trying to download the update!");
-            e.printStackTrace();
+        } catch (IOException exception) {
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + ChatColor.RED + "Error while trying to download the update!");
+            this._plugin.Error("Error while trying to download the update!");
+            exception.printStackTrace();
 
-            if (!this.plugin.isRegistered()) {
-                this.plugin.setRegistered(true);
-                this.plugin.getEventManager().registerEvent(new JoinUpdateListener(this.plugin));
+            if (!this._plugin.IsRegistered()) {
+                this._plugin.SetRegistered(true);
+                this._plugin.GetEventManager().RegisterEvent(new JoinUpdateListener(this._plugin));
             }
 
-            if (checkedVersion.equalsIgnoreCase(this.plugin.getNewVersion()))
+            if (checkedVersion.equalsIgnoreCase(this._plugin.GetNewVersion()))
                 return;
 
-            this.plugin.setNewVersion(checkedVersion);
+            this._plugin.SetNewVersion(checkedVersion);
         }
     }
 }

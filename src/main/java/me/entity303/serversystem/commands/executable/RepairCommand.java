@@ -1,6 +1,6 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Material;
@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 
-public class RepairCommand extends CommandUtils implements CommandExecutorOverload {
+public class RepairCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public RepairCommand(ServerSystem plugin) {
         super(plugin);
@@ -19,13 +19,13 @@ public class RepairCommand extends CommandUtils implements CommandExecutorOverlo
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
         if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetOnlyPlayer());
             return true;
         }
 
-        if (!this.plugin.getPermissions().hasPermission(player, "repair")) {
-            var permission = this.plugin.getPermissions().getPermission("repair");
-            player.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(player, "repair")) {
+            var permission = this._plugin.GetPermissions().GetPermission("repair");
+            player.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
 
@@ -33,23 +33,23 @@ public class RepairCommand extends CommandUtils implements CommandExecutorOverlo
             player.getInventory().getItemInMainHand();
             if (player.getInventory().getItemInMainHand().getType() == Material.AIR) {
                 player.sendMessage(
-                        this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, player, null, "Repair.NoItem"));
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, player, null, "Repair.NoItem"));
                 return true;
             }
 
             this.RepairItems(player.getInventory().getItemInMainHand());
 
-            player.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, player, null, "Repair.Hand"));
+            player.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, player, null, "Repair.Hand"));
             return true;
         }
 
         if ("all".equalsIgnoreCase(arguments[0])) {
-            for (var i = 0; i < player.getInventory().getSize(); i++) {
-                var items = player.getInventory().getItem(i);
+            for (var index = 0; index < player.getInventory().getSize(); index++) {
+                var items = player.getInventory().getItem(index);
                 this.RepairItems(items);
             }
 
-            player.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, player, null, "Repair.All"));
+            player.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, player, null, "Repair.All"));
             return true;
         }
 
@@ -57,13 +57,13 @@ public class RepairCommand extends CommandUtils implements CommandExecutorOverlo
             this.RepairItems(player.getInventory().getHelmet(), player.getInventory().getChestplate(), player.getInventory().getLeggings(),
                              player.getInventory().getBoots());
 
-            player.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, player, null, "Repair.Armor"));
+            player.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, player, null, "Repair.Armor"));
             return true;
         }
 
         var found = false;
-        for (var i = 0; i < player.getInventory().getSize(); i++) {
-            var items = player.getInventory().getItem(i);
+        for (var index = 0; index < player.getInventory().getSize(); index++) {
+            var items = player.getInventory().getItem(index);
             if (Material.getMaterial(arguments[0].toUpperCase()) == null)
                 break;
             this.RepairItems(items);
@@ -71,14 +71,14 @@ public class RepairCommand extends CommandUtils implements CommandExecutorOverlo
         }
 
         if (!found) {
-            player.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                  .getMessage(commandLabel, command, player, null, "Repair.NoType")
+            player.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                  .GetMessage(commandLabel, command, player, null, "Repair.NoType")
                                                                                   .replace("<TYPE>", arguments[0].toUpperCase()));
             return true;
         }
 
-        player.sendMessage(this.plugin.getMessages().getPrefix() +
-                           this.plugin.getMessages().getMessage(commandLabel, command, player, null, "Repair.Type").replace("<TYPE>", arguments[0]));
+        player.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                           this._plugin.GetMessages().GetMessage(commandLabel, command, player, null, "Repair.Type").replace("<TYPE>", arguments[0]));
         return true;
     }
 

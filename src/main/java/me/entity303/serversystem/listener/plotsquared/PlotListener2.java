@@ -16,14 +16,14 @@ public class PlotListener2 extends CommandUtils implements Listener {
     }
 
     @EventHandler
-    public void onPlotEnter(PlayerEnterPlotEvent e) {
-        if (e.getPlot().hasFlag(TIME))
-            if (e.getPlot().getFlag(TIME).isPresent())
-                PlotListener.TIME_MAP.put(e.getPlayer(), e.getPlot().getFlag(TIME).get());
+    public void OnPlotEnter(PlayerEnterPlotEvent event) {
+        if (event.getPlot().hasFlag(TIME))
+            if (event.getPlot().getFlag(TIME).isPresent())
+                PlotListener.TIME_MAP.put(event.getPlayer(), event.getPlot().getFlag(TIME).get());
     }
 
     @EventHandler
-    public void onPlotLeave(PlayerLeavePlotEvent e) {
-        PlotListener.TIME_MAP.remove(e.getPlayer());
+    public void OnPlotLeave(PlayerLeavePlotEvent event) {
+        PlotListener.TIME_MAP.remove(event.getPlayer());
     }
 }

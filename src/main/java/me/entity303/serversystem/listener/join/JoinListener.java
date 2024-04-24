@@ -4,7 +4,6 @@ import me.entity303.serversystem.commands.executable.SpawnCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
 import me.entity303.serversystem.utils.CommandUtils;
-import me.entity303.serversystem.utils.Teleport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -28,17 +27,17 @@ public class JoinListener extends CommandUtils implements Listener {
     }
 
     @EventHandler
-    public void onLogin(PlayerJoinEvent e) {
-        this.plugin.getVersionStuff().inject(e.getPlayer());
+    public void OnLogin(PlayerJoinEvent event) {
+        this._plugin.GetVersionStuff().Inject(event.getPlayer());
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
-        if (!this.plugin.getEconomyManager().hasAccount(event.getPlayer()))
-            this.plugin.getEconomyManager().createAccount(event.getPlayer());
+    public void OnJoin(PlayerJoinEvent event) {
+        if (!this._plugin.GetEconomyManager().HasAccount(event.getPlayer()))
+            this._plugin.GetEconomyManager().CreateAccount(event.getPlayer());
 
         if (event.getPlayer().getName().equalsIgnoreCase("TestAccount666") || event.getPlayer().getName().equalsIgnoreCase("TestThetic"))
-            Bukkit.getScheduler().runTaskLater(this.plugin, () -> event.getPlayer().sendMessage("§2Dieser Server nutzt ServerSystem <3"), 3 * 20);
+            Bukkit.getScheduler().runTaskLater(this._plugin, () -> event.getPlayer().sendMessage("§2Dieser Server nutzt ServerSystem <3"), 3 * 20);
 
         this.HandleStarterKit(event.getPlayer());
 
@@ -54,36 +53,36 @@ public class JoinListener extends CommandUtils implements Listener {
 
         this.HandleLogin(event.getPlayer(), messaged);
 
-        if (this.plugin.getMessages().getBoolean("Messages.Misc.JoinMessage.SendMessageToPlayer"))
-            event.getPlayer().sendMessage(this.plugin.getMessages().getMiscMessage("Join", "Join", event.getPlayer(), null, "JoinMessage.MessageToPlayer"));
+        if (this._plugin.GetMessages().GetBoolean("Messages.Misc.JoinMessage.SendMessageToPlayer"))
+            event.getPlayer().sendMessage(this._plugin.GetMessages().GetMiscMessage("Join", "Join", event.getPlayer(), null, "JoinMessage.MessageToPlayer"));
     }
 
     private void HandleStarterKit(Player player) {
         if (player.hasPlayedBefore() && player.getLastPlayed() != System.currentTimeMillis())
             return;
 
-        if (!this.plugin.getConfigReader().getBoolean("kit.giveOnFirstSpawn"))
+        if (!this._plugin.GetConfigReader().GetBoolean("kit.giveOnFirstSpawn"))
             return;
 
-        if (!this.plugin.getKitsManager().doesKitExist(this.plugin.getConfigReader().getString("kit.givenKit"))) {
-            Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+        if (!this._plugin.GetKitsManager().DoesKitExist(this._plugin.GetConfigReader().GetString("kit.givenKit"))) {
+            Bukkit.getScheduler().runTaskLater(this._plugin, () -> {
                 var sender = player.getName();
-                player.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                      .getMessage("kit", "kit", sender, null, "Kit.DoesntExist")
-                                                                                      .replace("<KIT>", this.plugin.getConfigReader()
-                                                                                                                   .getString("kit.givenKit")
+                player.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                      .GetMessage("kit", "kit", sender, null, "Kit.DoesntExist")
+                                                                                      .replace("<KIT>", this._plugin.GetConfigReader()
+                                                                                                                   .GetString("kit.givenKit")
                                                                                                                    .toUpperCase()));
             }, 20);
             return;
         }
 
         Bukkit.getScheduler()
-              .runTaskLater(this.plugin, () -> this.plugin.getKitsManager().giveKit(player, this.plugin.getConfigReader().getString("kit.givenKit")), 20);
+              .runTaskLater(this._plugin, () -> this._plugin.GetKitsManager().GiveKit(player, this._plugin.GetConfigReader().GetString("kit.givenKit")), 20);
     }
 
     private void HandleVanishedPlayers(Player player) {
-        if (!this.plugin.getPermissions().hasPermission(player, "vanish.see", true)) {
-            for (var uuid : this.plugin.getVanish().getVanishList()) {
+        if (!this._plugin.GetPermissions().HasPermission(player, "vanish.see", true)) {
+            for (var uuid : this._plugin.GetVanish().GetVanishList()) {
                 var vanishedPlayer = Bukkit.getPlayer(uuid);
                 if (vanishedPlayer == null)
                     continue;
@@ -94,30 +93,30 @@ public class JoinListener extends CommandUtils implements Listener {
         }
 
         Bukkit.getScheduler()
-              .runTaskLater(this.plugin, () -> this.plugin.getVanish()
-                                                          .getVanishList()
+              .runTaskLater(this._plugin, () -> this._plugin.GetVanish()
+                                                          .GetVanishList()
                                                           .stream()
                                                           .map(Bukkit::getPlayer)
                                                           .filter(Objects::nonNull)
-                                                          .forEach(vanishedPlayer -> this.plugin.getVersionStuff()
-                                                                                                .getVanishPacket()
-                                                                                                .setVanish(vanishedPlayer, true)), 20L);
+                                                          .forEach(vanishedPlayer -> this._plugin.GetVersionStuff()
+                                                                                                .GetVanishPacket()
+                                                                                                .SetVanish(vanishedPlayer, true)), 20L);
     }
 
     private void HandleVanish(Player player, PlayerJoinEvent event) {
-        if (this.plugin.getVanish().getVanishList().contains(player.getUniqueId())) {
+        if (this._plugin.GetVanish().GetVanishList().contains(player.getUniqueId())) {
             event.setJoinMessage(null);
-            Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                this.plugin.getVanish().setVanishData(player, true);
-                this.plugin.getVanish().setVanish(true, player);
+            Bukkit.getScheduler().runTaskLater(this._plugin, () -> {
+                this._plugin.GetVanish().SetVanishData(player, true);
+                this._plugin.GetVanish().SetVanish(true, player);
             }, 10L);
 
-            player.sendMessage(this.plugin.getMessages().getPrefix() +
-                               this.plugin.getMessages().getMessage("vanish", "vanish", player.getName(), null, "Vanish.StillActivated"));
+            player.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                               this._plugin.GetMessages().GetMessage("vanish", "vanish", player.getName(), null, "Vanish.StillActivated"));
 
             Bukkit.getOnlinePlayers()
                   .stream()
-                  .filter(allPlayers -> !this.plugin.getPermissions().hasPermission(allPlayers, "vanish.see", true))
+                  .filter(allPlayers -> !this._plugin.GetPermissions().HasPermission(allPlayers, "vanish.see", true))
                   .forEachOrdered(allPlayers -> allPlayers.hidePlayer(player));
 
             event.setJoinMessage(null);
@@ -125,14 +124,14 @@ public class JoinListener extends CommandUtils implements Listener {
     }
 
     private void HandleJoinMessage(Player player, PlayerJoinEvent event) {
-        if (this.plugin.getMessages().getCfg().getBoolean("Messages.Misc.JoinMessage.Change") &&
-            !this.plugin.getVanish().getVanishList().contains(player.getUniqueId())) {
-            if (!this.plugin.getMessages().getCfg().getBoolean("Messages.Misc.JoinMessage.Send")) {
+        if (this._plugin.GetMessages().GetConfiguration().GetBoolean("Messages.Misc.JoinMessage.Change") &&
+            !this._plugin.GetVanish().GetVanishList().contains(player.getUniqueId())) {
+            if (!this._plugin.GetMessages().GetConfiguration().GetBoolean("Messages.Misc.JoinMessage.Send")) {
                 event.setJoinMessage(null);
                 return;
             }
 
-            event.setJoinMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.getMessages().getCfg().getString("Messages.Misc.JoinMessage.Message"))
+            event.setJoinMessage(ChatColor.TranslateAlternateColorCodes('&', this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.JoinMessage.Message"))
                                           .replace("<PLAYER>", player.getName())
                                           .replace("<PLAYERDISPLAY>", player.getDisplayName())
                                           .replace("<SENDER>", player.getName())
@@ -142,33 +141,33 @@ public class JoinListener extends CommandUtils implements Listener {
 
     private void HandleFirstLogin(Player player, AtomicBoolean messaged) {
         if (player.getLastPlayed() == player.getFirstPlayed() || !player.hasPlayedBefore())
-            if (this.plugin.getConfigReader().getBoolean("spawn.firstLoginTp"))
-                Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+            if (this._plugin.GetConfigReader().GetBoolean("spawn.firstLoginTp"))
+                Bukkit.getScheduler().runTaskLater(this._plugin, () -> {
                     var spawnFile = new File("plugins//ServerSystem", "spawn.yml");
                     if (!spawnFile.exists()) {
                         if (!messaged.get()) {
                             var sender = player.getName();
-                            player.sendMessage(this.plugin.getMessages().getPrefix() +
-                                               this.plugin.getMessages().getMessage("spawn", "spawn", sender, null, "Spawn.NoSpawn"));
+                            player.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                               this._plugin.GetMessages().GetMessage("spawn", "spawn", sender, null, "Spawn.NoSpawn"));
                             messaged.set(true);
                         }
                     } else {
                         var location = this.GetSpawnLocation(player, messaged, spawnFile);
 
-                        Teleport.teleport(player, location);
+                        player.teleport(location);
                     }
                 }, 20 * 3L);
     }
 
     private void HandleLogin(Player player, AtomicBoolean messaged) {
-        if (!this.plugin.getConfigReader().getBoolean("spawn.tp"))
+        if (!this._plugin.GetConfigReader().GetBoolean("spawn.tp"))
             return;
 
         var spawnFile = new File("plugins//ServerSystem", "spawn.yml");
         if (!spawnFile.exists()) {
             if (!messaged.get()) {
                 var sender = player.getName();
-                player.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage("spawn", "spawn", sender, null, "Spawn.NoSpawn"));
+                player.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage("spawn", "spawn", sender, null, "Spawn.NoSpawn"));
                 messaged.set(true);
             }
             return;
@@ -184,7 +183,7 @@ public class JoinListener extends CommandUtils implements Listener {
 
         player.teleport(location);
 
-        Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+        Bukkit.getScheduler().runTaskLater(this._plugin, () -> {
             for (var passenger : passengers)
                 player.addPassenger(passenger);
         }, 10L);
@@ -195,7 +194,7 @@ public class JoinListener extends CommandUtils implements Listener {
         if (Bukkit.getWorld(Objects.requireNonNull(cfg.getString("Spawn.World"))) == null)
             if (!messaged.get()) {
                 var sender = player.getName();
-                player.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage("spawn", "spawn", sender, null, "Spawn.NoSpawn"));
+                player.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage("spawn", "spawn", sender, null, "Spawn.NoSpawn"));
             }
 
         var location = player.getLocation().clone();
@@ -204,53 +203,53 @@ public class JoinListener extends CommandUtils implements Listener {
         return location;
     }
 
-    private void changeName(String name, Player player, boolean colored) {
+    private void ChangeName(String name, Player player, boolean colored) {
         if (!colored)
-            this.changeName(name, player);
+            this.ChangeName(name, player);
         else
             try {
-                name = ChatColor.translateAlternateColorCodes('&', name);
+                name = ChatColor.TranslateAlternateColorCodes('&', name);
                 var getHandle = player.getClass().getMethod("getHandle");
                 var entityPlayer = getHandle.invoke(player);
 
                 var profile = entityPlayer.getClass().getMethod("getProfile").invoke(entityPlayer);
-                var ff = profile.getClass().getDeclaredField("name");
-                ff.setAccessible(true);
-                ff.set(profile, name);
+                var nameFile = profile.getClass().getDeclaredField("name");
+                nameFile.setAccessible(true);
+                nameFile.set(profile, name);
                 player.setCustomName(name);
                 player.setDisplayName(name);
-                for (var p : Bukkit.getOnlinePlayers()) {
-                    p.hidePlayer(player);
-                    p.showPlayer(player);
+                for (var all : Bukkit.getOnlinePlayers()) {
+                    all.hidePlayer(player);
+                    all.showPlayer(player);
                 }
-                if (this.plugin.getVanish().isVanish(player))
-                    this.plugin.getVanish().setVanish(true, player);
+                if (this._plugin.GetVanish().IsVanish(player))
+                    this._plugin.GetVanish().SetVanish(true, player);
             } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException |
-                     NoSuchFieldException e) {
-                e.printStackTrace();
+                     NoSuchFieldException exception) {
+                exception.printStackTrace();
             }
     }
 
-    private void changeName(String name, Player player) {
+    private void ChangeName(String name, Player player) {
         try {
             var getHandle = player.getClass().getMethod("getHandle");
             var entityPlayer = getHandle.invoke(player);
 
             var profile = entityPlayer.getClass().getMethod("getProfile").invoke(entityPlayer);
-            var ff = profile.getClass().getDeclaredField("name");
-            ff.setAccessible(true);
-            ff.set(profile, name);
+            var nameField = profile.getClass().getDeclaredField("name");
+            nameField.setAccessible(true);
+            nameField.set(profile, name);
             player.setCustomName(name);
             player.setDisplayName(name);
-            for (var p : Bukkit.getOnlinePlayers()) {
-                p.hidePlayer(player);
-                p.showPlayer(player);
+            for (var all : Bukkit.getOnlinePlayers()) {
+                all.hidePlayer(player);
+                all.showPlayer(player);
             }
-            if (this.plugin.getVanish().isVanish(player))
-                this.plugin.getVanish().setVanish(true, player);
+            if (this._plugin.GetVanish().IsVanish(player))
+                this._plugin.GetVanish().SetVanish(true, player);
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException |
-                 NoSuchFieldException e) {
-            e.printStackTrace();
+                 NoSuchFieldException exception) {
+            exception.printStackTrace();
         }
     }
 }

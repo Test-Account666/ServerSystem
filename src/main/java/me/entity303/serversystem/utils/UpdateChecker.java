@@ -9,22 +9,22 @@ import java.util.Scanner;
 import java.util.function.Consumer;
 
 public class UpdateChecker {
-    private final ServerSystem plugin;
-    private final String resourceId;
+    private final ServerSystem _plugin;
+    private final String _resourceId;
 
     public UpdateChecker(ServerSystem plugin, String resourceId) {
-        this.plugin = plugin;
-        this.resourceId = resourceId;
+        this._plugin = plugin;
+        this._resourceId = resourceId;
     }
 
-    public void getVersion(final Consumer<String> consumer) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, () -> {
-            try (var inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.resourceId).openStream();
+    public void GetVersion(final Consumer<? super String> consumer) {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(this._plugin, () -> {
+            try (var inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this._resourceId).openStream();
                  var scanner = new Scanner(inputStream)) {
                 if (scanner.hasNext())
                     consumer.accept(scanner.next());
             } catch (IOException exception) {
-                this.plugin.error("Cannot look for updates: " + exception.getMessage());
+                this._plugin.Error("Cannot look for updates: " + exception.getMessage());
             }
         }, 3L * 20L);
     }

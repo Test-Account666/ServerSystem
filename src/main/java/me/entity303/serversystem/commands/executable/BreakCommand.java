@@ -1,6 +1,6 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Material;
@@ -8,7 +8,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class BreakCommand extends CommandUtils implements CommandExecutorOverload {
+public class BreakCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public BreakCommand(ServerSystem plugin) {
         super(plugin);
@@ -17,52 +17,52 @@ public class BreakCommand extends CommandUtils implements CommandExecutorOverloa
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
         if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetOnlyPlayer());
             return true;
         }
 
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "break.use")) {
-            var permission = this.plugin.getPermissions().getPermission("break.use");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "break.use")) {
+            var permission = this._plugin.GetPermissions().GetPermission("break.use");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
 
         var block = player.getTargetBlock(null, 10);
         if (block.getType() == Material.AIR) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Break.NoBlockFound"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Break.NoBlockFound"));
             return true;
         }
 
         if (block.getType() == Material.BEDROCK)
-            if (!this.plugin.getPermissions().hasPermission(commandSender, "break.bedrock")) {
-                var permission = this.plugin.getPermissions().getPermission("break.bedrock");
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "break.bedrock")) {
+                var permission = this._plugin.GetPermissions().GetPermission("break.bedrock");
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return true;
             }
 
         if (block.getType() == Material.BARRIER) {
-            if (!this.plugin.getPermissions().hasPermission(commandSender, "break.barrier")) {
-                var permission = this.plugin.getPermissions().getPermission("break.barrier");
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "break.barrier")) {
+                var permission = this._plugin.GetPermissions().GetPermission("break.barrier");
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return true;
             }
             return true;
         }
 
         if (block.getType() == Material.COMMAND_BLOCK || block.getType() == Material.CHAIN_COMMAND_BLOCK || block.getType() == Material.REPEATING_COMMAND_BLOCK) {
-            if (!this.plugin.getPermissions().hasPermission(commandSender, "break.commandblock")) {
-                var permission = this.plugin.getPermissions().getPermission("break.commandblock");
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "break.commandblock")) {
+                var permission = this._plugin.GetPermissions().GetPermission("break.commandblock");
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return true;
             }
             return true;
         }
 
         if (block.getType() == Material.STRUCTURE_BLOCK) {
-            if (!this.plugin.getPermissions().hasPermission(commandSender, "break.structureblock")) {
-                var permission = this.plugin.getPermissions().getPermission("break.structureblock");
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "break.structureblock")) {
+                var permission = this._plugin.GetPermissions().GetPermission("break.structureblock");
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return true;
             }
             return true;
@@ -70,8 +70,8 @@ public class BreakCommand extends CommandUtils implements CommandExecutorOverloa
 
         block.setType(Material.AIR);
 
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                     .getMessage(commandLabel, command, commandSender, null, "Break.BlockBroke")
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                     .GetMessage(commandLabel, command, commandSender, null, "Break.BlockBroke")
                                                                                      .replace("<X>", String.valueOf(block.getX()))
                                                                                      .replace("<Y>", String.valueOf(block.getY()))
                                                                                      .replace("<Z>", String.valueOf(block.getZ())));

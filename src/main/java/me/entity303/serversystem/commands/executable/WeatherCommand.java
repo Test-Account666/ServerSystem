@@ -1,7 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.tabcompleter.WorldTabCompleter;
 import me.entity303.serversystem.utils.CommandUtils;
@@ -16,13 +16,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class WeatherCommand extends CommandUtils implements CommandExecutorOverload {
+public class WeatherCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public WeatherCommand(ServerSystem plugin) {
         super(plugin);
 
-        this.plugin.getCommandManager().registerCommand("sun", new SunCommand(this.plugin, this), new WorldTabCompleter());
-        this.plugin.getCommandManager().registerCommand("rain", new RainCommand(this.plugin, this), new WorldTabCompleter());
+        this._plugin.GetCommandManager().RegisterCommand("sun", new SunCommand(this._plugin, this), new WorldTabCompleter());
+        this._plugin.GetCommandManager().RegisterCommand("rain", new RainCommand(this._plugin, this), new WorldTabCompleter());
     }
 
     @SuppressWarnings("DuplicatedCode")
@@ -46,45 +46,45 @@ public class WeatherCommand extends CommandUtils implements CommandExecutorOverl
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "weather")) {
-            var permission = this.plugin.getPermissions().getPermission("weather");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "weather")) {
+            var permission = this._plugin.GetPermissions().GetPermission("weather");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
 
         if (arguments.length == 0) {
             commandSender.sendMessage(
-                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Weather"));
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Weather"));
             return true;
         }
 
         if (arguments.length == 1) {
             if (!(commandSender instanceof Player)) {
                 commandSender.sendMessage(
-                        this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Weather"));
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Weather"));
                 return true;
             }
-            this.handleWeatherCommand(commandSender, arguments[0], ((Player) commandSender).getWorld(), command, commandLabel);
+            this.HandleWeatherCommand(commandSender, arguments[0], ((Player) commandSender).getWorld(), command, commandLabel);
             return true;
         }
 
         if (arguments.length == 2) {
             var world = Bukkit.getWorld(arguments[1]);
             if (world == null) {
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                             .getMessage(commandLabel, command, commandSender, null,
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                             .GetMessage(commandLabel, command, commandSender, null,
                                                                                                          "Weather.NoWorld")
                                                                                              .replace("<WORLD>", arguments[1]));
                 return true;
             }
-            this.handleWeatherCommand(commandSender, arguments[0], world, command, commandLabel);
+            this.HandleWeatherCommand(commandSender, arguments[0], world, command, commandLabel);
             return true;
         }
 
         return false;
     }
 
-    private void handleWeatherCommand(CommandSender commandSender, String argument, World world, Command command, String commandLabel) {
+    private void HandleWeatherCommand(CommandSender commandSender, String argument, World world, Command command, String commandLabel) {
         var weatherState = switch (argument.toLowerCase()) {
             case "storm", "sturm", "regen", "rain" -> "storm";
             case "sun", "sonne", "clear", "klar" -> "clear";
@@ -93,7 +93,7 @@ public class WeatherCommand extends CommandUtils implements CommandExecutorOverl
 
         if ("unknown".equals(weatherState)) {
             commandSender.sendMessage(
-                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Weather"));
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Weather"));
             return;
         }
 
@@ -102,8 +102,8 @@ public class WeatherCommand extends CommandUtils implements CommandExecutorOverl
         world.setStorm(isStorm);
 
         var messageKey = isStorm? "Weather.RainStarted" : "Weather.RainStopped";
-        var message = this.plugin.getMessages().getPrefix() +
-                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, messageKey).replace("<WORLD>", world.getName());
+        var message = this._plugin.GetMessages().GetPrefix() +
+                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, messageKey).replace("<WORLD>", world.getName());
         commandSender.sendMessage(message);
     }
 

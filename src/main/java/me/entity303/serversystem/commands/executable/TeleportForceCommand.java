@@ -4,13 +4,13 @@ package me.entity303.serversystem.commands.executable;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
 import me.entity303.serversystem.utils.CommandUtils;
-import me.entity303.serversystem.utils.Teleport;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TeleportForceCommand extends CommandUtils implements CommandExecutorOverload {
+public class TeleportForceCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public TeleportForceCommand(ServerSystem plugin) {
         super(plugin);
@@ -19,61 +19,62 @@ public class TeleportForceCommand extends CommandUtils implements CommandExecuto
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
         if (arguments.length == 0) {
-            if (this.plugin.getPermissions().hasPermission(commandSender, "tpo.self", true) || this.plugin.getPermissions().hasPermission(commandSender, "tpo.others", true)) {
+            if (this._plugin.GetPermissions().HasPermission(commandSender, "tpo.self", true) || this._plugin.GetPermissions().HasPermission(commandSender, "tpo.others", true)) {
                 
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Tpo"));
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Tpo"));
                 return true;
             }
-            this.plugin.log(ChatColor.translateAlternateColorCodes('&', this.plugin.getMessages().getCfg().getString("Messages.Misc.NoPermissionInfo"))
-                                     .replace("<SENDER>", commandSender.getName()));
-            var permission = this.plugin.getPermissions().getPermission("tpo.self") + " || " + this.plugin.getPermissions().getPermission("tpo.others");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+            this._plugin.Info(ChatColor.TranslateAlternateColorCodes('&', this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.NoPermissionInfo"))
+                                      .replace("<SENDER>", commandSender.getName()));
+            var permission = this._plugin.GetPermissions().GetPermission("tpo.self") + " || " + this._plugin.GetPermissions().GetPermission("tpo.others");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
         if (arguments.length == 1) {
             if ((!(commandSender instanceof Player))) {
                 
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Tpo"));
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Tpo"));
                 return true;
             }
-            if (!this.plugin.getPermissions().hasPermission(commandSender, "tpo.self")) {
-                var permission = this.plugin.getPermissions().getPermission("tpo.self");
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "tpo.self")) {
+                var permission = this._plugin.GetPermissions().GetPermission("tpo.self");
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return true;
             }
-            var target = this.getPlayer(commandSender, arguments[0]);
+            var target = this.GetPlayer(commandSender, arguments[0]);
             if (target == null) {
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
                 return true;
             }
 
-            Teleport.teleport((Player) commandSender, target);
+            var location = target.getLocation();
+            ((Player) commandSender).teleport(location);
 
-            
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Tpo.Self"));
+
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Tpo.Self"));
             return true;
         }
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "tpo.others")) {
-            var permission = this.plugin.getPermissions().getPermission("tpo.others");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "tpo.others")) {
+            var permission = this._plugin.GetPermissions().GetPermission("tpo.others");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
-        var target1 = this.getPlayer(commandSender, arguments[0]);
+        var target1 = this.GetPlayer(commandSender, arguments[0]);
         if (target1 == null) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;
         }
-        var target2 = this.getPlayer(commandSender, arguments[1]);
+        var target2 = this.GetPlayer(commandSender, arguments[1]);
         if (target2 == null) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[1]));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[1]));
             return true;
         }
 
-        Teleport.teleport(target1, target2);
+        target1.teleport(target2.getLocation());
 
-        
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                  this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target1, "Tpo.Others").replace("<TARGET2>", target2.getName()));
+
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                  this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target1, "Tpo.Others").replace("<TARGET2>", target2.getName()));
         return true;
     }
 }

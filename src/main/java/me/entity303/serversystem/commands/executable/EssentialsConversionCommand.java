@@ -4,8 +4,8 @@ import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 import com.earth2me.essentials.Warps;
 import com.earth2me.essentials.commands.WarpNotFoundException;
-import me.entity303.serversystem.bansystem.Mute;
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.bansystem.moderation.MuteModeration;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import me.entity303.serversystem.utils.FileUtils;
@@ -23,8 +23,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.UUID;
 
-public class EssentialsConversionCommand extends CommandUtils implements CommandExecutorOverload {
-    private boolean starting = false;
+public class EssentialsConversionCommand extends CommandUtils implements ICommandExecutorOverload {
+    private boolean _starting = false;
 
     public EssentialsConversionCommand(ServerSystem plugin) {
         super(plugin);
@@ -32,22 +32,22 @@ public class EssentialsConversionCommand extends CommandUtils implements Command
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "convertfromessentials")) {
-            var permission = this.plugin.getPermissions().getPermission("convertfromessentials");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "convertfromessentials")) {
+            var permission = this._plugin.GetPermissions().GetPermission("convertfromessentials");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
 
-        if (!this.starting) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "ConvertFromEssentials.WarnNotTested"));
-            this.starting = true;
-            Bukkit.getScheduler().runTaskLater(this.plugin, () -> this.starting = false, 20 * 10);
+        if (!this._starting) {
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "ConvertFromEssentials.WarnNotTested"));
+            this._starting = true;
+            Bukkit.getScheduler().runTaskLater(this._plugin, () -> this._starting = false, 20 * 10);
             return true;
         }
 
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                  this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "ConvertFromEssentials.Start"));
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                  this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "ConvertFromEssentials.Start"));
 
         if (!this.CreateBackup())
             return true;
@@ -55,8 +55,8 @@ public class EssentialsConversionCommand extends CommandUtils implements Command
         var essentialsDirectory = new File("plugins" + File.separator + "Essentials");
 
         if (!essentialsDirectory.exists()) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                         .getMessage(commandLabel, command, commandSender, null,
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                         .GetMessage(commandLabel, command, commandSender, null,
                                                                                                      "ConvertFromEssentials.Failed.NoDirectory"));
             return true;
         }
@@ -75,12 +75,12 @@ public class EssentialsConversionCommand extends CommandUtils implements Command
 
         //TODO: Convert kits
 
-        if (this.plugin.getVaultHookManager() != null)
-            this.plugin.getVaultHookManager().hook(true);
+        if (this._plugin.GetVaultHookManager() != null)
+            this._plugin.GetVaultHookManager().Hook(true);
 
 
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                  this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "ConvertFromEssentials.Finished"));
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                  this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "ConvertFromEssentials.Finished"));
         return true;
     }
 
@@ -91,20 +91,20 @@ public class EssentialsConversionCommand extends CommandUtils implements Command
         var backupDate = dtf.format(now);
 
         try {
-            FileUtils.copyDirectory(serverSystemDirectory,
+            FileUtils.CopyDirectory(serverSystemDirectory,
                                     new File("plugins" + File.separator + "ServerSystem-Backups" + File.separator + "ServerSystem-Backup-" + backupDate));
             return true;
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException exception) {
+            exception.printStackTrace();
 
-            this.plugin.error("Exists: " + serverSystemDirectory.exists());
+            this._plugin.Error("Exists: " + serverSystemDirectory.exists());
 
-            this.plugin.error("Read: " + serverSystemDirectory.canRead());
-            this.plugin.error("Write: " + serverSystemDirectory.canWrite());
-            this.plugin.error("Execute: " + serverSystemDirectory.canExecute());
+            this._plugin.Error("Read: " + serverSystemDirectory.canRead());
+            this._plugin.Error("Write: " + serverSystemDirectory.canWrite());
+            this._plugin.Error("Execute: " + serverSystemDirectory.canExecute());
 
-            this.plugin.error("Directory: " + serverSystemDirectory.isDirectory());
-            this.plugin.error("File: " + serverSystemDirectory.isFile());
+            this._plugin.Error("Directory: " + serverSystemDirectory.isDirectory());
+            this._plugin.Error("File: " + serverSystemDirectory.isFile());
         }
 
         return false;
@@ -119,38 +119,38 @@ public class EssentialsConversionCommand extends CommandUtils implements Command
                 var offlineUser = essentials.getUser(UUID.fromString(userData.getName().split("\\.")[0]));
 
                 if (offlineUser == null) {
-                    this.plugin.error("User '" + userData.getName().split("\\.")[0] + "' is null?!");
+                    this._plugin.Error("User '" + userData.getName().split("\\.")[0] + "' is null?!");
                     continue;
                 }
 
                 this.ConvertMute(offlineUser, commandSender, command, commandLabel);
 
-                this.plugin.getEconomyManager().setMoney(offlineUser.getBase(), offlineUser.getMoney().doubleValue());
+                this._plugin.GetEconomyManager().SetMoney(offlineUser.getBase(), offlineUser.getMoney().doubleValue());
 
                 this.ConvertHomes(offlineUser, commandSender, command, commandLabel, userData);
 
-                this.plugin.getVanish().setVanish(offlineUser.isVanished(), offlineUser.getConfigUUID());
+                this._plugin.GetVanish().SetVanish(offlineUser.isVanished(), offlineUser.getConfigUUID());
 
-                this.plugin.getWantsTeleport().setWantsTeleport(Bukkit.getOfflinePlayer(offlineUser.getUUID()), offlineUser.isTeleportEnabled());
-            } catch (Exception e) {
-                this.plugin.error("Failed to process userdata '" + userData.getName() + "'!");
+                this._plugin.GetWantsTeleport().SetWantsTeleport(Bukkit.getOfflinePlayer(offlineUser.getUUID()), offlineUser.isTeleportEnabled());
+            } catch (Exception exception) {
+                this._plugin.Error("Failed to process userdata '" + userData.getName() + "'!");
             }
     }
 
     private void ConvertWarps(Warps warps, CommandSender commandSender, Command command, String commandLabel) {
         for (var warp : warps.getList())
             try {
-                this.plugin.getWarpManager().addWarp(warp, warps.getWarp(warp));
-            } catch (WarpNotFoundException | InvalidWorldException e) {
-                if (e instanceof WarpNotFoundException) {
-                    this.plugin.warn("Warp '" + warp + "' does not exist?!");
+                this._plugin.GetWarpManager().AddWarp(warp, warps.getWarp(warp));
+            } catch (WarpNotFoundException | InvalidWorldException exception) {
+                if (exception instanceof WarpNotFoundException) {
+                    this._plugin.Warn("Warp '" + warp + "' does not exist?!");
                     continue;
                 }
 
-                e.printStackTrace();
+                exception.printStackTrace();
 
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                             .getMessageWithStringTarget(commandLabel, command, commandSender,
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                             .GetMessageWithStringTarget(commandLabel, command, commandSender,
                                                                                                                          "warpSetting;" + warp,
                                                                                                                          "ConvertFromEssentials.Failed.Unknown"));
                 return;
@@ -162,20 +162,20 @@ public class EssentialsConversionCommand extends CommandUtils implements Command
             return;
 
         var target = offlineUser.getName();
-        var reason = this.plugin.getMessages().getMessageWithStringTarget(commandLabel, command, commandSender, target, "Mute.DefaultReason");
+        var reason = this._plugin.GetMessages().GetMessageWithStringTarget(commandLabel, command, commandSender, target, "Mute.DefaultReason");
 
         if (offlineUser.hasMuteReason())
             reason = offlineUser.getMuteReason();
 
         var unMute = offlineUser.getMuteTimeout();
 
-        var date = this.plugin.getMuteManager().convertLongToDate(unMute);
+        var date = this._plugin.GetMuteManager().ConvertLongToDate(unMute);
 
         var mute =
-                new Mute(offlineUser.getUUID().toString(), this.plugin.getMessages().getCfg().getString("Messages.Misc.BanSystem." + "ConsoleName"), unMute, date,
-                         reason);
+                new MuteModeration(UUID.fromString(offlineUser.getUUID().toString()),
+                                   this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.BanSystem." + "ConsoleName"), unMute, date, reason, false);
 
-        this.plugin.getMuteManager().addMute(mute);
+        this._plugin.GetMuteManager().CreateMute(mute);
     }
 
     private void ConvertHomes(User offlineUser, CommandSender commandSender, Command command, String commandLabel, File userData) {
@@ -188,12 +188,12 @@ public class EssentialsConversionCommand extends CommandUtils implements Command
             try {
                 setHomes = true;
                 homeCfg.set("Homes." + home.toUpperCase(), offlineUser.getHome(home));
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception exception) {
+                exception.printStackTrace();
 
                 var target = "homeSetting;" + offlineUser.getName();
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                             .getMessageWithStringTarget(commandLabel, command, commandSender,
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                             .GetMessageWithStringTarget(commandLabel, command, commandSender,
                                                                                                                          target,
                                                                                                                          "ConvertFromEssentials.Failed.Unknown") +
                                           ";" + home);
@@ -205,11 +205,11 @@ public class EssentialsConversionCommand extends CommandUtils implements Command
 
         try {
             homeCfg.save(homeFile);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException exception) {
+            exception.printStackTrace();
 
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                         .getMessageWithStringTarget(commandLabel, command, commandSender,
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                         .GetMessageWithStringTarget(commandLabel, command, commandSender,
                                                                                                                      "homeSaving;" + userData.getName(),
                                                                                                                      "ConvertFromEssentials.Failed.Unknown"));
         }

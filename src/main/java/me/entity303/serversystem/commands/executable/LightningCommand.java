@@ -1,6 +1,6 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Objects;
 
-public class LightningCommand extends CommandUtils implements CommandExecutorOverload {
+public class LightningCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public LightningCommand(ServerSystem plugin) {
         super(plugin);
@@ -17,14 +17,14 @@ public class LightningCommand extends CommandUtils implements CommandExecutorOve
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "lightning")) {
-            var permission = this.plugin.getPermissions().getPermission("lightning");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "lightning")) {
+            var permission = this._plugin.GetPermissions().GetPermission("lightning");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
 
         if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage(this.plugin.getMessages().getOnlyPlayer());
+            commandSender.sendMessage(this._plugin.GetMessages().GetOnlyPlayer());
             return true;
         }
 

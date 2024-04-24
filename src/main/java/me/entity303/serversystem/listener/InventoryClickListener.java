@@ -21,81 +21,81 @@ public class InventoryClickListener extends CommandUtils implements Listener {
     }
 
     @EventHandler
-    public void onInvClose(InventoryCloseEvent e) {
-        this.plugin.getEnderchest().remove(e.getPlayer());
-        if (RecipeCommand.getRecipeList().contains(e.getPlayer())) {
+    public void OnInventoryClose(InventoryCloseEvent event) {
+        this._plugin.GetEnderchest().remove(event.getPlayer());
+        if (RecipeCommand.GetRecipeList().contains(event.getPlayer())) {
             var contents = new ItemStack[10];
-            for (var i = 0; i < 10; i++)
-                contents[i] = null;
-            if (e.getInventory() instanceof CraftingInventory)
-                e.getInventory().setContents(contents);
+            for (var index = 0; index < 10; index++)
+                contents[index] = null;
+            if (event.getInventory() instanceof CraftingInventory)
+                event.getInventory().setContents(contents);
         }
-        RecipeCommand.getRecipeList().remove(e.getPlayer());
+        RecipeCommand.GetRecipeList().remove(event.getPlayer());
     }
 
 
     @EventHandler
-    public void onClick(InventoryClickEvent e) {
-        if (e.getClickedInventory() == null)
+    public void OnInventoryClick(InventoryClickEvent event) {
+        if (event.getClickedInventory() == null)
             return;
 
-        if (e.getView().getTopInventory() instanceof PlayerInventory)
-            if (e.getView().getTopInventory().getSize() == 45) {
-                var action = e.getAction();
+        if (event.getView().getTopInventory() instanceof PlayerInventory)
+            if (event.getView().getTopInventory().getSize() == 45) {
+                var action = event.getAction();
                 if (action.name().equalsIgnoreCase("CLONE_STACK")) {
-                    if (e.getSlot() > 40)
-                        e.setCancelled(true);
-                    if (e.getCursor().getType() == Material.DROPPER)
-                        e.setCancelled(true);
+                    if (event.getSlot() > 40)
+                        event.setCancelled(true);
+                    if (event.getCursor().getType() == Material.DROPPER)
+                        event.setCancelled(true);
                     return;
                 } else if (action.name().equalsIgnoreCase("HOTBAR_MOVE_AND_READD") || action.name().equalsIgnoreCase("HOTBAR_SWAP") ||
                            action.name().equalsIgnoreCase("MOVE_TO_OTHER_INVENTORY")) {
-                    if (e.getSlot() > 40)
-                        e.setCancelled(true);
+                    if (event.getSlot() > 40)
+                        event.setCancelled(true);
 
-                    if (e.getCursor().getType() == Material.DROPPER)
-                        e.setCancelled(true);
+                    if (event.getCursor().getType() == Material.DROPPER)
+                        event.setCancelled(true);
                     return;
                 } else if (action.name().equalsIgnoreCase("COLLECT_TO_CURSOR")) {
-                    if (e.getCursor().getType() == Material.DROPPER)
-                        e.setCancelled(true);
+                    if (event.getCursor().getType() == Material.DROPPER)
+                        event.setCancelled(true);
                     return;
                 }
                 return;
             }
 
-        if (RecipeCommand.getRecipeList().contains(e.getWhoClicked())) {
-            if (e.getClickedInventory() instanceof PlayerInventory)
+        if (RecipeCommand.GetRecipeList().contains(event.getWhoClicked())) {
+            if (event.getClickedInventory() instanceof PlayerInventory)
                 return;
-            e.setCancelled(true);
+            event.setCancelled(true);
             return;
         }
 
-        if (this.plugin.getEnderchest().containsKey(e.getWhoClicked())) {
-            var owner = this.plugin.getEnderchest().get(e.getWhoClicked());
-            if (owner == e.getWhoClicked())
+        if (this._plugin.GetEnderchest().containsKey(event.getWhoClicked())) {
+            var owner = this._plugin.GetEnderchest().get(event.getWhoClicked());
+            if (owner == event.getWhoClicked())
                 return;
-            if (!this.plugin.getPermissions().hasPermission(owner, "enderchest.exempt", true))
+            if (!this._plugin.GetPermissions().HasPermission(owner, "enderchest.exempt", true))
                 return;
-            e.setCancelled(true);
+            event.setCancelled(true);
             return;
         }
 
-        if (e.getClickedInventory().getHolder() == null)
+        if (event.getClickedInventory().getHolder() == null)
             return;
-        if (e.getClickedInventory().getHolder() == e.getWhoClicked())
+        if (event.getClickedInventory().getHolder() == event.getWhoClicked())
             return;
-        var holder = e.getInventory().getHolder();
+        var holder = event.getInventory().getHolder();
         if (!(holder instanceof HumanEntity targetEntity))
             return;
-        if (e.getInventory().getType() == InventoryType.ENDER_CHEST) {
-            if (!this.plugin.getPermissions().hasPermission(targetEntity, "enderchest.exempt", true))
+        if (event.getInventory().getType() == InventoryType.ENDER_CHEST) {
+            if (!this._plugin.GetPermissions().HasPermission(targetEntity, "enderchest.exempt", true))
                 return;
-            e.setCancelled(true);
+            event.setCancelled(true);
             return;
         }
-        if (!this.plugin.getPermissions().hasPermission(targetEntity, "invsee.exempt", true))
+        if (!this._plugin.GetPermissions().HasPermission(targetEntity, "invsee.exempt", true))
             return;
-        e.setCancelled(true);
+        event.setCancelled(true);
     }
 }

@@ -15,28 +15,28 @@ public class FlightHitListener extends CommandUtils implements Listener {
     }
 
     @EventHandler
-    public void onFlightHit(EntityDamageEvent e) {
-        if (!this.plugin.isDisableFlightOnHit() && !this.plugin.isStopFlightOnHit()) {
+    public void OnFlightHit(EntityDamageEvent event) {
+        if (!this._plugin.IsDisableFlightOnHit() && !this._plugin.IsStopFlightOnHit()) {
             HandlerList.unregisterAll(this);
             return;
         }
 
-        if (!(e.getEntity() instanceof Player player))
+        if (!(event.getEntity() instanceof Player player))
             return;
 
-        if (this.plugin.getPermissions().hasPermission(e.getEntity(), "fly.bypassdamage", true))
+        if (this._plugin.GetPermissions().HasPermission(event.getEntity(), "fly.bypassdamage", true))
             return;
 
-        if (e.getCause() == EntityDamageEvent.DamageCause.STARVATION)
+        if (event.getCause() == EntityDamageEvent.DamageCause.STARVATION)
             return;
 
         if (player.isFlying() || player.getAllowFlight()) {
-            if (this.plugin.isStopFlightOnHit()) {
-                e.getEntity().setFallDistance(0);
+            if (this._plugin.IsStopFlightOnHit()) {
+                event.getEntity().setFallDistance(0);
                 player.setFlying(false);
-                e.getEntity().setFallDistance(0);
+                event.getEntity().setFallDistance(0);
             }
-            if (this.plugin.isDisableFlightOnHit())
+            if (this._plugin.IsDisableFlightOnHit())
                 player.setAllowFlight(false);
         }
     }

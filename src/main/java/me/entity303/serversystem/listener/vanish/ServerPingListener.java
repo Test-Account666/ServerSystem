@@ -13,19 +13,19 @@ public class ServerPingListener extends CommandUtils implements Listener {
     }
 
     @EventHandler
-    public void onPing(ServerListPingEvent e) {
-        if (e == null)
+    public void OnPing(ServerListPingEvent event) {
+        if (event == null)
             return;
-        if (!(e instanceof Iterable))
+        if (!(event instanceof Iterable))
             return;
         try {
-            e.iterator();
-            if (!e.iterator().hasNext())
+            event.iterator();
+            if (!event.iterator().hasNext())
                 return;
-            for (var it = e.iterator(); it.hasNext(); ) {
-                var player = it.next();
-                if (this.plugin.getVanish().isVanish(player))
-                    it.remove();
+            for (var playerIterator = event.iterator(); playerIterator.hasNext(); ) {
+                var player = playerIterator.next();
+                if (this._plugin.GetVanish().IsVanish(player))
+                    playerIterator.remove();
             }
         } catch (UnsupportedOperationException ignored) {
         }

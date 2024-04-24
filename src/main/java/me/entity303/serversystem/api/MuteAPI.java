@@ -1,6 +1,6 @@
 package me.entity303.serversystem.api;
 
-import me.entity303.serversystem.bansystem.Mute;
+import me.entity303.serversystem.bansystem.moderation.MuteModeration;
 import me.entity303.serversystem.bansystem.MuteManager_Disabled;
 import me.entity303.serversystem.bansystem.TimeUnit;
 import me.entity303.serversystem.main.ServerSystem;
@@ -9,11 +9,11 @@ import org.bukkit.OfflinePlayer;
 import java.util.List;
 import java.util.UUID;
 
-public class MuteAPI {
-    private final ServerSystem plugin;
+@SuppressWarnings("NewMethodNamingConvention") public class MuteAPI {
+    private final ServerSystem _plugin;
 
     public MuteAPI(ServerSystem plugin) {
-        this.plugin = plugin;
+        this._plugin = plugin;
     }
 
     /**
@@ -21,15 +21,15 @@ public class MuteAPI {
 
      @return = Gives you the Mute object of the muted player
      */
-    public Mute getMute(OfflinePlayer player) {
-        return this.plugin.getMuteManager().getMute(player);
+    public MuteModeration getMute(OfflinePlayer player) {
+        return this._plugin.GetMuteManager().GetMute(player);
     }
 
     /**
      @param player = The muted player
      */
     public void deleteMute(OfflinePlayer player) {
-        this.plugin.getMuteManager().removeMute(player.getUniqueId());
+        this._plugin.GetMuteManager().RemoveMute(player.getUniqueId());
     }
 
     /**
@@ -41,8 +41,8 @@ public class MuteAPI {
 
      @return = Returns the Mute Object
      */
-    public Mute createMute(UUID mutedUUID, String senderUUID, String reason, Long howLong, TimeUnit timeUnit) {
-        return this.plugin.getMuteManager().addMute(mutedUUID, senderUUID, reason, howLong, timeUnit);
+    public MuteModeration createMute(UUID mutedUUID, String senderUUID, String reason, Long howLong, TimeUnit timeUnit) {
+        return this._plugin.GetMuteManager().CreateMute(mutedUUID, senderUUID, reason, howLong, timeUnit);
     }
 
     /**
@@ -51,17 +51,17 @@ public class MuteAPI {
      @return = Gives out if the player is muted
      */
     public boolean isMuted(OfflinePlayer player) {
-        return this.plugin.getMuteManager().isMuted(player);
+        return this._plugin.GetMuteManager().IsMuted(player);
     }
 
     /**
      @return = Gives you a list with all muted player names
      */
     public List<String> getMutedPlayerNames() {
-        return this.plugin.getMuteManager().getMutedPlayerNames();
+        return this._plugin.GetMuteManager().GetMutedPlayerNames();
     }
 
     public boolean isMuteEnabled() {
-        return !(this.plugin.getMuteManager() instanceof MuteManager_Disabled);
+        return !(this._plugin.GetMuteManager() instanceof MuteManager_Disabled);
     }
 }

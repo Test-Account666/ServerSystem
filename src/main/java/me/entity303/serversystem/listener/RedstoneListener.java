@@ -13,8 +13,8 @@ public class RedstoneListener extends CommandUtils implements Listener {
     }
 
     @EventHandler
-    public void onRedstone(BlockRedstoneEvent e) {
-        e.setNewCurrent(0);
+    public void OnRedstone(BlockRedstoneEvent event) {
+        event.setNewCurrent(0);
     }
 
 }

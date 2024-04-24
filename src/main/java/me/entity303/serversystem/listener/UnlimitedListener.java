@@ -27,31 +27,31 @@ import org.bukkit.inventory.PlayerInventory;
 
 import java.util.HashSet;
 
-import static me.entity303.serversystem.commands.executable.UnlimitedCommand.isUnlimited;
+import static me.entity303.serversystem.commands.executable.UnlimitedCommand.IsUnlimited;
 
 public class UnlimitedListener implements Listener {
-    private final HashSet<HumanEntity> openInventory = new HashSet<>();
+    private final HashSet<HumanEntity> _openInventory = new HashSet<>();
 
     @EventHandler
-    public void onOpen(InventoryOpenEvent e) {
-        this.openInventory.add(e.getPlayer());
+    public void OnOpen(InventoryOpenEvent event) {
+        this._openInventory.add(event.getPlayer());
     }
 
     @EventHandler
-    public void onClose(InventoryCloseEvent e) {
-        this.openInventory.remove(e.getPlayer());
+    public void OnClose(InventoryCloseEvent event) {
+        this._openInventory.remove(event.getPlayer());
     }
 
     @EventHandler
-    public void onInvClick(InventoryClickEvent e) {
-        if (e.getClickedInventory() instanceof PlayerInventory playerInventory)
-            if (playerInventory.getHolder() == e.getWhoClicked())
-                this.openInventory.add(e.getWhoClicked());
+    public void OnInvClick(InventoryClickEvent event) {
+        if (event.getClickedInventory() instanceof PlayerInventory playerInventory)
+            if (playerInventory.getHolder() == event.getWhoClicked())
+                this._openInventory.add(event.getWhoClicked());
     }
 
     @EventHandler
-    public void onProjectileLaunch(ProjectileLaunchEvent e) {
-        if (e.getEntity().getShooter() instanceof Player player) {
+    public void OnProjectileLaunch(ProjectileLaunchEvent event) {
+        if (event.getEntity().getShooter() instanceof Player player) {
 
             if (player.getGameMode() == GameMode.CREATIVE)
                 return;
@@ -70,7 +70,7 @@ public class UnlimitedListener implements Listener {
 
             var itemStack = player.getInventory().getItemInMainHand();
 
-            if (isUnlimited(itemStack)) {
+            if (IsUnlimited(itemStack)) {
                 itemStack.setAmount(itemStack.getAmount() + 1);
                 player.updateInventory();
             }
@@ -78,140 +78,140 @@ public class UnlimitedListener implements Listener {
     }
 
     @EventHandler
-    public void onConsume(PlayerItemConsumeEvent e) {
-        if (e.getPlayer().getGameMode() == GameMode.CREATIVE)
+    public void OnConsume(PlayerItemConsumeEvent event) {
+        if (event.getPlayer().getGameMode() == GameMode.CREATIVE)
             return;
 
-        if (isUnlimited(e.getItem())) {
-            var itemStack = e.getPlayer().getInventory().getItemInMainHand();
+        if (IsUnlimited(event.getItem())) {
+            var itemStack = event.getPlayer().getInventory().getItemInMainHand();
             itemStack.setAmount(itemStack.getAmount() + 1);
-            e.getPlayer().updateInventory();
+            event.getPlayer().updateInventory();
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onBucketPlace(PlayerInteractEvent e) {
-        if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
+    public void OnBucketPlace(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
             return;
 
-        if (e.getPlayer().getGameMode() == GameMode.CREATIVE)
+        if (event.getPlayer().getGameMode() == GameMode.CREATIVE)
             return;
 
-        if (e.getItem() == null)
+        if (event.getItem() == null)
             return;
 
-        if (e.getItem().getType() == Material.AIR)
+        if (event.getItem().getType() == Material.AIR)
             return;
 
-        if (e.getItem().getType() == Material.BUCKET) {
-            if (!isUnlimited(e.getItem()))
+        if (event.getItem().getType() == Material.BUCKET) {
+            if (!IsUnlimited(event.getItem()))
                 return;
 
-            if (e.isCancelled())
+            if (event.isCancelled())
                 return;
 
-            var slot = e.getPlayer().getInventory().getHeldItemSlot();
-            var itemStack = e.getItem().clone();
-            for (var i = 0; i < 20; i++)
+            var slot = event.getPlayer().getInventory().getHeldItemSlot();
+            var itemStack = event.getItem().clone();
+            for (var index = 0; index < 20; index++)
                 Bukkit.getScheduler()
-                      .runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> e.getPlayer().getInventory().setItem(slot, itemStack), 1L + i);
+                      .runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> event.getPlayer().getInventory().setItem(slot, itemStack), 1L + index);
             return;
         }
 
-        if (e.getItem().getType() != Material.LAVA_BUCKET && e.getItem().getType() != Material.WATER_BUCKET)
+        if (event.getItem().getType() != Material.LAVA_BUCKET && event.getItem().getType() != Material.WATER_BUCKET)
             return;
 
-        if (!isUnlimited(e.getItem()))
+        if (!IsUnlimited(event.getItem()))
             return;
 
-        if (e.isCancelled())
+        if (event.isCancelled())
             return;
 
-        var itemStack = e.getItem().clone();
-        var slot = e.getPlayer().getInventory().getHeldItemSlot();
+        var itemStack = event.getItem().clone();
+        var slot = event.getPlayer().getInventory().getHeldItemSlot();
 
-        Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> e.getPlayer().getInventory().setItem(slot, itemStack), 1L);
-        Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> e.getPlayer().getInventory().setItem(slot, itemStack), 2L);
-        Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> e.getPlayer().getInventory().setItem(slot, itemStack), 3L);
+        Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> event.getPlayer().getInventory().setItem(slot, itemStack), 1L);
+        Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> event.getPlayer().getInventory().setItem(slot, itemStack), 2L);
+        Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> event.getPlayer().getInventory().setItem(slot, itemStack), 3L);
     }
 
     @EventHandler
-    public void onDrop(PlayerDropItemEvent e) {
-        if (!isUnlimited(e.getItemDrop().getItemStack()))
+    public void OnDrop(PlayerDropItemEvent event) {
+        if (!IsUnlimited(event.getItemDrop().getItemStack()))
             return;
 
-        if (this.openInventory.contains(e.getPlayer())) {
-            if (e.getPlayer().getGameMode() == GameMode.CREATIVE) {
-                var itemStack = e.getItemDrop().getItemStack().clone();
+        if (this._openInventory.contains(event.getPlayer())) {
+            if (event.getPlayer().getGameMode() == GameMode.CREATIVE) {
+                var itemStack = event.getItemDrop().getItemStack().clone();
                 itemStack.setAmount(itemStack.getMaxStackSize());
-                e.getPlayer().setItemOnCursor(itemStack);
+                event.getPlayer().setItemOnCursor(itemStack);
 
-                Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> e.getPlayer().updateInventory(), 1L);
-                Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> e.getPlayer().updateInventory(), 2L);
-                Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> e.getPlayer().updateInventory(), 3L);
+                Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> event.getPlayer().updateInventory(), 1L);
+                Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> event.getPlayer().updateInventory(), 2L);
+                Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> event.getPlayer().updateInventory(), 3L);
                 return;
             }
 
-            if (e.getPlayer().getOpenInventory().getCursor() == null || e.getPlayer().getOpenInventory().getCursor().getType() == Material.AIR) {
-                var itemStack = e.getItemDrop().getItemStack();
+            if (event.getPlayer().getOpenInventory().getCursor() == null || event.getPlayer().getOpenInventory().getCursor().getType() == Material.AIR) {
+                var itemStack = event.getItemDrop().getItemStack();
                 if (itemStack.getAmount() > itemStack.getType().getMaxStackSize())
                     itemStack.setAmount(itemStack.getMaxStackSize());
 
-                e.getPlayer().getOpenInventory().setCursor(itemStack);
+                event.getPlayer().getOpenInventory().setCursor(itemStack);
 
-                Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> e.getPlayer().updateInventory(), 5L);
+                Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> event.getPlayer().updateInventory(), 5L);
                 return;
             }
 
-            var itemStack = e.getPlayer().getOpenInventory().getCursor();
+            var itemStack = event.getPlayer().getOpenInventory().getCursor();
             itemStack.setAmount(itemStack.getAmount() + 1);
-            Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> e.getPlayer().updateInventory(), 5L);
+            Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> event.getPlayer().updateInventory(), 5L);
             return;
         }
 
-        if (e.getPlayer().getInventory().getItemInMainHand() == null || e.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR ||
-            e.getPlayer().getInventory().getItemInMainHand().getAmount() <= 0) {
-            e.getPlayer().getInventory().setItemInHand(e.getItemDrop().getItemStack());
-            e.getPlayer().updateInventory();
+        if (event.getPlayer().getInventory().getItemInMainHand() == null || event.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR ||
+            event.getPlayer().getInventory().getItemInMainHand().getAmount() <= 0) {
+            event.getPlayer().getInventory().setItemInHand(event.getItemDrop().getItemStack());
+            event.getPlayer().updateInventory();
             return;
         }
 
-        e.getPlayer()
+        event.getPlayer()
          .getInventory()
          .getItemInMainHand()
-         .setAmount(e.getPlayer().getInventory().getItemInMainHand().getAmount() + e.getItemDrop().getItemStack().getAmount());
-        e.getPlayer().updateInventory();
+         .setAmount(event.getPlayer().getInventory().getItemInMainHand().getAmount() + event.getItemDrop().getItemStack().getAmount());
+        event.getPlayer().updateInventory();
     }
 
     @EventHandler
-    public void onDispense(BlockDispenseEvent e) {
-        if (isUnlimited(e.getItem())) {
-            var inventory = ((InventoryHolder) e.getBlock().getState()).getInventory();
-            Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> inventory.addItem(e.getItem()), 1L);
+    public void OnDispense(BlockDispenseEvent event) {
+        if (IsUnlimited(event.getItem())) {
+            var inventory = ((InventoryHolder) event.getBlock().getState()).getInventory();
+            Bukkit.getScheduler().runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> inventory.addItem(event.getItem()), 1L);
         }
     }
 
     @EventHandler
-    public void onItemDamage(PlayerItemDamageEvent e) {
-        if (isUnlimited(e.getItem()))
-            e.setCancelled(true);
+    public void OnItemDamage(PlayerItemDamageEvent event) {
+        if (IsUnlimited(event.getItem()))
+            event.setCancelled(true);
     }
 
     @EventHandler
-    public void onBlockPlace(BlockPlaceEvent e) {
-        if (e.getPlayer().getGameMode() == GameMode.SURVIVAL || e.getPlayer().getGameMode() == GameMode.ADVENTURE)
-            if (isUnlimited(e.getItemInHand())) {
-                e.getItemInHand().setAmount(e.getItemInHand().getAmount() + 1);
+    public void OnBlockPlace(BlockPlaceEvent event) {
+        if (event.getPlayer().getGameMode() == GameMode.SURVIVAL || event.getPlayer().getGameMode() == GameMode.ADVENTURE)
+            if (IsUnlimited(event.getItemInHand())) {
+                event.getItemInHand().setAmount(event.getItemInHand().getAmount() + 1);
                 Bukkit.getScheduler()
-                      .runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> e.getItemInHand().setAmount(e.getItemInHand().getAmount() - 1), 1L);
-                e.getPlayer().updateInventory();
+                      .runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> event.getItemInHand().setAmount(event.getItemInHand().getAmount() - 1), 1L);
+                event.getPlayer().updateInventory();
             }
     }
 
     @EventHandler
-    public void onEntitySpawn(EntitySpawnEvent e) {
-        if (e.getEntity() instanceof Item item)
-            if (isUnlimited(item.getItemStack()))
-                ServerSystem.getPlugin(ServerSystem.class).getVersionStuff().getNbtViewer().removeTag("unlimited", item.getItemStack());
+    public void OnEntitySpawn(EntitySpawnEvent event) {
+        if (event.getEntity() instanceof Item item)
+            if (IsUnlimited(item.getItemStack()))
+                ServerSystem.getPlugin(ServerSystem.class).GetVersionStuff().GetNbtViewer().RemoveTag("unlimited", item.getItemStack());
     }
 }

@@ -14,43 +14,43 @@ import java.util.*;
 
 import static java.util.stream.Collectors.toMap;
 
-public class EconomyManager extends ManagerEconomy {
-    private final File file;
-    private final FileConfiguration cfg;
-    private final String currencySingular;
-    private final String currencyPlural;
-    private final String startingMoney;
-    private final String displayFormat;
-    private final String moneyFormat;
-    private final String separator;
-    private final String thousand;
+public class EconomyManager extends AbstractEconomyManager {
+    private final File _file;
+    private final FileConfiguration _configuration;
+    private final String _currencySingular;
+    private final String _currencyPlural;
+    private final String _startingMoney;
+    private final String _displayFormat;
+    private final String _moneyFormat;
+    private final String _separator;
+    private final String _thousand;
 
     public EconomyManager(String currencySingular, String currencyPlural, String startingMoney, String displayFormat, String moneyFormat, String separator,
-                          String thousand, ServerSystem plugin) {
-        super(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousand, plugin);
+                          String thousands, ServerSystem plugin) {
+        super(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, plugin);
 
-        this.file = new File("plugins//ServerSystem", "economy.yml");
-        this.cfg = YamlConfiguration.loadConfiguration(this.file);
-        this.currencySingular = currencySingular;
-        this.currencyPlural = currencyPlural;
-        this.startingMoney = startingMoney;
-        this.displayFormat = displayFormat;
-        this.moneyFormat = moneyFormat;
-        this.separator = separator;
-        this.thousand = thousand;
+        this._file = new File("plugins//ServerSystem", "economy.yml");
+        this._configuration = YamlConfiguration.loadConfiguration(this._file);
+        this._currencySingular = currencySingular;
+        this._currencyPlural = currencyPlural;
+        this._startingMoney = startingMoney;
+        this._displayFormat = displayFormat;
+        this._moneyFormat = moneyFormat;
+        this._separator = separator;
+        this._thousand = thousands;
     }
 
-    public String getThousand() {
-        return this.thousand;
+    public String GetThousand() {
+        return this._thousand;
     }
 
     @Override
-    public String format(double money) {
+    public String Format(double money) {
         var moneyStr = String.format(Locale.US, "%1$,.2f", money);
 
         moneyStr = moneyStr.replace(",", "<THOUSAND>");
 
-        var formattedMoney = this.getFormattedMoney(moneyStr);
+        var formattedMoney = this.GetFormattedMoney(moneyStr);
 
         var plural = false;
 
@@ -65,10 +65,10 @@ public class EconomyManager extends ManagerEconomy {
         if (money > 1)
             plural = true;
 
-        return this.displayFormat.replace("<MONEY>", formattedMoney).replace("<CURRENCY>", plural? this.currencyPlural : this.currencySingular);
+        return this._displayFormat.replace("<MONEY>", formattedMoney).replace("<CURRENCY>", plural? this._currencyPlural : this._currencySingular);
     }
 
-    private String getFormattedMoney(String moneyStr) {
+    private String GetFormattedMoney(String moneyStr) {
         var moneyString = moneyStr.split("\\.")[0] + "." + moneyStr.split("\\.")[1];
         String formattedMoney;
         var first = "0";
@@ -82,258 +82,258 @@ public class EconomyManager extends ManagerEconomy {
 
         if (last.length() == 1)
             last = last + "0";
-        formattedMoney = this.moneyFormat.replace("<FIRST>", first)
-                                         .replace("<LAST>", last)
-                                         .replace("<SEPARATOR>", this.separator)
-                                         .replace("<THOUSAND>", this.getThousands());
+        formattedMoney = this._moneyFormat.replace("<FIRST>", first)
+                                          .replace("<LAST>", last)
+                                          .replace("<SEPARATOR>", this._separator)
+                                          .replace("<THOUSAND>", this.GetThousands());
         return formattedMoney;
     }
 
     @Override
-    public boolean hasEnoughMoney(Player player, double amount) {
-        return this.getMoneyAsNumber((OfflinePlayer) player) >= amount;
+    public boolean HasEnoughMoney(Player player, double amount) {
+        return this.GetMoneyAsNumber((OfflinePlayer) player) >= amount;
     }
 
     @Override
-    public void makeTransaction(Player sender, Player target, double amount) {
-        this.removeMoney((OfflinePlayer) sender, amount);
-        this.addMoney((OfflinePlayer) target, amount);
+    public void MakeTransaction(Player sender, Player target, double amount) {
+        this.RemoveMoney((OfflinePlayer) sender, amount);
+        this.AddMoney((OfflinePlayer) target, amount);
     }
 
     @Override
-    public void setMoney(Player player, double amount) {
-        this.save(player, String.valueOf(amount));
+    public void SetMoney(Player player, double amount) {
+        this.Save(player, String.valueOf(amount));
     }
 
     @Override
-    public void removeMoney(Player player, double amount) {
-        this.save(player, String.valueOf(this.getMoneyAsNumber((OfflinePlayer) player) - amount));
+    public void RemoveMoney(Player player, double amount) {
+        this.Save(player, String.valueOf(this.GetMoneyAsNumber((OfflinePlayer) player) - amount));
     }
 
     @Override
-    public void addMoney(Player player, double amount) {
-        this.save(player, String.valueOf(this.getMoneyAsNumber((OfflinePlayer) player) + amount));
+    public void AddMoney(Player player, double amount) {
+        this.Save(player, String.valueOf(this.GetMoneyAsNumber((OfflinePlayer) player) + amount));
     }
 
     @Override
-    public void createAccount(Player player) {
-        this.save(player, this.startingMoney);
+    public void CreateAccount(Player player) {
+        this.Save(player, this._startingMoney);
     }
 
     ////////////////////////////////////
     @Override
-    public boolean hasEnoughMoney(OfflinePlayer player, double amount) {
-        return this.getMoneyAsNumber(player) >= amount;
+    public boolean HasEnoughMoney(OfflinePlayer player, double amount) {
+        return this.GetMoneyAsNumber(player) >= amount;
     }
 
     @Override
-    public void makeTransaction(OfflinePlayer sender, OfflinePlayer target, double amount) {
+    public void MakeTransaction(OfflinePlayer sender, OfflinePlayer target, double amount) {
         if (sender == null)
             return;
         if (target == null)
             return;
-        this.removeMoney(sender, amount);
-        this.addMoney(target, amount);
+        this.RemoveMoney(sender, amount);
+        this.AddMoney(target, amount);
     }
 
     @Override
-    public void setMoney(OfflinePlayer player, double amount) {
+    public void SetMoney(OfflinePlayer player, double amount) {
         if (player == null)
             return;
-        this.cfg.set("Money." + player.getUniqueId(), String.valueOf(amount));
+        this._configuration.set("Money." + player.getUniqueId(), String.valueOf(amount));
 
 
         try {
-            this.cfg.save(this.file);
-        } catch (IOException e) {
-            e.printStackTrace();
+            this._configuration.save(this._file);
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
 
 
         try {
-            this.cfg.load(this.file);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+            this._configuration.load(this._file);
+        } catch (IOException | InvalidConfigurationException exception) {
+            exception.printStackTrace();
         }
 
         if (player.isOnline())
-            this.setMoney(player.getPlayer(), amount);
+            this.SetMoney(player.getPlayer(), amount);
     }
 
     @Override
-    public void removeMoney(OfflinePlayer player, double amount) {
+    public void RemoveMoney(OfflinePlayer player, double amount) {
         if (player == null)
             return;
-        this.cfg.set("Money." + player.getUniqueId(), String.valueOf(this.getMoneyAsNumber(player) - amount));
+        this._configuration.set("Money." + player.getUniqueId(), String.valueOf(this.GetMoneyAsNumber(player) - amount));
 
         try {
-            this.cfg.save(this.file);
-        } catch (IOException e) {
-            e.printStackTrace();
+            this._configuration.save(this._file);
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
 
 
         try {
-            this.cfg.load(this.file);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+            this._configuration.load(this._file);
+        } catch (IOException | InvalidConfigurationException exception) {
+            exception.printStackTrace();
         }
 
         if (player.isOnline())
-            this.removeMoney(player.getPlayer(), amount);
+            this.RemoveMoney(player.getPlayer(), amount);
     }
 
     @Override
-    public void addMoney(OfflinePlayer player, double amount) {
+    public void AddMoney(OfflinePlayer player, double amount) {
         if (player == null)
             return;
-        this.cfg.set("Money." + player.getUniqueId(), String.valueOf(this.getMoneyAsNumber(player) + amount));
+        this._configuration.set("Money." + player.getUniqueId(), String.valueOf(this.GetMoneyAsNumber(player) + amount));
 
 
         try {
-            this.cfg.save(this.file);
-        } catch (IOException e) {
-            e.printStackTrace();
+            this._configuration.save(this._file);
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
 
 
         try {
-            this.cfg.load(this.file);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+            this._configuration.load(this._file);
+        } catch (IOException | InvalidConfigurationException exception) {
+            exception.printStackTrace();
         }
 
         if (player.isOnline())
-            this.addMoney(player.getPlayer(), amount);
+            this.AddMoney(player.getPlayer(), amount);
     }
 
     @Override
-    public void createAccount(OfflinePlayer player) {
+    public void CreateAccount(OfflinePlayer player) {
         if (player == null)
             return;
-        this.cfg.set("Money." + player.getUniqueId(), String.valueOf(this.startingMoney));
+        this._configuration.set("Money." + player.getUniqueId(), String.valueOf(this._startingMoney));
 
 
         try {
-            this.cfg.save(this.file);
-        } catch (IOException e) {
-            e.printStackTrace();
+            this._configuration.save(this._file);
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
 
 
         try {
-            this.cfg.load(this.file);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+            this._configuration.load(this._file);
+        } catch (IOException | InvalidConfigurationException exception) {
+            exception.printStackTrace();
         }
     }
 
     @Override
-    public void deleteAccount(OfflinePlayer player) {
+    public void DeleteAccount(OfflinePlayer player) {
         if (player == null)
             return;
-        this.cfg.set("Money." + player.getUniqueId(), null);
+        this._configuration.set("Money." + player.getUniqueId(), null);
 
         try {
-            this.cfg.save(this.file);
-        } catch (IOException e) {
-            e.printStackTrace();
+            this._configuration.save(this._file);
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
 
         try {
-            this.cfg.load(this.file);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+            this._configuration.load(this._file);
+        } catch (IOException | InvalidConfigurationException exception) {
+            exception.printStackTrace();
         }
     }
 
     @Override
-    public Double getMoneyAsNumber(Player player) {
-        return this.getMoneyAsNumber((OfflinePlayer) player);
+    public Double GetMoneyAsNumber(Player player) {
+        return this.GetMoneyAsNumber((OfflinePlayer) player);
     }
 
     @Override
-    public String getMoney(Player player) {
-        return this.getMoney((OfflinePlayer) player);
+    public String GetMoney(Player player) {
+        return this.GetMoney((OfflinePlayer) player);
     }
 
     @Override
-    public Double getMoneyAsNumber(OfflinePlayer player) {
+    public Double GetMoneyAsNumber(OfflinePlayer player) {
         if (player == null)
             return 0.0D;
         try {
-            if (!this.file.exists())
+            if (!this._file.exists())
                 return 0.0;
-            return Double.valueOf(this.cfg.getString("Money." + player.getUniqueId()));
+            return Double.valueOf(this._configuration.getString("Money." + player.getUniqueId()));
         } catch (NullPointerException ignored) {
             return 0.0;
         }
     }
 
     @Override
-    public String getMoney(OfflinePlayer player) {
+    public String GetMoney(OfflinePlayer player) {
         if (player == null)
-            return this.format(0.0D);
+            return this.Format(0.0D);
         try {
-            if (!this.file.exists())
-                return this.format(0.0D);
-            return this.format(Double.parseDouble(this.cfg.getString("Money." + player.getUniqueId())));
+            if (!this._file.exists())
+                return this.Format(0.0D);
+            return this.Format(Double.parseDouble(this._configuration.getString("Money." + player.getUniqueId())));
         } catch (Exception ignored) {
-            return this.format(0.0D);
+            return this.Format(0.0D);
         }
     }
 
     @Override
-    public boolean hasAccount(OfflinePlayer player) {
+    public boolean HasAccount(OfflinePlayer player) {
         if (player == null)
             return false;
         try {
-            if (!this.file.exists())
+            if (!this._file.exists())
                 return false;
-            return (this.cfg.getString("Money." + player.getUniqueId()) != null && !this.cfg.getString("Money." + player.getUniqueId()).equalsIgnoreCase("null"));
+            return (this._configuration.getString("Money." + player.getUniqueId()) != null && !this._configuration.getString("Money." + player.getUniqueId()).equalsIgnoreCase("null"));
         } catch (NullPointerException ignored) {
             return false;
         }
     }
 
     @Override
-    public void close() {
+    public void Close() {
 
     }
 
 
     ///////////////////////////////////
 
-    public void save(Player player, String balance) {
+    public void Save(Player player, String balance) {
         if (player == null)
             return;
         balance = String.format("%.2f", Double.parseDouble(balance)).replace(",", ".");
-        this.cfg.set("Money." + player.getUniqueId(), balance);
+        this._configuration.set("Money." + player.getUniqueId(), balance);
 
         try {
-            this.cfg.save(this.file);
-        } catch (IOException e) {
-            e.printStackTrace();
+            this._configuration.save(this._file);
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
 
         try {
-            this.cfg.load(this.file);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+            this._configuration.load(this._file);
+        } catch (IOException | InvalidConfigurationException exception) {
+            exception.printStackTrace();
         }
     }
 
     @Override
-    public void fetchTopTen() {
-        if (!this.topTen.isEmpty())
-            this.topTen.clear();
+    public void FetchTopTen() {
+        if (!this._topTen.isEmpty())
+            this._topTen.clear();
         var topTenMoneyHash = new HashMap<OfflinePlayer, Double>();
 
-        if (this.cfg.getConfigurationSection("Money") == null)
+        if (this._configuration.getConfigurationSection("Money") == null)
             return;
 
-        this.cfg.getConfigurationSection("Money").getKeys(false).forEach(uuid -> {
-            Double money = this.cfg.getDouble("Money." + uuid);
+        this._configuration.getConfigurationSection("Money").getKeys(false).forEach(uuid -> {
+            Double money = this._configuration.getDouble("Money." + uuid);
             topTenMoneyHash.put(Bukkit.getOfflinePlayer(UUID.fromString(uuid)), money);
         });
 
@@ -345,56 +345,56 @@ public class EconomyManager extends ManagerEconomy {
         topTenMoneyHashSorted = topTenMoneyHash.entrySet()
                                                .stream()
                                                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
-                                               .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
+                                               .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (entry1, entry2) -> entry2, LinkedHashMap::new));
 
         var topTenMoney = new LinkedHashMap<OfflinePlayer, Double>();
 
         var iterator = topTenMoneyHashSorted.entrySet().iterator();
 
-        var i = 0;
+        var index = 0;
 
-        while (i < 10) {
-            i = i + 1;
+        while (index < 10) {
+            index = index + 1;
             var entry = iterator.next();
             topTenMoney.put(entry.getKey(), entry.getValue());
         }
 
-        this.topTen = topTenMoney;
+        this._topTen = topTenMoney;
     }
 
     @Override
-    public String getMoneyFormat() {
-        return this.moneyFormat;
+    public String GetMoneyFormat() {
+        return this._moneyFormat;
     }
 
     @Override
-    public String getSeparator() {
-        return this.separator;
+    public String GetSeparator() {
+        return this._separator;
     }
 
     @Override
-    public String getStartingMoney() {
-        return this.startingMoney;
+    public String GetStartingMoney() {
+        return this._startingMoney;
     }
 
     @Override
-    public String getDisplayFormat() {
-        return this.displayFormat;
+    public String GetDisplayFormat() {
+        return this._displayFormat;
     }
 
     @Override
-    public String getCurrencySingular() {
-        return this.currencySingular;
+    public String GetCurrencySingular() {
+        return this._currencySingular;
     }
 
     @Override
-    public String getCurrencyPlural() {
-        return this.currencyPlural;
+    public String GetCurrencyPlural() {
+        return this._currencyPlural;
     }
 
 
     @Override
-    public LinkedHashMap<OfflinePlayer, Double> getTopTen() {
-        return this.topTen;
+    public LinkedHashMap<OfflinePlayer, Double> GetTopTen() {
+        return this._topTen;
     }
 }

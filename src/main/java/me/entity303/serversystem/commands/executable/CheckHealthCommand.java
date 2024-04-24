@@ -1,13 +1,13 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public class CheckHealthCommand extends CommandUtils implements CommandExecutorOverload {
+public class CheckHealthCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public CheckHealthCommand(ServerSystem plugin) {
         super(plugin);
@@ -15,26 +15,26 @@ public class CheckHealthCommand extends CommandUtils implements CommandExecutorO
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "checkhealth")) {
-            var permission = this.plugin.getPermissions().getPermission("checkhealth");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "checkhealth")) {
+            var permission = this._plugin.GetPermissions().GetPermission("checkhealth");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
 
         if (arguments.length == 0) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                      this.plugin.getMessages().getSyntax(commandLabel, command.getName(), commandSender, null, "CheckHealth"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetSyntax(commandLabel, command.getName(), commandSender, null, "CheckHealth"));
             return true;
         }
 
-        var target = this.getPlayer(commandSender, arguments[0]);
+        var target = this.GetPlayer(commandSender, arguments[0]);
         if (target == null) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;
         }
 
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                     .getMessage(commandLabel, command.getName(), commandSender, target,
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                     .GetMessage(commandLabel, command.getName(), commandSender, target,
                                                                                                  "CheckHealth")
                                                                                      .replace("<HEALTH>", String.valueOf(target.getHealth()))
                                                                                      .replace("<FOOD>", String.valueOf(target.getFoodLevel()))

@@ -12,48 +12,48 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class WantsTeleport {
-    private final FileConfiguration cfg;
-    private final File wantsTpFile = new File("plugins" + File.separator + "ServerSystem", "wantstp.yml");
+    private final FileConfiguration _configuration;
+    private final File _wantsTeleportFile = new File("plugins" + File.separator + "ServerSystem", "wantstp.yml");
 
     public WantsTeleport(ServerSystem plugin) {
-        this.cfg = YamlConfiguration.loadConfiguration(this.wantsTpFile);
+        this._configuration = YamlConfiguration.loadConfiguration(this._wantsTeleportFile);
     }
 
-    public boolean wantsTeleport(Player player) {
-        return this.wantsTeleport(player.getUniqueId());
+    public boolean DoesPlayerWantTeleport(Player player) {
+        return this.DoesPlayerWantTeleport(player.getUniqueId());
     }
 
-    public boolean wantsTeleport(UUID uuid) {
-        if (!this.wantsTpFile.exists())
+    public boolean DoesPlayerWantTeleport(UUID uuid) {
+        if (!this._wantsTeleportFile.exists())
             return true;
 
-        if (!this.cfg.isSet("WantsTp." + uuid.toString()))
+        if (!this._configuration.isSet("WantsTp." + uuid.toString()))
             return true;
 
-        return this.cfg.getBoolean("WantsTp." + uuid);
+        return this._configuration.getBoolean("WantsTp." + uuid);
     }
 
-    public boolean wantsTeleport(OfflinePlayer offlinePlayer) {
-        return this.wantsTeleport(offlinePlayer.getUniqueId());
+    public boolean DoesPlayerWantTeleport(OfflinePlayer offlinePlayer) {
+        return this.DoesPlayerWantTeleport(offlinePlayer.getUniqueId());
     }
 
-    public void setWantsTeleport(Player player, Boolean wants) {
-        this.setWantsTeleport(player.getUniqueId(), wants);
+    public void SetWantsTeleport(Player player, Boolean wants) {
+        this.SetWantsTeleport(player.getUniqueId(), wants);
     }
 
-    public void setWantsTeleport(UUID uuid, Boolean wants) {
-        this.cfg.set("WantsTp." + uuid, wants);
+    public void SetWantsTeleport(UUID uuid, Boolean wants) {
+        this._configuration.set("WantsTp." + uuid, wants);
 
         try {
-            this.cfg.save(this.wantsTpFile);
+            this._configuration.save(this._wantsTeleportFile);
 
-            this.cfg.load(this.wantsTpFile);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+            this._configuration.load(this._wantsTeleportFile);
+        } catch (IOException | InvalidConfigurationException exception) {
+            exception.printStackTrace();
         }
     }
 
-    public void setWantsTeleport(OfflinePlayer offlinePlayer, Boolean wants) {
-        this.setWantsTeleport(offlinePlayer.getUniqueId(), wants);
+    public void SetWantsTeleport(OfflinePlayer offlinePlayer, Boolean wants) {
+        this.SetWantsTeleport(offlinePlayer.getUniqueId(), wants);
     }
 }

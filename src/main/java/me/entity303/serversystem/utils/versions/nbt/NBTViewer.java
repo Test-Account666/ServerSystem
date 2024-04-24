@@ -10,19 +10,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NBTViewer implements INBTViewer {
-    HashMap<String, NamespacedKey> keys = new HashMap<>();
+    final HashMap<String, NamespacedKey> _keys = new HashMap<>();
 
-    private NamespacedKey getOrCreateKey(String tag) {
-        return this.keys.entrySet()
-                        .stream()
-                        .filter(stringNamespacedKeyEntry -> stringNamespacedKeyEntry.getKey().equalsIgnoreCase(tag))
-                        .map(Map.Entry::getValue)
-                        .findFirst()
-                        .orElse(new NamespacedKey(ServerSystem.getPlugin(ServerSystem.class), tag));
+    private NamespacedKey GetOrCreateKey(String tag) {
+        return this._keys.entrySet()
+                         .stream()
+                         .filter(stringNamespacedKeyEntry -> stringNamespacedKeyEntry.getKey().equalsIgnoreCase(tag))
+                         .map(Map.Entry::getValue)
+                         .findFirst()
+                         .orElse(new NamespacedKey(ServerSystem.getPlugin(ServerSystem.class), tag));
     }
 
     @Override
-    public boolean isTagSet(String tag, ItemStack itemStack) {
+    public boolean IsTagSet(String tag, ItemStack itemStack) {
         if (itemStack.getItemMeta() == null)
             return false;
 
@@ -34,19 +34,19 @@ public class NBTViewer implements INBTViewer {
 
         var container = meta.getPersistentDataContainer();
 
-        var namespacedKey = this.getOrCreateKey(tag);
+        var namespacedKey = this.GetOrCreateKey(tag);
         return container.has(namespacedKey, PersistentDataType.BYTE);
     }
 
     @Override
-    public ItemStack removeTag(String tag, ItemStack itemStack) {
+    public ItemStack RemoveTag(String tag, ItemStack itemStack) {
         if (itemStack.getItemMeta() == null)
             return itemStack;
 
         if (!(itemStack.getItemMeta() instanceof PersistentDataHolder))
             return itemStack;
 
-        if (!this.isTagSet(tag, itemStack))
+        if (!this.IsTagSet(tag, itemStack))
             return itemStack;
 
         var meta = itemStack.getItemMeta();
@@ -54,7 +54,7 @@ public class NBTViewer implements INBTViewer {
 
         var container = meta.getPersistentDataContainer();
 
-        var namespacedKey = this.getOrCreateKey(tag);
+        var namespacedKey = this.GetOrCreateKey(tag);
 
         if (!container.has(namespacedKey, PersistentDataType.BYTE))
             return itemStack;
@@ -66,14 +66,14 @@ public class NBTViewer implements INBTViewer {
     }
 
     @Override
-    public ItemStack setTag(String tag, ItemStack itemStack) {
+    public ItemStack SetTag(String tag, ItemStack itemStack) {
         if (itemStack.getItemMeta() == null)
             throw new NullPointerException("ItemStack doesn't have ItemMeta, cannot set tag!");
 
         if (!(itemStack.getItemMeta() instanceof PersistentDataHolder))
             throw new IllegalStateException("ItemStack ItemMeta doesn't extend PersistentDataHolder, cannot set tag!");
 
-        if (this.isTagSet(tag, itemStack))
+        if (this.IsTagSet(tag, itemStack))
             return itemStack;
 
         var meta = itemStack.getItemMeta();
@@ -81,7 +81,7 @@ public class NBTViewer implements INBTViewer {
 
         var container = meta.getPersistentDataContainer();
 
-        var namespacedKey = this.getOrCreateKey(tag);
+        var namespacedKey = this.GetOrCreateKey(tag);
 
         container.set(namespacedKey, PersistentDataType.BYTE, (byte) 1);
 

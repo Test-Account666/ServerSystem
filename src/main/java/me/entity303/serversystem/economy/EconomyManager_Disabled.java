@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 import java.util.LinkedHashMap;
 
-public class EconomyManager_Disabled extends ManagerEconomy {
+public class EconomyManager_Disabled extends AbstractEconomyManager {
 
     public EconomyManager_Disabled(String currencySingular, String currencyPlural, String startingMoney, String displayFormat, String moneyFormat,
                                    String separator, String thousands, ServerSystem plugin) {
@@ -14,142 +14,142 @@ public class EconomyManager_Disabled extends ManagerEconomy {
     }
 
     @Override
-    public String format(double money) {
+    public String Format(double money) {
         return "";
     }
 
     @Override
-    public boolean hasEnoughMoney(Player player, double amount) {
+    public boolean HasEnoughMoney(Player player, double amount) {
         return false;
     }
 
     @Override
-    public void makeTransaction(Player sender, Player target, double amount) {
+    public void MakeTransaction(Player sender, Player target, double amount) {
 
     }
 
     @Override
-    public void setMoney(Player player, double amount) {
+    public void SetMoney(Player player, double amount) {
 
     }
 
     @Override
-    public void removeMoney(Player player, double amount) {
+    public void RemoveMoney(Player player, double amount) {
 
     }
 
     @Override
-    public void addMoney(Player player, double amount) {
+    public void AddMoney(Player player, double amount) {
 
     }
 
     @Override
-    public void createAccount(Player player) {
+    public void CreateAccount(Player player) {
 
     }
 
     @Override
-    public boolean hasEnoughMoney(OfflinePlayer player, double amount) {
+    public boolean HasEnoughMoney(OfflinePlayer player, double amount) {
         return false;
     }
 
     @Override
-    public void makeTransaction(OfflinePlayer sender, OfflinePlayer target, double amount) {
+    public void MakeTransaction(OfflinePlayer sender, OfflinePlayer target, double amount) {
 
     }
 
     @Override
-    public void setMoney(OfflinePlayer player, double amount) {
+    public void SetMoney(OfflinePlayer player, double amount) {
 
     }
 
     @Override
-    public void removeMoney(OfflinePlayer player, double amount) {
+    public void RemoveMoney(OfflinePlayer player, double amount) {
 
     }
 
     @Override
-    public void addMoney(OfflinePlayer player, double amount) {
+    public void AddMoney(OfflinePlayer player, double amount) {
 
     }
 
     @Override
-    public void createAccount(OfflinePlayer player) {
+    public void CreateAccount(OfflinePlayer player) {
 
     }
 
     @Override
-    public void deleteAccount(OfflinePlayer player) {
+    public void DeleteAccount(OfflinePlayer player) {
 
     }
 
     @Override
-    public Double getMoneyAsNumber(Player player) {
+    public Double GetMoneyAsNumber(Player player) {
         return 0.0;
     }
 
     @Override
-    public String getMoney(Player player) {
+    public String GetMoney(Player player) {
         return "";
     }
 
     @Override
-    public Double getMoneyAsNumber(OfflinePlayer player) {
+    public Double GetMoneyAsNumber(OfflinePlayer player) {
         return 0.0;
     }
 
     @Override
-    public String getMoney(OfflinePlayer player) {
+    public String GetMoney(OfflinePlayer player) {
         return "";
     }
 
     @Override
-    public boolean hasAccount(OfflinePlayer player) {
+    public boolean HasAccount(OfflinePlayer player) {
         return false;
     }
 
     @Override
-    public void fetchTopTen() {
+    public void FetchTopTen() {
 
     }
 
     @Override
-    public void close() {
+    public void Close() {
 
     }
 
     @Override
-    public String getMoneyFormat() {
+    public String GetMoneyFormat() {
         return "";
     }
 
     @Override
-    public String getSeparator() {
+    public String GetSeparator() {
         return "";
     }
 
     @Override
-    public String getStartingMoney() {
+    public String GetStartingMoney() {
         return "";
     }
 
     @Override
-    public String getDisplayFormat() {
+    public String GetDisplayFormat() {
         return "";
     }
 
     @Override
-    public String getCurrencySingular() {
+    public String GetCurrencySingular() {
         return "";
     }
 
     @Override
-    public String getCurrencyPlural() {
+    public String GetCurrencyPlural() {
         return "";
     }
 
     @Override
-    public LinkedHashMap<OfflinePlayer, Double> getTopTen() {
+    public LinkedHashMap<OfflinePlayer, Double> GetTopTen() {
 
         return new LinkedHashMap<>();
     }

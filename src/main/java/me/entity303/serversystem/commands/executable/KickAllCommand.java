@@ -4,13 +4,13 @@ import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class KickAllCommand extends CommandUtils implements CommandExecutorOverload {
+public class KickAllCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public KickAllCommand(ServerSystem plugin) {
         super(plugin);
@@ -18,14 +18,14 @@ public class KickAllCommand extends CommandUtils implements CommandExecutorOverl
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "kickall")) {
-            var permission = this.plugin.getPermissions().getPermission("kickall");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "kickall")) {
+            var permission = this._plugin.GetPermissions().GetPermission("kickall");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
 
         var command1 = command.getName();
-        var reason = this.plugin.getMessages().getMessage(commandLabel, command1, commandSender, null, "KickAll.DefaultReason");
+        var reason = this._plugin.GetMessages().GetMessage(commandLabel, command1, commandSender, null, "KickAll.DefaultReason");
 
         if (arguments.length > 0)
             reason = Arrays.stream(arguments).map(arg -> arg + " ").collect(Collectors.joining());
@@ -34,11 +34,11 @@ public class KickAllCommand extends CommandUtils implements CommandExecutorOverl
             if (all == commandSender)
                 continue;
             
-            all.kickPlayer(this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "KickAll.Kick").replace("<REASON>", reason));
+            all.kickPlayer(this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "KickAll.Kick").replace("<REASON>", reason));
         }
 
         
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "KickAll.Success"));
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "KickAll.Success"));
         return true;
     }
 }

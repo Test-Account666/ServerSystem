@@ -14,48 +14,48 @@ import org.bukkit.plugin.Plugin;
 import java.util.LinkedList;
 
 public class FreezeListener implements Listener {
-    private final ServerSystem plugin;
-    private Object namespacedKey;
+    private final ServerSystem _plugin;
+    private Object _namespacedKey;
 
     public FreezeListener(ServerSystem plugin) {
-        this.plugin = plugin;
+        this._plugin = plugin;
         try {
             var clazz = Class.forName("org.bukkit.NamespacedKey");
-            this.namespacedKey = clazz.getConstructor(Plugin.class, String.class).newInstance(plugin, "freeze");
+            this._namespacedKey = clazz.getConstructor(Plugin.class, String.class).newInstance(plugin, "freeze");
         } catch (Throwable ignored) {
-            this.namespacedKey = null;
+            this._namespacedKey = null;
         }
     }
 
     @EventHandler
-    public void onMove(PlayerMoveEvent e) {
-        if (!this.isFrozen(e.getPlayer()))
+    public void OnMove(PlayerMoveEvent event) {
+        if (!this.IsFrozen(event.getPlayer()))
             return;
 
-        e.getPlayer().sendBlockChange(e.getPlayer().getLocation().clone().add(0, -1, 0), Material.BARRIER.createBlockData());
+        event.getPlayer().sendBlockChange(event.getPlayer().getLocation().clone().add(0, -1, 0), Material.BARRIER.createBlockData());
 
-        var from = e.getFrom();
+        var from = event.getFrom();
 
-        from.setYaw(e.getTo().getYaw());
-        from.setPitch(e.getTo().getPitch());
+        from.setYaw(event.getTo().getYaw());
+        from.setPitch(event.getTo().getPitch());
 
         var passengers = new LinkedList<Entity>();
-        for (var passenger : e.getPlayer().getPassengers()) {
+        for (var passenger : event.getPlayer().getPassengers()) {
             passenger.eject();
             passengers.add(passenger);
         }
 
-        e.getPlayer().teleport(from);
+        event.getPlayer().teleport(from);
 
-        Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+        Bukkit.getScheduler().runTaskLater(this._plugin, () -> {
             for (var passenger : passengers)
-                e.getPlayer().addPassenger(passenger);
+                event.getPlayer().addPassenger(passenger);
         }, 10L);
 
-        e.setTo(from);
+        event.setTo(from);
     }
 
-    private boolean isFrozen(Player player) {
-        return FreezeCommand.isFrozen(player, (org.bukkit.NamespacedKey) this.namespacedKey);
+    private boolean IsFrozen(Player player) {
+        return FreezeCommand.IsFrozen(player, (org.bukkit.NamespacedKey) this._namespacedKey);
     }
 }

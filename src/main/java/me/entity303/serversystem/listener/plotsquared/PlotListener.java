@@ -17,8 +17,8 @@ public class PlotListener implements Listener {
     }
 
     @EventHandler
-    public void onPluginDisable(PluginDisableEvent e) {
-        if (e.getPlugin().getName().equalsIgnoreCase("PlotSquared")) {
+    public void OnPluginDisable(PluginDisableEvent event) {
+        if (event.getPlugin().getName().equalsIgnoreCase("PlotSquared")) {
             for (var player : PlotListener.TIME_MAP.keySet())
                 player.resetPlayerTime();
             PlotListener.TIME_MAP.clear();

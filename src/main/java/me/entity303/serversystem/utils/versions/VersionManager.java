@@ -24,124 +24,124 @@ import me.entity303.serversystem.virtual.stonecutter.VirtualStoneCutter_Latest;
 import org.bukkit.Bukkit;
 
 public class VersionManager {
-    private final ServerSystem serverSystem;
-    private String nmsVersion;
-    private String version;
-    private boolean vanishFullyFunctional = true;
+    private final ServerSystem _serverSystem;
+    private String _nmsVersion;
+    private String _version;
+    private boolean _vanishFullyFunctional = true;
 
     public VersionManager(ServerSystem serverSystem) {
-        this.serverSystem = serverSystem;
+        this._serverSystem = serverSystem;
     }
 
-    public void registerVersionStuff() {
-        this.nmsVersion = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
-        this.fetchVersion();
+    public void RegisterVersionStuff() {
+        this._nmsVersion = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+        this.FetchVersion();
 
-        this.serverSystem.log("ServerSystem is running on " + this.version + "!");
+        this._serverSystem.Info("ServerSystem is running on " + this._version + "!");
 
         try {
-            this.serverSystem.getVersionStuff()
-                             .setGetHandleMethod(
-                                     Class.forName("org.bukkit.craftbukkit." + this.nmsVersion + ".entity.CraftPlayer").getDeclaredMethod("getHandle"));
-        } catch (NoSuchMethodException | ClassNotFoundException e) {
-            e.printStackTrace();
+            this._serverSystem.GetVersionStuff()
+                              .SetGetHandleMethod(
+                                     Class.forName("org.bukkit.craftbukkit." + this._nmsVersion + ".entity.CraftPlayer").getDeclaredMethod("getHandle"));
+        } catch (NoSuchMethodException | ClassNotFoundException exception) {
+            exception.printStackTrace();
         }
 
-        if (this.version.contains("1.20")) {
-            this.serverSystem.warn("Vanish is currently not fully functional in version 1.20+");
-            this.vanishFullyFunctional = false;
+        if (this._version.contains("1.20")) {
+            this._serverSystem.Warn("Vanish is currently not fully functional in version 1.20+");
+            this._vanishFullyFunctional = false;
 
-            this.handleFullySupportedVersion();
+            this.HandleFullySupportedVersion();
             Bukkit.getScheduler()
-                  .runTaskLater(this.serverSystem, () -> this.serverSystem.getCommandManager().registerCommand("skull", new SkullCommand(this.serverSystem), null), 5L);
-        } else if (this.version.contains("1.19.R3")) {
-            this.handleFullySupportedVersion();
-            this.registerObsoleteEditSignCommand();
-        } else if (this.version.contains("1.19"))
-            this.handleLegacyVersions();
-        else if (this.version.contains("1.18"))
-            this.handleLegacyVersions();
-        else if (this.version.contains("1.17")) {
-            this.serverSystem.getVersionStuff().setActionBar(new ActionBar());
-            this.serverSystem.getVersionStuff().setVanishPacket(new VanishPacket_Reflection_Till_1_19_2(this.serverSystem));
-            Bukkit.getPluginManager().registerEvents(new InteractListener(this.serverSystem), this.serverSystem);
-            this.serverSystem.getVersionStuff().setSignEdit(new SignEdit_v1_17_R1());
-            this.setLatestVirtualInventories();
-            this.serverSystem.getVersionStuff().setTeleport(new Teleport_v1_17_R1(this.serverSystem));
-            this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer());
-            this.registerObsoleteEditSignCommand();
+                  .runTaskLater(this._serverSystem, () -> this._serverSystem.GetCommandManager().RegisterCommand("skull", new SkullCommand(this._serverSystem), null), 5L);
+        } else if (this._version.contains("1.19.R3")) {
+            this.HandleFullySupportedVersion();
+            this.RegisterObsoleteEditSignCommand();
+        } else if (this._version.contains("1.19"))
+            this.HandleLegacyVersions();
+        else if (this._version.contains("1.18"))
+            this.HandleLegacyVersions();
+        else if (this._version.contains("1.17")) {
+            this._serverSystem.GetVersionStuff().SetActionBar(new ActionBar());
+            this._serverSystem.GetVersionStuff().SetVanishPacket(new VanishPacket_Reflection_Till_1_19_2(this._serverSystem));
+            Bukkit.getPluginManager().registerEvents(new InteractListener(this._serverSystem), this._serverSystem);
+            this._serverSystem.GetVersionStuff().SetSignEdit(new SignEdit_v1_17_R1());
+            this.SetLatestVirtualInventories();
+            this._serverSystem.GetVersionStuff().SetTeleport(new Teleport_v1_17_R1(this._serverSystem));
+            this._serverSystem.GetVersionStuff().SetNbtViewer(new NBTViewer());
+            this.RegisterObsoleteEditSignCommand();
         } else {
-            this.serverSystem.warn("Unsupported version detected! Continue with your own risk! Support may not guaranteed!");
-            this.serverSystem.warn("Keep in mind that all versions below 1.17.1 are unsupported since 2.0.0!");
-            this.serverSystem.warn("Using a version older than that, will *NOT* work!");
-            this.serverSystem.warn("Also, only the latest version will always be fully supported!");
+            this._serverSystem.Warn("Unsupported version detected! Continue with your own risk! Support may not guaranteed!");
+            this._serverSystem.Warn("Keep in mind that all versions below 1.17.1 are unsupported since 2.0.0!");
+            this._serverSystem.Warn("Using a version older than that, will *NOT* work!");
+            this._serverSystem.Warn("Also, only the latest version will always be fully supported!");
 
-            this.serverSystem.warn("Vanish is currently not fully functional in version 1.20+");
-            this.vanishFullyFunctional = false;
-            this.handleFullySupportedVersion();
+            this._serverSystem.Warn("Vanish is currently not fully functional in version 1.20+");
+            this._vanishFullyFunctional = false;
+            this.HandleFullySupportedVersion();
             Bukkit.getScheduler()
-                  .runTaskLater(this.serverSystem, () -> this.serverSystem.getCommandManager().registerCommand("skull", new SkullCommand(this.serverSystem), null), 5L);
+                  .runTaskLater(this._serverSystem, () -> this._serverSystem.GetCommandManager().RegisterCommand("skull", new SkullCommand(this._serverSystem), null), 5L);
         }
     }
 
-    public void fetchVersion() {
-        if (this.version != null && !this.version.isEmpty())
+    public void FetchVersion() {
+        if (this._version != null && !this._version.isEmpty())
             return;
 
         try {
-            this.version = this.nmsVersion.replace("_", ".");
-        } catch (ArrayIndexOutOfBoundsException e) {
-            e.printStackTrace();
+            this._version = this._nmsVersion.replace("_", ".");
+        } catch (ArrayIndexOutOfBoundsException exception) {
+            exception.printStackTrace();
         }
     }
 
-    public boolean isVanishFullyFunctional() {
-        return this.vanishFullyFunctional;
+    public boolean IsVanishFullyFunctional() {
+        return this._vanishFullyFunctional;
     }
 
-    private void handleFullySupportedVersion() {
-        this.serverSystem.getVersionStuff().setActionBar(new ActionBar());
-        this.serverSystem.getVersionStuff().setVanishPacket(new VanishPacket_Reflection_Latest(this.serverSystem));
-        this.handleGenericVersion();
+    private void HandleFullySupportedVersion() {
+        this._serverSystem.GetVersionStuff().SetActionBar(new ActionBar());
+        this._serverSystem.GetVersionStuff().SetVanishPacket(new VanishPacket_Reflection_Latest(this._serverSystem));
+        this.HandleGenericVersion();
     }
 
-    private void handleGenericVersion() {
-        Bukkit.getPluginManager().registerEvents(new InteractListener(this.serverSystem), this.serverSystem);
-        this.serverSystem.getVersionStuff().setSignEdit(new SignEdit_Reflection_Latest());
-        this.setLatestVirtualInventories();
-        this.serverSystem.getVersionStuff().setTeleport(new Teleport_Latest(this.serverSystem));
-        this.serverSystem.getVersionStuff().setNbtViewer(new NBTViewer());
+    private void HandleGenericVersion() {
+        Bukkit.getPluginManager().registerEvents(new InteractListener(this._serverSystem), this._serverSystem);
+        this._serverSystem.GetVersionStuff().SetSignEdit(new SignEdit_Reflection_Latest());
+        this.SetLatestVirtualInventories();
+        this._serverSystem.GetVersionStuff().SetTeleport(new Teleport_Latest(this._serverSystem));
+        this._serverSystem.GetVersionStuff().SetNbtViewer(new NBTViewer());
     }
 
-    private void registerObsoleteEditSignCommand() {
-        Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> {
-            this.serverSystem.getCommandManager()
-                             .registerCommand("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null?
-                                                          new EditSignPlotSquaredCommand(this.serverSystem) :
-                                                          new EditSignCommand(this.serverSystem), null);
-            this.serverSystem.getCommandManager().registerCommand("skull", new SkullCommand(this.serverSystem), null);
+    private void RegisterObsoleteEditSignCommand() {
+        Bukkit.getScheduler().runTaskLater(this._serverSystem, () -> {
+            this._serverSystem.GetCommandManager()
+                              .RegisterCommand("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null?
+                                                          new EditSignPlotSquaredCommand(this._serverSystem) :
+                                                          new EditSignCommand(this._serverSystem), null);
+            this._serverSystem.GetCommandManager().RegisterCommand("skull", new SkullCommand(this._serverSystem), null);
         }, 5L);
     }
 
-    private void handleLegacyVersions() {
-        this.serverSystem.getVersionStuff().setActionBar(new ActionBar());
-        this.serverSystem.getVersionStuff().setVanishPacket(new VanishPacket_Reflection_Till_1_19_2(this.serverSystem));
-        this.handleGenericVersion();
-        this.registerObsoleteEditSignCommand();
+    private void HandleLegacyVersions() {
+        this._serverSystem.GetVersionStuff().SetActionBar(new ActionBar());
+        this._serverSystem.GetVersionStuff().SetVanishPacket(new VanishPacket_Reflection_Till_1_19_2(this._serverSystem));
+        this.HandleGenericVersion();
+        this.RegisterObsoleteEditSignCommand();
     }
 
-    private void setLatestVirtualInventories() {
-        this.serverSystem.getVersionStuff().setVirtualAnvil(new VirtualAnvil_Latest());
-        this.serverSystem.getVersionStuff().setVirtualCartography(new VirtualCartography_Latest());
-        this.serverSystem.getVersionStuff().setVirtualGrindstone(new VirtualGrindstone_latest());
-        this.serverSystem.getVersionStuff().setVirtualLoom(new VirtualLoom_Latest());
-        this.serverSystem.getVersionStuff().setVirtualStoneCutter(new VirtualStoneCutter_Latest());
-        this.serverSystem.getVersionStuff().setVirtualSmithing(new VirtualSmithing_Latest());
-        this.serverSystem.getVersionStuff().setSaveData(new SaveData_Latest(this.serverSystem));
-        this.serverSystem.getVersionStuff().setEntityPlayer(new EntityPlayer_Latest(this.serverSystem));
+    private void SetLatestVirtualInventories() {
+        this._serverSystem.GetVersionStuff().SetVirtualAnvil(new VirtualAnvil_Latest());
+        this._serverSystem.GetVersionStuff().SetVirtualCartography(new VirtualCartography_Latest());
+        this._serverSystem.GetVersionStuff().SetVirtualGrindstone(new VirtualGrindstone_latest());
+        this._serverSystem.GetVersionStuff().SetVirtualLoom(new VirtualLoom_Latest());
+        this._serverSystem.GetVersionStuff().SetVirtualStoneCutter(new VirtualStoneCutter_Latest());
+        this._serverSystem.GetVersionStuff().SetVirtualSmithing(new VirtualSmithing_Latest());
+        this._serverSystem.GetVersionStuff().SetSaveData(new SaveData_Latest(this._serverSystem));
+        this._serverSystem.GetVersionStuff().SetEntityPlayer(new EntityPlayer_Latest(this._serverSystem));
     }
 
-    public String getNMSVersion() {
-        return this.nmsVersion;
+    public String GetNMSVersion() {
+        return this._nmsVersion;
     }
 }

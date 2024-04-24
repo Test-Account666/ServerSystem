@@ -16,44 +16,44 @@ public class CommandListener extends CommandUtils implements Listener {
     }
 
     @EventHandler
-    public void onCommand(PlayerCommandPreprocessEvent e) {
-        if (e.getMessage().equalsIgnoreCase("/restart")) {
-            if (this.plugin.getCommand("restart") == null)
+    public void OnCommand(PlayerCommandPreprocessEvent event) {
+        if (event.getMessage().equalsIgnoreCase("/restart")) {
+            if (this._plugin.getCommand("restart") == null)
                 return;
 
-            e.setCancelled(true);
-            this.plugin.getCommand("restart").execute(e.getPlayer(), "restart", new String[] { });
+            event.setCancelled(true);
+            this._plugin.getCommand("restart").execute(event.getPlayer(), "restart", new String[] { });
         }
 
-        for (var player : this.plugin.getCmdSpy()) {
-            var label = e.getMessage();
-            var command = e.getMessage();
+        for (var player : this._plugin.GetCommanddSpy()) {
+            var commandLabel = event.getMessage();
+            var command = event.getMessage();
             player.sendMessage(
-                    this.plugin.getMessages().getMessage(label, command, e.getPlayer(), player, "CommandSpy.Spy").replace("<MESSAGE>", e.getMessage()));
+                    this._plugin.GetMessages().GetMessage(commandLabel, command, event.getPlayer(), player, "CommandSpy.Spy").replace("<MESSAGE>", event.getMessage()));
         }
     }
 
     @EventHandler
-    public void onServerCmd(ServerCommandEvent e) {
-        this.SendCommandSpyMessages(e);
+    public void OnServerCmd(ServerCommandEvent event) {
+        this.SendCommandSpyMessages(event);
     }
 
-    private void SendCommandSpyMessages(ServerCommandEvent e) {
+    private void SendCommandSpyMessages(ServerCommandEvent event) {
         if (Bukkit.getOnlinePlayers().isEmpty())
             return;
 
         Bukkit.getOnlinePlayers().forEach(all -> {
-            if (this.plugin.getCmdSpy().contains(all)) {
-                var label = e.getCommand();
-                var command = e.getCommand();
-                var sender = e.getSender();
-                all.sendMessage(this.plugin.getMessages().getMessage(label, command, sender, all, "CommandSpy.Spy").replace("<MESSAGE>", e.getCommand()));
+            if (this._plugin.GetCommanddSpy().contains(all)) {
+                var commandLabel = event.getCommand();
+                var command = event.getCommand();
+                var sender = event.getSender();
+                all.sendMessage(this._plugin.GetMessages().GetMessage(commandLabel, command, sender, all, "CommandSpy.Spy").replace("<MESSAGE>", event.getCommand()));
             }
         });
     }
 
     @EventHandler
-    public void onRemoteServerCmd(RemoteServerCommandEvent e) {
-        this.SendCommandSpyMessages(e);
+    public void OnRemoteServerCmd(RemoteServerCommandEvent event) {
+        this.SendCommandSpyMessages(event);
     }
 }

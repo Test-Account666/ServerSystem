@@ -1,9 +1,8 @@
 package me.entity303.serversystem.tabcompleter;
 
-import me.entity303.serversystem.main.ServerSystem;
+import me.entity303.serversystem.commands.ITabCompleterOverload;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -13,22 +12,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class HomeTabCompleter implements TabCompleter {
-    private final ServerSystem plugin;
-
-    public HomeTabCompleter(ServerSystem plugin) {
-        this.plugin = plugin;
-    }
+public class HomeTabCompleter implements ITabCompleterOverload {
 
     @Override
-    public List<String> onTabComplete(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!(cs instanceof Player))
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!(commandSender instanceof Player))
             return Collections.singletonList("");
 
-        if (args.length == 1) {
-            var f = new File("plugins//ServerSystem//Homes", ((Player) cs).getUniqueId() + ".yml");
-            FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
-            if (!f.exists())
+        if (arguments.length == 1) {
+            var homeFile = new File("plugins//ServerSystem//Homes", ((Player) commandSender).getUniqueId() + ".yml");
+            FileConfiguration cfg = YamlConfiguration.loadConfiguration(homeFile);
+            if (!homeFile.exists())
                 return Collections.singletonList("");
 
             if (cfg.getConfigurationSection("Homes") == null)
@@ -39,7 +33,7 @@ public class HomeTabCompleter implements TabCompleter {
             if (!homes.isEmpty()) {
                 List<String> tabs = new ArrayList<>();
                 for (var home : homes)
-                    if (home.toLowerCase().startsWith(args[0].toLowerCase()))
+                    if (home.toLowerCase().startsWith(arguments[0].toLowerCase()))
                         tabs.add(home.toUpperCase());
 
                 return !tabs.isEmpty()? tabs : homes;

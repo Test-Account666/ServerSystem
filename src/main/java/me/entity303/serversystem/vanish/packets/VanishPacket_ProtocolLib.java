@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import static com.comphenix.protocol.PacketType.Play.Server.PLAYER_INFO;
 
 public class VanishPacket_ProtocolLib {
-    private Field pingField;
+    private Field _pingField;
 
-    public void sendPlayerInfoChangeGameModePacket(Player target, Player vanishPlayer, boolean vanish) {
+    public void SendPlayerInfoChangeGameModePacket(Player target, Player vanishPlayer, boolean vanish) {
         var playerInfoPacket = new PacketContainer(PLAYER_INFO);
 
         var action = playerInfoPacket.getPlayerInfoAction();
@@ -25,7 +25,7 @@ public class VanishPacket_ProtocolLib {
         action.writeSafely(0, EnumWrappers.PlayerInfoAction.UPDATE_GAME_MODE);
 
         var gameProfile = WrappedGameProfile.fromPlayer(vanishPlayer);
-        var ping = this.getPing(vanishPlayer);
+        var ping = this.GetPing(vanishPlayer);
         var gameMode = vanish? EnumWrappers.NativeGameMode.SPECTATOR : EnumWrappers.NativeGameMode.fromBukkit(vanishPlayer.getGameMode());
         var displayName = WrappedChatComponent.fromText(vanishPlayer.getPlayerListName());
 
@@ -38,30 +38,30 @@ public class VanishPacket_ProtocolLib {
         ProtocolLibrary.getProtocolManager().sendServerPacket(target, playerInfoPacket);
     }
 
-    private int getPing(Player player) {
+    private int GetPing(Player player) {
         try {
 
             var plugin = ServerSystem.getPlugin(ServerSystem.class);
 
-            var getHandleMethod = plugin.getVersionStuff().getGetHandleMethod();
+            var getHandleMethod = plugin.GetVersionStuff().GetGetHandleMethod();
 
             if (getHandleMethod == null) {
                 getHandleMethod = player.getClass().getDeclaredMethod("getHandle");
                 getHandleMethod.setAccessible(true);
 
-                plugin.getVersionStuff().setGetHandleMethod(getHandleMethod);
+                plugin.GetVersionStuff().SetGetHandleMethod(getHandleMethod);
             }
 
             var entityPlayer = getHandleMethod.invoke(player);
 
-            if (this.pingField == null) {
-                this.pingField = entityPlayer.getClass().getDeclaredField("ping");
-                this.pingField.setAccessible(true);
+            if (this._pingField == null) {
+                this._pingField = entityPlayer.getClass().getDeclaredField("ping");
+                this._pingField.setAccessible(true);
             }
-            var ping = this.pingField.getInt(entityPlayer);
+            var ping = this._pingField.getInt(entityPlayer);
 
             return Math.max(ping, 0);
-        } catch (Exception e) {
+        } catch (Exception exception) {
             return 666;
         }
     }

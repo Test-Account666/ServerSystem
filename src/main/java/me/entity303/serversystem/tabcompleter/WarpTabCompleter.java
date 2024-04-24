@@ -1,38 +1,38 @@
 package me.entity303.serversystem.tabcompleter;
 
+import me.entity303.serversystem.commands.ITabCompleterOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class WarpTabCompleter extends CommandUtils implements TabCompleter {
+public class WarpTabCompleter extends CommandUtils implements ITabCompleterOverload {
 
     public WarpTabCompleter(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender cs, Command cmd, String label, String[] args) {
-        if (args.length == 1) {
-            if (this.plugin.getPermissions().getConfiguration().getBoolean("Permissions.warp.required"))
-                if (!this.plugin.getPermissions().hasPermission(cs, "warp.permission", true))
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (arguments.length == 1) {
+            if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.warp.required"))
+                if (!this._plugin.GetPermissions().HasPermission(commandSender, "warp.permission", true))
                     return Collections.singletonList("");
-            var warpManager = this.plugin.getWarpManager();
-            var warps = warpManager.getWarps();
+            var warpManager = this._plugin.GetWarpManager();
+            var warps = warpManager.GetWarps();
             List<String> tabCompletions = new ArrayList<>();
             if (!warps.isEmpty())
                 for (var warp : warps)
-                    if (warp.toLowerCase().startsWith(args[0].toLowerCase()))
+                    if (warp.toLowerCase().startsWith(arguments[0].toLowerCase()))
                         tabCompletions.add(warp);
             return tabCompletions.isEmpty()? warps : tabCompletions;
         }
-        if (args.length == 2)
-            if (this.plugin.getPermissions().hasPermission(cs, "warp.others", true))
+        if (arguments.length == 2)
+            if (this._plugin.GetPermissions().HasPermission(commandSender, "warp.others", true))
                 return null;
         return Collections.singletonList("");
     }

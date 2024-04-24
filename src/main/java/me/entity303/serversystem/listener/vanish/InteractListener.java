@@ -21,82 +21,86 @@ import static org.bukkit.Material.CHEST;
 import static org.bukkit.Material.TRAPPED_CHEST;
 
 public class InteractListener implements Listener {
-    private final List<HumanEntity> open = new ArrayList<>();
-    private final List<HumanEntity> nerfed = new ArrayList<>();
-    private final ServerSystem plugin;
+    private final List<HumanEntity> _open = new ArrayList<>();
+    private final List<HumanEntity> _nerfed = new ArrayList<>();
+    private final ServerSystem _plugin;
 
     public InteractListener(ServerSystem plugin) {
-        this.plugin = plugin;
+        this._plugin = plugin;
     }
 
     @EventHandler
-    public void onInvClose(InventoryCloseEvent e) {
+    public void OnInventoryClose(InventoryCloseEvent event) {
         GameMode mode;
         boolean allowFlying;
         boolean flying;
-        if (!this.open.contains(e.getPlayer()))
+        if (!this._open.contains(event.getPlayer()))
             return;
-        this.open.remove(e.getPlayer());
-        mode = e.getPlayer().getGameMode();
-        allowFlying = ((Player) e.getPlayer()).getAllowFlight();
-        flying = ((Player) e.getPlayer()).isFlying();
-        e.getPlayer().setGameMode(GameMode.SPECTATOR);
+        this._open.remove(event.getPlayer());
+        mode = event.getPlayer().getGameMode();
+        allowFlying = ((Player) event.getPlayer()).getAllowFlight();
+        flying = ((Player) event.getPlayer()).isFlying();
+        event.getPlayer().setGameMode(GameMode.SPECTATOR);
         Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("ServerSystem"), () -> {
-            e.getPlayer().setGameMode(mode);
-            ((Player) e.getPlayer()).setAllowFlight(allowFlying);
+            event.getPlayer().setGameMode(mode);
+            ((Player) event.getPlayer()).setAllowFlight(allowFlying);
             if (flying)
-                ((Player) e.getPlayer()).setFlying(true);
+                ((Player) event.getPlayer()).setFlying(true);
         }, 1L);
-        Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("ServerSystem"), () -> this.nerfed.remove(e.getPlayer()), 5L);
+        Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("ServerSystem"), () -> this._nerfed.remove(event.getPlayer()), 5L);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onInteract(PlayerInteractEvent e) {
-        if (this.getPlugin().getVanish() == null)
+    public void OnInteract(PlayerInteractEvent event) {
+        if (this._plugin.GetVanish() == null)
             return;
-        if (!this.getPlugin().getVanish().isVanish(e.getPlayer()))
+        if (!this._plugin.GetVanish().IsVanish(event.getPlayer()))
             return;
-        if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
             return;
-        if (e.getClickedBlock() == null)
+        if (event.getClickedBlock() == null)
             return;
-        if (e.getClickedBlock().getType() != CHEST && e.getClickedBlock().getType() != TRAPPED_CHEST && !this.isShulker(e.getClickedBlock())) {
-            if (!this.plugin.getVanish().getAllowInteract().contains(e.getPlayer()) && this.plugin.getCommandManager().isInteractActive()) {
-                e.getPlayer()
-                 .sendMessage(this.plugin.getMessages().getPrefix() +
-                              this.plugin.getMessages().getMessage("vanish", "vanish", e.getPlayer().getName(), null, "Vanish.Misc.NoInteract"));
-                e.setCancelled(true);
+        if (event.getClickedBlock().getType() != CHEST && event.getClickedBlock().getType() != TRAPPED_CHEST && !this.IsShulker(event.getClickedBlock())) {
+            if (!this._plugin.GetVanish().GetAllowInteract().contains(event.getPlayer()) && this._plugin.GetCommandManager().IsInteractActive()) {
+                event.getPlayer()
+                 .sendMessage(this._plugin.GetMessages().GetPrefix() +
+                              this._plugin.GetMessages().GetMessage("vanish", "vanish", event.getPlayer().getName(), null, "Vanish.Misc.NoInteract"));
+                event.setCancelled(true);
             }
             return;
         }
-        if (this.nerfed.contains(e.getPlayer())) {
-            e.setCancelled(true);
+        if (this._nerfed.contains(event.getPlayer())) {
+            event.setCancelled(true);
             return;
         }
-        this.nerfed.add(e.getPlayer());
-        e.setCancelled(false);
+        this._nerfed.add(event.getPlayer());
+        event.setCancelled(false);
         GameMode mode;
         boolean allowFlying;
         boolean flying;
-        mode = e.getPlayer().getGameMode();
-        allowFlying = e.getPlayer().getAllowFlight();
-        flying = e.getPlayer().isFlying();
-        this.open.add(e.getPlayer());
-        e.getPlayer().setGameMode(GameMode.SPECTATOR);
+        mode = event.getPlayer().getGameMode();
+        allowFlying = event.getPlayer().getAllowFlight();
+        flying = event.getPlayer().isFlying();
+        this._open.add(event.getPlayer());
+        event.getPlayer().setGameMode(GameMode.SPECTATOR);
         Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("ServerSystem"), () -> {
-            e.getPlayer().setGameMode(mode);
-            e.getPlayer().setAllowFlight(allowFlying);
+            event.getPlayer().setGameMode(mode);
+            event.getPlayer().setAllowFlight(allowFlying);
             if (flying)
-                e.getPlayer().setFlying(true);
+                event.getPlayer().setFlying(true);
         }, 1L);
     }
 
-    public ServerSystem getPlugin() {
-        return this.plugin;
+    public ServerSystem GetPlugin() {
+        return this._plugin;
     }
 
-    private boolean isShulker(Block block) {
+    private boolean IsShulker(Block block) {
         var type = block.getType();
+        return this.IsShulker(type);
+    }
+
+    private boolean IsShulker(Material type) {
         return type == Material.getMaterial("SHULKER_BOX") || type == Material.getMaterial("BLACK_SHULKER_BOX") ||
                type == Material.getMaterial("BLUE_SHULKER_BOX") || type == Material.getMaterial("BROWN_SHULKER_BOX") ||
                type == Material.getMaterial("CYAN_SHULKER_BOX") || type == Material.getMaterial("GRAY_SHULKER_BOX") ||

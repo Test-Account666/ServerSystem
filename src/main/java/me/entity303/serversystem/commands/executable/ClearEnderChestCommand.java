@@ -1,7 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 
-public class ClearEnderChestCommand extends CommandUtils implements CommandExecutorOverload {
+public class ClearEnderChestCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public ClearEnderChestCommand(ServerSystem plugin) {
         super(plugin);
@@ -19,15 +19,15 @@ public class ClearEnderChestCommand extends CommandUtils implements CommandExecu
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
         if (arguments.length == 0) {
             if (!(commandSender instanceof Player)) {
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetOnlyPlayer());
                 return true;
             }
 
-            if (this.plugin.getPermissions().getConfiguration().getBoolean("Permissions.clearenderchest.self.required"))
-                if (!this.plugin.getPermissions().hasPermission(commandSender, "clearenderchest.self.permission")) {
-                    commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                                 .getNoPermission(this.plugin.getPermissions()
-                                                                                                                             .getPermission(
+            if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.clearenderchest.self.required"))
+                if (!this._plugin.GetPermissions().HasPermission(commandSender, "clearenderchest.self.permission")) {
+                    commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                                 .GetNoPermission(this._plugin.GetPermissions()
+                                                                                                                             .GetPermission(
                                                                                                                                      "clearenderchest.self.permission")));
                     return true;
                 }
@@ -36,14 +36,14 @@ public class ClearEnderChestCommand extends CommandUtils implements CommandExecu
             return true;
         }
 
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "clearenderchest.others")) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                      this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().getPermission("clearenderchest.others")));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "clearenderchest.others")) {
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetNoPermission(this._plugin.GetPermissions().GetPermission("clearenderchest.others")));
             return true;
         }
-        var target = this.getPlayer(commandSender, arguments[0]);
+        var target = this.GetPlayer(commandSender, arguments[0]);
         if (target == null) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;
         }
 
@@ -55,8 +55,8 @@ public class ClearEnderChestCommand extends CommandUtils implements CommandExecu
         var counter = 0;
         var enderChestInventory = target.getEnderChest();
 
-        for (var i = 0; i < enderChestInventory.getSize(); i++) {
-            var itemStack = enderChestInventory.getItem(i);
+        for (var index = 0; index < enderChestInventory.getSize(); index++) {
+            var itemStack = enderChestInventory.getItem(index);
 
             if (itemStack == null)
                 continue;
@@ -67,19 +67,19 @@ public class ClearEnderChestCommand extends CommandUtils implements CommandExecu
         enderChestInventory.clear();
 
         if (commandSender == target) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                         .getMessage(commandLabel, command.getName(), commandSender, null,
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                         .GetMessage(commandLabel, command.getName(), commandSender, null,
                                                                                                      "ClearEnderChest.Self")
                                                                                          .replace("<AMOUNT>", String.valueOf(counter)));
             return;
         }
 
-        target.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                              .getMessage(commandLabel, command.getName(), commandSender, target,
+        target.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                              .GetMessage(commandLabel, command.getName(), commandSender, target,
                                                                                           "ClearEnderChest.Others.Target")
                                                                               .replace("<AMOUNT>", String.valueOf(counter)));
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                     .getMessage(commandLabel, command.getName(), commandSender, target,
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                     .GetMessage(commandLabel, command.getName(), commandSender, target,
                                                                                                  "ClearEnderChest.Others.Sender")
                                                                                      .replace("<AMOUNT>", String.valueOf(counter)));
     }

@@ -15,123 +15,124 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public final class CommandManager {
-    private final ServerSystem serverSystem;
-    private final List<String> serverSystemCommands = new ArrayList<>();
-    private final Map<String, PluginCommand> deactivatedBukkitCommands = new HashMap<>();
-    private final Map<String, Command> deactivatedMiscCommands = new HashMap<>();
-    private boolean dropActive = true;
-    private boolean pickupActive = true;
-    private boolean interactActive = true;
-    private boolean chatActive = true;
+    public static final String UNBAN = "unban";
+    private final ServerSystem _serverSystem;
+    private final List<String> _serverSystemCommands = new ArrayList<>();
+    private final Map<String, PluginCommand> _deactivatedBukkitCommands = new HashMap<>();
+    private final Map<String, Command> _deactivatedMiscCommands = new HashMap<>();
+    private boolean _dropActive = true;
+    private boolean _pickupActive = true;
+    private boolean _interactActive = true;
+    private boolean _chatActive = true;
 
     public CommandManager(ServerSystem serverSystem) {
-        this.serverSystem = serverSystem;
+        this._serverSystem = serverSystem;
     }
 
-    public void registerTabComplete(String command, TabCompleter completer) {
-        if (this.serverSystem.getCommand(command) != null)
-            this.serverSystem.getCommand(command).setTabCompleter(completer);
+    public void RegisterTabComplete(String command, TabCompleter completer) {
+        if (this._serverSystem.getCommand(command) != null)
+            this._serverSystem.getCommand(command).setTabCompleter(completer);
     }
 
-    public Command getCommand(String command) {
-        Object result = this.getCommandMap();
+    public Command GetCommand(String command) {
+        Object result = this.GetCommandMap();
         var commandMap = (SimpleCommandMap) result;
         return commandMap.getCommand(command.toLowerCase(Locale.ROOT));
     }
 
-    private CommandMap getCommandMap() {
+    private CommandMap GetCommandMap() {
         CommandMap commandMap = null;
         try {
             if (Bukkit.getPluginManager() instanceof SimplePluginManager) {
                 var commandMapField = ((SimplePluginManager) Bukkit.getPluginManager()).getClass().getDeclaredField("commandMap");
                 commandMapField.setAccessible(true);
 
-                commandMap = (CommandMap) commandMapField.get(this.serverSystem.getServer().getPluginManager());
+                commandMap = (CommandMap) commandMapField.get(this._serverSystem.getServer().getPluginManager());
             }
-        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
-            if (e instanceof NoSuchFieldException)
+        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException exception) {
+            if (exception instanceof NoSuchFieldException)
                 try {
                     var commandMapField = SimplePluginManager.class.getDeclaredField("commandMap");
                     commandMapField.setAccessible(true);
 
-                    commandMap = (CommandMap) commandMapField.get(this.serverSystem.getServer().getPluginManager());
+                    commandMap = (CommandMap) commandMapField.get(this._serverSystem.getServer().getPluginManager());
                     return commandMap;
-                } catch (Exception ex) {
-                    e.addSuppressed(ex);
+                } catch (Exception exception1) {
+                    exception.addSuppressed(exception1);
                 }
-            e.printStackTrace();
+            exception.printStackTrace();
         }
 
         return commandMap;
     }
 
-    public void unregisterCommands() {
-        if (!this.deactivatedBukkitCommands.isEmpty()) {
-            for (var entry : this.deactivatedBukkitCommands.entrySet()) {
-                var cmd = entry.getKey();
+    public void UnregisterCommands() {
+        if (!this._deactivatedBukkitCommands.isEmpty()) {
+            for (var entry : this._deactivatedBukkitCommands.entrySet()) {
+                var commandWithNamespace = entry.getKey();
 
-                var plugin = cmd.split(":")[0];
-                var command = cmd.split(":")[1];
-                this.serverSystem.log("Reactivating command " + command + " from " + plugin + "!");
-                this.activateBukkitCommand(this.deactivatedBukkitCommands.get(cmd));
+                var plugin = commandWithNamespace.split(":")[0];
+                var command = commandWithNamespace.split(":")[1];
+                this._serverSystem.Info("Reactivating command " + command + " from " + plugin + "!");
+                this.ActivateBukkitCommand(this._deactivatedBukkitCommands.get(command));
             }
 
-            if (this.serverSystem.getEssentialsCommandListener() != null)
-                for (var cmd : this.serverSystem.getEssentialsCommandListener().getNewEssentialsCommands()) {
-                    this.serverSystem.log("Reactivating command " + cmd + "!");
-                    this.serverSystem.getEssentialsCommandListener().removeCommand(cmd);
+            if (this._serverSystem.GetEssentialsCommandListener() != null)
+                for (var command : this._serverSystem.GetEssentialsCommandListener().GetNewEssentialsCommands()) {
+                    this._serverSystem.Info("Reactivating command " + command + "!");
+                    this._serverSystem.GetEssentialsCommandListener().RemoveCommand(command);
                 }
         }
 
         try {
-            for (var command : this.serverSystemCommands) {
+            for (var command : this._serverSystemCommands) {
                 command = command.toLowerCase();
-                this.deactivateOwnCommand(command);
+                this.DeactivateOwnCommand(command);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
     }
 
-    private void activateBukkitCommand(PluginCommand cmd) {
+    private void ActivateBukkitCommand(PluginCommand command) {
         try {
-            Object result = /*this.getPrivateField(this.serverSystem.getServer().getPluginManager(), "commandMap")*/this.getCommandMap();
+            Object result = /*this.getPrivateField(this.serverSystem.getServer().getPluginManager(), "commandMap")*/this.GetCommandMap();
             var commandMap = (SimpleCommandMap) result;
-            var map = this.getPrivateField(commandMap);
+            var map = this.GetPrivateField(commandMap);
             var knownCommands = (HashMap<String, Command>) map;
-            if (cmd == null)
+            if (command == null)
                 return;
-            knownCommands.put(cmd.getName().toLowerCase(), cmd);
-            knownCommands.put(cmd.getPlugin().getName().toLowerCase() + ":" + cmd.getName().toLowerCase(), cmd);
-            if (!cmd.getAliases().isEmpty())
-                for (var alias : cmd.getAliases()) {
-                    knownCommands.put(alias.toLowerCase(), cmd);
+            knownCommands.put(command.getName().toLowerCase(), command);
+            knownCommands.put(command.getPlugin().getName().toLowerCase() + ":" + command.getName().toLowerCase(), command);
+            if (!command.getAliases().isEmpty())
+                for (var alias : command.getAliases()) {
+                    knownCommands.put(alias.toLowerCase(), command);
                     if (Bukkit.getServer().getPluginCommand(alias.toLowerCase().toLowerCase()) == null)
-                        knownCommands.put(cmd.getPlugin().getName().toLowerCase() + ":" + alias.toLowerCase(), cmd);
+                        knownCommands.put(command.getPlugin().getName().toLowerCase() + ":" + alias.toLowerCase(), command);
                 }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
     }
 
-    private void deactivateOwnCommand(String cmd) {
+    private void DeactivateOwnCommand(String command) {
         try {
             var plugin = "serversystem";
-            Object result = /*this.getPrivateField(this.serverSystem.getServer().getPluginManager(), "commandMap")*/this.getCommandMap();
+            Object result = /*this.getPrivateField(this.serverSystem.getServer().getPluginManager(), "commandMap")*/this.GetCommandMap();
             var commandMap = (SimpleCommandMap) result;
-            var map = this.getPrivateField(commandMap);
+            var map = this.GetPrivateField(commandMap);
             var knownCommands = (HashMap<String, Command>) map;
-            if (cmd == null)
+            if (command == null)
                 return;
-            if (this.serverSystem.getServer().getPluginCommand(plugin + ":" + cmd) == this.serverSystem.getServer().getPluginCommand(cmd))
-                knownCommands.remove(cmd);
-            knownCommands.remove(plugin + ":" + cmd);
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (this._serverSystem.getServer().getPluginCommand(plugin + ":" + command) == this._serverSystem.getServer().getPluginCommand(command))
+                knownCommands.remove(command);
+            knownCommands.remove(plugin + ":" + command);
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
     }
 
-    private Object getPrivateField(Object object) throws IllegalArgumentException, IllegalAccessException {
+    private Object GetPrivateField(Object object) throws IllegalArgumentException, IllegalAccessException {
         var clazz = object.getClass();
 
         try {
@@ -145,120 +146,120 @@ public final class CommandManager {
         }
     }
 
-    public void registerCommands() {
-        this.registerCommand("afk", new AwayFromKeyboardCommand(this.serverSystem), null);
-        this.registerCommand("unlimited", new UnlimitedCommand(this.serverSystem), null);
-        this.registerCommand("clearchat", new ClearChatCommand(this.serverSystem), null);
-        this.registerCommand("back", new BackCommand(this.serverSystem), null);
-        this.registerCommand("broadcast", new BroadcastCommand(this.serverSystem), null);
-        this.registerCommand("sethome", new SetHomeCommand(this.serverSystem), null);
-        this.registerCommand("delhome", new DelHomeCommand(this.serverSystem), new DelHomeTabCompleter(this.serverSystem));
-        this.registerCommand("home", new HomeCommand(this.serverSystem), new HomeTabCompleter(this.serverSystem));
-        this.registerCommand("workbench", new WorkbenchCommand(this.serverSystem), null);
-        this.registerCommand("tpa", new TeleportRequestCommand(this.serverSystem), null);
-        this.registerCommand("tpahere", new TeleportRequestHereCommand(this.serverSystem), null);
-        this.registerCommand("tpaccept", new TeleportRequestAcceptCommand(this.serverSystem), null);
-        this.registerCommand("tpdeny", new TeleportRequestDenyCommand(this.serverSystem), null);
-        this.registerCommand("vanish", new VanishCommand(this.serverSystem), null);
-        this.registerCommand("chat", new ChatCommand(this.serverSystem), null);
-        this.registerCommand("interact", new InteractCommand(this.serverSystem), null);
-        this.registerCommand("pickup", new PickUpCommand(this.serverSystem), null);
-        this.registerCommand("drop", new DropCommand(this.serverSystem), null);
-        this.registerCommand("tptoggle", new TeleportToggleCommand(this.serverSystem), null);
-        this.registerCommand("clearenderchest", new ClearEnderChestCommand(this.serverSystem), null);
-        this.registerCommand("clearinventory", new ClearInventoryCommand(this.serverSystem), null);
-        this.registerCommand("checkgamemode", new CheckGameModeCommand(this.serverSystem), null);
-        this.registerCommand("speed", new SpeedCommand(this.serverSystem), new SpeedTabCompleter(this.serverSystem));
-        this.registerCommand("serversystem", new ServerSystemCommand(this.serverSystem), new ServerSystemTabCompleter(this.serverSystem));
-        this.registerCommand("gamemode", new GameModeCommand(this.serverSystem), new GameModeTabCompleter());
-        this.registerCommand("feed", new FeedCommand(this.serverSystem), null);
-        this.registerCommand("time", new TimeCommand(this.serverSystem), new WorldTabCompleter());
-        this.registerCommand("heal", new HealCommand(this.serverSystem), null);
-        this.registerCommand("hat", new HatCommand(this.serverSystem), null);
-        this.registerCommand("weather", new WeatherCommand(this.serverSystem), new WorldTabCompleter());
-        this.registerCommand("restart", new RestartCommand(this.serverSystem), null);
-        this.registerCommand("ping", new PingCommand(this.serverSystem), null);
-        this.registerCommand("burn", new BurnCommand(this.serverSystem), null);
-        this.registerCommand("ip", new IpCommand(this.serverSystem), null);
-        this.registerCommand("repair", new RepairCommand(this.serverSystem), null);
-        this.registerCommand("disenchant", new DisenchantCommand(this.serverSystem), null);
-        this.registerCommand("suicide", new SuicideCommand(this.serverSystem), null);
-        this.registerCommand("extinguish", new ExtinguishCommand(this.serverSystem), null);
-        this.registerCommand("lag", new LagCommand(this.serverSystem), null);
-        this.registerCommand("sudo", new SudoCommand(this.serverSystem), null);
-        this.registerCommand("smelt", new SmeltCommand(this.serverSystem), null);
-        this.registerCommand("stack", new StackCommand(this.serverSystem), null);
-        this.registerCommand("disposal", new DisposalCommand(this.serverSystem), null);
-        this.registerCommand("teamchat", new TeamChatCommand(this.serverSystem), null);
-        this.registerCommand("sign", new SignCommand(this.serverSystem), null);
-        this.registerCommand("unsign", new UnSignCommand(this.serverSystem), null);
-        this.registerCommand("tppos", new TeleportPositionCommand(this.serverSystem), null);
-        if (this.serverSystem.getConfigReader().getBoolean("banSystem.enabled")) {
-            this.registerCommand("ban", new BanCommand(this.serverSystem), new BanTabCompleter(this.serverSystem));
-            this.registerCommand("unban", new UnBanCommand(this.serverSystem), new UnBanTabCompleter(this.serverSystem));
-            this.registerCommand("mute", new MuteCommand(this.serverSystem), new MuteTabCompleter(this.serverSystem));
-            this.registerCommand("unmute", new UnMuteCommand(this.serverSystem), new UnMuteTabCompleter(this.serverSystem));
-            this.registerCommand("kick", new KickCommand(this.serverSystem), null);
-            this.registerCommand("kickall", new KickAllCommand(this.serverSystem), null);
+    public void RegisterCommands() {
+        this.RegisterCommand("afk", new AwayFromKeyboardCommand(this._serverSystem), null);
+        this.RegisterCommand("unlimited", new UnlimitedCommand(this._serverSystem), null);
+        this.RegisterCommand("clearchat", new ClearChatCommand(this._serverSystem), null);
+        this.RegisterCommand("back", new BackCommand(this._serverSystem), null);
+        this.RegisterCommand("broadcast", new BroadcastCommand(this._serverSystem), null);
+        this.RegisterCommand("sethome", new SetHomeCommand(this._serverSystem), null);
+        this.RegisterCommand("delhome", new DelHomeCommand(this._serverSystem), new DelHomeTabCompleter());
+        this.RegisterCommand("home", new HomeCommand(this._serverSystem), new HomeTabCompleter());
+        this.RegisterCommand("workbench", new WorkbenchCommand(this._serverSystem), null);
+        this.RegisterCommand("tpa", new TeleportRequestCommand(this._serverSystem), null);
+        this.RegisterCommand("tpahere", new TeleportRequestHereCommand(this._serverSystem), null);
+        this.RegisterCommand("tpaccept", new TeleportRequestAcceptCommand(this._serverSystem), null);
+        this.RegisterCommand("tpdeny", new TeleportRequestDenyCommand(this._serverSystem), null);
+        this.RegisterCommand("vanish", new VanishCommand(this._serverSystem), null);
+        this.RegisterCommand("chat", new ChatCommand(this._serverSystem), null);
+        this.RegisterCommand("interact", new InteractCommand(this._serverSystem), null);
+        this.RegisterCommand("pickup", new PickUpCommand(this._serverSystem), null);
+        this.RegisterCommand("drop", new DropCommand(this._serverSystem), null);
+        this.RegisterCommand("tptoggle", new TeleportToggleCommand(this._serverSystem), null);
+        this.RegisterCommand("clearenderchest", new ClearEnderChestCommand(this._serverSystem), null);
+        this.RegisterCommand("clearinventory", new ClearInventoryCommand(this._serverSystem), null);
+        this.RegisterCommand("checkgamemode", new CheckGameModeCommand(this._serverSystem), null);
+        this.RegisterCommand("speed", new SpeedCommand(this._serverSystem), new SpeedTabCompleter(this._serverSystem));
+        this.RegisterCommand("serversystem", new ServerSystemCommand(this._serverSystem), new ServerSystemTabCompleter(this._serverSystem));
+        this.RegisterCommand("gamemode", new GameModeCommand(this._serverSystem), new GameModeTabCompleter());
+        this.RegisterCommand("feed", new FeedCommand(this._serverSystem), null);
+        this.RegisterCommand("time", new TimeCommand(this._serverSystem), new WorldTabCompleter());
+        this.RegisterCommand("heal", new HealCommand(this._serverSystem), null);
+        this.RegisterCommand("hat", new HatCommand(this._serverSystem), null);
+        this.RegisterCommand("weather", new WeatherCommand(this._serverSystem), new WorldTabCompleter());
+        this.RegisterCommand("restart", new RestartCommand(this._serverSystem), null);
+        this.RegisterCommand("ping", new PingCommand(this._serverSystem), null);
+        this.RegisterCommand("burn", new BurnCommand(this._serverSystem), null);
+        this.RegisterCommand("ip", new IpCommand(this._serverSystem), null);
+        this.RegisterCommand("repair", new RepairCommand(this._serverSystem), null);
+        this.RegisterCommand("disenchant", new DisenchantCommand(this._serverSystem), null);
+        this.RegisterCommand("suicide", new SuicideCommand(this._serverSystem), null);
+        this.RegisterCommand("extinguish", new ExtinguishCommand(this._serverSystem), null);
+        this.RegisterCommand("lag", new LagCommand(this._serverSystem), null);
+        this.RegisterCommand("sudo", new SudoCommand(this._serverSystem), null);
+        this.RegisterCommand("smelt", new SmeltCommand(this._serverSystem), null);
+        this.RegisterCommand("stack", new StackCommand(this._serverSystem), null);
+        this.RegisterCommand("disposal", new DisposalCommand(this._serverSystem), null);
+        this.RegisterCommand("teamchat", new TeamChatCommand(this._serverSystem), null);
+        this.RegisterCommand("sign", new SignCommand(this._serverSystem), null);
+        this.RegisterCommand("unsign", new UnSignCommand(this._serverSystem), null);
+        this.RegisterCommand("tppos", new TeleportPositionCommand(this._serverSystem), null);
+        if (this._serverSystem.GetConfigReader().GetBoolean("banSystem.enabled")) {
+            this.RegisterCommand("ban", new BanCommand(this._serverSystem), new BanTabCompleter(this._serverSystem));
+            this.RegisterCommand(UNBAN, new UnBanCommand(this._serverSystem), new UnBanTabCompleter(this._serverSystem));
+            this.RegisterCommand("mute", new MuteCommand(this._serverSystem), new MuteTabCompleter(this._serverSystem));
+            this.RegisterCommand("unmute", new UnMuteCommand(this._serverSystem), new UnMuteTabCompleter(this._serverSystem));
+            this.RegisterCommand("kick", new KickCommand(this._serverSystem), null);
+            this.RegisterCommand("kickall", new KickAllCommand(this._serverSystem), null);
         }
-        if (this.serverSystem.getConfigReader().getBoolean("economy.enabled")) {
-            this.registerCommand("money", new MoneyCommand(this.serverSystem), null);
-            this.registerCommand("pay", new PayCommand(this.serverSystem), null);
-            this.registerCommand("economy", new EconomyCommand(this.serverSystem), new EconomyTabCompleter(this.serverSystem));
-            this.registerCommand("baltop", new BaltopCommand(this.serverSystem), null);
+        if (this._serverSystem.GetConfigReader().GetBoolean("economy.enabled")) {
+            this.RegisterCommand("money", new MoneyCommand(this._serverSystem), null);
+            this.RegisterCommand("pay", new PayCommand(this._serverSystem), null);
+            this.RegisterCommand("economy", new EconomyCommand(this._serverSystem), new EconomyTabCompleter(this._serverSystem));
+            this.RegisterCommand("baltop", new BaltopCommand(this._serverSystem), null);
         }
-        this.registerCommand("fly", new FlyCommand(this.serverSystem), null);
-        this.registerCommand("commandspy", new CommandSpyCommand(this.serverSystem), null);
-        this.registerCommand("warp", new WarpCommand(this.serverSystem), new WarpTabCompleter(this.serverSystem));
-        this.registerCommand("delwarp", new DeleteWarpCommand(this.serverSystem), new WarpTabCompleter(this.serverSystem));
-        this.registerCommand("setwarp", new SetWarpCommand(this.serverSystem), null);
-        this.registerCommand("setspawn", new SetSpawnCommand(this.serverSystem), null);
-        this.registerCommand("spawn", new SpawnCommand(this.serverSystem), null);
-        this.registerCommand("createkit", new CreateKitCommand(this.serverSystem), null);
-        this.registerCommand("delkit", new DeleteKitCommand(this.serverSystem), new DeleteKitTabCompleter(this.serverSystem));
-        this.registerCommand("kit", new KitCommand(this.serverSystem), new KitTabCompleter(this.serverSystem));
-        this.registerCommand("invsee", new InvseeCommand(this.serverSystem), null);
-        this.registerCommand("enderchest", new EnderChestCommand(this.serverSystem), null);
-        this.registerCommand("tp", new TeleportCommand(this.serverSystem), null);
-        this.registerCommand("tpo", new TeleportForceCommand(this.serverSystem), null);
-        this.registerCommand("tphere", new TeleportHereCommand(this.serverSystem), null);
-        this.registerCommand("tpohere", new TeleportForceHereCommand(this.serverSystem), null);
-        this.registerCommand("tpall", new TeleportAllCommand(this.serverSystem), null);
-        this.registerCommand("msg", new MsgCommand(this.serverSystem), null);
-        this.registerCommand("msgtoggle", new MsgToggleCommand(this.serverSystem), null);
-        this.registerCommand("socialspy", new SocialSpyCommand(this.serverSystem), null);
+        this.RegisterCommand("fly", new FlyCommand(this._serverSystem), null);
+        this.RegisterCommand("commandspy", new CommandSpyCommand(this._serverSystem), null);
+        this.RegisterCommand("warp", new WarpCommand(this._serverSystem), new WarpTabCompleter(this._serverSystem));
+        this.RegisterCommand("delwarp", new DeleteWarpCommand(this._serverSystem), new WarpTabCompleter(this._serverSystem));
+        this.RegisterCommand("setwarp", new SetWarpCommand(this._serverSystem), null);
+        this.RegisterCommand("setspawn", new SetSpawnCommand(this._serverSystem), null);
+        this.RegisterCommand("spawn", new SpawnCommand(this._serverSystem), null);
+        this.RegisterCommand("createkit", new CreateKitCommand(this._serverSystem), null);
+        this.RegisterCommand("delkit", new DeleteKitCommand(this._serverSystem), new DeleteKitTabCompleter(this._serverSystem));
+        this.RegisterCommand("kit", new KitCommand(this._serverSystem), new KitTabCompleter(this._serverSystem));
+        this.RegisterCommand("invsee", new InvseeCommand(this._serverSystem), null);
+        this.RegisterCommand("enderchest", new EnderChestCommand(this._serverSystem), null);
+        this.RegisterCommand("tp", new TeleportCommand(this._serverSystem), null);
+        this.RegisterCommand("tpo", new TeleportForceCommand(this._serverSystem), null);
+        this.RegisterCommand("tphere", new TeleportHereCommand(this._serverSystem), null);
+        this.RegisterCommand("tpohere", new TeleportForceHereCommand(this._serverSystem), null);
+        this.RegisterCommand("tpall", new TeleportAllCommand(this._serverSystem), null);
+        this.RegisterCommand("msg", new MsgCommand(this._serverSystem), null);
+        this.RegisterCommand("msgtoggle", new MsgToggleCommand(this._serverSystem), null);
+        this.RegisterCommand("socialspy", new SocialSpyCommand(this._serverSystem), null);
         if (Bukkit.getPluginManager().getPlugin("Essentials") != null) {
-            this.registerCommand("convertfromessentials", new EssentialsConversionCommand(this.serverSystem), null);
-            this.registerCommand("converttoessentials", new ServerSystemConversionCommand(this.serverSystem), null);
+            this.RegisterCommand("convertfromessentials", new EssentialsConversionCommand(this._serverSystem), null);
+            this.RegisterCommand("converttoessentials", new ServerSystemConversionCommand(this._serverSystem), null);
         }
-        this.registerCommand("god", new GodCommand(this.serverSystem), null);
-        this.registerCommand("reply", new ReplyCommand(this.serverSystem), null);
-        this.registerCommand("maintenance", new MaintenanceCommand(this.serverSystem), null);
-        this.registerCommand("rules", new RulesCommand(this.serverSystem), null);
-        this.registerCommand("rename", new RenameCommand(this.serverSystem), null);
-        this.registerCommand("recipe", new RecipeCommand(this.serverSystem), new RecipeTabCompleter(this.serverSystem));
-        this.registerCommand("warps", new WarpsCommand(this.serverSystem), null);
-        this.registerCommand("checkhealth", new CheckHealthCommand(this.serverSystem), null);
-        this.registerCommand("lightning", new LightningCommand(this.serverSystem), null);
-        this.registerCommand("getpos", new GetPositionCommand(this.serverSystem), null);
-        this.registerCommand("anvil", new AnvilCommand(this.serverSystem), null);
-        if (this.serverSystem.getVersionStuff().getVirtualCartography() != null)
-            this.registerCommand("cartographytable", new CartographyCommand(this.serverSystem), null);
-        if (this.serverSystem.getVersionStuff().getVirtualGrindstone() != null)
-            this.registerCommand("grindstone", new GrindStoneCommand(this.serverSystem), null);
-        if (this.serverSystem.getVersionStuff().getVirtualLoom() != null)
-            this.registerCommand("loom", new LoomCommand(this.serverSystem), null);
-        if (this.serverSystem.getVersionStuff().getVirtualStoneCutter() != null)
-            this.registerCommand("stonecutter", new StoneCutterCommand(this.serverSystem), null);
-        if (this.serverSystem.getVersionStuff().getVirtualSmithing() != null)
-            this.registerCommand("smithingtable", new SmithingTableCommand(this.serverSystem), null);
-        this.registerCommand("break", new BreakCommand(this.serverSystem), null);
-        this.registerCommand("offlineteleport", new OfflineTeleportCommand(this.serverSystem), null);
-        this.registerCommand("offlineteleporthere", new OfflineTeleportHereCommand(this.serverSystem), null);
-        this.registerCommand("offlineinvsee", new OfflineInvseeCommand(this.serverSystem), null);
-        this.registerCommand("offlineenderchest", new OfflineEnderChestCommand(this.serverSystem), null);
-        this.registerCommand("seen", new SeenCommand(this.serverSystem), null);
-        this.registerCommand("freeze", new FreezeCommand(this.serverSystem), null);
+        this.RegisterCommand("god", new GodCommand(this._serverSystem), null);
+        this.RegisterCommand("reply", new ReplyCommand(this._serverSystem), null);
+        this.RegisterCommand("maintenance", new MaintenanceCommand(this._serverSystem), null);
+        this.RegisterCommand("rules", new RulesCommand(this._serverSystem), null);
+        this.RegisterCommand("rename", new RenameCommand(this._serverSystem), null);
+        this.RegisterCommand("recipe", new RecipeCommand(this._serverSystem), new RecipeTabCompleter(this._serverSystem));
+        this.RegisterCommand("warps", new WarpsCommand(this._serverSystem), null);
+        this.RegisterCommand("checkhealth", new CheckHealthCommand(this._serverSystem), null);
+        this.RegisterCommand("lightning", new LightningCommand(this._serverSystem), null);
+        this.RegisterCommand("getpos", new GetPositionCommand(this._serverSystem), null);
+        this.RegisterCommand("anvil", new AnvilCommand(this._serverSystem), null);
+        if (this._serverSystem.GetVersionStuff().GetVirtualCartography() != null)
+            this.RegisterCommand("cartographytable", new CartographyCommand(this._serverSystem), null);
+        if (this._serverSystem.GetVersionStuff().GetVirtualGrindstone() != null)
+            this.RegisterCommand("grindstone", new GrindStoneCommand(this._serverSystem), null);
+        if (this._serverSystem.GetVersionStuff().GetVirtualLoom() != null)
+            this.RegisterCommand("loom", new LoomCommand(this._serverSystem), null);
+        if (this._serverSystem.GetVersionStuff().GetVirtualStoneCutter() != null)
+            this.RegisterCommand("stonecutter", new StoneCutterCommand(this._serverSystem), null);
+        if (this._serverSystem.GetVersionStuff().GetVirtualSmithing() != null)
+            this.RegisterCommand("smithingtable", new SmithingTableCommand(this._serverSystem), null);
+        this.RegisterCommand("break", new BreakCommand(this._serverSystem), null);
+        this.RegisterCommand("offlineteleport", new OfflineTeleportCommand(this._serverSystem), null);
+        this.RegisterCommand("offlineteleporthere", new OfflineTeleportHereCommand(this._serverSystem), null);
+        this.RegisterCommand("offlineinvsee", new OfflineInvseeCommand(this._serverSystem), null);
+        this.RegisterCommand("offlineenderchest", new OfflineEnderChestCommand(this._serverSystem), null);
+        this.RegisterCommand("seen", new SeenCommand(this._serverSystem), null);
+        this.RegisterCommand("freeze", new FreezeCommand(this._serverSystem), null);
 
 
         var plotSquaredAlreadyRegistered = false;
@@ -266,7 +267,7 @@ public final class CommandManager {
         try {
             Class.forName("com.plotsquared.core.PlotAPI");
             new PlotListener4();
-            new PlotListener(this.serverSystem);
+            new PlotListener(this._serverSystem);
             plotSquaredAlreadyRegistered = true;
         } catch (Exception ignored) {
         }
@@ -275,7 +276,7 @@ public final class CommandManager {
             try {
                 Class.forName("com.plotsquared.core.events.PlayerEnterPlotEvent");
                 new PlotListener3();
-                new PlotListener(this.serverSystem);
+                new PlotListener(this._serverSystem);
                 plotSquaredAlreadyRegistered = true;
             } catch (Exception ignored) {
 
@@ -284,8 +285,8 @@ public final class CommandManager {
         if (!plotSquaredAlreadyRegistered)
             try {
                 Class.forName("com.github.intellectualsites.plotsquared.bukkit.events.PlayerEnterPlotEvent");
-                Bukkit.getPluginManager().registerEvents(new PlotListener2(this.serverSystem), this.serverSystem);
-                new PlotListener(this.serverSystem);
+                Bukkit.getPluginManager().registerEvents(new PlotListener2(this._serverSystem), this._serverSystem);
+                new PlotListener(this._serverSystem);
                 plotSquaredAlreadyRegistered = true;
             } catch (Exception ignored) {
 
@@ -294,72 +295,72 @@ public final class CommandManager {
         if (!plotSquaredAlreadyRegistered)
             try {
                 Class.forName("com.plotsquared.bukkit.events.PlayerEnterPlotEvent");
-                Bukkit.getPluginManager().registerEvents(new PlotListener1(this.serverSystem), this.serverSystem);
-                new PlotListener(this.serverSystem);
+                Bukkit.getPluginManager().registerEvents(new PlotListener1(this._serverSystem), this._serverSystem);
+                new PlotListener(this._serverSystem);
             } catch (Exception ignored) {
 
             }
     }
 
-    public void registerCommand(String command, CommandExecutor executor, TabCompleter tabCompleter) {
+    public void RegisterCommand(String command, CommandExecutor executor, TabCompleter tabCompleter) {
         if (executor == null)
-            this.serverSystem.error("CommandExecutor does not exist, please forward this message to the plugin author!");
+            this._serverSystem.Error("CommandExecutor does not exist, please forward this message to the plugin author!");
         if (command == null)
-            this.serverSystem.error("Command does not exist, please forward this message to the plugin author!");
+            this._serverSystem.Error("Command does not exist, please forward this message to the plugin author!");
 
         if (tabCompleter == null)
             if (executor instanceof TabCompleter)
                 tabCompleter = (TabCompleter) executor;
             else
-                tabCompleter = new DefaultTabCompleter(this.serverSystem);
+                tabCompleter = new DefaultTabCompleter(this._serverSystem);
 
 
         var commandsFiles = new File("plugins//ServerSystem", "commands.yml");
-        var commandsConfig = DefaultConfigReader.loadConfiguration(commandsFiles, this.serverSystem);
+        var commandsConfig = DefaultConfigReader.LoadConfiguration(commandsFiles, this._serverSystem);
 
-        if (commandsConfig.getBoolean(command.toLowerCase())) {
-            this.registerCommandInternal(executor, tabCompleter, this.serverSystem, command);
+        if (commandsConfig.GetBoolean(command.toLowerCase())) {
+            this.RegisterCommandInternal(executor, tabCompleter, this._serverSystem, command);
 
-            this.serverSystemCommands.add(command.toLowerCase());
+            this._serverSystemCommands.add(command.toLowerCase());
 
             var aliasFiles = new File("plugins//ServerSystem", "aliases.yml");
-            var aliasConfig = DefaultConfigReader.loadConfiguration(aliasFiles, this.serverSystem);
+            var aliasConfig = DefaultConfigReader.LoadConfiguration(aliasFiles, this._serverSystem);
 
-            var aliasString = aliasConfig.getString("Aliases." + command.toLowerCase() + ".aliases");
+            var aliasString = aliasConfig.GetString("Aliases." + command.toLowerCase() + ".aliases");
 
             if (aliasString != null) {
                 if (!aliasString.equalsIgnoreCase("No Aliases")) {
-                    var aliases = aliasConfig.getString("Aliases." + command.toLowerCase() + ".aliases").replace(" ", "").toLowerCase().split(",");
-                    this.addAlias(command, executor, aliases);
-                    this.serverSystemCommands.addAll(Arrays.asList(aliases));
+                    var aliases = aliasConfig.GetString("Aliases." + command.toLowerCase() + ".aliases").replace(" ", "").toLowerCase().split(",");
+                    this.AddAlias(command, executor, aliases);
+                    this._serverSystemCommands.addAll(Arrays.asList(aliases));
                 }
             } else
-                this.serverSystem.warn("Null alias for: " + command);
+                this._serverSystem.Warn("Null alias for: " + command);
         } else if (command.equalsIgnoreCase("drop"))
-            this.dropActive = false;
+            this._dropActive = false;
         else if (command.equalsIgnoreCase("chat"))
-            this.chatActive = false;
+            this._chatActive = false;
         else if (command.equalsIgnoreCase("pickup"))
-            this.pickupActive = false;
+            this._pickupActive = false;
         else if (command.equalsIgnoreCase("interact"))
-            this.interactActive = false;
+            this._interactActive = false;
     }
 
-    private void registerCommandInternal(CommandExecutor executor, TabCompleter tabCompleter, Plugin plugin, String... aliases) {
-        if (this.serverSystem.getServer().getPluginCommand(aliases[0]) != null)
-            if (!this.serverSystem.getServer().getPluginCommand(aliases[0]).getPlugin().getName().equalsIgnoreCase("ServerSystem"))
-                this.deactivateBukkitCommand(aliases[0], this.serverSystem.getServer().getPluginCommand(aliases[0]).getPlugin().getName());
+    private void RegisterCommandInternal(CommandExecutor executor, TabCompleter tabCompleter, Plugin plugin, String... aliases) {
+        if (this._serverSystem.getServer().getPluginCommand(aliases[0]) != null)
+            if (!this._serverSystem.getServer().getPluginCommand(aliases[0]).getPlugin().getName().equalsIgnoreCase("ServerSystem"))
+                this.DeactivateBukkitCommand(aliases[0], this._serverSystem.getServer().getPluginCommand(aliases[0]).getPlugin().getName());
 
         Object map = null;
         try {
-            map = this.getPrivateField(this.getCommandMap());
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            map = this.GetPrivateField(this.GetCommandMap());
+        } catch (IllegalAccessException exception) {
+            exception.printStackTrace();
         }
         var knownCommands = (HashMap<String, Command>) map;
 
         aliases = Arrays.stream(aliases).map(String::toLowerCase).toArray(String[]::new);
-        var command = this.getNewCommand(aliases[0], plugin);
+        var command = this.GetNewCommand(aliases[0], plugin);
 
         command.setExecutor(executor);
         if (tabCompleter != null)
@@ -374,16 +375,16 @@ public final class CommandManager {
             knownCommands.put(alias.toLowerCase(), command);
         }
 
-        command.register(this.getCommandMap());
+        command.register(this.GetCommandMap());
     }
 
-    private void addAlias(String cmd, CommandExecutor executor, String... aliases) {
-        cmd = cmd.toLowerCase();
+    private void AddAlias(String commandName, CommandExecutor executor, String... aliases) {
+        commandName = commandName.toLowerCase();
         try {
             Object result;
-            result = /*this.getPrivateField(this.serverSystem.getServer().getPluginManager(), "commandMap")*/ this.getCommandMap();
+            result = /*this.getPrivateField(this.serverSystem.getServer().getPluginManager(), "commandMap")*/ this.GetCommandMap();
             var commandMap = (SimpleCommandMap) result;
-            var map = this.getPrivateField(commandMap);
+            var map = this.GetPrivateField(commandMap);
             var knownCommands = (HashMap<String, Command>) map;
 
             for (var alias : aliases) {
@@ -391,7 +392,7 @@ public final class CommandManager {
                 knownCommands.remove("serversystem:" + alias.toLowerCase());
             }
 
-            var command = this.getNewCommand(cmd.toLowerCase(), this.serverSystem);
+            var command = this.GetNewCommand(commandName.toLowerCase(), this._serverSystem);
 
             command.setExecutor(executor);
 
@@ -405,59 +406,60 @@ public final class CommandManager {
 
             command.register(commandMap);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
     }
 
-    public void deactivateBukkitCommand(String cmd, String plugin) {
+    public void DeactivateBukkitCommand(String command, String plugin) {
         try {
-            Object result = /*this.getPrivateField(this.serverSystem.getServer().getPluginManager(), "commandMap")*/this.getCommandMap();
+            Object result = /*this.getPrivateField(this.serverSystem.getServer().getPluginManager(), "commandMap")*/this.GetCommandMap();
             var commandMap = (SimpleCommandMap) result;
-            var map = this.getPrivateField(commandMap);
+            var map = this.GetPrivateField(commandMap);
             var knownCommands = (HashMap<String, Command>) map;
-            if (cmd == null)
+            if (command == null)
                 return;
             if (plugin == null)
                 return;
-            if (this.serverSystem.getServer().getPluginCommand(plugin + ":" + cmd) == this.serverSystem.getServer().getPluginCommand(cmd))
-                knownCommands.remove(cmd);
+            if (this._serverSystem.getServer().getPluginCommand(plugin + ":" + command) == this._serverSystem.getServer().getPluginCommand(command))
+                knownCommands.remove(command);
 
             if (!plugin.equalsIgnoreCase("minecraft") && !plugin.equalsIgnoreCase("bukkit") && !plugin.equalsIgnoreCase("spigot"))
-                knownCommands.remove(plugin + ":" + cmd);
-        } catch (Exception e) {
-            e.printStackTrace();
+                knownCommands.remove(plugin + ":" + command);
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
     }
 
-    private PluginCommand getNewCommand(String name, Plugin plugin) {
+    private PluginCommand GetNewCommand(String name, Plugin plugin) {
         PluginCommand command = null;
 
         try {
-            var c = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
-            c.setAccessible(true);
+            var constructor = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
+            constructor.setAccessible(true);
 
-            command = c.newInstance(name, plugin);
-        } catch (IllegalArgumentException | IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
+            command = constructor.newInstance(name, plugin);
+        } catch (IllegalArgumentException | IllegalAccessException | InstantiationException | InvocationTargetException |
+                 NoSuchMethodException exception) {
+            exception.printStackTrace();
         }
 
         return command;
     }
 
-    public boolean isDropActive() {
-        return this.dropActive;
+    public boolean IsDropActive() {
+        return this._dropActive;
     }
 
-    public boolean isPickupActive() {
-        return this.pickupActive;
+    public boolean IsPickupActive() {
+        return this._pickupActive;
     }
 
-    public boolean isInteractActive() {
-        return this.interactActive;
+    public boolean IsInteractActive() {
+        return this._interactActive;
     }
 
-    public boolean isChatActive() {
-        return this.chatActive;
+    public boolean IsChatActive() {
+        return this._chatActive;
     }
 }

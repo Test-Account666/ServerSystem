@@ -1,5 +1,6 @@
 package me.entity303.serversystem.bansystem;
 
+import me.entity303.serversystem.bansystem.moderation.BanModeration;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.OfflinePlayer;
 
@@ -8,66 +9,52 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class BanManager_Disabled extends ManagerBan {
+public class BanManager_Disabled extends AbstractBanManager {
 
     public BanManager_Disabled(File banFile, String dateFormat, ServerSystem plugin) {
-        super(banFile, dateFormat, plugin);
+        super(dateFormat, plugin);
     }
 
     @Override
-    public boolean isBanned(UUID uuid) {
+    public boolean IsBanned(UUID uuid) {
         return false;
     }
 
     @Override
-    public List<String> getBannedPlayerNames() {
+    public List<String> GetBannedPlayerNames() {
         return new ArrayList<>();
     }
 
     @Override
-    public Ban getBanByUUID(UUID uuid) {
+    public BanModeration GetBanByUUID(UUID uuid) {
         return null;
     }
 
     @Override
-    public Ban getBanByUUIDString(String uuid) {
+    public BanModeration GetBanByPlayer(OfflinePlayer player) {
         return null;
     }
 
     @Override
-    public Ban getBanByPlayer(OfflinePlayer player) {
-        return null;
+    public BanModeration CreateBan(UUID banned, String senderUUID, String reason, Long howLong, TimeUnit timeUnit) {
+        return new BanModeration(banned, senderUUID, howLong, "", reason);
     }
 
     @Override
-    public String convertLongToDate(Long l) {
+    public void UnBan(UUID banned) {
+    }
+
+    @Override
+    public String ConvertLongToDate(Long longDate) {
         return "";
     }
 
     @Override
-    public String getDateFormat() {
+    protected String GetPermanentBanName() {
         return "";
     }
 
     @Override
-    public void setDateFormat(String dateFormat) {
-    }
-
-    @Override
-    public Ban createBan(UUID banned, String senderUUID, String reason, Long howLong, TimeUnit timeUnit) {
-        return new Ban(banned, reason, senderUUID, howLong, "");
-    }
-
-    @Override
-    public void unBan(UUID banned) {
-    }
-
-    @Override
-    public void close() {
-    }
-
-    @Override
-    protected String getBanSystem(String action) {
-        return "";
+    public void Close() {
     }
 }

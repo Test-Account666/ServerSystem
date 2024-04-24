@@ -12,73 +12,75 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class EssentialsCommandListener implements Listener {
-    private final Essentials essentials;
-    private final ServerSystem plugin;
-    private final Map<String, String> essentialsCommandMap = new HashMap<>();
+    private static final Pattern SLASH_PATTERN = Pattern.compile("/");
+    private final Essentials _essentials;
+    private final ServerSystem _plugin;
+    private final Map<String, String> _essentialsCommandMap = new HashMap<>();
 
     public EssentialsCommandListener(Essentials essentials, ServerSystem plugin) {
-        this.essentials = essentials;
-        this.plugin = plugin;
+        this._essentials = essentials;
+        this._plugin = plugin;
     }
 
     @EventHandler
-    public void onNewEssentialsCommand(PlayerCommandPreprocessEvent e) {
-        var com = e.getMessage().split(" ")[0].replaceFirst("/", "").toLowerCase();
-        if (this.essentialsCommandMap.containsKey(com)) {
-            e.setCancelled(true);
-            List<String> args = new ArrayList<>();
+    public void OnNewEssentialsCommand(PlayerCommandPreprocessEvent event) {
+        var com = SLASH_PATTERN.matcher(event.getMessage().split(" ")[0]).replaceFirst("").toLowerCase();
+        if (this._essentialsCommandMap.containsKey(com)) {
+            event.setCancelled(true);
+            List<String> arguments = new ArrayList<>();
 
-            if (e.getMessage().split(" ").length >= 2)
-                for (var i = 1; i < e.getMessage().split(" ").length; i++)
-                    args.add(i - 1, e.getMessage().split(" ")[i]);
+            if (event.getMessage().split(" ").length >= 2)
+                for (var index = 1; index < event.getMessage().split(" ").length; index++)
+                    arguments.add(index - 1, event.getMessage().split(" ")[index]);
 
-            var command = this.essentialsCommandMap.get(com);
-            var essentialsCommand = this.plugin.getServer().getPluginCommand("essentials:" + command);
+            var commandName = this._essentialsCommandMap.get(com);
+            var essentialsCommand = this._plugin.getServer().getPluginCommand("essentials:" + commandName);
 
-            IEssentialsCommand cmd;
+            IEssentialsCommand command;
 
             try {
-                cmd = (IEssentialsCommand) Essentials.class.getClassLoader()
+                command = (IEssentialsCommand) Essentials.class.getClassLoader()
                                                            .loadClass("com.earth2me.essentials.commands.Command" + essentialsCommand.getName())
                                                            .newInstance();
             } catch (InstantiationException | IllegalAccessException | ClassNotFoundException instantiationException) {
                 if (!instantiationException.getMessage().isEmpty())
-                    e.getPlayer().sendMessage(instantiationException.getMessage());
+                    event.getPlayer().sendMessage(instantiationException.getMessage());
                 instantiationException.printStackTrace();
                 return;
             }
 
-            cmd.setEssentials(this.essentials);
-            cmd.setEssentialsModule(null);
+            command.setEssentials(this._essentials);
+            command.setEssentialsModule(null);
 
             try {
-                cmd.run(this.essentials.getServer(), this.essentials.getUser(e.getPlayer().getUniqueId()), essentialsCommand.getName(), essentialsCommand,
-                        args.toArray(new String[0]));
+                command.run(this._essentials.getServer(), this._essentials.getUser(event.getPlayer().getUniqueId()), essentialsCommand.getName(), essentialsCommand,
+                        arguments.toArray(new String[0]));
             } catch (NotEnoughArgumentsException exception) {
-                e.getPlayer().sendMessage(essentialsCommand.getDescription());
-                e.getPlayer().sendMessage(essentialsCommand.getUsage().replaceAll("<command>", com));
+                event.getPlayer().sendMessage(essentialsCommand.getDescription());
+                event.getPlayer().sendMessage(essentialsCommand.getUsage().replace("<command>", com));
                 if (!exception.getMessage().isEmpty())
-                    e.getPlayer().sendMessage(exception.getMessage());
+                    event.getPlayer().sendMessage(exception.getMessage());
             } catch (Exception exception) {
                 if (!exception.getMessage().isEmpty())
-                    e.getPlayer().sendMessage(exception.getMessage());
+                    event.getPlayer().sendMessage(exception.getMessage());
                 else
                     exception.printStackTrace();
             }
         }
     }
 
-    public void addCommand(String command, String essentialsCommand) {
-        this.essentialsCommandMap.put(command.toLowerCase(), essentialsCommand.toLowerCase());
+    public void AddCommand(String command, String essentialsCommand) {
+        this._essentialsCommandMap.put(command.toLowerCase(), essentialsCommand.toLowerCase());
     }
 
-    public void removeCommand(String command) {
-        this.essentialsCommandMap.remove(command.toLowerCase());
+    public void RemoveCommand(String command) {
+        this._essentialsCommandMap.remove(command.toLowerCase());
     }
 
-    public List<String> getNewEssentialsCommands() {
-        return new ArrayList<>(this.essentialsCommandMap.keySet());
+    public List<String> GetNewEssentialsCommands() {
+        return new ArrayList<>(this._essentialsCommandMap.keySet());
     }
 }

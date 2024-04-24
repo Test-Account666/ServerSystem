@@ -10,75 +10,75 @@ import java.util.List;
 import java.util.UUID;
 
 public class Vanish {
-    private final ServerSystem plugin;
-    private final List<UUID> vanishList = new ArrayList<>();
-    private final List<Player> allowInteract = new ArrayList<>();
-    private final List<Player> allowChat = new ArrayList<>();
-    private final List<Player> allowDrop = new ArrayList<>();
-    private final List<Player> allowPickup = new ArrayList<>();
+    private final ServerSystem _plugin;
+    private final List<UUID> _vanishList = new ArrayList<>();
+    private final List<Player> _allowInteract = new ArrayList<>();
+    private final List<Player> _allowChat = new ArrayList<>();
+    private final List<Player> _allowDrop = new ArrayList<>();
+    private final List<Player> _allowPickup = new ArrayList<>();
 
     public Vanish(ServerSystem plugin) {
-        this.plugin = plugin;
+        this._plugin = plugin;
     }
 
-    public List<Player> getAllowInteract() {
-        if (!this.plugin.getCommandManager().isInteractActive())
+    public List<Player> GetAllowInteract() {
+        if (!this._plugin.GetCommandManager().IsInteractActive())
             return new ArrayList<>(Bukkit.getOnlinePlayers());
-        return this.allowInteract;
+        return this._allowInteract;
     }
 
-    public List<Player> getAllowChat() {
-        if (!this.plugin.getCommandManager().isChatActive())
+    public List<Player> GetAllowChat() {
+        if (!this._plugin.GetCommandManager().IsChatActive())
             return new ArrayList<>(Bukkit.getOnlinePlayers());
-        return this.allowChat;
+        return this._allowChat;
     }
 
-    public List<Player> getAllowDrop() {
-        if (!this.plugin.getCommandManager().isDropActive())
+    public List<Player> GetAllowDrop() {
+        if (!this._plugin.GetCommandManager().IsDropActive())
             return new ArrayList<>(Bukkit.getOnlinePlayers());
-        return this.allowDrop;
+        return this._allowDrop;
     }
 
-    public List<Player> getAllowPickup() {
-        if (!this.plugin.getCommandManager().isPickupActive())
+    public List<Player> GetAllowPickup() {
+        if (!this._plugin.GetCommandManager().IsPickupActive())
             return new ArrayList<>(Bukkit.getOnlinePlayers());
-        return this.allowPickup;
+        return this._allowPickup;
     }
 
-    public List<UUID> getVanishList() {
-        return this.vanishList;
+    public List<UUID> GetVanishList() {
+        return this._vanishList;
     }
 
-    public Boolean isVanish(OfflinePlayer player) {
-        return player.isOnline()? this.isVanish(player.getPlayer()) : Boolean.valueOf(this.vanishList.contains(player.getUniqueId()));
+    public Boolean IsVanish(OfflinePlayer player) {
+        return player.isOnline()? this.IsVanish(player.getPlayer()) : Boolean.valueOf(this._vanishList.contains(player.getUniqueId()));
     }
 
-    public Boolean isVanish(Player player) {
+    public Boolean IsVanish(Player player) {
         if (player == null)
-            this.plugin.error("Player cannot be null!");
+            this._plugin.Error("Player cannot be null!");
         player.getMetadata("Vanish");
-        return player.getMetadata("Vanish").stream().anyMatch(metadataValue -> metadataValue.asBoolean() || this.vanishList.contains(player.getUniqueId()));
+        return player.getMetadata("Vanish").stream().anyMatch(metadataValue -> metadataValue.asBoolean() || this._vanishList.contains(player.getUniqueId()));
     }
 
-    public void setVanishData(Player player, Boolean vanish) {
+    public void SetVanishData(Player player, Boolean vanish) {
         if (!vanish)
-            this.vanishList.remove(player.getUniqueId());
-        else if (!this.vanishList.contains(player.getUniqueId()))
-            this.vanishList.add(player.getUniqueId());
+            this._vanishList.remove(player.getUniqueId());
+        else if (!this._vanishList.contains(player.getUniqueId()))
+            this._vanishList.add(player.getUniqueId());
 
-        player.setMetadata("Vanish", this.plugin.getMetaValue().getMetaValue(vanish));
-        player.setMetadata("vanished", this.plugin.getMetaValue().getMetaValue(vanish));
+        player.setMetadata("Vanish", this._plugin.GetMetaValue().GetMetaValue(vanish));
+        player.setMetadata("vanished", this._plugin.GetMetaValue().GetMetaValue(vanish));
     }
 
-    public void setVanish(Boolean vanish, UUID uuid) {
+    public void SetVanish(Boolean vanish, UUID uuid) {
         if (vanish)
-            this.vanishList.add(uuid);
+            this._vanishList.add(uuid);
         else
-            this.vanishList.remove(uuid);
+            this._vanishList.remove(uuid);
     }
 
-    public void setVanish(boolean vanish, Player vanishPlayer) {
+    public void SetVanish(boolean vanish, Player vanishPlayer) {
         vanishPlayer.setSleepingIgnored(vanish);
-        this.plugin.getVersionStuff().getVanishPacket().setVanish(vanishPlayer, vanish);
+        this._plugin.GetVersionStuff().GetVanishPacket().SetVanish(vanishPlayer, vanish);
     }
 }

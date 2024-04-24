@@ -2,7 +2,7 @@ package me.entity303.serversystem.utils.versions.offlineplayer.data;
 
 import org.bukkit.entity.Player;
 
-public interface SaveData {
+public interface ISaveData {
 
-    void saveData(Player player);
+    void SaveData(Player player);
 }

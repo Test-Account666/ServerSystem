@@ -15,18 +15,18 @@ import org.bukkit.entity.Player;
     }
 
     @Subscribe
-    public void onPlayerEnterPlot(PlayerEnterPlotEvent e) {
-        var l = e.getPlot().getFlag((TimeFlag.TIME_DISABLED));
-        var player = (Player) e.getPlotPlayer().getPlatformPlayer();
-        if (l > -9000000000L)
-            PlotListener.TIME_MAP.put(player, l);
+    public void OnPlayerEnterPlot(PlayerEnterPlotEvent event) {
+        var timeDisabledFlag = event.getPlot().getFlag((TimeFlag.TIME_DISABLED));
+        var player = (Player) event.getPlotPlayer().getPlatformPlayer();
+        if (timeDisabledFlag > -9000000000L)
+            PlotListener.TIME_MAP.put(player, timeDisabledFlag);
         else
             PlotListener.TIME_MAP.remove(player);
     }
 
     @Subscribe
-    public void onPlayerLeavePlot(PlayerLeavePlotEvent e) {
-        var player = (Player) e.getPlotPlayer().getPlatformPlayer();
+    public void OnPlayerLeavePlot(PlayerLeavePlotEvent event) {
+        var player = (Player) event.getPlotPlayer().getPlatformPlayer();
         PlotListener.TIME_MAP.remove(player);
     }
 }

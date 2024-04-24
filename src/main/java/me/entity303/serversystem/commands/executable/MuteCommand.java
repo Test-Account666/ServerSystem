@@ -1,8 +1,8 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.bansystem.Mute;
+import me.entity303.serversystem.bansystem.moderation.MuteModeration;
 import me.entity303.serversystem.bansystem.TimeUnit;
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.events.AsyncMuteEvent;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 
 import static me.entity303.serversystem.bansystem.TimeUnit.*;
 
-public class MuteCommand extends CommandUtils implements CommandExecutorOverload {
+public class MuteCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public MuteCommand(ServerSystem plugin) {
         super(plugin);
@@ -22,91 +22,91 @@ public class MuteCommand extends CommandUtils implements CommandExecutorOverload
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (this.getPlugin().getMuteManager() == null) {
-            this.plugin.error("BanManager is null?!");
+        if (this._plugin.GetMuteManager() == null) {
+            this._plugin.Error("BanManager is null?!");
             return true;
         }
 
         var commandSenderName = commandSender instanceof Player?
                                 ((Player) commandSender).getUniqueId().toString() :
-                                this.plugin.getMessages().getCfg().getString("Messages.Misc.BanSystem." + "ConsoleName");
+                                this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.BanSystem." + "ConsoleName");
 
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "mute.use")) {
-            var permission = this.plugin.getPermissions().getPermission("mute.use");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "mute.use")) {
+            var permission = this._plugin.GetPermissions().GetPermission("mute.use");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
 
         if (arguments.length <= 1) {
             var targetName = arguments.length == 1? arguments[0] : null;
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                         .getSyntaxWithStringTarget(commandLabel, command, commandSender,
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                         .GetSyntaxWithStringTarget(commandLabel, command, commandSender,
                                                                                                                     targetName, "Mute")
-                                                                                         .replace("<YEAR>", getName(YEAR))
-                                                                                         .replace("<MONTH>", getName(MONTH))
-                                                                                         .replace("<WEEK>", getName(WEEK))
-                                                                                         .replace("<DAY>", getName(DAY))
-                                                                                         .replace("<HOUR>", getName(HOUR))
-                                                                                         .replace("<MINUTE>", getName(MINUTE))
-                                                                                         .replace("<SECOND>", getName(SECOND)));
+                                                                                         .replace("<YEAR>", GetName(YEAR))
+                                                                                         .replace("<MONTH>", GetName(MONTH))
+                                                                                         .replace("<WEEK>", GetName(WEEK))
+                                                                                         .replace("<DAY>", GetName(DAY))
+                                                                                         .replace("<HOUR>", GetName(HOUR))
+                                                                                         .replace("<MINUTE>", GetName(MINUTE))
+                                                                                         .replace("<SECOND>", GetName(SECOND)));
             return true;
         }
 
-        var target = MuteCommand.getPlayer(arguments[0]);
+        var target = MuteCommand.GetPlayer(arguments[0]);
 
         if (arguments.length == 2)
-            if (!arguments[1].equalsIgnoreCase(this.plugin.getMessages().getCfg().getString("Messages.Misc.BanSystem." + "PermanentName"))) {
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                             .getSyntaxWithStringTarget(commandLabel, command, commandSender,
+            if (!arguments[1].equalsIgnoreCase(this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.BanSystem." + "PermanentName"))) {
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                             .GetSyntaxWithStringTarget(commandLabel, command, commandSender,
                                                                                                                         arguments[0], "Mute")
-                                                                                             .replace("<YEAR>", getName(YEAR))
-                                                                                             .replace("<MONTH>", getName(MONTH))
-                                                                                             .replace("<WEEK>", getName(WEEK))
-                                                                                             .replace("<DAY>", getName(DAY))
-                                                                                             .replace("<HOUR>", getName(HOUR))
-                                                                                             .replace("<MINUTE>", getName(MINUTE))
-                                                                                             .replace("<SECOND>", getName(SECOND)));
+                                                                                             .replace("<YEAR>", GetName(YEAR))
+                                                                                             .replace("<MONTH>", GetName(MONTH))
+                                                                                             .replace("<WEEK>", GetName(WEEK))
+                                                                                             .replace("<DAY>", GetName(DAY))
+                                                                                             .replace("<HOUR>", GetName(HOUR))
+                                                                                             .replace("<MINUTE>", GetName(MINUTE))
+                                                                                             .replace("<SECOND>", GetName(SECOND)));
                 return true;
             }
 
-        if (arguments[1].equalsIgnoreCase(this.plugin.getMessages().getCfg().getString("Messages.Misc.BanSystem." + "PermanentName"))) {
-            if (this.isPlayerExempt(commandSender, command, commandLabel, target))
+        if (arguments[1].equalsIgnoreCase(this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.BanSystem." + "PermanentName"))) {
+            if (this.IsPlayerExempt(commandSender, command, commandLabel, target))
                 return true;
 
             var reason =
-                    this.plugin.getMessages().getMessageWithStringTarget(commandLabel, command.getName(), commandSender, target.getName(), "Mute.DefaultReason");
+                    this._plugin.GetMessages().GetMessageWithStringTarget(commandLabel, command.getName(), commandSender, target.getName(), "Mute.DefaultReason");
 
             var shadow = false;
 
             if (arguments.length > 3)
-                if (!arguments[2].equalsIgnoreCase(this.plugin.getMessages().getCfg().getString("Messages.Misc.BanSystem." + "ShadowBan")) ||
-                    !this.plugin.getPermissions().hasPermission(commandSender, "mute.shadow.permanent", true))
-                    reason = this.extractReason(2, arguments);
+                if (!arguments[2].equalsIgnoreCase(this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.BanSystem." + "ShadowBan")) ||
+                    !this._plugin.GetPermissions().HasPermission(commandSender, "mute.shadow.permanent", true))
+                    reason = this.ExtractReason(2, arguments);
                 else {
                     shadow = true;
-                    reason = this.extractReason(3, arguments);
+                    reason = this.ExtractReason(3, arguments);
                 }
 
             if (reason.equalsIgnoreCase(""))
-                reason = this.plugin.getMessages().getMessageWithStringTarget(commandLabel, command, commandSender, target.getName(), "Mute.DefaultReason");
+                reason = this._plugin.GetMessages().GetMessageWithStringTarget(commandLabel, command, commandSender, target.getName(), "Mute.DefaultReason");
 
             long time = -1;
-            var mute = this.getPlugin().getMuteManager().addMute(target.getUniqueId(), commandSenderName, reason, shadow, time, YEAR);
+            var mute = this._plugin.GetMuteManager().CreateMute(target.getUniqueId(), commandSenderName, reason, shadow, time, YEAR);
 
             this.SendSuccessMessageAndInvokeEvent(commandSender, command, commandLabel, target, reason, mute);
             return true;
         }
 
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "mute.temporary")) {
-            var permission = this.plugin.getPermissions().getPermission("mute.temporary");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "mute.temporary")) {
+            var permission = this._plugin.GetPermissions().GetPermission("mute.temporary");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
 
         if (target.isOnline())
-            if (this.plugin.getPermissions().hasPermission(target.getPlayer(), "mute.exempt", true)) {
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                             .getMessageWithStringTarget(commandLabel, command, commandSender,
+            if (this._plugin.GetPermissions().HasPermission(target.getPlayer(), "mute.exempt", true)) {
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                             .GetMessageWithStringTarget(commandLabel, command, commandSender,
                                                                                                                          target.getName(), "Mute.CannotMute"));
                 return true;
             }
@@ -115,50 +115,50 @@ public class MuteCommand extends CommandUtils implements CommandExecutorOverload
         try {
             time = Long.parseLong(arguments[1]);
         } catch (NumberFormatException ignored) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                         .getMessageWithStringTarget(commandLabel, command, commandSender,
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                         .GetMessageWithStringTarget(commandLabel, command, commandSender,
                                                                                                                      target.getName(), "Mute.NotANumber")
                                                                                          .replace("<TIME>", arguments[1]));
             return true;
         }
 
-        var timeUnit = TimeUnit.getFromName(arguments[2]);
+        var timeUnit = TimeUnit.GetFromName(arguments[2]);
         if (timeUnit == null) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                         .getMessageWithStringTarget(commandLabel, command, commandSender,
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                         .GetMessageWithStringTarget(commandLabel, command, commandSender,
                                                                                                                      target.getName(), "Mute.NotATimeUnit")
                                                                                          .replace("<TIMEUNIT>", arguments[2]));
             return true;
         }
 
-        var reason = this.plugin.getMessages().getMessageWithStringTarget(commandLabel, command.getName(), commandSender, target.getName(), "Mute.DefaultReason");
+        var reason = this._plugin.GetMessages().GetMessageWithStringTarget(commandLabel, command.getName(), commandSender, target.getName(), "Mute.DefaultReason");
 
         var shadow = false;
 
         if (arguments.length > 3) {
-            if (!arguments[3].equalsIgnoreCase(this.plugin.getMessages().getCfg().getString("Messages.Misc.BanSystem." + "ShadowBan")) ||
-                !this.plugin.getPermissions().hasPermission(commandSender, "mute.shadow.permanent", true))
+            if (!arguments[3].equalsIgnoreCase(this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.BanSystem." + "ShadowBan")) ||
+                !this._plugin.GetPermissions().HasPermission(commandSender, "mute.shadow.permanent", true))
                 return true;
 
             shadow = true;
 
-            reason = this.extractReason(4, arguments);
+            reason = this.ExtractReason(4, arguments);
         }
 
         if (reason.equalsIgnoreCase(""))
-            reason = this.plugin.getMessages().getMessageWithStringTarget(commandLabel, command, commandSender, target.getName(), "Mute.DefaultReason");
+            reason = this._plugin.GetMessages().GetMessageWithStringTarget(commandLabel, command, commandSender, target.getName(), "Mute.DefaultReason");
 
-        var mute = this.plugin.getMuteManager().addMute(target.getUniqueId(), commandSenderName, reason, shadow, time, timeUnit);
+        var mute = this._plugin.GetMuteManager().CreateMute(target.getUniqueId(), commandSenderName, reason, shadow, time, timeUnit);
 
         this.SendSuccessMessageAndInvokeEvent(commandSender, command, commandLabel, target, reason, mute);
         return true;
     }
 
-    private ServerSystem getPlugin() {
-        return this.plugin;
+    private ServerSystem GetPlugin() {
+        return this._plugin;
     }
 
-    private static OfflinePlayer getPlayer(String name) {
+    private static OfflinePlayer GetPlayer(String name) {
         OfflinePlayer player;
         player = Bukkit.getPlayer(name);
         if (player == null)
@@ -166,25 +166,25 @@ public class MuteCommand extends CommandUtils implements CommandExecutorOverload
         return player;
     }
 
-    private boolean isPlayerExempt(CommandSender commandSender, Command command, String commandLabel, OfflinePlayer target) {
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "mute.permanent")) {
-            var permission = this.plugin.getPermissions().getPermission("mute.permanent");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+    private boolean IsPlayerExempt(CommandSender commandSender, Command command, String commandLabel, OfflinePlayer target) {
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "mute.permanent")) {
+            var permission = this._plugin.GetPermissions().GetPermission("mute.permanent");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
 
         if (target.isOnline())
-            if (this.plugin.getPermissions().hasPermission(target.getPlayer(), "mute.exempt", true)) {
+            if (this._plugin.GetPermissions().HasPermission(target.getPlayer(), "mute.exempt", true)) {
 
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                             .getMessageWithStringTarget(commandLabel, command, commandSender,
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                             .GetMessageWithStringTarget(commandLabel, command, commandSender,
                                                                                                                          target.getName(), "Mute.CannotMute"));
                 return true;
             }
         return false;
     }
 
-    private String extractReason(int start, String... arguments) {
+    private String ExtractReason(int start, String... arguments) {
         var reasonBuilder = new StringBuilder();
         for (var index = start; index < arguments.length; index++)
             if (index == arguments.length - 1)
@@ -195,18 +195,18 @@ public class MuteCommand extends CommandUtils implements CommandExecutorOverload
     }
 
     private void SendSuccessMessageAndInvokeEvent(CommandSender commandSender, Command command, String commandLabel, OfflinePlayer target, String reason,
-                                                  Mute mute) {
+                                                  MuteModeration mute) {
         if (commandSender instanceof Player)
-            this.plugin.getMuteManager().removeMute(((Player) commandSender).getUniqueId());
+            this._plugin.GetMuteManager().RemoveMute(((Player) commandSender).getUniqueId());
 
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                     .getMessageWithStringTarget(commandLabel, command, commandSender,
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                     .GetMessageWithStringTarget(commandLabel, command, commandSender,
                                                                                                                  target.getName(), "Mute.Success")
                                                                                      .replace("<REASON>", reason)
-                                                                                     .replace("<UNMUTE_DATE>", mute.getUNMUTE_DATE()));
+                                                                                     .replace("<UNMUTE_DATE>", mute.GetExpireDate()));
 
-        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
-            var asyncMuteEvent = new AsyncMuteEvent(commandSender, target, reason, mute.getUNMUTE_DATE());
+        Bukkit.getScheduler().runTaskAsynchronously(this._plugin, () -> {
+            var asyncMuteEvent = new AsyncMuteEvent(commandSender, target, reason, mute.GetExpireDate());
             Bukkit.getPluginManager().callEvent(asyncMuteEvent);
         });
     }

@@ -1,6 +1,6 @@
 package me.entity303.serversystem.virtual.smithing;
 
-import me.entity303.serversystem.virtual.Virtual;
+import me.entity303.serversystem.virtual.AbstractVirtual;
 import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.PacketPlayOutOpenWindow;
@@ -19,104 +19,104 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Locale;
 
-public class VirtualSmithing_Latest extends VirtualSmithing {
+public class VirtualSmithing_Latest extends AbstractVirtualSmithingTable {
 
     @Override
-    public void openSmithing(Player player) {
-        if (Virtual.getInventoryMethod == null) {
-            Virtual.getInventoryMethod = Arrays.stream(EntityHuman.class.getDeclaredMethods())
-                                               .filter(method -> method.getReturnType().getName().equalsIgnoreCase(PlayerInventory.class.getName()))
-                                               .filter(method -> method.getParameters().length == 0)
-                                               .findFirst()
-                                               .orElse(null);
+    public void OpenSmithingTable(Player player) {
+        if (AbstractVirtual.GET_INVENTORY_METHOD == null) {
+            AbstractVirtual.GET_INVENTORY_METHOD = Arrays.stream(EntityHuman.class.getDeclaredMethods())
+                                                         .filter(method -> method.getReturnType().getName().equalsIgnoreCase(PlayerInventory.class.getName()))
+                                                         .filter(method -> method.getParameters().length == 0)
+                                                         .findFirst()
+                                                         .orElse(null);
 
 
-            if (Virtual.getInventoryMethod == null) {
+            if (AbstractVirtual.GET_INVENTORY_METHOD == null) {
                 try {
                     throw new NoSuchMethodException("Couldn't find method 'getInventory' in class " + EntityHuman.class.getName());
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
                 }
                 return;
             }
 
-            Virtual.getInventoryMethod.setAccessible(true);
+            AbstractVirtual.GET_INVENTORY_METHOD.setAccessible(true);
 
         }
 
-        if (Virtual.sendPacketMethod == null) {
-            Virtual.sendPacketMethod = Arrays.stream(PlayerConnection.class.getMethods())
-                                             .filter(method -> method.getParameters().length == 1)
-                                             .filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(Packet.class.getName()))
-                                             .findFirst()
-                                             .orElse(null);
+        if (AbstractVirtual.SEND_PACKET_METHOD == null) {
+            AbstractVirtual.SEND_PACKET_METHOD = Arrays.stream(PlayerConnection.class.getMethods())
+                                                       .filter(method -> method.getParameters().length == 1)
+                                                       .filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(Packet.class.getName()))
+                                                       .findFirst()
+                                                       .orElse(null);
 
-            if (Virtual.sendPacketMethod == null) {
+            if (AbstractVirtual.SEND_PACKET_METHOD == null) {
                 try {
                     throw new NoSuchMethodException("Couldn't find method 'sendPacket' in class " + PlayerConnection.class.getName());
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
                 }
                 return;
             }
 
-            Virtual.sendPacketMethod.setAccessible(true);
+            AbstractVirtual.SEND_PACKET_METHOD.setAccessible(true);
         }
 
-        if (Virtual.containerField == null) {
-            Virtual.containerField = Arrays.stream(EntityHuman.class.getDeclaredFields())
-                                           .filter(field -> field.getType().getName().equalsIgnoreCase(Container.class.getName()))
-                                           .findFirst()
-                                           .orElse(null);
+        if (AbstractVirtual.CONTAINER_FIELD == null) {
+            AbstractVirtual.CONTAINER_FIELD = Arrays.stream(EntityHuman.class.getDeclaredFields())
+                                                    .filter(field -> field.getType().getName().equalsIgnoreCase(Container.class.getName()))
+                                                    .findFirst()
+                                                    .orElse(null);
 
-            if (Virtual.containerField == null) {
+            if (AbstractVirtual.CONTAINER_FIELD == null) {
                 try {
                     throw new NoSuchMethodException("Couldn't find field 'container' in class " + EntityHuman.class.getName());
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
                 }
                 return;
             }
 
-            Virtual.containerField.setAccessible(true);
+            AbstractVirtual.CONTAINER_FIELD.setAccessible(true);
         }
 
-        if (Virtual.initMenuMethod == null) {
-            Virtual.initMenuMethod = Arrays.stream(EntityPlayer.class.getDeclaredMethods())
-                                           .filter(method -> method.getParameters().length == 1)
-                                           .filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(Container.class.getName()))
-                                           .findFirst()
-                                           .orElse(null);
+        if (AbstractVirtual.INIT_MENU_METHOD == null) {
+            AbstractVirtual.INIT_MENU_METHOD = Arrays.stream(EntityPlayer.class.getDeclaredMethods())
+                                                     .filter(method -> method.getParameters().length == 1)
+                                                     .filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(Container.class.getName()))
+                                                     .findFirst()
+                                                     .orElse(null);
 
-            if (Virtual.initMenuMethod == null) {
+            if (AbstractVirtual.INIT_MENU_METHOD == null) {
                 try {
                     throw new NoSuchMethodException("Couldn't find method 'initMenu' in class " + EntityPlayer.class.getName());
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
                 }
                 return;
             }
 
-            Virtual.initMenuMethod.setAccessible(true);
+            AbstractVirtual.INIT_MENU_METHOD.setAccessible(true);
         }
 
 
         EntityPlayer human;
         try {
-            human = (EntityPlayer) Class.forName("org.bukkit.craftbukkit." + this.getVersion() + ".entity.CraftPlayer")
+            human = (EntityPlayer) Class.forName("org.bukkit.craftbukkit." + this.GetVersion() + ".entity.CraftPlayer")
                                         .getDeclaredMethod("getHandle")
                                         .invoke(player);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException exception) {
+            exception.printStackTrace();
             return;
         }
 
-        var id = human.nextContainerCounter();
+        var containerId = human.nextContainerCounter();
         ContainerSmithing container;
         try {
-            container = new ContainerSmithing(id, (PlayerInventory) Virtual.getInventoryMethod.invoke(human), (ContainerAccess) this.getWrapper(player));
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            container = new ContainerSmithing(containerId, (PlayerInventory) AbstractVirtual.GET_INVENTORY_METHOD.invoke(human), (ContainerAccess) this.GetWrapper(player));
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            exception.printStackTrace();
             return;
         }
 
@@ -125,58 +125,58 @@ public class VirtualSmithing_Latest extends VirtualSmithing {
         container.checkReachable = false;
 
         try {
-            if (playerConnectionField == null) {
-                playerConnectionField = Arrays.stream(human.getClass().getDeclaredFields())
-                                              .filter(field -> field.getType().getName().toLowerCase(Locale.ROOT).contains("playerconnection"))
-                                              .findFirst()
-                                              .orElse(null);
+            if (PLAYER_CONNECTION_FIELD == null) {
+                PLAYER_CONNECTION_FIELD = Arrays.stream(human.getClass().getDeclaredFields())
+                                                .filter(field -> field.getType().getName().toLowerCase(Locale.ROOT).contains("playerconnection"))
+                                                .findFirst()
+                                                .orElse(null);
 
-                if (playerConnectionField == null) {
-                    this.plugin.error("Couldn't find PlayerConnection field! (Modded environment?)");
-                    Arrays.stream(human.getClass().getDeclaredFields()).forEach(field -> this.plugin.log(field.getType() + " -> " + field.getName()));
-                    this.plugin.warn("Please forward this to the developer of ServerSystem!");
+                if (PLAYER_CONNECTION_FIELD == null) {
+                    this._plugin.Error("Couldn't find PlayerConnection field! (Modded environment?)");
+                    Arrays.stream(human.getClass().getDeclaredFields()).forEach(field -> this._plugin.Info(field.getType() + " -> " + field.getName()));
+                    this._plugin.Warn("Please forward this to the developer of ServerSystem!");
                     return;
                 }
 
-                playerConnectionField.setAccessible(true);
+                PLAYER_CONNECTION_FIELD.setAccessible(true);
             }
 
-            var playerConnection = (PlayerConnection) playerConnectionField.get(human);
+            var playerConnection = (PlayerConnection) PLAYER_CONNECTION_FIELD.get(human);
 
-            Virtual.sendPacketMethod.invoke(playerConnection,
-                                            new PacketPlayOutOpenWindow(id, Containers.r, IChatBaseComponent.ChatSerializer.a("{\"text\":\"Smithing\"}")));
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            AbstractVirtual.SEND_PACKET_METHOD.invoke(playerConnection,
+                                                      new PacketPlayOutOpenWindow(containerId, Containers.r, IChatBaseComponent.ChatSerializer.a("{\"text\":\"Smithing\"}")));
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            exception.printStackTrace();
             return;
         }
 
         try {
-            Virtual.containerField.set(human, container);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            AbstractVirtual.CONTAINER_FIELD.set(human, container);
+        } catch (IllegalAccessException exception) {
+            exception.printStackTrace();
             return;
         }
 
         try {
-            Virtual.initMenuMethod.invoke(human, container);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            AbstractVirtual.INIT_MENU_METHOD.invoke(human, container);
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            exception.printStackTrace();
         }
 
-        if (Virtual.getBukkitViewMethod == null) {
+        if (AbstractVirtual.GET_BUKKIT_VIEW_METHOD == null) {
             try {
-                Virtual.getBukkitViewMethod = Container.class.getDeclaredMethod("getBukkitView");
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
+                AbstractVirtual.GET_BUKKIT_VIEW_METHOD = Container.class.getDeclaredMethod("getBukkitView");
+            } catch (NoSuchMethodException exception) {
+                exception.printStackTrace();
                 return;
             }
-            Virtual.getBukkitViewMethod.setAccessible(true);
+            AbstractVirtual.GET_BUKKIT_VIEW_METHOD.setAccessible(true);
         }
 
         try {
-            player.openInventory(((InventoryView) Virtual.getBukkitViewMethod.invoke(container)));
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            player.openInventory(((InventoryView) AbstractVirtual.GET_BUKKIT_VIEW_METHOD.invoke(container)));
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            exception.printStackTrace();
         }
     }
 }

@@ -15,25 +15,25 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Locale;
 
-public class EntityPlayer_Latest extends CommandUtils implements EntityPlayer {
-    private static Method getWorldServerMethod = null;
-    private Constructor<net.minecraft.server.level.EntityPlayer> entityPlayerConstructor = null;
+public class EntityPlayer_Latest extends CommandUtils implements IEntityPlayer {
+    private static Method GET_WORLD_SERVER_METHOD = null;
+    private Constructor<net.minecraft.server.level.EntityPlayer> _entityPlayerConstructor = null;
 
     public EntityPlayer_Latest(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public Object getEntityPlayer(OfflinePlayer offlinePlayer) {
-        if (EntityPlayer_Latest.getWorldServerMethod == null)
-            EntityPlayer_Latest.getWorldServerMethod = Arrays.stream(MinecraftServer.class.getDeclaredMethods())
-                                                             .filter(method -> method.getParameters().length == 1)
-                                                             .filter(method -> method.getParameters()[0].getType()
+    public Object GetEntityPlayer(OfflinePlayer offlinePlayer) {
+        if (EntityPlayer_Latest.GET_WORLD_SERVER_METHOD == null)
+            EntityPlayer_Latest.GET_WORLD_SERVER_METHOD = Arrays.stream(MinecraftServer.class.getDeclaredMethods())
+                                                                .filter(method -> method.getParameters().length == 1)
+                                                                .filter(method -> method.getParameters()[0].getType()
                                                                                                         .getName()
                                                                                                         .equalsIgnoreCase(ResourceKey.class.getName()))
-                                                             .filter(method -> method.getReturnType().getName().toLowerCase(Locale.ROOT).contains("world"))
-                                                             .findFirst()
-                                                             .orElse(null);
+                                                                .filter(method -> method.getReturnType().getName().toLowerCase(Locale.ROOT).contains("world"))
+                                                                .findFirst()
+                                                                .orElse(null);
 
         var gameProfile = new GameProfile(offlinePlayer.getUniqueId(), offlinePlayer.getName());
 
@@ -45,7 +45,7 @@ public class EntityPlayer_Latest extends CommandUtils implements EntityPlayer {
                 var name = field.get(null).toString();
 
                 return name.toLowerCase().contains("overworld");
-            } catch (IllegalAccessException e) {
+            } catch (IllegalAccessException exception) {
                 return false;
             }
 
@@ -54,18 +54,18 @@ public class EntityPlayer_Latest extends CommandUtils implements EntityPlayer {
         ResourceKey<World> worldResourceKey;
         try {
             worldResourceKey = (ResourceKey<World>) worldResourceKeyField.get(null);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException exception) {
+            exception.printStackTrace();
             return null;
         }
 
         try {
 
-            if (this.entityPlayerConstructor != null) {
+            if (this._entityPlayerConstructor != null) {
 
-                var lastParameter = this.entityPlayerConstructor.getParameterCount() - 1;
+                var lastParameter = this._entityPlayerConstructor.getParameterCount() - 1;
 
-                if (this.entityPlayerConstructor.getParameterTypes()[lastParameter].getName().contains("ClientInformation"))
+                if (this._entityPlayerConstructor.getParameterTypes()[lastParameter].getName().contains("ClientInformation"))
                     try {
                         var clientInformationClass = Class.forName("net.minecraft.server.level.ClientInformation");
 
@@ -74,31 +74,31 @@ public class EntityPlayer_Latest extends CommandUtils implements EntityPlayer {
                                                         .findFirst()
                                                         .orElse(null);
 
-                        return this.entityPlayerConstructor.newInstance(MinecraftServer.getServer(),
-                                                                        EntityPlayer_Latest.getWorldServerMethod.invoke(MinecraftServer.getServer(),
-                                                                                                                        worldResourceKey), gameProfile,
-                                                                        createDefaultMethod.invoke(null));
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
+                        return this._entityPlayerConstructor.newInstance(MinecraftServer.getServer(),
+                                                                         EntityPlayer_Latest.GET_WORLD_SERVER_METHOD.invoke(MinecraftServer.getServer(),
+                                                                                                                            worldResourceKey), gameProfile,
+                                                                         createDefaultMethod.invoke(null));
+                    } catch (ClassNotFoundException exception) {
+                        exception.printStackTrace();
                         return null;
                     }
 
-                return this.entityPlayerConstructor.newInstance(MinecraftServer.getServer(),
-                                                                EntityPlayer_Latest.getWorldServerMethod.invoke(MinecraftServer.getServer(), worldResourceKey),
-                                                                gameProfile, null);
+                return this._entityPlayerConstructor.newInstance(MinecraftServer.getServer(),
+                                                                 EntityPlayer_Latest.GET_WORLD_SERVER_METHOD.invoke(MinecraftServer.getServer(), worldResourceKey),
+                                                                 gameProfile, null);
             }
 
             try {
                 return new net.minecraft.server.level.EntityPlayer(MinecraftServer.getServer(),
-                                                                   (WorldServer) EntityPlayer_Latest.getWorldServerMethod.invoke(MinecraftServer.getServer(),
-                                                                                                                                 worldResourceKey), gameProfile);
+                                                                   (WorldServer) EntityPlayer_Latest.GET_WORLD_SERVER_METHOD.invoke(MinecraftServer.getServer(),
+                                                                                                                                    worldResourceKey), gameProfile);
             } catch (NoSuchMethodError ignored) {
-                this.entityPlayerConstructor =
+                this._entityPlayerConstructor =
                         (Constructor<net.minecraft.server.level.EntityPlayer>) net.minecraft.server.level.EntityPlayer.class.getConstructors()[0];
 
-                var lastParameter = this.entityPlayerConstructor.getParameterCount() - 1;
+                var lastParameter = this._entityPlayerConstructor.getParameterCount() - 1;
 
-                if (this.entityPlayerConstructor.getParameterTypes()[lastParameter].getName().contains("ClientInformation"))
+                if (this._entityPlayerConstructor.getParameterTypes()[lastParameter].getName().contains("ClientInformation"))
                     try {
                         var clientInformationClass = Class.forName("net.minecraft.server.level.ClientInformation");
 
@@ -107,21 +107,21 @@ public class EntityPlayer_Latest extends CommandUtils implements EntityPlayer {
                                                         .findFirst()
                                                         .orElse(null);
 
-                        return this.entityPlayerConstructor.newInstance(MinecraftServer.getServer(),
-                                                                        EntityPlayer_Latest.getWorldServerMethod.invoke(MinecraftServer.getServer(),
-                                                                                                                        worldResourceKey), gameProfile,
-                                                                        createDefaultMethod.invoke(null));
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
+                        return this._entityPlayerConstructor.newInstance(MinecraftServer.getServer(),
+                                                                         EntityPlayer_Latest.GET_WORLD_SERVER_METHOD.invoke(MinecraftServer.getServer(),
+                                                                                                                            worldResourceKey), gameProfile,
+                                                                         createDefaultMethod.invoke(null));
+                    } catch (ClassNotFoundException exception) {
+                        exception.printStackTrace();
                         return null;
                     }
 
-                return this.entityPlayerConstructor.newInstance(MinecraftServer.getServer(),
-                                                                EntityPlayer_Latest.getWorldServerMethod.invoke(MinecraftServer.getServer(), worldResourceKey),
-                                                                gameProfile, null);
+                return this._entityPlayerConstructor.newInstance(MinecraftServer.getServer(),
+                                                                 EntityPlayer_Latest.GET_WORLD_SERVER_METHOD.invoke(MinecraftServer.getServer(), worldResourceKey),
+                                                                 gameProfile, null);
             }
-        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException | InvocationTargetException | InstantiationException exception) {
+            exception.printStackTrace();
         }
 
         return null;

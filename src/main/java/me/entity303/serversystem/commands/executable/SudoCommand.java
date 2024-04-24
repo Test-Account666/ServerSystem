@@ -1,9 +1,9 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
-import me.entity303.serversystem.utils.Morpher;
+import me.entity303.serversystem.utils.IMorpher;
 import me.entity303.serversystem.utils.interceptors.SudoInterceptor;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.implementation.MethodCall;
@@ -20,23 +20,23 @@ import org.bukkit.permissions.PermissibleBase;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class SudoCommand extends CommandUtils implements CommandExecutorOverload {
+public class SudoCommand extends CommandUtils implements ICommandExecutorOverload {
 
-    private Method getHandleMethod = null;
+    private Method _getHandleMethod = null;
 
     public SudoCommand(ServerSystem plugin) {
         super(plugin);
     }
 
-    public static void sendMessage(CommandSender commandSender, Object... objects) {
+    public static void SendMessage(CommandSender commandSender, Object... objects) {
         Method sendMessageMethod = null;
         for (var method : CommandSender.class.getDeclaredMethods()) {
             var parameters = method.getParameterTypes();
             if (parameters.length == objects.length) {
                 var found = true;
-                for (int i = 0, parametersLength = parameters.length; i < parametersLength; i++) {
-                    var parameter = parameters[i];
-                    if (!parameter.getCanonicalName().equals((objects[i].getClass().getCanonicalName()))) {
+                for (int index = 0, parametersLength = parameters.length; index < parametersLength; index++) {
+                    var parameter = parameters[index];
+                    if (!parameter.getCanonicalName().equals((objects[index].getClass().getCanonicalName()))) {
                         found = false;
                         break;
                     }
@@ -50,26 +50,26 @@ public class SudoCommand extends CommandUtils implements CommandExecutorOverload
         if (sendMessageMethod != null)
             try {
                 sendMessageMethod.invoke(commandSender, objects);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+            } catch (IllegalAccessException | InvocationTargetException exception) {
+                exception.printStackTrace();
             }
     }
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "sudo.use")) {
-            var permission = this.plugin.getPermissions().getPermission("sudo.use");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "sudo.use")) {
+            var permission = this._plugin.GetPermissions().GetPermission("sudo.use");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
 
         if (arguments.length <= 1) {
             commandSender.sendMessage(
-                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Sudo"));
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Sudo"));
             return true;
         }
 
-        var special = this.plugin.isSpecialSudo();
+        var special = this._plugin.IsSpecialSudo();
 
         if (arguments.length >= 3)
             try {
@@ -84,9 +84,9 @@ public class SudoCommand extends CommandUtils implements CommandExecutorOverload
 
             }
 
-        var target = this.getPlayer(commandSender, arguments[0]);
+        var target = this.GetPlayer(commandSender, arguments[0]);
         if (target == null) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;
         }
 
@@ -96,57 +96,57 @@ public class SudoCommand extends CommandUtils implements CommandExecutorOverload
             try {
                 //Hacky and stupid stuff ™ to hook into "sendMessage"
                 dynamicType = new ByteBuddy().subclass(
-                                                     Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".entity.CraftPlayer"))
+                                                     Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".entity.CraftPlayer"))
                                              .method(ElementMatchers.named("sendMessage"))
                                              .intercept(MethodCall.invokeSuper()
                                                                   .withAllArguments()
                                                                   .andThen(MethodDelegation.withDefaultConfiguration()
-                                                                                           .withBinders(Morph.Binder.install(Morpher.class))
+                                                                                           .withBinders(Morph.Binder.install(IMorpher.class))
                                                                                            .to(new SudoInterceptor(commandSender))))
                                              .make()
                                              .load(this.getClass().getClassLoader())
                                              .getLoaded();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+            } catch (ClassNotFoundException exception) {
+                exception.printStackTrace();
                 failed = true;
             }
 
-            if (this.getHandleMethod == null)
+            if (this._getHandleMethod == null)
                 try {
-                    this.getHandleMethod = Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".entity.CraftPlayer")
-                                                .getDeclaredMethod("getHandle");
-                    this.getHandleMethod.setAccessible(true);
-                } catch (NoSuchMethodException | ClassNotFoundException e) {
-                    e.printStackTrace();
+                    this._getHandleMethod = Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".entity.CraftPlayer")
+                                                 .getDeclaredMethod("getHandle");
+                    this._getHandleMethod.setAccessible(true);
+                } catch (NoSuchMethodException | ClassNotFoundException exception) {
+                    exception.printStackTrace();
                     failed = true;
                 }
 
             if (!failed)
                 try {
-                    var permField = Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".entity.CraftHumanEntity")
+                    var permField = Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".entity.CraftHumanEntity")
                                          .getDeclaredField("perm");
 
                     permField.setAccessible(true);
 
                     var permissibleBase = (PermissibleBase) permField.get(target);
 
-                    target = (Player) dynamicType.getDeclaredConstructors()[0].newInstance(Bukkit.getServer(), this.getHandleMethod.invoke(target));
+                    target = (Player) dynamicType.getDeclaredConstructors()[0].newInstance(Bukkit.getServer(), this._getHandleMethod.invoke(target));
 
                     permField.set(target, permissibleBase);
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | ClassNotFoundException | NoSuchFieldException e) {
-                    e.printStackTrace();
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | ClassNotFoundException | NoSuchFieldException exception) {
+                    exception.printStackTrace();
                 }
         }
 
-        if (this.plugin.getPermissions().hasPermission(target, "sudo.exempt", true))
+        if (this._plugin.GetPermissions().HasPermission(target, "sudo.exempt", true))
             if (commandSender instanceof Player) {
                 commandSender.sendMessage(
-                        this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Sudo"));
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Sudo"));
                 return true;
             }
         var msg = new StringBuilder();
-        for (var i = 1; arguments.length > i; i++)
-            msg.append(arguments[i]).append(" ");
+        for (var index = 1; arguments.length > index; index++)
+            msg.append(arguments[index]).append(" ");
 
         var first = arguments[1];
         if (!first.startsWith("/")) {
@@ -156,7 +156,7 @@ public class SudoCommand extends CommandUtils implements CommandExecutorOverload
 
         first = first.substring(1);
 
-        var commandToExecute = this.plugin.getCommandManager().getCommand(first);
+        var commandToExecute = this._plugin.GetCommandManager().GetCommand(first);
         if (commandToExecute == null) {
             var commandEvent = new PlayerCommandPreprocessEvent(target, msg.toString().trim());
             Bukkit.getPluginManager().callEvent(commandEvent);

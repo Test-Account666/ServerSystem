@@ -2,153 +2,154 @@ package me.entity303.serversystem.commands.executable;
 
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import com.intellectualcrafters.plot.api.PlotAPI;
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 //NOTE: I'll probably delete this at some point
-@Deprecated(forRemoval = true) public class EditSignPlotSquaredCommand implements CommandExecutorOverload {
-    private final ServerSystem plugin;
+@Deprecated(forRemoval = true) public class EditSignPlotSquaredCommand implements ICommandExecutorOverload {
+    private final ServerSystem _plugin;
 
     public EditSignPlotSquaredCommand(ServerSystem plugin) {
-        this.plugin = plugin;
+        this._plugin = plugin;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] arguments) {
-        if (this.plugin.getVersionStuff().getSignEdit() == null) {
-            sender.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotAvailable", commandLabel, command.getName(), sender, null));
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (this._plugin.GetVersionStuff().GetSignEdit() == null) {
+            commandSender.sendMessage(this.GetPrefix() + this.GetMessage("EditSign.NotAvailable", commandLabel, command.getName(), commandSender, null));
             return true;
         }
 
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage(this.getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+        if (!(commandSender instanceof Player player)) {
+            commandSender.sendMessage(this.GetPrefix() + this._plugin.GetMessages().GetOnlyPlayer());
             return true;
         }
 
-        if (this.isLatestPlotSquared()) {
-            if (!this.plugin.getPermissions().hasPermission(player, "editschild.players")) {
+        if (this.IsLatestPlotSquared()) {
+            if (!this._plugin.GetPermissions().HasPermission(player, "editschild.players")) {
                 player.sendMessage(
-                        this.getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().getPermission("editschild.players")));
+                        this.GetPrefix() + this._plugin.GetMessages().GetNoPermission(this._plugin.GetPermissions().GetPermission("editschild.players")));
                 return true;
             }
 
             var block = player.getTargetBlock(null, 5);
             if (!(block.getState() instanceof Sign sign)) {
-                player.sendMessage(this.getPrefix() + this.getMessage("EditSign.SignNeeded", commandLabel, command.getName(), sender, null));
+                player.sendMessage(this.GetPrefix() + this.GetMessage("EditSign.SignNeeded", commandLabel, command.getName(), commandSender, null));
                 return true;
             }
 
-            if (!this.isPlotWorldLatest(player)) {
-                this.plugin.getVersionStuff().getSignEdit().editSign(player, sign);
+            if (!this.IsPlotWorldLatest(player)) {
+                this._plugin.GetVersionStuff().GetSignEdit().EditSign(player, sign);
                 return true;
             }
 
 
-            if ((!this.isPlayerInPlotLatest(player) && ((!this.plugin.getPermissions().hasPermission(player, "editschild.admin"))))) {
-                player.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotInPlot", commandLabel, command.getName(), sender, null));
+            if ((!this.IsPlayerInPlotLatest(player) && ((!this._plugin.GetPermissions().HasPermission(player, "editschild.admin"))))) {
+                player.sendMessage(this.GetPrefix() + this.GetMessage("EditSign.NotInPlot", commandLabel, command.getName(), commandSender, null));
                 return true;
             }
 
-            if (((!this.isPlayerInPlotLatest(player)) || (!this.getLatestPlot(player.getLocation()).isOwner(player.getUniqueId()))) &&
-                ((!this.plugin.getPermissions().hasPermission(player, "editschild.admin")))) {
-                player.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotYourPlot", commandLabel, command.getName(), sender, null));
+            if (((!this.IsPlayerInPlotLatest(player)) || (!this.GetLatestPlot(player.getLocation()).isOwner(player.getUniqueId()))) &&
+                ((!this._plugin.GetPermissions().HasPermission(player, "editschild.admin")))) {
+                player.sendMessage(this.GetPrefix() + this.GetMessage("EditSign.NotYourPlot", commandLabel, command.getName(), commandSender, null));
                 return true;
             }
 
-            this.plugin.getVersionStuff().getSignEdit().editSign(player, sign);
+            this._plugin.GetVersionStuff().GetSignEdit().EditSign(player, sign);
             return true;
         }
 
-        if (this.newerPlotSquared()) {
-            if (!this.plugin.getPermissions().hasPermission(player, "editschild.players")) {
+        if (this.NewerPlotSquared()) {
+            if (!this._plugin.GetPermissions().HasPermission(player, "editschild.players")) {
                 player.sendMessage(
-                        this.getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().getPermission("editschild.players")));
+                        this.GetPrefix() + this._plugin.GetMessages().GetNoPermission(this._plugin.GetPermissions().GetPermission("editschild.players")));
                 return true;
             }
 
             var block = player.getTargetBlock(null, 5);
             if (!(block.getState() instanceof Sign sign)) {
-                player.sendMessage(this.getPrefix() + this.getMessage("EditSign.SignNeeded", commandLabel, command.getName(), sender, null));
+                player.sendMessage(this.GetPrefix() + this.GetMessage("EditSign.SignNeeded", commandLabel, command.getName(), commandSender, null));
                 return true;
             }
 
-            if (!this.isPlotWorld(player)) {
-                this.plugin.getVersionStuff().getSignEdit().editSign(player, sign);
+            if (!this.IsPlotWorld(player)) {
+                this._plugin.GetVersionStuff().GetSignEdit().EditSign(player, sign);
                 return true;
             }
 
 
-            if ((!this.isPlayerInPlot(player) && ((!this.plugin.getPermissions().hasPermission(player, "editschild.admin"))))) {
-                player.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotInPlot", commandLabel, command.getName(), sender, null));
+            if ((!this.IsPlayerInPlot(player) && ((!this._plugin.GetPermissions().HasPermission(player, "editschild.admin"))))) {
+                player.sendMessage(this.GetPrefix() + this.GetMessage("EditSign.NotInPlot", commandLabel, command.getName(), commandSender, null));
                 return true;
             }
 
-            if (((!this.isPlayerInPlot(player)) || (!this.getPlot(player.getLocation()).isOwner(player.getUniqueId()))) &&
-                ((!this.plugin.getPermissions().hasPermission(player, "editschild.admin")))) {
-                player.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotYourPlot", commandLabel, command.getName(), sender, null));
+            if (((!this.IsPlayerInPlot(player)) || (!this.GetPlot(player.getLocation()).isOwner(player.getUniqueId()))) &&
+                ((!this._plugin.GetPermissions().HasPermission(player, "editschild.admin")))) {
+                player.sendMessage(this.GetPrefix() + this.GetMessage("EditSign.NotYourPlot", commandLabel, command.getName(), commandSender, null));
                 return true;
             }
 
-            this.plugin.getVersionStuff().getSignEdit().editSign(player, sign);
+            this._plugin.GetVersionStuff().GetSignEdit().EditSign(player, sign);
             return true;
         }
 
         var plotAPI = new PlotAPI();
 
-        if (!this.plugin.getPermissions().hasPermission(player, "editschild.players")) {
-            player.sendMessage(this.getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().getPermission("editschild.players")));
+        if (!this._plugin.GetPermissions().HasPermission(player, "editschild.players")) {
+            player.sendMessage(this.GetPrefix() + this._plugin.GetMessages().GetNoPermission(this._plugin.GetPermissions().GetPermission("editschild.players")));
             return true;
         }
 
         var block = player.getTargetBlock(null, 5);
         if (!(block.getState() instanceof Sign sign)) {
-            player.sendMessage(this.getPrefix() + this.getMessage("EditSign.SignNeeded", commandLabel, command.getName(), sender, null));
+            player.sendMessage(this.GetPrefix() + this.GetMessage("EditSign.SignNeeded", commandLabel, command.getName(), commandSender, null));
             return true;
         }
 
         if (!plotAPI.isPlotWorld(player.getWorld())) {
-            this.plugin.getVersionStuff().getSignEdit().editSign(player, sign);
+            this._plugin.GetVersionStuff().GetSignEdit().EditSign(player, sign);
             return true;
         }
 
         if ((plotAPI.getPlot(player.getTargetBlock(null, 5).getLocation()) == null) &&
-            ((!this.plugin.getPermissions().hasPermission(player, "editschild.admin")))) {
-            player.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotInPlot", commandLabel, command.getName(), sender, null));
+            ((!this._plugin.GetPermissions().HasPermission(player, "editschild.admin")))) {
+            player.sendMessage(this.GetPrefix() + this.GetMessage("EditSign.NotInPlot", commandLabel, command.getName(), commandSender, null));
             return true;
         } else if (((!plotAPI.isInPlot(player)) || (!plotAPI.getPlot(player.getLocation()).isOwner(player.getUniqueId()))) &&
-                   ((!this.plugin.getPermissions().hasPermission(player, "editschild.admin")))) {
-            player.sendMessage(this.getPrefix() + this.getMessage("EditSign.NotYourPlot", commandLabel, command.getName(), sender, null));
+                   ((!this._plugin.GetPermissions().HasPermission(player, "editschild.admin")))) {
+            player.sendMessage(this.GetPrefix() + this.GetMessage("EditSign.NotYourPlot", commandLabel, command.getName(), commandSender, null));
             return true;
         }
 
-        this.plugin.getVersionStuff().getSignEdit().editSign(player, sign);
+        this._plugin.GetVersionStuff().GetSignEdit().EditSign(player, sign);
 
         return true;
     }
 
-    public String getPrefix() {
-        return this.plugin.getMessages().getPrefix();
+    public String GetPrefix() {
+        return this._plugin.GetMessages().GetPrefix();
     }
 
-    public String getMessage(String action, String label, String command, CommandSender sender, CommandSender target) {
-        return this.plugin.getMessages().getMessage(label, command, sender, target, action);
+    public String GetMessage(String action, String commandLabel, String command, CommandSender sender, CommandSender target) {
+        return this._plugin.GetMessages().GetMessage(commandLabel, command, sender, target, action);
     }
 
-    public boolean isLatestPlotSquared() {
+    public boolean IsLatestPlotSquared() {
         try {
             Class.forName("com.plotsquared.bukkit.listener.PlayerEventListener");
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException exception) {
             return false;
         }
         return true;
     }
 
-    public boolean isPlotWorldLatest(Player player) {
+    public boolean IsPlotWorldLatest(Player player) {
         try {
             var getLocationMethod = Class.forName("com.plotsquared.bukkit.util.BukkitUtil").getDeclaredMethod("getLocation", Location.class);
             getLocationMethod.setAccessible(true);
@@ -156,17 +157,17 @@ import org.bukkit.entity.Player;
             var getPlotAreaMethod = plotLocation.getClass().getDeclaredMethod("getPlotArea");
             var plotArea = getPlotAreaMethod.invoke(plotLocation);
             return plotArea != null;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
             return false;
         }
     }
 
-    public boolean isPlayerInPlotLatest(Player player) {
-        return this.getLatestPlot(player.getLocation()) != null;
+    public boolean IsPlayerInPlotLatest(Player player) {
+        return this.GetLatestPlot(player.getLocation()) != null;
     }
 
-    public com.plotsquared.core.plot.Plot getLatestPlot(Location location) {
+    public com.plotsquared.core.plot.Plot GetLatestPlot(Location location) {
         try {
             var getLocationMethod = Class.forName("com.plotsquared.bukkit.util.BukkitUtil").getDeclaredMethod("getLocation", Location.class);
             getLocationMethod.setAccessible(true);
@@ -174,22 +175,22 @@ import org.bukkit.entity.Player;
             var getPlotMethod = plotLocation.getClass().getDeclaredMethod("getPlot");
             var plot = getPlotMethod.invoke(plotLocation);
             return (com.plotsquared.core.plot.Plot) plot;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
             return null;
         }
     }
 
-    public boolean newerPlotSquared() {
+    public boolean NewerPlotSquared() {
         try {
             Class.forName("com.intellectualcrafters.plot.api.PlotAPI");
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException exception) {
             return true;
         }
         return false;
     }
 
-    public boolean isPlotWorld(Player player) {
+    public boolean IsPlotWorld(Player player) {
         try {
             var location = player.getLocation();
             var plotLocation =
@@ -203,18 +204,18 @@ import org.bukkit.entity.Player;
         return false;
     }
 
-    public boolean isPlayerInPlot(Player player) {
-        return this.getPlot(player.getLocation()) != null;
+    public boolean IsPlayerInPlot(Entity player) {
+        return this.GetPlot(player.getLocation()) != null;
     }
 
-    public Plot getPlot(Location location) {
+    public Plot GetPlot(Location location) {
         var plotLocation =
                 new com.github.intellectualsites.plotsquared.plot.object.Location(location.getWorld().getName(), (int) location.getX(), (int) location.getY(),
                                                                                   (int) location.getZ());
         return plotLocation.getPlot();
     }
 
-    public boolean isAllowed(CommandSender cs, String action) {
-        return this.plugin.getPermissions().hasPermission(cs, action);
+    public boolean IsAllowed(CommandSender commandSender, String action) {
+        return this._plugin.GetPermissions().HasPermission(commandSender, action);
     }
 }

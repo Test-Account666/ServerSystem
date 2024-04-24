@@ -13,18 +13,18 @@ public class ItemDamageListener extends CommandUtils implements Listener {
     }
 
     @EventHandler
-    public void onItemDamage(PlayerItemDamageEvent e) {
-        var currentDurability = e.getItem().getType().getMaxDurability() - e.getDamage();
+    public void OnItemDamage(PlayerItemDamageEvent event) {
+        var currentDurability = event.getItem().getType().getMaxDurability() - event.getDamage();
         if (currentDurability > 20 || currentDurability <= -1)
             return;
 
-        this.plugin.getVersionStuff()
-                   .getActionBar()
-                   .sendActionBar(e.getPlayer(), this.plugin.getMessages()
-                                                            .getMessage("break", "break", e.getPlayer(), null, "ItemBreaking")
+        this._plugin.GetVersionStuff()
+                   .GetActionBar()
+                   .SendActionBar(event.getPlayer(), this._plugin.GetMessages()
+                                                            .GetMessage("break", "break", event.getPlayer(), null, "ItemBreaking")
                                                             .replace("\"", "\\\"")
-                                                            .replace("<ITEM>", e.getItem().getType().name())
+                                                            .replace("<ITEM>", event.getItem().getType().name())
                                                             .replace("<DURABILITY>", String.valueOf(currentDurability + 1))
-                                                            .replace("<MAXDURABILITY>", String.valueOf(e.getItem().getType().getMaxDurability() + 1)));
+                                                            .replace("<MAXDURABILITY>", String.valueOf(event.getItem().getType().getMaxDurability() + 1)));
     }
 }

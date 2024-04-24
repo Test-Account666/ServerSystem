@@ -4,9 +4,9 @@ import org.bukkit.inventory.ItemStack;
 
 public interface INBTViewer {
 
-    boolean isTagSet(String tag, ItemStack itemStack);
+    boolean IsTagSet(String tag, ItemStack itemStack);
 
-    ItemStack removeTag(String tag, ItemStack itemStack);
+    ItemStack RemoveTag(String tag, ItemStack itemStack);
 
-    ItemStack setTag(String tag, ItemStack itemStack);
+    ItemStack SetTag(String tag, ItemStack itemStack);
 }

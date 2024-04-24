@@ -29,15 +29,15 @@ public class MetricsLite {
     // The version of this bStats class
     public static final int B_STATS_VERSION = 1;
     // The url to which the data is sent
-    private static final String URL = "https://bStats.org/submitData/bukkit";
+    private static final String SUBMIT_URL = "https://bStats.org/submitData/bukkit";
     // Should failed requests be logged?
-    private static boolean logFailedRequests;
+    private static boolean LOG_FAILED_REQUESTS;
     // Should the sent data be logged?
-    private static boolean logSentData;
+    private static boolean LOG_SENT_DATA;
     // Should the response text be logged?
-    private static boolean logResponseStatusText;
+    private static boolean LOG_RESPONSE_DATA_TEXT;
     // The uuid of the server
-    private static String serverUUID;
+    private static String SERVER_UUID;
 
     static {
         // You can use the property to disable the check in your test environment
@@ -52,11 +52,11 @@ public class MetricsLite {
     }
 
     // The plugin
-    private final ServerSystem plugin;
+    private final ServerSystem _plugin;
     // The plugin id
-    private final int pluginId;
+    private final int _pluginId;
     // Is bStats enabled on this server?
-    private final boolean enabled;
+    private final boolean _enabled;
 
     /**
      Class constructor.
@@ -68,8 +68,8 @@ public class MetricsLite {
     public MetricsLite(ServerSystem plugin, int pluginId) {
         if (plugin == null)
             throw new IllegalArgumentException("Plugin cannot be null!");
-        this.plugin = plugin;
-        this.pluginId = pluginId;
+        this._plugin = plugin;
+        this._pluginId = pluginId;
 
         // Get the config file
         var bStatsFolder = new File(plugin.getDataFolder().getParentFile(), "bStats");
@@ -91,13 +91,11 @@ public class MetricsLite {
             config.addDefault("logResponseStatusText", false);
 
             // Inform the server owners about bStats
-            config.options()
-                  .header("""
-                          bStats collects some data for plugin authors like how many servers are using their plugins.
-                          To honor their work, you should not disable it.
-                          This has nearly no effect on the server performance!
-                          Check out https://bStats.org/ to learn more :)""")
-                  .copyDefaults(true);
+            config.options().header("""
+                                    bStats collects some data for plugin authors like how many servers are using their plugins.
+                                    To honor their work, you should not disable it.
+                                    This has nearly no effect on the server performance!
+                                    Check out https://bStats.org/ to learn more :)""").copyDefaults(true);
             try {
                 config.save(configFile);
             } catch (IOException ignored) {
@@ -105,12 +103,12 @@ public class MetricsLite {
         }
 
         // Load the data
-        MetricsLite.serverUUID = config.getString("serverUuid");
-        MetricsLite.logFailedRequests = config.getBoolean("logFailedRequests", false);
-        this.enabled = config.getBoolean("enabled", true);
-        MetricsLite.logSentData = config.getBoolean("logSentData", false);
-        MetricsLite.logResponseStatusText = config.getBoolean("logResponseStatusText", false);
-        if (this.enabled) {
+        MetricsLite.SERVER_UUID = config.getString("serverUuid");
+        MetricsLite.LOG_FAILED_REQUESTS = config.getBoolean("logFailedRequests", false);
+        this._enabled = config.getBoolean("enabled", true);
+        MetricsLite.LOG_SENT_DATA = config.getBoolean("logSentData", false);
+        MetricsLite.LOG_RESPONSE_DATA_TEXT = config.getBoolean("logResponseStatusText", false);
+        if (this._enabled) {
             var found = false;
             // Search for all other bStats Metrics classes to see if we are the first one
             for (var service : Bukkit.getServicesManager().getKnownServices())
@@ -124,25 +122,25 @@ public class MetricsLite {
             Bukkit.getServicesManager().register(MetricsLite.class, this, plugin, ServicePriority.Normal);
             // We are the first!
             if (!found)
-                this.startSubmitting();
+                this.StartSubmitting();
         }
     }
 
     /**
      Starts the Scheduler which submits our data every 30 minutes.
      */
-    private void startSubmitting() {
+    private void StartSubmitting() {
         final var timer = new Timer(true); // We use a timer cause the Bukkit scheduler is affected by server lags
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (!MetricsLite.this.plugin.isEnabled()) { // Plugin was disabled
+                if (!MetricsLite.this._plugin.isEnabled()) { // Plugin was disabled
                     timer.cancel();
                     return;
                 }
                 // Nevertheless we want our code to run in the Bukkit main thread, so we have to use the Bukkit scheduler
                 // Don't be afraid! The connection to the bStats server is still async, only the stats collection is sync ;)
-                Bukkit.getScheduler().runTask(MetricsLite.this.plugin, MetricsLite.this::submitData);
+                Bukkit.getScheduler().runTask(MetricsLite.this._plugin, MetricsLite.this::SubmitData);
             }
         }, 1000 * 60 * 5, 1000 * 60 * 30);
         // Submit the data every 30 minutes, first time after 5 minutes to give other plugins enough time to start
@@ -153,8 +151,8 @@ public class MetricsLite {
     /**
      Collects the data and sends it afterwards.
      */
-    private void submitData() {
-        final var data = this.getServerData();
+    private void SubmitData() {
+        final var data = this.GetServerData();
 
         var pluginData = new JsonArray();
         // Search for all other bStats Metrics classes to get their plugin data
@@ -178,11 +176,11 @@ public class MetricsLite {
                                     var object = new JsonParser().parse(jsonString).getAsJsonObject();
                                     pluginData.add(object);
                                 }
-                            } catch (ClassNotFoundException e) {
+                            } catch (ClassNotFoundException exception) {
                                 // minecraft version 1.14+
-                                if (MetricsLite.logFailedRequests) {
-                                    this.plugin.error("Encountered unexpected exception: " + e.getMessage());
-                                    e.printStackTrace();
+                                if (MetricsLite.LOG_FAILED_REQUESTS) {
+                                    this._plugin.Error("Encountered unexpected exception: " + exception.getMessage());
+                                    exception.printStackTrace();
                                 }
                             }
                     } catch (NullPointerException | NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
@@ -196,12 +194,12 @@ public class MetricsLite {
         new Thread(() -> {
             try {
                 // Send the data
-                MetricsLite.sendData(this.plugin, data);
-            } catch (Exception e) {
+                MetricsLite.SendData(this._plugin, data);
+            } catch (Exception exception) {
                 // Something went wrong! :(
-                if (MetricsLite.logFailedRequests) {
-                    this.plugin.error("Could not submit plugin stats of " + this.plugin.getName());
-                    e.printStackTrace();
+                if (MetricsLite.LOG_FAILED_REQUESTS) {
+                    this._plugin.Error("Could not submit plugin stats of " + this._plugin.getName());
+                    exception.printStackTrace();
                 }
             }
         }).start();
@@ -212,7 +210,7 @@ public class MetricsLite {
 
      @return The server specific data.
      */
-    private JsonObject getServerData() {
+    private JsonObject GetServerData() {
         // Minecraft specific data
         int playerAmount;
         try {
@@ -222,7 +220,7 @@ public class MetricsLite {
             playerAmount = onlinePlayersMethod.getReturnType().equals(Collection.class)?
                            ((Collection<?>) onlinePlayersMethod.invoke(Bukkit.getServer())).size() :
                            ((Player[]) onlinePlayersMethod.invoke(Bukkit.getServer())).length;
-        } catch (Exception e) {
+        } catch (Exception exception) {
             playerAmount = Bukkit.getOnlinePlayers().size(); // Just use the new method if the Reflection failed
         }
         var onlineMode = Bukkit.getOnlineMode()? 1 : 0;
@@ -238,7 +236,7 @@ public class MetricsLite {
 
         var data = new JsonObject();
 
-        data.addProperty("serverUUID", MetricsLite.serverUUID);
+        data.addProperty("serverUUID", MetricsLite.SERVER_UUID);
 
         data.addProperty("playerAmount", playerAmount);
         data.addProperty("onlineMode", onlineMode);
@@ -262,17 +260,17 @@ public class MetricsLite {
 
      @throws Exception If the request failed.
      */
-    private static void sendData(ServerSystem plugin, JsonObject data) throws Exception {
+    private static void SendData(ServerSystem plugin, JsonObject data) throws Exception {
         if (data == null)
             throw new IllegalArgumentException("Data cannot be null!");
         if (Bukkit.isPrimaryThread())
             throw new IllegalAccessException("This method must not be called from the main thread!");
-        if (MetricsLite.logSentData)
-            plugin.log("Sending data to bStats: " + data);
-        var connection = (HttpsURLConnection) new URL(MetricsLite.URL).openConnection();
+        if (MetricsLite.LOG_SENT_DATA)
+            plugin.Info("Sending data to bStats: " + data);
+        var connection = (HttpsURLConnection) new URL(MetricsLite.SUBMIT_URL).openConnection();
 
         // Compress the data to save bandwidth
-        var compressedData = MetricsLite.compress(data.toString());
+        var compressedData = MetricsLite.Compress(data.toString());
 
         // Add headers
         connection.setRequestMethod("POST");
@@ -294,15 +292,15 @@ public class MetricsLite {
             String line;
             while ((line = bufferedReader.readLine()) != null)
                 builder.append(line);
-        } catch (IOException e) {
-            if (!e.getMessage().toLowerCase().contains("code: 429")) {
-                e.printStackTrace();
+        } catch (IOException exception) {
+            if (!exception.getMessage().toLowerCase().contains("code: 429")) {
+                exception.printStackTrace();
                 return;
             }
         }
 
-        if (MetricsLite.logResponseStatusText)
-            plugin.log("Sent data to bStats and received response: " + builder);
+        if (MetricsLite.LOG_RESPONSE_DATA_TEXT)
+            plugin.Info("Sent data to bStats and received response: " + builder);
     }
 
     /**
@@ -314,7 +312,7 @@ public class MetricsLite {
 
      @throws IOException If the compression failed.
      */
-    private static byte[] compress(final String str) throws IOException {
+    private static byte[] Compress(final String str) throws IOException {
         if (str == null)
             return null;
         var outputStream = new ByteArrayOutputStream();
@@ -329,8 +327,8 @@ public class MetricsLite {
 
      @return Whether bStats is enabled or not.
      */
-    public boolean isEnabled() {
-        return this.enabled;
+    public boolean IsEnabled() {
+        return this._enabled;
     }
 
     /**
@@ -339,14 +337,14 @@ public class MetricsLite {
 
      @return The plugin specific data.
      */
-    public JsonObject getPluginData() {
+    public JsonObject GetPluginData() {
         var data = new JsonObject();
 
-        var pluginName = this.plugin.getDescription().getName();
-        var pluginVersion = this.plugin.getDescription().getVersion();
+        var pluginName = this._plugin.getDescription().getName();
+        var pluginVersion = this._plugin.getDescription().getVersion();
 
         data.addProperty("pluginName", pluginName); // Append the name of the plugin
-        data.addProperty("id", this.pluginId); // Append the id of the plugin
+        data.addProperty("id", this._pluginId); // Append the id of the plugin
         data.addProperty("pluginVersion", pluginVersion); // Append the version of the plugin
         data.add("customCharts", new JsonArray());
 

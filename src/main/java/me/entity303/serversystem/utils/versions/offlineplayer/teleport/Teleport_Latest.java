@@ -14,80 +14,80 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-public class Teleport_Latest extends CommandUtils implements Teleport {
-    private final Field worldField = null;
-    private Method setLocationMethod = null;
-    private Method getHandleMethod = null;
-    private Method teleportToMethod = null;
+public class Teleport_Latest extends CommandUtils implements ITeleport {
+    private final Field _worldField = null;
+    private Method _setLocationMethod = null;
+    private Method _getHandleMethod = null;
+    private Method _teleportToMethod = null;
 
     public Teleport_Latest(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public void teleport(Player player, Location location) {
+    public void Teleport(Player player, Location location) {
         try {
-            this.setLocationMethod =
+            this._setLocationMethod =
                     net.minecraft.world.entity.Entity.class.getDeclaredMethod("a", double.class, double.class, double.class, float.class, float.class);
-        } catch (NoSuchMethodException ex) {
-            ex.printStackTrace();
+        } catch (NoSuchMethodException exception) {
+            exception.printStackTrace();
         }
 
 
-        if (this.getHandleMethod == null)
+        if (this._getHandleMethod == null)
             try {
-                this.getHandleMethod =
-                        Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".CraftWorld").getDeclaredMethod("getHandle");
-            } catch (NoSuchMethodException | ClassNotFoundException e) {
-                e.printStackTrace();
+                this._getHandleMethod =
+                        Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".CraftWorld").getDeclaredMethod("getHandle");
+            } catch (NoSuchMethodException | ClassNotFoundException exception) {
+                exception.printStackTrace();
                 return;
             }
 
         EntityPlayer entity;
         try {
-            entity = (EntityPlayer) this.plugin.getVersionStuff().getGetHandleMethod().invoke(player);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            entity = (EntityPlayer) this._plugin.GetVersionStuff().GetGetHandleMethod().invoke(player);
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            exception.printStackTrace();
             return;
         }
 
         Object worldServer;
         try {
-            worldServer = this.getHandleMethod.invoke(location.getWorld());
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            worldServer = this._getHandleMethod.invoke(location.getWorld());
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            exception.printStackTrace();
             return;
         }
 
-        if (this.teleportToMethod == null) {
-            this.teleportToMethod = Arrays.stream(Entity.class.getDeclaredMethods())
-                                          .filter(method -> method.getParameterTypes().length == 2)
-                                          .filter(method -> method.getParameterTypes()[0] == World.class && method.getParameterTypes()[1] == BlockPosition.class)
-                                          .findFirst()
-                                          .orElse(null);
+        if (this._teleportToMethod == null) {
+            this._teleportToMethod = Arrays.stream(Entity.class.getDeclaredMethods())
+                                           .filter(method -> method.getParameterTypes().length == 2)
+                                           .filter(method -> method.getParameterTypes()[0] == World.class && method.getParameterTypes()[1] == BlockPosition.class)
+                                           .findFirst()
+                                           .orElse(null);
 
-            if (this.teleportToMethod == null) {
+            if (this._teleportToMethod == null) {
                 try {
                     throw new NoSuchMethodException("Couldn't find method 'teleportTo' in class " + Entity.class.getName());
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
+                } catch (NoSuchMethodException exception) {
+                    exception.printStackTrace();
                 }
                 return;
             }
 
-            this.teleportToMethod.setAccessible(true);
+            this._teleportToMethod.setAccessible(true);
         }
 
         try {
-            this.teleportToMethod.invoke(entity, worldServer, new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
+            this._teleportToMethod.invoke(entity, worldServer, new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            throw new RuntimeException(exception);
         }
 
         try {
-            this.setLocationMethod.invoke(entity, location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            this._setLocationMethod.invoke(entity, location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            exception.printStackTrace();
         }
     }
 }

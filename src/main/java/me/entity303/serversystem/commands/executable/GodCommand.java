@@ -1,13 +1,13 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class GodCommand extends CommandUtils implements CommandExecutorOverload {
+public class GodCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public GodCommand(ServerSystem plugin) {
         super(plugin);
@@ -18,57 +18,57 @@ public class GodCommand extends CommandUtils implements CommandExecutorOverload 
         if (arguments.length == 0) {
             if (!(commandSender instanceof Player)) {
                 commandSender.sendMessage(
-                        this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "God"));
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "God"));
                 return true;
             }
 
-            if (!this.plugin.getPermissions().hasPermission(commandSender, "god.self")) {
-                var permission = this.plugin.getPermissions().getPermission("god.self");
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "god.self")) {
+                var permission = this._plugin.GetPermissions().GetPermission("god.self");
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return true;
             }
 
-            if (this.plugin.getGodList().contains(commandSender)) {
-                this.plugin.getGodList().remove(commandSender);
+            if (this._plugin.GetGodList().contains(commandSender)) {
+                this._plugin.GetGodList().remove(commandSender);
 
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                          this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "God.Self.Deactivated"));
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                          this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "God.Self.Deactivated"));
             } else {
-                this.plugin.getGodList().add(((Player) commandSender));
+                this._plugin.GetGodList().add(((Player) commandSender));
 
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                          this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "God.Self.Activated"));
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                          this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "God.Self.Activated"));
             }
             return true;
         }
 
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "god.others")) {
-            var permission = this.plugin.getPermissions().getPermission("god.others");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "god.others")) {
+            var permission = this._plugin.GetPermissions().GetPermission("god.others");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
 
-        var targetPlayer = this.getPlayer(commandSender, arguments[0]);
+        var targetPlayer = this.GetPlayer(commandSender, arguments[0]);
         if (targetPlayer == null) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;
         }
 
-        if (this.plugin.getGodList().contains(targetPlayer)) {
-            this.plugin.getGodList().remove(targetPlayer);
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, targetPlayer, "God.Others.Deactivated.Sender"));
+        if (this._plugin.GetGodList().contains(targetPlayer)) {
+            this._plugin.GetGodList().remove(targetPlayer);
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, targetPlayer, "God.Others.Deactivated.Sender"));
 
-            targetPlayer.sendMessage(this.plugin.getMessages().getPrefix() +
-                                     this.plugin.getMessages().getMessage(commandLabel, command, commandSender, targetPlayer, "God.Others.Deactivated.Target"));
+            targetPlayer.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                     this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, targetPlayer, "God.Others.Deactivated.Target"));
         } else {
-            this.plugin.getGodList().add(targetPlayer);
+            this._plugin.GetGodList().add(targetPlayer);
             var command1 = command.getName();
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                      this.plugin.getMessages().getMessage(commandLabel, command1, commandSender, targetPlayer, "God.Others.Activated.Sender"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command1, commandSender, targetPlayer, "God.Others.Activated.Sender"));
 
-            targetPlayer.sendMessage(this.plugin.getMessages().getPrefix() +
-                                     this.plugin.getMessages().getMessage(commandLabel, command, commandSender, targetPlayer, "God.Others.Activated.Target"));
+            targetPlayer.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                     this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, targetPlayer, "God.Others.Activated.Target"));
         }
         return true;
     }

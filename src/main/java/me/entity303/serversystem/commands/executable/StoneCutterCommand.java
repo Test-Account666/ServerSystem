@@ -3,11 +3,11 @@ package me.entity303.serversystem.commands.executable;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class StoneCutterCommand extends CommandUtils implements CommandExecutorOverload {
+public class StoneCutterCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public StoneCutterCommand(ServerSystem plugin) {
         super(plugin);
@@ -15,16 +15,16 @@ public class StoneCutterCommand extends CommandUtils implements CommandExecutorO
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "stonecutter")) {
-            var permission = this.plugin.getPermissions().getPermission("stonecutter");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "stonecutter")) {
+            var permission = this._plugin.GetPermissions().GetPermission("stonecutter");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
         if (!(commandSender instanceof Player)) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetOnlyPlayer());
             return true;
         }
-        this.plugin.getVersionStuff().getVirtualStoneCutter().openCutter((Player) commandSender);
+        this._plugin.GetVersionStuff().GetVirtualStoneCutter().OpenStoneCutter((Player) commandSender);
         return true;
     }
 }

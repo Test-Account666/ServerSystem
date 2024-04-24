@@ -7,9 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 
-public class FileUtils {
+public final class FileUtils {
 
-    public static void deleteDirectory(File file) throws IOException {
+    public static void DeleteDirectory(File file) throws IOException {
         if (file == null)
             return;
 
@@ -17,20 +17,20 @@ public class FileUtils {
             throw new FileNotFoundException("File not found: " + file.getAbsolutePath());
 
         if (!file.isDirectory()) {
-            FileUtils.deleteFile(file);
+            FileUtils.DeleteFile(file);
             return;
         }
 
-        for (var f : file.listFiles())
-            if (f.isDirectory())
-                FileUtils.deleteDirectory(f);
+        for (var listedFile : file.listFiles())
+            if (listedFile.isDirectory())
+                FileUtils.DeleteDirectory(listedFile);
             else
-                FileUtils.deleteFile(f);
+                FileUtils.DeleteFile(listedFile);
 
-        FileUtils.deleteFile(file);
+        FileUtils.DeleteFile(file);
     }
 
-    public static void deleteFile(File file) throws IOException {
+    public static void DeleteFile(File file) throws IOException {
         if (file == null)
             return;
 
@@ -41,7 +41,7 @@ public class FileUtils {
             throw new IOException("Couldn't delete file: " + file.getAbsolutePath());
     }
 
-    public static void copyDirectory(File source, File destination) throws IOException {
+    public static void CopyDirectory(File source, File destination) throws IOException {
         if (source == null)
             return;
         if (destination == null)
@@ -51,7 +51,7 @@ public class FileUtils {
             throw new FileNotFoundException("File not found: " + source);
 
         if (!source.isDirectory()) {
-            FileUtils.copyFile(source, destination);
+            FileUtils.CopyFile(source, destination);
             return;
         }
 
@@ -66,12 +66,12 @@ public class FileUtils {
 
         for (var file : source.listFiles())
             if (file.isDirectory())
-                FileUtils.copyDirectory(file, new File(destination, file.getName()));
+                FileUtils.CopyDirectory(file, new File(destination, file.getName()));
             else
-                FileUtils.copyFile(file, new File(destination, file.getName()));
+                FileUtils.CopyFile(file, new File(destination, file.getName()));
     }
 
-    public static void copyFile(File source, File destination) throws IOException {
+    public static void CopyFile(File source, File destination) throws IOException {
         if (source == null)
             return;
         if (destination == null)

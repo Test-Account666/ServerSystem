@@ -1,18 +1,18 @@
 package me.entity303.serversystem.tabcompleter;
 
+import me.entity303.serversystem.commands.ITabCompleterOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RecipeTabCompleter extends CommandUtils implements TabCompleter {
+public class RecipeTabCompleter extends CommandUtils implements ITabCompleterOverload {
 
     public static final Material[] MATERIALS = Material.values();
 
@@ -21,16 +21,16 @@ public class RecipeTabCompleter extends CommandUtils implements TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender cs, Command cmd, String label, String[] args) {
-        if (args.length != 1)
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (arguments.length != 1)
             return null;
 
-        if (this.plugin.getPermissions().getConfiguration().getBoolean("Permissions.recipe.required"))
-            if (!this.plugin.getPermissions().hasPermission(cs, "recipe.permission", true))
+        if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.recipe.required"))
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "recipe.permission", true))
                 return Collections.singletonList("");
 
         var tabCompletions = Arrays.stream(MATERIALS)
-                                   .filter(material -> material.name().toLowerCase().startsWith(args[0].toLowerCase()) && !material.name().endsWith("AIR") &&
+                                   .filter(material -> material.name().toLowerCase().startsWith(arguments[0].toLowerCase()) && !material.name().endsWith("AIR") &&
                                                        !material.name().startsWith("LEGACY"))
                                    .map(Enum::name)
                                    .collect(Collectors.toList());
@@ -39,7 +39,7 @@ public class RecipeTabCompleter extends CommandUtils implements TabCompleter {
             return tabCompletions;
 
         tabCompletions.addAll(Arrays.stream(RecipeTabCompleter.MATERIALS).map(Enum::name).toList());
-        tabCompletions.removeIf(s -> s.endsWith("AIR") || s.startsWith("LEGACY"));
+        tabCompletions.removeIf(material -> material.endsWith("AIR") || material.startsWith("LEGACY"));
         return tabCompletions;
 
     }

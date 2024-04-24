@@ -1,10 +1,9 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
 import me.entity303.serversystem.utils.CommandUtils;
-import me.entity303.serversystem.utils.Teleport;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -13,7 +12,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Objects;
 
-public class WarpCommand extends CommandUtils implements CommandExecutorOverload {
+public class WarpCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public WarpCommand(ServerSystem plugin) {
         super(plugin);
@@ -21,97 +20,98 @@ public class WarpCommand extends CommandUtils implements CommandExecutorOverload
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (this.plugin.getPermissions().getConfiguration().getBoolean("Permissions.warp.required"))
-            if (!this.plugin.getPermissions().hasPermission(commandSender, "warp.permission")) {
-                var permission = this.plugin.getPermissions().getPermission("warp.permission");
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.warp.required"))
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "warp.permission")) {
+                var permission = this._plugin.GetPermissions().GetPermission("warp.permission");
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return true;
             }
 
         if (arguments.length == 0) {
             commandSender.sendMessage(
-                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Warp"));
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Warp"));
             return true;
         }
 
         var name = arguments[0].toLowerCase();
-        var warpManager = this.plugin.getWarpManager();
-        if (!warpManager.doesWarpExist(name)) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                         .getMessage(commandLabel, command, commandSender, null,
+        var warpManager = this._plugin.GetWarpManager();
+        if (!warpManager.DoesWarpExist(name)) {
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                         .GetMessage(commandLabel, command, commandSender, null,
                                                                                                      "Warp.WarpDoesntExists")
                                                                                          .replace("<WARP>", name.toUpperCase()));
             return true;
         }
 
         if (!(commandSender instanceof Player) || arguments.length >= 2) {
-            if (!this.plugin.getPermissions().hasPermission(commandSender, "warp.others")) {
-                var permission = this.plugin.getPermissions().getPermission("warp.others");
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "warp.others")) {
+                var permission = this._plugin.GetPermissions().GetPermission("warp.others");
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return true;
             }
 
             if (arguments.length < 2) {
                 commandSender.sendMessage(
-                        this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Warp"));
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Warp"));
                 return true;
             }
 
-            var targetPlayer = this.getPlayer(commandSender, arguments[1]);
+            var targetPlayer = this.GetPlayer(commandSender, arguments[1]);
             if (targetPlayer == null) {
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[1]));
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[1]));
                 return true;
             }
 
-            var location = warpManager.getWarp(name);
+            var location = warpManager.GetWarp(name);
 
-            Teleport.teleport(targetPlayer, location);
+            targetPlayer.teleport(location);
 
-            targetPlayer.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                        .getMessage(commandLabel, command.getName(), commandSender, targetPlayer,
+            targetPlayer.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                        .GetMessage(commandLabel, command.getName(), commandSender, targetPlayer,
                                                                                                     "Warp.Others.Teleporting.Target")
                                                                                         .replace("<WARP>", name.toUpperCase()));
 
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                         .getMessage(commandLabel, command, commandSender, targetPlayer,
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                         .GetMessage(commandLabel, command, commandSender, targetPlayer,
                                                                                                      "Warp.Others.Teleporting.Sender")
                                                                                          .replace("<WARP>", name.toUpperCase()));
             return true;
         }
 
-        if (this.plugin.getConfigReader().getBoolean("teleportation.warp.enableDelay"))
-            if (!this.plugin.getPermissions().hasPermission(commandSender, "warp.bypassdelay", true)) {
-                this.plugin.getTeleportMap().put(((Player) commandSender), Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+        if (this._plugin.GetConfigReader().GetBoolean("teleportation.warp.enableDelay"))
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "warp.bypassdelay", true)) {
+                this._plugin.GetTeleportMap().put(((Player) commandSender), Bukkit.getScheduler().runTaskLater(this._plugin, () -> {
                     OfflinePlayer player = ((OfflinePlayer) commandSender).getPlayer();
                     assert player != null;
                     if (player.isOnline()) {
-                        var location = warpManager.getWarp(name);
+                        var location = warpManager.GetWarp(name);
 
-                        Teleport.teleport(Objects.requireNonNull(player.getPlayer()), location);
+                        var player1 = Objects.requireNonNull(player.getPlayer());
+                        player1.teleport(location);
 
-                        commandSender.sendMessage(WarpCommand.this.plugin.getMessages().getPrefix() + ChatColor.translateAlternateColorCodes('&',
-                                                                                                                                             WarpCommand.this.plugin.getMessages()
-                                                                                                                                                                    .getCfg()
-                                                                                                                                                                    .getString(
+                        commandSender.sendMessage(WarpCommand.this._plugin.GetMessages().GetPrefix() + ChatColor.TranslateAlternateColorCodes('&',
+                                                                                                                                             WarpCommand.this._plugin.GetMessages()
+                                                                                                                                                                    .GetConfiguration()
+                                                                                                                                                                    .GetString(
                                                                                                                                                                             "Messages.Misc.Teleportation.Success")));
-                        WarpCommand.this.plugin.getTeleportMap().remove(player);
+                        WarpCommand.this._plugin.GetTeleportMap().remove(player);
                     }
-                }, 20L * this.plugin.getConfigReader().getInt("teleportation.warp.delay")));
+                }, 20L * this._plugin.GetConfigReader().GetInt("teleportation.warp.delay")));
 
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                             .getMessage(commandLabel, command, commandSender, null,
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                             .GetMessage(commandLabel, command, commandSender, null,
                                                                                                          "Warp.Teleporting")
                                                                                              .replace("<WARP>", name.toUpperCase()));
                 return true;
             }
 
-        var location = warpManager.getWarp(name);
+        var location = warpManager.GetWarp(name);
 
-        Teleport.teleport((Player) commandSender, location);
+        ((Player) commandSender).teleport(location);
 
 
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                     .getMessage(commandLabel, command, commandSender, null,
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                     .GetMessage(commandLabel, command, commandSender, null,
                                                                                                  "Warp.InstantTeleporting")
                                                                                      .replace("<WARP>", name.toUpperCase()));
         return true;

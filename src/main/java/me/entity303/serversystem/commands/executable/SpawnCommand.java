@@ -1,10 +1,9 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
 import me.entity303.serversystem.utils.CommandUtils;
-import me.entity303.serversystem.utils.Teleport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -16,7 +15,7 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.util.Objects;
 
-public class SpawnCommand extends CommandUtils implements CommandExecutorOverload {
+public class SpawnCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public SpawnCommand(ServerSystem plugin) {
         super(plugin);
@@ -25,49 +24,50 @@ public class SpawnCommand extends CommandUtils implements CommandExecutorOverloa
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
         if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetOnlyPlayer());
             return true;
         }
 
-        if (this.plugin.getPermissions().getConfiguration().getBoolean("Permissions.spawn.required"))
-            if (!this.plugin.getPermissions().hasPermission(commandSender, "spawn.permission")) {
-                var permission = this.plugin.getPermissions().getPermission("spawn.permission");
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.spawn.required"))
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "spawn.permission")) {
+                var permission = this._plugin.GetPermissions().GetPermission("spawn.permission");
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return true;
             }
         var spawnFile = new File("plugins//ServerSystem", "spawn.yml");
         if (!spawnFile.exists()) {
 
             commandSender.sendMessage(
-                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Spawn.NoSpawn"));
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Spawn.NoSpawn"));
             return true;
         }
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(spawnFile);
         var location = GetSpawnLocation(cfg, player.getLocation());
-        if (!this.plugin.getConfigReader().getBoolean("teleportation.spawn.enableDelay") ||
-            this.plugin.getPermissions().hasPermission(commandSender, "spawn.bypassdelay", true)) {
+        if (!this._plugin.GetConfigReader().GetBoolean("teleportation.spawn.enableDelay") ||
+            this._plugin.GetPermissions().HasPermission(commandSender, "spawn.bypassdelay", true)) {
 
-            Teleport.teleport((Player) commandSender, location);
+            ((Player) commandSender).teleport(location);
 
 
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Spawn.InstantTeleporting"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Spawn.InstantTeleporting"));
             return true;
         }
-        this.plugin.getTeleportMap().put(player, Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+        this._plugin.GetTeleportMap().put(player, Bukkit.getScheduler().runTaskLater(this._plugin, () -> {
             if (player.isOnline()) {
-                Teleport.teleport(Objects.requireNonNull(player.getPlayer()), location);
+                var player1 = Objects.requireNonNull(player.getPlayer());
+                player1.teleport(location);
 
-                commandSender.sendMessage(SpawnCommand.this.plugin.getMessages().getPrefix() + ChatColor.translateAlternateColorCodes('&',
-                                                                                                                                      SpawnCommand.this.plugin.getMessages()
-                                                                                                                                                              .getCfg()
-                                                                                                                                                              .getString(
+                commandSender.sendMessage(SpawnCommand.this._plugin.GetMessages().GetPrefix() + ChatColor.TranslateAlternateColorCodes('&',
+                                                                                                                                      SpawnCommand.this._plugin.GetMessages()
+                                                                                                                                                              .GetConfiguration()
+                                                                                                                                                              .GetString(
                                                                                                                                                                       "Messages.Misc.Teleportation.Success")));
-                SpawnCommand.this.plugin.getTeleportMap().remove(player);
+                SpawnCommand.this._plugin.GetTeleportMap().remove(player);
             }
-        }, 20L * this.plugin.getConfigReader().getInt("teleportation.spawn.delay")));
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                  this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "Home.Teleporting"));
+        }, 20L * this._plugin.GetConfigReader().GetInt("teleportation.spawn.delay")));
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                  this._plugin.GetMessages().GetMessage(commandLabel, command.getName(), commandSender, null, "Home.Teleporting"));
         return true;
     }
 

@@ -3,11 +3,11 @@ package me.entity303.serversystem.commands.executable;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TeleportToggleCommand extends CommandUtils implements CommandExecutorOverload {
+public class TeleportToggleCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public TeleportToggleCommand(ServerSystem plugin) {
         super(plugin);
@@ -16,45 +16,45 @@ public class TeleportToggleCommand extends CommandUtils implements CommandExecut
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
         if (arguments.length == 0) {
-            if (!this.plugin.getPermissions().hasPermission(commandSender, "tptoggle.self")) {
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "tptoggle.self")) {
                 commandSender.sendMessage(
-                        this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().getPermission("tptoggle.self")));
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(this._plugin.GetPermissions().GetPermission("tptoggle.self")));
                 return true;
             }
             if (!(commandSender instanceof Player)) {
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command.getName(),
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command.getName(),
                                                                                                                       commandSender, null, "TpToggle"));
                 return true;
             }
-            if (this.plugin.getWantsTeleport().wantsTeleport(((Player) commandSender))) {
-                this.plugin.getWantsTeleport().setWantsTeleport(((Player) commandSender), false);
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                          this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "TpToggle.Self.DeActivated"));
+            if (this._plugin.GetWantsTeleport().DoesPlayerWantTeleport(((Player) commandSender))) {
+                this._plugin.GetWantsTeleport().SetWantsTeleport(((Player) commandSender), false);
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                          this._plugin.GetMessages().GetMessage(commandLabel, command.getName(), commandSender, null, "TpToggle.Self.DeActivated"));
             } else {
-                this.plugin.getWantsTeleport().setWantsTeleport(((Player) commandSender), true);
+                this._plugin.GetWantsTeleport().SetWantsTeleport(((Player) commandSender), true);
                 commandSender.sendMessage(
-                        this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, null, "TpToggle.Self.Activated"));
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command.getName(), commandSender, null, "TpToggle.Self.Activated"));
             }
             return true;
         }
-        var targetPlayer = this.getPlayer(commandSender, arguments[0]);
+        var targetPlayer = this.GetPlayer(commandSender, arguments[0]);
         if (targetPlayer == null) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;
         }
 
-        if (this.plugin.getWantsTeleport().wantsTeleport(targetPlayer)) {
-            this.plugin.getWantsTeleport().setWantsTeleport(targetPlayer, false);
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                      this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, targetPlayer, "TpToggle.Others.DeActivated.Sender"));
-            targetPlayer.sendMessage(this.plugin.getMessages().getPrefix() +
-                                     this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, targetPlayer, "TpToggle.Others.DeActivated.Target"));
+        if (this._plugin.GetWantsTeleport().DoesPlayerWantTeleport(targetPlayer)) {
+            this._plugin.GetWantsTeleport().SetWantsTeleport(targetPlayer, false);
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command.getName(), commandSender, targetPlayer, "TpToggle.Others.DeActivated.Sender"));
+            targetPlayer.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                     this._plugin.GetMessages().GetMessage(commandLabel, command.getName(), commandSender, targetPlayer, "TpToggle.Others.DeActivated.Target"));
         } else {
-            this.plugin.getWantsTeleport().setWantsTeleport(targetPlayer, true);
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                      this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, targetPlayer, "TpToggle.Others.Activated.Sender"));
-            targetPlayer.sendMessage(this.plugin.getMessages().getPrefix() +
-                                     this.plugin.getMessages().getMessage(commandLabel, command.getName(), commandSender, targetPlayer, "TpToggle.Others.Activated.Target"));
+            this._plugin.GetWantsTeleport().SetWantsTeleport(targetPlayer, true);
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command.getName(), commandSender, targetPlayer, "TpToggle.Others.Activated.Sender"));
+            targetPlayer.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                     this._plugin.GetMessages().GetMessage(commandLabel, command.getName(), commandSender, targetPlayer, "TpToggle.Others.Activated.Target"));
         }
         return true;
     }

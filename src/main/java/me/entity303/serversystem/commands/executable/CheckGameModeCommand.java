@@ -1,13 +1,13 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public class CheckGameModeCommand extends CommandUtils implements CommandExecutorOverload {
+public class CheckGameModeCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public CheckGameModeCommand(ServerSystem plugin) {
         super(plugin);
@@ -15,33 +15,33 @@ public class CheckGameModeCommand extends CommandUtils implements CommandExecuto
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "checkgamemode")) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                      this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().getPermission("checkgamemode")));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "checkgamemode")) {
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetNoPermission(this._plugin.GetPermissions().GetPermission("checkgamemode")));
             return true;
         }
         if (arguments.length == 0) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                      this.plugin.getMessages().getSyntax(commandLabel, command.getName(), commandSender, null, "CheckGameMode"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetSyntax(commandLabel, command.getName(), commandSender, null, "CheckGameMode"));
             return true;
         }
 
-        var target = this.getPlayer(commandSender, arguments[0]);
+        var target = this.GetPlayer(commandSender, arguments[0]);
         if (target != null)
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                         .getMessage(commandLabel, command.getName(), commandSender, target,
-                                                                                                     "CheckGamemode")
-                                                                                         .replace("<MODE>", this.getMode(target.getGameMode())));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                         .GetMessage(commandLabel, command.getName(), commandSender,
+                                                                                                     target, "CheckGamemode")
+                                                                                         .replace("<MODE>", this.GetMode(target.getGameMode())));
         else if (arguments[0].equalsIgnoreCase("Konsole") || arguments[0].equalsIgnoreCase("Console"))
-            commandSender.sendMessage(arguments[0].equalsIgnoreCase("Konsole")?
-                                      this.plugin.getMessages().getPrefix() + "Die Konsole ist allmächtig und wird uns alle TÖTEN!" :
-                                      this.plugin.getMessages().getPrefix() + "The console is almighty and will KILL us all!");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + (arguments[0].equalsIgnoreCase("Konsole")?
+                                                                               "Die Konsole ist allmächtig und wird uns alle TÖTEN!" :
+                                                                               "The console is almighty and will KILL us all!"));
         else
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
         return true;
     }
 
-    private String getMode(GameMode gamemode) {
-        return this.plugin.getMessages().getCfg().getString("Messages.Misc.GameModes." + gamemode);
+    private String GetMode(GameMode gamemode) {
+        return this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.GameModes." + gamemode);
     }
 }

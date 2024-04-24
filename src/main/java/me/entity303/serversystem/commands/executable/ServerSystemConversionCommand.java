@@ -8,7 +8,7 @@ import me.entity303.serversystem.utils.CommandUtils;
 import net.ess3.api.MaxMoneyException;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 
 import java.io.File;
@@ -17,8 +17,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class ServerSystemConversionCommand extends CommandUtils implements CommandExecutorOverload {
-    private boolean starting = false;
+public class ServerSystemConversionCommand extends CommandUtils implements ICommandExecutorOverload {
+    private boolean _starting = false;
 
     public ServerSystemConversionCommand(ServerSystem plugin) {
         super(plugin);
@@ -26,23 +26,23 @@ public class ServerSystemConversionCommand extends CommandUtils implements Comma
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "converttoessentials")) {
-            var permission = this.plugin.getPermissions().getPermission("converttoessentials");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "converttoessentials")) {
+            var permission = this._plugin.GetPermissions().GetPermission("converttoessentials");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
 
-        if (!this.starting) {
+        if (!this._starting) {
             
             commandSender.sendMessage(
-                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "ConvertToEssentials.WarnNotTested"));
-            this.starting = true;
-            Bukkit.getScheduler().runTaskLater(this.plugin, () -> this.starting = false, 20 * 10);
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "ConvertToEssentials.WarnNotTested"));
+            this._starting = true;
+            Bukkit.getScheduler().runTaskLater(this._plugin, () -> this._starting = false, 20 * 10);
             return true;
         }
 
         var command1 = command.getName();
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command1, commandSender, null, "ConvertToEssentials.Start"));
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command1, commandSender, null, "ConvertToEssentials.Start"));
 
         var essentialsDirectory = new File("plugins//Essentials");
         var dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm-ss");
@@ -50,9 +50,9 @@ public class ServerSystemConversionCommand extends CommandUtils implements Comma
         var backupDate = dtf.format(now);
 
         try {
-            FileUtils.copyFile(essentialsDirectory, new File("plugins//Essentials-Backups//Essentials-Backup-" + backupDate));
-        } catch (IOException e) {
-            e.printStackTrace();
+            FileUtils.CopyFile(essentialsDirectory, new File("plugins//Essentials-Backups//Essentials-Backup-" + backupDate));
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
 
         var essentials = (Essentials) Bukkit.getServer().getPluginManager().getPlugin("Essentials");
@@ -60,9 +60,9 @@ public class ServerSystemConversionCommand extends CommandUtils implements Comma
         var error = false;
 
         for (var offlinePlayer : Bukkit.getOfflinePlayers()) {
-            var economy = this.plugin.getEconomyManager();
+            var economy = this._plugin.GetEconomyManager();
 
-            double balance = economy.getMoneyAsNumber(offlinePlayer);
+            double balance = economy.GetMoneyAsNumber(offlinePlayer);
 
             User user = null;
 
@@ -76,25 +76,25 @@ public class ServerSystemConversionCommand extends CommandUtils implements Comma
 
             try {
                 user.setMoney(new BigDecimal(balance));
-            } catch (MaxMoneyException e) {
-                e.printStackTrace();
+            } catch (MaxMoneyException exception) {
+                exception.printStackTrace();
                 error = true;
             }
 
 
-            var homeManager = this.plugin.getHomeManager();
+            var homeManager = this._plugin.GetHomeManager();
 
-            for (var home : homeManager.getHomes(offlinePlayer).entrySet()) {
+            for (var home : homeManager.GetHomes(offlinePlayer).entrySet()) {
                 var name = home.getKey();
                 var location = home.getValue();
 
                 user.setHome(name, location);
             }
 
-            if (this.plugin.getVanish().isVanish(offlinePlayer))
+            if (this._plugin.GetVanish().IsVanish(offlinePlayer))
                 user.setVanished(true);
 
-            if (!this.plugin.getWantsTeleport().wantsTeleport(offlinePlayer))
+            if (!this._plugin.GetWantsTeleport().DoesPlayerWantTeleport(offlinePlayer))
                 user.setTeleportEnabled(false);
 
             //TODO: Convert bans and mutes
@@ -105,13 +105,13 @@ public class ServerSystemConversionCommand extends CommandUtils implements Comma
         var warps = essentials.getWarps();
 
         if (warps != null) {
-            var warpManager = this.plugin.getWarpManager();
+            var warpManager = this._plugin.GetWarpManager();
 
-            for (var warp : warpManager.getWarps())
+            for (var warp : warpManager.GetWarps())
                 try {
-                    warps.setWarp(warp, warpManager.getWarp(warp));
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    warps.setWarp(warp, warpManager.GetWarp(warp));
+                } catch (Exception exception) {
+                    exception.printStackTrace();
                     error = true;
                 }
         }
@@ -120,13 +120,13 @@ public class ServerSystemConversionCommand extends CommandUtils implements Comma
 
         if (error) {
             
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "ConvertToEssentials.FinishedWithErrors"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "ConvertToEssentials.FinishedWithErrors"));
             return true;
         }
 
         
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "ConvertToEssentials.Finished"));
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "ConvertToEssentials.Finished"));
         return true;
     }
 }

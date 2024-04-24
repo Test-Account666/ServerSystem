@@ -17,62 +17,62 @@ public class LoginListener extends CommandUtils implements Listener {
     }
 
     @EventHandler
-    public void onLogin(PlayerLoginEvent e) {
-        if (this.plugin.isStarting())
-            e.disallow(PlayerLoginEvent.Result.KICK_OTHER,
-                       ChatColor.translateAlternateColorCodes('&', this.plugin.getMessages().getCfg().getString("Messages.Misc.ServerStillStarting")));
+    public void OnLogin(PlayerLoginEvent event) {
+        if (this._plugin.IsStarting())
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER,
+                       ChatColor.TranslateAlternateColorCodes('&', this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.ServerStillStarting")));
 
-        if (this.plugin.isMaintenance())
-            if (!this.plugin.getPermissions().hasPermission(e.getPlayer(), "maintenance.join", true)) {
-                var sender = e.getPlayer().getName();
-                e.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, this.plugin.getMessages().getMessage("Join", "Join", sender, null, "Maintenance.NoJoin"));
+        if (this._plugin.IsMaintenance())
+            if (!this._plugin.GetPermissions().HasPermission(event.getPlayer(), "maintenance.join", true)) {
+                var sender = event.getPlayer().getName();
+                event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, this._plugin.GetMessages().GetMessage("Join", "Join", sender, null, "Maintenance.NoJoin"));
                 return;
             }
 
-        var banManager = this.plugin.getBanManager();
-        if (banManager.isBanned(e.getPlayer().getUniqueId())) {
-            var ban = banManager.getBanByPlayer(e.getPlayer());
-            if (ban.UNBAN_TIME() > -1)
-                if (ban.UNBAN_TIME() <= System.currentTimeMillis()) {
-                    this.plugin.getBanManager().unBan(e.getPlayer().getUniqueId());
+        var banManager = this._plugin.GetBanManager();
+        if (banManager.IsBanned(event.getPlayer().getUniqueId())) {
+            var ban = banManager.GetBanByPlayer(event.getPlayer());
+            if (ban.GetExpireTime() > -1)
+                if (ban.GetExpireTime() <= System.currentTimeMillis()) {
+                    this._plugin.GetBanManager().UnBan(event.getPlayer().getUniqueId());
                     return;
                 }
             var name = "Unknown";
 
-            if (ban.BAN_SENDER_UUID().equalsIgnoreCase(this.plugin.getMessages().getCfg().getString("Messages.Misc.BanSystem." + "ConsoleName")))
-                name = this.plugin.getMessages().getCfg().getString("Messages.Misc.BanSystem." + "ConsoleName");
+            if (ban.GetSenderUuid().equalsIgnoreCase(this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.BanSystem." + "ConsoleName")))
+                name = this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.BanSystem." + "ConsoleName");
             else
                 try {
-                    var player = Bukkit.getOfflinePlayer(UUID.fromString(ban.BAN_SENDER_UUID()));
+                    var player = Bukkit.getOfflinePlayer(UUID.fromString(ban.GetSenderUuid()));
                     name = player.getName();
                 } catch (IllegalArgumentException ignored) {
                 }
-            e.disallow(PlayerLoginEvent.Result.KICK_BANNED, this.plugin.getMessages()
-                                                                       .getMessage("login", "login", name, e.getPlayer(), "Ban.Kick")
-                                                                       .replace("<REASON>", ChatColor.translateAlternateColorCodes('&', ban.BAN_REASON()))
-                                                                       .replace("<DATE>", ban.UNBAN_DATE().replace("&", "§")));
+            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, this._plugin.GetMessages()
+                                                                       .GetMessage("login", "login", name, event.getPlayer(), "Ban.Kick")
+                                                                       .replace("<REASON>", ChatColor.TranslateAlternateColorCodes('&', ban.GetReason()))
+                                                                       .replace("<DATE>", ban.GetExpireDate().replace("&", "§")));
         } else if (Bukkit.getMaxPlayers() <= Bukkit.getOnlinePlayers().size())
-            if (!this.plugin.getPermissions().hasPermission(e.getPlayer(), "joinfullserver.premium", true) &&
-                !this.plugin.getPermissions().hasPermission(e.getPlayer(), "joinfullserver.admin", true))
-                e.disallow(PlayerLoginEvent.Result.KICK_FULL, this.plugin.getMessages()
-                                                                         .getMiscMessage("ServerJoin", "ServerJoin", e.getPlayer(), null, "ServerFull")
-                                                                         .replace("<PERMISSION>", this.plugin.getPermissions().getPermission("joinfullserver")));
+            if (!this._plugin.GetPermissions().HasPermission(event.getPlayer(), "joinfullserver.premium", true) &&
+                !this._plugin.GetPermissions().HasPermission(event.getPlayer(), "joinfullserver.admin", true))
+                event.disallow(PlayerLoginEvent.Result.KICK_FULL, this._plugin.GetMessages()
+                                                                         .GetMiscMessage("ServerJoin", "ServerJoin", event.getPlayer(), null, "ServerFull")
+                                                                         .replace("<PERMISSION>", this._plugin.GetPermissions().GetPermission("joinfullserver")));
             else {
-                e.allow();
-                if (this.plugin.getPermissions().hasPermission(e.getPlayer(), "joinfullserver.admin", true)) {
-                    var kickedPlayer = Bukkit.getOnlinePlayers().stream().filter(player -> player != e.getPlayer()).filter(player -> !this.plugin.getPermissions().hasPermission(player, "joinfullserver.admin", true)).findFirst().orElse(null);
+                event.allow();
+                if (this._plugin.GetPermissions().HasPermission(event.getPlayer(), "joinfullserver.admin", true)) {
+                    var kickedPlayer = Bukkit.getOnlinePlayers().stream().filter(player -> player != event.getPlayer()).filter(player -> !this._plugin.GetPermissions().HasPermission(player, "joinfullserver.admin", true)).findFirst().orElse(null);
                     var name = kickedPlayer.getName();
                     kickedPlayer.kickPlayer(
-                            this.plugin.getMessages().getMessageWithStringTarget("joinKick", "joinKick", e.getPlayer(), name, "KickedByHigher.Admin"));
-                } else if (this.plugin.getPermissions().hasPermission(e.getPlayer(), "joinfullserver.premium", true)) {
-                    var kickedPlayer = Bukkit.getOnlinePlayers().stream().filter(player -> player != e.getPlayer()).filter(player -> {
-                        if (this.plugin.getPermissions().hasPermission(player, "joinfullserver.premium", true))
+                            this._plugin.GetMessages().GetMessageWithStringTarget("joinKick", "joinKick", event.getPlayer(), name, "KickedByHigher.Admin"));
+                } else if (this._plugin.GetPermissions().HasPermission(event.getPlayer(), "joinfullserver.premium", true)) {
+                    var kickedPlayer = Bukkit.getOnlinePlayers().stream().filter(player -> player != event.getPlayer()).filter(player -> {
+                        if (this._plugin.GetPermissions().HasPermission(player, "joinfullserver.premium", true))
                             return false;
-                        return !this.plugin.getPermissions().hasPermission(player, "joinfullserver.admin", true);
+                        return !this._plugin.GetPermissions().HasPermission(player, "joinfullserver.admin", true);
                     }).findFirst().orElse(null);
                     var name = kickedPlayer.getName();
                     kickedPlayer.kickPlayer(
-                            this.plugin.getMessages().getMessageWithStringTarget("joinKick", "joinKick", e.getPlayer(), name, "KickedByHigher.Premium"));
+                            this._plugin.GetMessages().GetMessageWithStringTarget("joinKick", "joinKick", event.getPlayer(), name, "KickedByHigher.Premium"));
                 }
             }
     }

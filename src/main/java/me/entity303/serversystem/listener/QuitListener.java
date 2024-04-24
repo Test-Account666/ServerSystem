@@ -14,19 +14,19 @@ public class QuitListener extends CommandUtils implements Listener {
     }
 
     @EventHandler
-    public void onQuit(PlayerQuitEvent e) {
-        if (!this.plugin.getVanish().getVanishList().contains(e.getPlayer().getUniqueId())) {
-            if (this.plugin.getMessages().getCfg().getBoolean("Messages.Misc.QuitMessage.Change"))
-                if (this.plugin.getMessages().getCfg().getBoolean("Messages.Misc.QuitMessage.Send"))
-                    e.setQuitMessage(
-                            ChatColor.translateAlternateColorCodes('&', this.plugin.getMessages().getCfg().getString("Messages.Misc.QuitMessage.Message"))
-                                     .replace("<PLAYER>", e.getPlayer().getName())
-                                     .replace("<PLAYERDISPLAY>", e.getPlayer().getDisplayName())
-                                     .replace("<SENDER>", e.getPlayer().getName())
-                                     .replace("<SENDERDISPLAY>", e.getPlayer().getDisplayName()));
+    public void OnQuit(PlayerQuitEvent event) {
+        if (!this._plugin.GetVanish().GetVanishList().contains(event.getPlayer().getUniqueId())) {
+            if (this._plugin.GetMessages().GetConfiguration().GetBoolean("Messages.Misc.QuitMessage.Change"))
+                if (this._plugin.GetMessages().GetConfiguration().GetBoolean("Messages.Misc.QuitMessage.Send"))
+                    event.setQuitMessage(
+                            ChatColor.TranslateAlternateColorCodes('&', this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.QuitMessage.Message"))
+                                     .replace("<PLAYER>", event.getPlayer().getName())
+                                     .replace("<PLAYERDISPLAY>", event.getPlayer().getDisplayName())
+                                     .replace("<SENDER>", event.getPlayer().getName())
+                                     .replace("<SENDERDISPLAY>", event.getPlayer().getDisplayName()));
                 else
-                    e.setQuitMessage(null);
+                    event.setQuitMessage(null);
         } else
-            e.setQuitMessage(null);
+            event.setQuitMessage(null);
     }
 }

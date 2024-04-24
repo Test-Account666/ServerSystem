@@ -1,6 +1,6 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Material;
@@ -8,7 +8,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ClearInventoryCommand extends CommandUtils implements CommandExecutorOverload {
+public class ClearInventoryCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public ClearInventoryCommand(ServerSystem plugin) {
         super(plugin);
@@ -18,15 +18,15 @@ public class ClearInventoryCommand extends CommandUtils implements CommandExecut
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
         if (arguments.length == 0) {
             if (!(commandSender instanceof Player)) {
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetOnlyPlayer());
                 return true;
             }
 
-            if (this.plugin.getPermissions().getConfiguration().getBoolean("Permissions.clearinventory.self.required"))
-                if (!this.plugin.getPermissions().hasPermission(commandSender, "clearinventory.self.permission")) {
-                    commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                                 .getNoPermission(this.plugin.getPermissions()
-                                                                                                                             .getPermission(
+            if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.clearinventory.self.required"))
+                if (!this._plugin.GetPermissions().HasPermission(commandSender, "clearinventory.self.permission")) {
+                    commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                                 .GetNoPermission(this._plugin.GetPermissions()
+                                                                                                                             .GetPermission(
                                                                                                                                      "clearinventory.self.permission")));
                     return true;
                 }
@@ -34,15 +34,15 @@ public class ClearInventoryCommand extends CommandUtils implements CommandExecut
             this.ClearInventory(commandSender, (Player) commandSender, command, commandLabel);
             return true;
         }
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "clearinventory.others")) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                      this.plugin.getMessages().getNoPermission(this.plugin.getPermissions().getPermission("clearinventory.others")));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "clearinventory.others")) {
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetNoPermission(this._plugin.GetPermissions().GetPermission("clearinventory.others")));
             return true;
         }
 
-        var target = this.getPlayer(commandSender, arguments[0]);
+        var target = this.GetPlayer(commandSender, arguments[0]);
         if (target == null) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;
         }
 
@@ -53,8 +53,8 @@ public class ClearInventoryCommand extends CommandUtils implements CommandExecut
     private void ClearInventory(CommandSender commandSender, Player target, Command command, String commandLabel) {
         var counter = 0;
 
-        for (var i = 0; i < (27 + 9); i++) {
-            var itemStack = target.getInventory().getItem(i);
+        for (var index = 0; index < (27 + 9); index++) {
+            var itemStack = target.getInventory().getItem(index);
 
             if (itemStack == null || itemStack.getType() == Material.AIR)
                 continue;
@@ -83,20 +83,20 @@ public class ClearInventoryCommand extends CommandUtils implements CommandExecut
         target.getInventory().clear();
 
         if (target == commandSender) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                         .getMessage(commandLabel, command.getName(), commandSender, null,
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                         .GetMessage(commandLabel, command.getName(), commandSender, null,
                                                                                                      "ClearInventory.Self")
                                                                                          .replace("<AMOUNT>", String.valueOf(counter)));
             return;
         }
 
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                     .getMessage(commandLabel, command.getName(), commandSender, target,
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                     .GetMessage(commandLabel, command.getName(), commandSender, target,
                                                                                                  "ClearInventory.Others.Sender")
                                                                                      .replace("<AMOUNT>", String.valueOf(counter)));
 
-        target.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                              .getMessage(commandLabel, command.getName(), commandSender, target,
+        target.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                              .GetMessage(commandLabel, command.getName(), commandSender, target,
                                                                                           "ClearInventory.Others.Target")
                                                                               .replace("<AMOUNT>", String.valueOf(counter)));
     }

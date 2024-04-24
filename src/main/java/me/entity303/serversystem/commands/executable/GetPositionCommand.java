@@ -1,6 +1,6 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Objects;
 
-public class GetPositionCommand extends CommandUtils implements CommandExecutorOverload {
+public class GetPositionCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public GetPositionCommand(ServerSystem plugin) {
         super(plugin);
@@ -19,52 +19,52 @@ public class GetPositionCommand extends CommandUtils implements CommandExecutorO
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
         if (!(commandSender instanceof Player player)) {
             commandSender.sendMessage(
-                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "GetPos"));
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "GetPos"));
             return true;
         }
 
         if (arguments.length == 0) {
-            if (!this.plugin.getPermissions().hasPermission(commandSender, "getpos.self", true)) {
-                var permissionMessage = this.plugin.getPermissions().getPermission("getpos.self");
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permissionMessage));
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "getpos.self", true)) {
+                var permissionMessage = this._plugin.GetPermissions().GetPermission("getpos.self");
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permissionMessage));
                 return true;
             }
-            this.sendPositionMessage(commandSender, player, commandLabel, command);
+            this.SendPositionMessage(commandSender, player, commandLabel, command);
             return true;
         }
 
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "getpos.others", true)) {
-            var permissionMessage = this.plugin.getPermissions().getPermission("getpos.others");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permissionMessage));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "getpos.others", true)) {
+            var permissionMessage = this._plugin.GetPermissions().GetPermission("getpos.others");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permissionMessage));
             return true;
         }
 
-        var target = this.getPlayer(commandSender, arguments[0]);
+        var target = this.GetPlayer(commandSender, arguments[0]);
         if (target == null) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;
         }
 
-        this.sendPositionMessage(commandSender, target, commandLabel, command);
+        this.SendPositionMessage(commandSender, target, commandLabel, command);
         return true;
     }
 
-    private void sendPositionMessage(CommandSender sender, Player target, String commandLabel, Command command) {
-        var x = this.formatCoordinate(target.getLocation().getX());
-        var y = this.formatCoordinate(target.getLocation().getY());
-        var z = this.formatCoordinate(target.getLocation().getZ());
+    private void SendPositionMessage(CommandSender sender, Player target, String commandLabel, Command command) {
+        var xCoordinate = this.FormatCoordinate(target.getLocation().getX());
+        var yCoordinate = this.FormatCoordinate(target.getLocation().getY());
+        var zCoordinate = this.FormatCoordinate(target.getLocation().getZ());
         var world = Objects.requireNonNull(target.getLocation().getWorld()).getName();
 
-        var message = this.plugin.getMessages()
-                                 .getMessage(commandLabel, command, sender, target, target.equals(sender)? "GetPos.Self" : "GetPos.Others")
-                                 .replace("<X>", x)
-                                 .replace("<Y>", y)
-                                 .replace("<Z>", z)
+        var message = this._plugin.GetMessages()
+                                 .GetMessage(commandLabel, command, sender, target, target.equals(sender)? "GetPos.Self" : "GetPos.Others")
+                                 .replace("<X>", xCoordinate)
+                                 .replace("<Y>", yCoordinate)
+                                 .replace("<Z>", zCoordinate)
                                  .replace("<WORLD>", world);
-        sender.sendMessage(this.plugin.getMessages().getPrefix() + message);
+        sender.sendMessage(this._plugin.GetMessages().GetPrefix() + message);
     }
 
-    private String formatCoordinate(double coordinate) {
+    private String FormatCoordinate(double coordinate) {
         var formatted = String.valueOf(coordinate);
         var parts = formatted.split("\\.");
         if (parts.length > 1 && parts[1].length() > 2)

@@ -1,13 +1,14 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.listener.AwayFromKeyboardListener;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class AwayFromKeyboardCommand extends CommandUtils implements CommandExecutorOverload {
+public class AwayFromKeyboardCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public AwayFromKeyboardCommand(ServerSystem plugin) {
         super(plugin);
@@ -15,38 +16,45 @@ public class AwayFromKeyboardCommand extends CommandUtils implements CommandExec
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        var pluginMessages = this._plugin.GetMessages();
+        var prefix = pluginMessages.GetPrefix();
         if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+            var onlyPlayerMessage = pluginMessages.GetOnlyPlayer();
+            commandSender.sendMessage(prefix + onlyPlayerMessage);
             return true;
         }
 
-        if (this.plugin.getPermissions().getConfiguration().getBoolean("Permissions.afk.required"))
-            if (!this.plugin.getPermissions().hasPermission(commandSender, "afk.permission")) {
-                var permission = this.plugin.getPermissions().getPermission("afk.permission");
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.afk.required"))
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "afk.permission")) {
+                var permission = this._plugin.GetPermissions().GetPermission("afk.permission");
+                var noPermissionMessage = pluginMessages.GetNoPermission(permission);
+                commandSender.sendMessage(prefix + noPermissionMessage);
                 return true;
             }
 
         var awayFromKeyboard = false;
 
         if (player.hasMetadata("afk"))
-            awayFromKeyboard = isAwayFromKeyboard(player);
+            awayFromKeyboard = IsAwayFromKeyboard(player);
 
+        var metaValueGenerator = this._plugin.GetMetaValue();
         if (!awayFromKeyboard) {
-            player.removeMetadata("afk", this.plugin);
-            player.setMetadata("afk", this.plugin.getMetaValue().getMetaValue(true));
+            player.removeMetadata("afk", this._plugin);
+            var metaValue = metaValueGenerator.GetMetaValue(true);
+            player.setMetadata("afk", metaValue);
 
 
-            commandSender.sendMessage(
-                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Afk.Enabled"));
+            var message = pluginMessages.GetMessage(commandLabel, command, commandSender, null, AwayFromKeyboardListener.AFK_ENABLED);
+            commandSender.sendMessage(prefix + message);
             return true;
         }
 
-        player.removeMetadata("afk", this.plugin);
-        player.setMetadata("afk", this.plugin.getMetaValue().getMetaValue(false));
+        player.removeMetadata("afk", this._plugin);
+        var metaValue = metaValueGenerator.GetMetaValue(false);
+        player.setMetadata("afk", metaValue);
 
-        commandSender.sendMessage(
-                this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Afk.Disabled"));
+        var message = pluginMessages.GetMessage(commandLabel, command, commandSender, null, AwayFromKeyboardListener.AFK_DISABLED);
+        commandSender.sendMessage(prefix + message);
         return true;
     }
 }

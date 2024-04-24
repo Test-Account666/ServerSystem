@@ -16,14 +16,14 @@ public class KillListener extends CommandUtils implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onKill(EntityDeathEvent e) {
+    public void OnEntityDeath(EntityDeathEvent event) {
         try {
-            var killer = e.getEntity().getKiller();
+            var killer = event.getEntity().getKiller();
             if (killer == null)
                 return;
-            if (this.plugin.getVanish().isVanish(killer))
+            if (this._plugin.GetVanish().IsVanish(killer))
                 for (var all : Bukkit.getOnlinePlayers())
-                    if (!this.plugin.getPermissions().hasPermission(all, "vanish.see", true))
+                    if (!this._plugin.GetPermissions().HasPermission(all, "vanish.see", true))
                         all.hidePlayer(killer);
         } catch (Exception ignored) {
 
@@ -31,12 +31,12 @@ public class KillListener extends CommandUtils implements Listener {
     }
 
     @EventHandler
-    public void onKill(PlayerDeathEvent e) {
-        if (this.plugin.getVanish().isVanish(e.getEntity())) {
-            e.setDeathMessage(null);
+    public void OnPlayerDeath(PlayerDeathEvent event) {
+        if (this._plugin.GetVanish().IsVanish(event.getEntity())) {
+            event.setDeathMessage(null);
             for (var all : Bukkit.getOnlinePlayers())
-                if (!this.plugin.getPermissions().hasPermission(all, "vanish.see", true))
-                    all.hidePlayer(e.getEntity());
+                if (!this._plugin.GetPermissions().HasPermission(all, "vanish.see", true))
+                    all.hidePlayer(event.getEntity());
         }
     }
 }

@@ -14,17 +14,18 @@ public class PlotListener1 extends CommandUtils implements Listener {
         super(plugin);
     }
 
+    @SuppressWarnings("Guava")
     @EventHandler
-    public void onPlotEnter(PlayerEnterPlotEvent e) {
-        if (e.getPlot().hasFlag(Flags.TIME)) {
-            var optionalLong = e.getPlot().getFlag(Flags.TIME);
+    public void OnPlotEnter(PlayerEnterPlotEvent event) {
+        if (event.getPlot().hasFlag(Flags.TIME)) {
+            var optionalLong = event.getPlot().getFlag(Flags.TIME);
             if (optionalLong.isPresent())
-                PlotListener.TIME_MAP.put(e.getPlayer(), optionalLong.get());
+                PlotListener.TIME_MAP.put(event.getPlayer(), optionalLong.get());
         }
     }
 
     @EventHandler
-    public void onPlotLeave(PlayerLeavePlotEvent e) {
-        PlotListener.TIME_MAP.remove(e.getPlayer());
+    public void OnPlotLeave(PlayerLeavePlotEvent event) {
+        PlotListener.TIME_MAP.remove(event.getPlayer());
     }
 }

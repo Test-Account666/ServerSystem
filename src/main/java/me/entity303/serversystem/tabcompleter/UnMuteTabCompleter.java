@@ -1,29 +1,29 @@
 package me.entity303.serversystem.tabcompleter;
 
+import me.entity303.serversystem.commands.ITabCompleterOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class UnMuteTabCompleter extends CommandUtils implements TabCompleter {
+public class UnMuteTabCompleter extends CommandUtils implements ITabCompleterOverload {
 
     public UnMuteTabCompleter(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!this.plugin.getPermissions().hasPermission(cs, "unmute", true))
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "unmute", true))
             return Collections.singletonList("");
-        if (args.length == 1) {
-            if (this.getPlugin().getMuteManager().getMutedPlayerNames().isEmpty())
+        if (arguments.length == 1) {
+            if (this._plugin.GetMuteManager().GetMutedPlayerNames().isEmpty())
                 return Collections.singletonList("");
-            var playerNameList = this.getPlugin().getMuteManager().getMutedPlayerNames();
+            var playerNameList = this._plugin.GetMuteManager().GetMutedPlayerNames();
             if (playerNameList == null)
                 return Collections.singletonList("");
             if (playerNameList.isEmpty())
@@ -32,7 +32,7 @@ public class UnMuteTabCompleter extends CommandUtils implements TabCompleter {
             for (var playerName : playerNameList) {
                 if (playerName == null)
                     continue;
-                if (playerName.toLowerCase().startsWith(args[0].toLowerCase()) || playerName.equalsIgnoreCase(args[0]))
+                if (playerName.toLowerCase().startsWith(arguments[0].toLowerCase()) || playerName.equalsIgnoreCase(arguments[0]))
                     tabList.add(playerName);
             }
             return tabList.isEmpty()? playerNameList : tabList;
@@ -40,7 +40,7 @@ public class UnMuteTabCompleter extends CommandUtils implements TabCompleter {
         return Collections.singletonList("");
     }
 
-    public ServerSystem getPlugin() {
-        return this.plugin;
+    public ServerSystem GetPlugin() {
+        return this._plugin;
     }
 }

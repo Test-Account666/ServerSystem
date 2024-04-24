@@ -1,6 +1,6 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
 import me.entity303.serversystem.utils.CommandUtils;
@@ -8,7 +8,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class RulesCommand extends CommandUtils implements CommandExecutorOverload {
+public class RulesCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public RulesCommand(ServerSystem plugin) {
         super(plugin);
@@ -16,21 +16,21 @@ public class RulesCommand extends CommandUtils implements CommandExecutorOverloa
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (this.plugin.getPermissions().getConfiguration().getBoolean("Permissions.rules.required"))
-            if (!this.plugin.getPermissions().hasPermission(commandSender, "rules.permission")) {
-                var permission = this.plugin.getPermissions().getPermission("rules.permission");
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.rules.required"))
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "rules.permission")) {
+                var permission = this._plugin.GetPermissions().GetPermission("rules.permission");
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return true;
             }
 
-        commandSender.sendMessage(this.plugin.getMessages()
-                                             .getMessage(commandLabel, command, commandSender, null, "Rules")
-                                             .replace("<RULES>", this.getRules(commandLabel, command.getName(), commandSender, null)));
+        commandSender.sendMessage(this._plugin.GetMessages()
+                                             .GetMessage(commandLabel, command, commandSender, null, "Rules")
+                                             .replace("<RULES>", this.GetRules(commandLabel, command.getName(), commandSender, null)));
         return true;
     }
 
-    public String getRules(String label, String command, CommandSender sender, CommandSender target) {
-        var rules = this.plugin.getRulesConfig().getString("Rules");
+    public String GetRules(String commandLabel, String command, CommandSender sender, CommandSender target) {
+        var rules = this._plugin.GetRulesConfig().getString("Rules");
         if (sender == null)
             throw new IllegalArgumentException("Sender cannot be null!");
         if (target == null)
@@ -53,17 +53,17 @@ public class RulesCommand extends CommandUtils implements CommandExecutorOverloa
             targetDisplayName = targetName;
 
         if (senderName.equalsIgnoreCase("console") || senderName.equalsIgnoreCase("konsole")) {
-            senderName = this.plugin.getMessages().getCfg().getString("Messages.Misc.BanSystem.ConsoleName");
+            senderName = this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.BanSystem.ConsoleName");
             senderDisplayName = senderName;
         }
 
         if (targetName.equalsIgnoreCase("console") || targetName.equalsIgnoreCase("konsole")) {
-            targetName = this.plugin.getMessages().getCfg().getString("Messages.Misc.BanSystem.ConsoleName");
+            targetName = this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.BanSystem.ConsoleName");
             targetDisplayName = targetName;
         }
 
         try {
-            return ChatColor.translateAlternateColorCodes('&', rules.replace("<LABEL>", label)
+            return ChatColor.TranslateAlternateColorCodes('&', rules.replace("<LABEL>", commandLabel)
                                                                     .replace("<COMMAND>", command)
                                                                     .replace("<SENDER>", senderName)
                                                                     .replace("<TARGET>", targetName)

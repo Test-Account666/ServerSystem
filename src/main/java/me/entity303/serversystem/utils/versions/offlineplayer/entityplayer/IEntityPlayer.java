@@ -2,7 +2,7 @@ package me.entity303.serversystem.utils.versions.offlineplayer.entityplayer;
 
 import org.bukkit.OfflinePlayer;
 
-public interface EntityPlayer {
+public interface IEntityPlayer {
 
-    Object getEntityPlayer(OfflinePlayer offlinePlayer);
+    Object GetEntityPlayer(OfflinePlayer offlinePlayer);
 }

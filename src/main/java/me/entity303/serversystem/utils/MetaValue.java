@@ -10,62 +10,70 @@ public class MetaValue {
     public MetaValue(ServerSystem plugin) {
     }
 
-    public MetadataValue getMetaValue(boolean value) {
-        return new MetadataValue() {
-            @Override
-            public Object value() {
-                return value;
-            }
+    public MetadataValue GetMetaValue(boolean value) {
+        return new MyMetadataValue(value);
+    }
 
-            @Override
-            public int asInt() {
-                return value? 1 : 0;
-            }
+    private static class MyMetadataValue implements MetadataValue {
+        private final boolean _value;
 
-            @Override
-            public float asFloat() {
-                return value? 1 : 0;
-            }
+        public MyMetadataValue(boolean value) {
+            this._value = value;
+        }
 
-            @Override
-            public double asDouble() {
-                return value? 1 : 0;
-            }
+        @Override
+        public Object value() {
+            return _value;
+        }
 
-            @Override
-            public long asLong() {
-                return value? 1 : 0;
-            }
+        @Override
+        public int asInt() {
+            return _value? 1 : 0;
+        }
 
-            @Override
-            public short asShort() {
-                return value? (short) 1 : (short) 0;
-            }
+        @Override
+        public float asFloat() {
+            return _value? 1 : 0;
+        }
 
-            @Override
-            public byte asByte() {
-                return value? (byte) 1 : (byte) 0;
-            }
+        @Override
+        public double asDouble() {
+            return _value? 1 : 0;
+        }
 
-            @Override
-            public boolean asBoolean() {
-                return value;
-            }
+        @Override
+        public long asLong() {
+            return _value? 1 : 0;
+        }
 
-            @Override
-            public String asString() {
-                return value? "true" : "false";
-            }
+        @Override
+        public short asShort() {
+            return (short) (_value? 1 : 0);
+        }
 
-            @Override
-            public Plugin getOwningPlugin() {
-                return Bukkit.getPluginManager().getPlugin("ServerSystem");
-            }
+        @Override
+        public byte asByte() {
+            return (byte) (_value? 1 : 0);
+        }
 
-            @Override
-            public void invalidate() {
+        @Override
+        public boolean asBoolean() {
+            return _value;
+        }
 
-            }
-        };
+        @Override
+        public String asString() {
+            return _value? "true" : "false";
+        }
+
+        @Override
+        public Plugin getOwningPlugin() {
+            return Bukkit.getPluginManager().getPlugin("ServerSystem");
+        }
+
+        @Override
+        public void invalidate() {
+
+        }
     }
 }

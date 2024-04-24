@@ -9,8 +9,8 @@ import me.entity303.serversystem.api.VanishAPI;
 import me.entity303.serversystem.bansystem.*;
 import me.entity303.serversystem.bstats.MetricsLite;
 import me.entity303.serversystem.commands.util.CommandManager;
-import me.entity303.serversystem.config.ConfigReader;
 import me.entity303.serversystem.config.DefaultConfigReader;
+import me.entity303.serversystem.config.IConfigReader;
 import me.entity303.serversystem.config.NonValidatingConfigReader;
 import me.entity303.serversystem.databasemanager.HomeManager;
 import me.entity303.serversystem.databasemanager.MySQL;
@@ -50,284 +50,296 @@ import java.util.*;
 
 import static me.entity303.serversystem.bansystem.TimeUnit.*;
 
-@SuppressWarnings("UnstableApiUsage") public final class ServerSystem extends JavaPlugin {
-    public static boolean debug = false;
-    private static EconomyAPI economyAPI;
-    private static MuteAPI muteAPI;
-    private static BanAPI banAPI;
-    private static VanishAPI vanishAPI;
-    public final String CONFIG_VERSION = "6.4";
-    public final String JAR_NAME = this.getFile().getName();
-    private final File RULES_FILE = new File("plugins//ServerSystem", "rules.yml");
-    private final List<Player> cmdSpy = new ArrayList<>();
-    private final List<Player> godList = new ArrayList<>();
-    private final List<Player> msgOff = new ArrayList<>();
-    private final List<Player> socialSpy = new ArrayList<>();
-    private final Map<Player, Location> backloc = new HashMap<>();
-    private final Map<Player, String> backreason = new HashMap<>();
-    private final Map<Player, BukkitTask> teleportMap = new HashMap<>();
-    private final Map<Player, TpaData> tpaDataMap = new HashMap<>();
-    private final Map<Player, Player> enderchest = new HashMap<>();
-    private final VersionStuff versionStuff = new VersionStuff(this);
-    private EventManager eventManager;
-    private VersionManager versionManager;
-    private CommandManager commandManager;
-    private boolean onceTold = false;
-    private String serverName;
-    private String newVersion = this.getDescription().getVersion();
-    private Message messages;
-    private PermissionsChecker PermissionsChecker;
-    private boolean starting = true;
-    private boolean registered = false;
-    private boolean maintenance = false;
-    private boolean stopFlightOnHit = false;
-    private boolean disableFlightOnHit = false;
-    private boolean specialSudo = true;
-    private boolean advancedInvsee = true;
-    private boolean clientsideOp = true;
-    private Vanish vanish;
-    private MetaValue metaValue;
-    private WantsTeleport wantsTeleport;
-    private KitsManager kitsManager;
-    private ServerSystemTimer timer;
-    private ManagerBan banManager;
-    private ManagerMute muteManager;
-    private WarpManager warpManager;
-    private HomeManager homeManager;
-    private MySQL mySQL;
-    private ManagerEconomy economyManager;
-    private Vault vault;
-    private VaultHookManager vaultHookManager;
-    private EssentialsCommandListener essentialsCommandListener = null;
-    private Furnace furnace;
-    private MetricsLite metrics;
-    private FileConfiguration rulesConfig;
-    private Method syncCommandsMethod = null;
-    private ConfigReader configReader;
+@SuppressWarnings("UnstableApiUsage")
+public final class ServerSystem extends JavaPlugin {
+    public static boolean DEBUG = false;
+    private static EconomyAPI ECONOMY_API;
+    private static MuteAPI MUTE_API;
+    private static BanAPI BAN_API;
+    private static VanishAPI VANISH_API;
+    public final String _configVersion = "6.4";
+    public final String _jarName = this.getFile().getName();
+    private final File _rulesFile = new File("plugins//ServerSystem", "rules.yml");
+    private final List<Player> _commandSpyList = new ArrayList<>();
+    private final List<Player> _godList = new ArrayList<>();
+    private final List<Player> _msgOffList = new ArrayList<>();
+    private final List<Player> _socialSpyList = new ArrayList<>();
+    private final Map<Player, Location> _backLocationMap = new HashMap<>();
+    private final Map<Player, String> _backReasonMap = new HashMap<>();
+    private final Map<Player, BukkitTask> _teleportMap = new HashMap<>();
+    private final Map<Player, TpaData> _tpaDataMap = new HashMap<>();
+    private final Map<Player, Player> _enderchest = new HashMap<>();
+    private final VersionStuff _versionStuff = new VersionStuff(this);
+    private EventManager _eventManager;
+    private VersionManager _versionManager;
+    private CommandManager _commandManager;
+    private boolean _onceTold = false;
+    private String _serverName;
+    private String _newVersion = this.getDescription().getVersion();
+    private Message _messages;
+    private PermissionsChecker _permissionsChecker;
+    private boolean _starting = true;
+    private boolean _registered = false;
+    private boolean _maintenance = false;
+    private boolean _stopFlightOnHit = false;
+    private boolean _disableFlightOnHit = false;
+    private boolean _specialSudo = true;
+    private boolean _advancedInvsee = true;
+    private boolean _clientsideOp = true;
+    private Vanish _vanish;
+    private MetaValue _metaValue;
+    private WantsTeleport _wantsTeleport;
+    private KitsManager _kitsManager;
+    private ServerSystemTimer _timer;
+    private AbstractBanManager _banManager;
+    private AbstractMuteManager _muteManager;
+    private WarpManager _warpManager;
+    private HomeManager _homeManager;
+    private MySQL _mySQL;
+    private AbstractEconomyManager _economyManager;
+    private Vault _vault;
+    private VaultHookManager _vaultHookManager;
+    private EssentialsCommandListener _essentialsCommandListener = null;
+    private Furnace _furnace;
+    private MetricsLite _metrics;
+    private FileConfiguration _rulesConfig;
+    private Method _syncCommandsMethod = null;
+    private IConfigReader _configReader;
 
-    public static EconomyAPI getEconomyAPI() {
-        return ServerSystem.economyAPI;
+    @SuppressWarnings("NewMethodNamingConvention")
+    public static EconomyAPI getEconomyApi() {
+        return ServerSystem.ECONOMY_API;
     }
 
-    public static MuteAPI getMuteAPI() {
-        return ServerSystem.muteAPI;
+    @SuppressWarnings({ "NewMethodNamingConvention", "MethodNamesDifferingOnlyByCase" })
+    public static MuteAPI getMuteApi() {
+        return ServerSystem.MUTE_API;
     }
 
-    public static BanAPI getBanAPI() {
-        return ServerSystem.banAPI;
+    @SuppressWarnings({ "NewMethodNamingConvention", "MethodNamesDifferingOnlyByCase" })
+    public static BanAPI getBanApi() {
+        return ServerSystem.BAN_API;
     }
 
-    public static VanishAPI getVanishAPI() {
-        return ServerSystem.vanishAPI;
+    @SuppressWarnings("NewMethodNamingConvention")
+    public static VanishAPI getVanishApi() {
+        return ServerSystem.VANISH_API;
     }
 
-    public WantsTeleport getWantsTeleport() {
-        return this.wantsTeleport;
+    public WantsTeleport GetWantsTeleport() {
+        return this._wantsTeleport;
     }
 
-    public boolean isSpecialSudo() {
-        return this.specialSudo;
+    public boolean IsSpecialSudo() {
+        return this._specialSudo;
     }
 
-    public VersionManager getVersionManager() {
-        return this.versionManager;
+    public VersionManager GetVersionManager() {
+        return this._versionManager;
     }
 
-    public VersionStuff getVersionStuff() {
-        return this.versionStuff;
+    public VersionStuff GetVersionStuff() {
+        return this._versionStuff;
     }
 
-    public EssentialsCommandListener getEssentialsCommandListener() {
-        return this.essentialsCommandListener;
+    public EssentialsCommandListener GetEssentialsCommandListener() {
+        return this._essentialsCommandListener;
     }
 
-    public HomeManager getHomeManager() {
-        return this.homeManager;
+    public HomeManager GetHomeManager() {
+        return this._homeManager;
     }
 
-    public boolean isStopFlightOnHit() {
-        return this.stopFlightOnHit;
+    public boolean IsStopFlightOnHit() {
+        return this._stopFlightOnHit;
     }
 
-    public void setStopFlightOnHit(boolean stopFlightOnHit) {
-        this.stopFlightOnHit = stopFlightOnHit;
+    public void SetStopFlightOnHit(boolean stopFlightOnHit) {
+        this._stopFlightOnHit = stopFlightOnHit;
     }
 
-    public List<Player> getSocialSpy() {
-        return this.socialSpy;
+    public List<Player> GetSocialSpy() {
+        return this._socialSpyList;
     }
 
-    public boolean isDisableFlightOnHit() {
-        return this.disableFlightOnHit;
+    public boolean IsDisableFlightOnHit() {
+        return this._disableFlightOnHit;
     }
 
-    public void setDisableFlightOnHit(boolean disableFlightOnHit) {
-        this.disableFlightOnHit = disableFlightOnHit;
+    public void SetDisableFlightOnHit(boolean disableFlightOnHit) {
+        this._disableFlightOnHit = disableFlightOnHit;
     }
 
-    public File getRULES_FILE() {
-        return this.RULES_FILE;
+    public File GetRulesFile() {
+        return this._rulesFile;
     }
 
-    public FileConfiguration getRulesConfig() {
-        return this.rulesConfig;
+    public FileConfiguration GetRulesConfig() {
+        return this._rulesConfig;
     }
 
-    public boolean isMaintenance() {
-        return this.maintenance;
+    public boolean IsMaintenance() {
+        return this._maintenance;
     }
 
-    public void setMaintenance(boolean maintenance) {
-        this.maintenance = maintenance;
+    public void SetMaintenance(boolean maintenance) {
+        this._maintenance = maintenance;
     }
 
-    public boolean isAdvancedInvsee() {
-        return this.advancedInvsee;
+    public boolean IsAdvancedInvsee() {
+        return this._advancedInvsee;
     }
 
-    public void setAdvancedInvsee(boolean advancedInvsee) {
-        this.advancedInvsee = advancedInvsee;
+    public void SetAdvancedInvsee(boolean advancedInvsee) {
+        this._advancedInvsee = advancedInvsee;
     }
 
-    public boolean isClientsideOp() {
-        return this.clientsideOp;
+    public boolean IsClientsideOp() {
+        return this._clientsideOp;
     }
 
-    public void setClientsideOp(boolean clientsideOp) {
-        this.clientsideOp = clientsideOp;
+    public void SetClientsideOp(boolean clientsideOp) {
+        this._clientsideOp = clientsideOp;
     }    /*
     Fix for something, don't know anymore
      */
 
-    public boolean isRegistered() {
-        return this.registered;
+    public boolean IsRegistered() {
+        return this._registered;
     }
 
-    public void setRegistered(boolean registered) {
-        this.registered = registered;
+    public void SetRegistered(boolean registered) {
+        this._registered = registered;
     }
 
-    public KitsManager getKitsManager() {
-        return this.kitsManager;
+    public KitsManager GetKitsManager() {
+        return this._kitsManager;
     }
 
-    public List<Player> getGodList() {
-        return this.godList;
+    public List<Player> GetGodList() {
+        return this._godList;
     }
 
-    public List<Player> getCmdSpy() {
-        return this.cmdSpy;
+    public List<Player> GetCommanddSpy() {
+        return this._commandSpyList;
     }
 
-    public Map<Player, Player> getEnderchest() {
-        return this.enderchest;
+    public Map<Player, Player> GetEnderchest() {
+        return this._enderchest;
     }
 
-    public String getServerName() {
-        return this.serverName;
+    public String GetServerName() {
+        return this._serverName;
     }
 
-    public void setServerName(String serverName) {
-        this.serverName = serverName;
+    public void GetServerName(String serverName) {
+        this._serverName = serverName;
     }
 
-    public MySQL getMySQL() {
-        return this.mySQL;
+    public MySQL GetMySQL() {
+        return this._mySQL;
     }
 
-    public ManagerMute getMuteManager() {
-        return this.muteManager;
+    public AbstractMuteManager GetMuteManager() {
+        return this._muteManager;
     }
 
-    public ManagerBan getBanManager() {
-        return this.banManager;
+    public AbstractBanManager GetBanManager() {
+        return this._banManager;
     }
 
-    public Map<Player, TpaData> getTpaDataMap() {
-        return this.tpaDataMap;
+    public Map<Player, TpaData> GetTpaDataMap() {
+        return this._tpaDataMap;
     }
 
-    public MetricsLite getMetrics() {
-        return this.metrics;
+    public MetricsLite GetMetrics() {
+        return this._metrics;
     }
 
-    public List<Player> getMsgOff() {
-        return this.msgOff;
+    public List<Player> GetMsgOff() {
+        return this._msgOffList;
     }
 
-    public Map<Player, Location> getBackloc() {
-        return this.backloc;
+    public Map<Player, Location> GetBackloc() {
+        return this._backLocationMap;
     }
 
-    public Map<Player, String> getBackreason() {
-        return this.backreason;
+    public Map<Player, String> GetBackReason() {
+        return this._backReasonMap;
     }
 
-    public MetaValue getMetaValue() {
-        return this.metaValue;
+    public MetaValue GetMetaValue() {
+        return this._metaValue;
     }
 
-    public Map<Player, BukkitTask> getTeleportMap() {
-        return this.teleportMap;
+    public Map<Player, BukkitTask> GetTeleportMap() {
+        return this._teleportMap;
     }
 
-    public boolean isStarting() {
-        return this.starting;
+    public boolean IsStarting() {
+        return this._starting;
     }
 
-    public PermissionsChecker getPermissions() {
-        return this.PermissionsChecker;
+    public PermissionsChecker GetPermissions() {
+        return this._permissionsChecker;
     }
 
-    public String getNewVersion() {
-        return this.newVersion;
+    public String GetNewVersion() {
+        return this._newVersion;
     }
 
-    public void setNewVersion(String newVersion) {
-        this.newVersion = newVersion;
+    public void SetNewVersion(String newVersion) {
+        this._newVersion = newVersion;
     }
 
-    public WarpManager getWarpManager() {
-        return this.warpManager;
+    public WarpManager GetWarpManager() {
+        return this._warpManager;
     }
 
-    public ServerSystemTimer getTimer() {
-        return this.timer;
+    public ServerSystemTimer GetTimer() {
+        return this._timer;
     }
 
-    public String getConfigVersion() {
-        return this.CONFIG_VERSION;
+    public String GetConfigVersion() {
+        return this._configVersion;
     }
 
-    public Vault getVault() {
-        return this.vault;
+    public Vault GetVault() {
+        return this._vault;
     }
 
-    public VaultHookManager getVaultHookManager() {
-        return this.vaultHookManager;
+    public VaultHookManager GetVaultHookManager() {
+        return this._vaultHookManager;
     }
 
-    public Furnace getFurnace() {
-        return this.furnace;
+    public Furnace GetFurnace() {
+        return this._furnace;
     }
 
-    public CommandManager getCommandManager() {
-        return this.commandManager;
+    public CommandManager GetCommandManager() {
+        return this._commandManager;
     }
 
-    private boolean checkMainServerForUpdates(String currentVersion, boolean autoUpdate) {
+    public IConfigReader GetConfigReader() {
+        return this._configReader;
+    }
+
+    public EventManager GetEventManager() {
+        return this._eventManager;
+    }
+
+    public AbstractEconomyManager GetEconomyManager() {
+        return this._economyManager;
+    }    private boolean CheckMainServerForUpdates(String currentVersion, boolean autoUpdate) {
         var foundVersion = this.getDescription().getVersion();
 
         Document doc;
         try {
-            doc = Jsoup.connect("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem")
-                       .referrer("ServerSystem")
-                       .timeout(30000)
-                       .get();
-        } catch (IOException e) {
-            this.error("An error occurred while trying to connect to the updater!");
-            //e.printStackTrace();
-            this.log("Please ignore this error. The update server is currently down. Please be patient");
+            doc = Jsoup.connect("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem").referrer("ServerSystem").timeout(30000).get();
+        } catch (IOException exception) {
+            this.Error("An error occurred while trying to connect to the updater!");
+            //exception.printStackTrace();
+            this.Info("Please ignore this error. The update server is currently down. Please be patient");
             return false;
         }
 
@@ -337,71 +349,74 @@ import static me.entity303.serversystem.bansystem.TimeUnit.*;
             foundVersion = remoteFileName;
         }
 
-        var isFoundVersionMoreRecent = this.isFoundVersionMoreRecent(foundVersion, currentVersion);
+        var isFoundVersionMoreRecent = this.IsFoundVersionMoreRecent(foundVersion, currentVersion);
 
         if (!isFoundVersionMoreRecent || currentVersion.equalsIgnoreCase(foundVersion)) {
-            if (this.onceTold)
+            if (this._onceTold)
                 return true;
 
-            this.log("You are using the latest version of ServerSystem <3");
-            this.onceTold = true;
+            this.Info("You are using the latest version of ServerSystem <3");
+            this._onceTold = true;
             return true;
         }
 
-        this.warn("There is a new version available! (" + foundVersion + ")");
+        this.Warn("There is a new version available! (" + foundVersion + ")");
         if (!autoUpdate) {
-            if (!this.getConfigReader().getBoolean("updates.notifyOnJoin"))
+            if (!this._configReader.GetBoolean("updates.notifyOnJoin"))
                 return true;
 
-            if (!foundVersion.equalsIgnoreCase(this.newVersion))
-                this.newVersion = foundVersion;
+            if (!foundVersion.equalsIgnoreCase(this._newVersion))
+                this._newVersion = foundVersion;
 
-            if (this.registered)
+            if (this._registered)
                 return true;
 
-            this.registered = true;
-            this.getEventManager().registerEvent(new JoinUpdateListener(this));
+            this._registered = true;
+            this._eventManager.RegisterEvent(new JoinUpdateListener(this));
             return true;
         }
 
-        this.log("Auto-updating!");
-        this.log("(You need to restart the server so the update can take effect)");
+        this.Info("Auto-updating!");
+        this.Info("(You need to restart the server so the update can take effect)");
         try {
-            var resultImageResponse = Jsoup.connect("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem/" + foundVersion + ".jar")
-                                           .referrer("ServerSystem")
-                                           .timeout(30000)
-                                           .ignoreContentType(true)
-                                           .execute();
-
-            var in = new BufferedInputStream(
-                    new URL("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem/" + foundVersion + ".jar").openStream());
-            var fileOutputStream = new FileOutputStream(new File("plugins/update", this.JAR_NAME));
+            var inputStream =
+                    new BufferedInputStream(new URL("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem/" + foundVersion + ".jar").openStream());
+            var fileOutputStream = new FileOutputStream(new File("plugins/update", this._jarName));
             var dataBuffer = new byte[1024];
             int bytesRead;
-            while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1)
+            while ((bytesRead = inputStream.read(dataBuffer, 0, 1024)) != -1)
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
 
-            in.close();
+            inputStream.close();
             fileOutputStream.close();
             return true;
-        } catch (Exception e) {
-            this.error("Error while trying downloading the update!");
-            e.printStackTrace();
+        } catch (Exception exception) {
+            this.Error("Error while trying downloading the update!");
+            exception.printStackTrace();
         }
         return false;
     }
 
-    public void error(String text) {
-        Bukkit.getConsoleSender()
-              .sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&4Error&8] [&4ServerSystem&8] &7>> &4" + text));
+    public Message GetMessages() {
+        return this._messages;
     }
 
-    public void log(String text) {
-        Bukkit.getConsoleSender()
-              .sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&aInfo&8] [&aServerSystem&8] &7>> &a" + text));
+    public Vanish GetVanish() {
+        return this._vanish;
     }
 
-    private boolean isFoundVersionMoreRecent(String foundVersion, String currentVersion) {
+    public void Error(String text) {
+        Bukkit.getConsoleSender().sendMessage(ChatColor.TranslateAlternateColorCodes('&', "&8[&4Error&8] [&4ServerSystem&8] &7>> &4" + text));
+    }
+
+
+
+    public void Info(String text) {
+        Bukkit.getConsoleSender().sendMessage(ChatColor.TranslateAlternateColorCodes('&', "&8[&aInfo&8] [&aServerSystem&8] &7>> &a" + text));
+    }
+
+
+    private boolean IsFoundVersionMoreRecent(String foundVersion, String currentVersion) {
         var foundVersionSplit = foundVersion.split("\\.");
 
         if (foundVersionSplit.length < 3)
@@ -430,77 +445,71 @@ import static me.entity303.serversystem.bansystem.TimeUnit.*;
         return currentVersionPatch < foundVersionPatch;
     }
 
+
     @Override
     public void saveDefaultConfig() {
         super.saveDefaultConfig();
-        this.configReader = new NonValidatingConfigReader(new File("plugins" + File.separator + "ServerSystem", "config.yml"), this);
+        this._configReader = new NonValidatingConfigReader(new File("plugins" + File.separator + "ServerSystem", "config.yml"), this);
     }
 
-    public void warn(String text) {
-        Bukkit.getConsoleSender()
-              .sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&cWarning&8] [&cServerSystem&8] &7>> &c" + text));
+    public void Warn(String text) {
+        Bukkit.getConsoleSender().sendMessage(ChatColor.TranslateAlternateColorCodes('&', "&8[&cWarning&8] [&cServerSystem&8] &7>> &c" + text));
     }
 
-    public ConfigReader getConfigReader() {
-        return this.configReader;
-    }
 
     @Override
     public void reloadConfig() {
-        if (this.configReader != null)
-            this.configReader.reload();
+        if (this._configReader != null)
+            this._configReader.Reload();
         else
-            this.configReader = new NonValidatingConfigReader(new File("plugins" + File.separator + "ServerSystem", "config.yml"), this);
+            this._configReader = new NonValidatingConfigReader(new File("plugins" + File.separator + "ServerSystem", "config.yml"), this);
     }
 
-    public EventManager getEventManager() {
-        return this.eventManager;
-    }
 
-    public void reloadConfigValidating() {
-        if (this.configReader == null || this.configReader instanceof NonValidatingConfigReader) {
-            this.configReader = new DefaultConfigReader(new File("plugins" + File.separator + "ServerSystem", "config.yml"), this);
+    public void ReloadConfigValidating() {
+        if (this._configReader == null || this._configReader instanceof NonValidatingConfigReader) {
+            this._configReader = new DefaultConfigReader(new File("plugins" + File.separator + "ServerSystem", "config.yml"), this);
             return;
         }
 
-        this.configReader.reload();
+        this._configReader.Reload();
     }
 
 
     @Override
     public void saveConfig() {
-        if (this.configReader != null)
-            this.configReader.save();
+        if (this._configReader != null)
+            this._configReader.Save();
     }
 
 
-    private void checkServerSoftware() {
+    private void CheckServerSoftware() {
         try {
             Bukkit.getScheduler().runTaskLater(this, () -> {
                 try {
                     Bukkit.class.getDeclaredMethod("spigot");
                 } catch (Exception ignored) {
-                    this.error("Unsupported Serversoftware!");
-                    this.warn("ServerSystem may not work (correctly)!");
+                    this.Error("Unsupported Serversoftware!");
+                    this.Warn("ServerSystem may not work (correctly)!");
                 }
             }, 1L);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
     }
 
 
     @Override
     public void onLoad() {
-        this.loadConfigs();
+        this.LoadConfigs();
 
-        this.reloadConfigValidating();
+        this.ReloadConfigValidating();
 
 
         if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
-            this.vault = new Vault();
-            this.vaultHookManager = new VaultHookManager(this);
-            this.vaultHookManager.hook();
+            this._vault = new Vault();
+            this._vaultHookManager = new VaultHookManager(this);
+            this._vaultHookManager.Hook();
         }
     }
 
@@ -510,18 +519,18 @@ import static me.entity303.serversystem.bansystem.TimeUnit.*;
         if (!new File("plugins//update").exists())
             new File("plugins//update").mkdirs();
 
-        this.starting = true;
-        this.metaValue = new MetaValue(this);
-        this.vanish = new Vanish(this);
+        this._starting = true;
+        this._metaValue = new MetaValue(this);
+        this._vanish = new Vanish(this);
 
-        ServerSystem.debug = this.getConfigReader().getBoolean("debug");
+        ServerSystem.DEBUG = this._configReader.GetBoolean("debug");
 
-        this.messages = new Message(this);
-        this.PermissionsChecker = new PermissionsChecker(this);
+        this._messages = new Message(this);
+        this._permissionsChecker = new PermissionsChecker(this);
 
-        this.versionManager = new VersionManager(this);
+        this._versionManager = new VersionManager(this);
 
-        this.versionManager.registerVersionStuff();
+        this._versionManager.RegisterVersionStuff();
 
         var file = new File("plugins//ServerSystem", "vanish.yml");
         if (file.exists()) {
@@ -529,18 +538,18 @@ import static me.entity303.serversystem.bansystem.TimeUnit.*;
             if (cfg.getConfigurationSection("Vanish") != null)
                 if (!cfg.getConfigurationSection("Vanish").getKeys(false).isEmpty())
                     for (var uuidString : cfg.getConfigurationSection("Vanish").getKeys(false))
-                        this.getVanish().getVanishList().add(UUID.fromString(uuidString));
+                        this._vanish.GetVanishList().add(UUID.fromString(uuidString));
             file.delete();
         }
 
-        this.kitsManager = new KitsManager(this);
+        this._kitsManager = new KitsManager(this);
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)
             new ServerSystemExpansion(this).register();
 
-        this.commandManager = new CommandManager(this);
+        this._commandManager = new CommandManager(this);
         Bukkit.getScheduler().runTaskLater(this, () -> {
-            this.commandManager.registerCommands();
+            this._commandManager.RegisterCommands();
 
             if (!this.SyncCommands())
                 return;
@@ -550,390 +559,379 @@ import static me.entity303.serversystem.bansystem.TimeUnit.*;
                     player.updateCommands();
         }, 5L);
 
-        this.eventManager = new EventManager(this);
+        this._eventManager = new EventManager(this);
 
-        this.eventManager.registerEvents();
+        this._eventManager.RegisterEvents();
 
-        Bukkit.getScheduler().runTaskLater(this, () -> this.starting = false, 100L);
+        Bukkit.getScheduler().runTaskLater(this, () -> this._starting = false, 100L);
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             List<Player> players = new ArrayList<>();
-            for (var entry : this.tpaDataMap.entrySet()) {
+            for (var entry : this._tpaDataMap.entrySet()) {
                 var player = entry.getKey();
 
-                if (entry.getValue().getEnd() <= System.currentTimeMillis())
+                if (entry.getValue().GetEnd() <= System.currentTimeMillis())
                     players.add(player);
             }
 
             if (!players.isEmpty())
                 for (var player : players)
-                    this.tpaDataMap.remove(player);
+                    this._tpaDataMap.remove(player);
         }, 20L, 20L);
 
-        this.wantsTeleport = new WantsTeleport(this);
-        this.timer = new ServerSystemTimer();
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this.timer, 1000L, 50L);
+        this._wantsTeleport = new WantsTeleport(this);
+        this._timer = new ServerSystemTimer();
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this._timer, 1000L, 50L);
 
-        this.setupEconomyBanSystem();
+        this.SetupEconomyBanSystem();
 
-        ServerSystem.economyAPI = new EconomyAPI(this);
-        ServerSystem.muteAPI = new MuteAPI(this);
-        ServerSystem.banAPI = new BanAPI(this);
-        ServerSystem.vanishAPI = new VanishAPI(this);
+        ServerSystem.ECONOMY_API = new EconomyAPI(this);
+        ServerSystem.MUTE_API = new MuteAPI(this);
+        ServerSystem.BAN_API = new BanAPI(this);
+        ServerSystem.VANISH_API = new VanishAPI(this);
 
-        this.warpManager = new WarpManager(this);
+        this._warpManager = new WarpManager(this);
 
-        this.homeManager = new HomeManager();
+        this._homeManager = new HomeManager();
 
-        yearName = this.getBanSystem("YearName");
-        monthName = this.getBanSystem("MonthName");
-        weekName = this.getBanSystem("WeekName");
-        dayName = this.getBanSystem("DayName");
-        hourName = this.getBanSystem("HourName");
-        minuteName = this.getBanSystem("MinuteName");
-        secondName = this.getBanSystem("SecondName");
+        YEAR_NAME = this.GetBanSystem("YearName");
+        MONTH_NAME = this.GetBanSystem("MonthName");
+        WEEK_NAME = this.GetBanSystem("WeekName");
+        DAY_NAME = this.GetBanSystem("DayName");
+        HOUR_NAME = this.GetBanSystem("HourName");
+        MINUTE_NAME = this.GetBanSystem("MinuteName");
+        SECOND_NAME = this.GetBanSystem("SecondName");
 
-        this.disableFlightOnHit = this.getConfigReader().getBoolean("fly.disableWhenHit");
-        this.stopFlightOnHit = this.getConfigReader().getBoolean("fly.stopWhenHit");
+        this._disableFlightOnHit = this._configReader.GetBoolean("fly.disableWhenHit");
+        this._stopFlightOnHit = this._configReader.GetBoolean("fly.stopWhenHit");
 
-        if (this.disableFlightOnHit)
-            this.stopFlightOnHit = true;
+        if (this._disableFlightOnHit)
+            this._stopFlightOnHit = true;
 
-        if (this.stopFlightOnHit)
-            this.getEventManager().registerEvent(new FlightHitListener(this));
+        if (this._stopFlightOnHit)
+            this._eventManager.RegisterEvent(new FlightHitListener(this));
 
-        if (this.getConfigReader().getBoolean("metrics"))
-            this.metrics = new MetricsLite(this, 9043);
+        if (this._configReader.GetBoolean("metrics"))
+            this._metrics = new MetricsLite(this, 9043);
 
-        Bukkit.getScheduler().runTaskLater(this, () -> this.furnace = new Furnace(this), 10L);
+        Bukkit.getScheduler().runTaskLater(this, () -> this._furnace = new Furnace(this), 10L);
 
-        this.startDeactivatingCommands();
+        this.StartDeactivatingCommands();
 
-        this.specialSudo = this.getConfigReader().getBoolean("specialSudo", true);
+        this._specialSudo = this._configReader.GetBoolean("specialSudo", true);
 
-        this.advancedInvsee = this.getConfigReader().getBoolean("advancedInvSee", true);
+        this._advancedInvsee = this._configReader.GetBoolean("advancedInvSee", true);
 
-        this.clientsideOp = this.getConfigReader().getBoolean("clientsideOpSpoof", true);
+        this._clientsideOp = this._configReader.GetBoolean("clientsideOpSpoof", true);
 
         var commandsFiles = new File("plugins//ServerSystem", "commands.yml");
-        FileConfiguration commandsConfig = YamlConfiguration.loadConfiguration(commandsFiles);
+        var commandsConfig = YamlConfiguration.loadConfiguration(commandsFiles);
 
         if (commandsConfig.getBoolean("baltop"))
-            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> this.getEconomyManager().fetchTopTen(), 20L, 72000L);
+            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> this._economyManager.FetchTopTen(), 20L, 72000L);
 
-        this.startSwappingCommands();
+        this.StartSwappingCommands();
 
-        this.startUpdateCheck();
+        this.StartUpdateCheck();
 
-        this.checkServerSoftware();
+        this.CheckServerSoftware();
 
         Bukkit.getScheduler().runTask(this, () -> {
             var markerFile = new File("plugins" + File.separator + "ServerSystem", "marker.ignore");
             if (markerFile.exists())
                 return;
 
-            this.warn("!!!!! BREAKING CHANGES !!!!!");
-            this.warn("As of 2.0.0, there are some breaking changes!");
-            this.warn("If you updated from 1.8.3, you should be fine.");
-            this.warn("If you're using a minecraft version below 1.17.1, this version of ServerSystem will NOT work!");
-            this.warn("Support for every version below 1.17.1 was completely dropped!");
-            this.warn("!!!!! BREAKING CHANGES !!!!!");
+            this.Warn("!!!!! BREAKING CHANGES !!!!!");
+            this.Warn("As of 2.0.0, there are some breaking changes!");
+            this.Warn("If you updated from 1.8.3, you should be fine.");
+            this.Warn("If you're using a minecraft version below 1.17.1, this version of ServerSystem will NOT work!");
+            this.Warn("Support for every version below 1.17.1 was completely dropped!");
+            this.Warn("!!!!! BREAKING CHANGES !!!!!");
 
             try {
                 markerFile.createNewFile();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            } catch (IOException exception) {
+                throw new RuntimeException(exception);
             }
         });
     }
 
     private boolean SyncCommands() {
-        if (this.syncCommandsMethod == null)
+        if (this._syncCommandsMethod == null)
             try {
-                this.syncCommandsMethod = Class.forName("org.bukkit.craftbukkit." + this.versionManager.getNMSVersion() + ".CraftServer")
-                                               .getDeclaredMethod("syncCommands");
-                this.syncCommandsMethod.setAccessible(true);
-            } catch (NoSuchMethodException | ClassNotFoundException e) {
-                e.printStackTrace();
+                this._syncCommandsMethod =
+                        Class.forName("org.bukkit.craftbukkit." + this._versionManager.GetNMSVersion() + ".CraftServer").getDeclaredMethod("syncCommands");
+                this._syncCommandsMethod.setAccessible(true);
+            } catch (NoSuchMethodException | ClassNotFoundException exception) {
+                exception.printStackTrace();
                 return false;
             }
 
         try {
-            this.syncCommandsMethod.invoke(Bukkit.getServer());
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            this._syncCommandsMethod.invoke(Bukkit.getServer());
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            exception.printStackTrace();
             return false;
         }
         return true;
     }
 
 
-    private void startDeactivatingCommands() {
-        if (this.getConfigReader().getBoolean("deactivatedCommands.enabled"))
+    private void StartDeactivatingCommands() {
+        if (this._configReader.GetBoolean("deactivatedCommands.enabled"))
             Bukkit.getScheduler()
-                  .runTaskLater(this,
-                                () -> this.getConfigReader().getConfigurationSection("deactivatedCommands").getKeys(false).forEach(cmd -> {
-                                    if (!cmd.equalsIgnoreCase("enabled")) {
-                                        this.log("Deactivating command " + cmd + " from plugin " +
-                                                 this.getConfigReader().getString("deactivatedCommands." + cmd) + "!");
-                                        this.commandManager.deactivateBukkitCommand(cmd.toLowerCase(), this.getConfigReader()
-                                                                                                           .getString(
-                                                                                                                   "deactivatedCommands." +
-                                                                                                                   cmd)
-                                                                                                           .toLowerCase());
-                                    }
-                                }), 40L);
+                  .runTaskLater(this, () -> this._configReader.GetConfigurationSection("deactivatedCommands").getKeys(false).forEach(command -> {
+                      if (!command.equalsIgnoreCase("enabled")) {
+                          this.Info("Deactivating command " + command + " from plugin " + this._configReader.GetString("deactivatedCommands." + command) +
+                                    "!");
+                          this._commandManager.DeactivateBukkitCommand(command.toLowerCase(),
+                                                                       this._configReader.GetString("deactivatedCommands." + command).toLowerCase());
+                      }
+                  }), 40L);
     }
 
 
-    private void startSwappingCommands() {
-        if (this.getConfigReader().getBoolean("swapCommands.enabled"))
-            Bukkit.getScheduler()
-                  .runTaskLater(this,
-                                () -> this.getConfigReader().getConfigurationSection("swapCommands").getKeys(false).forEach(cmdFrom -> {
-                                    if (!cmdFrom.equalsIgnoreCase("enabled")) {
-                                        var pluginFrom = this.getConfigReader().getString("swapCommands." + cmdFrom + ".fromPlugin");
-                                        var cmdTo = this.getConfigReader().getString("swapCommands." + cmdFrom + ".toCommand");
-                                        var pluginTo = this.getConfigReader().getString("swapCommands." + cmdFrom + ".toPlugin");
+    private void StartSwappingCommands() {
+        if (this._configReader.GetBoolean("swapCommands.enabled"))
+            Bukkit.getScheduler().runTaskLater(this, () -> this._configReader.GetConfigurationSection("swapCommands").getKeys(false).forEach(cmdFrom -> {
+                if (!cmdFrom.equalsIgnoreCase("enabled")) {
+                    var pluginFrom = this._configReader.GetString("swapCommands." + cmdFrom + ".fromPlugin");
+                    var cmdTo = this._configReader.GetString("swapCommands." + cmdFrom + ".toCommand");
+                    var pluginTo = this._configReader.GetString("swapCommands." + cmdFrom + ".toPlugin");
 
-                                        this.log("Swapping command " + cmdFrom + " from plugin " + pluginFrom + " to command " + cmdTo +
-                                                 " from plugin " + pluginTo + "!");
+                    this.Info("Swapping command " + cmdFrom + " from plugin " + pluginFrom + " to command " + cmdTo + " from plugin " + pluginTo + "!");
 
-                                        var cmdFromToLower = pluginFrom.toLowerCase() + ":" + cmdFrom.toLowerCase();
+                    var cmdFromToLower = pluginFrom.toLowerCase() + ":" + cmdFrom.toLowerCase();
 
-                                        var commandFrom = Bukkit.getPluginCommand(cmdFromToLower);
-                                        var commandToPluginCommand =
-                                                Bukkit.getPluginCommand(pluginTo.toLowerCase() + ":" + cmdTo.toLowerCase());
+                    var commandFrom = Bukkit.getPluginCommand(cmdFromToLower);
+                    var commandToPluginCommand = Bukkit.getPluginCommand(pluginTo.toLowerCase() + ":" + cmdTo.toLowerCase());
 
-                                        if (commandFrom == null) {
-                                            this.warn("Command " + cmdFrom + " does not exist in plugin " + pluginFrom + "!");
-                                            return;
-                                        }
+                    if (commandFrom == null) {
+                        this.Warn("Command " + cmdFrom + " does not exist in plugin " + pluginFrom + "!");
+                        return;
+                    }
 
-                                        if (commandToPluginCommand == null) {
-                                            this.warn("Command " + cmdTo + " does not exist in plugin " + pluginTo + "!");
-                                            return;
-                                        }
+                    if (commandToPluginCommand == null) {
+                        this.Warn("Command " + cmdTo + " does not exist in plugin " + pluginTo + "!");
+                        return;
+                    }
 
-                                        commandFrom.setExecutor(commandToPluginCommand.getExecutor());
-                                        commandFrom.setTabCompleter(commandToPluginCommand.getTabCompleter());
-                                        commandFrom.setPermission(commandToPluginCommand.getPermission());
-                                        commandFrom.setPermissionMessage(commandToPluginCommand.getPermissionMessage());
-                                        commandFrom.setDescription(commandToPluginCommand.getDescription());
+                    commandFrom.setExecutor(commandToPluginCommand.getExecutor());
+                    commandFrom.setTabCompleter(commandToPluginCommand.getTabCompleter());
+                    commandFrom.setPermission(commandToPluginCommand.getPermission());
+                    commandFrom.setPermissionMessage(commandToPluginCommand.getPermissionMessage());
+                    commandFrom.setDescription(commandToPluginCommand.getDescription());
 
-                                        if (pluginTo.equalsIgnoreCase("Essentials")) {
-                                            if (this.essentialsCommandListener == null) {
-                                                var essentialsPlugin = JavaPlugin.getProvidingPlugin(
-                                                        this.getServer().getPluginManager().getPlugin("Essentials").getClass());
-                                                var essentials = (Essentials) essentialsPlugin;
-                                                this.essentialsCommandListener = new EssentialsCommandListener(essentials, this);
-                                                this.getEventManager().registerEvent(this.essentialsCommandListener);
-                                            }
-                                            if (this.getServer().getPluginCommand(cmdFromToLower) ==
-                                                this.getServer().getPluginCommand(cmdFrom.toLowerCase()))
-                                                this.essentialsCommandListener.addCommand(cmdFrom, cmdTo);
-                                            else
-                                                this.essentialsCommandListener.addCommand(pluginFrom + ":" + cmdFrom, cmdTo);
-                                        }
-                                    }
-                                }), 60L);
+                    if (pluginTo.equalsIgnoreCase("Essentials")) {
+                        if (this._essentialsCommandListener == null) {
+                            var essentialsPlugin = JavaPlugin.getProvidingPlugin(this.getServer().getPluginManager().getPlugin("Essentials").getClass());
+                            var essentials = (Essentials) essentialsPlugin;
+                            this._essentialsCommandListener = new EssentialsCommandListener(essentials, this);
+                            this._eventManager.RegisterEvent(this._essentialsCommandListener);
+                        }
+                        if (this.getServer().getPluginCommand(cmdFromToLower) == this.getServer().getPluginCommand(cmdFrom.toLowerCase()))
+                            this._essentialsCommandListener.AddCommand(cmdFrom, cmdTo);
+                        else
+                            this._essentialsCommandListener.AddCommand(pluginFrom + ":" + cmdFrom, cmdTo);
+                    }
+                }
+            }), 60L);
     }
 
 
-    private void startUpdateCheck() {
-        if (this.getConfigReader().getBoolean("updates.check"))
+    private void StartUpdateCheck() {
+        if (this._configReader.GetBoolean("updates.check"))
             Bukkit.getScheduler().scheduleAsyncRepeatingTask(this, () -> {
-                var autoUpdate = this.getConfigReader().getBoolean("updates.autoUpdate");
+                var autoUpdate = this._configReader.GetBoolean("updates.autoUpdate");
 
                 var currentVersion = this.getDescription().getVersion();
 
-                if (this.checkMainServerForUpdates(currentVersion, autoUpdate))
+                if (this.CheckMainServerForUpdates(currentVersion, autoUpdate))
                     return;
 
-                this.checkBackupServerForUpdates(currentVersion, autoUpdate);
+                this.CheckBackupServerForUpdates(currentVersion, autoUpdate);
             }, 80L, 7200L * 20L);
     }
 
-    private void checkBackupServerForUpdates(String currentVersion, Boolean autoUpdate) {
-        this.log("Switching to backup updater!");
-        new UpdateChecker(this, "78974").getVersion(foundVersion -> {
-            var isFoundVersionMoreRecent = this.isFoundVersionMoreRecent(foundVersion, currentVersion);
+    private void CheckBackupServerForUpdates(String currentVersion, Boolean autoUpdate) {
+        this.Info("Switching to backup updater!");
+        new UpdateChecker(this, "78974").GetVersion(foundVersion -> {
+            var isFoundVersionMoreRecent = this.IsFoundVersionMoreRecent(foundVersion, currentVersion);
 
             if (!isFoundVersionMoreRecent || currentVersion.equalsIgnoreCase(foundVersion)) {
-                if (this.onceTold)
+                if (this._onceTold)
                     return;
 
-                this.log("You are using the latest version of ServerSystem <3");
-                this.onceTold = true;
+                this.Info("You are using the latest version of ServerSystem <3");
+                this._onceTold = true;
             }
 
-            this.warn("There is a new update available (" + foundVersion + ")!");
+            this.Warn("There is a new update available (" + foundVersion + ")!");
             if (!autoUpdate) {
-                if (!this.getConfigReader().getBoolean("updates.notifyOnJoin"))
+                if (!this._configReader.GetBoolean("updates.notifyOnJoin"))
                     return;
 
-                if (!foundVersion.equalsIgnoreCase(this.newVersion))
-                    this.newVersion = foundVersion;
+                if (!foundVersion.equalsIgnoreCase(this._newVersion))
+                    this._newVersion = foundVersion;
 
-                if (this.registered)
+                if (this._registered)
                     return;
 
-                this.registered = true;
-                this.getEventManager().registerEvent(new JoinUpdateListener(this));
+                this._registered = true;
+                this._eventManager.RegisterEvent(new JoinUpdateListener(this));
                 return;
             }
 
-            this.log("Auto-updating!");
-            this.log("(You need to restart the server so the update can take effect)");
+            this.Info("Auto-updating!");
+            this.Info("(You need to restart the server so the update can take effect)");
 
             try (var inputStream = new BufferedInputStream(new URL("https://api.spiget.org/v2/resources/78974/download").openStream());
-                 var fileOutputStream = new FileOutputStream(new File("plugins/update", this.JAR_NAME))) {
+                 var fileOutputStream = new FileOutputStream(new File("plugins/update", this._jarName))) {
                 var dataBuffer = new byte[1024];
                 int bytesRead;
                 while ((bytesRead = inputStream.read(dataBuffer, 0, 1024)) != -1)
                     fileOutputStream.write(dataBuffer, 0, bytesRead);
-            } catch (IOException e) {
-                e.printStackTrace();
-                this.error("Error while trying downloading the update!");
-                this.error("Please download it by yourself (https://www.spigotmc.org/resources/serversystem.78974/)!");
-                if (!this.registered) {
-                    this.registered = true;
-                    this.getEventManager().registerEvent(new JoinUpdateListener(this));
+            } catch (IOException exception) {
+                exception.printStackTrace();
+                this.Error("Error while trying downloading the update!");
+                this.Error("Please download it by yourself (https://www.spigotmc.org/resources/serversystem.78974/)!");
+                if (!this._registered) {
+                    this._registered = true;
+                    this._eventManager.RegisterEvent(new JoinUpdateListener(this));
                 }
 
-                if (!foundVersion.equalsIgnoreCase(this.newVersion))
-                    this.newVersion = foundVersion;
+                if (!foundVersion.equalsIgnoreCase(this._newVersion))
+                    this._newVersion = foundVersion;
             }
         });
     }
 
 
-    public void setupEconomyBanSystem() {
+    public void SetupEconomyBanSystem() {
         String dateFormat;
-        dateFormat = this.getConfigReader().getString("banSystem.dateFormat");
+        dateFormat = this._configReader.GetString("banSystem.dateFormat");
 
 
-        var currencySingular = this.getConfigReader().getString("economy.currency.singular");
-        var currencyPlural = this.getConfigReader().getString("economy.currency.plural");
-        var startingMoney = this.getConfigReader().getString("economy.startingMoney");
-        var displayFormat = this.getConfigReader().getString("economy.displayFormat");
-        var moneyFormat = this.getConfigReader().getString("economy.moneyFormat");
-        var separator = this.getConfigReader().getString("economy.separator");
-        var thousands = this.getConfigReader().getString("economy.thousand");
+        var currencySingular = this._configReader.GetString("economy.currency.singular");
+        var currencyPlural = this._configReader.GetString("economy.currency.plural");
+        var startingMoney = this._configReader.GetString("economy.startingMoney");
+        var displayFormat = this._configReader.GetString("economy.displayFormat");
+        var moneyFormat = this._configReader.GetString("economy.moneyFormat");
+        var separator = this._configReader.GetString("economy.separator");
+        var thousands = this._configReader.GetString("economy.thousand");
 
-        if (this.getConfigReader().getBoolean("mysql.use")) {
-            var hostname = this.getConfigReader().getString("mysql.hostname");
-            var port = this.getConfigReader().getString("mysql.port");
-            var username = this.getConfigReader().getString("mysql.username");
-            var password = this.getConfigReader().getString("mysql.password");
-            var database = this.getConfigReader().getString("mysql.database");
+        if (this._configReader.GetBoolean("mysql.use")) {
+            var hostname = this._configReader.GetString("mysql.hostname");
+            var port = this._configReader.GetString("mysql.port");
+            var username = this._configReader.GetString("mysql.username");
+            var password = this._configReader.GetString("mysql.password");
+            var database = this._configReader.GetString("mysql.database");
 
-            var mariadb = this.getConfigReader().getBoolean("mysql.mariadb");
+            var mariadb = this._configReader.GetBoolean("mysql.mariadb");
 
-            this.mySQL = new MySQL(hostname, port, username, password, database, mariadb, this);
-            this.mySQL.connect();
-            this.mySQL.createTable();
+            this._mySQL = new MySQL(hostname, port, username, password, database, mariadb, this);
+            this._mySQL.Connect();
+            this._mySQL.CreateTable();
         }
 
-        if (!this.getConfigReader().getBoolean("economy.enabled")) {
-            this.log("Economy disabled! Not using it...");
-            this.economyManager = new EconomyManager_Disabled("", "", "", "", "", "", "", this);
+        if (!this._configReader.GetBoolean("economy.enabled")) {
+            this.Info("Economy disabled! Not using it...");
+            this._economyManager = new EconomyManager_Disabled("", "", "", "", "", "", "", this);
         }
 
-        if (!this.getConfigReader().getBoolean("banSystem.enabled")) {
-            this.log("BanSystem disabled! Not using it...");
-            this.banManager = new BanManager_Disabled(new File(""), "", this);
-            this.muteManager = new MuteManager_Disabled(new File(""), "", this);
+        if (!this._configReader.GetBoolean("banSystem.enabled")) {
+            this.Info("BanSystem disabled! Not using it...");
+            this._banManager = new BanManager_Disabled(new File(""), "", this);
+            this._muteManager = new MuteManager_Disabled("", this);
         }
 
-        if (this.getConfigReader().getBoolean("economy.enabled") || this.getConfigReader().getBoolean("banSystem.enabled")) {
-            if (this.getConfigReader().getBoolean("mysql.use")) {
-                this.log("MySQL enabled, using it...");
-                if (this.getConfigReader().getBoolean("mysql.economy.enabled") && this.getConfigReader().getBoolean("economy.enabled")) {
-                    this.log("Using Economy with MySQL...");
-                    if (this.economyManager != null)
-                        this.error("You cannot have two databases at the same time for economy activated!");
+        if (this._configReader.GetBoolean("economy.enabled") || this._configReader.GetBoolean("banSystem.enabled")) {
+            if (this._configReader.GetBoolean("mysql.use")) {
+                this.Info("MySQL enabled, using it...");
+                if (this._configReader.GetBoolean("mysql.economy.enabled") && this._configReader.GetBoolean("economy.enabled")) {
+                    this.Info("Using Economy with MySQL...");
+                    if (this._economyManager != null)
+                        this.Error("You cannot have two databases at the same time for economy activated!");
                     else {
-                        this.setServerName(this.getConfigReader().getString("mysql.economy.serverName"));
-                        this.economyManager =
-                                new EconomyManager_MySQL(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat,
-                                                         separator, thousands, this);
+                        this._serverName = this._configReader.GetString("mysql.economy.serverName");
+                        this._economyManager =
+                                new EconomyManager_MySQL(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands,
+                                                         this);
                     }
                 }
-                if (this.getConfigReader().getBoolean("mysql.banSystem") && this.getConfigReader().getBoolean("banSystem.enabled")) {
-                    this.log("Using BanSystem with MySQL...");
-                    if (this.banManager != null || this.muteManager != null)
-                        this.error("You cannot have two databases at the same time for BanSystem activated!");
+                if (this._configReader.GetBoolean("mysql.banSystem") && this._configReader.GetBoolean("banSystem.enabled")) {
+                    this.Info("Using BanSystem with MySQL...");
+                    if (this._banManager != null || this._muteManager != null)
+                        this.Error("You cannot have two databases at the same time for BanSystem activated!");
                     else {
-                        this.banManager = new BanManager_MySQL(dateFormat, this);
-                        this.muteManager = new MuteManager_MySQL(this, dateFormat);
+                        this._banManager = new BanManager_MySQL(dateFormat, this);
+                        this._muteManager = new MuteManager_MySQL(this, dateFormat);
                     }
                 }
             }
 
-            if (this.getConfigReader().getBoolean("h2.use")) {
-                this.log("H2 enabled, using it...");
-                if (this.getConfigReader().getBoolean("h2.economy") && this.getConfigReader().getBoolean("economy.enabled")) {
-                    this.log("Using Economy with H2...");
-                    if (this.economyManager != null)
-                        this.error("You cannot have two databases at the same time for economy activated!");
+            if (this._configReader.GetBoolean("h2.use")) {
+                this.Info("H2 enabled, using it...");
+                if (this._configReader.GetBoolean("h2.economy") && this._configReader.GetBoolean("economy.enabled")) {
+                    this.Info("Using Economy with H2...");
+                    if (this._economyManager != null)
+                        this.Error("You cannot have two databases at the same time for economy activated!");
                     else
-                        this.economyManager =
-                                new EconomyManager_H2(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat,
-                                                      separator, thousands, this);
+                        this._economyManager =
+                                new EconomyManager_H2(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands,
+                                                      this);
                 }
 
-                if (this.getConfigReader().getBoolean("h2.banSystem") && this.getConfigReader().getBoolean("banSystem.enabled")) {
-                    this.log("Using BanSystem with H2...");
-                    if (this.banManager != null || this.muteManager != null)
-                        this.error("You cannot have two databases at the same time for BanSystem activated!");
+                if (this._configReader.GetBoolean("h2.banSystem") && this._configReader.GetBoolean("banSystem.enabled")) {
+                    this.Info("Using BanSystem with H2...");
+                    if (this._banManager != null || this._muteManager != null)
+                        this.Error("You cannot have two databases at the same time for BanSystem activated!");
                     else {
-                        this.banManager = new BanManager_H2(dateFormat, this);
-                        this.muteManager = new MuteManager_H2(this, dateFormat);
+                        this._banManager = new BanManager_H2(dateFormat, this);
+                        this._muteManager = new MuteManager_H2(this, dateFormat);
                     }
                 }
             }
 
-            if (this.getConfigReader().getBoolean("sqlite.use")) {
-                this.log("SQLite enabled, using it...");
-                if (this.getConfigReader().getBoolean("sqlite.economy") && this.getConfigReader().getBoolean("economy.enabled")) {
-                    this.log("Using Economy with SQLite...");
-                    if (this.economyManager != null)
-                        this.error("You cannot have two databases at the same time for economy activated!");
+            if (this._configReader.GetBoolean("sqlite.use")) {
+                this.Info("SQLite enabled, using it...");
+                if (this._configReader.GetBoolean("sqlite.economy") && this._configReader.GetBoolean("economy.enabled")) {
+                    this.Info("Using Economy with SQLite...");
+                    if (this._economyManager != null)
+                        this.Error("You cannot have two databases at the same time for economy activated!");
                     else
-                        this.economyManager =
-                                new EconomyManager_SQLite(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat,
-                                                          separator, thousands, this);
+                        this._economyManager =
+                                new EconomyManager_SQLite(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator,
+                                                          thousands, this);
                 }
 
-                if (this.getConfigReader().getBoolean("sqlite.banSystem") && this.getConfigReader().getBoolean("banSystem.enabled")) {
-                    this.log("Using BanSystem with SQLite...");
-                    if (this.banManager != null || this.muteManager != null)
-                        this.error("You cannot have two databases at the same time for BanSystem activated!");
+                if (this._configReader.GetBoolean("sqlite.banSystem") && this._configReader.GetBoolean("banSystem.enabled")) {
+                    this.Info("Using BanSystem with SQLite...");
+                    if (this._banManager != null || this._muteManager != null)
+                        this.Error("You cannot have two databases at the same time for BanSystem activated!");
                     else {
-                        this.banManager = new BanManager_SQLite(dateFormat, this);
-                        this.muteManager = new MuteManager_SQLite(this, dateFormat);
+                        this._banManager = new BanManager_SQLite(dateFormat, this);
+                        this._muteManager = new MuteManager_SQLite(this, dateFormat);
                     }
                 }
             }
 
-            if (this.economyManager == null) {
-                this.warn("Not using any database for Economy...");
-                this.economyManager =
-                        new EconomyManager(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator,
-                                           thousands, this);
+            if (this._economyManager == null) {
+                this.Warn("Not using any database for Economy...");
+                this._economyManager =
+                        new EconomyManager(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, this);
             }
-            if (this.banManager == null) {
-                this.warn("Not using any database for BanSystem...");
-                this.banManager = new BanManager(new File("plugins//ServerSystem", "bans.yml"), dateFormat, this);
+            if (this._banManager == null) {
+                this.Warn("Not using any database for BanSystem...");
+                this._banManager = new BanManager_Yaml(new File("plugins//ServerSystem", "bans.yml"), dateFormat, this);
             }
-            if (this.muteManager == null)
-                this.muteManager = new MuteManager(new File("plugins//ServerSystem", "muted.yml"), dateFormat, this);
+            if (this._muteManager == null)
+                this._muteManager = new MuteManager_Yaml(new File("plugins//ServerSystem", "muted.yml"), dateFormat, this);
 
         }
     }
 
 
-    private void loadConfigs() {
+    private void LoadConfigs() {
         this.saveDefaultConfig();
         this.reloadConfig();
 
@@ -956,62 +954,62 @@ import static me.entity303.serversystem.bansystem.TimeUnit.*;
         if (!kitsFile.exists())
             this.saveResource("kits.yml", false);
 
-        this.rulesConfig = YamlConfiguration.loadConfiguration(this.RULES_FILE);
+        this._rulesConfig = YamlConfiguration.loadConfiguration(this._rulesFile);
     }
 
     @Override
     public void onDisable() {
-        this.log("Shutting down...");
+        this.Info("Shutting down...");
 
-        this.log("Cancelling leftover tasks...");
+        this.Info("Cancelling leftover tasks...");
         Bukkit.getScheduler().cancelTasks(this);
 
-        if (this.vaultHookManager != null) {
-            this.log("Unhooking from vault...");
-            this.vaultHookManager.unhook();
+        if (this._vaultHookManager != null) {
+            this.Info("Unhooking from vault...");
+            this._vaultHookManager.Unhook();
         }
 
-        this.log("Saving vanished players...");
+        this.Info("Saving vanished players...");
         var file = new File("plugins//ServerSystem", "vanish.yml");
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-        for (var uuid : this.getVanish().getVanishList())
+        for (var uuid : this._vanish.GetVanishList())
             cfg.set("Vanish." + uuid.toString(), true);
         try {
             cfg.save(file);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
 
-        this.log("Closing banManager database...");
-        if (this.banManager != null)
-            this.banManager.close();
-        this.log("Closing muteManager database...");
-        if (this.muteManager != null)
-            this.muteManager.close();
-        this.log("Closing economyManager database...");
-        if (this.economyManager != null)
-            this.economyManager.close();
-        this.log("Closing MySQL...");
-        if (this.mySQL != null)
-            this.mySQL.close();
+        this.Info("Closing banManager database...");
+        if (this._banManager != null)
+            this._banManager.Close();
+        this.Info("Closing muteManager database...");
+        if (this._muteManager != null)
+            this._muteManager.Close();
+        this.Info("Closing economyManager database...");
+        if (this._economyManager != null)
+            this._economyManager.Close();
+        this.Info("Closing MySQL...");
+        if (this._mySQL != null)
+            this._mySQL.Close();
 
-        this.banManager = null;
-        this.muteManager = null;
-        this.economyManager = null;
+        this._banManager = null;
+        this._muteManager = null;
+        this._economyManager = null;
 
-        this.log("Unregistering commands...");
-        this.commandManager.unregisterCommands();
+        this.Info("Unregistering commands...");
+        this._commandManager.UnregisterCommands();
 
-        this.log("Syncing commands...");
+        this.Info("Syncing commands...");
 
         if (!this.SyncCommands())
             return;
 
-        this.log("Unregistering Handlers...");
+        this.Info("Unregistering Handlers...");
 
         HandlerList.unregisterAll(this);
 
-        this.log("Shutdown done!");
+        this.Info("Shutdown done!");
     }
 
     private void CreateMessagesFiles() {
@@ -1068,66 +1066,51 @@ import static me.entity303.serversystem.bansystem.TimeUnit.*;
             if (locale.equalsIgnoreCase("de"))
                 try {
                     Files.copy(msgDEFile, new File("plugins//ServerSystem", "messages.yml"));
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
                 }
             else if (locale.equalsIgnoreCase("cz"))
                 try {
                     Files.copy(msgCZFile, new File("plugins//ServerSystem", "messages.yml"));
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
                 }
             else if (locale.equalsIgnoreCase("tr"))
                 try {
                     Files.copy(msgTRFile, new File("plugins//ServerSystem", "messages.yml"));
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
                 }
             else if (locale.toLowerCase(Locale.ROOT).contains("zh"))
                 try {
                     Files.copy(msgZHCNFile, new File("plugins//ServerSystem", "messages.yml"));
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
                 }
             else if (locale.toLowerCase(Locale.ROOT).contains("it"))
                 try {
                     Files.copy(msgITFile, new File("plugins//ServerSystem", "messages.yml"));
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
                 }
             else if (locale.toLowerCase(Locale.ROOT).contains("ru"))
                 try {
                     Files.copy(msgRUFile, new File("plugins//ServerSystem", "messages.yml"));
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
                 }
             else
                 try {
                     Files.copy(msgENFile, new File("plugins//ServerSystem", "messages.yml"));
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
                 }
         }
     }
 
 
-    private String getBanSystem(String action) {
-        return this.getMessages().getCfg().getString("Messages.Misc.BanSystem." + action);
-    }
-
-
-    public ManagerEconomy getEconomyManager() {
-        return this.economyManager;
-    }
-
-
-    public Message getMessages() {
-        return this.messages;
-    }
-
-
-    public Vanish getVanish() {
-        return this.vanish;
+    private String GetBanSystem(String action) {
+        return this._messages.GetConfiguration().GetString("Messages.Misc.BanSystem." + action);
     }
 
 

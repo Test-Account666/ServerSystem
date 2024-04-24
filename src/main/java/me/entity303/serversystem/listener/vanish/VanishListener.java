@@ -12,68 +12,68 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 
 public class VanishListener implements Listener {
-    private final ServerSystem plugin;
+    private final ServerSystem _plugin;
 
     public VanishListener(ServerSystem plugin) {
-        this.plugin = plugin;
+        this._plugin = plugin;
     }
 
     @EventHandler
-    public void onChat(AsyncPlayerChatEvent e) {
-        if (!this.plugin.getVanish().isVanish(e.getPlayer()))
+    public void OnChat(AsyncPlayerChatEvent event) {
+        if (!this._plugin.GetVanish().IsVanish(event.getPlayer()))
             return;
-        if (this.plugin.getVanish().getAllowChat().contains(e.getPlayer()) || !this.plugin.getCommandManager().isChatActive())
+        if (this._plugin.GetVanish().GetAllowChat().contains(event.getPlayer()) || !this._plugin.GetCommandManager().IsChatActive())
             return;
-        e.setCancelled(true);
-        e.getPlayer()
-         .sendMessage(this.plugin.getMessages().getPrefix() +
-                      this.plugin.getMessages().getMessage("vanish", "vanish", e.getPlayer().getName(), null, "Vanish.Misc.NoChat"));
+        event.setCancelled(true);
+        event.getPlayer()
+         .sendMessage(this._plugin.GetMessages().GetPrefix() +
+                      this._plugin.GetMessages().GetMessage("vanish", "vanish", event.getPlayer().getName(), null, "Vanish.Misc.NoChat"));
 
     }
 
     @EventHandler
-    public void onInteract(PlayerInteractEvent e) {
-        if (!this.plugin.getVanish().isVanish(e.getPlayer()))
+    public void OnInteract(PlayerInteractEvent event) {
+        if (!this._plugin.GetVanish().IsVanish(event.getPlayer()))
             return;
-        if (e.getAction() == Action.RIGHT_CLICK_BLOCK)
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK)
             return;
-        if (this.plugin.getVanish().getAllowInteract().contains(e.getPlayer()) || !this.plugin.getCommandManager().isInteractActive())
+        if (this._plugin.GetVanish().GetAllowInteract().contains(event.getPlayer()) || !this._plugin.GetCommandManager().IsInteractActive())
             return;
-        e.setCancelled(true);
-        if (e.getAction() == Action.LEFT_CLICK_BLOCK)
-            e.getPlayer()
-             .sendMessage(this.plugin.getMessages().getPrefix() +
-                          this.plugin.getMessages().getMessage("vanish", "vanish", e.getPlayer().getName(), null, "Vanish.Misc.NoInteract"));
+        event.setCancelled(true);
+        if (event.getAction() == Action.LEFT_CLICK_BLOCK)
+            event.getPlayer()
+             .sendMessage(this._plugin.GetMessages().GetPrefix() +
+                          this._plugin.GetMessages().GetMessage("vanish", "vanish", event.getPlayer().getName(), null, "Vanish.Misc.NoInteract"));
     }
 
     @EventHandler
-    public void onDrop(PlayerDropItemEvent e) {
-        if (!this.plugin.getVanish().isVanish(e.getPlayer()))
+    public void OnDrop(PlayerDropItemEvent event) {
+        if (!this._plugin.GetVanish().IsVanish(event.getPlayer()))
             return;
-        if (this.plugin.getVanish().getAllowDrop().contains(e.getPlayer()) || !this.plugin.getCommandManager().isDropActive())
+        if (this._plugin.GetVanish().GetAllowDrop().contains(event.getPlayer()) || !this._plugin.GetCommandManager().IsDropActive())
             return;
-        e.setCancelled(true);
-        e.getPlayer()
-         .sendMessage(this.plugin.getMessages().getPrefix() +
-                      this.plugin.getMessages().getMessage("vanish", "vanish", e.getPlayer().getName(), null, "Vanish.Misc.NoDrop"));
+        event.setCancelled(true);
+        event.getPlayer()
+         .sendMessage(this._plugin.GetMessages().GetPrefix() +
+                      this._plugin.GetMessages().GetMessage("vanish", "vanish", event.getPlayer().getName(), null, "Vanish.Misc.NoDrop"));
     }
 
     @EventHandler
-    public void onPickup(PlayerPickupItemEvent e) {
-        if (!this.plugin.getVanish().isVanish(e.getPlayer()))
+    public void OnPickup(PlayerPickupItemEvent event) {
+        if (!this._plugin.GetVanish().IsVanish(event.getPlayer()))
             return;
-        if (this.plugin.getVanish().getAllowPickup().contains(e.getPlayer()) || !this.plugin.getCommandManager().isPickupActive())
+        if (this._plugin.GetVanish().GetAllowPickup().contains(event.getPlayer()) || !this._plugin.GetCommandManager().IsPickupActive())
             return;
-        e.setCancelled(true);
+        event.setCancelled(true);
     }
 
     @EventHandler
-    public void onEntityTarget(EntityTargetLivingEntityEvent e) {
-        if (e.getTarget() == null)
+    public void OnEntityTarget(EntityTargetLivingEntityEvent event) {
+        if (event.getTarget() == null)
             return;
-        if (!(e.getTarget() instanceof Player player))
+        if (!(event.getTarget() instanceof Player player))
             return;
-        if (this.plugin.getVanish().isVanish(player))
-            e.setTarget(null);
+        if (this._plugin.GetVanish().IsVanish(player))
+            event.setTarget(null);
     }
 }

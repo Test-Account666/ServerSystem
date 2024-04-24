@@ -17,73 +17,73 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class EventManager {
-    private final ServerSystem serverSystem;
-    private final List<Listener> listeners = new ArrayList<>();
+    private final ServerSystem _serverSystem;
+    private final List<Listener> _listeners = new ArrayList<>();
 
     public EventManager(ServerSystem serverSystem) {
-        this.serverSystem = serverSystem;
+        this._serverSystem = serverSystem;
     }
 
-    public void registerEvents() {
-        if (!this.listeners.isEmpty())
-            this.listeners.forEach(HandlerList::unregisterAll);
+    public void RegisterEvents() {
+        if (!this._listeners.isEmpty())
+            this._listeners.forEach(HandlerList::unregisterAll);
 
-        this.listeners.clear();
+        this._listeners.clear();
 
-        this.registerEvent(new BackListener(this.serverSystem));
-        this.registerEvent(new LoginListener(this.serverSystem));
-        this.registerEvent(new MoveListener(this.serverSystem));
-        this.registerEvent(new JoinListener(this.serverSystem));
-        this.registerEvent(new QuitListener(this.serverSystem));
-        this.registerEvent(new VanishListener(this.serverSystem));
-        this.registerEvent(new KillListener(this.serverSystem));
-        this.registerEvent(new CommandListener(this.serverSystem));
-        this.registerEvent(new SignListener(this.serverSystem));
-        this.registerEvent(new GodListener(this.serverSystem));
+        this.RegisterEvent(new BackListener(this._serverSystem));
+        this.RegisterEvent(new LoginListener(this._serverSystem));
+        this.RegisterEvent(new MoveListener(this._serverSystem));
+        this.RegisterEvent(new JoinListener(this._serverSystem));
+        this.RegisterEvent(new QuitListener(this._serverSystem));
+        this.RegisterEvent(new VanishListener(this._serverSystem));
+        this.RegisterEvent(new KillListener(this._serverSystem));
+        this.RegisterEvent(new CommandListener(this._serverSystem));
+        this.RegisterEvent(new SignListener(this._serverSystem));
+        this.RegisterEvent(new GodListener(this._serverSystem));
 
-        this.registerEvent(new ChatListenerWithPrefix(this.serverSystem, this.serverSystem.getConfigReader().getBoolean("chat.active"),
-                                                      this.serverSystem.getConfigReader().getString("chat.format")));
+        this.RegisterEvent(new ChatListenerWithPrefix(this._serverSystem, this._serverSystem.GetConfigReader().GetBoolean("chat.active"),
+                                                      this._serverSystem.GetConfigReader().GetString("chat.format")));
 
 
-        this.registerEvent(new InventoryClickListener(this.serverSystem));
+        this.RegisterEvent(new InventoryClickListener(this._serverSystem));
 
-        this.registerEvent(new SomeVanishListener(this.serverSystem));
-        this.registerEvent(new GameModeChangeListener(this.serverSystem));
-        this.registerEvent(new ServerPingListener(this.serverSystem));
+        this.RegisterEvent(new SomeVanishListener(this._serverSystem));
+        this.RegisterEvent(new GameModeChangeListener(this._serverSystem));
+        this.RegisterEvent(new ServerPingListener(this._serverSystem));
 
-        var resetGameMode = this.serverSystem.getConfigReader().getBoolean("worldChange.resetGameMode");
-        var resetGodMode = this.serverSystem.getConfigReader().getBoolean("worldChange.resetGod");
-        var resetFly = this.serverSystem.getConfigReader().getBoolean("worldChange.resetFly");
+        var resetGameMode = this._serverSystem.GetConfigReader().GetBoolean("worldChange.resetGameMode");
+        var resetGodMode = this._serverSystem.GetConfigReader().GetBoolean("worldChange.resetGod");
+        var resetFly = this._serverSystem.GetConfigReader().GetBoolean("worldChange.resetFly");
 
         if (resetGameMode || resetGodMode || resetFly)
-            this.registerEvent(new WorldChangeListener(this.serverSystem, resetGameMode, resetGodMode, resetFly));
+            this.RegisterEvent(new WorldChangeListener(this._serverSystem, resetGameMode, resetGodMode, resetFly));
 
-        if (this.serverSystem.getConfigReader().getBoolean("deactivateEntityCollision"))
-            Bukkit.getScheduler().runTaskLater(this.serverSystem, () -> this.registerEvent(new EntitySpawnListener(this.serverSystem)), 5L);
+        if (this._serverSystem.GetConfigReader().GetBoolean("deactivateEntityCollision"))
+            Bukkit.getScheduler().runTaskLater(this._serverSystem, () -> this.RegisterEvent(new EntitySpawnListener(this._serverSystem)), 5L);
 
-        if (this.serverSystem.getConfigReader().getBoolean("no-redstone"))
-            this.registerEvent(new RedstoneListener(this.serverSystem));
+        if (this._serverSystem.GetConfigReader().GetBoolean("no-redstone"))
+            this.RegisterEvent(new RedstoneListener(this._serverSystem));
 
-        if (this.serverSystem.getConfigReader().getBoolean("spawn.respawn"))
-            this.registerEvent(new RespawnListener(this.serverSystem));
+        if (this._serverSystem.GetConfigReader().GetBoolean("spawn.respawn"))
+            this.RegisterEvent(new RespawnListener(this._serverSystem));
 
-        this.registerEvent(new UnlimitedListener());
-        this.registerEvent(new FreezeListener(this.serverSystem));
+        this.RegisterEvent(new UnlimitedListener());
+        this.RegisterEvent(new FreezeListener(this._serverSystem));
 
-        if (this.serverSystem.getConfigReader().getBoolean("afk.enabled")) {
-            var maxDuration = this.serverSystem.getConfigReader().getLong("afk.maxDuration");
+        if (this._serverSystem.GetConfigReader().GetBoolean("afk.enabled")) {
+            var maxDuration = this._serverSystem.GetConfigReader().GetLong("afk.maxDuration");
             maxDuration = TimeUnit.SECONDS.toMillis(maxDuration);
 
-            var kickDuration = this.serverSystem.getConfigReader().getLong("afk.kickDuration");
+            var kickDuration = this._serverSystem.GetConfigReader().GetLong("afk.kickDuration");
             kickDuration = TimeUnit.SECONDS.toMillis(kickDuration);
             kickDuration += maxDuration;
 
-            this.registerEvent(new AwayFromKeyboardListener(this.serverSystem, maxDuration, kickDuration));
+            this.RegisterEvent(new AwayFromKeyboardListener(this._serverSystem, maxDuration, kickDuration));
         }
     }
 
-    public void registerEvent(Listener listener) {
-        Bukkit.getPluginManager().registerEvents(listener, this.serverSystem);
-        this.listeners.add(listener);
+    public void RegisterEvent(Listener listener) {
+        Bukkit.getPluginManager().registerEvents(listener, this._serverSystem);
+        this._listeners.add(listener);
     }
 }

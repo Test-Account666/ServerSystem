@@ -1,7 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Material;
@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class HatCommand extends CommandUtils implements CommandExecutorOverload {
+public class HatCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public HatCommand(ServerSystem plugin) {
         super(plugin);
@@ -19,14 +19,14 @@ public class HatCommand extends CommandUtils implements CommandExecutorOverload 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
         if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetOnlyPlayer());
             return true;
         }
 
-        if (this.plugin.getPermissions().getConfiguration().getBoolean("Permissions.hat.required"))
-            if (!this.plugin.getPermissions().hasPermission(commandSender, "hat.permission")) {
-                var permission = this.plugin.getPermissions().getPermission("hat.permission");
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.hat.required"))
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "hat.permission")) {
+                var permission = this._plugin.GetPermissions().GetPermission("hat.permission");
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return true;
             }
 
@@ -37,8 +37,8 @@ public class HatCommand extends CommandUtils implements CommandExecutorOverload 
             player.getInventory().setHelmet(player.getInventory().getItemInMainHand());
             player.getInventory().removeItem(player.getInventory().getItemInMainHand());
 
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                         .getMessage(commandLabel, command, commandSender, null,
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                         .GetMessage(commandLabel, command, commandSender, null,
                                                                                                      "Hat.Success.NewHat")
                                                                                          .replace("<TYPE>",
                                                                                                   player.getInventory().getHelmet().getType().toString()));
@@ -47,14 +47,14 @@ public class HatCommand extends CommandUtils implements CommandExecutorOverload 
 
         if (player.getInventory().getHelmet() == null) {
             commandSender.sendMessage(
-                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Hat.NoItem"));
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Hat.NoItem"));
             return true;
         }
 
         player.getInventory().addItem(player.getInventory().getHelmet());
 
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                     .getMessage(commandLabel, command, commandSender, null,
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                     .GetMessage(commandLabel, command, commandSender, null,
                                                                                                  "Hat.Success.HatRemoved")
                                                                                      .replace("<TYPE>", player.getInventory().getHelmet().getType().toString()));
 

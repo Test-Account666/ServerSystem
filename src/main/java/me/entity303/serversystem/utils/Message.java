@@ -1,6 +1,6 @@
 package me.entity303.serversystem.utils;
 
-import me.entity303.serversystem.config.ConfigReader;
+import me.entity303.serversystem.config.IConfigReader;
 import me.entity303.serversystem.config.DefaultConfigReader;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.Bukkit;
@@ -11,23 +11,21 @@ import org.bukkit.entity.Player;
 import java.io.File;
 
 public class Message {
-    private final ServerSystem plugin;
-    private final File messagesFile;
-    private final ConfigReader cfg;
-    private final boolean placeholderAPI;
+    private final File _messagesFile;
+    private final IConfigReader _configuration;
+    private final boolean _placeholderAPI;
 
     public Message(ServerSystem plugin) {
-        this.plugin = plugin;
-        this.messagesFile = new File("plugins//ServerSystem", "messages.yml");
-        this.cfg = DefaultConfigReader.loadConfiguration(this.messagesFile, this.plugin);
-        this.placeholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
+        this._messagesFile = new File("plugins//ServerSystem", "messages.yml");
+        this._configuration = DefaultConfigReader.LoadConfiguration(this._messagesFile, plugin);
+        this._placeholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
     }
 
-    public String getMessageWithStringTarget(String label, Command command, CommandSender sender, String target, String action) {
-        return this.getMessageWithStringTarget(label, command.getName(), sender, target, action);
+    public String GetMessageWithStringTarget(String commandLabel, Command command, CommandSender sender, String target, String action) {
+        return this.GetMessageWithStringTarget(commandLabel, command.getName(), sender, target, action);
     }
 
-    public String getMessageWithStringTarget(String label, String command, CommandSender sender, String target, String action) {
+    public String GetMessageWithStringTarget(String commandLabel, String command, CommandSender sender, String target, String action) {
         if (sender == null)
             throw new IllegalArgumentException("Sender cannot be null!");
 
@@ -51,36 +49,38 @@ public class Message {
         }
 
         if (senderName.equalsIgnoreCase("console") || senderName.equalsIgnoreCase("konsole")) {
-            senderName = this.cfg.getString("Messages.Misc.BanSystem.ConsoleName");
+            senderName = this._configuration.GetString("Messages.Misc.BanSystem.ConsoleName");
             senderDisplayName = senderName;
         }
 
         if (targetName.equalsIgnoreCase("console") || targetName.equalsIgnoreCase("konsole")) {
-            targetName = this.cfg.getString("Messages.Misc.BanSystem.ConsoleName");
+            targetName = this._configuration.GetString("Messages.Misc.BanSystem.ConsoleName");
             targetDisplayName = targetName;
         }
         try {
-            var message = ChatColor.translateAlternateColorCodes('&', this.cfg.getString("Messages.Normal." + action))
+            var message = ChatColor.TranslateAlternateColorCodes('&', this._configuration.GetString("Messages.Normal." + action))
                                    .replace("<BREAK>", "\n")
                                    .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq")
-                                   .replace("<LABEL>", label)
+                                   .replace("<LABEL>", commandLabel)
                                    .replace("<COMMAND>", command)
                                    .replace("<SENDER>", senderName)
                                    .replace("<TARGET>", targetName)
                                    .replace("<SENDERDISPLAY>", senderDisplayName)
                                    .replace("<TARGETDISPLAY>", targetDisplayName);
 
-            return sender instanceof Player && this.placeholderAPI? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
+            return sender instanceof Player && this._placeholderAPI?
+                   me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) :
+                   message;
         } catch (NullPointerException ignored) {
             return "Error! Path: Normal." + action;
         }
     }
 
-    public String getMessage(String label, Command command, CommandSender sender, CommandSender target, String action) {
-        return this.getMessage(label, command.getName(), sender, target, action);
+    public String GetMessage(String commandLabel, Command command, CommandSender sender, CommandSender target, String action) {
+        return this.GetMessage(commandLabel, command.getName(), sender, target, action);
     }
 
-    public String getMessage(String label, String command, CommandSender sender, CommandSender target, String action) {
+    public String GetMessage(String commandLabel, String command, CommandSender sender, CommandSender target, String action) {
         if (sender == null)
             throw new IllegalArgumentException("Sender cannot be null!");
         if (target == null)
@@ -103,32 +103,34 @@ public class Message {
             targetDisplayName = targetName;
 
         if (senderName.equalsIgnoreCase("console") || senderName.equalsIgnoreCase("konsole")) {
-            senderName = this.cfg.getString("Messages.Misc.BanSystem.ConsoleName");
+            senderName = this._configuration.GetString("Messages.Misc.BanSystem.ConsoleName");
             senderDisplayName = senderName;
         }
 
         if (targetName.equalsIgnoreCase("console") || targetName.equalsIgnoreCase("konsole")) {
-            targetName = this.cfg.getString("Messages.Misc.BanSystem.ConsoleName");
+            targetName = this._configuration.GetString("Messages.Misc.BanSystem.ConsoleName");
             targetDisplayName = targetName;
         }
 
         try {
-            var message = ChatColor.translateAlternateColorCodes('&', this.cfg.getString("Messages.Normal." + action)
-                                                                              .replace("<LABEL>", label)
-                                                                              .replace("<COMMAND>", command)
-                                                                              .replace("<SENDER>", senderName)
-                                                                              .replace("<TARGET>", targetName)
-                                                                              .replace("<SENDERDISPLAY>", senderDisplayName)
-                                                                              .replace("<TARGETDISPLAY>", targetDisplayName)
-                                                                              .replace("<BREAK>", "\n")
-                                                                              .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq"));
-            return sender instanceof Player && this.placeholderAPI? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
+            var message = ChatColor.TranslateAlternateColorCodes('&', this._configuration.GetString("Messages.Normal." + action)
+                                                                                         .replace("<LABEL>", commandLabel)
+                                                                                         .replace("<COMMAND>", command)
+                                                                                         .replace("<SENDER>", senderName)
+                                                                                         .replace("<TARGET>", targetName)
+                                                                                         .replace("<SENDERDISPLAY>", senderDisplayName)
+                                                                                         .replace("<TARGETDISPLAY>", targetDisplayName)
+                                                                                         .replace("<BREAK>", "\n")
+                                                                                         .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq"));
+            return sender instanceof Player && this._placeholderAPI?
+                   me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) :
+                   message;
         } catch (NullPointerException ignored) {
             return "Error! Path: Normal." + action;
         }
     }
 
-    public String getMessage(String label, String command, String sender, CommandSender target, String action) {
+    public String GetMessage(String commandLabel, String command, String sender, CommandSender target, String action) {
         if (sender == null)
             throw new IllegalArgumentException("Sender cannot be null!");
 
@@ -150,31 +152,31 @@ public class Message {
         }
 
         if (senderName.equalsIgnoreCase("console") || senderName.equalsIgnoreCase("konsole")) {
-            senderName = this.cfg.getString("Messages.Misc.BanSystem.ConsoleName");
+            senderName = this._configuration.GetString("Messages.Misc.BanSystem.ConsoleName");
             senderDisplayName = senderName;
         }
 
         if (targetName.equalsIgnoreCase("console") || targetName.equalsIgnoreCase("konsole")) {
-            targetName = this.cfg.getString("Messages.Misc.BanSystem.ConsoleName");
+            targetName = this._configuration.GetString("Messages.Misc.BanSystem.ConsoleName");
             targetDisplayName = targetName;
         }
 
         try {
-            return ChatColor.translateAlternateColorCodes('&', this.cfg.getString("Messages.Normal." + action)
-                                                                       .replace("<LABEL>", label)
-                                                                       .replace("<COMMAND>", command)
-                                                                       .replace("<SENDER>", senderName)
-                                                                       .replace("<TARGET>", targetName)
-                                                                       .replace("<SENDERDISPLAY>", senderDisplayName)
-                                                                       .replace("<TARGETDISPLAY>", targetDisplayName)
-                                                                       .replace("<BREAK>", "\n")
-                                                                       .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq"));
+            return ChatColor.TranslateAlternateColorCodes('&', this._configuration.GetString("Messages.Normal." + action)
+                                                                                  .replace("<LABEL>", commandLabel)
+                                                                                  .replace("<COMMAND>", command)
+                                                                                  .replace("<SENDER>", senderName)
+                                                                                  .replace("<TARGET>", targetName)
+                                                                                  .replace("<SENDERDISPLAY>", senderDisplayName)
+                                                                                  .replace("<TARGETDISPLAY>", targetDisplayName)
+                                                                                  .replace("<BREAK>", "\n")
+                                                                                  .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq"));
         } catch (NullPointerException ignored) {
             return "Error! Path: Normal." + action;
         }
     }
 
-    public String getMiscMessage(String label, String command, CommandSender sender, CommandSender target, String action) {
+    public String GetMiscMessage(String commandLabel, String command, CommandSender sender, CommandSender target, String action) {
         if (sender == null)
             throw new IllegalArgumentException("Sender cannot be null!");
         if (target == null)
@@ -197,31 +199,33 @@ public class Message {
             targetDisplayName = targetName;
 
         if (senderName.equalsIgnoreCase("console") || senderName.equalsIgnoreCase("konsole")) {
-            senderName = this.cfg.getString("Messages.Misc.BanSystem.ConsoleName");
+            senderName = this._configuration.GetString("Messages.Misc.BanSystem.ConsoleName");
             senderDisplayName = senderName;
         }
 
         if (targetName.equalsIgnoreCase("console") || targetName.equalsIgnoreCase("konsole")) {
-            targetName = this.cfg.getString("Messages.Misc.BanSystem.ConsoleName");
+            targetName = this._configuration.GetString("Messages.Misc.BanSystem.ConsoleName");
             targetDisplayName = targetName;
         }
         try {
-            var message = ChatColor.translateAlternateColorCodes('&', this.cfg.getString("Messages.Misc." + action)
-                                                                              .replace("<LABEL>", label)
-                                                                              .replace("<COMMAND>", command)
-                                                                              .replace("<SENDER>", senderName)
-                                                                              .replace("<TARGET>", targetName)
-                                                                              .replace("<SENDERDISPLAY>", senderDisplayName)
-                                                                              .replace("<TARGETDISPLAY>", targetDisplayName)
-                                                                              .replace("<BREAK>", "\n")
-                                                                              .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq"));
-            return sender instanceof Player && this.placeholderAPI? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
+            var message = ChatColor.TranslateAlternateColorCodes('&', this._configuration.GetString("Messages.Misc." + action)
+                                                                                         .replace("<LABEL>", commandLabel)
+                                                                                         .replace("<COMMAND>", command)
+                                                                                         .replace("<SENDER>", senderName)
+                                                                                         .replace("<TARGET>", targetName)
+                                                                                         .replace("<SENDERDISPLAY>", senderDisplayName)
+                                                                                         .replace("<TARGETDISPLAY>", targetDisplayName)
+                                                                                         .replace("<BREAK>", "\n")
+                                                                                         .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq"));
+            return sender instanceof Player && this._placeholderAPI?
+                   me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) :
+                   message;
         } catch (NullPointerException ignored) {
             return "Error! Path: Misc." + action;
         }
     }
 
-    public String getMessage(String label, String command, CommandSender sender, CommandSender target, String action, boolean colorless) {
+    public String GetMessage(String commandLabel, String command, CommandSender sender, CommandSender target, String action, boolean colorless) {
         if (sender == null)
             throw new IllegalArgumentException("Sender cannot be null!");
         if (target == null)
@@ -244,48 +248,50 @@ public class Message {
             targetDisplayName = targetName;
 
         if (senderName.equalsIgnoreCase("console") || senderName.equalsIgnoreCase("konsole")) {
-            senderName = this.cfg.getString("Messages.Misc.BanSystem.ConsoleName");
+            senderName = this._configuration.GetString("Messages.Misc.BanSystem.ConsoleName");
             senderDisplayName = senderName;
         }
 
         if (targetName.equalsIgnoreCase("console") || targetName.equalsIgnoreCase("konsole")) {
-            targetName = this.cfg.getString("Messages.Misc.BanSystem.ConsoleName");
+            targetName = this._configuration.GetString("Messages.Misc.BanSystem.ConsoleName");
             targetDisplayName = targetName;
         }
         if (colorless)
             try {
-                return this.cfg.getString("Messages.Normal." + action)
-                               .replace("<LABEL>", label)
-                               .replace("<COMMAND>", command)
-                               .replace("<SENDER>", senderName)
-                               .replace("<TARGET>", targetName)
-                               .replace("<SENDERDISPLAY>", senderDisplayName)
-                               .replace("<TARGETDISPLAY>", targetDisplayName)
-                               .replace("<BREAK>", "\n")
-                               .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq");
+                return this._configuration.GetString("Messages.Normal." + action)
+                                          .replace("<LABEL>", commandLabel)
+                                          .replace("<COMMAND>", command)
+                                          .replace("<SENDER>", senderName)
+                                          .replace("<TARGET>", targetName)
+                                          .replace("<SENDERDISPLAY>", senderDisplayName)
+                                          .replace("<TARGETDISPLAY>", targetDisplayName)
+                                          .replace("<BREAK>", "\n")
+                                          .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq");
             } catch (NullPointerException ignored) {
                 return "Error! Path: " + action;
             }
         else
             try {
-                var message = ChatColor.translateAlternateColorCodes('&', this.cfg.getString("Messages.Normal." + action)
-                                                                                  .replace("<LABEL>", label)
-                                                                                  .replace("<COMMAND>", command)
-                                                                                  .replace("<SENDER>", senderName)
-                                                                                  .replace("<TARGET>", targetName)
-                                                                                  .replace("<BREAK>", "\n")
-                                                                                  .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq"));
-                return sender instanceof Player && this.placeholderAPI? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
+                var message = ChatColor.TranslateAlternateColorCodes('&', this._configuration.GetString("Messages.Normal." + action)
+                                                                                             .replace("<LABEL>", commandLabel)
+                                                                                             .replace("<COMMAND>", command)
+                                                                                             .replace("<SENDER>", senderName)
+                                                                                             .replace("<TARGET>", targetName)
+                                                                                             .replace("<BREAK>", "\n")
+                                                                                             .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq"));
+                return sender instanceof Player && this._placeholderAPI?
+                       me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) :
+                       message;
             } catch (NullPointerException ignored) {
                 return "Error! Path: Normal." + action;
             }
     }
 
-    public String getSyntax(String label, Command command, CommandSender sender, CommandSender target, String action) {
-        return this.getSyntax(label, command.getName(), sender, target, action);
+    public String GetSyntax(String commandLabel, Command command, CommandSender sender, CommandSender target, String action) {
+        return this.GetSyntax(commandLabel, command.getName(), sender, target, action);
     }
 
-    public String getSyntax(String label, String command, CommandSender sender, CommandSender target, String action) {
+    public String GetSyntax(String commandLabel, String command, CommandSender sender, CommandSender target, String action) {
         if (sender == null)
             throw new IllegalArgumentException("Sender cannot be null!");
         if (target == null)
@@ -308,35 +314,37 @@ public class Message {
             targetDisplayName = targetName;
 
         if (senderName.equalsIgnoreCase("console") || senderName.equalsIgnoreCase("konsole")) {
-            senderName = this.cfg.getString("Messages.Misc.BanSystem.ConsoleName");
+            senderName = this._configuration.GetString("Messages.Misc.BanSystem.ConsoleName");
             senderDisplayName = senderName;
         }
 
         if (targetName.equalsIgnoreCase("console") || targetName.equalsIgnoreCase("konsole")) {
-            targetName = this.cfg.getString("Messages.Misc.BanSystem.ConsoleName");
+            targetName = this._configuration.GetString("Messages.Misc.BanSystem.ConsoleName");
             targetDisplayName = targetName;
         }
         try {
-            var message = ChatColor.translateAlternateColorCodes('&', this.cfg.getString("Messages.Syntax." + action))
+            var message = ChatColor.TranslateAlternateColorCodes('&', this._configuration.GetString("Messages.Syntax." + action))
                                    .replace("<BREAK>", "\n")
                                    .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq")
-                                   .replace("<LABEL>", label)
+                                   .replace("<LABEL>", commandLabel)
                                    .replace("<COMMAND>", command)
                                    .replace("<SENDER>", senderName)
                                    .replace("<TARGET>", targetName)
                                    .replace("<SENDERDISPLAY>", senderDisplayName)
                                    .replace("<TARGETDISPLAY>", targetDisplayName);
-            return sender instanceof Player && this.placeholderAPI? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
+            return sender instanceof Player && this._placeholderAPI?
+                   me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) :
+                   message;
         } catch (NullPointerException ignored) {
             return "Error! Path: Syntax." + action;
         }
     }
 
-    public String getSyntaxWithStringTarget(String label, Command command, CommandSender sender, String target, String action) {
-        return this.getSyntaxWithStringTarget(label, command.getName(), sender, target, action);
+    public String GetSyntaxWithStringTarget(String commandLabel, Command command, CommandSender sender, String target, String action) {
+        return this.GetSyntaxWithStringTarget(commandLabel, command.getName(), sender, target, action);
     }
 
-    public String getSyntaxWithStringTarget(String label, String command, CommandSender sender, String target, String action) {
+    public String GetSyntaxWithStringTarget(String commandLabel, String command, CommandSender sender, String target, String action) {
         if (sender == null)
             throw new IllegalArgumentException("Sender cannot be null!");
 
@@ -360,60 +368,62 @@ public class Message {
         }
 
         if (senderName.equalsIgnoreCase("console") || senderName.equalsIgnoreCase("konsole")) {
-            senderName = this.cfg.getString("Messages.Misc.BanSystem.ConsoleName");
+            senderName = this._configuration.GetString("Messages.Misc.BanSystem.ConsoleName");
             senderDisplayName = senderName;
         }
 
         if (targetName.equalsIgnoreCase("console") || targetName.equalsIgnoreCase("konsole")) {
-            targetName = this.cfg.getString("Messages.Misc.BanSystem.ConsoleName");
+            targetName = this._configuration.GetString("Messages.Misc.BanSystem.ConsoleName");
             targetDisplayName = targetName;
         }
         try {
-            var message = ChatColor.translateAlternateColorCodes('&', this.cfg.getString("Messages.Syntax." + action))
+            var message = ChatColor.TranslateAlternateColorCodes('&', this._configuration.GetString("Messages.Syntax." + action))
                                    .replace("<BREAK>", "\n")
                                    .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq")
-                                   .replace("<LABEL>", label)
+                                   .replace("<LABEL>", commandLabel)
                                    .replace("<COMMAND>", command)
                                    .replace("<SENDER>", senderName)
                                    .replace("<TARGET>", targetName)
                                    .replace("<SENDERDISPLAY>", senderDisplayName)
                                    .replace("<TARGETDISPLAY>", targetDisplayName);
-            return sender instanceof Player && this.placeholderAPI? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
+            return sender instanceof Player && this._placeholderAPI?
+                   me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) :
+                   message;
         } catch (NullPointerException ignored) {
             return "Error! Path: Syntax." + action;
         }
     }
 
-    public ConfigReader getCfg() {
-        return this.cfg;
+    public IConfigReader GetConfiguration() {
+        return this._configuration;
     }
 
-    public String getPrefix() {
+    public String GetPrefix() {
         try {
-            return ChatColor.translateAlternateColorCodes('&', this.cfg.getString("Messages.Misc.Prefix")
-                                                                       .replace("<BREAK>", "\n")
-                                                                       .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq"));
+            return ChatColor.TranslateAlternateColorCodes('&', this._configuration.GetString("Messages.Misc.Prefix")
+                                                                                  .replace("<BREAK>", "\n")
+                                                                                  .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq"));
         } catch (NullPointerException ignored) {
             return "Error! Path: Misc.Prefix";
         }
     }
 
-    public String getNoPermission(String permission) {
+    public String GetNoPermission(String permission) {
         if (permission == null)
             permission = "No permission found";
         try {
-            return ChatColor.translateAlternateColorCodes('&', this.cfg.getString("Messages.Misc.NoPermissions")
-                                                                       .replace("<PERMISSION>", permission)
-                                                                       .replace("<BREAK>", "\n")
-                                                                       .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq"));
+            return ChatColor.TranslateAlternateColorCodes('&', this._configuration.GetString("Messages.Misc.NoPermissions")
+                                                                                  .replace("<PERMISSION>", permission)
+                                                                                  .replace("<BREAK>", "\n")
+                                                                                  .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq"));
         } catch (NullPointerException ignored) {
             return "Error! Path: Misc.NoPermissions";
         }
     }
 
-    public String getOnlyPlayer() {
+    public String GetOnlyPlayer() {
         try {
-            return ChatColor.translateAlternateColorCodes('&', this.cfg.getString("Messages.Misc.OnlyPlayer"))
+            return ChatColor.TranslateAlternateColorCodes('&', this._configuration.GetString("Messages.Misc.OnlyPlayer"))
                             .replace("<BREAK>", "\n")
                             .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq");
         } catch (NullPointerException ignored) {
@@ -421,11 +431,11 @@ public class Message {
         }
     }
 
-    public String getNoTarget(String targetName) {
+    public String GetNoTarget(String targetName) {
         try {
-            return ChatColor.translateAlternateColorCodes('&', this.cfg.getString("Messages.Misc.NoTarget")
-                                                                       .replace("<TARGET>", targetName != null? targetName : "null")
-                                                                       .replace("<TARGETDISPLAY>", targetName != null? targetName : "null"))
+            return ChatColor.TranslateAlternateColorCodes('&', this._configuration.GetString("Messages.Misc.NoTarget")
+                                                                                  .replace("<TARGET>", targetName != null? targetName : "null")
+                                                                                  .replace("<TARGETDISPLAY>", targetName != null? targetName : "null"))
                             .replace("<BREAK>", "\n")
                             .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq");
         } catch (NullPointerException ignored) {
@@ -433,11 +443,11 @@ public class Message {
         }
     }
 
-    public void reloadMessages() {
-        this.cfg.load(this.messagesFile);
+    public void ReloadMessages() {
+        this._configuration.Load(this._messagesFile);
     }
 
-    public boolean getBoolean(String fullAction) {
-        return this.cfg.getBoolean(fullAction);
+    public boolean GetBoolean(String fullAction) {
+        return this._configuration.GetBoolean(fullAction);
     }
 }

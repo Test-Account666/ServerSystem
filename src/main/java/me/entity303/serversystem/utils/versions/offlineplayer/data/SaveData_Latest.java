@@ -22,185 +22,185 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Locale;
 
-public class SaveData_Latest extends CommandUtils implements SaveData {
+public class SaveData_Latest extends CommandUtils implements ISaveData {
 
-    private static PlayerList playerList = null;
-    private static Method saveDataMethod = null;
-    private static Method loadMethod = null;
-    private static Method hasKeyOfTypeMethod = null;
-    private static Method getCompoundMethod = null;
-    private static Method setMethod = null;
-    private static Field worldNbtField = null;
+    private static PlayerList PLAYER_LIST = null;
+    private static Method SAVE_DATA_METHOD = null;
+    private static Method LOAD_METHOD = null;
+    private static Method HAS_KEY_OF_TYPE_METHOD = null;
+    private static Method GET_COMPOUND_METHOD = null;
+    private static Method SET_METHOD = null;
+    private static Field WORLD_NBT_FIELD = null;
 
     public SaveData_Latest(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public void saveData(Player player) {
+    public void SaveData(Player player) {
         EntityPlayer entityPlayer;
         try {
-            entityPlayer = (EntityPlayer) this.plugin.getVersionStuff().getGetHandleMethod().invoke(player);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            entityPlayer = (EntityPlayer) this._plugin.GetVersionStuff().GetGetHandleMethod().invoke(player);
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            exception.printStackTrace();
             return;
         }
 
         try {
-            if (SaveData_Latest.playerList == null)
+            if (SaveData_Latest.PLAYER_LIST == null)
                 try {
                     var method = MinecraftServer.class.getDeclaredMethod("getPlayerList");
                     method.setAccessible(true);
-                    SaveData_Latest.playerList = (PlayerList) method.invoke(MinecraftServer.getServer());
-                } catch (NoSuchMethodException | NoSuchMethodError e) {
+                    SaveData_Latest.PLAYER_LIST = (PlayerList) method.invoke(MinecraftServer.getServer());
+                } catch (NoSuchMethodException | NoSuchMethodError exception) {
                     var field = Arrays.stream(MinecraftServer.class.getDeclaredFields())
                                       .filter(field1 -> field1.getType().getName().equalsIgnoreCase(PlayerList.class.getName()))
                                       .findFirst()
                                       .orElse(null);
                     if (field == null) {
-                        e.printStackTrace();
+                        exception.printStackTrace();
                         return;
                     }
                     field.setAccessible(true);
-                    SaveData_Latest.playerList = (PlayerList) field.get(MinecraftServer.getServer());
+                    SaveData_Latest.PLAYER_LIST = (PlayerList) field.get(MinecraftServer.getServer());
                 }
 
-            if (SaveData_Latest.worldNbtField == null) {
-                SaveData_Latest.worldNbtField = Arrays.stream(PlayerList.class.getDeclaredFields())
-                                                      .filter(field -> field.getType().getName().contains(WorldNBTStorage.class.getName()))
-                                                      .findFirst()
-                                                      .orElse(null);
+            if (SaveData_Latest.WORLD_NBT_FIELD == null) {
+                SaveData_Latest.WORLD_NBT_FIELD = Arrays.stream(PlayerList.class.getDeclaredFields())
+                                                        .filter(field -> field.getType().getName().contains(WorldNBTStorage.class.getName()))
+                                                        .findFirst()
+                                                        .orElse(null);
 
-                if (SaveData_Latest.worldNbtField == null)
+                if (SaveData_Latest.WORLD_NBT_FIELD == null)
                     try {
                         throw new NoSuchFieldException("Couldn't find field 'worldNbt' in class " + PlayerList.class.getName());
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
                     }
                 return;
 
             }
 
-            var worldNBTStorage = (WorldNBTStorage) SaveData_Latest.worldNbtField.get(SaveData_Latest.playerList);
+            var worldNBTStorage = (WorldNBTStorage) SaveData_Latest.WORLD_NBT_FIELD.get(SaveData_Latest.PLAYER_LIST);
 
-            if (SaveData_Latest.saveDataMethod == null) {
-                SaveData_Latest.saveDataMethod = Arrays.stream(Entity.class.getDeclaredMethods())
-                                                       .filter(method -> method.getReturnType().getName().equalsIgnoreCase(NBTTagCompound.class.getName()))
-                                                       .findFirst()
-                                                       .orElse(null);
-                if (SaveData_Latest.saveDataMethod == null) {
+            if (SaveData_Latest.SAVE_DATA_METHOD == null) {
+                SaveData_Latest.SAVE_DATA_METHOD = Arrays.stream(Entity.class.getDeclaredMethods())
+                                                         .filter(method -> method.getReturnType().getName().equalsIgnoreCase(NBTTagCompound.class.getName()))
+                                                         .findFirst()
+                                                         .orElse(null);
+                if (SaveData_Latest.SAVE_DATA_METHOD == null) {
                     try {
                         throw new NoSuchMethodException("Couldn't find method 'saveData' in class " + Entity.class.getName());
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
                     }
                     return;
                 }
 
-                SaveData_Latest.saveDataMethod.setAccessible(true);
+                SaveData_Latest.SAVE_DATA_METHOD.setAccessible(true);
             }
 
-            var playerData = (NBTTagCompound) SaveData_Latest.saveDataMethod.invoke(entityPlayer, new NBTTagCompound());
+            var playerData = (NBTTagCompound) SaveData_Latest.SAVE_DATA_METHOD.invoke(entityPlayer, new NBTTagCompound());
             if (!player.isOnline()) {
 
-                if (SaveData_Latest.loadMethod == null) {
-                    SaveData_Latest.loadMethod = Arrays.stream(WorldNBTStorage.class.getDeclaredMethods())
-                                                       .filter(method -> method.getReturnType().getName().equalsIgnoreCase(NBTTagCompound.class.getName()))
-                                                       .filter(method -> method.getParameters().length == 1)
-                                                       .filter(method -> method.getParameters()[0].getType()
+                if (SaveData_Latest.LOAD_METHOD == null) {
+                    SaveData_Latest.LOAD_METHOD = Arrays.stream(WorldNBTStorage.class.getDeclaredMethods())
+                                                        .filter(method -> method.getReturnType().getName().equalsIgnoreCase(NBTTagCompound.class.getName()))
+                                                        .filter(method -> method.getParameters().length == 1)
+                                                        .filter(method -> method.getParameters()[0].getType()
                                                                                                   .getName()
                                                                                                   .equalsIgnoreCase(EntityHuman.class.getName()))
-                                                       .findFirst()
-                                                       .orElse(null);
-                    if (SaveData_Latest.loadMethod == null) {
+                                                        .findFirst()
+                                                        .orElse(null);
+                    if (SaveData_Latest.LOAD_METHOD == null) {
                         try {
                             throw new NoSuchMethodException("Couldn't find method 'load' in class " + WorldNBTStorage.class.getName());
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        } catch (Exception exception) {
+                            exception.printStackTrace();
                         }
                         return;
                     }
 
-                    SaveData_Latest.loadMethod.setAccessible(true);
+                    SaveData_Latest.LOAD_METHOD.setAccessible(true);
                 }
 
-                var oldData = (NBTTagCompound) SaveData_Latest.loadMethod.invoke(worldNBTStorage, entityPlayer);
+                var oldData = (NBTTagCompound) SaveData_Latest.LOAD_METHOD.invoke(worldNBTStorage, entityPlayer);
 
-                if (SaveData_Latest.hasKeyOfTypeMethod == null) {
-                    SaveData_Latest.hasKeyOfTypeMethod = Arrays.stream(NBTTagCompound.class.getDeclaredMethods())
-                                                               .filter(method -> method.getReturnType().getName().toLowerCase(Locale.ROOT).contains("boolean"))
-                                                               .filter(method -> method.getParameters().length == 2)
-                                                               .filter(method -> method.getParameters()[0].getType()
+                if (SaveData_Latest.HAS_KEY_OF_TYPE_METHOD == null) {
+                    SaveData_Latest.HAS_KEY_OF_TYPE_METHOD = Arrays.stream(NBTTagCompound.class.getDeclaredMethods())
+                                                                   .filter(method -> method.getReturnType().getName().toLowerCase(Locale.ROOT).contains("boolean"))
+                                                                   .filter(method -> method.getParameters().length == 2)
+                                                                   .filter(method -> method.getParameters()[0].getType()
                                                                                                           .getName()
                                                                                                           .toLowerCase(Locale.ROOT)
                                                                                                           .contains("string"))
-                                                               .filter(method -> method.getParameters()[1].getType()
+                                                                   .filter(method -> method.getParameters()[1].getType()
                                                                                                           .getName()
                                                                                                           .toLowerCase(Locale.ROOT)
                                                                                                           .contains("int"))
-                                                               .findFirst()
-                                                               .orElse(null);
+                                                                   .findFirst()
+                                                                   .orElse(null);
 
-                    if (SaveData_Latest.hasKeyOfTypeMethod == null) {
+                    if (SaveData_Latest.HAS_KEY_OF_TYPE_METHOD == null) {
                         try {
                             throw new NoSuchMethodException("Couldn't find method 'hasKeyOfType' in class " + NBTTagCompound.class.getName());
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        } catch (Exception exception) {
+                            exception.printStackTrace();
                         }
                         return;
                     }
 
-                    SaveData_Latest.hasKeyOfTypeMethod.setAccessible(true);
+                    SaveData_Latest.HAS_KEY_OF_TYPE_METHOD.setAccessible(true);
                 }
 
-                if (SaveData_Latest.getCompoundMethod == null) {
-                    SaveData_Latest.getCompoundMethod = Arrays.stream(NBTTagCompound.class.getDeclaredMethods())
-                                                              .filter(method -> method.getReturnType().getName().equalsIgnoreCase(NBTTagCompound.class.getName()))
-                                                              .filter(method -> method.getParameters().length == 1)
-                                                              .filter(method -> method.getParameters()[0].getType()
+                if (SaveData_Latest.GET_COMPOUND_METHOD == null) {
+                    SaveData_Latest.GET_COMPOUND_METHOD = Arrays.stream(NBTTagCompound.class.getDeclaredMethods())
+                                                                .filter(method -> method.getReturnType().getName().equalsIgnoreCase(NBTTagCompound.class.getName()))
+                                                                .filter(method -> method.getParameters().length == 1)
+                                                                .filter(method -> method.getParameters()[0].getType()
                                                                                                          .getName()
                                                                                                          .toLowerCase(Locale.ROOT)
                                                                                                          .contains("string"))
-                                                              .findFirst()
-                                                              .orElse(null);
+                                                                .findFirst()
+                                                                .orElse(null);
 
-                    if (SaveData_Latest.getCompoundMethod == null) {
+                    if (SaveData_Latest.GET_COMPOUND_METHOD == null) {
                         try {
                             throw new NoSuchMethodException("Couldn't find method 'getCompoun' in class " + NBTTagCompound.class.getName());
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        } catch (Exception exception) {
+                            exception.printStackTrace();
                         }
                         return;
                     }
 
-                    SaveData_Latest.getCompoundMethod.setAccessible(true);
+                    SaveData_Latest.GET_COMPOUND_METHOD.setAccessible(true);
                 }
 
 
-                if (SaveData_Latest.setMethod == null) {
-                    SaveData_Latest.setMethod = Arrays.stream(NBTTagCompound.class.getDeclaredMethods())
-                                                      .filter(method -> method.getReturnType().getName().equalsIgnoreCase(NBTBase.class.getName()))
-                                                      .filter(method -> method.getParameters().length == 2)
-                                                      .filter(method -> method.getParameters()[0].getType().getName().toLowerCase(Locale.ROOT).contains("string"))
-                                                      .filter(method -> method.getParameters()[1].getType().getName().equalsIgnoreCase(NBTBase.class.getName()))
-                                                      .findFirst()
-                                                      .orElse(null);
+                if (SaveData_Latest.SET_METHOD == null) {
+                    SaveData_Latest.SET_METHOD = Arrays.stream(NBTTagCompound.class.getDeclaredMethods())
+                                                       .filter(method -> method.getReturnType().getName().equalsIgnoreCase(NBTBase.class.getName()))
+                                                       .filter(method -> method.getParameters().length == 2)
+                                                       .filter(method -> method.getParameters()[0].getType().getName().toLowerCase(Locale.ROOT).contains("string"))
+                                                       .filter(method -> method.getParameters()[1].getType().getName().equalsIgnoreCase(NBTBase.class.getName()))
+                                                       .findFirst()
+                                                       .orElse(null);
 
-                    if (SaveData_Latest.setMethod == null) {
+                    if (SaveData_Latest.SET_METHOD == null) {
                         try {
                             throw new NoSuchMethodException("Couldn't find method 'set' in class " + NBTTagCompound.class.getName());
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        } catch (Exception exception) {
+                            exception.printStackTrace();
                         }
                         return;
                     }
 
-                    SaveData_Latest.setMethod.setAccessible(true);
+                    SaveData_Latest.SET_METHOD.setAccessible(true);
                 }
 
 
-                if (oldData != null && (boolean) SaveData_Latest.hasKeyOfTypeMethod.invoke(oldData, "RootVehicle", 10))
-                    SaveData_Latest.setMethod.invoke(playerData, "RootVehicle", SaveData_Latest.getCompoundMethod.invoke(oldData, "RootVehicle"));
+                if (oldData != null && (boolean) SaveData_Latest.HAS_KEY_OF_TYPE_METHOD.invoke(oldData, "RootVehicle", 10))
+                    SaveData_Latest.SET_METHOD.invoke(playerData, "RootVehicle", SaveData_Latest.GET_COMPOUND_METHOD.invoke(oldData, "RootVehicle"));
             }
 
             var file = new File(worldNBTStorage.getPlayerDir(), player.getUniqueId() + ".dat.tmp");

@@ -13,48 +13,48 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WarpManager {
-    private final FileConfiguration cfg;
-    private final File warpFile = new File("plugins" + File.separator + "ServerSystem", "warps.yml");
+    private final FileConfiguration _configurartion;
+    private final File _warpFile = new File("plugins" + File.separator + "ServerSystem", "warps.yml");
 
     public WarpManager(ServerSystem plugin) {
-        this.cfg = YamlConfiguration.loadConfiguration(this.warpFile);
+        this._configurartion = YamlConfiguration.loadConfiguration(this._warpFile);
     }
 
-    public void addWarp(String name, Location location) {
-        if (this.doesWarpExist(name))
+    public void AddWarp(String name, Location location) {
+        if (this.DoesWarpExist(name))
             return;
         name = name.toLowerCase();
-        var x = location.getX();
-        var y = location.getY();
-        var z = location.getZ();
+        var xCoordinate = location.getX();
+        var yCoordinate = location.getY();
+        var zCoordinate = location.getZ();
         double yaw = location.getYaw();
         double pitch = location.getPitch();
 
-        this.cfg.set("Warps." + name + ".X", x);
-        this.cfg.set("Warps." + name + ".Y", y);
-        this.cfg.set("Warps." + name + ".Z", z);
-        this.cfg.set("Warps." + name + ".Yaw", yaw);
-        this.cfg.set("Warps." + name + ".Pitch", pitch);
-        this.cfg.set("Warps." + name + ".World", location.getWorld().getName());
+        this._configurartion.set("Warps." + name + ".X", xCoordinate);
+        this._configurartion.set("Warps." + name + ".Y", yCoordinate);
+        this._configurartion.set("Warps." + name + ".Z", zCoordinate);
+        this._configurartion.set("Warps." + name + ".Yaw", yaw);
+        this._configurartion.set("Warps." + name + ".Pitch", pitch);
+        this._configurartion.set("Warps." + name + ".World", location.getWorld().getName());
 
         try {
-            this.cfg.save(this.warpFile);
-            this.cfg.load(this.warpFile);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+            this._configurartion.save(this._warpFile);
+            this._configurartion.load(this._warpFile);
+        } catch (IOException | InvalidConfigurationException exception) {
+            exception.printStackTrace();
         }
     }
 
-    public boolean doesWarpExist(String name) {
+    public boolean DoesWarpExist(String name) {
         name = name.toLowerCase();
 
-        if (!this.warpFile.exists())
+        if (!this._warpFile.exists())
             return false;
 
-        if (!this.cfg.isSet("Warps." + name))
+        if (!this._configurartion.isSet("Warps." + name))
             return false;
 
-        var worldName = this.cfg.getString("Warps." + name + ".World");
+        var worldName = this._configurartion.getString("Warps." + name + ".World");
 
         if (worldName == null)
             return false;
@@ -64,51 +64,51 @@ public class WarpManager {
         return world != null;
     }
 
-    public Location getWarp(String name) {
+    public Location GetWarp(String name) {
         name = name.toLowerCase();
-        if (!this.doesWarpExist(name))
+        if (!this.DoesWarpExist(name))
             return null;
 
-        var x = this.cfg.getDouble("Warps." + name + ".X");
-        var y = this.cfg.getDouble("Warps." + name + ".Y");
-        var z = this.cfg.getDouble("Warps." + name + ".Z");
+        var xCoordinate = this._configurartion.getDouble("Warps." + name + ".X");
+        var yCoordinate = this._configurartion.getDouble("Warps." + name + ".Y");
+        var zCoordinate = this._configurartion.getDouble("Warps." + name + ".Z");
 
-        var yaw = this.cfg.getDouble("Warps." + name + ".Yaw");
-        var pitch = this.cfg.getDouble("Warps." + name + ".Pitch");
+        var yaw = this._configurartion.getDouble("Warps." + name + ".Yaw");
+        var pitch = this._configurartion.getDouble("Warps." + name + ".Pitch");
 
-        var worldName = this.cfg.getString("Warps." + name + ".World");
+        var worldName = this._configurartion.getString("Warps." + name + ".World");
 
         assert worldName != null;
         var world = Bukkit.getWorld(worldName);
 
-        return new Location(world, x, y, z, (float) yaw, (float) pitch);
+        return new Location(world, xCoordinate, yCoordinate, zCoordinate, (float) yaw, (float) pitch);
     }
 
-    public void deleteWarp(String name) {
+    public void DeleteWarp(String name) {
         name = name.toLowerCase();
 
-        if (!this.warpFile.exists())
+        if (!this._warpFile.exists())
             return;
 
-        this.cfg.set("Warps." + name, null);
+        this._configurartion.set("Warps." + name, null);
 
         try {
-            this.cfg.save(this.warpFile);
+            this._configurartion.save(this._warpFile);
 
-            this.cfg.load(this.warpFile);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+            this._configurartion.load(this._warpFile);
+        } catch (IOException | InvalidConfigurationException exception) {
+            exception.printStackTrace();
         }
     }
 
-    public List<String> getWarps() {
+    public List<String> GetWarps() {
         List<String> warps = new ArrayList<>();
 
-        if (!this.warpFile.exists())
+        if (!this._warpFile.exists())
             return warps;
 
-        for (var warpName : this.cfg.getConfigurationSection("Warps").getKeys(false)) {
-            if (!this.doesWarpExist(warpName))
+        for (var warpName : this._configurartion.getConfigurationSection("Warps").getKeys(false)) {
+            if (!this.DoesWarpExist(warpName))
                 continue;
 
             warps.add(warpName);

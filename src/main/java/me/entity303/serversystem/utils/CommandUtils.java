@@ -14,15 +14,15 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class CommandUtils {
-    protected final ServerSystem plugin;
+    protected final ServerSystem _plugin;
 
-    private Method loadDataMethod = null;
+    private Method _loadDataMethod = null;
 
     public CommandUtils(ServerSystem plugin) {
-        this.plugin = plugin;
+        this._plugin = plugin;
     }
 
-    public static boolean isAwayFromKeyboard(Player player) {
+    public static boolean IsAwayFromKeyboard(Player player) {
         var awayFromKeyboard = false;
 
         for (var metadataValue : player.getMetadata("afk")) {
@@ -42,41 +42,41 @@ public class CommandUtils {
         return awayFromKeyboard;
     }
 
-    public Player getHookedPlayer(OfflinePlayer offlineTarget) {
+    public Player GetHookedPlayer(OfflinePlayer offlineTarget) {
         try {
             var player = new AtomicReference<Player>(null);
             var cPlayer =
-                    new ByteBuddy().subclass(Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".entity.CraftPlayer"))
+                    new ByteBuddy().subclass(Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".entity.CraftPlayer"))
                                    .method(ElementMatchers.named("saveData"))
                                    .intercept(MethodCall.invokeSuper()
-                                                        .andThen(MethodCall.run(() -> this.plugin.getVersionStuff().getSaveData().saveData(player.get()))))
+                                                        .andThen(MethodCall.run(() -> this._plugin.GetVersionStuff().GetSaveData().SaveData(player.get()))))
                                    .make()
-                                   .load(this.plugin.getClass().getClassLoader())
+                                   .load(this._plugin.getClass().getClassLoader())
                                    .getLoaded()
                                    .getConstructors()[0].newInstance(Bukkit.getServer(),
-                                                                     this.plugin.getVersionStuff().getEntityPlayer().getEntityPlayer(offlineTarget));
+                                                                     this._plugin.GetVersionStuff().GetEntityPlayer().GetEntityPlayer(offlineTarget));
 
-            if (this.loadDataMethod == null) {
-                this.loadDataMethod = Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".entity.CraftPlayer")
-                                           .getDeclaredMethod("loadData");
-                this.loadDataMethod.setAccessible(true);
+            if (this._loadDataMethod == null) {
+                this._loadDataMethod = Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".entity.CraftPlayer")
+                                            .getDeclaredMethod("loadData");
+                this._loadDataMethod.setAccessible(true);
             }
 
-            this.loadDataMethod.invoke(cPlayer);
+            this._loadDataMethod.invoke(cPlayer);
 
             player.set((Player) cPlayer);
             return player.get();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
         return null;
     }
 
-    public Player getPlayer(CommandSender sender, String name) {
-        return this.getPlayer(sender, name, null);
+    public Player GetPlayer(CommandSender sender, String name) {
+        return this.GetPlayer(sender, name, null);
     }
 
-    public Player getPlayer(CommandSender sender, String name, UUID uuid) {
+    public Player GetPlayer(CommandSender sender, String name, UUID uuid) {
         Player player = null;
 
         if (name != null)
@@ -87,14 +87,14 @@ public class CommandUtils {
         if (player == null)
             return null;
         if (sender instanceof Player)
-            if (!this.plugin.getVanish().isVanish(player) || this.plugin.getPermissions().hasPermission(sender, "vanish.see", true))
+            if (!this._plugin.GetVanish().IsVanish(player) || this._plugin.GetPermissions().HasPermission(sender, "vanish.see", true))
                 return player;
             else
                 return null;
         return player;
     }
 
-    public Player getPlayer(CommandSender sender, UUID uuid) {
-        return this.getPlayer(sender, null, uuid);
+    public Player GetPlayer(CommandSender sender, UUID uuid) {
+        return this.GetPlayer(sender, null, uuid);
     }
 }

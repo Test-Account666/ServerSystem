@@ -9,10 +9,10 @@ import org.bukkit.entity.Player;
 import java.util.Map;
 
 public class ServerSystemExpansion extends PlaceholderExpansion {
-    private final ServerSystem plugin;
+    private final ServerSystem _plugin;
 
     public ServerSystemExpansion(ServerSystem plugin) {
-        this.plugin = plugin;
+        this._plugin = plugin;
     }
 
     @Override
@@ -42,45 +42,47 @@ public class ServerSystemExpansion extends PlaceholderExpansion {
         return super.register();
     }
 
+    @SuppressWarnings("ParameterNameDiffersFromOverriddenParameter")
     @Override
-    public String onRequest(OfflinePlayer p, String params) {
+    public String onRequest(OfflinePlayer offlinePlayer, String params) {
         if (params.equalsIgnoreCase("money"))
-            return String.valueOf(this.plugin.getEconomyManager().getMoneyAsNumber(p));
+            return String.valueOf(this._plugin.GetEconomyManager().GetMoneyAsNumber(offlinePlayer));
         if (params.equalsIgnoreCase("formattedmoney"))
-            return this.plugin.getEconomyManager().getMoney(p);
+            return this._plugin.GetEconomyManager().GetMoney(offlinePlayer);
         if (params.equalsIgnoreCase("drop")) {
-            if (!p.isOnline())
+            if (!offlinePlayer.isOnline())
                 return "false";
-            return String.valueOf(this.plugin.getVanish().getAllowDrop().contains(p.getPlayer()));
+            return String.valueOf(this._plugin.GetVanish().GetAllowDrop().contains(offlinePlayer.getPlayer()));
         }
         if (params.equalsIgnoreCase("pickup")) {
-            if (!p.isOnline())
+            if (!offlinePlayer.isOnline())
                 return "false";
-            return String.valueOf(this.plugin.getVanish().getAllowPickup().contains(p.getPlayer()));
+            return String.valueOf(this._plugin.GetVanish().GetAllowPickup().contains(offlinePlayer.getPlayer()));
         }
         if (params.equalsIgnoreCase("chat")) {
-            if (!p.isOnline())
+            if (!offlinePlayer.isOnline())
                 return "false";
-            return String.valueOf(this.plugin.getVanish().getAllowChat().contains(p.getPlayer()));
+            return String.valueOf(this._plugin.GetVanish().GetAllowChat().contains(offlinePlayer.getPlayer()));
         }
         if (params.equalsIgnoreCase("interact")) {
-            if (!p.isOnline())
+            if (!offlinePlayer.isOnline())
                 return "false";
-            return String.valueOf(this.plugin.getVanish().getAllowInteract().contains(p.getPlayer()));
+            return String.valueOf(this._plugin.GetVanish().GetAllowInteract().contains(offlinePlayer.getPlayer()));
         }
         if (params.equalsIgnoreCase("vanish"))
-            return String.valueOf(this.plugin.getVanish().isVanish(p));
+            return String.valueOf(this._plugin.GetVanish().IsVanish(offlinePlayer));
         if (params.equalsIgnoreCase("god")) {
-            if (!p.isOnline())
+            if (!offlinePlayer.isOnline())
                 return "false";
-            return String.valueOf(this.plugin.getGodList().contains(p.getPlayer()));
+            return String.valueOf(this._plugin.GetGodList().contains(offlinePlayer.getPlayer()));
         }
 
         if (params.equalsIgnoreCase("onlineplayers")) {
-            if (!p.isOnline())
+            if (!offlinePlayer.isOnline())
                 return null;
-            var player = (Player) p;
-            return String.valueOf(Bukkit.getOnlinePlayers().size() - (int) Bukkit.getOnlinePlayers().stream().filter(player1 -> !player.canSee(player1)).count());
+            var player = (Player) offlinePlayer;
+            return String.valueOf(
+                    Bukkit.getOnlinePlayers().size() - (int) Bukkit.getOnlinePlayers().stream().filter(player1 -> !player.canSee(player1)).count());
         }
 
         if (params.startsWith("baltop_formattedmoney_")) {
@@ -94,9 +96,9 @@ public class ServerSystemExpansion extends PlaceholderExpansion {
                 if (place > 10)
                     throw new UnsupportedOperationException("Currently, only top 10 is supported!");
 
-                return this.plugin.getEconomyManager().format(this.getTopXBalance(place));
-            } catch (NumberFormatException e) {
-                this.plugin.error("'" + placeString + "' is not a valid integer!");
+                return this._plugin.GetEconomyManager().Format(this.GetTopXBalance(place));
+            } catch (NumberFormatException exception) {
+                this._plugin.Error("'" + placeString + "' is not a valid integer!");
                 return "";
             }
         }
@@ -112,9 +114,9 @@ public class ServerSystemExpansion extends PlaceholderExpansion {
                 if (place > 10)
                     throw new UnsupportedOperationException("Currently, only top 10 is supported!");
 
-                return String.valueOf(this.getTopXBalance(place));
-            } catch (NumberFormatException e) {
-                this.plugin.error("'" + placeString + "' is not a valid integer!");
+                return String.valueOf(this.GetTopXBalance(place));
+            } catch (NumberFormatException exception) {
+                this._plugin.Error("'" + placeString + "' is not a valid integer!");
                 return "";
             }
         }
@@ -130,27 +132,27 @@ public class ServerSystemExpansion extends PlaceholderExpansion {
                 if (place > 10)
                     throw new UnsupportedOperationException("Currently, only top 10 is supported!");
 
-                return this.getTopXName(place);
-            } catch (NumberFormatException e) {
-                this.plugin.error("'" + placeString + "' is not a valid integer!");
+                return this.GetTopXName(place);
+            } catch (NumberFormatException exception) {
+                this._plugin.Error("'" + placeString + "' is not a valid integer!");
                 return "";
             }
         }
-        return super.onRequest(p, params);
+        return super.onRequest(offlinePlayer, params);
     }
 
-    private Double getTopXBalance(int place) {
-        return this.getTopX(place).getValue();
+    private Double GetTopXBalance(int place) {
+        return this.GetTopX(place).getValue();
     }
 
-    private String getTopXName(int place) {
-        return this.getTopX(place).getKey().getName();
+    private String GetTopXName(int place) {
+        return this.GetTopX(place).getKey().getName();
     }
 
-    private Map.Entry<OfflinePlayer, Double> getTopX(int place) {
+    private Map.Entry<OfflinePlayer, Double> GetTopX(int place) {
         var currentPlace = 0;
 
-        Map<OfflinePlayer, Double> topTenMap = this.plugin.getEconomyManager().getTopTen();
+        Map<OfflinePlayer, Double> topTenMap = this._plugin.GetEconomyManager().GetTopTen();
 
         Map.Entry<OfflinePlayer, Double> lastPlace = null;
 

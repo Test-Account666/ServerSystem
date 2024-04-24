@@ -5,7 +5,7 @@ import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -13,55 +13,57 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
-public class RecipeCommand extends CommandUtils implements CommandExecutorOverload {
-    private final static List<Player> recipeList = new ArrayList<>();
+public class RecipeCommand extends CommandUtils implements ICommandExecutorOverload {
+    private final static List<Player> RECIPE_LIST = new ArrayList<>();
+    private static final Pattern SPLIT_PATTERN = Pattern.compile("");
 
     public RecipeCommand(ServerSystem plugin) {
         super(plugin);
     }
 
-    public static List<Player> getRecipeList() {
-        return RecipeCommand.recipeList;
+    public static List<Player> GetRecipeList() {
+        return RecipeCommand.RECIPE_LIST;
     }
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (this.plugin.getPermissions().getConfiguration().getBoolean("Permissions.recipe.required"))
-            if (!this.plugin.getPermissions().hasPermission(commandSender, "recipe.permission")) {
-                var permission = this.plugin.getPermissions().getPermission("recipe.permission");
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.recipe.required"))
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "recipe.permission")) {
+                var permission = this._plugin.GetPermissions().GetPermission("recipe.permission");
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return true;
             }
         if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetOnlyPlayer());
             return true;
         }
         if (arguments.length == 0) {
             var stack = player.getInventory().getItemInMainHand();
             if (stack.getType() == Material.AIR) {
                 
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Recipe.NoItem"));
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Recipe.NoItem"));
                 return true;
             }
             var recipeList = Bukkit.getRecipesFor(stack);
             if (recipeList.isEmpty()) {
                 
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                          this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Recipe.NoRecipe").replace("<MATERIAL>", stack.getType().name()));
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                          this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Recipe.NoRecipe").replace("<MATERIAL>", stack.getType().name()));
                 return true;
             }
-            RecipeCommand.recipeList.add((Player) commandSender);
+            RecipeCommand.RECIPE_LIST.add((Player) commandSender);
             var recipe = recipeList.get(0);
             if (recipe instanceof ShapelessRecipe shapelessRecipe) {
                 var inventoryView = player.openWorkbench(player.getLocation(), true);
                 var craftingInventory = inventoryView.getTopInventory();
                 var contents = new ItemStack[10];
-                for (var i = 0; i < 10; i++)
-                    contents[i] = null;
+                for (var index = 0; index < 10; index++)
+                    contents[index] = null;
 
-                for (int i = 1, i1 = 0; i < Math.min(shapelessRecipe.getIngredientList().size() + 1, 11); i++, i1++)
-                    contents[i] = this.normalize(shapelessRecipe.getIngredientList().get(i1));
+                for (int index = 1, index1 = 0; index < Math.min(shapelessRecipe.getIngredientList().size() + 1, 11); index++, index1++)
+                    contents[index] = this.Normalize(shapelessRecipe.getIngredientList().get(index1));
 
                 craftingInventory.setContents(contents);
                 return true;
@@ -71,23 +73,23 @@ public class RecipeCommand extends CommandUtils implements CommandExecutorOverlo
                 var inventoryView = player.openWorkbench(player.getLocation(), true);
                 var craftingInventory = inventoryView.getTopInventory();
                 var contents = new ItemStack[10];
-                for (var i = 0; i < 10; i++)
-                    contents[i] = null;
+                for (var index = 0; index < 10; index++)
+                    contents[index] = null;
 
                 Map<Character, ItemStack> ingredient = new LinkedHashMap<>();
 
                 var rows = shapedRecipe.getShape();
 
-                List<String> alphabet = new ArrayList<>(Arrays.asList("abcdefghijklmnopqrstuvwxyz".split("")));
+                List<String> alphabet = new ArrayList<>(Arrays.asList(SPLIT_PATTERN.split("abcdefghijklmnopqrstuvwxyz")));
 
                 for (var row : rows)
-                    for (String character : row.split(""))
+                    for (var character : SPLIT_PATTERN.split(row))
                         alphabet.remove(character);
 
                 for (var row : rows) {
                     var rowEdit = new StringBuilder(row);
-                    var rowLength = row.split("").length;
-                    for (var character : row.split(""))
+                    var rowLength = SPLIT_PATTERN.split(row).length;
+                    for (var character : SPLIT_PATTERN.split(row))
                         if (character.equalsIgnoreCase(" "))
                             ingredient.put(character.charAt(0), null);
                         else
@@ -95,7 +97,7 @@ public class RecipeCommand extends CommandUtils implements CommandExecutorOverlo
 
                     var usedCharacter = "";
 
-                    for (var i = rowLength; i < 3; i++)
+                    for (var index = rowLength; index < 3; index++)
                         for (var character : alphabet)
                             if (!rowEdit.toString().contains(character)) {
                                 rowEdit.append(character);
@@ -104,16 +106,16 @@ public class RecipeCommand extends CommandUtils implements CommandExecutorOverlo
                                 break;
                             }
 
-                    for (var character : usedCharacter.split(""))
+                    for (var character : SPLIT_PATTERN.split(usedCharacter))
                         alphabet.remove(character);
                 }
 
-                var i = 1;
+                var index = 1;
                 for (var itemStack : ingredient.values()) {
-                    if (i >= 10)
+                    if (index >= 10)
                         break;
-                    contents[i] = this.normalize(itemStack);
-                    i += 1;
+                    contents[index] = this.Normalize(itemStack);
+                    index += 1;
                 }
 
                 craftingInventory.setContents(contents);
@@ -121,8 +123,8 @@ public class RecipeCommand extends CommandUtils implements CommandExecutorOverlo
             }
 
             
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Recipe.NoRecipe").replace("<MATERIAL>", stack.getType().name()));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Recipe.NoRecipe").replace("<MATERIAL>", stack.getType().name()));
             return true;
         }
 
@@ -135,8 +137,8 @@ public class RecipeCommand extends CommandUtils implements CommandExecutorOverlo
         var material = Material.getMaterial(name);
         if (material == null) {
             
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Recipe.InvalidMaterial").replace("<MATERIAL>", name));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Recipe.InvalidMaterial").replace("<MATERIAL>", name));
             return true;
         }
 
@@ -144,29 +146,29 @@ public class RecipeCommand extends CommandUtils implements CommandExecutorOverlo
 
         if (stack.getType() == Material.AIR) {
             
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Recipe.InvalidMaterial").replace("<MATERIAL>", name));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Recipe.InvalidMaterial").replace("<MATERIAL>", name));
             return true;
         }
 
         var recipeList = Bukkit.getRecipesFor(stack);
         if (recipeList.isEmpty()) {
             
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Recipe.NoRecipe").replace("<MATERIAL>", name));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Recipe.NoRecipe").replace("<MATERIAL>", name));
             return true;
         }
-        RecipeCommand.recipeList.add((Player) commandSender);
+        RecipeCommand.RECIPE_LIST.add((Player) commandSender);
         var recipe = recipeList.get(0);
         if (recipe instanceof ShapelessRecipe shapelessRecipe) {
             var inventoryView = player.openWorkbench(player.getLocation(), true);
             var craftingInventory = inventoryView.getTopInventory();
             var contents = new ItemStack[10];
-            for (var i = 0; i < 10; i++)
-                contents[i] = null;
+            for (var index = 0; index < 10; index++)
+                contents[index] = null;
 
-            for (int i = 1, i1 = 0; i < Math.min(shapelessRecipe.getIngredientList().size() + 1, 11); i++, i1++)
-                contents[i] = this.normalize(shapelessRecipe.getIngredientList().get(i1));
+            for (int index = 1, index1 = 0; index < Math.min(shapelessRecipe.getIngredientList().size() + 1, 11); index++, index1++)
+                contents[index] = this.Normalize(shapelessRecipe.getIngredientList().get(index1));
 
             craftingInventory.setContents(contents);
             return true;
@@ -176,8 +178,8 @@ public class RecipeCommand extends CommandUtils implements CommandExecutorOverlo
             var inventoryView = player.openWorkbench(player.getLocation(), true);
             var craftingInventory = inventoryView.getTopInventory();
             var contents = new ItemStack[10];
-            for (var i = 0; i < 10; i++)
-                contents[i] = null;
+            for (var index = 0; index < 10; index++)
+                contents[index] = null;
 
             Map<Character, ItemStack> ingredient = new LinkedHashMap<>();
 
@@ -186,13 +188,13 @@ public class RecipeCommand extends CommandUtils implements CommandExecutorOverlo
             List<String> alphabet = new ArrayList<>(Arrays.asList("abcdefghijklmnopqrstuvwxyz".split("")));
 
             for (var row : rows)
-                for (String character : row.split(""))
+                for (var character : SPLIT_PATTERN.split(row))
                     alphabet.remove(character);
 
             for (var row : rows) {
                 var rowEdit = new StringBuilder(row);
-                var rowLength = row.split("").length;
-                for (var character : row.split(""))
+                var rowLength = SPLIT_PATTERN.split(row).length;
+                for (var character : SPLIT_PATTERN.split(row))
                     if (character.equalsIgnoreCase(" "))
                         ingredient.put(character.charAt(0), null);
                     else
@@ -200,7 +202,7 @@ public class RecipeCommand extends CommandUtils implements CommandExecutorOverlo
 
                 var usedCharacter = "";
 
-                for (var i = rowLength; i < 3; i++)
+                for (var index = rowLength; index < 3; index++)
                     for (var character : alphabet)
                         if (!rowEdit.toString().contains(character)) {
                             rowEdit.append(character);
@@ -209,16 +211,16 @@ public class RecipeCommand extends CommandUtils implements CommandExecutorOverlo
                             break;
                         }
 
-                for (var character : usedCharacter.split(""))
+                for (var character : SPLIT_PATTERN.split(usedCharacter))
                     alphabet.remove(character);
             }
 
-            var i = 1;
+            var index = 1;
             for (var itemStack : ingredient.values()) {
-                if (i >= 10)
+                if (index >= 10)
                     break;
-                contents[i] = this.normalize(itemStack);
-                i += 1;
+                contents[index] = this.Normalize(itemStack);
+                index += 1;
             }
 
             craftingInventory.setContents(contents);
@@ -226,13 +228,13 @@ public class RecipeCommand extends CommandUtils implements CommandExecutorOverlo
         }
 
         
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                  this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Recipe.NoRecipe").replace("<MATERIAL>", name));
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                  this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Recipe.NoRecipe").replace("<MATERIAL>", name));
 
         return true;
     }
 
-    private ItemStack normalize(ItemStack itemStack) {
+    private ItemStack Normalize(ItemStack itemStack) {
         return itemStack;
     }
 }

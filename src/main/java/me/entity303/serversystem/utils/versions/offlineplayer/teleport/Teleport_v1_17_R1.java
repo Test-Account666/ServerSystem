@@ -10,84 +10,84 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Locale;
 
-public class Teleport_v1_17_R1 extends CommandUtils implements Teleport {
-    private Method setLocationMethod = null;
-    private Field worldField = null;
-    private Method getHandleMethod = null;
+public class Teleport_v1_17_R1 extends CommandUtils implements ITeleport {
+    private Method _setLocationMethod = null;
+    private Field _worldField = null;
+    private Method _getHandleMethod = null;
 
     public Teleport_v1_17_R1(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public void teleport(Player player, Location location) {
-        if (this.worldField == null)
+    public void Teleport(Player player, Location location) {
+        if (this._worldField == null)
             try {
-                this.worldField = Class.forName("net.minecraft.server." + this.plugin.getVersionManager().getNMSVersion() + ".Entity").getDeclaredField("world");
-                this.worldField.setAccessible(true);
-            } catch (NoSuchFieldException | ClassNotFoundException e) {
-                if (e instanceof ClassNotFoundException)
+                this._worldField = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".Entity").getDeclaredField("world");
+                this._worldField.setAccessible(true);
+            } catch (NoSuchFieldException | ClassNotFoundException exception) {
+                if (exception instanceof ClassNotFoundException)
                     try {
                         for (var field : Class.forName("net.minecraft.world.entity.Entity").getDeclaredFields())
                             if (field.getType().getName().toLowerCase(Locale.ROOT).contains("world")) {
-                                this.worldField = field;
+                                this._worldField = field;
                                 break;
                             }
 
-                        this.worldField.setAccessible(true);
-                    } catch (ClassNotFoundException ex) {
-                        ex.printStackTrace();
+                        this._worldField.setAccessible(true);
+                    } catch (ClassNotFoundException exception1) {
+                        exception1.printStackTrace();
                     }
                 else
-                    e.printStackTrace();
+                    exception.printStackTrace();
                 return;
             }
 
-        if (this.setLocationMethod == null)
+        if (this._setLocationMethod == null)
             try {
-                this.setLocationMethod = Class.forName("net.minecraft.server." + this.plugin.getVersionManager().getNMSVersion() + ".Entity")
-                                              .getDeclaredMethod("setLocation", double.class, double.class, double.class, float.class, float.class);
-            } catch (NoSuchMethodException | ClassNotFoundException e) {
-                if (e instanceof ClassNotFoundException)
+                this._setLocationMethod = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".Entity")
+                                               .getDeclaredMethod("setLocation", double.class, double.class, double.class, float.class, float.class);
+            } catch (NoSuchMethodException | ClassNotFoundException exception) {
+                if (exception instanceof ClassNotFoundException)
                     try {
-                        this.setLocationMethod = Class.forName("net.minecraft.world.entity.Entity")
-                                                      .getDeclaredMethod("setLocation", double.class, double.class, double.class, float.class, float.class);
-                    } catch (NoSuchMethodException | ClassNotFoundException ex) {
-                        ex.printStackTrace();
+                        this._setLocationMethod = Class.forName("net.minecraft.world.entity.Entity")
+                                                       .getDeclaredMethod("setLocation", double.class, double.class, double.class, float.class, float.class);
+                    } catch (NoSuchMethodException | ClassNotFoundException exception1) {
+                        exception1.printStackTrace();
                     }
                 else
-                    e.printStackTrace();
+                    exception.printStackTrace();
             }
 
-        if (this.getHandleMethod == null)
+        if (this._getHandleMethod == null)
             try {
-                this.getHandleMethod =
-                        Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".CraftWorld").getDeclaredMethod("getHandle");
-            } catch (NoSuchMethodException | ClassNotFoundException e) {
-                e.printStackTrace();
+                this._getHandleMethod =
+                        Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".CraftWorld").getDeclaredMethod("getHandle");
+            } catch (NoSuchMethodException | ClassNotFoundException exception) {
+                exception.printStackTrace();
                 return;
             }
 
 
         Object entity;
         try {
-            entity = this.plugin.getVersionStuff().getGetHandleMethod().invoke(player);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            entity = this._plugin.GetVersionStuff().GetGetHandleMethod().invoke(player);
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            exception.printStackTrace();
             return;
         }
 
         Object worldServer;
         try {
-            worldServer = this.getHandleMethod.invoke(location.getWorld());
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            worldServer = this._getHandleMethod.invoke(location.getWorld());
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            exception.printStackTrace();
             return;
         }
         try {
-            this.worldField.set(entity, worldServer);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            this._worldField.set(entity, worldServer);
+        } catch (IllegalAccessException exception) {
+            exception.printStackTrace();
         }
     }
 }

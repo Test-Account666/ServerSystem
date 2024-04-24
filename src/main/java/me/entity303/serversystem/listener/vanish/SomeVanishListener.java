@@ -17,37 +17,37 @@ public class SomeVanishListener extends CommandUtils implements Listener {
     }
 
     @EventHandler
-    public void onVehicleCollision(VehicleEntityCollisionEvent e) {
-        if (!(e.getEntity() instanceof Player player))
+    public void OnVehicleCollision(VehicleEntityCollisionEvent event) {
+        if (!(event.getEntity() instanceof Player player))
             return;
-        if (this.plugin.getVanish().isVanish(player)) {
-            e.setCancelled(true);
-            e.setPickupCancelled(true);
-            e.setCollisionCancelled(true);
+        if (this._plugin.GetVanish().IsVanish(player)) {
+            event.setCancelled(true);
+            event.setPickupCancelled(true);
+            event.setCollisionCancelled(true);
         }
 
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onHangingBreak(HangingBreakByEntityEvent e) {
-        var entity = e.getRemover();
+    public void OnHangingBreak(HangingBreakByEntityEvent event) {
+        var entity = event.getRemover();
         if (!(entity instanceof Player player))
             return;
-        if (this.plugin.getVanish().isVanish(player) && this.plugin.getVanish().getAllowInteract().contains(player) &&
-            this.plugin.getCommandManager().isInteractActive())
-            e.setCancelled(true);
+        if (this._plugin.GetVanish().IsVanish(player) && this._plugin.GetVanish().GetAllowInteract().contains(player) &&
+            this._plugin.GetCommandManager().IsInteractActive())
+            event.setCancelled(true);
 
     }
 
     @EventHandler
-    public void onPlayerChangedWorld(PlayerChangedWorldEvent e) {
-        if (this.plugin.getVanish().isVanish(e.getPlayer()))
-            this.plugin.getVanish().setVanish(true, e.getPlayer());
+    public void OnPlayerChangedWorld(PlayerChangedWorldEvent event) {
+        if (this._plugin.GetVanish().IsVanish(event.getPlayer()))
+            this._plugin.GetVanish().SetVanish(true, event.getPlayer());
         else {
-            var vanished = this.plugin.getVanish().getVanishList();
+            var vanished = this._plugin.GetVanish().GetVanishList();
             for (var uuid : vanished)
                 if (Bukkit.getOfflinePlayer(uuid).isOnline())
-                    this.plugin.getVanish().setVanish(true, Bukkit.getPlayer(uuid));
+                    this._plugin.GetVanish().SetVanish(true, Bukkit.getPlayer(uuid));
         }
 
     }

@@ -1,6 +1,6 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Material;
@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 
-public class UnSignCommand extends CommandUtils implements CommandExecutorOverload {
+public class UnSignCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public UnSignCommand(ServerSystem plugin) {
         super(plugin);
@@ -17,21 +17,21 @@ public class UnSignCommand extends CommandUtils implements CommandExecutorOverlo
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "unsign")) {
-            var permission = this.plugin.getPermissions().getPermission("unsign");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "unsign")) {
+            var permission = this._plugin.GetPermissions().GetPermission("unsign");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
 
         if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getOnlyPlayer());
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetOnlyPlayer());
             return true;
         }
 
         player.getInventory().getItemInMainHand();
         if (player.getInventory().getItemInMainHand().getType() == Material.AIR) {
             commandSender.sendMessage(
-                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "UnSign.NoItem"));
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "UnSign.NoItem"));
             return true;
         }
 
@@ -39,7 +39,7 @@ public class UnSignCommand extends CommandUtils implements CommandExecutorOverlo
         assert meta != null;
         if (!meta.hasLore()) {
             commandSender.sendMessage(
-                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "UnSign.NotSigned"));
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "UnSign.NotSigned"));
             return true;
         }
 
@@ -49,7 +49,7 @@ public class UnSignCommand extends CommandUtils implements CommandExecutorOverlo
         player.updateInventory();
 
         commandSender.sendMessage(
-                this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "UnSign.Success"));
+                this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "UnSign.Success"));
         return true;
     }
 }

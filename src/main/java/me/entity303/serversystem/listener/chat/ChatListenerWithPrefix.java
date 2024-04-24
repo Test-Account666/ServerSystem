@@ -11,57 +11,57 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import java.util.UUID;
 
 public class ChatListenerWithPrefix extends CommandUtils implements Listener {
-    private final String format;
-    private final boolean withPrefix;
+    private final String _format;
+    private final boolean _withPrefix;
 
     public ChatListenerWithPrefix(ServerSystem plugin, boolean withPrefix, String format) {
         super(plugin);
-        this.format = format;
-        this.withPrefix = withPrefix;
+        this._format = format;
+        this._withPrefix = withPrefix;
     }
 
     @EventHandler
-    public void onChatWithPrefix(AsyncPlayerChatEvent e) {
-        var muteManager = this.plugin.getMuteManager();
-        if (muteManager.isMuted(e.getPlayer())) {
-            var mute = muteManager.getMute(e.getPlayer());
-            if (mute.getUNMUTE_TIME() > 0)
-                if (mute.getUNMUTE_TIME() <= System.currentTimeMillis())
-                    muteManager.removeMute(e.getPlayer().getUniqueId());
-            if (!mute.isSHADOW()) {
+    public void OnChatWithPrefix(AsyncPlayerChatEvent event) {
+        var muteManager = this._plugin.GetMuteManager();
+        if (muteManager.IsMuted(event.getPlayer())) {
+            var mute = muteManager.GetMute(event.getPlayer());
+            if (mute.GetExpireTime() > 0)
+                if (mute.GetExpireTime() <= System.currentTimeMillis())
+                    muteManager.RemoveMute(event.getPlayer().getUniqueId());
+            if (!mute.IsShadow()) {
                 String senderName = null;
                 try {
-                    senderName = Bukkit.getOfflinePlayer(UUID.fromString(mute.getSENDER_UUID())).getName();
+                    senderName = Bukkit.getOfflinePlayer(UUID.fromString(mute.GetSenderUuid())).getName();
                 } catch (Exception ignored) {
                 }
                 if (senderName == null)
-                    senderName = mute.getSENDER_UUID();
-                e.getPlayer()
-                 .sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                 .getMessage("mute", "mute", senderName, e.getPlayer(), "Mute.Muted")
-                                                                                 .replace("<UNMUTE_DATE>", mute.getUNMUTE_DATE()));
-                e.setCancelled(true);
+                    senderName = mute.GetSenderUuid();
+                event.getPlayer()
+                 .sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                 .GetMessage("mute", "mute", senderName, event.getPlayer(), "Mute.Muted")
+                                                                                 .replace("<UNMUTE_DATE>", mute.GetExpireDate()));
+                event.setCancelled(true);
                 return;
             }
-            e.getRecipients().removeIf(all -> all != e.getPlayer());
+            event.getRecipients().removeIf(all -> all != event.getPlayer());
         }
 
-        if (!this.withPrefix)
+        if (!this._withPrefix)
             return;
 
-        if (this.plugin.getVault() == null)
+        if (this._plugin.GetVault() == null)
             throw new NullPointerException("Cannot use vault when it doesn't exist!");
 
-        var prefix = ChatColor.translateAlternateColorCodes('&', this.plugin.getVault().getChat().getPlayerPrefix(e.getPlayer()));
-        var suffix = ChatColor.translateAlternateColorCodes('&', this.plugin.getVault().getChat().getPlayerSuffix(e.getPlayer()));
-        if (this.plugin.getPermissions().hasPermission(e.getPlayer(), "colorchat", true))
-            e.setMessage(ChatColor.translateAlternateColorCodes('&', e.getMessage().replace("%", "%%")));
+        var prefix = ChatColor.TranslateAlternateColorCodes('&', this._plugin.GetVault().GetChat().getPlayerPrefix(event.getPlayer()));
+        var suffix = ChatColor.TranslateAlternateColorCodes('&', this._plugin.GetVault().GetChat().getPlayerSuffix(event.getPlayer()));
+        if (this._plugin.GetPermissions().HasPermission(event.getPlayer(), "colorchat", true))
+            event.setMessage(ChatColor.TranslateAlternateColorCodes('&', event.getMessage().replace("%", "%%")));
         else
-            e.setMessage(e.getMessage().replace("%", "%%"));
-        e.setFormat(ChatColor.translateAlternateColorCodes('&', this.format)
+            event.setMessage(event.getMessage().replace("%", "%%"));
+        event.setFormat(ChatColor.TranslateAlternateColorCodes('&', this._format)
                              .replace("<prefix>", prefix)
                              .replace("<suffix>", suffix)
-                             .replace("<player>", e.getPlayer().getDisplayName())
-                             .replace("<message>", e.getMessage()));
+                             .replace("<player>", event.getPlayer().getDisplayName())
+                             .replace("<message>", event.getMessage()));
     }
 }

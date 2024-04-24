@@ -16,18 +16,22 @@ import java.util.HashSet;
 import java.util.UUID;
 
 public class AwayFromKeyboardListener implements Listener {
-    private final ServerSystem plugin;
-    private final HashMap<String, Long> awayFromKeyboardMap = new HashMap<>();
-    private final long maxDuration;
+    public static final String AFK_ENABLED = "Afk.Enabled";
+    public static final String AFK_DISABLED = "Afk.Disabled";
+    private final ServerSystem _plugin;
+    private final HashMap<String, Long> _awayFromKeyboardMap = new HashMap<>();
+    private final long _maxDuration;
 
 
     public AwayFromKeyboardListener(ServerSystem plugin, long maxDuration, long kickDuration) {
-        this.plugin = plugin;
-        this.maxDuration = maxDuration;
+        this._plugin = plugin;
+        this._maxDuration = maxDuration;
 
-        Bukkit.getScheduler().scheduleAsyncRepeatingTask(this.plugin, () -> {
-            for (var entry : new HashSet<>(this.awayFromKeyboardMap.entrySet())) {
-                var uuid = UUID.fromString(entry.getKey());
+        Bukkit.getScheduler().scheduleAsyncRepeatingTask(this._plugin, () -> {
+            var entrySet = this._awayFromKeyboardMap.entrySet();
+            for (var entry : new HashSet<>(entrySet)) {
+                var entryKey = entry.getKey();
+                var uuid = UUID.fromString(entryKey);
                 var duration = System.currentTimeMillis() - entry.getValue();
 
                 if (duration < maxDuration)
@@ -35,12 +39,14 @@ public class AwayFromKeyboardListener implements Listener {
 
                 var player = Bukkit.getPlayer(uuid);
 
+                var uuidString = uuid.toString();
                 if (player == null) {
-                    this.awayFromKeyboardMap.remove(uuid.toString());
+                    this._awayFromKeyboardMap.remove(uuidString);
                     continue;
                 }
 
-                if (this.isAwayFromKeyboard(player)) {
+                var pluginMessages = this._plugin.GetMessages();
+                if (this.IsAwayFromKeyboard(player)) {
 
                     if (kickDuration <= 0)
                         continue;
@@ -48,73 +54,88 @@ public class AwayFromKeyboardListener implements Listener {
                     if (duration < kickDuration)
                         continue;
 
-                    Bukkit.getScheduler().runTask(this.plugin, () -> {
-                        this.awayFromKeyboardMap.remove(uuid.toString());
-                        player.kickPlayer(this.plugin.getMessages().getMessage("afk", "afk", player, null, "Afk.Kick"));
+                    Bukkit.getScheduler().runTask(this._plugin, () -> {
+                        this._awayFromKeyboardMap.remove(uuidString);
+                        var message = pluginMessages.GetMessage("afk", "afk", player, null, "Afk.Kick");
+                        player.kickPlayer(message);
                     });
                     continue;
                 }
 
-                player.removeMetadata("afk", this.plugin);
-                player.setMetadata("afk", this.plugin.getMetaValue().getMetaValue(true));
+                player.removeMetadata("afk", this._plugin);
+                var metaValueGenerator = this._plugin.GetMetaValue();
+                var metaValue = metaValueGenerator.GetMetaValue(true);
+                player.setMetadata("afk", metaValue);
 
-                player.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage("afk", "afk", player, null, "Afk.Enabled"));
+                var prefix = pluginMessages.GetPrefix();
+                var message = pluginMessages.GetMessage("afk", "afk", player, null, AFK_ENABLED);
+                player.sendMessage(prefix + message);
             }
         }, 20L, 20L);
 
 
         for (var all : Bukkit.getOnlinePlayers())
-            this.onJoin(new PlayerJoinEvent(all, ""));
+            this.OnJoin(new PlayerJoinEvent(all, ""));
     }
 
-    private boolean isAwayFromKeyboard(Player player) {
+    private boolean IsAwayFromKeyboard(Player player) {
         var awayFromKeyboard = false;
 
-        awayFromKeyboard = AwayFromKeyboardCommand.isAwayFromKeyboard(player);
+        awayFromKeyboard = AwayFromKeyboardCommand.IsAwayFromKeyboard(player);
 
-        if (this.awayFromKeyboardMap.containsKey(player.getUniqueId().toString())) {
-            var duration = System.currentTimeMillis() - this.awayFromKeyboardMap.get(player.getUniqueId().toString());
+        var uniqueId = player.getUniqueId();
+        var uuidString = uniqueId.toString();
+        if (this._awayFromKeyboardMap.containsKey(uuidString)) {
+            var duration = System.currentTimeMillis() - this._awayFromKeyboardMap.get(uuidString);
 
-            return awayFromKeyboard && duration > this.maxDuration;
+            return awayFromKeyboard && duration > this._maxDuration;
         }
 
         return awayFromKeyboard;
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
-        e.getPlayer().removeMetadata("afk", this.plugin);
-        e.getPlayer().setMetadata("afk", this.plugin.getMetaValue().getMetaValue(false));
+    public void OnJoin(PlayerJoinEvent event) {
+        event.getPlayer().removeMetadata("afk", this._plugin);
+        var metaValue = this._plugin.GetMetaValue().GetMetaValue(false);
+        event.getPlayer().setMetadata("afk", metaValue);
 
         var currentTime = System.currentTimeMillis();
-        this.awayFromKeyboardMap.put(e.getPlayer().getUniqueId().toString(), currentTime);
+        var uuidString = event.getPlayer().getUniqueId().toString();
+        this._awayFromKeyboardMap.put(uuidString, currentTime);
     }
 
     @EventHandler
-    public void onQuit(PlayerQuitEvent e) {
-        e.getPlayer().removeMetadata("afk", this.plugin);
-        this.awayFromKeyboardMap.remove(e.getPlayer().getUniqueId().toString());
+    public void OnQuit(PlayerQuitEvent event) {
+        event.getPlayer().removeMetadata("afk", this._plugin);
+        var uuidString = event.getPlayer().getUniqueId().toString();
+        this._awayFromKeyboardMap.remove(uuidString);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onMove(PlayerMoveEvent e) {
-        if (e.getPlayer().getLocation().getYaw() == e.getTo().getYaw())
-            if (e.getPlayer().getLocation().getPitch() == e.getTo().getPitch())
+    public void OnMove(PlayerMoveEvent event) {
+        var player = event.getPlayer();
+        if (player.getLocation().getYaw() == event.getTo().getYaw())
+            if (player.getLocation().getPitch() == event.getTo().getPitch())
                 return;
 
-        var awayFromKeyboard = this.isAwayFromKeyboard(e.getPlayer());
+        var awayFromKeyboard = this.IsAwayFromKeyboard(player);
 
         var currentTime = System.currentTimeMillis();
 
-        this.awayFromKeyboardMap.put(e.getPlayer().getUniqueId().toString(), currentTime);
+        var uuidString = player.getUniqueId().toString();
+        this._awayFromKeyboardMap.put(uuidString, currentTime);
 
         if (!awayFromKeyboard)
             return;
 
-        e.getPlayer().removeMetadata("afk", this.plugin);
-        e.getPlayer().setMetadata("afk", this.plugin.getMetaValue().getMetaValue(false));
+        player.removeMetadata("afk", this._plugin);
+        var metaValue = this._plugin.GetMetaValue().GetMetaValue(false);
+        player.setMetadata("afk", metaValue);
 
-        e.getPlayer()
-         .sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage("afk", "afk", e.getPlayer(), null, "Afk.Disabled"));
+        var pluginMessages = this._plugin.GetMessages();
+        var prefix = pluginMessages.GetPrefix();
+        var message = pluginMessages.GetMessage("afk", "afk", player, null, AFK_DISABLED);
+        player.sendMessage(prefix + message);
     }
 }

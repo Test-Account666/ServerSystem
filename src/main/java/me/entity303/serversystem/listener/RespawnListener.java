@@ -20,23 +20,23 @@ public class RespawnListener extends CommandUtils implements Listener {
 
 
     @EventHandler
-    public void onRespawn(PlayerRespawnEvent e) {
-        if (!e.isBedSpawn() || this.plugin.getConfigReader().getBoolean("spawn.forceRespawn")) {
+    public void OnRespawn(PlayerRespawnEvent event) {
+        if (!event.isBedSpawn() || this._plugin.GetConfigReader().GetBoolean("spawn.forceRespawn")) {
             var spawnFile = new File("plugins//ServerSystem", "spawn.yml");
             if (!spawnFile.exists()) {
-                var sender = e.getPlayer().getName();
-                e.getPlayer()
-                 .sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage("spawn", "spawn", sender, null, "Spawn.NoSpawn"));
+                var sender = event.getPlayer().getName();
+                event.getPlayer()
+                 .sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage("spawn", "spawn", sender, null, "Spawn.NoSpawn"));
             } else {
                 FileConfiguration cfg = YamlConfiguration.loadConfiguration(spawnFile);
                 if (Bukkit.getWorld(cfg.getString("Spawn.World")) == null) {
-                    var sender = e.getPlayer().getName();
-                    e.getPlayer()
-                     .sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage("spawn", "spawn", sender, null, "Spawn.NoSpawn"));
+                    var sender = event.getPlayer().getName();
+                    event.getPlayer()
+                     .sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage("spawn", "spawn", sender, null, "Spawn.NoSpawn"));
                 }
-                var location = e.getPlayer().getLocation().clone();
+                var location = event.getPlayer().getLocation().clone();
                 SpawnCommand.GetSpawnLocation(cfg, location);
-                e.setRespawnLocation(location);
+                event.setRespawnLocation(location);
             }
         }
     }

@@ -1,7 +1,7 @@
 package me.entity303.serversystem.utils.interceptors.invsee;
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.Morpher;
+import me.entity303.serversystem.utils.IMorpher;
 import net.bytebuddy.implementation.bind.annotation.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,129 +17,138 @@ import java.util.TimerTask;
 
 public class InvseeSetItemInterceptor {
 
-    private final ServerSystem plugin;
-    private final Player victim;
-    private final Player player;
-    private final PlayerInventory master;
-    private Method asCraftMirrorMethod = null;
-    private Method setCountMethod = null;
-    private Method getInventoryMethod = null;
-    private Method setItemMethod = null;
-    private Object masterNms = null;
+    private final ServerSystem _plugin;
+    private final Player _victim;
+    private final Player _player;
+    private final PlayerInventory _masterInventory;
+    private Method _asCraftMirrorMethod = null;
+    private Method _setCountMethod = null;
+    private Method _getInventoryMethod = null;
+    private Method _setItemMethod = null;
+    private Object _masterInventoryNms = null;
 
     public InvseeSetItemInterceptor(ServerSystem plugin, Player victim, Player player) {
-        this.plugin = plugin;
-        this.victim = victim;
-        this.player = player;
-        this.master = victim.getInventory();
+        this._plugin = plugin;
+        this._victim = victim;
+        this._player = player;
+        this._masterInventory = victim.getInventory();
     }
 
+    @SuppressWarnings("NewMethodNamingConvention")
     @RuntimeType
-    public void intercept(@This Object obj, @AllArguments Object[] allArguments, @Morph Morpher morpher, @SuperMethod Method method) {
-        if (this.asCraftMirrorMethod == null)
+    public void intercept(@This Object obj, @AllArguments Object[] allArguments, @Morph IMorpher morpher, @SuperMethod Method method) {
+        if (this._asCraftMirrorMethod == null)
             try {
-                this.asCraftMirrorMethod = Arrays.stream(
-                        Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".inventory.CraftItemStack")
+                this._asCraftMirrorMethod = Arrays.stream(
+                        Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".inventory.CraftItemStack")
                              .getDeclaredMethods()).filter(method1 -> method1.getName().equalsIgnoreCase("asCraftMirror")).findFirst().orElse(null);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+            } catch (ClassNotFoundException exception) {
+                exception.printStackTrace();
                 return;
             }
 
-        if (this.masterNms == null) {
-            if (this.getInventoryMethod == null)
+        if (this._masterInventoryNms == null) {
+            if (this._getInventoryMethod == null)
                 try {
-                    this.getInventoryMethod =
-                            Class.forName("org.bukkit.craftbukkit." + this.plugin.getVersionManager().getNMSVersion() + ".inventory.CraftInventoryPlayer")
+                    this._getInventoryMethod =
+                            Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".inventory.CraftInventoryPlayer")
                                  .getDeclaredMethod("getInventory");
-                } catch (NoSuchMethodException | ClassNotFoundException e) {
-                    e.printStackTrace();
+                } catch (NoSuchMethodException | ClassNotFoundException exception) {
+                    exception.printStackTrace();
                     return;
                 }
 
             try {
-                this.masterNms = this.getInventoryMethod.invoke(this.master);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                this._masterInventoryNms = this._getInventoryMethod.invoke(this._masterInventory);
+            } catch (IllegalAccessException | InvocationTargetException exception) {
+                exception.printStackTrace();
                 return;
             }
         }
 
         if (allArguments[0] instanceof Integer) {
-            var i = (int) allArguments[0];
+            var index = (int) allArguments[0];
 
-            if (i > 45 - 5)
+            if (index > 45 - 5)
                 if (allArguments[1] != null) {
 
-                    if (this.setCountMethod == null)
+                    if (this._setCountMethod == null)
                         try {
-                            this.setCountMethod = allArguments[1].getClass().getDeclaredMethod("setCount", int.class);
+                            this._setCountMethod = allArguments[1].getClass().getDeclaredMethod("setCount", int.class);
                         } catch (NoSuchMethodException ignored) {
                         }
 
 
                     try {
-                        var itemStack = (ItemStack) this.asCraftMirrorMethod.invoke(null, allArguments[1]);
+                        var itemStack = (ItemStack) this._asCraftMirrorMethod.invoke(null, allArguments[1]);
                         if (!itemStack.getType().name().contains("AIR"))
-                            this.victim.getWorld()
-                                       .dropItem(this.victim.getEyeLocation().add(0, -0.33, 0), itemStack)
-                                       .setVelocity(new Vector(0.0, 0.0, 0.0).add(this.victim.getLocation().getDirection().multiply(0.35)));
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        e.printStackTrace();
+                            this._victim.getWorld()
+                                        .dropItem(this._victim.getEyeLocation().add(0, -0.33, 0), itemStack)
+                                        .setVelocity(new Vector(0.0, 0.0, 0.0).add(this._victim.getLocation().getDirection().multiply(0.35)));
+                    } catch (IllegalAccessException | InvocationTargetException exception) {
+                        exception.printStackTrace();
                         return;
                     }
 
                     var timer = new Timer();
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            if (InvseeSetItemInterceptor.this.setCountMethod != null)
-                                try {
-                                    InvseeSetItemInterceptor.this.setCountMethod.invoke(allArguments[1], 0);
-                                } catch (IllegalAccessException | InvocationTargetException e) {
-                                    if (e instanceof InvocationTargetException) {
-                                        if (!(e.getCause() instanceof AssertionError))
-                                            e.printStackTrace();
-                                    } else
-                                        e.printStackTrace();
-                                }
-
-                            try {
-                                var itemStack = (ItemStack) InvseeSetItemInterceptor.this.asCraftMirrorMethod.invoke(null, allArguments[1]);
-                                itemStack.setAmount(0);
-                            } catch (IllegalAccessException | InvocationTargetException e) {
-                                e.printStackTrace();
-                            }
-
-                            InvseeSetItemInterceptor.this.player.getItemOnCursor().setAmount(0);
-
-                            InvseeSetItemInterceptor.this.player.updateInventory();
-                        }
-                    }, 1000L / 20);
+                    timer.schedule(new MyTimerTask(allArguments), 1000L / 20);
                     return;
                 }
 
-            if (this.setItemMethod == null)
-                this.setItemMethod = Arrays.stream(this.masterNms.getClass().getDeclaredMethods())
-                                           .filter(method1 -> method1.getName().equalsIgnoreCase("setItem"))
-                                           .findFirst()
-                                           .orElse(null);
+            if (this._setItemMethod == null)
+                this._setItemMethod = Arrays.stream(this._masterInventoryNms.getClass().getDeclaredMethods())
+                                            .filter(method1 -> method1.getName().equalsIgnoreCase("setItem"))
+                                            .findFirst()
+                                            .orElse(null);
 
-            if (this.setItemMethod == null)
-                for (var m : this.masterNms.getClass().getDeclaredMethods())
-                    if (m.getReturnType().getName().equalsIgnoreCase(void.class.getName()))
-                        if (m.getParameters().length == 2)
-                            if (m.getParameters()[0].getType().getName().equalsIgnoreCase(int.class.getName()))
-                                if (m.getParameters()[1].getType().getName().toLowerCase(Locale.ROOT).contains("itemstack")) {
-                                    this.setItemMethod = m;
+            if (this._setItemMethod == null)
+                for (var declaredMethod : this._masterInventoryNms.getClass().getDeclaredMethods())
+                    if (declaredMethod.getReturnType().getName().equalsIgnoreCase(void.class.getName()))
+                        if (declaredMethod.getParameters().length == 2)
+                            if (declaredMethod.getParameters()[0].getType().getName().equalsIgnoreCase(int.class.getName()))
+                                if (declaredMethod.getParameters()[1].getType().getName().toLowerCase(Locale.ROOT).contains("itemstack")) {
+                                    this._setItemMethod = declaredMethod;
                                     break;
                                 }
 
             try {
-                this.setItemMethod.invoke(this.masterNms, allArguments[0], allArguments[1]);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                this._setItemMethod.invoke(this._masterInventoryNms, allArguments[0], allArguments[1]);
+            } catch (IllegalAccessException | InvocationTargetException exception) {
+                exception.printStackTrace();
             }
+        }
+    }
+
+    private class MyTimerTask extends TimerTask {
+        private final Object[] _allArguments;
+
+        public MyTimerTask(Object... allArguments) {
+            this._allArguments = allArguments;
+        }
+
+        @Override
+        public void run() {
+            if (InvseeSetItemInterceptor.this._setCountMethod != null)
+                try {
+                    InvseeSetItemInterceptor.this._setCountMethod.invoke(_allArguments[1], 0);
+                } catch (IllegalAccessException | InvocationTargetException exception) {
+                    if (exception instanceof InvocationTargetException) {
+                        if (!(exception.getCause() instanceof AssertionError))
+                            exception.printStackTrace();
+                    } else
+                        exception.printStackTrace();
+                }
+
+            try {
+                var itemStack = (ItemStack) InvseeSetItemInterceptor.this._asCraftMirrorMethod.invoke(null, _allArguments[1]);
+                itemStack.setAmount(0);
+            } catch (IllegalAccessException | InvocationTargetException exception) {
+                exception.printStackTrace();
+            }
+
+            InvseeSetItemInterceptor.this._player.getItemOnCursor().setAmount(0);
+
+            InvseeSetItemInterceptor.this._player.updateInventory();
         }
     }
 }

@@ -1,6 +1,6 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.GameMode;
@@ -12,22 +12,22 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class GameModeCommand extends CommandUtils implements CommandExecutorOverload {
-    private final ServerSystem plugin;
+public class GameModeCommand extends CommandUtils implements ICommandExecutorOverload {
+    private final ServerSystem _plugin;
 
     public GameModeCommand(ServerSystem plugin) {
         super(plugin);
-        this.plugin = plugin;
+        this._plugin = plugin;
 
-        var gameModeCreativeCommand = new GameModeCreativeCommmand(this.plugin, this);
-        var gameModeSurvivalCommand = new GameModeSurvivalCommand(this.plugin, this);
-        var gameModeAdventureCommand = new GameModeAdventureCommand(this.plugin, this);
-        var gameModeSpectatorCommand = new GameModeSpectatorCommand(this.plugin, this);
+        var gameModeCreativeCommand = new GameModeCreativeCommmand(this._plugin, this);
+        var gameModeSurvivalCommand = new GameModeSurvivalCommand(this._plugin, this);
+        var gameModeAdventureCommand = new GameModeAdventureCommand(this._plugin, this);
+        var gameModeSpectatorCommand = new GameModeSpectatorCommand(this._plugin, this);
 
-        plugin.getCommandManager().registerCommand("gmc", gameModeCreativeCommand, null);
-        plugin.getCommandManager().registerCommand("gms", gameModeSurvivalCommand, null);
-        plugin.getCommandManager().registerCommand("gma", gameModeAdventureCommand, null);
-        plugin.getCommandManager().registerCommand("gmsp", gameModeSpectatorCommand, null);
+        plugin.GetCommandManager().RegisterCommand("gmc", gameModeCreativeCommand, null);
+        plugin.GetCommandManager().RegisterCommand("gms", gameModeSurvivalCommand, null);
+        plugin.GetCommandManager().RegisterCommand("gma", gameModeAdventureCommand, null);
+        plugin.GetCommandManager().RegisterCommand("gmsp", gameModeSpectatorCommand, null);
     }
 
     @SuppressWarnings("DuplicatedCode")
@@ -52,52 +52,52 @@ public class GameModeCommand extends CommandUtils implements CommandExecutorOver
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (!this.hasPermission(commandSender, arguments)) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission("gamemode"));
+        if (!this.HasPermission(commandSender, arguments)) {
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(this._plugin.GetPermissions().GetPermission("gamemode")));
             return true;
         }
 
         if (arguments.length == 0) {
             commandSender.sendMessage(
-                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "GameMode"));
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "GameMode"));
             return true;
         }
 
-        var gameMode = this.parseGameMode(arguments[0]);
+        var gameMode = this.ParseGameMode(arguments[0]);
         if (gameMode == null) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                         .getMessage(commandLabel, command, commandSender, null,
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                         .GetMessage(commandLabel, command, commandSender, null,
                                                                                                      "GameMode.NotGameMode")
                                                                                          .replace("<MODE>", arguments[0].toUpperCase()));
             return true;
         }
 
         if (arguments.length == 1) {
-            this.changeGameMode(commandSender, gameMode, command, commandLabel);
+            this.ChangeGameMode(commandSender, gameMode, command, commandLabel);
             return true;
         }
 
-        var target = this.getPlayer(commandSender, arguments[1]);
+        var target = this.GetPlayer(commandSender, arguments[1]);
         if (target == null) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[1]));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[1]));
             return true;
         }
 
-        this.changeGameMode(target, gameMode, commandSender, command, commandLabel);
+        this.ChangeGameMode(target, gameMode, commandSender, command, commandLabel);
         return true;
     }
 
-    private boolean hasPermission(CommandSender sender, String... arguments) {
+    private boolean HasPermission(CommandSender sender, String... arguments) {
         var permission = arguments.length == 1? "gamemode.self." : "gamemode.others.";
 
-        var parsedGameMode = this.parseGameMode(arguments[0]);
+        var parsedGameMode = this.ParseGameMode(arguments[0]);
 
         assert parsedGameMode != null;
-        permission += this.getGameModeName(parsedGameMode).toLowerCase();
-        return this.plugin.getPermissions().hasPermission(sender, permission, true);
+        permission += this.GetGameModeName(parsedGameMode).toLowerCase();
+        return this._plugin.GetPermissions().HasPermission(sender, permission, true);
     }
 
-    private GameMode parseGameMode(String argument) {
+    private GameMode ParseGameMode(String argument) {
         return switch (argument.toLowerCase()) {
             case "1", "c", "creative", "k", "kreativ" -> GameMode.CREATIVE;
             case "2", "a", "adventure", "abenteuer" -> GameMode.ADVENTURE;
@@ -107,30 +107,30 @@ public class GameModeCommand extends CommandUtils implements CommandExecutorOver
         };
     }
 
-    private void changeGameMode(CommandSender sender, GameMode gameMode, Command command, String commandLabel) {
+    private void ChangeGameMode(CommandSender sender, GameMode gameMode, Command command, String commandLabel) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, sender, null, "GameMode"));
+            sender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, sender, null, "GameMode"));
             return;
         }
         player.setGameMode(gameMode);
-        player.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                              .getMessage(commandLabel, command, sender, null, "GameMode.Changed.Self")
-                                                                              .replace("<MODE>", this.getGameModeName(gameMode)));
+        player.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                              .GetMessage(commandLabel, command, sender, null, "GameMode.Changed.Self")
+                                                                              .replace("<MODE>", this.GetGameModeName(gameMode)));
     }
 
-    private void changeGameMode(Player target, GameMode gameMode, CommandSender sender, Command command, String commandLabel) {
+    private void ChangeGameMode(Player target, GameMode gameMode, CommandSender sender, Command command, String commandLabel) {
         target.setGameMode(gameMode);
-        target.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                              .getMessage(commandLabel, command.getName(), sender, target,
+        target.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                              .GetMessage(commandLabel, command.getName(), sender, target,
                                                                                           "GameMode.Changed.Others.Target")
-                                                                              .replace("<MODE>", this.getGameModeName(gameMode)));
-        sender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                              .getMessage(commandLabel, command.getName(), sender, target,
+                                                                              .replace("<MODE>", this.GetGameModeName(gameMode)));
+        sender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                              .GetMessage(commandLabel, command.getName(), sender, target,
                                                                                           "GameMode.Changed.Others.Sender")
-                                                                              .replace("<MODE>", this.getGameModeName(gameMode)));
+                                                                              .replace("<MODE>", this.GetGameModeName(gameMode)));
     }
 
-    private String getGameModeName(GameMode gameMode) {
+    private String GetGameModeName(GameMode gameMode) {
         return switch (gameMode) {
             case CREATIVE -> "Creative";
             case ADVENTURE -> "Adventure";

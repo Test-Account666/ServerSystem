@@ -11,180 +11,180 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-public class SignEdit_Reflection_Latest implements SignEdit {
-    private String version;
-    private Method getHandleMethodPlayer;
-    private Method getHandleMethodWorld;
-    private Method getPositionMethod;
-    private Method sendPacketMethod;
-    private Method getTileEntityMethod;
-    private Field playerConnectionField;
-    private Field setEditableField;
-    private Field gField;
+public class SignEdit_Reflection_Latest implements ISignEdit {
+    private String _version;
+    private Method _getHandleMethodPlayer;
+    private Method _getHandleMethodWorld;
+    private Method _getPositionMethod;
+    private Method _sendPacketMethod;
+    private Method _getTileEntityMethod;
+    private Field _playerConnectionField;
+    private Field _setEditableField;
+    private Field _gField;
 
     @Override
-    public void editSign(Player player, Sign sign) {
-        if (this.getHandleMethodPlayer == null) {
+    public void EditSign(Player paramPlayer, Sign paramSign) {
+        if (this._getHandleMethodPlayer == null) {
             try {
-                this.getHandleMethodPlayer = player.getClass().getDeclaredMethod("getHandle");
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
+                this._getHandleMethodPlayer = paramPlayer.getClass().getDeclaredMethod("getHandle");
+            } catch (NoSuchMethodException exception) {
+                exception.printStackTrace();
             }
-            this.getHandleMethodPlayer.setAccessible(true);
+            this._getHandleMethodPlayer.setAccessible(true);
         }
 
         Object entityPlayer = null;
 
         try {
-            entityPlayer = this.getHandleMethodPlayer.invoke(player);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            entityPlayer = this._getHandleMethodPlayer.invoke(paramPlayer);
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            exception.printStackTrace();
         }
 
-        if (this.getPositionMethod == null)
+        if (this._getPositionMethod == null)
             try {
-                this.getPositionMethod = Arrays.stream(Class.forName("net.minecraft.world.level.block.entity.TileEntity").getMethods())
-                                               .filter(method -> method.getParameters().length == 0)
-                                               .filter(method -> method.getReturnType().getName().equalsIgnoreCase(BlockPosition.class.getName()))
-                                               .findFirst()
-                                               .orElse(null);
-                if (this.getPositionMethod == null)
+                this._getPositionMethod = Arrays.stream(Class.forName("net.minecraft.world.level.block.entity.TileEntity").getMethods())
+                                                .filter(method -> method.getParameters().length == 0)
+                                                .filter(method -> method.getReturnType().getName().equalsIgnoreCase(BlockPosition.class.getName()))
+                                                .findFirst()
+                                                .orElse(null);
+                if (this._getPositionMethod == null)
                     throw new NoSuchMethodException("Could not find 'getPosition' method!");
-            } catch (NoSuchMethodException | ClassNotFoundException e) {
-                e.printStackTrace();
+            } catch (NoSuchMethodException | ClassNotFoundException exception) {
+                exception.printStackTrace();
             }
 
-        if (this.playerConnectionField == null) {
+        if (this._playerConnectionField == null) {
             try {
-                this.playerConnectionField = Arrays.stream(entityPlayer.getClass().getFields())
-                                                   .filter(field -> field.getType().getName().equalsIgnoreCase(PlayerConnection.class.getName()))
-                                                   .findFirst()
-                                                   .orElse(null);
-                if (this.playerConnectionField == null)
+                this._playerConnectionField = Arrays.stream(entityPlayer.getClass().getFields())
+                                                    .filter(field -> field.getType().getName().equalsIgnoreCase(PlayerConnection.class.getName()))
+                                                    .findFirst()
+                                                    .orElse(null);
+                if (this._playerConnectionField == null)
                     throw new NoSuchFieldException("Couldn't find 'playerConnection' field!");
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
+            } catch (NoSuchFieldException exception) {
+                exception.printStackTrace();
             }
-            this.playerConnectionField.setAccessible(true);
+            this._playerConnectionField.setAccessible(true);
         }
 
-        if (this.getHandleMethodWorld == null)
+        if (this._getHandleMethodWorld == null)
             try {
-                this.getHandleMethodWorld = sign.getWorld().getClass().getMethod("getHandle");
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
+                this._getHandleMethodWorld = paramSign.getWorld().getClass().getMethod("getHandle");
+            } catch (NoSuchMethodException exception) {
+                exception.printStackTrace();
             }
 
 
         var lines = new String[4];
-        for (var i = 0; i < sign.getLines().length; i++) {
-            sign.getLine(i);
-            lines[i] = sign.getLine(i).replace("§", "&");
+        for (var index = 0; index < paramSign.getLines().length; index++) {
+            paramSign.getLine(index);
+            lines[index] = paramSign.getLine(index).replace("§", "&");
         }
 
-        if (this.getTileEntityMethod == null)
+        if (this._getTileEntityMethod == null)
             try {
-                this.getTileEntityMethod = this.getHandleMethodWorld.invoke(sign.getWorld())
-                                                                    .getClass()
-                                                                    .getMethod("getTileEntity", Class.forName("net.minecraft.core.BlockPosition"));
-            } catch (NoSuchMethodException | NoSuchMethodError | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
-                if (e instanceof NoSuchMethodException || e instanceof NoSuchMethodError)
+                this._getTileEntityMethod = this._getHandleMethodWorld.invoke(paramSign.getWorld())
+                                                                      .getClass()
+                                                                      .getMethod("getTileEntity", Class.forName("net.minecraft.core.BlockPosition"));
+            } catch (NoSuchMethodException | NoSuchMethodError | IllegalAccessException | InvocationTargetException | ClassNotFoundException exception) {
+                if (exception instanceof NoSuchMethodException || exception instanceof NoSuchMethodError)
                     try {
-                        this.getTileEntityMethod = this.getHandleMethodWorld.invoke(sign.getWorld())
-                                                                            .getClass()
-                                                                            .getMethod("getBlockEntity", Class.forName("net.minecraft.core.BlockPosition"),
-                                                                                       boolean.class);
-                    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException ex) {
-                        ex.printStackTrace();
+                        this._getTileEntityMethod = this._getHandleMethodWorld.invoke(paramSign.getWorld())
+                                                                              .getClass()
+                                                                              .getMethod("getBlockEntity",
+                                                                                         Class.forName("net.minecraft.core.BlockPosition"), boolean.class);
+                    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException exception1) {
+                        exception1.printStackTrace();
                     }
                 else
-                    e.printStackTrace();
+                    exception.printStackTrace();
             }
 
         Object tes = null;
         try {
-            tes = this.getTileEntityMethod.getParameterCount() == 2?
-                  this.getTileEntityMethod.invoke(this.getHandleMethodWorld.invoke(sign.getWorld()), Class.forName("net.minecraft.core.BlockPosition")
-                                                                                                          .getConstructor(double.class, double.class,
-                                                                                                                          double.class)
-                                                                                                          .newInstance(sign.getLocation().getX(),
-                                                                                                                       sign.getLocation().getY(),
-                                                                                                                       sign.getLocation().getZ()), false)
+            tes = this._getTileEntityMethod.getParameterCount() == 2?
+                  this._getTileEntityMethod.invoke(this._getHandleMethodWorld.invoke(paramSign.getWorld()), Class.forName("net.minecraft.core.BlockPosition")
+                                                                                                                 .getConstructor(double.class, double.class,
+                                                                                                                            double.class)
+                                                                                                                 .newInstance(paramSign.getLocation().getX(),
+                                                                                                                              paramSign.getLocation().getY(),
+                                                                                                                              paramSign.getLocation().getZ()), false)
 
-                                                                   :
+                                                                    :
 
-                  this.getTileEntityMethod.invoke(this.getHandleMethodWorld.invoke(sign.getWorld()), Class.forName("net.minecraft.core.BlockPosition")
-                                                                                                          .getConstructor(double.class, double.class,
-                                                                                                                          double.class)
-                                                                                                          .newInstance(sign.getLocation().getX(),
-                                                                                                                       sign.getLocation().getY(),
-                                                                                                                       sign.getLocation().getZ()));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException | InstantiationException e) {
-            e.printStackTrace();
+                  this._getTileEntityMethod.invoke(this._getHandleMethodWorld.invoke(paramSign.getWorld()), Class.forName("net.minecraft.core.BlockPosition")
+                                                                                                                 .getConstructor(double.class, double.class,
+                                                                                                                            double.class)
+                                                                                                                 .newInstance(paramSign.getLocation().getX(),
+                                                                                                                              paramSign.getLocation().getY(),
+                                                                                                                              paramSign.getLocation().getZ()));
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException | InstantiationException exception) {
+            exception.printStackTrace();
         }
 
-        if (this.setEditableField == null)
+        if (this._setEditableField == null)
             try {
-                this.setEditableField = Class.forName("net.minecraft.world.level.block.entity.TileEntitySign").getField("f");
-            } catch (NoSuchFieldException | ClassNotFoundException e) {
-                e.printStackTrace();
+                this._setEditableField = Class.forName("net.minecraft.world.level.block.entity.TileEntitySign").getField("f");
+            } catch (NoSuchFieldException | ClassNotFoundException exception) {
+                exception.printStackTrace();
             }
 
-        if (this.gField == null)
+        if (this._gField == null)
             try {
-                this.gField = Class.forName("net.minecraft.world.level.block.entity.TileEntitySign").getDeclaredField("g");
-                this.gField.setAccessible(true);
-            } catch (NoSuchFieldException | ClassNotFoundException e) {
-                e.printStackTrace();
+                this._gField = Class.forName("net.minecraft.world.level.block.entity.TileEntitySign").getDeclaredField("g");
+                this._gField.setAccessible(true);
+            } catch (NoSuchFieldException | ClassNotFoundException exception) {
+                exception.printStackTrace();
             }
 
         try {
-            this.setEditableField.set(tes, true);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            this._setEditableField.set(tes, true);
+        } catch (IllegalAccessException exception) {
+            exception.printStackTrace();
         }
 
         try {
-            this.gField.set(tes, player.getUniqueId());
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            this._gField.set(tes, paramPlayer.getUniqueId());
+        } catch (IllegalAccessException exception) {
+            exception.printStackTrace();
         }
 
         try {
             tes.getClass().getMethod("a", Class.forName("net.minecraft.server.level.EntityPlayer")).invoke(tes, entityPlayer);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException exception) {
+            exception.printStackTrace();
         }
 
-        player.sendSignChange(sign.getLocation(), lines);
+        paramPlayer.sendSignChange(paramSign.getLocation(), lines);
 
         Object packet2 = null;
         try {
             packet2 = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutOpenSignEditor")
                            .getConstructor(Class.forName("net.minecraft.core.BlockPosition"))
-                           .newInstance(this.getPositionMethod.invoke(tes));
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
-            e.printStackTrace();
+                           .newInstance(this._getPositionMethod.invoke(tes));
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException exception) {
+            exception.printStackTrace();
         }
 
         Object connection = null;
         try {
-            connection = this.playerConnectionField.get(entityPlayer);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            connection = this._playerConnectionField.get(entityPlayer);
+        } catch (IllegalAccessException exception) {
+            exception.printStackTrace();
         }
 
-        if (this.sendPacketMethod == null)
-            this.sendPacketMethod = Arrays.stream(PlayerConnection.class.getMethods())
-                                          .filter(method -> method.getParameters().length == 1)
-                                          .filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(Packet.class.getName()))
-                                          .findFirst()
-                                          .orElse(null);
+        if (this._sendPacketMethod == null)
+            this._sendPacketMethod = Arrays.stream(PlayerConnection.class.getMethods())
+                                           .filter(method -> method.getParameters().length == 1)
+                                           .filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(Packet.class.getName()))
+                                           .findFirst()
+                                           .orElse(null);
 
         try {
-            this.sendPacketMethod.invoke(connection, packet2);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            this._sendPacketMethod.invoke(connection, packet2);
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            exception.printStackTrace();
         }
     }
 }

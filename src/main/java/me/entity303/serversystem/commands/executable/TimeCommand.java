@@ -1,7 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.tabcompleter.WorldTabCompleter;
 import me.entity303.serversystem.utils.CommandUtils;
@@ -15,14 +15,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class TimeCommand extends CommandUtils implements CommandExecutorOverload {
+public class TimeCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public TimeCommand(ServerSystem plugin) {
         super(plugin);
 
-        this.plugin.getCommandManager().registerCommand("day", new DayCommand(this.plugin, this), new WorldTabCompleter());
-        this.plugin.getCommandManager().registerCommand("night", new NightCommand(this.plugin, this), new WorldTabCompleter());
-        this.plugin.getCommandManager().registerCommand("noon", new NoonCommand(this.plugin, this), new WorldTabCompleter());
+        this._plugin.GetCommandManager().RegisterCommand("day", new DayCommand(this._plugin, this), new WorldTabCompleter());
+        this._plugin.GetCommandManager().RegisterCommand("night", new NightCommand(this._plugin, this), new WorldTabCompleter());
+        this._plugin.GetCommandManager().RegisterCommand("noon", new NoonCommand(this._plugin, this), new WorldTabCompleter());
     }
 
     @SuppressWarnings("DuplicatedCode")
@@ -46,113 +46,134 @@ public class TimeCommand extends CommandUtils implements CommandExecutorOverload
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "time")) {
-            var permission = this.plugin.getPermissions().getPermission("time");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "time")) {
+            var permission = this._plugin.GetPermissions().GetPermission("time");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
 
-        if (arguments.length == 0)
+        if (arguments.length == 0) {
             commandSender.sendMessage(
-                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Time"));
-        else if (arguments.length == 1) {
-            if (!(commandSender instanceof Player)) {
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Time"));
+            return true;
+        }
 
+        if (arguments.length == 1) {
+            if (!(commandSender instanceof Player)) {
                 commandSender.sendMessage(
-                        this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Time"));
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Time"));
                 return true;
             }
             if ("Tag".equalsIgnoreCase(arguments[0]) || "Day".equalsIgnoreCase(arguments[0])) {
                 ((Player) commandSender).getWorld().setTime(0);
 
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                             .getMessage(commandLabel, command, commandSender, null,
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                             .GetMessage(commandLabel, command, commandSender, null,
                                                                                                          "Time.Success")
-                                                                                             .replace("<WORLD>", ((Player) commandSender).getWorld().getName())
-                                                                                             .replace("<TIME>", this.getTime("Day")));
-            } else if ("Nacht".equalsIgnoreCase(arguments[0]) || "Night".equalsIgnoreCase(arguments[0])) {
-                ((Player) commandSender).getWorld().setTime(16000);
-
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                             .getMessage(commandLabel, command, commandSender, null,
-                                                                                                         "Time.Success")
-                                                                                             .replace("<WORLD>", ((Player) commandSender).getWorld().getName())
-                                                                                             .replace("<TIME>", this.getTime("Night")));
-            } else if ("Mittag".equalsIgnoreCase(arguments[0]) || "noon".equalsIgnoreCase(arguments[0])) {
-                ((Player) commandSender).getWorld().setTime(6000);
-
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                             .getMessage(commandLabel, command, commandSender, null,
-                                                                                                         "Time.Success")
-                                                                                             .replace("<WORLD>", ((Player) commandSender).getWorld().getName())
-                                                                                             .replace("<TIME>", this.getTime("Noon")));
-            } else
-                try {
-                    ((Player) commandSender).getWorld().setTime(Long.parseLong(arguments[0]));
-                } catch (Exception e) {
-
-                    commandSender.sendMessage(
-                            this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Time"));
-                }
-        } else {
-            if (Bukkit.getWorld(arguments[1]) == null) {
-
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                             .getMessage(commandLabel, command, commandSender, null,
-                                                                                                         "Time.NoWorld")
-                                                                                             .replace("<WORLD>", arguments[1]));
+                                                                                             .replace("<WORLD>",
+                                                                                                      ((Player) commandSender).getWorld().getName())
+                                                                                             .replace("<TIME>", this.GetTime("Day")));
                 return true;
             }
-            if ("Tag".equalsIgnoreCase(arguments[0]) || "Day".equalsIgnoreCase(arguments[0])) {
-                Bukkit.getWorld(arguments[1]).setTime(0);
 
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                             .getMessage(commandLabel, command, commandSender, null,
+            if ("Nacht".equalsIgnoreCase(arguments[0]) || "Night".equalsIgnoreCase(arguments[0])) {
+                ((Player) commandSender).getWorld().setTime(16000);
+
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                             .GetMessage(commandLabel, command, commandSender, null,
                                                                                                          "Time.Success")
-                                                                                             .replace("<WORLD>", ((Player) commandSender).getWorld().getName())
-                                                                                             .replace("<TIME>", this.getTime("Day")));
-            } else if ("Nacht".equalsIgnoreCase(arguments[0]) || "Night".equalsIgnoreCase(arguments[0])) {
-                Bukkit.getWorld(arguments[1]).setTime(16000);
+                                                                                             .replace("<WORLD>",
+                                                                                                      ((Player) commandSender).getWorld().getName())
+                                                                                             .replace("<TIME>", this.GetTime("Night")));
+                return true;
+            }
 
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                             .getMessage(commandLabel, command, commandSender, null,
+            if ("Mittag".equalsIgnoreCase(arguments[0]) || "noon".equalsIgnoreCase(arguments[0])) {
+                ((Player) commandSender).getWorld().setTime(6000);
+
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                             .GetMessage(commandLabel, command, commandSender, null,
                                                                                                          "Time.Success")
-                                                                                             .replace("<WORLD>", ((Player) commandSender).getWorld().getName())
-                                                                                             .replace("<TIME>", this.getTime("Night")));
-            } else if ("Mittag".equalsIgnoreCase(arguments[0]) || "noon".equalsIgnoreCase(arguments[0])) {
-                Bukkit.getWorld(arguments[1]).setTime(6000);
+                                                                                             .replace("<WORLD>",
+                                                                                                      ((Player) commandSender).getWorld().getName())
+                                                                                             .replace("<TIME>", this.GetTime("Noon")));
+                return true;
+            }
 
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                                             .getMessage(commandLabel, command, commandSender, null,
-                                                                                                         "Time.Success")
-                                                                                             .replace("<WORLD>", ((Player) commandSender).getWorld().getName())
-                                                                                             .replace("<TIME>", this.getTime("Noon")));
-            } else
-                try {
-                    Bukkit.getWorld(arguments[1]).setTime(Long.parseLong(arguments[0]));
-                } catch (Exception e) {
+            try {
+                ((Player) commandSender).getWorld().setTime(Long.parseLong(arguments[0]));
+            } catch (Exception exception) {
+                commandSender.sendMessage(
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Time"));
+            }
+            return true;
+        }
 
-                    commandSender.sendMessage(
-                            this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Time"));
-                }
+
+        if (Bukkit.getWorld(arguments[1]) == null) {
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                         .GetMessage(commandLabel, command, commandSender, null,
+                                                                                                     "Time.NoWorld")
+                                                                                         .replace("<WORLD>", arguments[1]));
+            return true;
+        }
+
+        if ("Tag".equalsIgnoreCase(arguments[0]) || "Day".equalsIgnoreCase(arguments[0])) {
+            Bukkit.getWorld(arguments[1]).setTime(0);
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                         .GetMessage(commandLabel, command, commandSender, null,
+                                                                                                     "Time.Success")
+                                                                                         .replace("<WORLD>", ((Player) commandSender).getWorld().getName())
+                                                                                         .replace("<TIME>", this.GetTime("Day")));
+            return true;
+        }
+
+        if ("Nacht".equalsIgnoreCase(arguments[0]) || "Night".equalsIgnoreCase(arguments[0])) {
+            Bukkit.getWorld(arguments[1]).setTime(16000);
+
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                         .GetMessage(commandLabel, command, commandSender, null,
+                                                                                                     "Time.Success")
+                                                                                         .replace("<WORLD>", ((Player) commandSender).getWorld().getName())
+                                                                                         .replace("<TIME>", this.GetTime("Night")));
+            return true;
+        }
+
+        if ("Mittag".equalsIgnoreCase(arguments[0]) || "noon".equalsIgnoreCase(arguments[0])) {
+            Bukkit.getWorld(arguments[1]).setTime(6000);
+
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                         .GetMessage(commandLabel, command, commandSender, null,
+                                                                                                     "Time.Success")
+                                                                                         .replace("<WORLD>", ((Player) commandSender).getWorld().getName())
+                                                                                         .replace("<TIME>", this.GetTime("Noon")));
+            return true;
+        }
+
+        try {
+            Bukkit.getWorld(arguments[1]).setTime(Long.parseLong(arguments[0]));
+        } catch (Exception exception) {
+
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Time"));
         }
         return true;
     }
 
-    private String getTime(String time) {
-        return this.plugin.getMessages().getCfg().getString("Messages.Misc.Times." + time);
+    private String GetTime(String time) {
+        return this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.Times." + time);
     }
 
     private void SetTimeForCurrentWorld(String commandLabel, String permission, Player player, String time) {
-        if (!this.plugin.getPermissions().hasPermissionString(player, permission)) {
-            player.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermissionString(player, permission)) {
+            player.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return;
         }
 
         player.getWorld().setTime(0);
-        player.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages()
-                                                                              .getMessage(commandLabel, "time", player, null, "Time.Success")
+        player.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                              .GetMessage(commandLabel, "time", player, null, "Time.Success")
                                                                               .replace("<WORLD>", player.getWorld().getName())
-                                                                              .replace("<TIME>", this.getTime(time)));
+                                                                              .replace("<TIME>", this.GetTime(time)));
     }
 }

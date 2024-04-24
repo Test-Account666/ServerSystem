@@ -12,13 +12,14 @@ import java.util.List;
 import java.util.Locale;
 
 public class AbstractServerSystemEconomy extends AbstractEconomy {
-    private final ServerSystem plugin;
+    public static final String SUCCESS = "Success!";
+    private final ServerSystem _plugin;
 
     public AbstractServerSystemEconomy(ServerSystem plugin) {
-        this.plugin = plugin;
+        this._plugin = plugin;
     }
 
-    private OfflinePlayer getPlayer(String username) {
+    private OfflinePlayer GetPlayer(String username) {
         OfflinePlayer player = Bukkit.getPlayer(username);
         if (player == null)
             player = Bukkit.getOfflinePlayer(username);
@@ -26,8 +27,9 @@ public class AbstractServerSystemEconomy extends AbstractEconomy {
         return player;
     }
 
-    private String getCurrencySymbol() {
-        var locale = Locale.forLanguageTag(System.getProperty("user.language"));
+    private String GetCurrencySymbol() {
+        var localeUserProperty = System.getProperty("user.language");
+        var locale = Locale.forLanguageTag(localeUserProperty);
 
         var currency = Currency.getInstance(locale);
 
@@ -36,7 +38,7 @@ public class AbstractServerSystemEconomy extends AbstractEconomy {
 
     @Override
     public boolean isEnabled() {
-        return this.plugin.getEconomyManager() != null;
+        return this._plugin.GetEconomyManager() != null;
     }
 
     @Override
@@ -55,139 +57,141 @@ public class AbstractServerSystemEconomy extends AbstractEconomy {
     }
 
     @Override
-    public String format(double balance) {
+    public String format(double amount) {
         if (!this.isEnabled()) {
             var locale = Locale.ROOT;
 
             var currency = Currency.getInstance(locale);
 
             var currencyFormat = NumberFormat.getCurrencyInstance(locale);
-            return currencyFormat.format(balance) + currency.getSymbol();
+            return currencyFormat.format(amount) + currency.getSymbol();
         }
 
-        return this.getPlugin().getEconomyManager().format(balance);
+        return this._plugin.GetEconomyManager().Format(amount);
     }
 
-    private ServerSystem getPlugin() {
-        return this.plugin;
+    private ServerSystem GetPlugin() {
+        return this._plugin;
     }
 
     @Override
     public String currencyNamePlural() {
         if (!this.isEnabled())
-            return this.getCurrencySymbol();
+            return this.GetCurrencySymbol();
 
-        return this.getPlugin().getEconomyManager().getCurrencyPlural();
+        return this._plugin.GetEconomyManager().GetCurrencyPlural();
     }
 
     @Override
     public String currencyNameSingular() {
         if (!this.isEnabled())
-            return this.getCurrencySymbol();
+            return this.GetCurrencySymbol();
 
-        return this.getPlugin().getEconomyManager().getCurrencySingular();
+        return this._plugin.GetEconomyManager().GetCurrencySingular();
     }
 
 
     @Override
-    public boolean hasAccount(String username) {
-        return this.hasEconomyAccount(username);
+    public boolean hasAccount(String playerName) {
+        return this.HasEconomyAccount(playerName);
     }
 
     @Override
-    public boolean hasAccount(String username, String worldName) {
-        return this.hasEconomyAccount(username);
+    public boolean hasAccount(String playerName, String worldName) {
+        return this.HasEconomyAccount(playerName);
     }
 
     @Override
-    public double getBalance(String username) {
-        return this.getMoney(username);
+    public double getBalance(String playerName) {
+        return this.GetMoney(playerName);
     }
 
     @Override
-    public double getBalance(String username, String worldName) {
-        return this.getMoney(username);
+    public double getBalance(String playerName, String world) {
+        return this.GetMoney(playerName);
     }
 
     @Override
-    public boolean has(String username, double amount) {
-        return this.hasMoney(username, amount);
+    public boolean has(String playerName, double amount) {
+        return this.HasMoney(playerName, amount);
     }
 
     @Override
-    public boolean has(String username, String worldName, double amount) {
-        return this.hasMoney(username, amount);
+    public boolean has(String playerName, String worldName, double amount) {
+        return this.HasMoney(playerName, amount);
     }
 
     @Override
-    public EconomyResponse withdrawPlayer(String username, double amount) {
-        return this.removeMoney(username, amount);
+    public EconomyResponse withdrawPlayer(String playerName, double amount) {
+        return this.RemoveMoney(playerName, amount);
     }
 
     @Override
-    public EconomyResponse withdrawPlayer(String username, String worldName, double amount) {
-        return this.removeMoney(username, amount);
+    public EconomyResponse withdrawPlayer(String playerName, String worldName, double amount) {
+        return this.RemoveMoney(playerName, amount);
     }
 
     @Override
-    public EconomyResponse depositPlayer(String username, double amount) {
-        return this.addMoney(username, amount);
+    public EconomyResponse depositPlayer(String playerName, double amount) {
+        return this.AddMoney(playerName, amount);
     }
 
-    private EconomyResponse addMoney(String username, double amount) {
+    private EconomyResponse AddMoney(String username, double amount) {
         if (!this.isEnabled())
             return new EconomyResponse(amount, -1, EconomyResponse.ResponseType.FAILURE, "EconomyManager hasn't loaded, yet?!");
 
-        var player = this.getPlayer(username);
-        if (!this.getPlugin().getEconomyManager().hasAccount(player))
+        var player = this.GetPlayer(username);
+        var economyManager = this.GetPlugin().GetEconomyManager();
+        if (!economyManager.HasAccount(player))
             return new EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "No account found for player " + username);
 
-        this.getPlugin().getEconomyManager().addMoney(player, amount);
-        return new EconomyResponse(amount, this.getPlugin().getEconomyManager().getMoneyAsNumber(player), EconomyResponse.ResponseType.SUCCESS, "Success!");
+        economyManager.AddMoney(player, amount);
+        var moneyAsNumber = economyManager.GetMoneyAsNumber(player);
+        return new EconomyResponse(amount, moneyAsNumber, EconomyResponse.ResponseType.SUCCESS, SUCCESS);
     }
 
     @Override
-    public EconomyResponse depositPlayer(String username, String worldName, double amount) {
-        return this.addMoney(username, amount);
+    public EconomyResponse depositPlayer(String playerName, String worldName, double amount) {
+        return this.AddMoney(playerName, amount);
     }
 
     @Override
-    public EconomyResponse createBank(String username, String worldName) {
+    public EconomyResponse createBank(String name, String player) {
         return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented!");
     }
 
     @Override
-    public EconomyResponse deleteBank(String username) {
+    public EconomyResponse deleteBank(String name) {
         return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented!");
     }
 
     @Override
-    public EconomyResponse bankBalance(String username) {
+    public EconomyResponse bankBalance(String name) {
         return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented!");
     }
 
     @Override
-    public EconomyResponse bankHas(String username, double amount) {
+    public EconomyResponse bankHas(String name, double amount) {
         return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented!");
     }
 
     @Override
-    public EconomyResponse bankWithdraw(String username, double amount) {
+    public EconomyResponse bankWithdraw(String name, double amount) {
         return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented!");
     }
 
     @Override
-    public EconomyResponse bankDeposit(String username, double amount) {
+    public EconomyResponse bankDeposit(String name, double amount) {
         return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented!");
     }
 
     @Override
-    public EconomyResponse isBankOwner(String username, String worldName) {
+    public EconomyResponse isBankOwner(String name, String playerName) {
         return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented!");
     }
 
     @Override
-    public EconomyResponse isBankMember(String username, String worldName) {
+    public EconomyResponse isBankMember(String name, String playerName) {
         return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented!");
     }
 
@@ -197,68 +201,70 @@ public class AbstractServerSystemEconomy extends AbstractEconomy {
     }
 
     @Override
-    public boolean createPlayerAccount(String username) {
-        return this.createAccount(username);
+    public boolean createPlayerAccount(String playerName) {
+        return this.CreateAccount(playerName);
     }
 
     @Override
-    public boolean createPlayerAccount(String username, String worldName) {
-        return this.createAccount(username);
+    public boolean createPlayerAccount(String playerName, String worldName) {
+        return this.CreateAccount(playerName);
     }
 
-    private boolean createAccount(String username) {
+    private boolean CreateAccount(String username) {
         if (!this.isEnabled())
             return false;
 
-        var player = this.getPlayer(username);
-        this.getPlugin().getEconomyManager().createAccount(player);
+        var player = this.GetPlayer(username);
+        this._plugin.GetEconomyManager().CreateAccount(player);
         return true;
     }
 
-    private EconomyResponse removeMoney(String username, double amount) {
+    private EconomyResponse RemoveMoney(String username, double amount) {
         if (!this.isEnabled())
             return new EconomyResponse(amount, -1, EconomyResponse.ResponseType.FAILURE, "EconomyManager hasn't loaded, yet?!");
 
-        var player = this.getPlayer(username);
-        if (!this.getPlugin().getEconomyManager().hasAccount(player))
+        var player = this.GetPlayer(username);
+        var economyManager = this._plugin.GetEconomyManager();
+        if (!economyManager.HasAccount(player))
             return new EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "No account found for player " + username);
 
-        if (!this.getPlugin().getEconomyManager().hasEnoughMoney(player, amount))
+        if (!economyManager.HasEnoughMoney(player, amount))
             return new EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Player " + username + " does not have enough money");
 
-        this.getPlugin().getEconomyManager().removeMoney(player, amount);
+        economyManager.RemoveMoney(player, amount);
 
-        return new EconomyResponse(amount, this.getPlugin().getEconomyManager().getMoneyAsNumber(player), EconomyResponse.ResponseType.SUCCESS, "Success!");
+        var moneyAsNumber = economyManager.GetMoneyAsNumber(player);
+        return new EconomyResponse(amount, moneyAsNumber, EconomyResponse.ResponseType.SUCCESS, SUCCESS);
     }
 
-    private boolean hasMoney(String username, double amount) {
+    private boolean HasMoney(String username, double amount) {
         if (!this.isEnabled())
             return false;
 
-        var player = this.getPlayer(username);
-        if (!this.getPlugin().getEconomyManager().hasAccount(player))
+        var player = this.GetPlayer(username);
+        if (!this._plugin.GetEconomyManager().HasAccount(player))
             return false;
 
-        return this.getPlugin().getEconomyManager().hasEnoughMoney(player, amount);
+        return this._plugin.GetEconomyManager().HasEnoughMoney(player, amount);
     }
 
-    private double getMoney(String username) {
+    private double GetMoney(String username) {
         if (!this.isEnabled())
             return -1;
 
-        var player = this.getPlayer(username);
-        if (!this.getPlugin().getEconomyManager().hasAccount(player))
+        var player = this.GetPlayer(username);
+        if (!this._plugin.GetEconomyManager().HasAccount(player))
             return 0.0;
 
-        return this.getPlugin().getEconomyManager().getMoneyAsNumber(player);
+        return this._plugin.GetEconomyManager().GetMoneyAsNumber(player);
     }
 
-    private boolean hasEconomyAccount(String username) {
+    private boolean HasEconomyAccount(String username) {
         if (!this.isEnabled())
             return false;
 
-        var player = this.getPlayer(username);
-        return this.getPlugin().getEconomyManager().hasAccount(player);
+        var player = this.GetPlayer(username);
+        return this._plugin.GetEconomyManager().HasAccount(player);
     }
 
 

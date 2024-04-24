@@ -1,6 +1,6 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.attribute.Attribute;
@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class HealCommand extends CommandUtils implements CommandExecutorOverload {
+public class HealCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public HealCommand(ServerSystem plugin) {
         super(plugin);
@@ -22,13 +22,13 @@ public class HealCommand extends CommandUtils implements CommandExecutorOverload
         if (arguments.length == 0) {
             if (!(commandSender instanceof Player player)) {
                 commandSender.sendMessage(
-                        this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Heal"));
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Heal"));
                 return true;
             }
 
-            if (!this.plugin.getPermissions().hasPermission(commandSender, "heal.self")) {
-                var permission = this.plugin.getPermissions().getPermission("heal.self");
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "heal.self")) {
+                var permission = this._plugin.GetPermissions().GetPermission("heal.self");
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return true;
             }
 
@@ -36,15 +36,15 @@ public class HealCommand extends CommandUtils implements CommandExecutorOverload
             return true;
         }
 
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "heal.others")) {
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "heal.others")) {
             commandSender.sendMessage(
-                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Heal"));
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Heal"));
             return true;
         }
 
-        var target = this.getPlayer(commandSender, arguments[0]);
+        var target = this.GetPlayer(commandSender, arguments[0]);
         if (target == null) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;
         }
 
@@ -56,8 +56,8 @@ public class HealCommand extends CommandUtils implements CommandExecutorOverload
         var maxHealth = Objects.requireNonNull(target.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue();
 
         if (maxHealth < 1.0) {
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                      this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Heal.NotHealable"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Heal.NotHealable"));
             return;
         }
 
@@ -72,16 +72,16 @@ public class HealCommand extends CommandUtils implements CommandExecutorOverload
 
         if (commandSender == target) {
             commandSender.sendMessage(
-                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Heal.Self"));
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Heal.Self"));
 
             return;
         }
 
         target.sendMessage(
-                this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Heal.Others.Target"));
+                this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Heal.Others.Target"));
 
         commandSender.sendMessage(
-                this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Heal.Others.Sender"));
+                this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Heal.Others.Sender"));
     }
 }
 

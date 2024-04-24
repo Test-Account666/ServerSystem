@@ -17,43 +17,43 @@ public class GodListener extends CommandUtils implements Listener {
     }
 
     @EventHandler
-    public void onDamage(EntityDamageEvent e) {
-        if (!(e.getEntity() instanceof Player))
+    public void OnDamage(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player))
             return;
 
-        if (this.plugin.getGodList().contains(((Player) e.getEntity()).getPlayer()))
-            e.setCancelled(true);
+        if (this._plugin.GetGodList().contains(((Player) event.getEntity()).getPlayer()))
+            event.setCancelled(true);
     }
 
     @EventHandler
-    public void onDamage(EntityDamageByEntityEvent e) {
-        if (!(e.getEntity() instanceof Player))
+    public void OnDamage(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player))
             return;
 
-        if (this.plugin.getGodList().contains(((Player) e.getEntity()).getPlayer()))
-            e.setCancelled(true);
+        if (this._plugin.GetGodList().contains(((Player) event.getEntity()).getPlayer()))
+            event.setCancelled(true);
     }
 
     @EventHandler
-    public void onFoodLevelChange(FoodLevelChangeEvent e) {
-        if (!(e.getEntity() instanceof Player))
+    public void OnFoodLevelChange(FoodLevelChangeEvent event) {
+        if (!(event.getEntity() instanceof Player))
             return;
 
-        if (this.plugin.getGodList().contains(((Player) e.getEntity()).getPlayer())) {
-            e.getEntity().setFoodLevel(20);
-            e.setCancelled(true);
+        if (this._plugin.GetGodList().contains(((Player) event.getEntity()).getPlayer())) {
+            event.getEntity().setFoodLevel(20);
+            event.setCancelled(true);
         }
     }
 
     @EventHandler
-    public void onEntityTarget(EntityTargetLivingEntityEvent e) {
-        if (e.getTarget() == null)
+    public void OnEntityTarget(EntityTargetLivingEntityEvent event) {
+        if (event.getTarget() == null)
             return;
 
-        if (!(e.getTarget() instanceof Player player))
+        if (!(event.getTarget() instanceof Player player))
             return;
 
-        if (this.plugin.getGodList().contains(player))
-            e.setTarget(null);
+        if (this._plugin.GetGodList().contains(player))
+            event.setTarget(null);
     }
 }

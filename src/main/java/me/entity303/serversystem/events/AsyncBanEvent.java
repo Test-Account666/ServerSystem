@@ -5,19 +5,20 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+@SuppressWarnings({ "NewMethodNamingConvention", "FieldNamingConvention" })
 public class AsyncBanEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    private final CommandSender sender;
-    private final OfflinePlayer target;
-    private final String reason;
-    private final String unbanDate;
+    private final CommandSender _sender;
+    private final OfflinePlayer _target;
+    private final String _reason;
+    private final String _unbanDate;
 
     public AsyncBanEvent(CommandSender sender, OfflinePlayer target, String reason, String unbanDate) {
         super(true);
-        this.sender = sender;
-        this.target = target;
-        this.reason = reason;
-        this.unbanDate = unbanDate;
+        this._sender = sender;
+        this._target = target;
+        this._reason = reason;
+        this._unbanDate = unbanDate;
     }
 
     public static HandlerList getHandlerList() {
@@ -25,19 +26,19 @@ public class AsyncBanEvent extends Event {
     }
 
     public String getUnbanDate() {
-        return unbanDate;
+        return this._unbanDate;
     }
 
     public String getReason() {
-        return reason;
+        return this._reason;
     }
 
     public CommandSender getSender() {
-        return this.sender;
+        return this._sender;
     }
 
     public OfflinePlayer getBannedPlayer() {
-        return this.target;
+        return this._target;
     }
 
     @Override

@@ -1,15 +1,15 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
-import me.entity303.serversystem.utils.Teleport;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import me.entity303.serversystem.commands.CommandExecutorOverload;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-public class TeleportAllCommand extends CommandUtils implements CommandExecutorOverload {
+public class TeleportAllCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public TeleportAllCommand(ServerSystem plugin) {
         super(plugin);
@@ -19,42 +19,42 @@ public class TeleportAllCommand extends CommandUtils implements CommandExecutorO
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
         if (arguments.length == 0) {
             if (!(commandSender instanceof Player)) {
-                
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "TpAll"));
+                commandSender.sendMessage(
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "TpAll"));
                 return true;
             }
-            if (!this.plugin.getPermissions().hasPermission(commandSender, "tpall.self")) {
-                var permission = this.plugin.getPermissions().getPermission("tpall.self");
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "tpall.self")) {
+                var permission = this._plugin.GetPermissions().GetPermission("tpall.self");
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return true;
             }
 
-            Bukkit.getOnlinePlayers().forEach(all -> Teleport.teleport(all, (Player) commandSender));
-            
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "TpAll.Self"));
-        } else if (this.plugin.getPermissions().hasPermission(commandSender, "tpall.others")) {
-            var target = this.getPlayer(commandSender, arguments[0]);
-            if (target != null) {
-                Bukkit.getOnlinePlayers().forEach(all -> Teleport.teleport(all, target));
-                var command1 = command.getName();
-                target.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command1, commandSender, target, "TpAll.Self"));
-                
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "TpAll.Others"));
-            } else
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoTarget(arguments[0]));
-        } else if (commandSender instanceof Player)
-            if (this.plugin.getPermissions().hasPermission(commandSender, "tpall.self")) {
-                Bukkit.getOnlinePlayers().forEach(all -> Teleport.teleport(all, (Player) commandSender));
-                
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "TpAll.Self"));
-            } else {
-                var permission = this.plugin.getPermissions().getPermission("tpall.others");
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
-            }
-        else {
-            var permission = this.plugin.getPermissions().getPermission("tpall.others");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+            Bukkit.getOnlinePlayers().forEach(all -> all.teleport(((Entity) commandSender).getLocation()));
+
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "TpAll.Self"));
+            return true;
         }
+
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "tpall.others")) {
+            var permission = this._plugin.GetPermissions().GetPermission("tpall.others");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
+            return true;
+        }
+
+        var target = this.GetPlayer(commandSender, arguments[0]);
+        if (target == null) {
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
+            return true;
+        }
+
+        Bukkit.getOnlinePlayers().forEach(all -> all.teleport(target.getLocation()));
+        var command1 = command.getName();
+        target.sendMessage(
+                this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command1, commandSender, target, "TpAll.Self"));
+
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                  this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "TpAll.Others"));
         return true;
     }
 }

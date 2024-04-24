@@ -10,12 +10,12 @@ public class NonValidatingConfigReader extends DefaultConfigReader {
         super(file, plugin);
     }
 
-    public static ConfigReader loadConfiguration(File file) {
+    public static IConfigReader LoadConfiguration(File file) {
         return new NonValidatingConfigReader(file, ServerSystem.getPlugin(ServerSystem.class));
     }
 
     @Override
-    protected boolean validateConfig() {
+    protected boolean ValidateConfig() {
         return true;
     }
 }

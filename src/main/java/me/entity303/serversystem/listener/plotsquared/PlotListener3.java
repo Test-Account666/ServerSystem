@@ -15,8 +15,8 @@ import java.lang.reflect.Method;
         Class clazz;
         try {
             clazz = Class.forName("com.plotsquared.core.api.PlotAPI");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException exception) {
+            exception.printStackTrace();
             return;
         }
 
@@ -24,39 +24,39 @@ import java.lang.reflect.Method;
 
         try {
             plotAPI = clazz.getConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException exception) {
+            exception.printStackTrace();
             return;
         }
 
         Method registerListenerMethod;
         try {
             registerListenerMethod = clazz.getDeclaredMethod("registerListener", Object.class);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+        } catch (NoSuchMethodException exception) {
+            exception.printStackTrace();
             return;
         }
 
         try {
             registerListenerMethod.invoke(plotAPI, this);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            exception.printStackTrace();
         }
     }
 
     @Subscribe
-    public void onPlayerEnterPlot(PlayerEnterPlotEvent e) {
-        var l = e.getPlot().getFlag((TimeFlag.TIME_DISABLED));
-        var player = (Player) e.getPlotPlayer().getPlatformPlayer();
-        if (l > -9000000000L)
-            PlotListener.TIME_MAP.put(player, l);
+    public void OnPlayerEnterPlot(PlayerEnterPlotEvent event) {
+        var timeDisabledFlag = event.getPlot().getFlag((TimeFlag.TIME_DISABLED));
+        var player = (Player) event.getPlotPlayer().getPlatformPlayer();
+        if (timeDisabledFlag > -9000000000L)
+            PlotListener.TIME_MAP.put(player, timeDisabledFlag);
         else
             PlotListener.TIME_MAP.remove(player);
     }
 
     @Subscribe
-    public void onPlayerLeavePlot(PlayerLeavePlotEvent e) {
-        var player = (Player) e.getPlotPlayer().getPlatformPlayer();
+    public void OnPlayerLeavePlot(PlayerLeavePlotEvent event) {
+        var player = (Player) event.getPlotPlayer().getPlatformPlayer();
         PlotListener.TIME_MAP.remove(player);
     }
 }

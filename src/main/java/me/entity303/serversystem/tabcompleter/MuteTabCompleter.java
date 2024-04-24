@@ -1,10 +1,10 @@
 package me.entity303.serversystem.tabcompleter;
 
+import me.entity303.serversystem.commands.ITabCompleterOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,39 +13,39 @@ import java.util.stream.Collectors;
 
 import static me.entity303.serversystem.bansystem.TimeUnit.*;
 
-public class MuteTabCompleter extends CommandUtils implements TabCompleter {
+public class MuteTabCompleter extends CommandUtils implements ITabCompleterOverload {
 
     public MuteTabCompleter(ServerSystem plugin) {
         super(plugin);
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!this.plugin.getPermissions().hasPermission(cs, "mute.use", true))
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "mute.use", true))
             return Collections.singletonList("");
-        if (args.length == 2)
-            if (this.plugin.getPermissions().hasPermission(cs, "mute.permanent", true))
-                return Collections.singletonList(this.plugin.getMessages().getCfg().getString("Messages.Misc.BanSystem." + "PermanentName"));
-        if (args.length == 3) {
+        if (arguments.length == 2)
+            if (this._plugin.GetPermissions().HasPermission(commandSender, "mute.permanent", true))
+                return Collections.singletonList(this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.BanSystem." + "PermanentName"));
+        if (arguments.length == 3) {
             List<String> timeUnitList = new ArrayList<>();
-            if (this.plugin.getPermissions().hasPermission(cs, "mute.temporary", true)) {
-                timeUnitList.add(yearName);
-                timeUnitList.add(monthName);
-                timeUnitList.add(weekName);
-                timeUnitList.add(dayName);
-                timeUnitList.add(hourName);
-                timeUnitList.add(minuteName);
-                timeUnitList.add(secondName);
+            if (this._plugin.GetPermissions().HasPermission(commandSender, "mute.temporary", true)) {
+                timeUnitList.add(YEAR_NAME);
+                timeUnitList.add(MONTH_NAME);
+                timeUnitList.add(WEEK_NAME);
+                timeUnitList.add(DAY_NAME);
+                timeUnitList.add(HOUR_NAME);
+                timeUnitList.add(MINUTE_NAME);
+                timeUnitList.add(SECOND_NAME);
             }
-            if (this.plugin.getPermissions().hasPermission(cs, "mute.shadow.permanent", true))
-                timeUnitList.add(this.plugin.getMessages().getCfg().getString("Messages.Misc.BanSystem." + "ShadowBan"));
-            var tabList = timeUnitList.stream().filter(timeUnit -> timeUnit.toLowerCase().startsWith(args[2].toLowerCase())).collect(Collectors.toList());
+            if (this._plugin.GetPermissions().HasPermission(commandSender, "mute.shadow.permanent", true))
+                timeUnitList.add(this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.BanSystem." + "ShadowBan"));
+            var tabList = timeUnitList.stream().filter(timeUnit -> timeUnit.toLowerCase().startsWith(arguments[2].toLowerCase())).collect(Collectors.toList());
             return tabList.isEmpty()? timeUnitList : tabList;
         }
 
-        if (args.length == 4)
-            if (this.plugin.getPermissions().hasPermission(cs, "mute.shadow.temporary", true))
-                return Collections.singletonList(this.plugin.getMessages().getCfg().getString("Messages.Misc.BanSystem." + "ShadowBan"));
+        if (arguments.length == 4)
+            if (this._plugin.GetPermissions().HasPermission(commandSender, "mute.shadow.temporary", true))
+                return Collections.singletonList(this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.BanSystem." + "ShadowBan"));
         return null;
     }
 }

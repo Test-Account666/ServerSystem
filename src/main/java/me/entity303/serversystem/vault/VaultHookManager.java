@@ -6,86 +6,86 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.ServicePriority;
 
 public class VaultHookManager {
-    private final ServerSystem plugin;
-    private AbstractServerSystemEconomy economy;
+    private final ServerSystem _plugin;
+    private AbstractServerSystemEconomy _economy;
 
     public VaultHookManager(ServerSystem plugin) {
-        this.plugin = plugin;
+        this._plugin = plugin;
     }
 
-    public void hook(boolean force) {
+    public void Hook(boolean force) {
         if (!force) {
-            this.hook();
+            this.Hook();
             return;
         }
-        var sm = Bukkit.getServicesManager();
-        if (!this.plugin.getConfigReader().getBoolean("economy.enabled"))
+        var serviceManager = Bukkit.getServicesManager();
+        if (!this._plugin.GetConfigReader().GetBoolean("economy.enabled"))
             return;
 
-        if (!this.plugin.getConfigReader().getBoolean("economy.hookIntoVault")) {
-            this.plugin.log("ServerSystem will not hook! Hooking is disabled!");
+        if (!this._plugin.GetConfigReader().GetBoolean("economy.hookIntoVault")) {
+            this._plugin.Info("ServerSystem will not hook! Hooking is disabled!");
             return;
         }
         try {
-            if (this.economy == null)
-                this.economy = new AbstractServerSystemEconomy(this.plugin);
-            sm.register(Economy.class, this.economy, this.plugin, ServicePriority.High);
-            if (this.economy != null)
-                sm.register(Economy.class, this.economy, Bukkit.getPluginManager().getPlugin("Essentials"), ServicePriority.High);
-        } catch (Exception e) {
-            this.plugin.error("Error while trying to hook into Vault!");
-            e.printStackTrace();
+            if (this._economy == null)
+                this._economy = new AbstractServerSystemEconomy(this._plugin);
+            serviceManager.register(Economy.class, this._economy, this._plugin, ServicePriority.High);
+            if (this._economy != null)
+                serviceManager.register(Economy.class, this._economy, Bukkit.getPluginManager().getPlugin("Essentials"), ServicePriority.High);
+        } catch (Exception exception) {
+            this._plugin.Error("Error while trying to hook into Vault!");
+            exception.printStackTrace();
         }
     }
 
-    public void hook() {
-        if (!this.plugin.getConfigReader().getBoolean("economy.enabled"))
+    public void Hook() {
+        if (!this._plugin.GetConfigReader().GetBoolean("economy.enabled"))
             return;
 
-        if (this.plugin.getServer().getPluginManager().getPlugin("Essentials") != null) {
-            this.plugin.warn("ServerSystem will not hook into vault! Essentials is installed!");
+        if (this._plugin.getServer().getPluginManager().getPlugin("Essentials") != null) {
+            this._plugin.Warn("ServerSystem will not hook into vault! Essentials is installed!");
             return;
         }
 
-        if (!this.plugin.getConfigReader().getBoolean("economy.hookIntoVault")) {
-            this.plugin.log("ServerSystem will not hook into Vault! Hooking is disabled!");
+        if (!this._plugin.GetConfigReader().GetBoolean("economy.hookIntoVault")) {
+            this._plugin.Info("ServerSystem will not hook into Vault! Hooking is disabled!");
             return;
         }
         try {
-            if (this.economy == null)
-                this.economy = new AbstractServerSystemEconomy(this.plugin);
-            var sm = this.plugin.getServer().getServicesManager();
-            sm.register(Economy.class, this.economy, this.plugin, ServicePriority.High);
-        } catch (Exception e) {
-            this.plugin.error("Error while trying to hook into Vault!");
-            e.printStackTrace();
+            if (this._economy == null)
+                this._economy = new AbstractServerSystemEconomy(this._plugin);
+            var serviceManager = this._plugin.getServer().getServicesManager();
+            serviceManager.register(Economy.class, this._economy, this._plugin, ServicePriority.High);
+        } catch (Exception exception) {
+            this._plugin.Error("Error while trying to hook into Vault!");
+            exception.printStackTrace();
         }
     }
 
-    public boolean isHooked() {
-        var sm = this.plugin.getServer().getServicesManager();
-        sm.getRegistrations(this.plugin);
-        if (!sm.getRegistrations(this.plugin).isEmpty())
+    public boolean IsHooked() {
+        var serviceManager = this._plugin.getServer().getServicesManager();
+        serviceManager.getRegistrations(this._plugin);
+        if (!serviceManager.getRegistrations(this._plugin).isEmpty())
             return true;
-        if (sm.getRegistrations(this.plugin).isEmpty())
+        if (serviceManager.getRegistrations(this._plugin).isEmpty())
             return false;
-        return sm.getRegistration(Economy.class).getPlugin().getName().equalsIgnoreCase("ServerSystem");
+        return serviceManager.getRegistration(Economy.class).getPlugin().getName().equalsIgnoreCase("ServerSystem");
     }
 
-    public void unhook() {
-        if (!this.plugin.getConfigReader().getBoolean("economy.enabled"))
+    public void Unhook() {
+        if (!this._plugin.GetConfigReader().GetBoolean("economy.enabled"))
             return;
 
-        if (!this.plugin.getConfigReader().getBoolean("economy.hookIntoVault"))
+        if (!this._plugin.GetConfigReader().GetBoolean("economy.hookIntoVault"))
             return;
-        var sm = this.plugin.getServer().getServicesManager();
-        if (this.economy != null) {
-            sm.unregister(Economy.class, this.economy);
+        var serviceManager = this._plugin.getServer().getServicesManager();
+        if (this._economy != null) {
+            serviceManager.unregister(Economy.class, this._economy);
             try {
-                sm.unregisterAll(this.plugin);
+                serviceManager.unregisterAll(this._plugin);
             } catch (NumberFormatException ignored) {
             }
-            this.economy = null;
+            this._economy = null;
         }
     }
 }

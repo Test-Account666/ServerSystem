@@ -1,13 +1,13 @@
 package me.entity303.serversystem.commands.executable;
 
-import me.entity303.serversystem.commands.CommandExecutorOverload;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ExtinguishCommand extends CommandUtils implements CommandExecutorOverload {
+public class ExtinguishCommand extends CommandUtils implements ICommandExecutorOverload {
 
     public ExtinguishCommand(ServerSystem plugin) {
         super(plugin);
@@ -18,44 +18,44 @@ public class ExtinguishCommand extends CommandUtils implements CommandExecutorOv
         if (arguments.length == 0) {
             if (!(commandSender instanceof Player player)) {
                 commandSender.sendMessage(
-                        this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getSyntax(commandLabel, command, commandSender, null, "Extinguish"));
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Extinguish"));
                 return true;
             }
 
-            if (!this.plugin.getPermissions().hasPermission(player, "extinguish.self")) {
-                var permission = this.plugin.getPermissions().getPermission("extinguish.self");
-                commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+            if (!this._plugin.GetPermissions().HasPermission(player, "extinguish.self")) {
+                var permission = this._plugin.GetPermissions().GetPermission("extinguish.self");
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return true;
             }
 
             player.setFireTicks(0);
 
             player.sendMessage(
-                    this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getMessage(commandLabel, command, commandSender, null, "Extinguish.Self"));
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Extinguish.Self"));
             return true;
         }
 
-        if (!this.plugin.getPermissions().hasPermission(commandSender, "extinguish.others")) {
-            var permission = this.plugin.getPermissions().getPermission("extinguish.others");
-            commandSender.sendMessage(this.plugin.getMessages().getPrefix() + this.plugin.getMessages().getNoPermission(permission));
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "extinguish.others")) {
+            var permission = this._plugin.GetPermissions().GetPermission("extinguish.others");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
 
-        var target = this.getPlayer(commandSender, arguments[0]);
+        var target = this.GetPlayer(commandSender, arguments[0]);
         if (target == null)
             return true;
 
         target.setFireTicks(0);
 
-        target.sendMessage(this.plugin.getMessages().getPrefix() +
-                           this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Extinguish.Others.Target"));
+        target.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                           this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Extinguish.Others.Target"));
 
-        commandSender.sendMessage(this.plugin.getMessages().getPrefix() +
-                                  this.plugin.getMessages().getMessage(commandLabel, command, commandSender, target, "Extinguish.Others.Sender"));
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                  this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Extinguish.Others.Sender"));
         return true;
     }
 
-    public String getPrefix() {
-        return this.plugin.getMessages().getPrefix();
+    public String GetPrefix() {
+        return this._plugin.GetMessages().GetPrefix();
     }
 }
