@@ -31,17 +31,17 @@ public class SeenCommand extends CommandUtils implements ITabExecutorOverload {
         }
 
         if (arguments.length == 0) {
-            var command1 = command.getName();
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command1, commandSender, null, "Seen"));
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Seen"));
             return true;
         }
 
         var target = Bukkit.getOfflinePlayer(arguments[0]);
         if (target.getLastPlayed() <= 0) {
-            var command1 = command.getName();
-            var target1 = target.getName();
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                      this._plugin.GetMessages().GetMessageWithStringTarget(commandLabel, command1, commandSender, target1, "Seen.PlayerNeverPlayed"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                           .GetMessageWithStringTarget(commandLabel, command,
+                                                                                                                       commandSender, target.getName(),
+                                                                                                                       "Seen.PlayerNeverPlayed"));
             return true;
         }
 
@@ -50,17 +50,16 @@ public class SeenCommand extends CommandUtils implements ITabExecutorOverload {
         if (target.isOnline())
             lastPlayed = System.currentTimeMillis();
 
-        var command2 = command.getName();
-        var target2 = target.getName();
-        var dtf = DateTimeFormatter.ofPattern(this._plugin.GetMessages().GetMessageWithStringTarget(commandLabel, command2, commandSender, target2, "Seen.TimeFormat"));
+        var dtf = DateTimeFormatter.ofPattern(
+                this._plugin.GetMessages().GetMessageWithStringTarget(commandLabel, command, commandSender, target.getName(), "Seen.TimeFormat"));
 
         var date = Instant.ofEpochMilli(lastPlayed).atZone(ZoneId.systemDefault()).toLocalDateTime();
         var format = dtf.format(date);
 
-        var command1 = command.getName();
-        var target1 = target.getName();
-        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                  this._plugin.GetMessages().GetMessageWithStringTarget(commandLabel, command1, commandSender, target1, "Seen.LastSeen").replace("<TIME>", format));
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                       .GetMessageWithStringTarget(commandLabel, command, commandSender,
+                                                                                                                   target.getName(), "Seen.LastSeen")
+                                                                                       .replace("<TIME>", format));
         return true;
     }
 
