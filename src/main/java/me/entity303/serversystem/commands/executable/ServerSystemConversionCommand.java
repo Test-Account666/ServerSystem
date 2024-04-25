@@ -2,13 +2,13 @@ package me.entity303.serversystem.commands.executable;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.FileUtils;
 import me.entity303.serversystem.utils.CommandUtils;
+import me.entity303.serversystem.utils.FileUtils;
 import net.ess3.api.MaxMoneyException;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 
 import java.io.File;
@@ -33,16 +33,18 @@ public class ServerSystemConversionCommand extends CommandUtils implements IComm
         }
 
         if (!this._starting) {
-            
-            commandSender.sendMessage(
-                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "ConvertToEssentials.WarnNotTested"));
+
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                           .GetMessage(commandLabel, command, commandSender, null,
+                                                                                                       "ConvertToEssentials.WarnNotTested"));
             this._starting = true;
             Bukkit.getScheduler().runTaskLater(this._plugin, () -> this._starting = false, 20 * 10);
             return true;
         }
 
         var command1 = command.getName();
-        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command1, commandSender, null, "ConvertToEssentials.Start"));
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                  this._plugin.GetMessages().GetMessage(commandLabel, command1, commandSender, null, "ConvertToEssentials.Start"));
 
         var essentialsDirectory = new File("plugins//Essentials");
         var dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm-ss");
@@ -97,7 +99,17 @@ public class ServerSystemConversionCommand extends CommandUtils implements IComm
             if (!this._plugin.GetWantsTeleport().DoesPlayerWantTeleport(offlinePlayer))
                 user.setTeleportEnabled(false);
 
-            //TODO: Convert bans and mutes
+            var muteManager = this._plugin.GetMuteManager();
+
+            var mute = muteManager.GetMute(offlinePlayer);
+
+            if (mute != null) {
+                user.setMuted(true);
+                user.setMuteReason(mute.GetReason());
+                user.setMuteTimeout(mute.GetExpireTime());
+            }
+
+            //TODO: Convert bans
 
             user.save();
         }
@@ -119,14 +131,16 @@ public class ServerSystemConversionCommand extends CommandUtils implements IComm
         //TODO: Convert kits
 
         if (error) {
-            
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "ConvertToEssentials.FinishedWithErrors"));
+
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                           .GetMessage(commandLabel, command, commandSender, null,
+                                                                                                       "ConvertToEssentials.FinishedWithErrors"));
             return true;
         }
 
-        
-        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "ConvertToEssentials.Finished"));
+
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                  this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "ConvertToEssentials.Finished"));
         return true;
     }
 }
