@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public final class CommandManager {
-    public static final String UNBAN = "unban";
     private final ServerSystem _serverSystem;
     private final List<String> _serverSystemCommands = new ArrayList<>();
     private final Map<String, PluginCommand> _deactivatedBukkitCommands = new HashMap<>();
@@ -196,7 +195,7 @@ public final class CommandManager {
         this.RegisterCommand("tppos", new TeleportPositionCommand(this._serverSystem), null);
         if (this._serverSystem.GetConfigReader().GetBoolean("banSystem.enabled")) {
             this.RegisterCommand("ban", new BanCommand(this._serverSystem), new BanTabCompleter(this._serverSystem));
-            this.RegisterCommand(UNBAN, new UnBanCommand(this._serverSystem), new UnBanTabCompleter(this._serverSystem));
+            this.RegisterCommand("unban", new UnBanCommand(this._serverSystem), new UnBanTabCompleter(this._serverSystem));
             this.RegisterCommand("mute", new MuteCommand(this._serverSystem), new MuteTabCompleter(this._serverSystem));
             this.RegisterCommand("unmute", new UnMuteCommand(this._serverSystem), new UnMuteTabCompleter(this._serverSystem));
             this.RegisterCommand("kick", new KickCommand(this._serverSystem), null);

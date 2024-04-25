@@ -1,7 +1,6 @@
 package me.entity303.serversystem.tabcompleter;
 
 import me.entity303.serversystem.commands.ITabCompleterOverload;
-import me.entity303.serversystem.commands.util.CommandManager;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
@@ -19,7 +18,7 @@ public class UnBanTabCompleter extends CommandUtils implements ITabCompleterOver
 
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (!this._plugin.GetPermissions().HasPermission(commandSender, CommandManager.UNBAN, true))
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "unban", true))
             return Collections.singletonList("");
         if (arguments.length == 1) {
             if (this._plugin.GetBanManager().GetBannedPlayerNames().isEmpty())

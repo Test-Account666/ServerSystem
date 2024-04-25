@@ -1,6 +1,5 @@
 package me.entity303.serversystem.events;
 
-import me.entity303.serversystem.commands.util.CommandManager;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -17,7 +16,7 @@ public class AsyncUnbanEvent extends Event {
     public AsyncUnbanEvent(CommandSender sender, OfflinePlayer target) {
         this(sender, target, ServerSystem.getPlugin(ServerSystem.class)
                                          .GetMessages()
-                                         .GetMessageWithStringTarget(CommandManager.UNBAN, CommandManager.UNBAN, sender, target.getName(),
+                                         .GetMessageWithStringTarget("unban", "unban", sender, target.getName(),
                                                                      "Ban.DefaultReason"));
     }
 
