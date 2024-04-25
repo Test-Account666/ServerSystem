@@ -2,6 +2,8 @@ package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
+import me.entity303.serversystem.utils.Message;
+import me.entity303.serversystem.utils.PermissionsChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -20,7 +22,19 @@ public class SmeltCommand extends CommandUtils implements ICommandExecutorOverlo
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (AnvilCommand.HasPermission(commandSender, this._plugin.GetMessages(), this._plugin.GetPermissions(), "smelt"))
+        boolean result1 = false;
+        Message messages = this._plugin.GetMessages();
+        PermissionsChecker permissions = this._plugin.GetPermissions();
+        if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(messages.GetPrefix() + messages.GetOnlyPlayer());
+        } else if (!permissions.HasPermission(commandSender, "smelt")) {
+            var permission = permissions.GetPermission("smelt");
+            commandSender.sendMessage(messages.GetPrefix() + messages.GetNoPermission(permission));
+        } else {
+            result1 = true;
+        }
+
+        if (result1)
             return true;
 
         ((Player) commandSender).getInventory().getItemInMainHand();

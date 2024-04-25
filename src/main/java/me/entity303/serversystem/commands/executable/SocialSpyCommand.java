@@ -2,6 +2,8 @@ package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
+import me.entity303.serversystem.utils.Message;
+import me.entity303.serversystem.utils.PermissionsChecker;
 import org.bukkit.command.Command;
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
@@ -15,7 +17,19 @@ public class SocialSpyCommand extends CommandUtils implements ICommandExecutorOv
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (AnvilCommand.HasPermission(commandSender, this._plugin.GetMessages(), this._plugin.GetPermissions(), "socialspy"))
+        boolean result = false;
+        Message messages = this._plugin.GetMessages();
+        PermissionsChecker permissions = this._plugin.GetPermissions();
+        if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(messages.GetPrefix() + messages.GetOnlyPlayer());
+        } else if (!permissions.HasPermission(commandSender, "socialspy")) {
+            var permission = permissions.GetPermission("socialspy");
+            commandSender.sendMessage(messages.GetPrefix() + messages.GetNoPermission(permission));
+        } else {
+            result = true;
+        }
+
+        if (result)
             return true;
         if (this._plugin.GetSocialSpy().contains(commandSender)) {
             this._plugin.GetSocialSpy().remove(commandSender);

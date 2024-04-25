@@ -2,6 +2,8 @@ package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
+import me.entity303.serversystem.utils.Message;
+import me.entity303.serversystem.utils.PermissionsChecker;
 import org.bukkit.command.Command;
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
@@ -16,7 +18,19 @@ public class StackCommand extends CommandUtils implements ICommandExecutorOverlo
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
         if (arguments.length == 0) {
-            if (AnvilCommand.HasPermission(commandSender, this._plugin.GetMessages(), this._plugin.GetPermissions(), "stack"))
+            boolean result = false;
+            Message messages = this._plugin.GetMessages();
+            PermissionsChecker permissions = this._plugin.GetPermissions();
+            if (!(commandSender instanceof Player)) {
+                commandSender.sendMessage(messages.GetPrefix() + messages.GetOnlyPlayer());
+            } else if (!permissions.HasPermission(commandSender, "stack")) {
+                var permission = permissions.GetPermission("stack");
+                commandSender.sendMessage(messages.GetPrefix() + messages.GetNoPermission(permission));
+            } else {
+                result = true;
+            }
+
+            if (result)
                 return true;
             ((Player) commandSender).getInventory().getItemInMainHand();
             ((Player) commandSender).getInventory().getItemInMainHand().setAmount(((Player) commandSender).getInventory().getItemInMainHand().getMaxStackSize());

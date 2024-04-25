@@ -7,13 +7,11 @@ import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 
 public class VanishPacket_Reflection_Latest extends AbstractVanishPacket {
     private final ServerSystem _plugin;
     private VanishPacket_ProtocolLib _vanishPacketProtocolLib = null;
-    private Method _getHandleMethod;
     private Field _playerConnectionField;
     private Field _collidesField;
 
@@ -51,7 +49,7 @@ public class VanishPacket_Reflection_Latest extends AbstractVanishPacket {
         Object entityPlayer;
 
         try {
-            entityPlayer = this._getHandleMethod.invoke(player);
+            entityPlayer = this._plugin.GetVersionStuff().GetGetHandleMethod().invoke(player);
         } catch (IllegalAccessException | InvocationTargetException exception) {
             exception.printStackTrace();
             return;
@@ -96,8 +94,7 @@ public class VanishPacket_Reflection_Latest extends AbstractVanishPacket {
     public boolean IsConnectionFieldNull(Object entityPlayer, Field playerConnectionField, ServerSystem plugin) {
         if (playerConnectionField == null) {
             plugin.Error("Couldn't find PlayerConnection field! (Modded environment?)");
-            Arrays.stream(entityPlayer.getClass().getDeclaredFields())
-                  .forEach(field -> plugin.Info(field.getType() + " -> " + field.getName()));
+            Arrays.stream(entityPlayer.getClass().getDeclaredFields()).forEach(field -> plugin.Info(field.getType() + " -> " + field.getName()));
             plugin.Warn("Please forward this to the developer of ServerSystem!");
             return true;
         }

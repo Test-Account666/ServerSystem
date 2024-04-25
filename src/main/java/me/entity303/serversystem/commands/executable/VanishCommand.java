@@ -31,7 +31,7 @@ public class VanishCommand extends CommandUtils implements ICommandExecutorOverl
 
             var vanish = !this._plugin.GetVanish().IsVanish(player);
 
-            this.SetVanish(player, !vanish, commandSender, command, commandLabel);
+            this.SetVanish(player, vanish, commandSender, command, commandLabel);
 
             return true;
         }

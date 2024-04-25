@@ -15,21 +15,31 @@ public class MsgToggleCommand extends CommandUtils implements ICommandExecutorOv
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (AnvilCommand.HasPermission(commandSender, this._plugin.GetMessages(), this._plugin.GetPermissions(), "msgtoggle"))
-            return true;
-
-        if (this._plugin.GetMsgOff().contains(commandSender)) {
-            this._plugin.GetMsgOff().remove(commandSender);
-
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "MsgToggle.Activated"));
+        var messages = this._plugin.GetMessages();
+        var permissions = this._plugin.GetPermissions();
+        if (!(commandSender instanceof Player player)) {
+            commandSender.sendMessage(messages.GetPrefix() + messages.GetOnlyPlayer());
             return true;
         }
 
-        this._plugin.GetMsgOff().add((Player) commandSender);
+        if (!permissions.HasPermission(player, "msgtoggle")) {
+            var permission = permissions.GetPermission("msgtoggle");
+            player.sendMessage(messages.GetPrefix() + messages.GetNoPermission(permission));
+            return true;
+        }
 
-        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                  this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "MsgToggle.Deactivated"));
+        if (this._plugin.GetMsgOff().contains(player)) {
+            this._plugin.GetMsgOff().remove(player);
+
+            player.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                               this._plugin.GetMessages().GetMessage(commandLabel, command, player, null, "MsgToggle.Activated"));
+            return true;
+        }
+
+        this._plugin.GetMsgOff().add(player);
+
+        player.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                           this._plugin.GetMessages().GetMessage(commandLabel, command, player, null, "MsgToggle.Deactivated"));
         return true;
     }
 }

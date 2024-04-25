@@ -56,8 +56,10 @@ public class Vanish {
     public Boolean IsVanish(Player player) {
         if (player == null)
             this._plugin.Error("Player cannot be null!");
-        player.getMetadata("Vanish");
-        return player.getMetadata("Vanish").stream().anyMatch(metadataValue -> metadataValue.asBoolean() || this._vanishList.contains(player.getUniqueId()));
+
+        return player.getMetadata("vanished")
+                     .stream()
+                     .anyMatch(metadataValue -> metadataValue.asBoolean() || this._vanishList.contains(player.getUniqueId()));
     }
 
     public void SetVanishData(Player player, Boolean vanish) {
@@ -65,6 +67,9 @@ public class Vanish {
             this._vanishList.remove(player.getUniqueId());
         else if (!this._vanishList.contains(player.getUniqueId()))
             this._vanishList.add(player.getUniqueId());
+
+        player.removeMetadata("Vanish", this._plugin);
+        player.removeMetadata("vanished", this._plugin);
 
         player.setMetadata("Vanish", this._plugin.GetMetaValue().GetMetaValue(vanish));
         player.setMetadata("vanished", this._plugin.GetMetaValue().GetMetaValue(vanish));

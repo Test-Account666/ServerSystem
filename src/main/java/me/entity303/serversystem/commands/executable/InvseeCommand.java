@@ -49,16 +49,8 @@ public class InvseeCommand extends CommandUtils implements ICommandExecutorOverl
         if (this._onceFired || !this._plugin.IsAdvancedInvsee())
             return this.OnCommandInternal(commandSender, command, commandLabel, arguments);
 
-        if (!this._plugin.GetPermissions().HasPermission(commandSender, "invsee.use")) {
-            var permission = this._plugin.GetPermissions().GetPermission("invsee.use");
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
+        if (this.DoesNotHavePermission(commandSender))
             return true;
-        }
-
-        if (!(commandSender instanceof Player)) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetOnlyPlayer());
-            return true;
-        }
 
         if (arguments.length == 0) {
 
@@ -144,15 +136,8 @@ public class InvseeCommand extends CommandUtils implements ICommandExecutorOverl
     }
 
     private boolean OnCommandInternal(CommandSender commandSender, Command command, String commandLabel, String... arguments) {
-        if (!this._plugin.GetPermissions().HasPermission(commandSender, "invsee.use")) {
-            var permission = this._plugin.GetPermissions().GetPermission("invsee.use");
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
+        if (this.DoesNotHavePermission(commandSender))
             return true;
-        }
-        if (!(commandSender instanceof Player)) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetOnlyPlayer());
-            return true;
-        }
         if (arguments.length == 0) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
                                       this._plugin.GetMessages().GetSyntax(commandLabel, command.getName(), commandSender, null, "Invsee"));
@@ -165,6 +150,19 @@ public class InvseeCommand extends CommandUtils implements ICommandExecutorOverl
         }
         ((Player) commandSender).openInventory(targetPlayer.getInventory());
         return true;
+    }
+
+    private boolean DoesNotHavePermission(CommandSender commandSender) {
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "invsee.use")) {
+            var permission = this._plugin.GetPermissions().GetPermission("invsee.use");
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
+            return true;
+        }
+        if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetOnlyPlayer());
+            return true;
+        }
+        return false;
     }
 
     public PlayerInventory CreateCustomInventory(Player targetPlayer, CommandSender commandSender) {
@@ -234,7 +232,8 @@ public class InvseeCommand extends CommandUtils implements ICommandExecutorOverl
         return playerInventory;
     }
 
-    private Object CreateNew(Object handle, Method setItemMethod, Method getItemMethod, Method getSizeMethod, Player targetPlayer, CommandSender commandSender) {
+    private Object CreateNew(Object handle, Method setItemMethod, Method getItemMethod, Method getSizeMethod, Player targetPlayer,
+                             CommandSender commandSender) {
         Object customPlayerInventory;
         try {
             customPlayerInventory = new ByteBuddy().subclass(this._playerInventoryNmsClass)
@@ -244,7 +243,8 @@ public class InvseeCommand extends CommandUtils implements ICommandExecutorOverl
                                                                           .or(ElementMatchers.is(setItemMethod)))
                                                    .intercept(MethodDelegation.withDefaultConfiguration()
                                                                               .withBinders(Morph.Binder.install(IMorpher.class))
-                                                                              .to(new InvseeSetItemInterceptor(this._plugin, targetPlayer, (Player) commandSender)))
+                                                                              .to(new InvseeSetItemInterceptor(this._plugin, targetPlayer,
+                                                                                                               (Player) commandSender)))
 
                                                    .method((ElementMatchers.isDeclaredBy(this._playerInventoryNmsClass)
                                                                            .and(ElementMatchers.named("getItem"))).or(ElementMatchers.is(getItemMethod)))
@@ -297,7 +297,8 @@ public class InvseeCommand extends CommandUtils implements ICommandExecutorOverl
                                                                           .and(ElementMatchers.named("setItem")))
                                                    .intercept(MethodDelegation.withDefaultConfiguration()
                                                                               .withBinders(Morph.Binder.install(IMorpher.class))
-                                                                              .to(new InvseeSetItemInterceptor(this._plugin, targetPlayer, (Player) commandSender)))
+                                                                              .to(new InvseeSetItemInterceptor(this._plugin, targetPlayer,
+                                                                                                               (Player) commandSender)))
 
                                                    .method((ElementMatchers.isDeclaredBy(this._playerInventoryNmsClass)
                                                                            .and(ElementMatchers.named("getItem"))))

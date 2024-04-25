@@ -79,7 +79,7 @@ public class MuteCommand extends CommandUtils implements ICommandExecutorOverloa
             var shadow = false;
 
             if (arguments.length > 3)
-                if (!arguments[2].equalsIgnoreCase(this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.BanSystem." + "ShadowBan")) ||
+                if (!arguments[2].equalsIgnoreCase(this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.BanSystem.ShadowBan")) ||
                     !this._plugin.GetPermissions().HasPermission(commandSender, "mute.shadow.permanent", true))
                     reason = this.ExtractReason(2, arguments);
                 else {

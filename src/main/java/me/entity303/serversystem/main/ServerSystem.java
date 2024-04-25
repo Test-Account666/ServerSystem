@@ -520,7 +520,7 @@ public final class ServerSystem extends JavaPlugin {
             new File("plugins//update").mkdirs();
 
         this._starting = true;
-        this._metaValue = new MetaValue(this);
+        this._metaValue = new MetaValue();
         this._vanish = new Vanish(this);
 
         ServerSystem.DEBUG = this._configReader.GetBoolean("debug");
