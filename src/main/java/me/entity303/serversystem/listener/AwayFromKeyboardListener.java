@@ -1,9 +1,9 @@
 package me.entity303.serversystem.listener;
 
-import me.entity303.serversystem.commands.executable.AwayFromKeyboardCommand;
 import me.entity303.serversystem.main.ServerSystem;
+import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -78,10 +78,10 @@ public class AwayFromKeyboardListener implements Listener {
             this.OnJoin(new PlayerJoinEvent(all, ""));
     }
 
-    private boolean IsAwayFromKeyboard(Player player) {
+    private boolean IsAwayFromKeyboard(Entity player) {
         var awayFromKeyboard = false;
 
-        awayFromKeyboard = AwayFromKeyboardCommand.IsAwayFromKeyboard(player);
+        awayFromKeyboard = CommandUtils.IsAwayFromKeyboard(player);
 
         var uniqueId = player.getUniqueId();
         var uuidString = uniqueId.toString();

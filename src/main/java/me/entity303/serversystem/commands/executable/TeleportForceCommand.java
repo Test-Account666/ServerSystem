@@ -4,16 +4,17 @@ package me.entity303.serversystem.commands.executable;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
 import me.entity303.serversystem.utils.CommandUtils;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TeleportForceCommand extends CommandUtils implements ICommandExecutorOverload {
+public class TeleportForceCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public TeleportForceCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
@@ -41,7 +42,7 @@ public class TeleportForceCommand extends CommandUtils implements ICommandExecut
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return true;
             }
-            var target = this.GetPlayer(commandSender, arguments[0]);
+            var target = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
             if (target == null) {
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
                 return true;
@@ -59,12 +60,12 @@ public class TeleportForceCommand extends CommandUtils implements ICommandExecut
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
-        var target1 = this.GetPlayer(commandSender, arguments[0]);
+        var target1 = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
         if (target1 == null) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;
         }
-        var target2 = this.GetPlayer(commandSender, arguments[1]);
+        var target2 = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[1]);
         if (target2 == null) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[1]));
             return true;

@@ -15,11 +15,12 @@ import java.util.List;
 
 import static me.entity303.serversystem.commands.executable.OfflineEnderChestCommand.GetOfflinePlayers;
 
-public class SeenCommand extends CommandUtils implements ITabExecutorOverload {
+public class SeenCommand implements ITabExecutorOverload {
+    protected final ServerSystem _plugin;
     //TODO: Seen Command, hopp hopp, Hutch meckert
 
     public SeenCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

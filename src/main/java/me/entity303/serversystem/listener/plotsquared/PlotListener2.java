@@ -9,10 +9,12 @@ import org.bukkit.event.Listener;
 
 import static com.github.intellectualsites.plotsquared.plot.flag.Flags.TIME;
 
-public class PlotListener2 extends CommandUtils implements Listener {
+public class PlotListener2 implements Listener {
+
+    protected final ServerSystem _plugin;
 
     public PlotListener2(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @EventHandler

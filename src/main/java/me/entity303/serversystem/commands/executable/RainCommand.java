@@ -6,12 +6,13 @@ import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public class RainCommand extends CommandUtils implements ICommandExecutorOverload {
+public class RainCommand implements ICommandExecutorOverload {
     private final static String WEATHER = "rain";
+    protected final ServerSystem _plugin;
     private final WeatherCommand _weatherCommand;
 
     public RainCommand(ServerSystem plugin, WeatherCommand weatherCommand) {
-        super(plugin);
+        this._plugin = plugin;
 
         this._weatherCommand = weatherCommand;
     }

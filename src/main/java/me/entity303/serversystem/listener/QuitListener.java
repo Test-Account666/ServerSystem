@@ -7,10 +7,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class QuitListener extends CommandUtils implements Listener {
+public class QuitListener implements Listener {
+
+    protected final ServerSystem _plugin;
 
     public QuitListener(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @EventHandler

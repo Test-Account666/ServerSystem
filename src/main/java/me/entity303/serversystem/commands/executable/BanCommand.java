@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.stream.Collectors;
@@ -17,10 +18,12 @@ import java.util.stream.IntStream;
 
 import static me.entity303.serversystem.bansystem.TimeUnit.*;
 
-public class BanCommand extends CommandUtils implements ICommandExecutorOverload {
+public class BanCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public BanCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
@@ -76,7 +79,7 @@ public class BanCommand extends CommandUtils implements ICommandExecutorOverload
 
             var target = BanCommand.GetPlayer(arguments[0]);
 
-            long time = -1;
+            var time = -1L;
 
             var reason = pluginMessages.GetMessageWithStringTarget(commandLabel, command, commandSender, target.getName(), "Ban.DefaultReason");
 
@@ -95,15 +98,13 @@ public class BanCommand extends CommandUtils implements ICommandExecutorOverload
 
         var target = BanCommand.GetPlayer(arguments[0]);
 
-        long time;
+        var time = -1L;
 
         var targetName = target.getName();
         var notNumberMessage = pluginMessages.GetMessageWithStringTarget(commandLabel, command, commandSender, targetName, "Ban.NotANumber");
         try {
             time = Long.parseLong(arguments[1]);
         } catch (NumberFormatException ignored) {
-            commandSender.sendMessage(prefix + notNumberMessage.replace("<TIME>", arguments[1]));
-            return true;
         }
 
         if (time < 1)
@@ -115,6 +116,7 @@ public class BanCommand extends CommandUtils implements ICommandExecutorOverload
             commandSender.sendMessage(prefix + notTimeUnitMessage.replace("<TIMEUNIT>", arguments[2]));
             return true;
         }
+
         pluginMessages.GetMessageWithStringTarget(commandLabel, command, commandSender, targetName, "Ban.DefaultReason");
         var reason = pluginMessages.GetMessageWithStringTarget(commandLabel, command, commandSender, targetName, "Ban.DefaultReason");
 
@@ -136,30 +138,26 @@ public class BanCommand extends CommandUtils implements ICommandExecutorOverload
     private void CreateBan(CommandSender commandSender, Command command, String commandLabel, OfflinePlayer target, long time, String reason,
                            TimeUnit timeUnit) {
         var pluginMessages = this._plugin.GetMessages();
-        if (reason.equalsIgnoreCase("")) {
-            var target1 = target.getName();
-            reason = pluginMessages.GetMessageWithStringTarget(commandLabel, command, commandSender, target1, "Ban.DefaultReason");
-        }
+        if (reason.equalsIgnoreCase(""))
+            reason = pluginMessages.GetMessageWithStringTarget(commandLabel, command, commandSender, target.getName(), "Ban.DefaultReason");
 
         if (this.IsExemptFromBans(commandSender, command, commandLabel, target))
             return;
 
         var consoleName = pluginMessages.GetConfiguration().GetString("Messages.Misc.BanSystem." + "ConsoleName");
         var ban = this._plugin.GetBanManager()
-                             .CreateBan(target.getUniqueId(),
-                                        commandSender instanceof Player? ((Player) commandSender).getUniqueId().toString() : consoleName, reason, time,
-                                        timeUnit);
+                              .CreateBan(target.getUniqueId(),
+                                         commandSender instanceof Player? ((Entity) commandSender).getUniqueId().toString() : consoleName, reason, time,
+                                         timeUnit);
 
 
-        var target1 = target.getName();
         var prefix = pluginMessages.GetPrefix();
-        var banSuccessMessage = pluginMessages.GetMessageWithStringTarget(commandLabel, command, commandSender, target1, "Ban.Success");
+        var banSuccessMessage = pluginMessages.GetMessageWithStringTarget(commandLabel, command, commandSender, target.getName(), "Ban.Success");
         var unbanDate = ban.GetExpireDate();
         commandSender.sendMessage(prefix + banSuccessMessage.replace("<DATE>", unbanDate));
 
         if (target.isOnline()) {
-            var command1 = command.getName();
-            var kickMessage = pluginMessages.GetMessage(commandLabel, command1, commandSender, target.getPlayer(), "Ban.Kick");
+            var kickMessage = pluginMessages.GetMessage(commandLabel, command.getName(), commandSender, target.getPlayer(), "Ban.Kick");
             var coloredBanReason = ChatColor.TranslateAlternateColorCodes('&', ban.GetReason());
             var coloredUnbanDate = ChatColor.TranslateAlternateColorCodes('&', unbanDate);
             target.getPlayer().kickPlayer(kickMessage.replace("<REASON>", coloredBanReason).replace("<DATE>", coloredUnbanDate));
@@ -173,15 +171,16 @@ public class BanCommand extends CommandUtils implements ICommandExecutorOverload
     }
 
     private boolean IsExemptFromBans(CommandSender commandSender, Command command, String commandLabel, OfflinePlayer target) {
-        if (target.isOnline())
-            if (this._plugin.GetPermissions().HasPermission(target.getPlayer(), "ban.exempt", true)) {
+        if (!target.isOnline())
+            return false;
 
-                var pluginMessages = this._plugin.GetMessages();
-                var prefix = pluginMessages.GetPrefix();
-                commandSender.sendMessage(prefix + pluginMessages.GetMessage(commandLabel, command, commandSender, target.getPlayer(), "Ban.Cannotban"));
-                return true;
-            }
-        return false;
+        if (!this._plugin.GetPermissions().HasPermission(target.getPlayer(), "ban.exempt", true))
+            return false;
+
+        var pluginMessages = this._plugin.GetMessages();
+        var prefix = pluginMessages.GetPrefix();
+        commandSender.sendMessage(prefix + pluginMessages.GetMessage(commandLabel, command, commandSender, target.getPlayer(), "Ban.Cannotban"));
+        return true;
     }
 
 }

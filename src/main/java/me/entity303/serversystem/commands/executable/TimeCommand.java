@@ -15,10 +15,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class TimeCommand extends CommandUtils implements ICommandExecutorOverload {
+public class TimeCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public TimeCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
 
         this._plugin.GetCommandManager().RegisterCommand("day", new DayCommand(this._plugin, this), new WorldTabCompleter());
         this._plugin.GetCommandManager().RegisterCommand("night", new NightCommand(this._plugin, this), new WorldTabCompleter());

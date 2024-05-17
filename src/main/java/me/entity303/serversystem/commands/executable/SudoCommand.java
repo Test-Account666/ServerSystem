@@ -20,12 +20,13 @@ import org.bukkit.permissions.PermissibleBase;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class SudoCommand extends CommandUtils implements ICommandExecutorOverload {
+public class SudoCommand implements ICommandExecutorOverload {
 
+    protected final ServerSystem _plugin;
     private Method _getHandleMethod = null;
 
     public SudoCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     public static void SendMessage(CommandSender commandSender, Object... objects) {
@@ -84,7 +85,7 @@ public class SudoCommand extends CommandUtils implements ICommandExecutorOverloa
 
             }
 
-        var target = this.GetPlayer(commandSender, arguments[0]);
+        var target = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
         if (target == null) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;

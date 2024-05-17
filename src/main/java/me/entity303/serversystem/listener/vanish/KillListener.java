@@ -9,10 +9,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-public class KillListener extends CommandUtils implements Listener {
+public class KillListener implements Listener {
+
+    protected final ServerSystem _plugin;
 
     public KillListener(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

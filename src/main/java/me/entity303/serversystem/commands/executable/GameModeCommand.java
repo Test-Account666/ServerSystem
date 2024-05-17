@@ -12,11 +12,10 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class GameModeCommand extends CommandUtils implements ICommandExecutorOverload {
-    private final ServerSystem _plugin;
+public class GameModeCommand implements ICommandExecutorOverload {
+    protected final ServerSystem _plugin;
 
     public GameModeCommand(ServerSystem plugin) {
-        super(plugin);
         this._plugin = plugin;
 
         var gameModeCreativeCommand = new GameModeCreativeCommmand(this._plugin, this);
@@ -53,7 +52,8 @@ public class GameModeCommand extends CommandUtils implements ICommandExecutorOve
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
         if (!this.HasPermission(commandSender, arguments)) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(this._plugin.GetPermissions().GetPermission("gamemode")));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetNoPermission(this._plugin.GetPermissions().GetPermission("gamemode")));
             return true;
         }
 
@@ -66,9 +66,9 @@ public class GameModeCommand extends CommandUtils implements ICommandExecutorOve
         var gameMode = this.ParseGameMode(arguments[0]);
         if (gameMode == null) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                         .GetMessage(commandLabel, command, commandSender, null,
-                                                                                                     "GameMode.NotGameMode")
-                                                                                         .replace("<MODE>", arguments[0].toUpperCase()));
+                                                                                           .GetMessage(commandLabel, command, commandSender, null,
+                                                                                                       "GameMode.NotGameMode")
+                                                                                           .replace("<MODE>", arguments[0].toUpperCase()));
             return true;
         }
 
@@ -77,7 +77,7 @@ public class GameModeCommand extends CommandUtils implements ICommandExecutorOve
             return true;
         }
 
-        var target = this.GetPlayer(commandSender, arguments[1]);
+        var target = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[1]);
         if (target == null) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[1]));
             return true;
@@ -90,7 +90,7 @@ public class GameModeCommand extends CommandUtils implements ICommandExecutorOve
     private boolean HasPermission(CommandSender sender, String... arguments) {
         var permission = arguments.length == 1? "gamemode.self." : "gamemode.others.";
 
-        var parsedGameMode = this.ParseGameMode(arguments[0]);
+        var parsedGameMode = arguments.length == 0? this.ParseGameMode("creative") : this.ParseGameMode(arguments[0]);
 
         assert parsedGameMode != null;
         permission += this.GetGameModeName(parsedGameMode).toLowerCase();
@@ -109,25 +109,26 @@ public class GameModeCommand extends CommandUtils implements ICommandExecutorOve
 
     private void ChangeGameMode(CommandSender sender, GameMode gameMode, Command command, String commandLabel) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, sender, null, "GameMode"));
+            sender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, sender, null, "GameMode"));
             return;
         }
         player.setGameMode(gameMode);
         player.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                              .GetMessage(commandLabel, command, sender, null, "GameMode.Changed.Self")
-                                                                              .replace("<MODE>", this.GetGameModeName(gameMode)));
+                                                                                .GetMessage(commandLabel, command, sender, null, "GameMode.Changed.Self")
+                                                                                .replace("<MODE>", this.GetGameModeName(gameMode)));
     }
 
     private void ChangeGameMode(Player target, GameMode gameMode, CommandSender sender, Command command, String commandLabel) {
         target.setGameMode(gameMode);
         target.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                              .GetMessage(commandLabel, command.getName(), sender, target,
-                                                                                          "GameMode.Changed.Others.Target")
-                                                                              .replace("<MODE>", this.GetGameModeName(gameMode)));
+                                                                                .GetMessage(commandLabel, command.getName(), sender, target,
+                                                                                            "GameMode.Changed.Others.Target")
+                                                                                .replace("<MODE>", this.GetGameModeName(gameMode)));
         sender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                              .GetMessage(commandLabel, command.getName(), sender, target,
-                                                                                          "GameMode.Changed.Others.Sender")
-                                                                              .replace("<MODE>", this.GetGameModeName(gameMode)));
+                                                                                .GetMessage(commandLabel, command.getName(), sender, target,
+                                                                                            "GameMode.Changed.Others.Sender")
+                                                                                .replace("<MODE>", this.GetGameModeName(gameMode)));
     }
 
     private String GetGameModeName(GameMode gameMode) {

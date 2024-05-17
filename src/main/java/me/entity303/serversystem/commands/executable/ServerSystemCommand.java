@@ -18,10 +18,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 
-public class ServerSystemCommand extends CommandUtils implements ICommandExecutorOverload {
+public class ServerSystemCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public ServerSystemCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

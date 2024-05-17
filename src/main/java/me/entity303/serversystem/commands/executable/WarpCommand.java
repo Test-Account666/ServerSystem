@@ -12,10 +12,12 @@ import org.bukkit.entity.Player;
 
 import java.util.Objects;
 
-public class WarpCommand extends CommandUtils implements ICommandExecutorOverload {
+public class WarpCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public WarpCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
@@ -56,7 +58,7 @@ public class WarpCommand extends CommandUtils implements ICommandExecutorOverloa
                 return true;
             }
 
-            var targetPlayer = this.GetPlayer(commandSender, arguments[1]);
+            var targetPlayer = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[1]);
             if (targetPlayer == null) {
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[1]));
                 return true;

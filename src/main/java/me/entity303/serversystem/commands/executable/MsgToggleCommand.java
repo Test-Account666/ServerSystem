@@ -7,10 +7,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class MsgToggleCommand extends CommandUtils implements ICommandExecutorOverload {
+public class MsgToggleCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public MsgToggleCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

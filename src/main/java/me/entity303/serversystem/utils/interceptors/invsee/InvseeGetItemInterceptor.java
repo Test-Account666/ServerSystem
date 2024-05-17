@@ -37,8 +37,14 @@ public class InvseeGetItemInterceptor {
         if (this._asNMSCopyMethod == null)
             try {
                 this._asNMSCopyMethod = Arrays.stream(
-                        Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".inventory.CraftItemStack")
-                             .getDeclaredMethods()).filter(method1 -> method1.getName().equalsIgnoreCase("asNMSCopy")).findFirst().orElse(null);
+                                                      Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() +
+                                                                    ".inventory.CraftItemStack")
+                                                           .getDeclaredMethods())
+                                              .filter(method1 -> method1.getName().equalsIgnoreCase("asNMSCopy"))
+                                              .filter(method1 -> method1.getParameters().length == 1)
+                                              .filter(method1 -> method1.getParameters()[0].getType() != java.util.List.class)
+                                              .findFirst()
+                                              .orElse(null);
             } catch (ClassNotFoundException exception) {
                 exception.printStackTrace();
                 return null;
@@ -76,20 +82,22 @@ public class InvseeGetItemInterceptor {
 
             try {
                 if (this._getItemMethod == null)
-                    this._getItemMethod = Arrays.stream(this._masterInventoryNms.getClass().getDeclaredMethods())
-                                                .filter(this::IsGetItem)
-                                                .findFirst()
-                                                .orElse(null);
+                    this._getItemMethod =
+                            Arrays.stream(this._masterInventoryNms.getClass().getDeclaredMethods()).filter(this::IsGetItem).findFirst().orElse(null);
 
                 if (this._getItemMethod == null)
-                    for (var declaredMethod : this._masterInventoryNms.getClass().getDeclaredMethods())
-                        if (declaredMethod.getParameters().length == 1)
-                            if (declaredMethod.getParameters()[0].getType().getName().equalsIgnoreCase(int.class.getName()))
-                                if (declaredMethod.getReturnType().getName().toLowerCase(Locale.ROOT).contains("itemstack"))
-                                    if (declaredMethod.getName().equalsIgnoreCase("a")) {
-                                        this._getItemMethod = declaredMethod;
-                                        break;
-                                    }
+                    for (var declaredMethod : this._masterInventoryNms.getClass().getDeclaredMethods()) {
+                        if (declaredMethod.getParameters().length != 1)
+                            continue;
+                        if (!declaredMethod.getParameters()[0].getType().getName().equalsIgnoreCase(int.class.getName()))
+                            continue;
+                        if (!declaredMethod.getReturnType().getName().toLowerCase(Locale.ROOT).contains("itemstack"))
+                            continue;
+                        if (!declaredMethod.getName().equalsIgnoreCase("a"))
+                            continue;
+                        this._getItemMethod = declaredMethod;
+                        break;
+                    }
 
                 return this._getItemMethod.invoke(this._masterInventoryNms, allArguments[0]);
             } catch (IllegalAccessException | InvocationTargetException exception) {

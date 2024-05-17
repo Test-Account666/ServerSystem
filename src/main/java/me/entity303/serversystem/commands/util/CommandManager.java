@@ -205,7 +205,7 @@ public final class CommandManager {
             this.RegisterCommand("money", new MoneyCommand(this._serverSystem), null);
             this.RegisterCommand("pay", new PayCommand(this._serverSystem), null);
             this.RegisterCommand("economy", new EconomyCommand(this._serverSystem), new EconomyTabCompleter(this._serverSystem));
-            this.RegisterCommand("baltop", new BaltopCommand(this._serverSystem), null);
+            this.RegisterCommand("baltop", new BalanceTopCommand(this._serverSystem), null);
         }
         this.RegisterCommand("fly", new FlyCommand(this._serverSystem), null);
         this.RegisterCommand("commandspy", new CommandSpyCommand(this._serverSystem), null);

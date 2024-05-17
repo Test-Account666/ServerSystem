@@ -23,11 +23,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.UUID;
 
-public class EssentialsConversionCommand extends CommandUtils implements ICommandExecutorOverload {
+public class EssentialsConversionCommand implements ICommandExecutorOverload {
+    protected final ServerSystem _plugin;
     private boolean _starting = false;
 
     public EssentialsConversionCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

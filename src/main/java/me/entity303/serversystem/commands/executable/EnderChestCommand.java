@@ -14,10 +14,12 @@ import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
 
-public class EnderChestCommand extends CommandUtils implements ICommandExecutorOverload, Listener {
+public class EnderChestCommand implements ICommandExecutorOverload, Listener {
+
+    protected final ServerSystem _plugin;
 
     public EnderChestCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
 
         this._plugin.GetEventManager().RegisterEvent(this);
     }
@@ -45,7 +47,7 @@ public class EnderChestCommand extends CommandUtils implements ICommandExecutorO
             return true;
         }
 
-        var targetPlayer = this.GetPlayer(commandSender, arguments[0]);
+        var targetPlayer = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
         if (targetPlayer == null) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;

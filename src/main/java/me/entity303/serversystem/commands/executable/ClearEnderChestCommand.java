@@ -9,10 +9,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 
-public class ClearEnderChestCommand extends CommandUtils implements ICommandExecutorOverload {
+public class ClearEnderChestCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public ClearEnderChestCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
@@ -41,7 +43,7 @@ public class ClearEnderChestCommand extends CommandUtils implements ICommandExec
                                       this._plugin.GetMessages().GetNoPermission(this._plugin.GetPermissions().GetPermission("clearenderchest.others")));
             return true;
         }
-        var target = this.GetPlayer(commandSender, arguments[0]);
+        var target = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
         if (target == null) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;

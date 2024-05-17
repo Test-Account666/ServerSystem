@@ -9,11 +9,12 @@ import org.bukkit.inventory.ItemStack;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class Furnace extends CommandUtils {
+public class Furnace {
+    protected final ServerSystem _plugin;
     private final Map<Material, String> _furnaceMap;
 
     public Furnace(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
         this._furnaceMap = new EnumMap<>(Material.class);
 
         try {

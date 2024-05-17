@@ -12,10 +12,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class SpeedTabCompleter extends CommandUtils implements ITabCompleterOverload {
+public class SpeedTabCompleter implements ITabCompleterOverload {
+
+    protected final ServerSystem _plugin;
 
     public SpeedTabCompleter(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

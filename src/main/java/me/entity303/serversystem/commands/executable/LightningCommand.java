@@ -9,10 +9,12 @@ import org.bukkit.entity.Player;
 
 import java.util.Objects;
 
-public class LightningCommand extends CommandUtils implements ICommandExecutorOverload {
+public class LightningCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public LightningCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

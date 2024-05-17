@@ -10,13 +10,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Locale;
 
-public class Teleport_v1_17_R1 extends CommandUtils implements ITeleport {
+public class Teleport_v1_17_R1 implements ITeleport {
+    protected final ServerSystem _plugin;
     private Method _setLocationMethod = null;
     private Field _worldField = null;
     private Method _getHandleMethod = null;
 
     public Teleport_v1_17_R1(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

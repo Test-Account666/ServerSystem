@@ -10,10 +10,12 @@ import org.bukkit.command.CommandSender;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class KickAllCommand extends CommandUtils implements ICommandExecutorOverload {
+public class KickAllCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public KickAllCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

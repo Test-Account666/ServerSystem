@@ -9,12 +9,13 @@ import org.bukkit.command.CommandSender;
 
 import static me.entity303.serversystem.commands.executable.GameModeCommand.ExecuteGameMode;
 
-public class GameModeSurvivalCommand extends CommandUtils implements ICommandExecutorOverload {
+public class GameModeSurvivalCommand implements ICommandExecutorOverload {
     private static final String GAME_MODE = "survival";
+    protected final ServerSystem _plugin;
     private final GameModeCommand _gameModeCommand;
 
     public GameModeSurvivalCommand(ServerSystem plugin, GameModeCommand gameModeCommand) {
-        super(plugin);
+        this._plugin = plugin;
 
         this._gameModeCommand = gameModeCommand;
     }

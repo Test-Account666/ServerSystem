@@ -12,10 +12,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
-public class SkullCommand extends CommandUtils implements ICommandExecutorOverload {
+public class SkullCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public SkullCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

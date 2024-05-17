@@ -16,10 +16,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class WeatherCommand extends CommandUtils implements ICommandExecutorOverload {
+public class WeatherCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public WeatherCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
 
         this._plugin.GetCommandManager().RegisterCommand("sun", new SunCommand(this._plugin, this), new WorldTabCompleter());
         this._plugin.GetCommandManager().RegisterCommand("rain", new RainCommand(this._plugin, this), new WorldTabCompleter());

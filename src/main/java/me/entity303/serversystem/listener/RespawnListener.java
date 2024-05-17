@@ -12,10 +12,12 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 
 import java.io.File;
 
-public class RespawnListener extends CommandUtils implements Listener {
+public class RespawnListener implements Listener {
+
+    protected final ServerSystem _plugin;
 
     public RespawnListener(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
 

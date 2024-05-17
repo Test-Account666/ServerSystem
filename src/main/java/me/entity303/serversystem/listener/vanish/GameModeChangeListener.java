@@ -6,10 +6,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 
-public class GameModeChangeListener extends CommandUtils implements Listener {
+public class GameModeChangeListener implements Listener {
+
+    protected final ServerSystem _plugin;
 
     public GameModeChangeListener(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @EventHandler

@@ -7,10 +7,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class LoomCommand extends CommandUtils implements ICommandExecutorOverload {
+public class LoomCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public LoomCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

@@ -8,10 +8,12 @@ import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 
-public class TeleportForceHereCommand extends CommandUtils implements ICommandExecutorOverload {
+public class TeleportForceHereCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public TeleportForceHereCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
@@ -26,7 +28,7 @@ public class TeleportForceHereCommand extends CommandUtils implements ICommandEx
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "TpoHere"));
             return true;
         }
-        var target = this.GetPlayer(commandSender, arguments[0]);
+        var target = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
         if (target == null) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;

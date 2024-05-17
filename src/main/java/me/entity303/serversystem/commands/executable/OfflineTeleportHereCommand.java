@@ -14,10 +14,12 @@ import java.util.List;
 
 import static me.entity303.serversystem.commands.executable.OfflineEnderChestCommand.GetOfflinePlayers;
 
-public class OfflineTeleportHereCommand extends CommandUtils implements ITabExecutorOverload {
+public class OfflineTeleportHereCommand implements ITabExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public OfflineTeleportHereCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
@@ -53,7 +55,7 @@ public class OfflineTeleportHereCommand extends CommandUtils implements ITabExec
         }
 
         if (offlineTarget.isOnline()) {
-            if (this.GetPlayer(commandSender, offlineTarget.getUniqueId()) == null) {
+            if (CommandUtils.GetPlayer(this._plugin, commandSender, offlineTarget.getUniqueId()) == null) {
 
                 var player = offlineTarget.getPlayer();
                 player.teleport(((Entity) commandSender).getLocation());
@@ -71,7 +73,7 @@ public class OfflineTeleportHereCommand extends CommandUtils implements ITabExec
             return true;
         }
 
-        var player = this.GetHookedPlayer(offlineTarget);
+        var player = CommandUtils.GetHookedPlayer(this._plugin, offlineTarget);
 
         this._plugin.GetVersionStuff().GetTeleport().Teleport(player, ((Player) commandSender).getLocation());
 

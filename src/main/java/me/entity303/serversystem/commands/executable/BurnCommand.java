@@ -9,10 +9,12 @@ import org.bukkit.command.CommandSender;
 import static java.lang.Integer.parseInt;
 
 
-public class BurnCommand extends CommandUtils implements ICommandExecutorOverload {
+public class BurnCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public BurnCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
@@ -28,7 +30,7 @@ public class BurnCommand extends CommandUtils implements ICommandExecutorOverloa
             return true;
         }
 
-        var target = this.GetPlayer(commandSender, arguments[0]);
+        var target = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
         if (target == null) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;

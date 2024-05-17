@@ -6,10 +6,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerListPingEvent;
 
-public class ServerPingListener extends CommandUtils implements Listener {
+public class ServerPingListener implements Listener {
+
+    protected final ServerSystem _plugin;
 
     public ServerPingListener(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @EventHandler

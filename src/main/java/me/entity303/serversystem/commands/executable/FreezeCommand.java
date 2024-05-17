@@ -10,11 +10,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataHolder;
 
-public class FreezeCommand extends CommandUtils implements ICommandExecutorOverload {
+public class FreezeCommand implements ICommandExecutorOverload {
+    protected final ServerSystem _plugin;
     private final NamespacedKey _namespacedKey;
 
     public FreezeCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
 
         this._namespacedKey = new NamespacedKey(plugin, "freeze");
     }

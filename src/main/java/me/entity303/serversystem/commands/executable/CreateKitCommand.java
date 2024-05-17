@@ -11,10 +11,12 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CreateKitCommand extends CommandUtils implements ICommandExecutorOverload {
+public class CreateKitCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public CreateKitCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

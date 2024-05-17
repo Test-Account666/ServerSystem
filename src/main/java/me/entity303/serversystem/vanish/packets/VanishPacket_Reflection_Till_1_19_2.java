@@ -19,7 +19,6 @@ import java.util.List;
 
 public class VanishPacket_Reflection_Till_1_19_2 extends AbstractVanishPacket {
     private final ServerSystem _plugin;
-    private String _version;
     private Method _getHandleMethod;
     private Method _getProfileMethod;
     private Method _spigotMethod;
@@ -277,16 +276,5 @@ public class VanishPacket_Reflection_Till_1_19_2 extends AbstractVanishPacket {
         } catch (Exception exception) {
             return 666;
         }
-    }
-
-    private String GetVersion() {
-        if (this._version == null)
-            try {
-                this._version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
-            } catch (ArrayIndexOutOfBoundsException exception) {
-                exception.printStackTrace();
-                return null;
-            }
-        return this._version;
     }
 }

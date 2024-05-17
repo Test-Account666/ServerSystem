@@ -7,10 +7,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class PayCommand extends CommandUtils implements ICommandExecutorOverload {
+public class PayCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public PayCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
@@ -27,13 +29,8 @@ public class PayCommand extends CommandUtils implements ICommandExecutorOverload
                     this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Pay"));
             return true;
         }
-        var target = this.GetPlayer(commandSender, arguments[0]);
-        if (target == null) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
-            return true;
-        }
-
-        if (target == commandSender) {
+        var target = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
+        if (target == null || target == commandSender) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;
         }
@@ -47,9 +44,9 @@ public class PayCommand extends CommandUtils implements ICommandExecutorOverload
         } catch (NumberFormatException ignored) {
 
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                         .GetMessage(commandLabel, command, commandSender, target,
-                                                                                                     "Pay.NotANumber")
-                                                                                         .replace("<NUMBER>", arguments[1]));
+                                                                                           .GetMessage(commandLabel, command, commandSender, target,
+                                                                                                       "Pay.NotANumber")
+                                                                                           .replace("<NUMBER>", arguments[1]));
             return true;
         }
         if (commandSender instanceof Player) {
@@ -68,27 +65,30 @@ public class PayCommand extends CommandUtils implements ICommandExecutorOverload
             }
 
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                         .GetMessage(commandLabel, command.getName(), commandSender, target,
-                                                                                                     "Pay.Success.Self")
-                                                                                         .replace("<AMOUNT>",
-                                                                                                  this._plugin.GetEconomyManager().Format(amount)));
+                                                                                           .GetMessage(commandLabel, command.getName(), commandSender,
+                                                                                                       target, "Pay.Success.Self")
+                                                                                           .replace("<AMOUNT>",
+                                                                                                    this._plugin.GetEconomyManager().Format(amount)));
             this._plugin.GetEconomyManager().MakeTransaction((Player) commandSender, target, amount);
 
             target.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                  .GetMessage(commandLabel, command, commandSender, target, "Pay.Success.Others")
-                                                                                  .replace("<AMOUNT>", this._plugin.GetEconomyManager().Format(amount)));
+                                                                                    .GetMessage(commandLabel, command, commandSender, target,
+                                                                                                "Pay.Success.Others")
+                                                                                    .replace("<AMOUNT>", this._plugin.GetEconomyManager().Format(amount)));
             return true;
         }
 
         commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                     .GetMessage(commandLabel, command.getName(), commandSender, target,
-                                                                                                 "Pay.Success.Self")
-                                                                                     .replace("<AMOUNT>", this._plugin.GetEconomyManager().Format(amount)));
+                                                                                       .GetMessage(commandLabel, command.getName(), commandSender, target,
+                                                                                                   "Pay.Success.Self")
+                                                                                       .replace("<AMOUNT>",
+                                                                                                this._plugin.GetEconomyManager().Format(amount)));
         this._plugin.GetEconomyManager().AddMoney(target, amount);
 
         target.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                              .GetMessage(commandLabel, command, commandSender, target, "Pay.Success.Others")
-                                                                              .replace("<AMOUNT>", this._plugin.GetEconomyManager().Format(amount)));
+                                                                                .GetMessage(commandLabel, command, commandSender, target,
+                                                                                            "Pay.Success.Others")
+                                                                                .replace("<AMOUNT>", this._plugin.GetEconomyManager().Format(amount)));
         return true;
     }
 

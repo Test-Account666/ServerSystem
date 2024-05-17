@@ -10,10 +10,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ServerSystemTabCompleter extends CommandUtils implements ITabCompleterOverload {
+public class ServerSystemTabCompleter implements ITabCompleterOverload {
+
+    protected final ServerSystem _plugin;
 
     public ServerSystemTabCompleter(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

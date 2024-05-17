@@ -10,10 +10,12 @@ import org.bukkit.entity.Player;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class KitCommand extends CommandUtils implements ICommandExecutorOverload {
+public class KitCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public KitCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
@@ -36,7 +38,7 @@ public class KitCommand extends CommandUtils implements ICommandExecutorOverload
         }
 
         var kitName = arguments[0];
-        var target = this.GetPlayer(commandSender, arguments[1]);
+        var target = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[1]);
 
         this.GiveKit(target, kitName, commandSender, command, commandLabel, arguments[1]);
         return true;

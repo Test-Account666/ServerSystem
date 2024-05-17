@@ -9,10 +9,12 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public class UnBanCommand extends CommandUtils implements ICommandExecutorOverload {
+public class UnBanCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public UnBanCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

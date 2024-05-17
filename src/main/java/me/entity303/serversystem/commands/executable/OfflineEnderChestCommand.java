@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,11 +18,12 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class OfflineEnderChestCommand extends CommandUtils implements ITabExecutorOverload, Listener {
+public class OfflineEnderChestCommand implements ITabExecutorOverload, Listener {
+    protected final ServerSystem _plugin;
     private final Map<Player, Inventory> _cachedInventories = new HashMap<>();
 
     public OfflineEnderChestCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
 
         plugin.GetEventManager().RegisterEvent(this);
     }
@@ -59,8 +61,8 @@ public class OfflineEnderChestCommand extends CommandUtils implements ITabExecut
         }
 
         if (offlineTarget.isOnline()) {
-            if (this.GetPlayer(commandSender, arguments[0]) == null) {
-                ((Player) commandSender).openInventory(offlineTarget.getPlayer().getEnderChest());
+            if (CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]) == null) {
+                ((HumanEntity) commandSender).openInventory(offlineTarget.getPlayer().getEnderChest());
                 return true;
             }
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
@@ -70,7 +72,7 @@ public class OfflineEnderChestCommand extends CommandUtils implements ITabExecut
             return true;
         }
 
-        var player = this.GetHookedPlayer(offlineTarget);
+        var player = CommandUtils.GetHookedPlayer(this._plugin, offlineTarget);
 
         this._cachedInventories.put(player, player.getEnderChest());
 

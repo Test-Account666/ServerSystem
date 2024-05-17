@@ -20,10 +20,12 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class JoinListener extends CommandUtils implements Listener {
+public class JoinListener implements Listener {
+
+    protected final ServerSystem _plugin;
 
     public JoinListener(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @EventHandler

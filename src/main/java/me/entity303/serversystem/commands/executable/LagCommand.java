@@ -11,11 +11,12 @@ import java.text.DecimalFormat;
 
 import static java.lang.Runtime.getRuntime;
 
-public class LagCommand extends CommandUtils implements ICommandExecutorOverload {
+public class LagCommand implements ICommandExecutorOverload {
     private static final DecimalFormat TWO_DECIMALS_FORMAT = new DecimalFormat("#,###.##");
+    protected final ServerSystem _plugin;
 
     public LagCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

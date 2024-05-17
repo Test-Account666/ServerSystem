@@ -12,12 +12,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RecipeTabCompleter extends CommandUtils implements ITabCompleterOverload {
+public class RecipeTabCompleter implements ITabCompleterOverload {
 
     public static final Material[] MATERIALS = Material.values();
+    protected final ServerSystem _plugin;
 
     public RecipeTabCompleter(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

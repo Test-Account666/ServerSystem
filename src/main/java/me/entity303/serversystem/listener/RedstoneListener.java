@@ -6,10 +6,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockRedstoneEvent;
 
-public class RedstoneListener extends CommandUtils implements Listener {
+public class RedstoneListener implements Listener {
+
+    protected final ServerSystem _plugin;
 
     public RedstoneListener(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @EventHandler

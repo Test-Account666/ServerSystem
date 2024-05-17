@@ -7,10 +7,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class AnvilCommand extends CommandUtils implements ICommandExecutorOverload {
+public class AnvilCommand implements ICommandExecutorOverload {
+    protected final ServerSystem _plugin;
 
     public AnvilCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

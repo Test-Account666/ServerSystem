@@ -7,12 +7,13 @@ import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public class NoonCommand extends CommandUtils implements ICommandExecutorOverload {
+public class NoonCommand implements ICommandExecutorOverload {
     private static final String TIME = "noon";
+    protected final ServerSystem _plugin;
     private final TimeCommand _timeCommand;
 
     public NoonCommand(ServerSystem plugin, TimeCommand timeCommand) {
-        super(plugin);
+        this._plugin = plugin;
 
         this._timeCommand = timeCommand;
     }

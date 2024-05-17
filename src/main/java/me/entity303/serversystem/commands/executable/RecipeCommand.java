@@ -15,12 +15,13 @@ import org.bukkit.inventory.ShapelessRecipe;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class RecipeCommand extends CommandUtils implements ICommandExecutorOverload {
+public class RecipeCommand implements ICommandExecutorOverload {
     private final static List<Player> RECIPE_LIST = new ArrayList<>();
     private static final Pattern SPLIT_PATTERN = Pattern.compile("");
+    protected final ServerSystem _plugin;
 
     public RecipeCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     public static List<Player> GetRecipeList() {

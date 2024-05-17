@@ -15,11 +15,12 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
-public class MsgCommand extends CommandUtils implements ICommandExecutorOverload {
+public class MsgCommand implements ICommandExecutorOverload {
     public static final HashMap<CommandSender, CommandSender> REPLY_MAP = new HashMap<>();
+    protected final ServerSystem _plugin;
 
     public MsgCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
@@ -38,13 +39,13 @@ public class MsgCommand extends CommandUtils implements ICommandExecutorOverload
                 return;
             }
 
-            var target = this.GetPlayer(commandSender, arguments[0]);
+            var target = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
             if (target == null) {
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
                 return;
             }
 
-            if (IsAwayFromKeyboard(target))
+            if (CommandUtils.IsAwayFromKeyboard(target))
                 commandSender.sendMessage(
                         this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Msg.Afk"));
 

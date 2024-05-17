@@ -8,10 +8,12 @@ import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class PlotListener1 extends CommandUtils implements Listener {
+public class PlotListener1 implements Listener {
+
+    protected final ServerSystem _plugin;
 
     public PlotListener1(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @SuppressWarnings("Guava")

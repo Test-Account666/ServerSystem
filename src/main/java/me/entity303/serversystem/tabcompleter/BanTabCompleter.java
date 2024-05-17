@@ -13,10 +13,12 @@ import java.util.stream.Collectors;
 
 import static me.entity303.serversystem.bansystem.TimeUnit.*;
 
-public class BanTabCompleter extends CommandUtils implements ITabCompleterOverload {
+public class BanTabCompleter implements ITabCompleterOverload {
+
+    protected final ServerSystem _plugin;
 
     public BanTabCompleter(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

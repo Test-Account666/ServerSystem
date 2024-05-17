@@ -9,10 +9,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class StackCommand extends CommandUtils implements ICommandExecutorOverload {
+public class StackCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public StackCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

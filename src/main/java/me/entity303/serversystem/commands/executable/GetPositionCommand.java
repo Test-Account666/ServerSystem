@@ -9,10 +9,12 @@ import org.bukkit.entity.Player;
 
 import java.util.Objects;
 
-public class GetPositionCommand extends CommandUtils implements ICommandExecutorOverload {
+public class GetPositionCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public GetPositionCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
@@ -39,7 +41,7 @@ public class GetPositionCommand extends CommandUtils implements ICommandExecutor
             return true;
         }
 
-        var target = this.GetPlayer(commandSender, arguments[0]);
+        var target = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
         if (target == null) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;

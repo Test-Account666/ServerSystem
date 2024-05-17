@@ -6,10 +6,12 @@ import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public class DeleteWarpCommand extends CommandUtils implements ICommandExecutorOverload {
+public class DeleteWarpCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public DeleteWarpCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

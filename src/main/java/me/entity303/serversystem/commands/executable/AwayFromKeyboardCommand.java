@@ -8,10 +8,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class AwayFromKeyboardCommand extends CommandUtils implements ICommandExecutorOverload {
+public class AwayFromKeyboardCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public AwayFromKeyboardCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
@@ -35,7 +37,7 @@ public class AwayFromKeyboardCommand extends CommandUtils implements ICommandExe
         var awayFromKeyboard = false;
 
         if (player.hasMetadata("afk"))
-            awayFromKeyboard = IsAwayFromKeyboard(player);
+            awayFromKeyboard = CommandUtils.IsAwayFromKeyboard(player);
 
         var metaValueGenerator = this._plugin.GetMetaValue();
         if (!awayFromKeyboard) {

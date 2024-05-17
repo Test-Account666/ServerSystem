@@ -44,7 +44,9 @@ public abstract class AbstractVirtual {
     protected String GetVersion() {
         if (this._version == null)
             try {
-                this._version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+                var splitVersion = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
+
+                this._version = splitVersion.length > 3? splitVersion[3] : "";
             } catch (ArrayIndexOutOfBoundsException exception) {
                 exception.printStackTrace();
                 return null;

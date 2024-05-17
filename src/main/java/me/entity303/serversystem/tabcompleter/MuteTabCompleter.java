@@ -13,10 +13,12 @@ import java.util.stream.Collectors;
 
 import static me.entity303.serversystem.bansystem.TimeUnit.*;
 
-public class MuteTabCompleter extends CommandUtils implements ITabCompleterOverload {
+public class MuteTabCompleter implements ITabCompleterOverload {
+
+    protected final ServerSystem _plugin;
 
     public MuteTabCompleter(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

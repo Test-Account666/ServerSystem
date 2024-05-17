@@ -8,10 +8,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ClearInventoryCommand extends CommandUtils implements ICommandExecutorOverload {
+public class ClearInventoryCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public ClearInventoryCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
@@ -40,7 +42,7 @@ public class ClearInventoryCommand extends CommandUtils implements ICommandExecu
             return true;
         }
 
-        var target = this.GetPlayer(commandSender, arguments[0]);
+        var target = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
         if (target == null) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;

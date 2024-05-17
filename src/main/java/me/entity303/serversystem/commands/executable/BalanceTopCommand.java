@@ -3,7 +3,6 @@ package me.entity303.serversystem.commands.executable;
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
-import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -13,10 +12,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class BaltopCommand extends CommandUtils implements ICommandExecutorOverload {
+public class BalanceTopCommand implements ICommandExecutorOverload {
 
-    public BaltopCommand(ServerSystem plugin) {
-        super(plugin);
+    protected final ServerSystem _plugin;
+
+    public BalanceTopCommand(ServerSystem plugin) {
+        this._plugin = plugin;
     }
 
     @Override

@@ -9,14 +9,12 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public class UnMuteCommand extends CommandUtils implements ICommandExecutorOverload {
+public class UnMuteCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public UnMuteCommand(ServerSystem plugin) {
-        super(plugin);
-    }
-
-    private ServerSystem GetPlugin() {
-        return this._plugin;
+        this._plugin = plugin;
     }
 
     @Override
@@ -33,10 +31,12 @@ public class UnMuteCommand extends CommandUtils implements ICommandExecutorOverl
             return true;
         }
         var target = this.GetPlayer(arguments[0]);
+
         if (!this._plugin.GetMuteManager().IsMuted(target)) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                         .GetMessageWithStringTarget(commandLabel, command, commandSender,
-                                                                                                                     target.getName(), "UnMute.NotMuted"));
+                                                                                           .GetMessageWithStringTarget(commandLabel, command,
+                                                                                                                       commandSender, target.getName(),
+                                                                                                                       "UnMute.NotMuted"));
             return true;
         }
         this._plugin.GetMuteManager().RemoveMute(target.getUniqueId());
@@ -47,16 +47,15 @@ public class UnMuteCommand extends CommandUtils implements ICommandExecutorOverl
         });
 
 
-        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                  this._plugin.GetMessages().GetMessageWithStringTarget(commandLabel, command, commandSender, target.getName(), "UnMute.Success"));
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                       .GetMessageWithStringTarget(commandLabel, command, commandSender,
+                                                                                                                   target.getName(), "UnMute.Success"));
         return true;
     }
 
     private OfflinePlayer GetPlayer(String name) {
         OfflinePlayer player;
         player = Bukkit.getPlayer(name);
-        if (!this._plugin.GetMuteManager().IsMuted(player))
-            player = null;
         if (player == null)
             player = Bukkit.getOfflinePlayer(name);
         return player;

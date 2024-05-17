@@ -10,10 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EconomyTabCompleter extends CommandUtils implements ITabCompleterOverload {
+public class EconomyTabCompleter implements ITabCompleterOverload {
+
+    protected final ServerSystem _plugin;
 
     public EconomyTabCompleter(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

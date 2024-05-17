@@ -9,10 +9,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class SetWarpCommand extends CommandUtils implements ICommandExecutorOverload {
+public class SetWarpCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public SetWarpCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

@@ -12,10 +12,12 @@ import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TeleportRequestHereCommand extends CommandUtils implements ICommandExecutorOverload {
+public class TeleportRequestHereCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public TeleportRequestHereCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
@@ -37,7 +39,7 @@ public class TeleportRequestHereCommand extends CommandUtils implements ICommand
             return true;
         }
 
-        var targetPlayer = this.GetPlayer(commandSender, arguments[0]);
+        var targetPlayer = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
         if (targetPlayer == null) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;

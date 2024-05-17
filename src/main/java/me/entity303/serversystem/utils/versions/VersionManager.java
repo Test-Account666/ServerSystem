@@ -34,7 +34,9 @@ public class VersionManager {
     }
 
     public void RegisterVersionStuff() {
-        this._nmsVersion = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+        var splitVersion = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
+
+        this._nmsVersion = splitVersion.length > 3? splitVersion[3] : "";
         this.FetchVersion();
 
         this._serverSystem.Info("ServerSystem is running on " + this._version + "!");
@@ -42,7 +44,7 @@ public class VersionManager {
         try {
             this._serverSystem.GetVersionStuff()
                               .SetGetHandleMethod(
-                                     Class.forName("org.bukkit.craftbukkit." + this._nmsVersion + ".entity.CraftPlayer").getDeclaredMethod("getHandle"));
+                                      Class.forName("org.bukkit.craftbukkit." + this._nmsVersion + ".entity.CraftPlayer").getDeclaredMethod("getHandle"));
         } catch (NoSuchMethodException | ClassNotFoundException exception) {
             exception.printStackTrace();
         }
@@ -53,7 +55,8 @@ public class VersionManager {
 
             this.HandleFullySupportedVersion();
             Bukkit.getScheduler()
-                  .runTaskLater(this._serverSystem, () -> this._serverSystem.GetCommandManager().RegisterCommand("skull", new SkullCommand(this._serverSystem), null), 5L);
+                  .runTaskLater(this._serverSystem,
+                                () -> this._serverSystem.GetCommandManager().RegisterCommand("skull", new SkullCommand(this._serverSystem), null), 5L);
         } else if (this._version.contains("1.19.R3")) {
             this.HandleFullySupportedVersion();
             this.RegisterObsoleteEditSignCommand();
@@ -80,7 +83,8 @@ public class VersionManager {
             this._vanishFullyFunctional = false;
             this.HandleFullySupportedVersion();
             Bukkit.getScheduler()
-                  .runTaskLater(this._serverSystem, () -> this._serverSystem.GetCommandManager().RegisterCommand("skull", new SkullCommand(this._serverSystem), null), 5L);
+                  .runTaskLater(this._serverSystem,
+                                () -> this._serverSystem.GetCommandManager().RegisterCommand("skull", new SkullCommand(this._serverSystem), null), 5L);
         }
     }
 
@@ -117,8 +121,8 @@ public class VersionManager {
         Bukkit.getScheduler().runTaskLater(this._serverSystem, () -> {
             this._serverSystem.GetCommandManager()
                               .RegisterCommand("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null?
-                                                          new EditSignPlotSquaredCommand(this._serverSystem) :
-                                                          new EditSignCommand(this._serverSystem), null);
+                                                           new EditSignPlotSquaredCommand(this._serverSystem) :
+                                                           new EditSignCommand(this._serverSystem), null);
             this._serverSystem.GetCommandManager().RegisterCommand("skull", new SkullCommand(this._serverSystem), null);
         }, 5L);
     }

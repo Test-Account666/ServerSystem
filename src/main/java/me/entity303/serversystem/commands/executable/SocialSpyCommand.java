@@ -9,10 +9,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class SocialSpyCommand extends CommandUtils implements ICommandExecutorOverload {
+public class SocialSpyCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public SocialSpyCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

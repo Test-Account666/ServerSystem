@@ -7,10 +7,12 @@ import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class SmithingTableCommand extends CommandUtils implements ICommandExecutorOverload {
+public class SmithingTableCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public SmithingTableCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

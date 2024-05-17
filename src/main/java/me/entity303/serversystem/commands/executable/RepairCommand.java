@@ -10,10 +10,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 
-public class RepairCommand extends CommandUtils implements ICommandExecutorOverload {
+public class RepairCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public RepairCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

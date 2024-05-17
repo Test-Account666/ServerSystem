@@ -17,11 +17,12 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class ServerSystemConversionCommand extends CommandUtils implements ICommandExecutorOverload {
+public class ServerSystemConversionCommand implements ICommandExecutorOverload {
+    protected final ServerSystem _plugin;
     private boolean _starting = false;
 
     public ServerSystemConversionCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

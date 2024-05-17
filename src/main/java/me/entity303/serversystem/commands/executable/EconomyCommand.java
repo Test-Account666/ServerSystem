@@ -8,23 +8,21 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public class EconomyCommand extends CommandUtils implements ICommandExecutorOverload {
+public class EconomyCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public EconomyCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        System.out.println("1");
-
         if (!this._plugin.GetPermissions().HasPermission(commandSender, "economy.general")) {
             var permission = this._plugin.GetPermissions().GetPermission("economy.general");
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
-
-        System.out.println("2");
 
         if (arguments.length == 0) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
@@ -32,19 +30,13 @@ public class EconomyCommand extends CommandUtils implements ICommandExecutorOver
             return true;
         }
 
-        System.out.println("3");
-
         if (!this.HasPermission(arguments[0], commandSender, command, commandLabel))
             return true;
-
-        System.out.println("4");
 
         if (arguments.length <= 2) {
             this.SendHelpCommand(arguments[0], commandSender, command, commandLabel);
             return true;
         }
-
-        System.out.println("5");
 
         var target = this.Player(arguments[1]);
 
@@ -52,8 +44,6 @@ public class EconomyCommand extends CommandUtils implements ICommandExecutorOver
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[1]));
             return true;
         }
-
-        System.out.println("6");
 
         double amount;
         try {
@@ -66,8 +56,6 @@ public class EconomyCommand extends CommandUtils implements ICommandExecutorOver
                                                                                            .replace("<NUMBER>", arguments[2]));
             return true;
         }
-
-        System.out.println(arguments[0].toLowerCase());
 
         switch (arguments[0].toLowerCase()) {
             case "set" -> {

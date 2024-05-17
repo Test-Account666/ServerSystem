@@ -11,10 +11,12 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 
-public class TeamChatCommand extends CommandUtils implements ICommandExecutorOverload {
+public class TeamChatCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public TeamChatCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

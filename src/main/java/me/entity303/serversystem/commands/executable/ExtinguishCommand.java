@@ -7,10 +7,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ExtinguishCommand extends CommandUtils implements ICommandExecutorOverload {
+public class ExtinguishCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public ExtinguishCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
@@ -41,7 +43,7 @@ public class ExtinguishCommand extends CommandUtils implements ICommandExecutorO
             return true;
         }
 
-        var target = this.GetPlayer(commandSender, arguments[0]);
+        var target = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
         if (target == null)
             return true;
 

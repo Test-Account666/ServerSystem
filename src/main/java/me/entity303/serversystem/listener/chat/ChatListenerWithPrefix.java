@@ -10,12 +10,13 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.UUID;
 
-public class ChatListenerWithPrefix extends CommandUtils implements Listener {
+public class ChatListenerWithPrefix implements Listener {
+    protected final ServerSystem _plugin;
     private final String _format;
     private final boolean _withPrefix;
 
     public ChatListenerWithPrefix(ServerSystem plugin, boolean withPrefix, String format) {
-        super(plugin);
+        this._plugin = plugin;
         this._format = format;
         this._withPrefix = withPrefix;
     }

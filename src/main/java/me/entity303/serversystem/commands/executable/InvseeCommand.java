@@ -29,7 +29,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class InvseeCommand extends CommandUtils implements ICommandExecutorOverload, Listener {
+public class InvseeCommand implements ICommandExecutorOverload, Listener {
+    protected final ServerSystem _plugin;
     private final HashMap<Player, PlayerInventory> _cachedCustomInventories = new HashMap<>();
     private final Method _getInventoryMethodNew = null;
     private Class _playerInventoryNmsClass = null;
@@ -39,7 +40,7 @@ public class InvseeCommand extends CommandUtils implements ICommandExecutorOverl
     private Method _getHandleMethod = null;
 
     public InvseeCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
 
         this._plugin.GetEventManager().RegisterEvent(this);
     }
@@ -59,7 +60,7 @@ public class InvseeCommand extends CommandUtils implements ICommandExecutorOverl
             return true;
         }
 
-        var targetPlayer = this.GetPlayer(commandSender, arguments[0]);
+        var targetPlayer = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
         if (targetPlayer == null) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;
@@ -143,7 +144,7 @@ public class InvseeCommand extends CommandUtils implements ICommandExecutorOverl
                                       this._plugin.GetMessages().GetSyntax(commandLabel, command.getName(), commandSender, null, "Invsee"));
             return true;
         }
-        var targetPlayer = this.GetPlayer(commandSender, arguments[0]);
+        var targetPlayer = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
         if (targetPlayer == null) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
             return true;

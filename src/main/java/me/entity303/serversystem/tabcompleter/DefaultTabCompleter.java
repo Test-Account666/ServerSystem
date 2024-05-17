@@ -8,10 +8,12 @@ import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
-public class DefaultTabCompleter extends CommandUtils implements ITabCompleterOverload {
+public class DefaultTabCompleter implements ITabCompleterOverload {
+
+    protected final ServerSystem _plugin;
 
     public DefaultTabCompleter(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

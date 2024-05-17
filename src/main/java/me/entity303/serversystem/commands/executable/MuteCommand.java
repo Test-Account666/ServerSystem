@@ -14,10 +14,12 @@ import org.bukkit.entity.Player;
 
 import static me.entity303.serversystem.bansystem.TimeUnit.*;
 
-public class MuteCommand extends CommandUtils implements ICommandExecutorOverload {
+public class MuteCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public MuteCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

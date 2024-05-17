@@ -8,10 +8,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class BreakCommand extends CommandUtils implements ICommandExecutorOverload {
+public class BreakCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public BreakCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

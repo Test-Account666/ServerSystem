@@ -14,10 +14,12 @@ import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-public class InventoryClickListener extends CommandUtils implements Listener {
+public class InventoryClickListener implements Listener {
+
+    protected final ServerSystem _plugin;
 
     public InventoryClickListener(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @EventHandler

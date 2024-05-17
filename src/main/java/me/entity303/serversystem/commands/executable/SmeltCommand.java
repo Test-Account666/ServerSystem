@@ -14,10 +14,12 @@ import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 
 
-public class SmeltCommand extends CommandUtils implements ICommandExecutorOverload {
+public class SmeltCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public SmeltCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

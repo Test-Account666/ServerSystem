@@ -4,7 +4,6 @@ import me.entity303.serversystem.commands.ITabExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -15,10 +14,12 @@ import java.util.List;
 
 import static me.entity303.serversystem.commands.executable.OfflineEnderChestCommand.GetOfflinePlayers;
 
-public class OfflineTeleportCommand extends CommandUtils implements ITabExecutorOverload {
+public class OfflineTeleportCommand implements ITabExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public OfflineTeleportCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
@@ -54,7 +55,7 @@ public class OfflineTeleportCommand extends CommandUtils implements ITabExecutor
         }
 
         if (offlineTarget.isOnline()) {
-            if (this.GetPlayer(commandSender, offlineTarget.getUniqueId()) == null) {
+            if (CommandUtils.GetPlayer(this._plugin, commandSender, offlineTarget.getUniqueId()) == null) {
 
                 Entity entity = offlineTarget.getPlayer();
                 var location = entity.getLocation();
@@ -72,7 +73,7 @@ public class OfflineTeleportCommand extends CommandUtils implements ITabExecutor
             return true;
         }
 
-        var player = this.GetHookedPlayer(offlineTarget);
+        var player = CommandUtils.GetHookedPlayer(this._plugin, offlineTarget);
 
         var location = player.getLocation();
 

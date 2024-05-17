@@ -8,10 +8,12 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-public class FlightHitListener extends CommandUtils implements Listener {
+public class FlightHitListener implements Listener {
+
+    protected final ServerSystem _plugin;
 
     public FlightHitListener(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @EventHandler

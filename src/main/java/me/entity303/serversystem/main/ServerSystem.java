@@ -330,6 +330,10 @@ public final class ServerSystem extends JavaPlugin {
 
     public AbstractEconomyManager GetEconomyManager() {
         return this._economyManager;
+    }
+
+    public Message GetMessages() {
+        return this._messages;
     }    private boolean CheckMainServerForUpdates(String currentVersion, boolean autoUpdate) {
         var foundVersion = this.getDescription().getVersion();
 
@@ -397,18 +401,15 @@ public final class ServerSystem extends JavaPlugin {
         return false;
     }
 
-    public Message GetMessages() {
-        return this._messages;
-    }
-
     public Vanish GetVanish() {
         return this._vanish;
     }
 
+
+
     public void Error(String text) {
         Bukkit.getConsoleSender().sendMessage(ChatColor.TranslateAlternateColorCodes('&', "&8[&4Error&8] [&4ServerSystem&8] &7>> &4" + text));
     }
-
 
 
     public void Info(String text) {

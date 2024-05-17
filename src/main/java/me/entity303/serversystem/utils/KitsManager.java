@@ -16,14 +16,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class KitsManager extends CommandUtils {
+public class KitsManager {
+    protected final ServerSystem _plugin;
     private final File _kitsFile = new File("plugins//ServerSystem", "kits.yml");
     private final FileConfiguration _kitsConfiguration;
     private final File _delaysFile = new File("plugins//ServerSystem", "delays.yml");
     private final FileConfiguration _delaysConfiguration;
 
     public KitsManager(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
         this._kitsConfiguration = YamlConfiguration.loadConfiguration(this._kitsFile);
         this._delaysConfiguration = YamlConfiguration.loadConfiguration(this._delaysFile);
     }

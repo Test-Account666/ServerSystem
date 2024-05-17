@@ -7,13 +7,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 
-public class WorldChangeListener extends CommandUtils implements Listener {
+public class WorldChangeListener implements Listener {
+    protected final ServerSystem _plugin;
     private final boolean _resetGameMode;
     private final boolean _resetGodMode;
     private final boolean _resetFly;
 
     public WorldChangeListener(ServerSystem plugin, boolean resetGameMode, boolean resetGodMode, boolean resetFly) {
-        super(plugin);
+        this._plugin = plugin;
         this._resetGameMode = resetGameMode;
         this._resetGodMode = resetGodMode;
         this._resetFly = resetFly;

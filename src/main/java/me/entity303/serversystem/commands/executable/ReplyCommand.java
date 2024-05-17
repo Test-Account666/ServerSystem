@@ -15,10 +15,12 @@ import java.util.stream.IntStream;
 
 import static me.entity303.serversystem.commands.executable.MsgCommand.REPLY_MAP;
 
-public class ReplyCommand extends CommandUtils implements ICommandExecutorOverload {
+public class ReplyCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public ReplyCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
@@ -48,7 +50,7 @@ public class ReplyCommand extends CommandUtils implements ICommandExecutorOverlo
             }
 
             if (target instanceof Player)
-                if (IsAwayFromKeyboard((Player) target))
+                if (CommandUtils.IsAwayFromKeyboard((Player) target))
                     commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
                                               this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Msg.Afk"));
 

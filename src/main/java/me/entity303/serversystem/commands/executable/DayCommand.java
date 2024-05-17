@@ -7,12 +7,13 @@ import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public class DayCommand extends CommandUtils implements ICommandExecutorOverload {
+public class DayCommand implements ICommandExecutorOverload {
     private static final String TIME = "day";
+    protected final ServerSystem _plugin;
     private final TimeCommand _timeCommand;
 
     public DayCommand(ServerSystem plugin, TimeCommand timeCommand) {
-        super(plugin);
+        this._plugin = plugin;
 
         this._timeCommand = timeCommand;
     }

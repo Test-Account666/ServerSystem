@@ -7,10 +7,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public class MaintenanceCommand extends CommandUtils implements ICommandExecutorOverload {
+public class MaintenanceCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public MaintenanceCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

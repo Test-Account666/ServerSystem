@@ -14,6 +14,7 @@ import net.bytebuddy.matcher.ElementMatchers;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,7 +30,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static me.entity303.serversystem.commands.executable.OfflineEnderChestCommand.GetOfflinePlayers;
 
-public class OfflineInvseeCommand extends CommandUtils implements ITabExecutorOverload, Listener {
+public class OfflineInvseeCommand implements ITabExecutorOverload, Listener {
+    protected final ServerSystem _plugin;
     private final HashMap<Player, PlayerInventory> _cachedCustomInventories = new HashMap<>();
     private Class _playerInventoryNmsClass = null;
     private Constructor _craftInventoryPlayerConstructor = null;
@@ -38,7 +40,7 @@ public class OfflineInvseeCommand extends CommandUtils implements ITabExecutorOv
     private Method _getHandleMethod = null;
 
     public OfflineInvseeCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
 
         this._plugin.GetEventManager().RegisterEvent(this);
     }
@@ -80,7 +82,7 @@ public class OfflineInvseeCommand extends CommandUtils implements ITabExecutorOv
 
         Player targetPlayer = null;
         if (offlineTarget.isOnline()) {
-            targetPlayer = this.GetPlayer(commandSender, arguments[0]);
+            targetPlayer = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
             if (targetPlayer != null) {
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
                                                                                                .GetMessage(commandLabel, command, commandSender,
@@ -91,7 +93,7 @@ public class OfflineInvseeCommand extends CommandUtils implements ITabExecutorOv
         }
 
         if (targetPlayer == null)
-            targetPlayer = this.GetHookedPlayer(Bukkit.getOfflinePlayer(arguments[0]));
+            targetPlayer = CommandUtils.GetHookedPlayer(this._plugin, Bukkit.getOfflinePlayer(arguments[0]));
 
         if (this._playerInventoryNmsClass == null)
             try {
@@ -189,7 +191,7 @@ public class OfflineInvseeCommand extends CommandUtils implements ITabExecutorOv
 
         Player targetPlayer = null;
         if (Bukkit.getPlayer(arguments[0]) != null) {
-            targetPlayer = this.GetPlayer(commandSender, arguments[0]);
+            targetPlayer = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
             if (targetPlayer != null) {
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
                                                                                                .GetMessage(commandLabel, command, commandSender,
@@ -200,9 +202,9 @@ public class OfflineInvseeCommand extends CommandUtils implements ITabExecutorOv
         }
 
         if (targetPlayer == null)
-            targetPlayer = this.GetHookedPlayer(Bukkit.getOfflinePlayer(arguments[0]));
+            targetPlayer = CommandUtils.GetHookedPlayer(this._plugin, Bukkit.getOfflinePlayer(arguments[0]));
 
-        ((Player) commandSender).openInventory(targetPlayer.getInventory());
+        ((HumanEntity) commandSender).openInventory(targetPlayer.getInventory());
 
         var finalPlayerInventory = targetPlayer.getInventory();
         var taskId = new AtomicInteger(0);

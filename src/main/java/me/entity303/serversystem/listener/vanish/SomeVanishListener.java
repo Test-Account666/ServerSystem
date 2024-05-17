@@ -10,10 +10,12 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 
-public class SomeVanishListener extends CommandUtils implements Listener {
+public class SomeVanishListener implements Listener {
+
+    protected final ServerSystem _plugin;
 
     public SomeVanishListener(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @EventHandler

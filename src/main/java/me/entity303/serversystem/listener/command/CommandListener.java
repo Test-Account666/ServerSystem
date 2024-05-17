@@ -9,10 +9,12 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.RemoteServerCommandEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
-public class CommandListener extends CommandUtils implements Listener {
+public class CommandListener implements Listener {
+
+    protected final ServerSystem _plugin;
 
     public CommandListener(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @EventHandler

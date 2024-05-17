@@ -10,10 +10,12 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class SignListener extends CommandUtils implements Listener {
+public class SignListener implements Listener {
+
+    protected final ServerSystem _plugin;
 
     public SignListener(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @EventHandler

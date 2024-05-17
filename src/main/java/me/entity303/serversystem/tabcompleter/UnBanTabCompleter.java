@@ -10,10 +10,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class UnBanTabCompleter extends CommandUtils implements ITabCompleterOverload {
+public class UnBanTabCompleter implements ITabCompleterOverload {
+
+    protected final ServerSystem _plugin;
 
     public UnBanTabCompleter(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

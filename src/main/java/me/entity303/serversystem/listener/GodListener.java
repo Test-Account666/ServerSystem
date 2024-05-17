@@ -10,10 +10,12 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 
-public class GodListener extends CommandUtils implements Listener {
+public class GodListener implements Listener {
+
+    protected final ServerSystem _plugin;
 
     public GodListener(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @EventHandler

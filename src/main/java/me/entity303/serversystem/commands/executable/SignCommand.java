@@ -17,12 +17,13 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class SignCommand extends CommandUtils implements ICommandExecutorOverload {
+public class SignCommand implements ICommandExecutorOverload {
 
     private static final Pattern SPLIT_PATTERN = Pattern.compile("\\n");
+    protected final ServerSystem _plugin;
 
     public SignCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

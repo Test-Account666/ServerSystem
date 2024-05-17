@@ -8,10 +8,12 @@ import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class SpeedCommand extends CommandUtils implements ICommandExecutorOverload {
+public class SpeedCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public SpeedCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
@@ -48,7 +50,7 @@ public class SpeedCommand extends CommandUtils implements ICommandExecutorOverlo
         }
 
         if (arguments.length == 2) {
-            var target = this.GetPlayer(commandSender, arguments[1]);
+            var target = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[1]);
             if (target == null)
                 if ("walk".equalsIgnoreCase(arguments[1]) || "laufen".equalsIgnoreCase(arguments[1]) || "walking".equalsIgnoreCase(arguments[1]) ||
                     "lauf".equalsIgnoreCase(arguments[1]) || "run".equalsIgnoreCase(arguments[1]) || "running".equalsIgnoreCase(arguments[1]) ||
@@ -87,7 +89,7 @@ public class SpeedCommand extends CommandUtils implements ICommandExecutorOverlo
         }
 
         if (arguments.length >= 3) {
-            var target = this.GetPlayer(commandSender, arguments[1]);
+            var target = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[1]);
             if (target == null) {
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[1]));
                 return true;

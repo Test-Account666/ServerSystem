@@ -12,8 +12,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 
-public class SaveData_Old extends CommandUtils implements ISaveData {
+public class SaveData_Old implements ISaveData {
 
+    protected final ServerSystem _plugin;
     private Object _worldNBTStorage = null;
     private Method _getPlayerDirectoryMethod = null;
     private Method _loadMethod = null;
@@ -25,7 +26,7 @@ public class SaveData_Old extends CommandUtils implements ISaveData {
     private Constructor _nbtTagCompoundConstructor = null;
 
     public SaveData_Old(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

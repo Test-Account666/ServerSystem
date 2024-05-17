@@ -12,7 +12,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 public class SignEdit_Reflection_Latest implements ISignEdit {
-    private String _version;
     private Method _getHandleMethodPlayer;
     private Method _getHandleMethodWorld;
     private Method _getPositionMethod;

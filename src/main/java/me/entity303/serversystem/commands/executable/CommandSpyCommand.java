@@ -9,10 +9,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 
-public class CommandSpyCommand extends CommandUtils implements ICommandExecutorOverload {
+public class CommandSpyCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public CommandSpyCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

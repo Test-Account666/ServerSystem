@@ -10,10 +10,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class UnMuteTabCompleter extends CommandUtils implements ITabCompleterOverload {
+public class UnMuteTabCompleter implements ITabCompleterOverload {
+
+    protected final ServerSystem _plugin;
 
     public UnMuteTabCompleter(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

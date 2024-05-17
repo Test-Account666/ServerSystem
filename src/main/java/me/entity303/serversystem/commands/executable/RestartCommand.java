@@ -8,11 +8,12 @@ import org.bukkit.command.Command;
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 
-public class RestartCommand extends CommandUtils implements ICommandExecutorOverload {
+public class RestartCommand implements ICommandExecutorOverload {
+    protected final ServerSystem _plugin;
     private Boolean _restarting = false;
 
     public RestartCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

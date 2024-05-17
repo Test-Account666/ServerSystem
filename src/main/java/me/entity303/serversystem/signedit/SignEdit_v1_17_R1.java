@@ -1,6 +1,5 @@
 package me.entity303.serversystem.signedit;
 
-import org.bukkit.Bukkit;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
@@ -9,7 +8,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class SignEdit_v1_17_R1 implements ISignEdit {
-    private String _version;
     private Method _getHandleMethodPlayer;
     private Method _getHandleMethodWorld;
     private Method _getPositionMethod;
@@ -70,12 +68,11 @@ public class SignEdit_v1_17_R1 implements ISignEdit {
             tes = this._getHandleMethodWorld.invoke(paramSign.getWorld())
                                             .getClass()
                                             .getMethod("getTileEntity", Class.forName("net.minecraft.core.BlockPosition"))
-                                            .invoke(this._getHandleMethodWorld.invoke(paramSign.getWorld()), Class.forName("net.minecraft.core.BlockPosition")
-                                                                                                                  .getConstructor(double.class, double.class,
-                                                                                                                           double.class)
-                                                                                                                  .newInstance(paramSign.getLocation().getX(),
-                                                                                                                               paramSign.getLocation().getY(),
-                                                                                                                               paramSign.getLocation().getZ()));
+                                            .invoke(this._getHandleMethodWorld.invoke(paramSign.getWorld()),
+                                                    Class.forName("net.minecraft.core.BlockPosition")
+                                                         .getConstructor(double.class, double.class, double.class)
+                                                         .newInstance(paramSign.getLocation().getX(), paramSign.getLocation().getY(),
+                                                                      paramSign.getLocation().getZ()));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException | InstantiationException exception) {
             exception.printStackTrace();
         }
@@ -136,16 +133,5 @@ public class SignEdit_v1_17_R1 implements ISignEdit {
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException exception) {
             exception.printStackTrace();
         }
-    }
-
-    private String GetVersion() {
-        if (this._version == null)
-            try {
-                this._version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
-            } catch (ArrayIndexOutOfBoundsException exception) {
-                exception.printStackTrace();
-                return null;
-            }
-        return this._version;
     }
 }

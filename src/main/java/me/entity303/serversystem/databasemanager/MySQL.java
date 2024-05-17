@@ -5,7 +5,7 @@ import org.bukkit.Bukkit;
 
 import java.sql.*;
 
-@SuppressWarnings("SqlSourceToSinkFlow") public class MySQL {
+public class MySQL {
     private final ServerSystem _plugin;
     private final String _hostname;
     private final String _port;
@@ -53,12 +53,23 @@ import java.sql.*;
         return false;
     }
 
-    public void ExecuteQuery(String command) {
+    public void CreateTable() {
+        this.ExecuteUpdate(
+                "CREATE TABLE IF NOT EXISTS BannedPlayers (BannedUUID VARCHAR(100), SenderUUID VARCHAR(100), Reason VARCHAR(100), UnbanTime BIGINT(1))");
+        this.ExecuteUpdate(
+                "CREATE TABLE IF NOT EXISTS MutedPlayers (BannedUUID VARCHAR(100), SenderUUID VARCHAR(100), Reason VARCHAR(100), Shadow INT(1), " +
+                "UnbanTime BIGINT(1))");
+        this.ExecuteUpdate("CREATE TABLE IF NOT EXISTS Economy (UUID VARCHAR(100), Server VARCHAR(100), Balance DECIMAL(30, 2))");
+    }
+
+    public void ExecuteUpdate(String command) {
         try {
             if (!this.IsConnected())
                 this.Connect();
 
-            this._connection.createStatement().executeQuery(command);
+            var statement = this._connection.createStatement();
+            statement.executeUpdate(command);
+            statement.closeOnCompletion();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -71,15 +82,17 @@ import java.sql.*;
         if (this._mariadb)
             try {
                 Class.forName("serversystem.libs.mariadb.org.mariadb.jdbc.Driver");
-                this._connection = DriverManager.getConnection("jdbc:mariadb://" + this._hostname + ":" + this._port + "/" + this._database + "?autoReconnect=true",
-                                                               this._username, this._password);
+                this._connection =
+                        DriverManager.getConnection("jdbc:mariadb://" + this._hostname + ":" + this._port + "/" + this._database + "?autoReconnect=true",
+                                                    this._username, this._password);
             } catch (SQLException | ClassNotFoundException throwables2) {
                 throwables2.printStackTrace();
             }
         else
             try {
-                this._connection = DriverManager.getConnection("jdbc:mysql://" + this._hostname + ":" + this._port + "/" + this._database + "?autoReconnect=true",
-                                                               this._username, this._password);
+                this._connection =
+                        DriverManager.getConnection("jdbc:mysql://" + this._hostname + ":" + this._port + "/" + this._database + "?autoReconnect=true",
+                                                    this._username, this._password);
             } catch (SQLException throwables2) {
                 throwables2.printStackTrace();
             }
@@ -95,6 +108,7 @@ import java.sql.*;
                 var statement = this._connection.createStatement();
                 var resultSet = statement.executeQuery("SELECT 1");
                 resultSet.close();
+                statement.closeOnCompletion();
             } catch (SQLException exception) {
                 exception.printStackTrace();
                 Bukkit.getScheduler().cancelTask(this._scheduleId);
@@ -106,43 +120,18 @@ import java.sql.*;
         }, 20 * 10, 20 * 10);
     }
 
-    public void CreateTable() {
-        this.ExecuteUpdate(
-                "CREATE TABLE IF NOT EXISTS BannedPlayers (BannedUUID VARCHAR(100), SenderUUID VARCHAR(100), Reason VARCHAR(100), UnbanTime BIGINT(1))");
-        this.ExecuteUpdate(
-                "CREATE TABLE IF NOT EXISTS MutedPlayers (BannedUUID VARCHAR(100), SenderUUID VARCHAR(100), Reason VARCHAR(100), Shadow INT(1), UnbanTime BIGINT(1))");
-        this.ExecuteUpdate("CREATE TABLE IF NOT EXISTS Economy (UUID VARCHAR(100), Server VARCHAR(100), Balance DECIMAL(30, 2))");
-    }
-
-    public void ExecuteUpdate(String command) {
-        try {
-            if (!this.IsConnected())
-                this.Connect();
-
-            this._connection.createStatement().executeUpdate(command);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
-
-    public void Execute(String command) {
-        try {
-            if (!this.IsConnected())
-                this.Connect();
-
-            this._connection.createStatement().execute(command);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-
-    }
-
     public ResultSet GetResult(String qry) {
         try {
             if (!this.IsConnected())
                 this.Connect();
 
-            return this._connection.createStatement().executeQuery(qry);
+            var statement = this._connection.createStatement();
+
+            var resultSet = statement.executeQuery(qry);
+
+            statement.closeOnCompletion();
+
+            return resultSet;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

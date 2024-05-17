@@ -10,10 +10,12 @@ import org.bukkit.event.player.PlayerLoginEvent;
 
 import java.util.UUID;
 
-public class LoginListener extends CommandUtils implements Listener {
+public class LoginListener implements Listener {
+
+    protected final ServerSystem _plugin;
 
     public LoginListener(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @EventHandler

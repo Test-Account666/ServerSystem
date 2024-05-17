@@ -14,12 +14,13 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class EntitySpawnListener extends CommandUtils implements Listener {
+public class EntitySpawnListener implements Listener {
+    protected final ServerSystem _plugin;
     private Field _collidesField;
     private Method _getHandleMethod;
 
     public EntitySpawnListener(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
         try {
             var entityLiving = Class.forName("org.bukkit.craftbukkit." + plugin.GetVersionManager().GetNMSVersion() + ".entity.CraftLivingEntity");
             this._collidesField = Class.forName("net.minecraft.world.entity.EntityLiving").getDeclaredField("collides");

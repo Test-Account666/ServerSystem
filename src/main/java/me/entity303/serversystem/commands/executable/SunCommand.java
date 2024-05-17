@@ -7,12 +7,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 
-public class SunCommand extends CommandUtils implements ICommandExecutorOverload {
+public class SunCommand implements ICommandExecutorOverload {
     private final static String WEATHER = "sun";
+    protected final ServerSystem _plugin;
     private final WeatherCommand _weatherCommand;
 
     public SunCommand(ServerSystem plugin, WeatherCommand weatherCommand) {
-        super(plugin);
+        this._plugin = plugin;
 
         this._weatherCommand = weatherCommand;
     }

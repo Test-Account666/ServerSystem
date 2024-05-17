@@ -6,10 +6,12 @@ import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public class DeleteKitCommand extends CommandUtils implements ICommandExecutorOverload {
+public class DeleteKitCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public DeleteKitCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

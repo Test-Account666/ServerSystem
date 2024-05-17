@@ -22,7 +22,7 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Locale;
 
-public class SaveData_Latest extends CommandUtils implements ISaveData {
+public class SaveData_Latest implements ISaveData {
 
     private static PlayerList PLAYER_LIST = null;
     private static Method SAVE_DATA_METHOD = null;
@@ -31,9 +31,10 @@ public class SaveData_Latest extends CommandUtils implements ISaveData {
     private static Method GET_COMPOUND_METHOD = null;
     private static Method SET_METHOD = null;
     private static Field WORLD_NBT_FIELD = null;
+    protected final ServerSystem _plugin;
 
     public SaveData_Latest(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

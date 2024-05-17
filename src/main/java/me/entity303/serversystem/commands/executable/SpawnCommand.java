@@ -15,10 +15,12 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.util.Objects;
 
-public class SpawnCommand extends CommandUtils implements ICommandExecutorOverload {
+public class SpawnCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public SpawnCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

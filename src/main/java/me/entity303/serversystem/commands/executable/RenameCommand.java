@@ -9,10 +9,12 @@ import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class RenameCommand extends CommandUtils implements ICommandExecutorOverload {
+public class RenameCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public RenameCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

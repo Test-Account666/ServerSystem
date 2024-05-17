@@ -14,14 +14,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-public class Teleport_Latest extends CommandUtils implements ITeleport {
+public class Teleport_Latest implements ITeleport {
+    protected final ServerSystem _plugin;
     private final Field _worldField = null;
     private Method _setLocationMethod = null;
     private Method _getHandleMethod = null;
     private Method _teleportToMethod = null;
 
     public Teleport_Latest(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

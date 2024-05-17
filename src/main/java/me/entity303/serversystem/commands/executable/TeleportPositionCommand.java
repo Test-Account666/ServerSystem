@@ -13,12 +13,13 @@ import org.bukkit.entity.Player;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-public class TeleportPositionCommand extends CommandUtils implements ICommandExecutorOverload {
+public class TeleportPositionCommand implements ICommandExecutorOverload {
 
     private static final Pattern WORLD_PATTERN = Pattern.compile("(world|w):");
+    protected final ServerSystem _plugin;
 
     public TeleportPositionCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
@@ -108,7 +109,7 @@ public class TeleportPositionCommand extends CommandUtils implements ICommandExe
                 return true;
             }
 
-            var target = this.GetPlayer(commandSender, arguments[0]);
+            var target = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
 
             if (target == null) {
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));
@@ -186,7 +187,7 @@ public class TeleportPositionCommand extends CommandUtils implements ICommandExe
             return true;
         }
 
-        var target = this.GetPlayer(commandSender, arguments[0]);
+        var target = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
 
         if (target == null) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[0]));

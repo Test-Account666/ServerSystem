@@ -15,12 +15,13 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Locale;
 
-public class EntityPlayer_Latest extends CommandUtils implements IEntityPlayer {
+public class EntityPlayer_Latest implements IEntityPlayer {
     private static Method GET_WORLD_SERVER_METHOD = null;
+    protected final ServerSystem _plugin;
     private Constructor<net.minecraft.server.level.EntityPlayer> _entityPlayerConstructor = null;
 
     public EntityPlayer_Latest(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

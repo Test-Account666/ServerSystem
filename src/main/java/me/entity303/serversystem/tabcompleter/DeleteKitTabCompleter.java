@@ -9,10 +9,12 @@ import org.bukkit.command.CommandSender;
 import java.util.Collections;
 import java.util.List;
 
-public class DeleteKitTabCompleter extends CommandUtils implements ITabCompleterOverload {
+public class DeleteKitTabCompleter implements ITabCompleterOverload {
+
+    protected final ServerSystem _plugin;
 
     public DeleteKitTabCompleter(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override

@@ -7,10 +7,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class InteractCommand extends CommandUtils implements ICommandExecutorOverload {
+public class InteractCommand implements ICommandExecutorOverload {
+
+    protected final ServerSystem _plugin;
 
     public InteractCommand(ServerSystem plugin) {
-        super(plugin);
+        this._plugin = plugin;
     }
 
     @Override
