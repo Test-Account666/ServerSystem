@@ -1,6 +1,6 @@
 # ServerSystem
 
-# Developers: I recommend you using my [setup.sh file](https://raw.githubusercontent.com/TheBlackEntity/ServerSystem/files/setup.sh) it is compatible with Windows 8+ through `Git Bash` too. But I recommend using `WSL 2` (`Windows Subsystem Linux 2` included in Windows 10+)
+# Developers: I recommend you using my [setup.sh file](https://raw.githubusercontent.com/TheBlackEntity/ServerSystem/master/setup.sh) it is compatible with Windows 8+ through `Git Bash` too. But I recommend using `WSL 2` (`Windows Subsystem Linux 2` included in Windows 10+)
 
 \~~~~~~~~~~~~~~~~~~~~~~ English ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -16,7 +16,7 @@ Does this plugin need any dependencies?
 It has some dependencies, but they are all optional: Vault, PlotSquared and PlaceholderAPI.
 
 Why an alternative to essentials?
-First, essentials looks pretty ugly.
+First, essentials doesn't look all that good out of the box.
 Also you can set every single message and permission.
 Plus this plugin has some useful functions that are NOT included in essentials.
 
@@ -56,7 +56,9 @@ Also you can just disable commands, if you like.
 
 %baltop_money_X% -> Shows the unformatted balance of top place X (1 - 10)
 
-%baltop_player_X% -> Shows the player name of top place X (1 - 10)</pre>
+%baltop_player_X% -> Shows the player name of top place X (1 - 10)
+
+</pre>
 </details>
 
 How do I install this plugin?
@@ -67,74 +69,3 @@ I found a bug or need help configuring the plugin, what do I do?
 
 You can always join on this discord: [https://discord.gg/dBhfCzdZxq](https://discord.gg/GxEFhVY6ff) and ask me some
 questions.
-
-\~~~~~~~~~~~~~~~~~~~~~~ Deutsch ~~~~~~~~~~~~~~~~~~~~~~
-
-Du möchtest wissen woran ich gerade arbeite?
-
-Hier ist meine Todo Liste:
-https://trello.com/b/gs6SQW8M/serversystem-todo-list
-
-Dieses Plugin soll eine Alternative zu Essentials sein
-Es versucht sogar besser als Essentials zu sein (zum Beispiel kannst du jede einzelne Nachricht und Permission selbst
-setzen)
-
-Benötigt dieses Plugin irgendwelche Zusätz?
-
-Nun, es gibt ein paar Plugins, die mein Plugin verwendet, diese sind aber alle optional:
-Vault, PlotSquared und PlaceholderAPI.
-
-Wieso eine Alternative zu Essentials?
-
-Zuerst, Essentials sieht einfach hässlich aus.
-Außerdem kannst du in diesem Plugin jede einzelne Nachricht und Permission selbst setzen.
-Plus dieses Plugin bietet ein paar Funktionen, die in Essentials NICHT enthalten sind.
-
-Was für Befehle fügt dieses Plugin hinzu?
-
-[Du kannst eine Liste der Befehle hier herunterladen.](https://www.dropbox.com/s/62f56n2flw8pvbe/Command_Reference.pdf?dl=0)
-
-Welche anderen coolen Featurs hat das Plugin?
-Du kannst das Plugin Commands "übergeben" lassen.
-Ein Beispiel:
-Wenn du den /ban Command eines anderen Plugins nutzen möchtest, mein Plugin den Command aber überschreibt, kannst du
-genau das erreichen!
-Du kannst außerdem auch einfach Commands deaktivieren, wenn du möchtest.
-
-<details><summary>Welche Placeholder fügt dieses Plugin hinzu? (PlaceholderAPI)</summary>
-<pre>
-
-%serversystem_money% -> Gibt den unformatierten Kontostand aus
-
-%serversystem_formattedmoney% -> Gibt den formatierten Kontostand aus
-
-%serversystem_drop% -> Zeigt ob der Spieler im Vanish Items droppen kann
-
-%serversystem_pickup% -> Zeigt ob der Spieler im Vanish Items aufheben kann
-
-%serversystem_chat% -> Zeigt ob der Spieler im Vanish Nachrichten schreiben kann
-
-%serversystem_interact% -> Zeigt ob der Spieler im Vanish mit Blöcken interargieren kann
-
-%serversystem_vanish% -> Zeigt ob der Spieler im Vanish ist
-
-%serversystem_god% -> Zeigt ob der Spieler im GodMode ist
-
-%serversystem_onlineplayers% -> Zeigst online Spieler Anzahl, ausgenommen von Spielern, die du nicht sehen kannst (Aka.
-vanish)
-
-%baltop_formattedmoney_X% -> Zeigt den formatierten Kontostand von Top Platz X (1 - 10)
-
-%baltop_money_X% -> Zeigt den unformatierten Kontostand von Top Platz X (1 - 10)
-
-%baltop_player_X% -> Zeigt den Spielernamen von Top Platz X (1 - 10)</pre>
-</details>
-
-
-Wie installiere ich das Plugin?
-Schiebe es einfach in den plugins-Ordner
-
-Ich habe einen Bug gefunden oder brauche Hilfe beim Konfigurieren, was soll ich tun?
-
-Du kannst jederzeit diesem Discord beitreten: [https://discord.gg/dBhfCzdZxq](https://discord.gg/GxEFhVY6ff) und mich
-etwas fragen.
