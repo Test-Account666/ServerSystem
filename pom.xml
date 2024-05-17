@@ -54,6 +54,46 @@
                                     <pattern>org.mariadb.jdbc</pattern>
                                     <shadedPattern>serversystem.libs.mariadb.org.mariadb.jdbc</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>net.bytebuddy</pattern>
+                                    <shadedPattern>serversystem.libs.net.bytebuddy</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.jsoup</pattern>
+                                    <shadedPattern>serversystem.libs.org.jsoup</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.h2</pattern>
+                                    <shadedPattern>serversystem.libs.org.h2</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>waffle</pattern>
+                                    <shadedPattern>serversystem.libs.waffle</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache</pattern>
+                                    <shadedPattern>serversystem.libs.org.apache</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.checkerframework</pattern>
+                                    <shadedPattern>serversystem.libs.org.checkerframework</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.slf4j</pattern>
+                                    <shadedPattern>serversystem.libs.org.slf4j</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.github.benmanes</pattern>
+                                    <shadedPattern>serversystem.libs.com.github.benmanes</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.google.errorprone</pattern>
+                                    <shadedPattern>serversystem.libs.com.google.errorprone</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.sun.jna</pattern>
+                                    <shadedPattern>serversystem.libs.com.sun.jna</shadedPattern>
+                                </relocation>
                             </relocations>
                             <filters>
                                 <filter>
@@ -311,7 +351,7 @@
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>1.14.13</version>
+            <version>1.14.15</version>
             <scope>compile</scope>
         </dependency>
 
