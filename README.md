@@ -7,7 +7,7 @@
 You want to know what I'm currently working on?
 
 Here's my todo list:
-https://trello.com/b/gs6SQW8M/serversystem-todo-list
+https://trello.com/b/mMbYQANl/serversystem-todo-list
 
 This plugin is supposed to be an alternative to essentials.
 It aims to be even better than essentials (for example you can set every single message and permission by yourself).
