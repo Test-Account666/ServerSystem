@@ -38,7 +38,7 @@ public class InvseeGetItemInterceptor {
             try {
                 this._asNMSCopyMethod = Arrays.stream(
                                                       Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() +
-                                                                    ".inventory.CraftItemStack")
+                                                                    "inventory.CraftItemStack")
                                                            .getDeclaredMethods())
                                               .filter(method1 -> method1.getName().equalsIgnoreCase("asNMSCopy"))
                                               .filter(method1 -> method1.getParameters().length == 1)
@@ -54,7 +54,7 @@ public class InvseeGetItemInterceptor {
             if (this._getInventoryMethod == null)
                 try {
                     this._getInventoryMethod =
-                            Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".inventory.CraftInventoryPlayer")
+                            Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + "inventory.CraftInventoryPlayer")
                                  .getDeclaredMethod("getInventory");
                 } catch (NoSuchMethodException | ClassNotFoundException exception) {
                     exception.printStackTrace();

@@ -334,6 +334,10 @@ public final class ServerSystem extends JavaPlugin {
 
     public Message GetMessages() {
         return this._messages;
+    }
+
+    public Vanish GetVanish() {
+        return this._vanish;
     }    private boolean CheckMainServerForUpdates(String currentVersion, boolean autoUpdate) {
         var foundVersion = this.getDescription().getVersion();
 
@@ -401,9 +405,6 @@ public final class ServerSystem extends JavaPlugin {
         return false;
     }
 
-    public Vanish GetVanish() {
-        return this._vanish;
-    }
 
 
 
@@ -659,10 +660,9 @@ public final class ServerSystem extends JavaPlugin {
     private boolean SyncCommands() {
         if (this._syncCommandsMethod == null)
             try {
-                this._syncCommandsMethod =
-                        Class.forName("org.bukkit.craftbukkit." + this._versionManager.GetNMSVersion() + ".CraftServer").getDeclaredMethod("syncCommands");
+                this._syncCommandsMethod = Bukkit.getServer().getClass().getDeclaredMethod("syncCommands");
                 this._syncCommandsMethod.setAccessible(true);
-            } catch (NoSuchMethodException | ClassNotFoundException exception) {
+            } catch (NoSuchMethodException exception) {
                 exception.printStackTrace();
                 return false;
             }

@@ -69,7 +69,7 @@ public class InvseeCommand implements ICommandExecutorOverload, Listener {
         if (this._playerInventoryNmsClass == null)
             try {
                 this._playerInventoryNmsClass =
-                        Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".PlayerInventory");
+                        Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "PlayerInventory");
             } catch (ClassNotFoundException exception) {
                 if (this._playerInventoryNmsClass == null)
                     try {
@@ -85,7 +85,7 @@ public class InvseeCommand implements ICommandExecutorOverload, Listener {
         if (this._getInventoryMethod == null)
             try {
                 this._getInventoryMethod =
-                        Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".inventory.CraftInventoryPlayer")
+                        Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + "inventory.CraftInventoryPlayer")
                              .getDeclaredMethod("getInventory");
             } catch (NoSuchMethodException | ClassNotFoundException exception) {
                 exception.printStackTrace();
@@ -95,9 +95,8 @@ public class InvseeCommand implements ICommandExecutorOverload, Listener {
 
         if (this._getHandleMethod == null)
             try {
-                this._getHandleMethod = Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".entity.CraftPlayer")
-                                             .getDeclaredMethod("getHandle");
-            } catch (NoSuchMethodException | ClassNotFoundException exception) {
+                this._getHandleMethod = commandSender.getClass().getDeclaredMethod("getHandle");
+            } catch (NoSuchMethodException exception) {
                 exception.printStackTrace();
                 this._onceFired = true;
                 return this.OnCommandInternal(commandSender, command, commandLabel, arguments);
@@ -106,7 +105,7 @@ public class InvseeCommand implements ICommandExecutorOverload, Listener {
         if (this._craftInventoryPlayerConstructor == null)
             try {
                 this._craftInventoryPlayerConstructor =
-                        Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".inventory.CraftInventoryPlayer")
+                        Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + "inventory.CraftInventoryPlayer")
                              .getConstructors()[0];
             } catch (ClassNotFoundException exception) {
                 exception.printStackTrace();

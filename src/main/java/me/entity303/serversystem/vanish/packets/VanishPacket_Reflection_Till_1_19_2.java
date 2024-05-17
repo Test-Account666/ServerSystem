@@ -43,9 +43,8 @@ public class VanishPacket_Reflection_Till_1_19_2 extends AbstractVanishPacket {
     public void SetVanish(Player player, boolean vanish) {
         if (this._getHandleMethod == null) {
             try {
-                this._getHandleMethod = Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".entity.CraftPlayer")
-                                             .getDeclaredMethod("getHandle");
-            } catch (NoSuchMethodException | ClassNotFoundException exception) {
+                this._getHandleMethod = player.getClass().getDeclaredMethod("getHandle");
+            } catch (NoSuchMethodException exception) {
                 exception.printStackTrace();
             }
             this._getHandleMethod.setAccessible(true);

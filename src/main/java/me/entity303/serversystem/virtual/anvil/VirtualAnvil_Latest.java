@@ -17,7 +17,6 @@ import org.bukkit.inventory.InventoryView;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.Locale;
 
 public class VirtualAnvil_Latest extends AbstractVirtualAnvil {
 
@@ -44,8 +43,19 @@ public class VirtualAnvil_Latest extends AbstractVirtualAnvil {
 
         }
 
+        Object playerConnection = null;
+        try {
+            playerConnection = this._plugin.GetVersionStuff().GetPlayerConnection(player);
+        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException exception) {
+            exception.printStackTrace();
+            return;
+        }
+
+        if (playerConnection == null)
+            return;
+
         if (AbstractVirtual.SEND_PACKET_METHOD == null) {
-            AbstractVirtual.SEND_PACKET_METHOD = Arrays.stream(PlayerConnection.class.getMethods())
+            AbstractVirtual.SEND_PACKET_METHOD = Arrays.stream(playerConnection.getClass().getMethods())
                                                        .filter(method -> method.getParameters().length == 1)
                                                        .filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(Packet.class.getName()))
                                                        .findFirst()
@@ -102,7 +112,7 @@ public class VirtualAnvil_Latest extends AbstractVirtualAnvil {
 
         EntityPlayer human;
         try {
-            human = (EntityPlayer) Class.forName("org.bukkit.craftbukkit." + this.GetVersion() + ".entity.CraftPlayer")
+            human = (EntityPlayer) Class.forName("org.bukkit.craftbukkit." + this.GetVersion() + "entity.CraftPlayer")
                                         .getDeclaredMethod("getHandle")
                                         .invoke(player);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException exception) {
@@ -126,24 +136,6 @@ public class VirtualAnvil_Latest extends AbstractVirtualAnvil {
 
 
         try {
-            if (PLAYER_CONNECTION_FIELD == null) {
-                PLAYER_CONNECTION_FIELD = Arrays.stream(human.getClass().getDeclaredFields())
-                                                .filter(field -> field.getType().getName().toLowerCase(Locale.ROOT).contains("playerconnection"))
-                                                .findFirst()
-                                                .orElse(null);
-
-                if (PLAYER_CONNECTION_FIELD == null) {
-                    this._plugin.Error("Couldn't find PlayerConnection field! (Modded environment?)");
-                    Arrays.stream(human.getClass().getDeclaredFields()).forEach(field -> this._plugin.Info(field.getType() + " -> " + field.getName()));
-                    this._plugin.Warn("Please forward this to the developer of ServerSystem!");
-                    return;
-                }
-
-                PLAYER_CONNECTION_FIELD.setAccessible(true);
-            }
-
-            var playerConnection = (PlayerConnection) PLAYER_CONNECTION_FIELD.get(human);
-
             AbstractVirtual.SEND_PACKET_METHOD.invoke(playerConnection,
                                                       new PacketPlayOutOpenWindow(containerId, Containers.h, IChatBaseComponent.ChatSerializer.a("{\"text\":\"Repairing\"}")));
         } catch (IllegalAccessException | InvocationTargetException exception) {

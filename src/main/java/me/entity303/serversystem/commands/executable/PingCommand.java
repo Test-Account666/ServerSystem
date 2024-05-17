@@ -84,15 +84,14 @@ public class PingCommand implements ICommandExecutorOverload {
 
     private int GetPingInternal(Player player) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         if (this._plugin.GetVersionStuff().GetGetHandleMethod() == null)
-            this._plugin.GetVersionStuff().FetchGetHandleMethod();
+            this._plugin.GetVersionStuff().FetchGetHandleMethod(player);
 
         var entityPlayer = this._plugin.GetVersionStuff().GetGetHandleMethod().invoke(player);
         if (this._pingField == null && this._getPingMethod == null) {
             try {
                 this._pingField = entityPlayer.getClass().getDeclaredField("ping");
             } catch (NoSuchFieldError | NoSuchFieldException exception) {
-                this._getPingMethod = Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".entity.CraftPlayer")
-                                           .getDeclaredMethod("getPing");
+                this._getPingMethod = player.getClass().getDeclaredMethod("getPing");
             }
             if (this._pingField != null)
                 this._pingField.setAccessible(true);

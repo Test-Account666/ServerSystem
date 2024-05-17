@@ -38,7 +38,7 @@ public class Teleport_Latest implements ITeleport {
         if (this._getHandleMethod == null)
             try {
                 this._getHandleMethod =
-                        Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".CraftWorld").getDeclaredMethod("getHandle");
+                        Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + "CraftWorld").getDeclaredMethod("getHandle");
             } catch (NoSuchMethodException | ClassNotFoundException exception) {
                 exception.printStackTrace();
                 return;

@@ -36,7 +36,7 @@ public class VersionManager {
     public void RegisterVersionStuff() {
         var splitVersion = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
 
-        this._nmsVersion = splitVersion.length > 3? splitVersion[3] : "";
+        this._nmsVersion = splitVersion.length > 3? splitVersion[3] + "." : "";
         this.FetchVersion();
 
         this._serverSystem.Info("ServerSystem is running on " + this._version + "!");
@@ -44,7 +44,7 @@ public class VersionManager {
         try {
             this._serverSystem.GetVersionStuff()
                               .SetGetHandleMethod(
-                                      Class.forName("org.bukkit.craftbukkit." + this._nmsVersion + ".entity.CraftPlayer").getDeclaredMethod("getHandle"));
+                                      Class.forName("org.bukkit.craftbukkit." + this._nmsVersion + "entity.CraftPlayer").getDeclaredMethod("getHandle"));
         } catch (NoSuchMethodException | ClassNotFoundException exception) {
             exception.printStackTrace();
         }

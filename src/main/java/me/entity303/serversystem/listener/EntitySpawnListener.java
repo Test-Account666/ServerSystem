@@ -22,14 +22,14 @@ public class EntitySpawnListener implements Listener {
     public EntitySpawnListener(ServerSystem plugin) {
         this._plugin = plugin;
         try {
-            var entityLiving = Class.forName("org.bukkit.craftbukkit." + plugin.GetVersionManager().GetNMSVersion() + ".entity.CraftLivingEntity");
+            var entityLiving = Class.forName("org.bukkit.craftbukkit." + plugin.GetVersionManager().GetNMSVersion() + "entity.CraftLivingEntity");
             this._collidesField = Class.forName("net.minecraft.world.entity.EntityLiving").getDeclaredField("collides");
             this._collidesField.setAccessible(true);
         } catch (Exception ignored) {
         }
         try {
             this._getHandleMethod =
-                    Class.forName("org.bukkit.craftbukkit." + plugin.GetVersionManager().GetNMSVersion() + ".entity.CraftEntity").getDeclaredMethod("getHandle");
+                    Class.forName("org.bukkit.craftbukkit." + plugin.GetVersionManager().GetNMSVersion() + "entity.CraftEntity").getDeclaredMethod("getHandle");
             this._getHandleMethod.setAccessible(true);
         } catch (NoSuchMethodException | ClassNotFoundException ignored) {
         }

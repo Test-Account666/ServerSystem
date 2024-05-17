@@ -94,37 +94,30 @@ public class SudoCommand implements ICommandExecutorOverload {
         if (special) {
             var failed = false;
             Class<?> dynamicType = null;
-            try {
-                //Hacky and stupid stuff ™ to hook into "sendMessage"
-                dynamicType = new ByteBuddy().subclass(
-                                                     Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".entity.CraftPlayer"))
-                                             .method(ElementMatchers.named("sendMessage"))
-                                             .intercept(MethodCall.invokeSuper()
-                                                                  .withAllArguments()
-                                                                  .andThen(MethodDelegation.withDefaultConfiguration()
-                                                                                           .withBinders(Morph.Binder.install(IMorpher.class))
-                                                                                           .to(new SudoInterceptor(commandSender))))
-                                             .make()
-                                             .load(this.getClass().getClassLoader())
-                                             .getLoaded();
-            } catch (ClassNotFoundException exception) {
-                exception.printStackTrace();
-                failed = true;
-            }
+            //Hacky and stupid stuff ™ to hook into "sendMessage"
+            dynamicType = new ByteBuddy().subclass(target.getClass())
+                                         .method(ElementMatchers.named("sendMessage"))
+                                         .intercept(MethodCall.invokeSuper()
+                                                              .withAllArguments()
+                                                              .andThen(MethodDelegation.withDefaultConfiguration()
+                                                                                       .withBinders(Morph.Binder.install(IMorpher.class))
+                                                                                       .to(new SudoInterceptor(commandSender))))
+                                         .make()
+                                         .load(this.getClass().getClassLoader())
+                                         .getLoaded();
 
             if (this._getHandleMethod == null)
                 try {
-                    this._getHandleMethod = Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".entity.CraftPlayer")
-                                                 .getDeclaredMethod("getHandle");
+                    this._getHandleMethod = target.getClass().getDeclaredMethod("getHandle");
                     this._getHandleMethod.setAccessible(true);
-                } catch (NoSuchMethodException | ClassNotFoundException exception) {
+                } catch (NoSuchMethodException exception) {
                     exception.printStackTrace();
                     failed = true;
                 }
 
             if (!failed)
                 try {
-                    var permField = Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".entity.CraftHumanEntity")
+                    var permField = Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + "entity.CraftHumanEntity")
                                          .getDeclaredField("perm");
 
                     permField.setAccessible(true);

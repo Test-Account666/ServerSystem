@@ -41,62 +41,62 @@ public class SaveData_Old implements ISaveData {
 
         try {
             if (this._worldNBTStorage == null) {
-                var minecraftServer = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".MinecraftServer")
+                var minecraftServer = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "MinecraftServer")
                                            .getDeclaredMethod("getServer")
                                            .invoke(null);
-                var playerList = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".MinecraftServer")
+                var playerList = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "MinecraftServer")
                                       .getDeclaredMethod("getPlayerList")
                                       .invoke(minecraftServer);
-                this._worldNBTStorage = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".PlayerList")
+                this._worldNBTStorage = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "PlayerList")
                                              .getDeclaredField("playerFileData")
                                              .get(playerList);
             }
 
             if (this._saveMethod == null)
                 try {
-                    this._saveMethod = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".Entity")
+                    this._saveMethod = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "Entity")
                                             .getDeclaredMethod("save", Class.forName(
-                                                   "net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".NBTTagCompound"));
+                                                   "net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "NBTTagCompound"));
                 } catch (NoSuchMethodError | NoSuchMethodException exception) {
-                    this._saveMethod = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".Entity")
+                    this._saveMethod = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "Entity")
                                             .getDeclaredMethod("e", Class.forName(
-                                                   "net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".NBTTagCompound"));
+                                                   "net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "NBTTagCompound"));
                 }
 
             if (this._nbtTagCompoundConstructor == null)
                 this._nbtTagCompoundConstructor =
-                        Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".NBTTagCompound").getDeclaredConstructor();
+                        Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "NBTTagCompound").getDeclaredConstructor();
 
             var playerData = this._nbtTagCompoundConstructor.newInstance();
             this._saveMethod.invoke(entityPlayer, playerData);
 
             if (!player.isOnline()) {
                 if (this._loadMethod == null)
-                    this._loadMethod = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".WorldNBTStorage")
+                    this._loadMethod = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "WorldNBTStorage")
                                             .getDeclaredMethod("load", Class.forName(
-                                                   "net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".EntityHuman"));
+                                                   "net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "EntityHuman"));
 
                 var oldData = this._loadMethod.invoke(this._worldNBTStorage, entityPlayer);
 
                 if (this._hasKeyOfTypeMethod == null)
-                    this._hasKeyOfTypeMethod = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".NBTTagCompound")
+                    this._hasKeyOfTypeMethod = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "NBTTagCompound")
                                                     .getDeclaredMethod("hasKeyOfType", String.class, int.class);
 
                 if (this._getCompoundMethod == null)
-                    this._getCompoundMethod = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".NBTTagCompound")
+                    this._getCompoundMethod = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "NBTTagCompound")
                                                    .getDeclaredMethod("getCompound", String.class);
 
                 if (this._setMethod == null)
-                    this._setMethod = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".NBTTagCompound")
+                    this._setMethod = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "NBTTagCompound")
                                            .getDeclaredMethod("set", String.class, Class.forName(
-                                                  "net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".NBTBase"));
+                                                  "net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "NBTBase"));
 
                 if (oldData != null && ((boolean) this._hasKeyOfTypeMethod.invoke(oldData, "RootVehicle", 10)))
                     this._setMethod.invoke(playerData, "RootVehicle", this._getCompoundMethod.invoke(oldData, "RootVehicle"));
             }
 
             if (this._getPlayerDirectoryMethod == null)
-                this._getPlayerDirectoryMethod = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".WorldNBTStorage")
+                this._getPlayerDirectoryMethod = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "WorldNBTStorage")
                                                       .getDeclaredMethod("getPlayerDir");
 
             var playerDir = (File) this._getPlayerDirectoryMethod.invoke(this._worldNBTStorage);
@@ -105,9 +105,9 @@ public class SaveData_Old implements ISaveData {
             var file1 = new File(playerDir, player.getUniqueId() + ".dat");
 
             if (this._aMethod == null)
-                this._aMethod = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".NBTCompressedStreamTools")
+                this._aMethod = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "NBTCompressedStreamTools")
                                      .getDeclaredMethod("a", Class.forName(
-                                            "net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".NBTTagCompound"), OutputStream.class);
+                                            "net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "NBTTagCompound"), OutputStream.class);
 
             this._aMethod.invoke(null, playerData, Files.newOutputStream(file.toPath()));
 

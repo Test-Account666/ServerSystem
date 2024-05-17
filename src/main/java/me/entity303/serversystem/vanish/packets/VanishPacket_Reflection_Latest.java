@@ -12,7 +12,6 @@ import java.util.Arrays;
 public class VanishPacket_Reflection_Latest extends AbstractVanishPacket {
     private final ServerSystem _plugin;
     private VanishPacket_ProtocolLib _vanishPacketProtocolLib = null;
-    private Field _playerConnectionField;
     private Field _collidesField;
 
     public VanishPacket_Reflection_Latest(ServerSystem plugin) {
@@ -41,7 +40,7 @@ public class VanishPacket_Reflection_Latest extends AbstractVanishPacket {
     public void SetVanish(Player player, boolean vanish) {
         if (this._plugin.GetVersionStuff().GetGetHandleMethod() == null)
             try {
-                this._plugin.GetVersionStuff().FetchGetHandleMethod();
+                this._plugin.GetVersionStuff().FetchGetHandleMethod(player);
             } catch (ClassNotFoundException | NoSuchMethodException exception) {
                 throw new RuntimeException(exception);
             }
@@ -67,16 +66,6 @@ public class VanishPacket_Reflection_Latest extends AbstractVanishPacket {
 
         player.setCollidable(false);
 
-        if (this._playerConnectionField == null) {
-            this._playerConnectionField = Arrays.stream(entityPlayer.getClass().getDeclaredFields())
-                                                .filter(field -> field.getType().getName().toLowerCase().contains("playerconnection"))
-                                                .findFirst()
-                                                .orElse(null);
-
-            if (this.IsConnectionFieldNull(entityPlayer, this._playerConnectionField, this._plugin))
-                return;
-        }
-
         if (this._vanishPacketProtocolLib == null)
             return;
 
@@ -89,19 +78,5 @@ public class VanishPacket_Reflection_Latest extends AbstractVanishPacket {
 
             this._vanishPacketProtocolLib.SendPlayerInfoChangeGameModePacket(all, player, vanish);
         }
-    }
-
-    public boolean IsConnectionFieldNull(Object entityPlayer, Field playerConnectionField, ServerSystem plugin) {
-        if (playerConnectionField == null) {
-            plugin.Error("Couldn't find PlayerConnection field! (Modded environment?)");
-            Arrays.stream(entityPlayer.getClass().getDeclaredFields()).forEach(field -> plugin.Info(field.getType() + " -> " + field.getName()));
-            plugin.Warn("Please forward this to the developer of ServerSystem!");
-            return true;
-        }
-
-        this._playerConnectionField = playerConnectionField;
-
-        this._playerConnectionField.setAccessible(true);
-        return false;
     }
 }

@@ -24,7 +24,7 @@ public class Teleport_v1_17_R1 implements ITeleport {
     public void Teleport(Player player, Location location) {
         if (this._worldField == null)
             try {
-                this._worldField = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".Entity").getDeclaredField("world");
+                this._worldField = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "Entity").getDeclaredField("world");
                 this._worldField.setAccessible(true);
             } catch (NoSuchFieldException | ClassNotFoundException exception) {
                 if (exception instanceof ClassNotFoundException)
@@ -46,7 +46,7 @@ public class Teleport_v1_17_R1 implements ITeleport {
 
         if (this._setLocationMethod == null)
             try {
-                this._setLocationMethod = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + ".Entity")
+                this._setLocationMethod = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "Entity")
                                                .getDeclaredMethod("setLocation", double.class, double.class, double.class, float.class, float.class);
             } catch (NoSuchMethodException | ClassNotFoundException exception) {
                 if (exception instanceof ClassNotFoundException)
@@ -63,7 +63,7 @@ public class Teleport_v1_17_R1 implements ITeleport {
         if (this._getHandleMethod == null)
             try {
                 this._getHandleMethod =
-                        Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".CraftWorld").getDeclaredMethod("getHandle");
+                        Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + "CraftWorld").getDeclaredMethod("getHandle");
             } catch (NoSuchMethodException | ClassNotFoundException exception) {
                 exception.printStackTrace();
                 return;

@@ -40,7 +40,7 @@ public class InvseeSetItemInterceptor {
         if (this._asCraftMirrorMethod == null)
             try {
                 this._asCraftMirrorMethod = Arrays.stream(
-                        Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".inventory.CraftItemStack")
+                        Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + "inventory.CraftItemStack")
                              .getDeclaredMethods()).filter(method1 -> method1.getName().equalsIgnoreCase("asCraftMirror")).findFirst().orElse(null);
             } catch (ClassNotFoundException exception) {
                 exception.printStackTrace();
@@ -51,7 +51,7 @@ public class InvseeSetItemInterceptor {
             if (this._getInventoryMethod == null)
                 try {
                     this._getInventoryMethod =
-                            Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + ".inventory.CraftInventoryPlayer")
+                            Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + "inventory.CraftInventoryPlayer")
                                  .getDeclaredMethod("getInventory");
                 } catch (NoSuchMethodException | ClassNotFoundException exception) {
                     exception.printStackTrace();

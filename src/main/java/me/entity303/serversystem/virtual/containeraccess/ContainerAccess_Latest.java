@@ -35,7 +35,7 @@ public class ContainerAccess_Latest extends ContainerAccessWrapper implements Co
 
         this._player = player;
         try {
-            this._human = (EntityPlayer) Class.forName("org.bukkit.craftbukkit." + this.GetVersion() + ".entity.CraftPlayer")
+            this._human = (EntityPlayer) Class.forName("org.bukkit.craftbukkit." + this.GetVersion() + "entity.CraftPlayer")
                                               .getDeclaredMethod("getHandle")
                                               .invoke(player);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException exception) {
@@ -48,7 +48,7 @@ public class ContainerAccess_Latest extends ContainerAccessWrapper implements Co
             try {
                 var splitVersion = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
 
-                this._version = splitVersion.length > 3? splitVersion[3] : "";
+                this._version = splitVersion.length > 3? splitVersion[3] + "." : "";
             } catch (ArrayIndexOutOfBoundsException exception) {
                 exception.printStackTrace();
                 return null;

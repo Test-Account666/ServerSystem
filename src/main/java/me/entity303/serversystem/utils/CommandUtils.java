@@ -18,7 +18,7 @@ import java.util.UUID;
 
 public final class CommandUtils {
 
-    private static final String NMS_CRAFT_PLAYER_CLASS_NAME = "org.bukkit.craftbukkit.%s.entity.CraftPlayer";
+    private static final String NMS_CRAFT_PLAYER_CLASS_NAME = "org.bukkit.craftbukkit." + "%s" + "entity.CraftPlayer";
     private static Method _loadDataMethod = null;
 
     public static boolean IsAwayFromKeyboard(Metadatable player) {

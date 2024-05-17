@@ -15,7 +15,6 @@ public abstract class AbstractVirtual {
     protected static Method INIT_MENU_METHOD = null;
     protected static Method GET_BUKKIT_VIEW_METHOD = null;
     protected static Field CONTAINER_FIELD = null;
-    protected static Field PLAYER_CONNECTION_FIELD = null;
     protected final ServerSystem _plugin;
     protected String _version = null;
 
@@ -46,7 +45,7 @@ public abstract class AbstractVirtual {
             try {
                 var splitVersion = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
 
-                this._version = splitVersion.length > 3? splitVersion[3] : "";
+                this._version = splitVersion.length > 3? splitVersion[3] + "." : "";
             } catch (ArrayIndexOutOfBoundsException exception) {
                 exception.printStackTrace();
                 return null;
