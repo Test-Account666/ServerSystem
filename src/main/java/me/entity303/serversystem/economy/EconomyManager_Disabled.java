@@ -2,9 +2,6 @@ package me.entity303.serversystem.economy;
 
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-
-import java.util.LinkedHashMap;
 
 public class EconomyManager_Disabled extends AbstractEconomyManager {
 
@@ -14,97 +11,32 @@ public class EconomyManager_Disabled extends AbstractEconomyManager {
     }
 
     @Override
-    public String Format(double money) {
-        return "";
-    }
-
-    @Override
-    public boolean HasEnoughMoney(Player player, double amount) {
+    public boolean HasEnoughMoney(OfflinePlayer offlinePlayer, double amount) {
         return false;
     }
 
     @Override
-    public void MakeTransaction(Player sender, Player target, double amount) {
-
-    }
-
-    @Override
-    public void SetMoney(Player player, double amount) {
-
-    }
-
-    @Override
-    public void RemoveMoney(Player player, double amount) {
-
-    }
-
-    @Override
-    public void AddMoney(Player player, double amount) {
-
-    }
-
-    @Override
-    public void CreateAccount(Player player) {
-
-    }
-
-    @Override
-    public boolean HasEnoughMoney(OfflinePlayer player, double amount) {
-        return false;
-    }
-
-    @Override
-    public void MakeTransaction(OfflinePlayer sender, OfflinePlayer target, double amount) {
-
-    }
-
-    @Override
-    public void SetMoney(OfflinePlayer player, double amount) {
-
-    }
-
-    @Override
-    public void RemoveMoney(OfflinePlayer player, double amount) {
-
-    }
-
-    @Override
-    public void AddMoney(OfflinePlayer player, double amount) {
-
-    }
-
-    @Override
-    public void CreateAccount(OfflinePlayer player) {
-
-    }
-
-    @Override
-    public void DeleteAccount(OfflinePlayer player) {
-
-    }
-
-    @Override
-    public Double GetMoneyAsNumber(Player player) {
+    public Double GetMoneyAsNumber(OfflinePlayer offlinePlayer) {
         return 0.0;
     }
 
     @Override
-    public String GetMoney(Player player) {
-        return "";
+    public void SetMoney(OfflinePlayer offlinePlayer, double amount) {
+
     }
 
     @Override
-    public Double GetMoneyAsNumber(OfflinePlayer player) {
-        return 0.0;
+    public void CreateAccount(OfflinePlayer offlinePlayer) {
+
     }
 
     @Override
-    public String GetMoney(OfflinePlayer player) {
-        return "";
+    public void DeleteAccount(OfflinePlayer offlinePlayer) {
+
     }
 
     @Override
-    public boolean HasAccount(OfflinePlayer player) {
+    public boolean HasAccount(OfflinePlayer offlinePlayer) {
         return false;
     }
 
@@ -116,41 +48,5 @@ public class EconomyManager_Disabled extends AbstractEconomyManager {
     @Override
     public void Close() {
 
-    }
-
-    @Override
-    public String GetMoneyFormat() {
-        return "";
-    }
-
-    @Override
-    public String GetSeparator() {
-        return "";
-    }
-
-    @Override
-    public String GetStartingMoney() {
-        return "";
-    }
-
-    @Override
-    public String GetDisplayFormat() {
-        return "";
-    }
-
-    @Override
-    public String GetCurrencySingular() {
-        return "";
-    }
-
-    @Override
-    public String GetCurrencyPlural() {
-        return "";
-    }
-
-    @Override
-    public LinkedHashMap<OfflinePlayer, Double> GetTopTen() {
-
-        return new LinkedHashMap<>();
     }
 }

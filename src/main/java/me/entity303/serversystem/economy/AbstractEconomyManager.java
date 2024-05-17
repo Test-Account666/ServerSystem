@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 
 public abstract class AbstractEconomyManager {
     protected final ServerSystem _plugin;
@@ -32,72 +33,173 @@ public abstract class AbstractEconomyManager {
         this._thousands = thousands;
     }
 
-    public abstract String Format(double money);
+    public final boolean HasEnoughMoney(Player player, double amount) {
+        return this.HasEnoughMoney((OfflinePlayer) player, amount);
+    }
 
-    public abstract boolean HasEnoughMoney(Player player, double amount);
+    public boolean HasEnoughMoney(OfflinePlayer offlinePlayer, double amount) {
+        return this.GetMoneyAsNumber(offlinePlayer) >= amount;
+    }
 
-    public abstract void MakeTransaction(Player sender, Player target, double amount);
+    public abstract Double GetMoneyAsNumber(OfflinePlayer offlinePlayer);
 
-    public abstract void SetMoney(Player player, double amount);
+    public final Double GetMoneyAsNumber(Player player) {
+        return this.GetMoneyAsNumber((OfflinePlayer) player);
+    }
 
-    public abstract void RemoveMoney(Player player, double amount);
+    public final String GetMoney(Player player) {
+        return this.GetMoney((OfflinePlayer) player);
+    }
 
-    public abstract void AddMoney(Player player, double amount);
+    public final String GetMoney(OfflinePlayer offlinePlayer) {
+        return this.Format(this.GetMoneyAsNumber(offlinePlayer));
+    }
 
-    public abstract void CreateAccount(Player player);
+    public final String Format(double money) {
+        var moneyStr = String.format(Locale.US, "%1$,.2f", money);
 
-    public abstract boolean HasEnoughMoney(OfflinePlayer player, double amount);
+        moneyStr = moneyStr.replace(",", "<THOUSAND>");
 
-    public abstract void MakeTransaction(OfflinePlayer sender, OfflinePlayer target, double amount);
+        var formattedMoney = this.GetFormattedMoney(moneyStr);
 
-    public abstract void SetMoney(OfflinePlayer player, double amount);
+        var plural = false;
 
-    public abstract void RemoveMoney(OfflinePlayer player, double amount);
+        var moneyWorth = money;
 
-    public abstract void AddMoney(OfflinePlayer player, double amount);
+        if (money < 0)
+            moneyWorth = money * -1;
 
-    public abstract void CreateAccount(OfflinePlayer player);
+        if (moneyWorth < 1)
+            plural = true;
 
-    public abstract void DeleteAccount(OfflinePlayer player);
+        if (money > 1)
+            plural = true;
 
-    public abstract Double GetMoneyAsNumber(Player player);
+        return this._displayFormat.replace("<MONEY>", formattedMoney).replace("<CURRENCY>", plural? this._currencyPlural : this._currencySingular);
+    }
 
-    ////////////////////////////////////
+    public final String GetFormattedMoney(String moneyStr) {
+        var moneyString = moneyStr.split("\\.")[0] + "." + moneyStr.split("\\.")[1];
+        String formattedMoney;
+        var first = "0";
+        var last = "00";
+        try {
+            first = moneyString.split("\\.")[0];
+            last = moneyString.split("\\.")[1];
+        } catch (Exception ignored) {
 
-    public abstract String GetMoney(Player player);
+        }
 
-    public abstract Double GetMoneyAsNumber(OfflinePlayer player);
+        if (last.length() == 1)
+            last = last + "0";
+        formattedMoney = this._moneyFormat.replace("<FIRST>", first)
+                                          .replace("<LAST>", last)
+                                          .replace("<SEPARATOR>", this._separator)
+                                          .replace("<THOUSAND>", this.GetThousands());
+        return formattedMoney;
+    }
 
-    public abstract String GetMoney(OfflinePlayer player);
+    public final String GetThousands() {
+        return this._thousands;
+    }
 
-    public abstract boolean HasAccount(OfflinePlayer player);
+    public final void MakeTransaction(Player sender, Player target, double amount) {
+        this.MakeTransaction((OfflinePlayer) sender, (OfflinePlayer) target, amount);
+    }
+
+    public final void MakeTransaction(OfflinePlayer sender, OfflinePlayer target, double amount) {
+        if (sender == null)
+            return;
+        if (target == null)
+            return;
+
+        this.RemoveMoney(sender, amount);
+        this.AddMoney(target, amount);
+    }
+
+    public final void RemoveMoney(OfflinePlayer offlinePlayer, double amount) {
+        var newBalance = this.GetMoneyAsNumber(offlinePlayer) - amount;
+
+        newBalance = this.Clamp(newBalance);
+
+        this.SetMoney(offlinePlayer, newBalance);
+    }
+
+    public final void AddMoney(OfflinePlayer offlinePlayer, double amount) {
+        var newBalance = this.GetMoneyAsNumber(offlinePlayer) + amount;
+
+        newBalance = this.Clamp(newBalance);
+
+        this.SetMoney(offlinePlayer, newBalance);
+    }
+
+    private double Clamp(double value) {
+        if (value < 0.0)
+            value = 0.0;
+
+        if (value > Double.MAX_VALUE)
+            value = Double.MAX_VALUE;
+
+        return value;
+    }
+
+    public abstract void SetMoney(OfflinePlayer offlinePlayer, double amount);
+
+    public final void SetMoney(Player player, double amount) {
+        this.SetMoney((OfflinePlayer) player, amount);
+    }
+
+    public final void RemoveMoney(Player player, double amount) {
+        this.RemoveMoney((OfflinePlayer) player, amount);
+    }
+
+    public final void AddMoney(Player player, double amount) {
+        this.AddMoney((OfflinePlayer) player, amount);
+    }
+
+    public final void CreateAccount(Player player) {
+        this.CreateAccount((OfflinePlayer) player);
+    }
+
+    public abstract void CreateAccount(OfflinePlayer offlinePlayer);
+
+    public abstract void DeleteAccount(OfflinePlayer offlinePlayer);
+
+    public abstract boolean HasAccount(OfflinePlayer offlinePlayer);
 
     public abstract void FetchTopTen();
 
     public abstract void Close();
 
-
-    ///////////////////////////////////
-
-    public ServerSystem GetPlugin() {
+    public final ServerSystem GetPlugin() {
         return this._plugin;
     }
 
-    public abstract String GetMoneyFormat();
-
-    public abstract String GetSeparator();
-
-    public abstract String GetStartingMoney();
-
-    public abstract String GetDisplayFormat();
-
-    public abstract String GetCurrencySingular();
-
-    public abstract String GetCurrencyPlural();
-
-    public String GetThousands() {
-        return this._thousands;
+    public final String GetMoneyFormat() {
+        return this._moneyFormat;
     }
 
-    public abstract LinkedHashMap<OfflinePlayer, Double> GetTopTen();
+    public final String GetSeparator() {
+        return this._separator;
+    }
+
+    public final String GetStartingMoney() {
+        return this._startingMoney;
+    }
+
+    public final String GetDisplayFormat() {
+        return this._displayFormat;
+    }
+
+    public final String GetCurrencySingular() {
+        return this._currencySingular;
+    }
+
+    public final String GetCurrencyPlural() {
+        return this._currencyPlural;
+    }
+
+    public LinkedHashMap<OfflinePlayer, Double> GetTopTen() {
+        return this._topTen;
+    }
 }
