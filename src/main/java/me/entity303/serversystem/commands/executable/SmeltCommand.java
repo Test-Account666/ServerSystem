@@ -79,7 +79,7 @@ public class SmeltCommand implements ICommandExecutorOverload {
     }
 
     // Weakening would result in the wrong Inventory type
-    @SuppressWarnings({ "TypeMayBeWeakened" })
+    @SuppressWarnings("TypeMayBeWeakened")
     private boolean SmeltItem(CommandSender commandSender, Command command, String commandLabel, Player player, ItemStack end) {
         player.getInventory().getItemInMainHand().setType(end.getType());
 

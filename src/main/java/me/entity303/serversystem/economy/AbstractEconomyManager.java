@@ -104,7 +104,7 @@ public abstract class AbstractEconomyManager {
     }
 
     public final void MakeTransaction(Player sender, Player target, double amount) {
-        this.MakeTransaction((OfflinePlayer) sender, (OfflinePlayer) target, amount);
+        this.MakeTransaction(sender, (OfflinePlayer) target, amount);
     }
 
     public final void MakeTransaction(OfflinePlayer sender, OfflinePlayer target, double amount) {
