@@ -51,7 +51,17 @@ public class GameModeCommand implements ICommandExecutorOverload {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (!this.HasPermission(commandSender, arguments)) {
+        var gameMode = arguments.length == 0? this.ParseGameMode("creative") : this.ParseGameMode(arguments[0]);
+
+        if (gameMode == null) {
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                           .GetMessage(commandLabel, command, commandSender, null,
+                                                                                                       "GameMode.NotGameMode")
+                                                                                           .replace("<MODE>", arguments[0].toUpperCase()));
+            return true;
+        }
+
+        if (!this.HasPermission(commandSender, gameMode, arguments)) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
                                       this._plugin.GetMessages().GetNoPermission(this._plugin.GetPermissions().GetPermission("gamemode")));
             return true;
@@ -60,15 +70,6 @@ public class GameModeCommand implements ICommandExecutorOverload {
         if (arguments.length == 0) {
             commandSender.sendMessage(
                     this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "GameMode"));
-            return true;
-        }
-
-        var gameMode = this.ParseGameMode(arguments[0]);
-        if (gameMode == null) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                           .GetMessage(commandLabel, command, commandSender, null,
-                                                                                                       "GameMode.NotGameMode")
-                                                                                           .replace("<MODE>", arguments[0].toUpperCase()));
             return true;
         }
 
@@ -87,16 +88,6 @@ public class GameModeCommand implements ICommandExecutorOverload {
         return true;
     }
 
-    private boolean HasPermission(CommandSender sender, String... arguments) {
-        var permission = arguments.length == 1? "gamemode.self." : "gamemode.others.";
-
-        var parsedGameMode = arguments.length == 0? this.ParseGameMode("creative") : this.ParseGameMode(arguments[0]);
-
-        assert parsedGameMode != null;
-        permission += this.GetGameModeName(parsedGameMode).toLowerCase();
-        return this._plugin.GetPermissions().HasPermission(sender, permission, true);
-    }
-
     private GameMode ParseGameMode(String argument) {
         return switch (argument.toLowerCase()) {
             case "1", "c", "creative", "k", "kreativ" -> GameMode.CREATIVE;
@@ -105,6 +96,14 @@ public class GameModeCommand implements ICommandExecutorOverload {
             case "0", "s", "survival", "ü", "überleben" -> GameMode.SURVIVAL;
             default -> null;
         };
+    }
+
+    private boolean HasPermission(CommandSender sender, GameMode parsedGameMode, String... arguments) {
+        var permission = arguments.length == 1? "gamemode.self." : "gamemode.others.";
+
+        assert parsedGameMode != null;
+        permission += this.GetGameModeName(parsedGameMode).toLowerCase();
+        return this._plugin.GetPermissions().HasPermission(sender, permission, true);
     }
 
     private void ChangeGameMode(CommandSender sender, GameMode gameMode, Command command, String commandLabel) {
