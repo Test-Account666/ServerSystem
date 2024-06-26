@@ -1,20 +1,15 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.bansystem.TimeUnit;
+import me.entity303.serversystem.bansystem.moderation.Moderation;
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.events.AsyncBanEvent;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.ChatColor;
-import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static me.entity303.serversystem.bansystem.TimeUnit.*;
 
@@ -32,155 +27,154 @@ public class BanCommand implements ICommandExecutorOverload {
             this._plugin.Error("BanManager is null?!");
             return true;
         }
-        var pluginMessages = this._plugin.GetMessages();
-        var prefix = pluginMessages.GetPrefix();
+
+        var commandSenderName = commandSender instanceof Player player?
+                                player.getUniqueId().toString() :
+                                this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.BanSystem." + "ConsoleName");
+
         if (!this._plugin.GetPermissions().HasPermission(commandSender, "ban.use.general")) {
             var permission = this._plugin.GetPermissions().GetPermission("ban.use.general");
-            var noPermissionMessage = pluginMessages.GetNoPermission(permission);
-            commandSender.sendMessage(prefix + noPermissionMessage);
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
 
         if (arguments.length <= 1) {
-            var target = arguments.length == 1? arguments[0] : null;
-            var syntax = pluginMessages.GetSyntaxWithStringTarget(commandLabel, command, commandSender, target, "Ban");
-            commandSender.sendMessage(prefix + syntax.replace("<YEAR>", GetName(YEAR))
-                                                     .replace("<MONTH>", GetName(MONTH))
-                                                     .replace("<WEEK>", GetName(WEEK))
-                                                     .replace("<DAY>", GetName(DAY))
-                                                     .replace("<HOUR>", GetName(HOUR))
-                                                     .replace("<MINUTE>", GetName(MINUTE))
-                                                     .replace("<SECOND>", GetName(SECOND)));
+            var targetName = arguments.length == 1? arguments[0] : null;
+
+            var message = this._plugin.GetMessages().GetPrefix() +
+                          this._plugin.GetMessages().GetSyntaxWithStringTarget(commandLabel, command, commandSender, targetName, "Ban");
+
+            message = this.ReplaceTimePlaceholders(message);
+
+            commandSender.sendMessage(message);
             return true;
         }
 
-        var config = pluginMessages.GetConfiguration();
-        var permanentName = config.GetString("Messages.Misc.BanSystem." + "PermanentName");
-        if (arguments.length == 2)
-            if (!arguments[1].equalsIgnoreCase(permanentName)) {
-                var syntax = pluginMessages.GetSyntaxWithStringTarget(commandLabel, command, commandSender, arguments[0], "Ban");
-                commandSender.sendMessage(prefix + syntax.replace("<YEAR>", YEAR.GetName())
-                                                         .replace("<MONTH>", MONTH.GetName())
-                                                         .replace("<WEEK>", WEEK.GetName())
-                                                         .replace("<DAY>", DAY.GetName())
-                                                         .replace("<HOUR>", HOUR.GetName())
-                                                         .replace("<MINUTE>", MINUTE.GetName())
-                                                         .replace("<SECOND>", SECOND.GetName()));
-                return true;
-            }
+        var target = GetPlayer(arguments[0]);
+
+        if (target.isOnline() && this._plugin.GetPermissions().HasPermission(target.getPlayer(), "ban.exempt", true)) {
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                           .GetMessageWithStringTarget(commandLabel, command,
+                                                                                                                       commandSender, target.getName(),
+                                                                                                                       "Ban.Cannotban"));
+            return true;
+        }
+
+        var permanentBan = false;
+
+        var permanentName = this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.BanSystem." + "PermanentName");
 
         if (arguments[1].equalsIgnoreCase(permanentName)) {
             if (!this._plugin.GetPermissions().HasPermission(commandSender, "ban.use.permanent")) {
                 var permission = this._plugin.GetPermissions().GetPermission("ban.use.permanent");
-                var noPermissionMessage = pluginMessages.GetNoPermission(permission);
-                commandSender.sendMessage(prefix + noPermissionMessage);
+
+                var message = this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission);
+
+                commandSender.sendMessage(message);
                 return true;
             }
 
-            var target = BanCommand.GetPlayer(arguments[0]);
+            permanentBan = true;
+        }
 
-            var time = -1L;
+        if (!permanentBan && arguments.length == 2) {
+            var message = this._plugin.GetMessages().GetPrefix() +
+                          this._plugin.GetMessages().GetSyntaxWithStringTarget(commandLabel, command, commandSender, target.getName(), "Ban");
 
-            var reason = pluginMessages.GetMessageWithStringTarget(commandLabel, command, commandSender, target.getName(), "Ban.DefaultReason");
+            message = this.ReplaceTimePlaceholders(message);
 
-            if (arguments.length >= 3)
-                reason = IntStream.range(2, arguments.length).mapToObj(index -> arguments[index] + " ").collect(Collectors.joining());
-
-            this.CreateBan(commandSender, command, commandLabel, target, time, reason, YEAR);
+            commandSender.sendMessage(message);
             return true;
         }
 
-        if (!this._plugin.GetPermissions().HasPermission(commandSender, "ban.use.temporary")) {
+        if (!permanentBan && !this._plugin.GetPermissions().HasPermission(commandSender, "ban.use.temporary")) {
             var permission = this._plugin.GetPermissions().GetPermission("ban.use.temporary");
-            commandSender.sendMessage(prefix + pluginMessages.GetNoPermission(permission));
+
+            var message = this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission);
+
+            commandSender.sendMessage(message);
             return true;
         }
 
-        var target = BanCommand.GetPlayer(arguments[0]);
+        var banTime = -1L;
+        var banTimeUnit = YEAR;
 
-        var time = -1L;
 
-        var targetName = target.getName();
-        var notNumberMessage = pluginMessages.GetMessageWithStringTarget(commandLabel, command, commandSender, targetName, "Ban.NotANumber");
-        try {
-            time = Long.parseLong(arguments[1]);
-        } catch (NumberFormatException ignored) {
+        var reason = this._plugin.GetMessages()
+                                 .GetMessageWithStringTarget(commandLabel, command.getName(), commandSender, target.getName(), "Mute.DefaultReason");
+
+
+        if (permanentBan) reason = arguments.length >= 3? this.ExtractReason(2, arguments) : reason;
+        else {
+            try {
+                banTime = Long.parseLong(arguments[1]);
+            } catch (NumberFormatException ignored) {
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                               .GetMessageWithStringTarget(commandLabel, command,
+                                                                                                                           commandSender, target.getName(),
+                                                                                                                           "Ban.NotANumber")
+                                                                                               .replace("<TIME>", arguments[1]));
+                return true;
+            }
+
+            banTimeUnit = TimeUnit.GetFromName(arguments[2]);
+            if (banTimeUnit == null) {
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                               .GetMessageWithStringTarget(commandLabel, command,
+                                                                                                                           commandSender, target.getName(),
+                                                                                                                           "Ban.NotATimeUnit")
+                                                                                               .replace("<TIMEUNIT>", arguments[2]));
+                return true;
+            }
+
+            reason = arguments.length >= 4? this.ExtractReason(3, arguments) : reason;
         }
 
-        if (time < 1)
-            commandSender.sendMessage(prefix + notNumberMessage.replace("<TIME>", arguments[1]));
 
-        var timeUnit = GetFromName(arguments[2]);
-        if (timeUnit == null) {
-            var notTimeUnitMessage = pluginMessages.GetMessageWithStringTarget(commandLabel, command, commandSender, targetName, "Ban.NotATimeUnit");
-            commandSender.sendMessage(prefix + notTimeUnitMessage.replace("<TIMEUNIT>", arguments[2]));
-            return true;
-        }
+        var ban = this._plugin.GetBanManager().CreateBan(target.getUniqueId(), commandSenderName, reason, banTime, banTimeUnit);
 
-        pluginMessages.GetMessageWithStringTarget(commandLabel, command, commandSender, targetName, "Ban.DefaultReason");
-        var reason = pluginMessages.GetMessageWithStringTarget(commandLabel, command, commandSender, targetName, "Ban.DefaultReason");
-
-        if (arguments.length >= 4)
-            reason = IntStream.range(3, arguments.length).mapToObj(index -> arguments[index] + " ").collect(Collectors.joining());
-
-        this.CreateBan(commandSender, command, commandLabel, target, time, reason, timeUnit);
+        this.SendSuccessMessageAndInvokeEvent(commandSender, command, commandLabel, target, reason, ban);
         return true;
+    }
+
+    private String ReplaceTimePlaceholders(String message) {
+        return message.replace("<YEAR>", GetName(YEAR))
+                      .replace("<MONTH>", GetName(MONTH))
+                      .replace("<WEEK>", GetName(WEEK))
+                      .replace("<DAY>", GetName(DAY))
+                      .replace("<HOUR>", GetName(HOUR))
+                      .replace("<MINUTE>", GetName(MINUTE))
+                      .replace("<SECOND>", GetName(SECOND));
     }
 
     private static OfflinePlayer GetPlayer(String name) {
         OfflinePlayer player;
         player = Bukkit.getPlayer(name);
-        if (player == null)
-            player = Bukkit.getOfflinePlayer(name);
+        if (player == null) player = Bukkit.getOfflinePlayer(name);
         return player;
     }
 
-    private void CreateBan(CommandSender commandSender, Command command, String commandLabel, OfflinePlayer target, long time, String reason,
-                           TimeUnit timeUnit) {
-        var pluginMessages = this._plugin.GetMessages();
-        if (reason.equalsIgnoreCase(""))
-            reason = pluginMessages.GetMessageWithStringTarget(commandLabel, command, commandSender, target.getName(), "Ban.DefaultReason");
+    private String ExtractReason(int start, String... arguments) {
+        var reasonBuilder = new StringBuilder();
+        for (var index = start; index < arguments.length; index++)
+            if (index == arguments.length - 1) reasonBuilder.append(arguments[index]);
+            else reasonBuilder.append(arguments[index]).append(" ");
+        return reasonBuilder.toString();
+    }
 
-        if (this.IsExemptFromBans(commandSender, command, commandLabel, target))
-            return;
+    private void SendSuccessMessageAndInvokeEvent(CommandSender commandSender, Command command, String commandLabel, OfflinePlayer target, String reason,
+                                                  Moderation moderation) {
+        this._plugin.GetBanManager().UnBan(target.getUniqueId());
 
-        var consoleName = pluginMessages.GetConfiguration().GetString("Messages.Misc.BanSystem." + "ConsoleName");
-        var ban = this._plugin.GetBanManager()
-                              .CreateBan(target.getUniqueId(),
-                                         commandSender instanceof Player? ((Entity) commandSender).getUniqueId().toString() : consoleName, reason, time,
-                                         timeUnit);
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                       .GetMessageWithStringTarget(commandLabel, command, commandSender,
+                                                                                                                   target.getName(), "Ban.Success")
+                                                                                       .replace("<REASON>", reason)
+                                                                                       .replace("<DATE>", moderation.GetExpireDate()));
 
-
-        var prefix = pluginMessages.GetPrefix();
-        var banSuccessMessage = pluginMessages.GetMessageWithStringTarget(commandLabel, command, commandSender, target.getName(), "Ban.Success");
-        var unbanDate = ban.GetExpireDate();
-        commandSender.sendMessage(prefix + banSuccessMessage.replace("<DATE>", unbanDate));
-
-        if (target.isOnline()) {
-            var kickMessage = pluginMessages.GetMessage(commandLabel, command.getName(), commandSender, target.getPlayer(), "Ban.Kick");
-            var coloredBanReason = ChatColor.TranslateAlternateColorCodes('&', ban.GetReason());
-            var coloredUnbanDate = ChatColor.TranslateAlternateColorCodes('&', unbanDate);
-            target.getPlayer().kickPlayer(kickMessage.replace("<REASON>", coloredBanReason).replace("<DATE>", coloredUnbanDate));
-        }
-
-        var finalReason = reason;
         Bukkit.getScheduler().runTaskAsynchronously(this._plugin, () -> {
-            var asyncBanEvent = new AsyncBanEvent(commandSender, target, finalReason, unbanDate);
+            var asyncBanEvent = new AsyncBanEvent(commandSender, target, reason, moderation.GetExpireDate());
             Bukkit.getPluginManager().callEvent(asyncBanEvent);
         });
     }
-
-    private boolean IsExemptFromBans(CommandSender commandSender, Command command, String commandLabel, OfflinePlayer target) {
-        if (!target.isOnline())
-            return false;
-
-        if (!this._plugin.GetPermissions().HasPermission(target.getPlayer(), "ban.exempt", true))
-            return false;
-
-        var pluginMessages = this._plugin.GetMessages();
-        var prefix = pluginMessages.GetPrefix();
-        commandSender.sendMessage(prefix + pluginMessages.GetMessage(commandLabel, command, commandSender, target.getPlayer(), "Ban.Cannotban"));
-        return true;
-    }
-
 }
