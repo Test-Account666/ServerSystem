@@ -4,7 +4,6 @@ import com.intellectualcrafters.plot.flag.Flags;
 import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
 import com.plotsquared.bukkit.events.PlayerLeavePlotEvent;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 

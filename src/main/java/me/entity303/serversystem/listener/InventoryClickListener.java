@@ -2,7 +2,6 @@ package me.entity303.serversystem.listener;
 
 import me.entity303.serversystem.commands.executable.RecipeCommand;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;

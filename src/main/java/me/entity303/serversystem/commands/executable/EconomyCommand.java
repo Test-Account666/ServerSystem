@@ -2,7 +2,6 @@ package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -30,8 +29,7 @@ public class EconomyCommand implements ICommandExecutorOverload {
             return true;
         }
 
-        if (!this.HasPermission(arguments[0], commandSender, command, commandLabel))
-            return true;
+        if (!this.HasPermission(arguments[0], commandSender, command, commandLabel)) return true;
 
         if (arguments.length <= 2) {
             this.SendHelpCommand(arguments[0], commandSender, command, commandLabel);
@@ -67,14 +65,18 @@ public class EconomyCommand implements ICommandExecutorOverload {
                                                                                                                            "Economy.Success.Set.Sender")
                                                                                                .replace("<AMOUNT>",
                                                                                                         this._plugin.GetEconomyManager().Format(amount)));
-                if (target.isOnline())
-                    target.getPlayer()
-                          .sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                            .GetMessageWithStringTarget(commandLabel, command,
-                                                                                                                        commandSender, target.getName(),
-                                                                                                                        "Economy.Success.Set.Target")
-                                                                                            .replace("<AMOUNT>",
-                                                                                                     this._plugin.GetEconomyManager().Format(amount)));
+                if (target.isOnline()) target.getPlayer()
+                                             .sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                                               .GetMessageWithStringTarget(commandLabel,
+                                                                                                                                           command,
+                                                                                                                                           commandSender,
+                                                                                                                                           target.getName(),
+                                                                                                                                           "Economy" +
+                                                                                                                                           ".Success.Set" +
+                                                                                                                                           ".Target")
+                                                                                                               .replace("<AMOUNT>",
+                                                                                                                        this._plugin.GetEconomyManager()
+                                                                                                                                    .Format(amount)));
             }
             case "give", "add" -> {
                 this._plugin.GetEconomyManager().AddMoney(target, amount);
@@ -84,14 +86,18 @@ public class EconomyCommand implements ICommandExecutorOverload {
                                                                                                                            "Economy.Success.Give.Sender")
                                                                                                .replace("<AMOUNT>",
                                                                                                         this._plugin.GetEconomyManager().Format(amount)));
-                if (target.isOnline())
-                    target.getPlayer()
-                          .sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                            .GetMessageWithStringTarget(commandLabel, command,
-                                                                                                                        commandSender, target.getName(),
-                                                                                                                        "Economy.Success.Give.Target")
-                                                                                            .replace("<AMOUNT>",
-                                                                                                     this._plugin.GetEconomyManager().Format(amount)));
+                if (target.isOnline()) target.getPlayer()
+                                             .sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                                               .GetMessageWithStringTarget(commandLabel,
+                                                                                                                                           command,
+                                                                                                                                           commandSender,
+                                                                                                                                           target.getName(),
+                                                                                                                                           "Economy" +
+                                                                                                                                           ".Success" +
+                                                                                                                                           ".Give.Target")
+                                                                                                               .replace("<AMOUNT>",
+                                                                                                                        this._plugin.GetEconomyManager()
+                                                                                                                                    .Format(amount)));
             }
             case "revoke", "take", "remove" -> {
                 this._plugin.GetEconomyManager().RemoveMoney(target, amount);
@@ -101,14 +107,19 @@ public class EconomyCommand implements ICommandExecutorOverload {
                                                                                                                            "Economy.Success.Revoke.Sender")
                                                                                                .replace("<AMOUNT>",
                                                                                                         this._plugin.GetEconomyManager().Format(amount)));
-                if (target.isOnline())
-                    target.getPlayer()
-                          .sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                            .GetMessageWithStringTarget(commandLabel, command,
-                                                                                                                        commandSender, target.getName(),
-                                                                                                                        "Economy.Success.Revoke.Target")
-                                                                                            .replace("<AMOUNT>",
-                                                                                                     this._plugin.GetEconomyManager().Format(amount)));
+                if (target.isOnline()) target.getPlayer()
+                                             .sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                                               .GetMessageWithStringTarget(commandLabel,
+                                                                                                                                           command,
+                                                                                                                                           commandSender,
+                                                                                                                                           target.getName(),
+                                                                                                                                           "Economy" +
+                                                                                                                                           ".Success" +
+                                                                                                                                           ".Revoke" +
+                                                                                                                                           ".Target")
+                                                                                                               .replace("<AMOUNT>",
+                                                                                                                        this._plugin.GetEconomyManager()
+                                                                                                                                    .Format(amount)));
             }
             default -> commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
                                                  this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Economy.General"));
@@ -165,10 +176,8 @@ public class EconomyCommand implements ICommandExecutorOverload {
 
     private OfflinePlayer Player(String name) {
         OfflinePlayer player = Bukkit.getPlayer(name);
-        if (player == null)
-            player = Bukkit.getOfflinePlayer(name);
-        if (!this._plugin.GetEconomyManager().HasAccount(player))
-            return null;
+        if (player == null) player = Bukkit.getOfflinePlayer(name);
+        if (!this._plugin.GetEconomyManager().HasAccount(player)) return null;
         return player;
     }
 

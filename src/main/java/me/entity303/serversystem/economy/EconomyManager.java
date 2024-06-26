@@ -91,14 +91,14 @@ public class EconomyManager extends AbstractEconomyManager {
     }
 
     @Override
-    public Double GetMoneyAsNumber(OfflinePlayer player) {
-        if (player == null)
+    public Double GetMoneyAsNumber(OfflinePlayer offlinePlayer) {
+        if (offlinePlayer == null)
             return 0.0D;
 
         try {
             if (!this._file.exists())
                 return 0.0;
-            return Double.valueOf(this._configuration.getString("Money." + player.getUniqueId()));
+            return Double.valueOf(this._configuration.getString("Money." + offlinePlayer.getUniqueId()));
         } catch (NullPointerException ignored) {
             return 0.0;
         }

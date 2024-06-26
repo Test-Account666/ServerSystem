@@ -25,14 +25,11 @@ public final class CommandUtils {
         var awayFromKeyboard = false;
 
         for (var metadataValue : player.getMetadata("afk")) {
-            if (metadataValue == null)
-                continue;
+            if (metadataValue == null) continue;
 
-            if (metadataValue.getOwningPlugin() == null)
-                continue;
+            if (metadataValue.getOwningPlugin() == null) continue;
 
-            if (!metadataValue.getOwningPlugin().getName().equalsIgnoreCase("ServerSystem"))
-                continue;
+            if (!metadataValue.getOwningPlugin().getName().equalsIgnoreCase("ServerSystem")) continue;
 
             awayFromKeyboard = metadataValue.asBoolean();
             break;
@@ -48,18 +45,13 @@ public final class CommandUtils {
     public static Player GetPlayer(ServerSystem plugin, CommandSender sender, String name, UUID uuid) {
         Player player = null;
 
-        if (name != null)
-            player = Bukkit.getPlayer(name);
-        else if (uuid != null)
-            player = Bukkit.getPlayer(uuid);
+        if (name != null) player = Bukkit.getPlayer(name);
+        else if (uuid != null) player = Bukkit.getPlayer(uuid);
 
-        if (player == null)
-            return null;
+        if (player == null) return null;
         if (sender instanceof Player)
-            if (!plugin.GetVanish().IsVanish(player) || plugin.GetPermissions().HasPermission(sender, "vanish.see", true))
-                return player;
-            else
-                return null;
+            if (!plugin.GetVanish().IsVanish(player) || plugin.GetPermissions().HasPermission(sender, "vanish.see", true)) return player;
+            else return null;
         return player;
     }
 
@@ -98,9 +90,9 @@ public final class CommandUtils {
             _loadDataMethod.invoke(hookedPlayer);
 
             return (Player) hookedPlayer;
-        } catch (Exception e) {
-            System.err.println("Failed to hook player: " + e.getMessage());
-            e.printStackTrace();
+        } catch (Exception exception) {
+            plugin.Error("Failed to hook player: " + exception.getMessage());
+            exception.printStackTrace();
             return null;
         }
     }

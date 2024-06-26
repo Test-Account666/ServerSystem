@@ -1,7 +1,6 @@
 package me.entity303.serversystem.listener;
 
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;

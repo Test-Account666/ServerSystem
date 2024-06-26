@@ -52,31 +52,30 @@ public class KitCommand implements ICommandExecutorOverload {
 
         if (!this._plugin.GetKitsManager().DoesKitExist(kitName)) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                         .GetMessage(commandLabel, command, commandSender, target,
-                                                                                                     "Kit.DoesntExist")
-                                                                                         .replace("<KIT>", kitName.toUpperCase()));
+                                                                                           .GetMessage(commandLabel, command, commandSender, target,
+                                                                                                       "Kit.DoesntExist")
+                                                                                           .replace("<KIT>", kitName.toUpperCase()));
             return;
         }
 
         var others = target != commandSender;
 
-        if (!this._plugin.GetKitsManager().IsKitAllowed(commandSender, kitName, others))
-            return;
+        if (!this._plugin.GetKitsManager().IsKitAllowed(commandSender, kitName, others)) return;
 
         if (this._plugin.GetKitsManager().IsKitDelayed(target, kitName))
             if (!this._plugin.GetPermissions().HasPermission(commandSender, "kit.bypassdelay", true)) {
                 var delay = this._plugin.GetKitsManager().GetPlayerLastDelay(target.getUniqueId().toString(), kitName) +
                             this._plugin.GetKitsManager().GetKitDelay(kitName);
 
-                var dateFormat =
-                        new SimpleDateFormat(this._plugin.GetMessages().GetMessage(commandLabel, command.getName(), commandSender, null, "Kit.TimeFormat"));
+                var dateFormat = new SimpleDateFormat(
+                        this._plugin.GetMessages().GetMessage(commandLabel, command.getName(), commandSender, null, "Kit.TimeFormat"));
                 var date = new Date(delay);
 
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                             .GetMessage(commandLabel, command, commandSender, target,
-                                                                                                         "Kit.OnDelay")
-                                                                                             .replace("<KIT>", kitName.toUpperCase())
-                                                                                             .replace("<DATE>", dateFormat.format(date)));
+                                                                                               .GetMessage(commandLabel, command, commandSender, target,
+                                                                                                           "Kit.OnDelay")
+                                                                                               .replace("<KIT>", kitName.toUpperCase())
+                                                                                               .replace("<DATE>", dateFormat.format(date)));
                 return;
             }
 
@@ -84,21 +83,21 @@ public class KitCommand implements ICommandExecutorOverload {
 
         if (!others) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                         .GetMessage(commandLabel, command, commandSender, target,
-                                                                                                     "Kit.Success.Self")
-                                                                                         .replace("<KIT>", kitName.toUpperCase()));
+                                                                                           .GetMessage(commandLabel, command, commandSender, target,
+                                                                                                       "Kit.Success.Self")
+                                                                                           .replace("<KIT>", kitName.toUpperCase()));
             return;
         }
 
         commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                     .GetMessage(commandLabel, command, commandSender, target,
-                                                                                                 "Kit.Success.Others.Sender")
-                                                                                     .replace("<KIT>", kitName.toUpperCase()));
+                                                                                       .GetMessage(commandLabel, command, commandSender, target,
+                                                                                                   "Kit.Success.Others.Sender")
+                                                                                       .replace("<KIT>", kitName.toUpperCase()));
 
         target.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                              .GetMessage(commandLabel, command, commandSender, target,
-                                                                                          "Kit.Success.Others.Target")
-                                                                              .replace("<KIT>", kitName.toUpperCase()));
+                                                                                .GetMessage(commandLabel, command, commandSender, target,
+                                                                                            "Kit.Success.Others.Target")
+                                                                                .replace("<KIT>", kitName.toUpperCase()));
     }
 }
 

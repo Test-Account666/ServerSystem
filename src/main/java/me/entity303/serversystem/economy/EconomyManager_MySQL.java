@@ -27,15 +27,15 @@ public class EconomyManager_MySQL extends AbstractEconomyManager {
     }
 
     @Override
-    public Double GetMoneyAsNumber(OfflinePlayer player) {
-        if (player == null)
+    public Double GetMoneyAsNumber(OfflinePlayer offlinePlayer) {
+        if (offlinePlayer == null)
             return 0.0D;
         if (Bukkit.isPrimaryThread())
-            if (this._moneyCache.containsKey(player))
-                return this._moneyCache.get(player);
+            if (this._moneyCache.containsKey(offlinePlayer))
+                return this._moneyCache.get(offlinePlayer);
         var resultSet = this.GetPlugin()
                             .GetMySQL()
-                            .GetResult("SELECT * FROM Economy WHERE UUID = '" + player.getUniqueId() + "' AND Server = '" + this._server + "'");
+                            .GetResult("SELECT * FROM Economy WHERE UUID = '" + offlinePlayer.getUniqueId() + "' AND Server = '" + this._server + "'");
         try {
             try {
                 if (resultSet.isClosed())
@@ -46,7 +46,7 @@ public class EconomyManager_MySQL extends AbstractEconomyManager {
                 return 0.0D;
             Double money = Double.parseDouble(String.format("%.2f", resultSet.getDouble("Balance")).replace(",", "."));
             resultSet.close();
-            this._moneyCache.put(player, money);
+            this._moneyCache.put(offlinePlayer, money);
             return money;
         } catch (SQLException exception) {
             if (!exception.getMessage().toLowerCase().contains("closed"))

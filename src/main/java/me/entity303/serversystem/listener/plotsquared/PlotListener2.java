@@ -3,7 +3,6 @@ package me.entity303.serversystem.listener.plotsquared;
 import com.github.intellectualsites.plotsquared.bukkit.events.PlayerEnterPlotEvent;
 import com.github.intellectualsites.plotsquared.bukkit.events.PlayerLeavePlotEvent;
 import me.entity303.serversystem.main.ServerSystem;
-import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 

@@ -55,13 +55,12 @@ public class BanManager_MySQL extends AbstractBanManager {
         if (!this.CheckPlayerInMYSQL(uuid.toString()))
             return null;
 
-        var bannedUUID = uuid;
         var reason = this.GetReason(uuid.toString());
         long expireTime = this.GetUnbanTime(uuid.toString());
         var senderUUID = this.GetUUIDSender(uuid.toString());
         var expireDate = this.ConvertLongToDate(expireTime);
 
-        return new BanModeration(bannedUUID, senderUUID, expireTime, expireDate, reason);
+        return new BanModeration(uuid, senderUUID, expireTime, expireDate, reason);
     }
 
     @Override
