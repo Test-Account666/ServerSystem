@@ -20,8 +20,8 @@ public class StackCommand implements ICommandExecutorOverload {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
         if (arguments.length == 0) {
-            Message messages = this._plugin.GetMessages();
-            PermissionsChecker permissions = this._plugin.GetPermissions();
+            var messages = this._plugin.GetMessages();
+            var permissions = this._plugin.GetPermissions();
             if (!(commandSender instanceof Player player)) {
                 commandSender.sendMessage(messages.GetPrefix() + messages.GetOnlyPlayer());
                 return true;
