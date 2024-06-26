@@ -68,7 +68,7 @@ public final class ServerSystem extends JavaPlugin {
     private final Map<Player, String> _backReasonMap = new HashMap<>();
     private final Map<Player, BukkitTask> _teleportMap = new HashMap<>();
     private final Map<Player, TpaData> _tpaDataMap = new HashMap<>();
-    private final Map<Player, Player> _enderchest = new HashMap<>();
+    private final Map<Player, Player> _enderChest = new HashMap<>();
     private final VersionStuff _versionStuff = new VersionStuff(this);
     private EventManager _eventManager;
     private VersionManager _versionManager;
@@ -225,7 +225,7 @@ public final class ServerSystem extends JavaPlugin {
     }
 
     public Map<Player, Player> GetEnderchest() {
-        return this._enderchest;
+        return this._enderChest;
     }
 
     public String GetServerName() {
@@ -338,7 +338,9 @@ public final class ServerSystem extends JavaPlugin {
 
     public Vanish GetVanish() {
         return this._vanish;
-    }    private boolean CheckMainServerForUpdates(String currentVersion, boolean autoUpdate) {
+    }
+
+    private boolean CheckMainServerForUpdates(String currentVersion, boolean autoUpdate) {
         var foundVersion = this.getDescription().getVersion();
 
         Document doc;
@@ -360,8 +362,7 @@ public final class ServerSystem extends JavaPlugin {
         var isFoundVersionMoreRecent = this.IsFoundVersionMoreRecent(foundVersion, currentVersion);
 
         if (!isFoundVersionMoreRecent || currentVersion.equalsIgnoreCase(foundVersion)) {
-            if (this._onceTold)
-                return true;
+            if (this._onceTold) return true;
 
             this.Info("You are using the latest version of ServerSystem <3");
             this._onceTold = true;
@@ -370,14 +371,11 @@ public final class ServerSystem extends JavaPlugin {
 
         this.Warn("There is a new version available! (" + foundVersion + ")");
         if (!autoUpdate) {
-            if (!this._configReader.GetBoolean("updates.notifyOnJoin"))
-                return true;
+            if (!this._configReader.GetBoolean("updates.notifyOnJoin")) return true;
 
-            if (!foundVersion.equalsIgnoreCase(this._newVersion))
-                this._newVersion = foundVersion;
+            if (!foundVersion.equalsIgnoreCase(this._newVersion)) this._newVersion = foundVersion;
 
-            if (this._registered)
-                return true;
+            if (this._registered) return true;
 
             this._registered = true;
             this._eventManager.RegisterEvent(new JoinUpdateListener(this));
@@ -392,8 +390,7 @@ public final class ServerSystem extends JavaPlugin {
             var fileOutputStream = new FileOutputStream(new File("plugins/update", this._jarName));
             var dataBuffer = new byte[1024];
             int bytesRead;
-            while ((bytesRead = inputStream.read(dataBuffer, 0, 1024)) != -1)
-                fileOutputStream.write(dataBuffer, 0, bytesRead);
+            while ((bytesRead = inputStream.read(dataBuffer, 0, 1024)) != -1) fileOutputStream.write(dataBuffer, 0, bytesRead);
 
             inputStream.close();
             fileOutputStream.close();
@@ -404,8 +401,6 @@ public final class ServerSystem extends JavaPlugin {
         }
         return false;
     }
-
-
 
 
     public void Error(String text) {
@@ -421,8 +416,7 @@ public final class ServerSystem extends JavaPlugin {
     private boolean IsFoundVersionMoreRecent(String foundVersion, String currentVersion) {
         var foundVersionSplit = foundVersion.split("\\.");
 
-        if (foundVersionSplit.length < 3)
-            return false;
+        if (foundVersionSplit.length < 3) return false;
 
         var foundVersionMajor = Long.parseLong(foundVersionSplit[0]);
         var foundVersionMinor = Long.parseLong(foundVersionSplit[1]);
@@ -430,19 +424,16 @@ public final class ServerSystem extends JavaPlugin {
 
         var currentVersionSplit = currentVersion.split("\\.");
 
-        if (currentVersionSplit.length < 3)
-            return true;
+        if (currentVersionSplit.length < 3) return true;
 
         var currentVersionMajor = Long.parseLong(currentVersionSplit[0]);
         var currentVersionMinor = Long.parseLong(currentVersionSplit[1]);
         var currentVersionPatch = Long.parseLong(currentVersionSplit[2]);
 
 
-        if (currentVersionMajor < foundVersionMajor)
-            return true;
+        if (currentVersionMajor < foundVersionMajor) return true;
 
-        if (currentVersionMinor < foundVersionMinor)
-            return true;
+        if (currentVersionMinor < foundVersionMinor) return true;
 
         return currentVersionPatch < foundVersionPatch;
     }
@@ -461,10 +452,8 @@ public final class ServerSystem extends JavaPlugin {
 
     @Override
     public void reloadConfig() {
-        if (this._configReader != null)
-            this._configReader.Reload();
-        else
-            this._configReader = new NonValidatingConfigReader(new File("plugins" + File.separator + "ServerSystem", "config.yml"), this);
+        if (this._configReader != null) this._configReader.Reload();
+        else this._configReader = new NonValidatingConfigReader(new File("plugins" + File.separator + "ServerSystem", "config.yml"), this);
     }
 
 
@@ -480,8 +469,7 @@ public final class ServerSystem extends JavaPlugin {
 
     @Override
     public void saveConfig() {
-        if (this._configReader != null)
-            this._configReader.Save();
+        if (this._configReader != null) this._configReader.Save();
     }
 
 
@@ -518,8 +506,7 @@ public final class ServerSystem extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (!new File("plugins//update").exists())
-            new File("plugins//update").mkdirs();
+        if (!new File("plugins//update").exists()) new File("plugins//update").mkdirs();
 
         this._starting = true;
         this._metaValue = new MetaValue();
@@ -537,28 +524,25 @@ public final class ServerSystem extends JavaPlugin {
         var file = new File("plugins//ServerSystem", "vanish.yml");
         if (file.exists()) {
             FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-            if (cfg.getConfigurationSection("Vanish") != null)
-                if (!cfg.getConfigurationSection("Vanish").getKeys(false).isEmpty())
-                    for (var uuidString : cfg.getConfigurationSection("Vanish").getKeys(false))
-                        this._vanish.GetVanishList().add(UUID.fromString(uuidString));
+            var vanishConfiguration = cfg.getConfigurationSection("Vanish");
+
+            if (vanishConfiguration != null && !vanishConfiguration.getKeys(false).isEmpty())
+                for (var uuidString : vanishConfiguration.getKeys(false)) this._vanish.GetVanishList().add(UUID.fromString(uuidString));
             file.delete();
         }
 
         this._kitsManager = new KitsManager(this);
 
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)
-            new ServerSystemExpansion(this).register();
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) new ServerSystemExpansion(this).register();
 
         this._commandManager = new CommandManager(this);
         Bukkit.getScheduler().runTaskLater(this, () -> {
             this._commandManager.RegisterCommands();
 
-            if (!this.SyncCommands())
-                return;
+            if (!this.SyncCommands()) return;
 
-            if (!Bukkit.getOnlinePlayers().isEmpty())
-                for (var player : Bukkit.getOnlinePlayers())
-                    player.updateCommands();
+            if (Bukkit.getOnlinePlayers().isEmpty()) return;
+            Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
         }, 5L);
 
         this._eventManager = new EventManager(this);
@@ -567,17 +551,18 @@ public final class ServerSystem extends JavaPlugin {
 
         Bukkit.getScheduler().runTaskLater(this, () -> this._starting = false, 100L);
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
-            List<Player> players = new ArrayList<>();
+            Collection<Player> players = new ArrayList<>();
             for (var entry : this._tpaDataMap.entrySet()) {
                 var player = entry.getKey();
 
-                if (entry.getValue().GetEnd() <= System.currentTimeMillis())
-                    players.add(player);
+                if (entry.getValue().GetEnd() > System.currentTimeMillis()) continue;
+
+                players.add(player);
             }
 
-            if (!players.isEmpty())
-                for (var player : players)
-                    this._tpaDataMap.remove(player);
+            if (players.isEmpty()) return;
+
+            players.forEach(this._tpaDataMap::remove);
         }, 20L, 20L);
 
         this._wantsTeleport = new WantsTeleport(this);
@@ -606,14 +591,11 @@ public final class ServerSystem extends JavaPlugin {
         this._disableFlightOnHit = this._configReader.GetBoolean("fly.disableWhenHit");
         this._stopFlightOnHit = this._configReader.GetBoolean("fly.stopWhenHit");
 
-        if (this._disableFlightOnHit)
-            this._stopFlightOnHit = true;
+        if (this._disableFlightOnHit) this._stopFlightOnHit = true;
 
-        if (this._stopFlightOnHit)
-            this._eventManager.RegisterEvent(new FlightHitListener(this));
+        if (this._stopFlightOnHit) this._eventManager.RegisterEvent(new FlightHitListener(this));
 
-        if (this._configReader.GetBoolean("metrics"))
-            this._metrics = new MetricsLite(this, 9043);
+        if (this._configReader.GetBoolean("metrics")) this._metrics = new MetricsLite(this, 9043);
 
         Bukkit.getScheduler().runTaskLater(this, () -> this._furnace = new Furnace(this), 10L);
 
@@ -639,8 +621,7 @@ public final class ServerSystem extends JavaPlugin {
 
         Bukkit.getScheduler().runTask(this, () -> {
             var markerFile = new File("plugins" + File.separator + "ServerSystem", "marker.ignore");
-            if (markerFile.exists())
-                return;
+            if (markerFile.exists()) return;
 
             this.Warn("!!!!! BREAKING CHANGES !!!!!");
             this.Warn("As of 2.0.0, there are some breaking changes!");
@@ -658,14 +639,13 @@ public final class ServerSystem extends JavaPlugin {
     }
 
     private boolean SyncCommands() {
-        if (this._syncCommandsMethod == null)
-            try {
-                this._syncCommandsMethod = Bukkit.getServer().getClass().getDeclaredMethod("syncCommands");
-                this._syncCommandsMethod.setAccessible(true);
-            } catch (NoSuchMethodException exception) {
-                exception.printStackTrace();
-                return false;
-            }
+        if (this._syncCommandsMethod == null) try {
+            this._syncCommandsMethod = Bukkit.getServer().getClass().getDeclaredMethod("syncCommands");
+            this._syncCommandsMethod.setAccessible(true);
+        } catch (NoSuchMethodException exception) {
+            exception.printStackTrace();
+            return false;
+        }
 
         try {
             this._syncCommandsMethod.invoke(Bukkit.getServer());
@@ -678,79 +658,84 @@ public final class ServerSystem extends JavaPlugin {
 
 
     private void StartDeactivatingCommands() {
-        if (this._configReader.GetBoolean("deactivatedCommands.enabled"))
-            Bukkit.getScheduler()
-                  .runTaskLater(this, () -> this._configReader.GetConfigurationSection("deactivatedCommands").getKeys(false).forEach(command -> {
-                      if (!command.equalsIgnoreCase("enabled")) {
-                          this.Info("Deactivating command " + command + " from plugin " + this._configReader.GetString("deactivatedCommands." + command) +
-                                    "!");
-                          this._commandManager.DeactivateBukkitCommand(command.toLowerCase(),
-                                                                       this._configReader.GetString("deactivatedCommands." + command).toLowerCase());
-                      }
-                  }), 40L);
+        if (!this._configReader.GetBoolean("deactivatedCommands.enabled")) return;
+
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            for (var command : this._configReader.GetConfigurationSection("deactivatedCommands").getKeys(false)) {
+                if (command.equalsIgnoreCase("enabled")) continue;
+
+                var plugin = this._configReader.GetString("deactivatedCommands." + command);
+
+                this.Info("Deactivating command " + command + " from plugin " + plugin + "!");
+                this._commandManager.DeactivateBukkitCommand(command.toLowerCase(), plugin.toLowerCase());
+            }
+        }, 40L);
     }
 
 
     private void StartSwappingCommands() {
-        if (this._configReader.GetBoolean("swapCommands.enabled"))
-            Bukkit.getScheduler().runTaskLater(this, () -> this._configReader.GetConfigurationSection("swapCommands").getKeys(false).forEach(cmdFrom -> {
-                if (!cmdFrom.equalsIgnoreCase("enabled")) {
-                    var pluginFrom = this._configReader.GetString("swapCommands." + cmdFrom + ".fromPlugin");
-                    var cmdTo = this._configReader.GetString("swapCommands." + cmdFrom + ".toCommand");
-                    var pluginTo = this._configReader.GetString("swapCommands." + cmdFrom + ".toPlugin");
+        if (!this._configReader.GetBoolean("swapCommands.enabled")) return;
 
-                    this.Info("Swapping command " + cmdFrom + " from plugin " + pluginFrom + " to command " + cmdTo + " from plugin " + pluginTo + "!");
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            for (var cmdFrom : this._configReader.GetConfigurationSection("swapCommands").getKeys(false)) {
+                if (cmdFrom.equalsIgnoreCase("enabled")) continue;
 
-                    var cmdFromToLower = pluginFrom.toLowerCase() + ":" + cmdFrom.toLowerCase();
+                var pluginFrom = this._configReader.GetString("swapCommands." + cmdFrom + ".fromPlugin");
+                var cmdTo = this._configReader.GetString("swapCommands." + cmdFrom + ".toCommand");
+                var pluginTo = this._configReader.GetString("swapCommands." + cmdFrom + ".toPlugin");
 
-                    var commandFrom = Bukkit.getPluginCommand(cmdFromToLower);
-                    var commandToPluginCommand = Bukkit.getPluginCommand(pluginTo.toLowerCase() + ":" + cmdTo.toLowerCase());
+                this.Info("Swapping command " + cmdFrom + " from plugin " + pluginFrom + " to command " + cmdTo + " from plugin " + pluginTo + "!");
 
-                    if (commandFrom == null) {
-                        this.Warn("Command " + cmdFrom + " does not exist in plugin " + pluginFrom + "!");
-                        return;
-                    }
+                var cmdFromToLower = pluginFrom.toLowerCase() + ":" + cmdFrom.toLowerCase();
 
-                    if (commandToPluginCommand == null) {
-                        this.Warn("Command " + cmdTo + " does not exist in plugin " + pluginTo + "!");
-                        return;
-                    }
+                var commandFrom = Bukkit.getPluginCommand(cmdFromToLower);
+                var commandToPluginCommand = Bukkit.getPluginCommand(pluginTo.toLowerCase() + ":" + cmdTo.toLowerCase());
 
-                    commandFrom.setExecutor(commandToPluginCommand.getExecutor());
-                    commandFrom.setTabCompleter(commandToPluginCommand.getTabCompleter());
-                    commandFrom.setPermission(commandToPluginCommand.getPermission());
-                    commandFrom.setPermissionMessage(commandToPluginCommand.getPermissionMessage());
-                    commandFrom.setDescription(commandToPluginCommand.getDescription());
-
-                    if (pluginTo.equalsIgnoreCase("Essentials")) {
-                        if (this._essentialsCommandListener == null) {
-                            var essentialsPlugin = JavaPlugin.getProvidingPlugin(this.getServer().getPluginManager().getPlugin("Essentials").getClass());
-                            var essentials = (Essentials) essentialsPlugin;
-                            this._essentialsCommandListener = new EssentialsCommandListener(essentials, this);
-                            this._eventManager.RegisterEvent(this._essentialsCommandListener);
-                        }
-                        if (this.getServer().getPluginCommand(cmdFromToLower) == this.getServer().getPluginCommand(cmdFrom.toLowerCase()))
-                            this._essentialsCommandListener.AddCommand(cmdFrom, cmdTo);
-                        else
-                            this._essentialsCommandListener.AddCommand(pluginFrom + ":" + cmdFrom, cmdTo);
-                    }
+                if (commandFrom == null) {
+                    this.Warn("Command " + cmdFrom + " does not exist in plugin " + pluginFrom + "!");
+                    continue;
                 }
-            }), 60L);
+
+                if (commandToPluginCommand == null) {
+                    this.Warn("Command " + cmdTo + " does not exist in plugin " + pluginTo + "!");
+                    continue;
+                }
+
+                commandFrom.setExecutor(commandToPluginCommand.getExecutor());
+                commandFrom.setTabCompleter(commandToPluginCommand.getTabCompleter());
+                commandFrom.setPermission(commandToPluginCommand.getPermission());
+                commandFrom.setPermissionMessage(commandToPluginCommand.getPermissionMessage());
+                commandFrom.setDescription(commandToPluginCommand.getDescription());
+
+                if (!pluginTo.equalsIgnoreCase("Essentials")) continue;
+
+                if (this._essentialsCommandListener == null) {
+                    var essentialsPlugin = JavaPlugin.getProvidingPlugin(this.getServer().getPluginManager().getPlugin("Essentials").getClass());
+                    var essentials = (Essentials) essentialsPlugin;
+                    this._essentialsCommandListener = new EssentialsCommandListener(essentials, this);
+                    this._eventManager.RegisterEvent(this._essentialsCommandListener);
+                }
+
+                if (this.getServer().getPluginCommand(cmdFromToLower) == this.getServer().getPluginCommand(cmdFrom.toLowerCase()))
+                    this._essentialsCommandListener.AddCommand(cmdFrom, cmdTo);
+                else this._essentialsCommandListener.AddCommand(pluginFrom + ":" + cmdFrom, cmdTo);
+            }
+        }, 60L);
     }
 
 
     private void StartUpdateCheck() {
-        if (this._configReader.GetBoolean("updates.check"))
-            Bukkit.getScheduler().scheduleAsyncRepeatingTask(this, () -> {
-                var autoUpdate = this._configReader.GetBoolean("updates.autoUpdate");
+        if (!this._configReader.GetBoolean("updates.check")) return;
 
-                var currentVersion = this.getDescription().getVersion();
+        Bukkit.getScheduler().scheduleAsyncRepeatingTask(this, () -> {
+            var autoUpdate = this._configReader.GetBoolean("updates.autoUpdate");
 
-                if (this.CheckMainServerForUpdates(currentVersion, autoUpdate))
-                    return;
+            var currentVersion = this.getDescription().getVersion();
 
-                this.CheckBackupServerForUpdates(currentVersion, autoUpdate);
-            }, 80L, 7200L * 20L);
+            if (this.CheckMainServerForUpdates(currentVersion, autoUpdate)) return;
+
+            this.CheckBackupServerForUpdates(currentVersion, autoUpdate);
+        }, 80L, 7200L * 20L);
     }
 
     private void CheckBackupServerForUpdates(String currentVersion, Boolean autoUpdate) {
@@ -759,23 +744,20 @@ public final class ServerSystem extends JavaPlugin {
             var isFoundVersionMoreRecent = this.IsFoundVersionMoreRecent(foundVersion, currentVersion);
 
             if (!isFoundVersionMoreRecent || currentVersion.equalsIgnoreCase(foundVersion)) {
-                if (this._onceTold)
-                    return;
+                if (this._onceTold) return;
 
                 this.Info("You are using the latest version of ServerSystem <3");
                 this._onceTold = true;
             }
 
             this.Warn("There is a new update available (" + foundVersion + ")!");
+
             if (!autoUpdate) {
-                if (!this._configReader.GetBoolean("updates.notifyOnJoin"))
-                    return;
+                if (!this._configReader.GetBoolean("updates.notifyOnJoin")) return;
 
-                if (!foundVersion.equalsIgnoreCase(this._newVersion))
-                    this._newVersion = foundVersion;
+                if (!foundVersion.equalsIgnoreCase(this._newVersion)) this._newVersion = foundVersion;
 
-                if (this._registered)
-                    return;
+                if (this._registered) return;
 
                 this._registered = true;
                 this._eventManager.RegisterEvent(new JoinUpdateListener(this));
@@ -789,8 +771,7 @@ public final class ServerSystem extends JavaPlugin {
                  var fileOutputStream = new FileOutputStream(new File("plugins/update", this._jarName))) {
                 var dataBuffer = new byte[1024];
                 int bytesRead;
-                while ((bytesRead = inputStream.read(dataBuffer, 0, 1024)) != -1)
-                    fileOutputStream.write(dataBuffer, 0, bytesRead);
+                while ((bytesRead = inputStream.read(dataBuffer, 0, 1024)) != -1) fileOutputStream.write(dataBuffer, 0, bytesRead);
             } catch (IOException exception) {
                 exception.printStackTrace();
                 this.Error("Error while trying downloading the update!");
@@ -800,8 +781,7 @@ public final class ServerSystem extends JavaPlugin {
                     this._eventManager.RegisterEvent(new JoinUpdateListener(this));
                 }
 
-                if (!foundVersion.equalsIgnoreCase(this._newVersion))
-                    this._newVersion = foundVersion;
+                if (!foundVersion.equalsIgnoreCase(this._newVersion)) this._newVersion = foundVersion;
             }
         });
     }
@@ -850,8 +830,7 @@ public final class ServerSystem extends JavaPlugin {
                 this.Info("MySQL enabled, using it...");
                 if (this._configReader.GetBoolean("mysql.economy.enabled") && this._configReader.GetBoolean("economy.enabled")) {
                     this.Info("Using Economy with MySQL...");
-                    if (this._economyManager != null)
-                        this.Error("You cannot have two databases at the same time for economy activated!");
+                    if (this._economyManager != null) this.Error("You cannot have two databases at the same time for economy activated!");
                     else {
                         this._serverName = this._configReader.GetString("mysql.economy.serverName");
                         this._economyManager =
@@ -874,12 +853,9 @@ public final class ServerSystem extends JavaPlugin {
                 this.Info("H2 enabled, using it...");
                 if (this._configReader.GetBoolean("h2.economy") && this._configReader.GetBoolean("economy.enabled")) {
                     this.Info("Using Economy with H2...");
-                    if (this._economyManager != null)
-                        this.Error("You cannot have two databases at the same time for economy activated!");
-                    else
-                        this._economyManager =
-                                new EconomyManager_H2(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands,
-                                                      this);
+                    if (this._economyManager != null) this.Error("You cannot have two databases at the same time for economy activated!");
+                    else this._economyManager =
+                            new EconomyManager_H2(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, this);
                 }
 
                 if (this._configReader.GetBoolean("h2.banSystem") && this._configReader.GetBoolean("banSystem.enabled")) {
@@ -897,12 +873,10 @@ public final class ServerSystem extends JavaPlugin {
                 this.Info("SQLite enabled, using it...");
                 if (this._configReader.GetBoolean("sqlite.economy") && this._configReader.GetBoolean("economy.enabled")) {
                     this.Info("Using Economy with SQLite...");
-                    if (this._economyManager != null)
-                        this.Error("You cannot have two databases at the same time for economy activated!");
-                    else
-                        this._economyManager =
-                                new EconomyManager_SQLite(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator,
-                                                          thousands, this);
+                    if (this._economyManager != null) this.Error("You cannot have two databases at the same time for economy activated!");
+                    else this._economyManager =
+                            new EconomyManager_SQLite(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands,
+                                                      this);
                 }
 
                 if (this._configReader.GetBoolean("sqlite.banSystem") && this._configReader.GetBoolean("banSystem.enabled")) {
@@ -925,8 +899,7 @@ public final class ServerSystem extends JavaPlugin {
                 this.Warn("Not using any database for BanSystem...");
                 this._banManager = new BanManager_Yaml(new File("plugins//ServerSystem", "bans.yml"), dateFormat, this);
             }
-            if (this._muteManager == null)
-                this._muteManager = new MuteManager_Yaml(new File("plugins//ServerSystem", "muted.yml"), dateFormat, this);
+            if (this._muteManager == null) this._muteManager = new MuteManager_Yaml(new File("plugins//ServerSystem", "muted.yml"), dateFormat, this);
 
         }
     }
@@ -941,19 +914,15 @@ public final class ServerSystem extends JavaPlugin {
         var aliasesFile = new File("plugins//ServerSystem", "aliases.yml");
         var kitsFile = new File("plugins//ServerSystem", "kits.yml");
 
-        if (!permFile.exists())
-            this.saveResource("permissions.yml", false);
+        if (!permFile.exists()) this.saveResource("permissions.yml", false);
 
         this.CreateMessagesFiles();
 
-        if (!commandsFile.exists())
-            this.saveResource("commands.yml", false);
+        if (!commandsFile.exists()) this.saveResource("commands.yml", false);
 
-        if (!aliasesFile.exists())
-            this.saveResource("aliases.yml", false);
+        if (!aliasesFile.exists()) this.saveResource("aliases.yml", false);
 
-        if (!kitsFile.exists())
-            this.saveResource("kits.yml", false);
+        if (!kitsFile.exists()) this.saveResource("kits.yml", false);
 
         this._rulesConfig = YamlConfiguration.loadConfiguration(this._rulesFile);
     }
@@ -982,17 +951,13 @@ public final class ServerSystem extends JavaPlugin {
         }
 
         this.Info("Closing banManager database...");
-        if (this._banManager != null)
-            this._banManager.Close();
+        if (this._banManager != null) this._banManager.Close();
         this.Info("Closing muteManager database...");
-        if (this._muteManager != null)
-            this._muteManager.Close();
+        if (this._muteManager != null) this._muteManager.Close();
         this.Info("Closing economyManager database...");
-        if (this._economyManager != null)
-            this._economyManager.Close();
+        if (this._economyManager != null) this._economyManager.Close();
         this.Info("Closing MySQL...");
-        if (this._mySQL != null)
-            this._mySQL.Close();
+        if (this._mySQL != null) this._mySQL.Close();
 
         this._banManager = null;
         this._muteManager = null;
@@ -1003,8 +968,7 @@ public final class ServerSystem extends JavaPlugin {
 
         this.Info("Syncing commands...");
 
-        if (!this.SyncCommands())
-            return;
+        if (!this.SyncCommands()) return;
 
         this.Info("Unregistering Handlers...");
 
@@ -1024,26 +988,19 @@ public final class ServerSystem extends JavaPlugin {
         var msgFile = new File("plugins//ServerSystem", "messages.yml");
         var rulesFile = new File("plugins//ServerSystem", "rules.yml");
 
-        if (!msgDEFile.exists())
-            this.saveResource("messages_de.yml", false);
+        if (!msgDEFile.exists()) this.saveResource("messages_de.yml", false);
 
-        if (!msgENFile.exists())
-            this.saveResource("messages_en.yml", false);
+        if (!msgENFile.exists()) this.saveResource("messages_en.yml", false);
 
-        if (!msgCZFile.exists())
-            this.saveResource("messages_cz.yml", false);
+        if (!msgCZFile.exists()) this.saveResource("messages_cz.yml", false);
 
-        if (!msgTRFile.exists())
-            this.saveResource("messages_tr.yml", false);
+        if (!msgTRFile.exists()) this.saveResource("messages_tr.yml", false);
 
-        if (!msgZHCNFile.exists())
-            this.saveResource("messages_zhcn.yml", false);
+        if (!msgZHCNFile.exists()) this.saveResource("messages_zhcn.yml", false);
 
-        if (msgITFile.exists())
-            this.saveResource("messages_it.yml", false);
+        if (msgITFile.exists()) this.saveResource("messages_it.yml", false);
 
-        if (msgRUFile.exists())
-            this.saveResource("messages_ru.yml", false);
+        if (msgRUFile.exists()) this.saveResource("messages_ru.yml", false);
 
         if (!rulesFile.exists()) {
             var locale = System.getProperty("user.language");
@@ -1064,44 +1021,37 @@ public final class ServerSystem extends JavaPlugin {
 
         if (!msgFile.exists()) {
             var locale = System.getProperty("user.language");
-            if (locale.equalsIgnoreCase("de"))
-                try {
-                    Files.copy(msgDEFile, new File("plugins//ServerSystem", "messages.yml"));
-                } catch (IOException exception) {
-                    exception.printStackTrace();
-                }
-            else if (locale.equalsIgnoreCase("cz"))
-                try {
-                    Files.copy(msgCZFile, new File("plugins//ServerSystem", "messages.yml"));
-                } catch (IOException exception) {
-                    exception.printStackTrace();
-                }
-            else if (locale.equalsIgnoreCase("tr"))
-                try {
-                    Files.copy(msgTRFile, new File("plugins//ServerSystem", "messages.yml"));
-                } catch (IOException exception) {
-                    exception.printStackTrace();
-                }
-            else if (locale.toLowerCase(Locale.ROOT).contains("zh"))
-                try {
-                    Files.copy(msgZHCNFile, new File("plugins//ServerSystem", "messages.yml"));
-                } catch (IOException exception) {
-                    exception.printStackTrace();
-                }
-            else if (locale.toLowerCase(Locale.ROOT).contains("it"))
-                try {
-                    Files.copy(msgITFile, new File("plugins//ServerSystem", "messages.yml"));
-                } catch (IOException exception) {
-                    exception.printStackTrace();
-                }
-            else if (locale.toLowerCase(Locale.ROOT).contains("ru"))
-                try {
-                    Files.copy(msgRUFile, new File("plugins//ServerSystem", "messages.yml"));
-                } catch (IOException exception) {
-                    exception.printStackTrace();
-                }
-            else
-                try {
+            if (locale.equalsIgnoreCase("de")) try {
+                Files.copy(msgDEFile, new File("plugins//ServerSystem", "messages.yml"));
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+            else if (locale.equalsIgnoreCase("cz")) try {
+                Files.copy(msgCZFile, new File("plugins//ServerSystem", "messages.yml"));
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+            else if (locale.equalsIgnoreCase("tr")) try {
+                Files.copy(msgTRFile, new File("plugins//ServerSystem", "messages.yml"));
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+            else if (locale.toLowerCase(Locale.ROOT).contains("zh")) try {
+                Files.copy(msgZHCNFile, new File("plugins//ServerSystem", "messages.yml"));
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+            else if (locale.toLowerCase(Locale.ROOT).contains("it")) try {
+                Files.copy(msgITFile, new File("plugins//ServerSystem", "messages.yml"));
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+            else if (locale.toLowerCase(Locale.ROOT).contains("ru")) try {
+                Files.copy(msgRUFile, new File("plugins//ServerSystem", "messages.yml"));
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+            else try {
                     Files.copy(msgENFile, new File("plugins//ServerSystem", "messages.yml"));
                 } catch (IOException exception) {
                     exception.printStackTrace();
@@ -1113,6 +1063,4 @@ public final class ServerSystem extends JavaPlugin {
     private String GetBanSystem(String action) {
         return this._messages.GetConfiguration().GetString("Messages.Misc.BanSystem." + action);
     }
-
-
 }

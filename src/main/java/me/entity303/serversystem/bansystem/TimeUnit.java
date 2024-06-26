@@ -1,8 +1,13 @@
 package me.entity303.serversystem.bansystem;
 
 public enum TimeUnit {
-    YEAR(31540000000L, "YEAR"), MONTH(2630000000L, "MONTH"), WEEK(604800000L, "WEEK"), DAY(86400000L, "DAY"), HOUR(3600000L, "HOUR"),
-    MINUTE(60000L, "MINUTE"), SECOND(1000L, "SECOND");
+    YEAR(31540000000L, "YEAR"),
+    MONTH(2630000000L, "MONTH"),
+    WEEK(604800000L, "WEEK"),
+    DAY(86400000L, "DAY"),
+    HOUR(3600000L, "HOUR"),
+    MINUTE(60000L, "MINUTE"),
+    SECOND(1000L, "SECOND");
 
     public static String YEAR_NAME = "YEAR";
     public static String MONTH_NAME = "MONTH";
