@@ -5,6 +5,7 @@ import me.entity303.serversystem.bansystem.moderation.Moderation;
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import me.entity303.serversystem.events.AsyncBanEvent;
 import me.entity303.serversystem.main.ServerSystem;
+import me.entity303.serversystem.utils.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -164,7 +165,14 @@ public class BanCommand implements ICommandExecutorOverload {
 
     private void SendSuccessMessageAndInvokeEvent(CommandSender commandSender, Command command, String commandLabel, OfflinePlayer target, String reason,
                                                   Moderation moderation) {
-        if (target.isOnline()) ((Player) target).kickPlayer(moderation.GetReason());
+        if (target.isOnline() && target instanceof Player player) {
+            var kickMessage = this._plugin.GetMessages()
+                                          .GetMessage(commandLabel, command, commandSender, player, "Ban.Kick")
+                                          .replace("<REASON>", ChatColor.TranslateAlternateColorCodes('&', reason))
+                                          .replace("<DATE>", moderation.GetExpireDate().replace("&", "§"));
+
+            player.kickPlayer(kickMessage);
+        }
 
         commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
                                                                                        .GetMessageWithStringTarget(commandLabel, command, commandSender,
