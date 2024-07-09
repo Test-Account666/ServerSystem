@@ -164,7 +164,7 @@ public class BanCommand implements ICommandExecutorOverload {
 
     private void SendSuccessMessageAndInvokeEvent(CommandSender commandSender, Command command, String commandLabel, OfflinePlayer target, String reason,
                                                   Moderation moderation) {
-        this._plugin.GetBanManager().UnBan(target.getUniqueId());
+        if (target.isOnline()) ((Player) target).kickPlayer(moderation.GetReason());
 
         commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
                                                                                        .GetMessageWithStringTarget(commandLabel, command, commandSender,
