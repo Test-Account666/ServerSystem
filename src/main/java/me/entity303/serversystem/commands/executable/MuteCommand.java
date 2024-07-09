@@ -195,8 +195,6 @@ public class MuteCommand implements ICommandExecutorOverload {
 
     private void SendSuccessMessageAndInvokeEvent(CommandSender commandSender, Command command, String commandLabel, OfflinePlayer target, String reason,
                                                   Moderation moderation) {
-        this._plugin.GetMuteManager().RemoveMute(target.getUniqueId());
-
         commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
                                                                                        .GetMessageWithStringTarget(commandLabel, command, commandSender,
                                                                                                                    target.getName(), "Mute.Success")
