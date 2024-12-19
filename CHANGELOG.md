@@ -7,3 +7,4 @@
 \* Fixed commands like `/grindstone`<br>
 \# Changed how commands get registered/managed. This is a breaking change!<br>
 \# Did some reformatting<br>
+\# Finally! ServerSystem is no longer multiple MB in size!<br>
