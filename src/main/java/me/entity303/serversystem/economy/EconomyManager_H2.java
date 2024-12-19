@@ -27,7 +27,7 @@ public class EconomyManager_H2 extends AbstractEconomyManager_SQL {
     @Override
     protected boolean Initialize() {
         try {
-            Class.forName("serversystem.libs.org.h2.Driver");
+            Class.forName("org.h2.Driver");
             return true;
         } catch (ClassNotFoundException var2) {
             this._plugin.Error("H2 driver class missing: " + var2.getMessage() + ".");

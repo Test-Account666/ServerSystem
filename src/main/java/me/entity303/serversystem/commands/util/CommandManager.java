@@ -299,7 +299,6 @@ public final class CommandManager {
 
                 if (entry.isDirectory()) continue;
                 if (!entry.getName().endsWith(".class")) continue;
-                if (entry.getName().contains("META-INF")) continue;
 
                 try {
                     classes.add(Class.forName(entry.getName().replace("/", ".").replace(".class", "")));

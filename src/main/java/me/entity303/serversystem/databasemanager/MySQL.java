@@ -75,7 +75,7 @@ public class MySQL {
 
         if (this._mariadb) {
             try {
-                Class.forName("serversystem.libs.mariadb.org.mariadb.jdbc.Driver");
+                Class.forName("mariadb.org.mariadb.jdbc.Driver");
                 this._connection =
                         DriverManager.getConnection("jdbc:mariadb://" + this._hostname + ":" + this._port + "/" + this._database + "?autoReconnect=true", this._username,
                                                     this._password);

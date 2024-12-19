@@ -48,59 +48,6 @@
                         <goals>
                             <goal>shade</goal>
                         </goals>
-                        <configuration>
-                            <relocations>
-                                <relocation>
-                                    <pattern>org.mariadb.jdbc</pattern>
-                                    <shadedPattern>serversystem.libs.mariadb.org.mariadb.jdbc</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>net.bytebuddy</pattern>
-                                    <shadedPattern>serversystem.libs.net.bytebuddy</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.h2</pattern>
-                                    <shadedPattern>serversystem.libs.org.h2</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>waffle</pattern>
-                                    <shadedPattern>serversystem.libs.waffle</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.apache</pattern>
-                                    <shadedPattern>serversystem.libs.org.apache</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.checkerframework</pattern>
-                                    <shadedPattern>serversystem.libs.org.checkerframework</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.slf4j</pattern>
-                                    <shadedPattern>serversystem.libs.org.slf4j</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.github.benmanes</pattern>
-                                    <shadedPattern>serversystem.libs.com.github.benmanes</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.google.errorprone</pattern>
-                                    <shadedPattern>serversystem.libs.com.google.errorprone</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.sun.jna</pattern>
-                                    <shadedPattern>serversystem.libs.com.sun.jna</shadedPattern>
-                                </relocation>
-                            </relocations>
-                            <filters>
-                                <filter>
-                                    <excludes>
-                                        <exclude>META-INF/*</exclude>
-                                        <exclude>META-INF/**</exclude>
-                                        <exclude>META-INF/*.*</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -319,67 +266,26 @@
             </exclusions>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
-        <!--<dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.5</version>
-            <scope>compile</scope>
-        </dependency>-->
-
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
-        <!--<dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.30</version>
-            <scope>compile</scope>
-        </dependency>-->
-
         <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>2.3.232</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
             <version>1.15.11</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
             <version>3.5.1</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
-
-
-        <!-- PlotSquared Core API -->
-        <!--
-        <dependency>
-            <groupId>com.plotsquared</groupId>
-            <artifactId>PlotSquared-Core</artifactId>
-            <version>5.13.3</version>
-            <scope>provided</scope>
-        </dependency>-->
-
-        <!-- PlotSquared Bukkit API -->
-        <!--
-        <dependency>
-            <groupId>com.plotsquared</groupId>
-            <artifactId>PlotSquared-Bukkit</artifactId>
-            <version>5.13.3</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>PlotSquared-Core</artifactId>
-                    <groupId>*</groupId>
-                </exclusion>
-            </exclusions>
-            <scope>provided</scope>
-        </dependency>-->
     </dependencies>
 </project>

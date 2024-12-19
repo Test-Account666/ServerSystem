@@ -100,13 +100,12 @@ public class ServerSystemCommand implements ICommandExecutorOverload {
             var version = this._plugin.getDescription().getVersion();
 
             var url = "http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem";
-            var client = HttpClient.newHttpClient();
+            var client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build();
             var request = HttpRequest.newBuilder().uri(URI.create(url)).header("Referer", "ServerSystem").timeout(java.time.Duration.ofSeconds(30)).build();
 
-            if (request != null) {
-                this.DownloadFromPrimaryServer(commandSender, command, commandLabel, client, request, version);
-                return;
-            }
+            var success = this.DownloadFromPrimaryServer(commandSender, command, commandLabel, client, request, version);
+            if (success) return;
+
 
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + ChatColor.RED + "Switching to backup updater!");
             new UpdateChecker(this._plugin, "78974").GetVersion(checkedVersion -> {
@@ -121,16 +120,19 @@ public class ServerSystemCommand implements ICommandExecutorOverload {
         }, 20L);
     }
 
-    private void DownloadFromPrimaryServer(CommandSender commandSender, Command command, String commandLabel, HttpClient client, HttpRequest request, String version) {
-
+    private boolean DownloadFromPrimaryServer(CommandSender commandSender, Command command, String commandLabel, HttpClient client, HttpRequest request, String version) {
         String responseBody;
         try {
             var response = client.send(request, HttpResponse.BodyHandlers.ofString());
             responseBody = response.body();
         } catch (IOException | InterruptedException exception) {
+            responseBody = "";
+        }
+
+        if (!responseBody.contains(".jar")) {
             this._plugin.Error("An error occurred while trying to connect to the updater!");
             this._plugin.Info("Please ignore this error. The update server is currently down. Please be patient");
-            return;
+            return false;
         }
 
         version = ServerSystem.FindVersion(version, responseBody);
@@ -138,7 +140,7 @@ public class ServerSystemCommand implements ICommandExecutorOverload {
         if (this._plugin.getDescription().getVersion().equalsIgnoreCase(version)) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
                                       this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "ServerSystem.Update.LatestVersion"));
-            return;
+            return true;
         }
 
         commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
@@ -158,7 +160,11 @@ public class ServerSystemCommand implements ICommandExecutorOverload {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + ChatColor.RED + "Error while trying to download the update!");
             this._plugin.Error("Error while trying to download the update!");
             exception.printStackTrace();
+
+            return false;
         }
+
+        return true;
     }
 
     private void DownloadFromBackupServer(CommandSender commandSender, Command command, String commandLabel, String checkedVersion) {

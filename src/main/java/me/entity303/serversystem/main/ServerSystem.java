@@ -348,7 +348,7 @@ public final class ServerSystem extends JavaPlugin {
 
         var foundVersion = this.getDescription().getVersion();
 
-        var client = HttpClient.newHttpClient();
+        var client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build();
         var request = HttpRequest.newBuilder().uri(URI.create(url)).header("Referer", "ServerSystem").timeout(java.time.Duration.ofSeconds(30)).build();
 
         String responseBody;
@@ -356,6 +356,10 @@ public final class ServerSystem extends JavaPlugin {
             var response = client.send(request, HttpResponse.BodyHandlers.ofString());
             responseBody = response.body();
         } catch (IOException | InterruptedException exception) {
+            responseBody = "";
+        }
+
+        if (!responseBody.contains(".jar")) {
             this.Error("An error occurred while trying to connect to the updater!");
             this.Info("Please ignore this error. The update server is currently down. Please be patient");
             return false;
