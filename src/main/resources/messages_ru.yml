@@ -69,6 +69,7 @@ Messages:
     OfflineInvsee: 'Синтаксис: &2/<LABEL> <ОффлайнИгрок>'
     Seen: 'Синтаксис: &2/<LABEL> <Игрок>'
     Freeze: 'Синтаксис: &2/<LABEL> <Игрок>'
+    ManageHomes: "Syntax: &2<LABEL> <Delete|Teleport|List> <Player> <Home>"
   Normal:
     GetPos:
       Self: Вы находитесь на координатах &6X:&2<X> &6Y:&2<Y> &6Z:&2<Z> &6Мир:&2<WORLD>
@@ -529,6 +530,12 @@ Messages:
       Disabled: Вы больше не в режиме AFK!
       Kick: '&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4Вас
         кикнули!<BREAK>&6Причина: &cВы были в режиме AFK слишком долго!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]'
+    ManageHomes:
+      NoHomesFound: "&4<TARGET> &cdoes not have any homes!"
+      HomeNotFound: "&4<TARGET> &cdoes not have a home called &4<HOME>&c!"
+      Deleted: "Successfully deleted home &2<HOME> &7from player &2<TARGET>&7!"
+      Teleported: "Successfully teleported to home &2<HOME> &7from player &2<TARGET>&7!"
+      Created: "Successfully created home &2<HOME> &7for player &2<TARGET>&7!"
   Misc:
     ServerFull: '&2[]&7--------------------------------&2[]<BREAK>&2СЕРВЕР<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4Сервер
       полон!<BREAK>&cЧтобы присоединиться все равно, вам нужно разрешение &4<PERMISSION>&c!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2СЕРВЕР<BREAK>&2[]&7--------------------------------&2[]'

@@ -1,8 +1,9 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.command.Command;
-import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -10,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
+@ServerSystemCommand(name = "CreateKit")
 public class CreateKitCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -32,15 +34,18 @@ public class CreateKitCommand implements ICommandExecutorOverload {
         }
 
         if (arguments.length == 0) {
-            
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "CreateKit"));
+
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "CreateKit"));
             return true;
         }
 
         if (this._plugin.GetKitsManager().DoesKitExist(arguments[0])) {
-            
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "CreateKit.AlreadyExist").replace("<KIT>", arguments[0].toUpperCase()));
+
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                           .GetMessage(commandLabel, command, commandSender, null,
+                                                                                                       "CreateKit.AlreadyExist")
+                                                                                           .replace("<KIT>", arguments[0].toUpperCase()));
             return true;
         }
 
@@ -78,17 +83,19 @@ public class CreateKitCommand implements ICommandExecutorOverload {
 
         long delay = 0;
 
-        if (arguments.length > 1)
+        if (arguments.length > 1) {
             try {
                 delay = Long.parseLong(arguments[1]);
                 delay = (delay * 60) * 1000;
             } catch (NumberFormatException ignored) {
             }
+        }
 
         this._plugin.GetKitsManager().AddKit(arguments[0].toLowerCase(), kit, delay);
-        
-        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                  this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "CreateKit.Success").replace("<KIT>", arguments[0].toUpperCase()));
+
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                       .GetMessage(commandLabel, command, commandSender, null, "CreateKit.Success")
+                                                                                       .replace("<KIT>", arguments[0].toUpperCase()));
         return true;
     }
 }

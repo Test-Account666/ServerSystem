@@ -1,6 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
@@ -14,6 +15,7 @@ import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
 
+@ServerSystemCommand(name = "EnderChest")
 public class EnderChestCommand implements ICommandExecutorOverload, Listener {
 
     protected final ServerSystem _plugin;
@@ -53,8 +55,9 @@ public class EnderChestCommand implements ICommandExecutorOverload, Listener {
             return true;
         }
 
-        if (this._plugin.GetPermissions().HasPermission(targetPlayer, "enderchest.exempt", true))
+        if (this._plugin.GetPermissions().HasPermission(targetPlayer, "enderchest.exempt", true)) {
             this._plugin.GetEnderchest().put(((Player) commandSender), targetPlayer);
+        }
 
         ((Player) commandSender).openInventory(targetPlayer.getEnderChest());
         return true;
@@ -66,8 +69,7 @@ public class EnderChestCommand implements ICommandExecutorOverload, Listener {
 
         var tryOfflineCommand = this._plugin.GetConfigReader().GetBoolean("invseeAndEndechest.tryOfflineCommandOnPlayerQuit");
 
-        if (tryOfflineCommand)
-            this.TryOfflineEnderChest(inventory, event.getPlayer());
+        if (tryOfflineCommand) this.TryOfflineEnderChest(inventory, event.getPlayer());
     }
 
     private void TryOfflineEnderChest(Inventory inventory, Player target) {
@@ -81,11 +83,9 @@ public class EnderChestCommand implements ICommandExecutorOverload, Listener {
             Bukkit.getScheduler().runTaskLater(this._plugin, () -> {
                 Bukkit.getScheduler().runTaskLater(this._plugin, () -> human.setItemOnCursor(cursorStack), 2L);
 
-                if (!(human instanceof Player player))
-                    return;
+                if (!(human instanceof Player player)) return;
 
-                if (!this._plugin.GetPermissions().HasPermission(player, "offlineenderchest", true))
-                    return;
+                if (!this._plugin.GetPermissions().HasPermission(player, "offlineenderchest", true)) return;
 
                 player.chat("/offlineenderchest " + target);
             }, 2L);

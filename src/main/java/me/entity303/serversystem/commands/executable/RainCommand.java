@@ -5,6 +5,7 @@ import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+// Annotation isn't required, as this command will get registered in WeatherCommand.
 public class RainCommand implements ICommandExecutorOverload {
     private final static String WEATHER = "rain";
     protected final ServerSystem _plugin;

@@ -22,16 +22,15 @@ public class MuteManager_SQLite extends AbstractMuteManager {
         this.Open();
         try {
             this._connection.createStatement()
-                            .executeUpdate(
-                                    "CREATE TABLE IF NOT EXISTS MutedPlayers (BannedUUID VARCHAR(100), SenderUUID VARCHAR(100), Reason VARCHAR(100), " +
-                                    "Shadow INT, UnbanTime BIGINT)");
+                            .executeUpdate("CREATE TABLE IF NOT EXISTS MutedPlayers (BannedUUID VARCHAR(100), SenderUUID VARCHAR(100), Reason VARCHAR(100), " +
+                                           "Shadow INT, UnbanTime BIGINT)");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
     }
 
     public boolean Open() {
-        if (this.Initialize())
+        if (this.Initialize()) {
             try {
                 this._connection = DriverManager.getConnection("jdbc:sqlite:" + new File("plugins//ServerSystem", "mutes.sqlite").getAbsolutePath());
                 return true;
@@ -39,8 +38,9 @@ public class MuteManager_SQLite extends AbstractMuteManager {
                 this._plugin.Error("Could not establish an SQLite connection, SQLException: " + var2.getMessage());
                 return false;
             }
-        else
+        } else {
             return false;
+        }
     }
 
     protected boolean Initialize() {
@@ -55,8 +55,7 @@ public class MuteManager_SQLite extends AbstractMuteManager {
 
     @Override
     public MuteModeration GetMute(OfflinePlayer player) {
-        if (!this.CheckPlayerInSQLite(player.getUniqueId().toString()))
-            return null;
+        if (!this.CheckPlayerInSQLite(player.getUniqueId().toString())) return null;
         var senderUUID = this.GetUUIDSender(player.getUniqueId().toString());
         var mutedUUID = player.getUniqueId();
         var unmuteTime = this.GetUnmuteTime(player.getUniqueId().toString());
@@ -69,8 +68,7 @@ public class MuteManager_SQLite extends AbstractMuteManager {
 
     @Override
     public void RemoveMute(UUID mutedUUID) {
-        if (!this.CheckPlayerInSQLite(mutedUUID.toString()))
-            return;
+        if (!this.CheckPlayerInSQLite(mutedUUID.toString())) return;
 
         try {
             var query = "DELETE FROM MutedPlayers WHERE BannedUUID=?";
@@ -91,11 +89,9 @@ public class MuteManager_SQLite extends AbstractMuteManager {
 
     @Override
     public MuteModeration CreateMute(UUID mutedUUID, String senderUUID, String reason, boolean shadow, Long howLong, TimeUnit timeUnit) {
-        if (this.IsMuted(Bukkit.getOfflinePlayer(mutedUUID)))
-            this.RemoveMute(mutedUUID);
+        if (this.IsMuted(Bukkit.getOfflinePlayer(mutedUUID))) this.RemoveMute(mutedUUID);
         var unbanTime = System.currentTimeMillis() + (howLong * timeUnit.GetValue());
-        if (howLong < 1)
-            unbanTime = -1L;
+        if (howLong < 1) unbanTime = -1L;
 
         var mute = new MuteModeration(mutedUUID, senderUUID, unbanTime, this.ConvertLongToDate(unbanTime), reason, shadow);
         this.CreateMute(mute);
@@ -108,11 +104,9 @@ public class MuteManager_SQLite extends AbstractMuteManager {
         var senderUUID = mute.GetSenderUuid();
         var reason = mute.GetReason();
 
-        if (this.IsMuted(Bukkit.getOfflinePlayer(mutedUUID)))
-            this.RemoveMute(mutedUUID);
+        if (this.IsMuted(Bukkit.getOfflinePlayer(mutedUUID))) this.RemoveMute(mutedUUID);
         long unbanTime = mute.GetExpireTime();
-        if (unbanTime < 1)
-            unbanTime = -1L;
+        if (unbanTime < 1) unbanTime = -1L;
         try {
             var query = "INSERT INTO `MutedPlayers` (BannedUUID, SenderUUID, Reason, Shadow, UnbanTime) VALUES (?, ?, ?, ?, ?)";
             var preparedStatement = this._connection.prepareStatement(query);
@@ -145,19 +139,15 @@ public class MuteManager_SQLite extends AbstractMuteManager {
             throwables.printStackTrace();
         }
 
-        while (true)
-            try {
-                if (resultSet == null)
-                    break;
-                if (!resultSet.next())
-                    break;
-                var uuid = resultSet.getString("BannedUUID");
+        while (true) try {
+            if (resultSet == null) break;
+            if (!resultSet.next()) break;
+            var uuid = resultSet.getString("BannedUUID");
 
-                if (this.CheckPlayerInSQLite(uuid))
-                    playerNames.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName());
-            } catch (SQLException exception) {
-                exception.printStackTrace();
-            }
+            if (this.CheckPlayerInSQLite(uuid)) playerNames.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName());
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
 
         return playerNames;
     }
@@ -170,8 +160,7 @@ public class MuteManager_SQLite extends AbstractMuteManager {
             throwables.printStackTrace();
         }
         try {
-            while (resultSet.next())
-                return true;
+            while (resultSet.next()) return true;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -186,8 +175,7 @@ public class MuteManager_SQLite extends AbstractMuteManager {
             throwables.printStackTrace();
         }
         try {
-            while (resultSet.next())
-                return resultSet.getString("SenderUUID");
+            while (resultSet.next()) return resultSet.getString("SenderUUID");
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -202,8 +190,7 @@ public class MuteManager_SQLite extends AbstractMuteManager {
             throwables.printStackTrace();
         }
         try {
-            while (resultSet.next())
-                return resultSet.getLong("UnbanTime");
+            while (resultSet.next()) return resultSet.getLong("UnbanTime");
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -218,8 +205,7 @@ public class MuteManager_SQLite extends AbstractMuteManager {
             throwables.printStackTrace();
         }
         try {
-            while (resultSet.next())
-                return resultSet.getString("Reason");
+            while (resultSet.next()) return resultSet.getString("Reason");
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -234,8 +220,7 @@ public class MuteManager_SQLite extends AbstractMuteManager {
             throwables.printStackTrace();
         }
         try {
-            while (resultSet.next())
-                return resultSet.getInt("Shadow") == 1;
+            while (resultSet.next()) return resultSet.getInt("Shadow") == 1;
         } catch (SQLException exception) {
             exception.printStackTrace();
         }

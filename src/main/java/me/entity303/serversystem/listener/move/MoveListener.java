@@ -15,24 +15,20 @@ public class MoveListener implements Listener {
 
     @EventHandler
     public void OnMove(PlayerMoveEvent event) {
-        if (!this._plugin.GetTeleportMap().containsKey(event.getPlayer()))
-            return;
+        if (!this._plugin.GetTeleportMap().containsKey(event.getPlayer())) return;
 
         var xCoordinateDifference = Math.max(event.getTo().getX(), event.getFrom().getX()) - Math.min(event.getTo().getX(), event.getFrom().getX());
         var yCoordinateDifference = Math.max(event.getTo().getY(), event.getFrom().getY()) - Math.min(event.getTo().getY(), event.getFrom().getY());
         var zCoordinateDifference = Math.max(event.getTo().getZ(), event.getFrom().getZ()) - Math.min(event.getTo().getZ(), event.getFrom().getZ());
-        if (!this.ShouldCancelTeleport(xCoordinateDifference, yCoordinateDifference, zCoordinateDifference))
-            return;
+        if (!this.ShouldCancelTeleport(xCoordinateDifference, yCoordinateDifference, zCoordinateDifference)) return;
 
         this._plugin.GetTeleportMap().get(event.getPlayer()).cancel();
         this._plugin.GetTeleportMap().remove(event.getPlayer());
         event.getPlayer()
              .sendMessage(this._plugin.GetMessages().GetPrefix() + ChatColor.TranslateAlternateColorCodes('&', this._plugin.GetMessages()
                                                                                                                            .GetConfiguration()
-                                                                                                                           .GetString(
-                                                                                                                                   "Messages.Misc" +
-                                                                                                                                   ".Teleportation" +
-                                                                                                                                   ".Failed")));
+                                                                                                                           .GetString("Messages.Misc" + ".Teleportation" +
+                                                                                                                                      ".Failed")));
 
     }
 

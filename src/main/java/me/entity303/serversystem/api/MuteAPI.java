@@ -1,15 +1,16 @@
 package me.entity303.serversystem.api;
 
-import me.entity303.serversystem.bansystem.moderation.MuteModeration;
 import me.entity303.serversystem.bansystem.MuteManager_Disabled;
 import me.entity303.serversystem.bansystem.TimeUnit;
+import me.entity303.serversystem.bansystem.moderation.MuteModeration;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.OfflinePlayer;
 
 import java.util.List;
 import java.util.UUID;
 
-@SuppressWarnings("NewMethodNamingConvention") public class MuteAPI {
+@SuppressWarnings("NewMethodNamingConvention")
+public class MuteAPI {
     private final ServerSystem _plugin;
 
     public MuteAPI(ServerSystem plugin) {

@@ -1,6 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -11,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
+@ServerSystemCommand(name = "Disenchant")
 public class DisenchantCommand implements ICommandExecutorOverload {
     private final ServerSystem _plugin;
 
@@ -49,24 +51,22 @@ public class DisenchantCommand implements ICommandExecutorOverload {
         List<ItemStack> itemsList = new ArrayList<>();
 
         for (var items : inv) {
-            if (items == null)
-                continue;
-            if (items.getType() == Material.getMaterial(arguments[0].toUpperCase()))
-                itemsList.add(items);
+            if (items == null) continue;
+            if (items.getType() == Material.getMaterial(arguments[0].toUpperCase())) itemsList.add(items);
         }
 
         if (itemsList.isEmpty()) {
             var command1 = command.getName();
             commandSender.sendMessage(this.GetPrefix() + this._plugin.GetMessages()
-                                                                    .GetMessage(commandLabel, command1, commandSender, null, "DisEnchant.NotInInv")
-                                                                    .replace("<TYPE>", arguments[0]));
+                                                                     .GetMessage(commandLabel, command1, commandSender, null, "DisEnchant.NotInInv")
+                                                                     .replace("<TYPE>", arguments[0]));
             return true;
         }
 
         itemsList.forEach(this::RemoveEnchantments);
         player.sendMessage(this.GetPrefix() + this._plugin.GetMessages()
-                                                    .GetMessage(commandLabel, command.getName(), commandSender, null, "DisEnchant.Type")
-                                                    .replace("<TYPE>", arguments[0]));
+                                                          .GetMessage(commandLabel, command.getName(), commandSender, null, "DisEnchant.Type")
+                                                          .replace("<TYPE>", arguments[0]));
         return true;
     }
 

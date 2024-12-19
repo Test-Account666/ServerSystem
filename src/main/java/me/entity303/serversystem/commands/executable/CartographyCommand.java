@@ -1,17 +1,23 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+@ServerSystemCommand(name = "CartographyTable")
 public class CartographyCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
 
     public CartographyCommand(ServerSystem plugin) {
         this._plugin = plugin;
+    }
+
+    public static boolean ShouldRegister(ServerSystem serverSystem) {
+        return serverSystem.GetVersionStuff().GetVirtualCartography() != null;
     }
 
     @Override

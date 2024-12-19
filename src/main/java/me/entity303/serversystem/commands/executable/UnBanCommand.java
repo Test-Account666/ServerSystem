@@ -1,19 +1,26 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.events.AsyncUnbanEvent;
 import me.entity303.serversystem.main.ServerSystem;
+import me.entity303.serversystem.tabcompleter.UnBanTabCompleter;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+@ServerSystemCommand(name = "UnBan", tabCompleter = UnBanTabCompleter.class)
 public class UnBanCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
 
     public UnBanCommand(ServerSystem plugin) {
         this._plugin = plugin;
+    }
+
+    public static boolean ShouldRegister(ServerSystem serverSystem) {
+        return serverSystem.GetConfigReader().GetBoolean("banSystem.enabled");
     }
 
     @Override
@@ -25,16 +32,14 @@ public class UnBanCommand implements ICommandExecutorOverload {
         }
 
         if (arguments.length == 0) {
-            commandSender.sendMessage(
-                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "UnBan"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "UnBan"));
             return true;
         }
 
         var target = UnBanCommand.GetPlayer(arguments[0]);
         if (!this._plugin.GetBanManager().IsBanned(target.getUniqueId())) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                         .GetMessageWithStringTarget(commandLabel, command, commandSender,
-                                                                                                                     target.getName(), "UnBan.NotBanned"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessageWithStringTarget(commandLabel, command, commandSender, target.getName(), "UnBan.NotBanned"));
             return true;
         }
 

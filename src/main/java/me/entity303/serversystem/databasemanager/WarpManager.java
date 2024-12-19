@@ -21,8 +21,7 @@ public class WarpManager {
     }
 
     public void AddWarp(String name, Location location) {
-        if (this.DoesWarpExist(name))
-            return;
+        if (this.DoesWarpExist(name)) return;
         name = name.toLowerCase();
         var xCoordinate = location.getX();
         var yCoordinate = location.getY();
@@ -48,16 +47,13 @@ public class WarpManager {
     public boolean DoesWarpExist(String name) {
         name = name.toLowerCase();
 
-        if (!this._warpFile.exists())
-            return false;
+        if (!this._warpFile.exists()) return false;
 
-        if (!this._configurartion.isSet("Warps." + name))
-            return false;
+        if (!this._configurartion.isSet("Warps." + name)) return false;
 
         var worldName = this._configurartion.getString("Warps." + name + ".World");
 
-        if (worldName == null)
-            return false;
+        if (worldName == null) return false;
 
         var world = Bukkit.getWorld(worldName);
 
@@ -66,8 +62,7 @@ public class WarpManager {
 
     public Location GetWarp(String name) {
         name = name.toLowerCase();
-        if (!this.DoesWarpExist(name))
-            return null;
+        if (!this.DoesWarpExist(name)) return null;
 
         var xCoordinate = this._configurartion.getDouble("Warps." + name + ".X");
         var yCoordinate = this._configurartion.getDouble("Warps." + name + ".Y");
@@ -87,8 +82,7 @@ public class WarpManager {
     public void DeleteWarp(String name) {
         name = name.toLowerCase();
 
-        if (!this._warpFile.exists())
-            return;
+        if (!this._warpFile.exists()) return;
 
         this._configurartion.set("Warps." + name, null);
 
@@ -104,12 +98,10 @@ public class WarpManager {
     public List<String> GetWarps() {
         List<String> warps = new ArrayList<>();
 
-        if (!this._warpFile.exists())
-            return warps;
+        if (!this._warpFile.exists()) return warps;
 
         for (var warpName : this._configurartion.getConfigurationSection("Warps").getKeys(false)) {
-            if (!this.DoesWarpExist(warpName))
-                continue;
+            if (!this.DoesWarpExist(warpName)) continue;
 
             warps.add(warpName);
         }

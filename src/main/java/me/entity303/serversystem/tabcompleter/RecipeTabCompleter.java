@@ -22,12 +22,11 @@ public class RecipeTabCompleter implements ITabCompleterOverload {
 
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (arguments.length != 1)
-            return null;
+        if (arguments.length != 1) return null;
 
-        if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.recipe.required"))
-            if (!this._plugin.GetPermissions().HasPermission(commandSender, "recipe.permission", true))
-                return Collections.singletonList("");
+        if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.recipe.required")) {
+            if (!this._plugin.GetPermissions().HasPermission(commandSender, "recipe.permission", true)) return Collections.singletonList("");
+        }
 
         var tabCompletions = Arrays.stream(MATERIALS)
                                    .filter(material -> material.name().toLowerCase().startsWith(arguments[0].toLowerCase()) && !material.name().endsWith("AIR") &&
@@ -35,8 +34,7 @@ public class RecipeTabCompleter implements ITabCompleterOverload {
                                    .map(Enum::name)
                                    .collect(Collectors.toList());
 
-        if (!tabCompletions.isEmpty())
-            return tabCompletions;
+        if (!tabCompletions.isEmpty()) return tabCompletions;
 
         tabCompletions.addAll(Arrays.stream(RecipeTabCompleter.MATERIALS).map(Enum::name).toList());
         tabCompletions.removeIf(material -> material.endsWith("AIR") || material.startsWith("LEGACY"));

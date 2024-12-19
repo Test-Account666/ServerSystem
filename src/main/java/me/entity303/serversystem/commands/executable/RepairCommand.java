@@ -1,6 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -9,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 
+@ServerSystemCommand(name = "Repair")
 public class RepairCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -33,8 +35,7 @@ public class RepairCommand implements ICommandExecutorOverload {
         if (arguments.length == 0) {
             player.getInventory().getItemInMainHand();
             if (player.getInventory().getItemInMainHand().getType() == Material.AIR) {
-                player.sendMessage(
-                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, player, null, "Repair.NoItem"));
+                player.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, player, null, "Repair.NoItem"));
                 return true;
             }
 
@@ -65,16 +66,14 @@ public class RepairCommand implements ICommandExecutorOverload {
         var found = false;
         for (var index = 0; index < player.getInventory().getSize(); index++) {
             var items = player.getInventory().getItem(index);
-            if (Material.getMaterial(arguments[0].toUpperCase()) == null)
-                break;
+            if (Material.getMaterial(arguments[0].toUpperCase()) == null) break;
             this.RepairItems(items);
             found = true;
         }
 
         if (!found) {
-            player.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                  .GetMessage(commandLabel, command, player, null, "Repair.NoType")
-                                                                                  .replace("<TYPE>", arguments[0].toUpperCase()));
+            player.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                               this._plugin.GetMessages().GetMessage(commandLabel, command, player, null, "Repair.NoType").replace("<TYPE>", arguments[0].toUpperCase()));
             return true;
         }
 
@@ -85,14 +84,10 @@ public class RepairCommand implements ICommandExecutorOverload {
 
     private void RepairItems(ItemStack... itemStacks) {
         for (var itemStack : itemStacks) {
-            if (itemStack == null)
-                continue;
-            if (itemStack.getType() == Material.AIR)
-                continue;
-            if (itemStack.getItemMeta() == null)
-                continue;
-            if (!(itemStack.getItemMeta() instanceof Damageable damageable) || /*!items.getType().isItem() ||*/ itemStack.getType().isBlock())
-                continue;
+            if (itemStack == null) continue;
+            if (itemStack.getType() == Material.AIR) continue;
+            if (itemStack.getItemMeta() == null) continue;
+            if (!(itemStack.getItemMeta() instanceof Damageable damageable) || /*!items.getType().isItem() ||*/ itemStack.getType().isBlock()) continue;
 
             damageable.setDamage(0);
             itemStack.setItemMeta(damageable);

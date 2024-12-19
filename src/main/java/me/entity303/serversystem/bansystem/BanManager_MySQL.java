@@ -33,27 +33,22 @@ public class BanManager_MySQL extends AbstractBanManager {
 
         var resultSet = this._plugin.GetMySQL().GetResult("SELECT BannedUUID from BannedPlayers");
 
-        while (true)
-            try {
-                if (resultSet == null)
-                    break;
-                if (!resultSet.next())
-                    break;
-                var uuid = resultSet.getString("BannedUUID");
+        while (true) try {
+            if (resultSet == null) break;
+            if (!resultSet.next()) break;
+            var uuid = resultSet.getString("BannedUUID");
 
-                if (this.CheckPlayerInMYSQL(uuid))
-                    playerNames.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName());
-            } catch (SQLException exception) {
-                exception.printStackTrace();
-            }
+            if (this.CheckPlayerInMYSQL(uuid)) playerNames.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName());
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
 
         return playerNames;
     }
 
     @Override
     public BanModeration GetBanByUUID(UUID uuid) {
-        if (!this.CheckPlayerInMYSQL(uuid.toString()))
-            return null;
+        if (!this.CheckPlayerInMYSQL(uuid.toString())) return null;
 
         var reason = this.GetReason(uuid.toString());
         long expireTime = this.GetUnbanTime(uuid.toString());
@@ -71,8 +66,7 @@ public class BanManager_MySQL extends AbstractBanManager {
     private boolean CheckPlayerInMYSQL(String uuid) {
         var resultSet = this._plugin.GetMySQL().GetResult("SELECT * FROM BannedPlayers WHERE BannedUUID='" + uuid + "'");
         try {
-            while (resultSet.next())
-                return true;
+            while (resultSet.next()) return true;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -82,8 +76,7 @@ public class BanManager_MySQL extends AbstractBanManager {
     private String GetReason(String uuid) {
         var resultSet = this._plugin.GetMySQL().GetResult("SELECT * FROM BannedPlayers WHERE BannedUUID='" + uuid + "'");
         try {
-            while (resultSet.next())
-                return resultSet.getString("Reason");
+            while (resultSet.next()) return resultSet.getString("Reason");
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -94,8 +87,7 @@ public class BanManager_MySQL extends AbstractBanManager {
     private Long GetUnbanTime(String uuid) {
         var resultSet = this._plugin.GetMySQL().GetResult("SELECT * FROM BannedPlayers WHERE BannedUUID='" + uuid + "'");
         try {
-            while (resultSet.next())
-                return resultSet.getLong("UnbanTime");
+            while (resultSet.next()) return resultSet.getLong("UnbanTime");
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -105,8 +97,7 @@ public class BanManager_MySQL extends AbstractBanManager {
     private String GetUUIDSender(String uuid) {
         var resultSet = this._plugin.GetMySQL().GetResult("SELECT * FROM BannedPlayers WHERE BannedUUID='" + uuid + "'");
         try {
-            while (resultSet.next())
-                return resultSet.getString("SenderUUID");
+            while (resultSet.next()) return resultSet.getString("SenderUUID");
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -115,11 +106,9 @@ public class BanManager_MySQL extends AbstractBanManager {
 
     @Override
     public BanModeration CreateBan(UUID bannedUuid, String senderUUID, String reason, Long howLong, TimeUnit timeUnit) {
-        if (this.IsBanned(bannedUuid))
-            this.UnBan(bannedUuid);
+        if (this.IsBanned(bannedUuid)) this.UnBan(bannedUuid);
         var expireTime = System.currentTimeMillis() + (howLong * timeUnit.GetValue());
-        if (howLong < 1)
-            expireTime = -1L;
+        if (howLong < 1) expireTime = -1L;
         try {
             var query = "INSERT INTO `BannedPlayers` (BannedUUID, SenderUUID, Reason, UnbanTime) VALUES (?, ?, ?, ?)";
             var preparedStatement = this._plugin.GetMySQL().PrepareStatement(query);

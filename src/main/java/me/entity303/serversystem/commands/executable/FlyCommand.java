@@ -1,13 +1,14 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-
+@ServerSystemCommand(name = "Fly")
 public class FlyCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -32,8 +33,8 @@ public class FlyCommand implements ICommandExecutorOverload {
             if (!player.getAllowFlight()) {
                 player.setAllowFlight(true);
 
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                          this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Fly.Activated.Self"));
+                commandSender.sendMessage(
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Fly.Activated.Self"));
             } else {
                 player.setAllowFlight(false);
 
@@ -44,8 +45,7 @@ public class FlyCommand implements ICommandExecutorOverload {
         }
 
         if (!this._plugin.GetPermissions().HasPermission(commandSender, "fly.others")) {
-            commandSender.sendMessage(
-                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Fly"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Fly"));
             return true;
         }
 

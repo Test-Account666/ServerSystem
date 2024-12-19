@@ -15,12 +15,17 @@ public class JoinUpdateListener implements Listener {
 
     @EventHandler
     public void OnJoin(PlayerJoinEvent event) {
-        if (this._plugin.GetPermissions().HasPermission(event.getPlayer(), "updatenotify", true))
+        if (this._plugin.GetPermissions().HasPermission(event.getPlayer(), "updatenotify", true)) {
             Bukkit.getScheduler()
-                  .runTaskLater(this._plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + event.getPlayer().getName() +
-                                                                                                     " [\"\",{\"text\":\"-----------------------------------------------------\",\"color\":\"#BB0000\"},{\"text\":\"\\n\"},{\"text\":\"ServerSystem\",\"color\":\"#8A950B\"},{\"text\":\"\\n\"},{\"text\":\"-----------------------------------------------------\",\"color\":\"#BB0000\"},{\"text\":\"\\n\"},{\"text\":\"Update Needed (New version: " +
-                                                                                                     this._plugin.GetNewVersion() +
-                                                                                                     ")!\",\"color\":\"#FF8000\"},{\"text\":\"\\n\"},{\"text\":\"Download here: https://www.spigotmc.org/resources/serversystem.78974/\",\"color\":\"#FF8000\"},{\"text\":\"\\n\"},{\"text\":\"-----------------------------------------------------\",\"color\":\"#BB0000\"},{\"text\":\"\\n\"},{\"text\":\"ServerSystem\",\"color\":\"#8A950B\"},{\"text\":\"\\n\"},{\"text\":\"-----------------------------------------------------\",\"color\":\"#BB0000\"}]"),
+                  .runTaskLater(this._plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + event.getPlayer().getName() + " [\"\"," + "{\"text" +
+                                                                                                      "\":\"-----------------------------------------------------\",\"color\":\"#BB0000\"},{\"text\":\"\\n\"},{\"text\":\"ServerSystem\",\"color\":\"#8A950B\"},{\"text\":\"\\n\"},{\"text\":\"-----------------------------------------------------\",\"color\":\"#BB0000\"},{\"text\":\"\\n\"},{\"text\":\"Update Needed (New version: " +
+                                                                                                      this._plugin.GetNewVersion() + ")!\",\"color\":\"#FF8000\"}," +
+                                                                                                      "{\"text\":\"\\n\"},{\"text\":\"Download " +
+                                                                                                      "here: https://www.spigotmc" +
+                                                                                                      ".org/resources/serversystem.78974/\"," +
+                                                                                                      "\"color\":\"#FF8000\"}," + "{\"text\":\"\\n\"}," + "{\"text" +
+                                                                                                      "\":\"-----------------------------------------------------\",\"color\":\"#BB0000\"},{\"text\":\"\\n\"},{\"text\":\"ServerSystem\",\"color\":\"#8A950B\"},{\"text\":\"\\n\"},{\"text\":\"-----------------------------------------------------\",\"color\":\"#BB0000\"}]"),
                                 20L);
+        }
     }
 }

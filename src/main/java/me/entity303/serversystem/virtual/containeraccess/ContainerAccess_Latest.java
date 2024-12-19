@@ -26,25 +26,25 @@ public class ContainerAccess_Latest extends ContainerAccessWrapper implements Co
                     Arrays.stream(EntityPlayer.class.getDeclaredMethods()).filter(method -> method.getParameters().length == 0).filter(method -> {
                         var splitted = method.getReturnType().getName().toLowerCase(Locale.ROOT).split("\\.");
 
-                        return splitted[splitted.length - 1].contains("world");
+                        return splitted[splitted.length - 1].contains("world") || splitted[splitted.length - 1].toLowerCase().contains("serverlevel");
                     }).findFirst().orElse(null);
 
-            if (ContainerAccess_Latest.GET_WORLD_METHOD == null)
+            if (ContainerAccess_Latest.GET_WORLD_METHOD == null) {
                 throw new NoSuchMethodException("Couldn't find method 'getWorld' in class " + EntityPlayer.class.getName());
+            }
         }
 
         this._player = player;
         try {
-            this._human = (EntityPlayer) Class.forName("org.bukkit.craftbukkit." + this.GetVersion() + "entity.CraftPlayer")
-                                              .getDeclaredMethod("getHandle")
-                                              .invoke(player);
+            this._human =
+                    (EntityPlayer) Class.forName("org.bukkit.craftbukkit." + this.GetVersion() + "entity.CraftPlayer").getDeclaredMethod("getHandle").invoke(player);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException exception) {
             exception.printStackTrace();
         }
     }
 
     protected String GetVersion() {
-        if (this._version == null)
+        if (this._version == null) {
             try {
                 var splitVersion = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
 
@@ -53,6 +53,7 @@ public class ContainerAccess_Latest extends ContainerAccessWrapper implements Co
                 exception.printStackTrace();
                 return null;
             }
+        }
         return this._version;
     }
 

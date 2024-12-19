@@ -1,18 +1,25 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
+import me.entity303.serversystem.tabcompleter.EconomyTabCompleter;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+@ServerSystemCommand(name = "Economy", tabCompleter = EconomyTabCompleter.class)
 public class EconomyCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
 
     public EconomyCommand(ServerSystem plugin) {
         this._plugin = plugin;
+    }
+
+    public static boolean ShouldRegister(ServerSystem serverSystem) {
+        return serverSystem.GetConfigReader().GetBoolean("economy.enabled");
     }
 
     @Override
@@ -24,8 +31,8 @@ public class EconomyCommand implements ICommandExecutorOverload {
         }
 
         if (arguments.length == 0) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                      this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Economy.General"));
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Economy.General"));
             return true;
         }
 
@@ -48,9 +55,8 @@ public class EconomyCommand implements ICommandExecutorOverload {
             amount = Double.parseDouble(arguments[2]);
         } catch (NumberFormatException ignored) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                           .GetMessageWithStringTarget(commandLabel, command,
-                                                                                                                       commandSender, target.getName(),
-                                                                                                                       "Economy.Error.NotANumber")
+                                                                                           .GetMessageWithStringTarget(commandLabel, command, commandSender,
+                                                                                                                       target.getName(), "Economy.Error.NotANumber")
                                                                                            .replace("<NUMBER>", arguments[2]));
             return true;
         }
@@ -60,69 +66,52 @@ public class EconomyCommand implements ICommandExecutorOverload {
                 this._plugin.GetEconomyManager().SetMoney(target, amount);
 
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                               .GetMessageWithStringTarget(commandLabel, command,
-                                                                                                                           commandSender, target.getName(),
-                                                                                                                           "Economy.Success.Set.Sender")
-                                                                                               .replace("<AMOUNT>",
-                                                                                                        this._plugin.GetEconomyManager().Format(amount)));
-                if (target.isOnline()) target.getPlayer()
-                                             .sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                                               .GetMessageWithStringTarget(commandLabel,
-                                                                                                                                           command,
-                                                                                                                                           commandSender,
-                                                                                                                                           target.getName(),
-                                                                                                                                           "Economy" +
-                                                                                                                                           ".Success.Set" +
-                                                                                                                                           ".Target")
-                                                                                                               .replace("<AMOUNT>",
-                                                                                                                        this._plugin.GetEconomyManager()
-                                                                                                                                    .Format(amount)));
+                                                                                               .GetMessageWithStringTarget(commandLabel, command, commandSender,
+                                                                                                                           target.getName(), "Economy.Success.Set.Sender")
+                                                                                               .replace("<AMOUNT>", this._plugin.GetEconomyManager().Format(amount)));
+                if (target.isOnline()) {
+                    target.getPlayer()
+                          .sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                            .GetMessageWithStringTarget(commandLabel, command, commandSender,
+                                                                                                                        target.getName(),
+                                                                                                                        "Economy" + ".Success.Set" + ".Target")
+                                                                                            .replace("<AMOUNT>", this._plugin.GetEconomyManager().Format(amount)));
+                }
             }
             case "give", "add" -> {
                 this._plugin.GetEconomyManager().AddMoney(target, amount);
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                               .GetMessageWithStringTarget(commandLabel, command,
-                                                                                                                           commandSender, target.getName(),
+                                                                                               .GetMessageWithStringTarget(commandLabel, command, commandSender,
+                                                                                                                           target.getName(),
                                                                                                                            "Economy.Success.Give.Sender")
-                                                                                               .replace("<AMOUNT>",
-                                                                                                        this._plugin.GetEconomyManager().Format(amount)));
-                if (target.isOnline()) target.getPlayer()
-                                             .sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                                               .GetMessageWithStringTarget(commandLabel,
-                                                                                                                                           command,
-                                                                                                                                           commandSender,
-                                                                                                                                           target.getName(),
-                                                                                                                                           "Economy" +
-                                                                                                                                           ".Success" +
-                                                                                                                                           ".Give.Target")
-                                                                                                               .replace("<AMOUNT>",
-                                                                                                                        this._plugin.GetEconomyManager()
-                                                                                                                                    .Format(amount)));
+                                                                                               .replace("<AMOUNT>", this._plugin.GetEconomyManager().Format(amount)));
+                if (target.isOnline()) {
+                    target.getPlayer()
+                          .sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                            .GetMessageWithStringTarget(commandLabel, command, commandSender,
+                                                                                                                        target.getName(),
+                                                                                                                        "Economy" + ".Success" + ".Give.Target")
+                                                                                            .replace("<AMOUNT>", this._plugin.GetEconomyManager().Format(amount)));
+                }
             }
             case "revoke", "take", "remove" -> {
                 this._plugin.GetEconomyManager().RemoveMoney(target, amount);
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                               .GetMessageWithStringTarget(commandLabel, command,
-                                                                                                                           commandSender, target.getName(),
+                                                                                               .GetMessageWithStringTarget(commandLabel, command, commandSender,
+                                                                                                                           target.getName(),
                                                                                                                            "Economy.Success.Revoke.Sender")
-                                                                                               .replace("<AMOUNT>",
-                                                                                                        this._plugin.GetEconomyManager().Format(amount)));
-                if (target.isOnline()) target.getPlayer()
-                                             .sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                                               .GetMessageWithStringTarget(commandLabel,
-                                                                                                                                           command,
-                                                                                                                                           commandSender,
-                                                                                                                                           target.getName(),
-                                                                                                                                           "Economy" +
-                                                                                                                                           ".Success" +
-                                                                                                                                           ".Revoke" +
-                                                                                                                                           ".Target")
-                                                                                                               .replace("<AMOUNT>",
-                                                                                                                        this._plugin.GetEconomyManager()
-                                                                                                                                    .Format(amount)));
+                                                                                               .replace("<AMOUNT>", this._plugin.GetEconomyManager().Format(amount)));
+                if (target.isOnline()) {
+                    target.getPlayer()
+                          .sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                            .GetMessageWithStringTarget(commandLabel, command, commandSender,
+                                                                                                                        target.getName(),
+                                                                                                                        "Economy" + ".Success" + ".Revoke" + ".Target")
+                                                                                            .replace("<AMOUNT>", this._plugin.GetEconomyManager().Format(amount)));
+                }
             }
-            default -> commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                                 this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Economy.General"));
+            default -> commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Economy.General"));
         }
         return true;
     }
@@ -158,19 +147,19 @@ public class EconomyCommand implements ICommandExecutorOverload {
     private void SendHelpCommand(String argument, CommandSender commandSender, Command command, String commandLabel) {
         switch (argument.toLowerCase()) {
             case "set" -> {
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                          this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Economy.Set"));
+                commandSender.sendMessage(
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Economy.Set"));
             }
             case "add", "give" -> {
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                          this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Economy.Give"));
+                commandSender.sendMessage(
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Economy.Give"));
             }
             case "take", "revoke", "remove" -> {
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                          this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Economy.Revoke"));
+                commandSender.sendMessage(
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Economy.Revoke"));
             }
-            default -> commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                                 this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Economy.General"));
+            default -> commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Economy.General"));
         }
     }
 

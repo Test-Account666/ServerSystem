@@ -2,12 +2,14 @@ package me.entity303.serversystem.commands.executable;
 
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+@ServerSystemCommand(name = "Feed")
 public class FeedCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -46,8 +48,7 @@ public class FeedCommand implements ICommandExecutorOverload {
         }
 
         var target = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
-        if (target == null)
-            return true;
+        if (target == null) return true;
 
         target.setFoodLevel(20);
         target.setExhaustion(0);

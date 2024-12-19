@@ -1,19 +1,26 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.events.AsyncUnmuteEvent;
 import me.entity303.serversystem.main.ServerSystem;
+import me.entity303.serversystem.tabcompleter.UnMuteTabCompleter;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+@ServerSystemCommand(name = "UnMute", tabCompleter = UnMuteTabCompleter.class)
 public class UnMuteCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
 
     public UnMuteCommand(ServerSystem plugin) {
         this._plugin = plugin;
+    }
+
+    public static boolean ShouldRegister(ServerSystem serverSystem) {
+        return serverSystem.GetConfigReader().GetBoolean("banSystem.enabled");
     }
 
     @Override
@@ -32,10 +39,8 @@ public class UnMuteCommand implements ICommandExecutorOverload {
         var target = this.GetPlayer(arguments[0]);
 
         if (!this._plugin.GetMuteManager().IsMuted(target)) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                           .GetMessageWithStringTarget(commandLabel, command,
-                                                                                                                       commandSender, target.getName(),
-                                                                                                                       "UnMute.NotMuted"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessageWithStringTarget(commandLabel, command, commandSender, target.getName(), "UnMute.NotMuted"));
             return true;
         }
         this._plugin.GetMuteManager().RemoveMute(target.getUniqueId());
@@ -46,17 +51,15 @@ public class UnMuteCommand implements ICommandExecutorOverload {
         });
 
 
-        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                       .GetMessageWithStringTarget(commandLabel, command, commandSender,
-                                                                                                                   target.getName(), "UnMute.Success"));
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                  this._plugin.GetMessages().GetMessageWithStringTarget(commandLabel, command, commandSender, target.getName(), "UnMute.Success"));
         return true;
     }
 
     private OfflinePlayer GetPlayer(String name) {
         OfflinePlayer player;
         player = Bukkit.getPlayer(name);
-        if (player == null)
-            player = Bukkit.getOfflinePlayer(name);
+        if (player == null) player = Bukkit.getOfflinePlayer(name);
         return player;
     }
 }

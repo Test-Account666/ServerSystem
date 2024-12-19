@@ -3,6 +3,7 @@ package me.entity303.serversystem.commands.executable;
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.FileUtils;
 import net.ess3.api.MaxMoneyException;
@@ -16,12 +17,17 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@ServerSystemCommand(name = "ConvertToEssentials")
 public class ServerSystemConversionCommand implements ICommandExecutorOverload {
     protected final ServerSystem _plugin;
     private boolean _starting = false;
 
     public ServerSystemConversionCommand(ServerSystem plugin) {
         this._plugin = plugin;
+    }
+
+    public static boolean ShouldRegister(ServerSystem serverSystem) {
+        return Bukkit.getPluginManager().getPlugin("Essentials") != null;
     }
 
     @Override
@@ -34,17 +40,16 @@ public class ServerSystemConversionCommand implements ICommandExecutorOverload {
 
         if (!this._starting) {
 
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                           .GetMessage(commandLabel, command, commandSender, null,
-                                                                                                       "ConvertToEssentials.WarnNotTested"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "ConvertToEssentials.WarnNotTested"));
             this._starting = true;
             Bukkit.getScheduler().runTaskLater(this._plugin, () -> this._starting = false, 20 * 10);
             return true;
         }
 
         var command1 = command.getName();
-        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                  this._plugin.GetMessages().GetMessage(commandLabel, command1, commandSender, null, "ConvertToEssentials.Start"));
+        commandSender.sendMessage(
+                this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command1, commandSender, null, "ConvertToEssentials.Start"));
 
         var essentialsDirectory = new File("plugins//Essentials");
         var dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm-ss");
@@ -68,13 +73,11 @@ public class ServerSystemConversionCommand implements ICommandExecutorOverload {
 
             User user = null;
 
-            if (offlinePlayer.getName() != null)
+            if (offlinePlayer.getName() != null) {
                 user = essentials.getOfflineUser(offlinePlayer.getName());
-            else if (offlinePlayer.getUniqueId() != null)
-                essentials.getUser(offlinePlayer.getUniqueId());
+            } else if (offlinePlayer.getUniqueId() != null) essentials.getUser(offlinePlayer.getUniqueId());
 
-            if (user == null)
-                continue;
+            if (user == null) continue;
 
             try {
                 user.setMoney(new BigDecimal(balance));
@@ -93,11 +96,9 @@ public class ServerSystemConversionCommand implements ICommandExecutorOverload {
                 user.setHome(name, location);
             }
 
-            if (this._plugin.GetVanish().IsVanish(offlinePlayer))
-                user.setVanished(true);
+            if (this._plugin.GetVanish().IsVanish(offlinePlayer)) user.setVanished(true);
 
-            if (!this._plugin.GetWantsTeleport().DoesPlayerWantTeleport(offlinePlayer))
-                user.setTeleportEnabled(false);
+            if (!this._plugin.GetWantsTeleport().DoesPlayerWantTeleport(offlinePlayer)) user.setTeleportEnabled(false);
 
             var muteManager = this._plugin.GetMuteManager();
 
@@ -132,9 +133,8 @@ public class ServerSystemConversionCommand implements ICommandExecutorOverload {
 
         if (error) {
 
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                           .GetMessage(commandLabel, command, commandSender, null,
-                                                                                                       "ConvertToEssentials.FinishedWithErrors"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "ConvertToEssentials.FinishedWithErrors"));
             return true;
         }
 

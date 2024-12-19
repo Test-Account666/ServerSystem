@@ -14,9 +14,8 @@ public class AsyncUnmuteEvent extends Event {
     private final String _reason;
 
     public AsyncUnmuteEvent(CommandSender sender, OfflinePlayer target) {
-        this(sender, target, ServerSystem.getPlugin(ServerSystem.class)
-                                         .GetMessages()
-                                         .GetMessageWithStringTarget("unmute", "unmute", sender, target.getName(), "Mute.DefaultReason"));
+        this(sender, target,
+             ServerSystem.getPlugin(ServerSystem.class).GetMessages().GetMessageWithStringTarget("unmute", "unmute", sender, target.getName(), "Mute.DefaultReason"));
     }
 
     public AsyncUnmuteEvent(CommandSender sender, OfflinePlayer target, String reason) {

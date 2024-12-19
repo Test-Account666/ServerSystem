@@ -1,6 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
 import org.bukkit.Bukkit;
@@ -12,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+@ServerSystemCommand(name = "BalTop")
 public class BalanceTopCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -20,18 +22,23 @@ public class BalanceTopCommand implements ICommandExecutorOverload {
         this._plugin = plugin;
     }
 
+    public static boolean ShouldRegister(ServerSystem serverSystem) {
+        return serverSystem.GetConfigReader().GetBoolean("economy.enabled");
+    }
+
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
         Bukkit.getScheduler().runTaskAsynchronously(this._plugin, () -> {
             var pluginMessages = this._plugin.GetMessages();
             var prefix = pluginMessages.GetPrefix();
-            if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.baltop.required"))
+            if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.baltop.required")) {
                 if (!this._plugin.GetPermissions().HasPermission(commandSender, "baltop.permission")) {
                     var permission = this._plugin.GetPermissions().GetPermission("baltop.permission");
                     var noPermissionMessage = pluginMessages.GetNoPermission(permission);
                     commandSender.sendMessage(prefix + noPermissionMessage);
                     return;
                 }
+            }
 
             List<String> topPlayers = new LinkedList<>();
             var topTen = this._plugin.GetEconomyManager().GetTopTen();
@@ -60,8 +67,7 @@ public class BalanceTopCommand implements ICommandExecutorOverload {
     private void AssignTopPlayers(Map<? extends OfflinePlayer, Double> topTen, List<String> topPlayers) {
         var count = 0;
         for (var entry : topTen.entrySet()) {
-            if (count >= 10)
-                break;
+            if (count >= 10) break;
             var topName = entry.getKey().getName();
             var balance = entry.getValue();
             var formattedBalance = this._plugin.GetEconomyManager().Format(balance);
@@ -73,8 +79,7 @@ public class BalanceTopCommand implements ICommandExecutorOverload {
         if (topPlayersSize < 10) {
             var lastPlayer = topPlayers.get(topPlayersSize - 1);
 
-            while (topPlayers.size() < 10)
-                topPlayers.add(lastPlayer);
+            while (topPlayers.size() < 10) topPlayers.add(lastPlayer);
         }
     }
 }

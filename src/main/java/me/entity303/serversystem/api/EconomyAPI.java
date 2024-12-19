@@ -7,7 +7,8 @@ import org.bukkit.OfflinePlayer;
 import java.util.LinkedHashMap;
 import java.util.concurrent.CompletableFuture;
 
-@SuppressWarnings("NewMethodNamingConvention") public class EconomyAPI {
+@SuppressWarnings("NewMethodNamingConvention")
+public class EconomyAPI {
     private final ServerSystem _plugin;
 
     public EconomyAPI(ServerSystem plugin) {

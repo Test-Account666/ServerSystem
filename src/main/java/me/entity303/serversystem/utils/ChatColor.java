@@ -3,8 +3,28 @@ package me.entity303.serversystem.utils;
 import java.util.regex.Pattern;
 
 public enum ChatColor {
-    BLACK, DARK_BLUE, DARK_GREEN, DARK_AQUA, DARK_RED, DARK_PURPLE, GOLD, GRAY, DARK_GRAY, BLUE, GREEN, AQUA, RED, LIGHT_PURPLE, YELLOW, WHITE, MAGIC,
-    BOLD, STRIKETHROUGH, UNDERLINE, ITALIC, RESET;
+    BLACK,
+    DARK_BLUE,
+    DARK_GREEN,
+    DARK_AQUA,
+    DARK_RED,
+    DARK_PURPLE,
+    GOLD,
+    GRAY,
+    DARK_GRAY,
+    BLUE,
+    GREEN,
+    AQUA,
+    RED,
+    LIGHT_PURPLE,
+    YELLOW,
+    WHITE,
+    MAGIC,
+    BOLD,
+    STRIKETHROUGH,
+    UNDERLINE,
+    ITALIC,
+    RESET;
 
     public static final char COLOR_CHAR = '§';
     public static final Pattern REPLACE_ALL_PATTERN;
@@ -24,20 +44,20 @@ public enum ChatColor {
     }
 
     public static String TranslateAlternateColorCodes(char altColorChar, String textToTranslate) {
-        if (textToTranslate.contains(altColorChar + "#"))
+        if (textToTranslate.contains(altColorChar + "#")) {
             try {
                 textToTranslate = ChatColor.ReplaceHexColor(altColorChar, textToTranslate);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
+        }
 
         return org.bukkit.ChatColor.translateAlternateColorCodes(altColorChar, textToTranslate);
     }
 
     public static String ReplaceHexColor(char altColorChar, String input) {
         var matcher = Pattern.compile(ChatColor.RGB_PATTERN.replace("&", String.valueOf(altColorChar))).matcher(input);
-        while (matcher.find())
-            input = input.replace(matcher.group(), ChatColor.OfHex(matcher.group()));
+        while (matcher.find()) input = input.replace(matcher.group(), ChatColor.OfHex(matcher.group()));
 
         return input;
     }
@@ -46,9 +66,8 @@ public enum ChatColor {
         var inputBuilder = new StringBuilder("§x");
         var arr = SPLIT_PATTERN.split(input);
         for (var colorCode : arr) {
-            if (colorCode.contains("#") || colorCode.contains("&"))
-                continue;
-            inputBuilder.append(org.bukkit.ChatColor.getByChar(colorCode));
+            if (colorCode.contains("#") || colorCode.contains("&")) continue;
+            inputBuilder.append(org.bukkit.ChatColor.getByChar(colorCode.toLowerCase()));
         }
 
         input = inputBuilder.toString();

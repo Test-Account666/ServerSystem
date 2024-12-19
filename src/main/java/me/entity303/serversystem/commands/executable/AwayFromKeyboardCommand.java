@@ -1,6 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.listener.AwayFromKeyboardListener;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
@@ -8,6 +9,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+@ServerSystemCommand(name = "AFK")
 public class AwayFromKeyboardCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -26,18 +28,18 @@ public class AwayFromKeyboardCommand implements ICommandExecutorOverload {
             return true;
         }
 
-        if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.afk.required"))
+        if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.afk.required")) {
             if (!this._plugin.GetPermissions().HasPermission(commandSender, "afk.permission")) {
                 var permission = this._plugin.GetPermissions().GetPermission("afk.permission");
                 var noPermissionMessage = pluginMessages.GetNoPermission(permission);
                 commandSender.sendMessage(prefix + noPermissionMessage);
                 return true;
             }
+        }
 
         var awayFromKeyboard = false;
 
-        if (player.hasMetadata("afk"))
-            awayFromKeyboard = CommandUtils.IsAwayFromKeyboard(player);
+        if (player.hasMetadata("afk")) awayFromKeyboard = CommandUtils.IsAwayFromKeyboard(player);
 
         var metaValueGenerator = this._plugin.GetMetaValue();
         if (!awayFromKeyboard) {

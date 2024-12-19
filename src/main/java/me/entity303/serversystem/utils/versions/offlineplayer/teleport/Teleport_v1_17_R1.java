@@ -21,12 +21,12 @@ public class Teleport_v1_17_R1 implements ITeleport {
 
     @Override
     public void Teleport(Player player, Location location) {
-        if (this._worldField == null)
+        if (this._worldField == null) {
             try {
                 this._worldField = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "Entity").getDeclaredField("world");
                 this._worldField.setAccessible(true);
             } catch (NoSuchFieldException | ClassNotFoundException exception) {
-                if (exception instanceof ClassNotFoundException)
+                if (exception instanceof ClassNotFoundException) {
                     try {
                         for (var field : Class.forName("net.minecraft.world.entity.Entity").getDeclaredFields())
                             if (field.getType().getName().toLowerCase(Locale.ROOT).contains("world")) {
@@ -38,28 +38,32 @@ public class Teleport_v1_17_R1 implements ITeleport {
                     } catch (ClassNotFoundException exception1) {
                         exception1.printStackTrace();
                     }
-                else
+                } else {
                     exception.printStackTrace();
+                }
                 return;
             }
+        }
 
-        if (this._setLocationMethod == null)
+        if (this._setLocationMethod == null) {
             try {
                 this._setLocationMethod = Class.forName("net.minecraft.server." + this._plugin.GetVersionManager().GetNMSVersion() + "Entity")
                                                .getDeclaredMethod("setLocation", double.class, double.class, double.class, float.class, float.class);
             } catch (NoSuchMethodException | ClassNotFoundException exception) {
-                if (exception instanceof ClassNotFoundException)
+                if (exception instanceof ClassNotFoundException) {
                     try {
                         this._setLocationMethod = Class.forName("net.minecraft.world.entity.Entity")
                                                        .getDeclaredMethod("setLocation", double.class, double.class, double.class, float.class, float.class);
                     } catch (NoSuchMethodException | ClassNotFoundException exception1) {
                         exception1.printStackTrace();
                     }
-                else
+                } else {
                     exception.printStackTrace();
+                }
             }
+        }
 
-        if (this._getHandleMethod == null)
+        if (this._getHandleMethod == null) {
             try {
                 this._getHandleMethod =
                         Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + "CraftWorld").getDeclaredMethod("getHandle");
@@ -67,6 +71,7 @@ public class Teleport_v1_17_R1 implements ITeleport {
                 exception.printStackTrace();
                 return;
             }
+        }
 
 
         Object entity;

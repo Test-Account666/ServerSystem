@@ -1,11 +1,13 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+@ServerSystemCommand(name = "PickUp")
 public class PickUpCommand implements ICommandExecutorOverload {
     private final ServerSystem _plugin;
 

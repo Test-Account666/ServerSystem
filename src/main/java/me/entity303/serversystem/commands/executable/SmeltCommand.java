@@ -1,6 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -11,6 +12,7 @@ import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 
 //TODO: Rewrite this
+@ServerSystemCommand(name = "Smelt")
 public class SmeltCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -39,8 +41,8 @@ public class SmeltCommand implements ICommandExecutorOverload {
         try {
             if (itemInHand.getType() == Material.AIR) {
 
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                          this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Smelt.NoItem"));
+                commandSender.sendMessage(
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Smelt.NoItem"));
                 return true;
             }
         } catch (Exception ignored) {
@@ -53,16 +55,16 @@ public class SmeltCommand implements ICommandExecutorOverload {
 
         while (recipeIterator.hasNext()) {
             var recipe = recipeIterator.next();
-            if (recipe instanceof FurnaceRecipe furnaceRecipe)
+            if (recipe instanceof FurnaceRecipe furnaceRecipe) {
                 if (furnaceRecipe.getInput().getType() == itemInHand.getType()) {
                     end = furnaceRecipe.getResult();
                     recipeFound = true;
                     break;
                 }
+            }
         }
 
-        if (recipeFound)
-            return this.SmeltItem(commandSender, command, commandLabel, player, end);
+        if (recipeFound) return this.SmeltItem(commandSender, command, commandLabel, player, end);
 
 
         var result = this._plugin.GetFurnace().GetResult(itemInHand);
@@ -73,8 +75,8 @@ public class SmeltCommand implements ICommandExecutorOverload {
         }
 
 
-        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                  this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Smelt.NotSmeltable"));
+        commandSender.sendMessage(
+                this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Smelt.NotSmeltable"));
         return true;
     }
 
@@ -84,8 +86,7 @@ public class SmeltCommand implements ICommandExecutorOverload {
         player.getInventory().getItemInMainHand().setType(end.getType());
 
         commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                       .GetMessage(commandLabel, command, commandSender, null,
-                                                                                                   "Smelt.Success")
+                                                                                       .GetMessage(commandLabel, command, commandSender, null, "Smelt.Success")
                                                                                        .replace("<ITEM>", end.getType() + ":" + end.getDurability()));
         return true;
     }

@@ -3,8 +3,10 @@ package me.entity303.serversystem.commands.executable;
 import me.entity303.serversystem.bansystem.TimeUnit;
 import me.entity303.serversystem.bansystem.moderation.Moderation;
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.events.AsyncMuteEvent;
 import me.entity303.serversystem.main.ServerSystem;
+import me.entity303.serversystem.tabcompleter.MuteTabCompleter;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -13,12 +15,17 @@ import org.bukkit.entity.Player;
 
 import static me.entity303.serversystem.bansystem.TimeUnit.*;
 
+@ServerSystemCommand(name = "Mute", tabCompleter = MuteTabCompleter.class)
 public class MuteCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
 
     public MuteCommand(ServerSystem plugin) {
         this._plugin = plugin;
+    }
+
+    public static boolean ShouldRegister(ServerSystem serverSystem) {
+        return serverSystem.GetConfigReader().GetBoolean("banSystem.enabled");
     }
 
     @Override
@@ -53,10 +60,8 @@ public class MuteCommand implements ICommandExecutorOverload {
         var target = MuteCommand.GetPlayer(arguments[0]);
 
         if (target.isOnline() && this._plugin.GetPermissions().HasPermission(target.getPlayer(), "mute.exempt", true)) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                           .GetMessageWithStringTarget(commandLabel, command,
-                                                                                                                       commandSender, target.getName(),
-                                                                                                                       "Mute.CannotMute"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessageWithStringTarget(commandLabel, command, commandSender, target.getName(), "Mute.CannotMute"));
             return true;
         }
 
@@ -100,10 +105,9 @@ public class MuteCommand implements ICommandExecutorOverload {
 
         var shadowMute = false;
 
-        if (arguments.length == 3)
+        if (arguments.length == 3) {
             shadowMute = arguments[2].equalsIgnoreCase(shadowName);
-        else if (arguments.length >= 4)
-            shadowMute = arguments[3].equalsIgnoreCase(shadowName);
+        } else if (arguments.length >= 4) shadowMute = arguments[3].equalsIgnoreCase(shadowName);
 
 
         var shadowMutePermission = permanentMute? "mute.shadow.permanent" : "mute.shadow.temporary";
@@ -121,23 +125,22 @@ public class MuteCommand implements ICommandExecutorOverload {
         var muteTimeUnit = YEAR;
 
 
-        var reason = this._plugin.GetMessages()
-                                 .GetMessageWithStringTarget(commandLabel, command.getName(), commandSender, target.getName(), "Mute.DefaultReason");
+        var reason = this._plugin.GetMessages().GetMessageWithStringTarget(commandLabel, command.getName(), commandSender, target.getName(), "Mute.DefaultReason");
 
 
-        if (permanentMute)
-            if (shadowMute)
+        if (permanentMute) {
+            if (shadowMute) {
                 reason = arguments.length >= 4? this.ExtractReason(3, arguments) : reason;
-            else
+            } else {
                 reason = arguments.length >= 3? this.ExtractReason(2, arguments) : reason;
-        else {
+            }
+        } else {
             try {
                 muteTime = Long.parseLong(arguments[1]);
             } catch (NumberFormatException ignored) {
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                               .GetMessageWithStringTarget(commandLabel, command,
-                                                                                                                           commandSender, target.getName(),
-                                                                                                                           "Mute.NotANumber")
+                                                                                               .GetMessageWithStringTarget(commandLabel, command, commandSender,
+                                                                                                                           target.getName(), "Mute.NotANumber")
                                                                                                .replace("<TIME>", arguments[1]));
                 return true;
             }
@@ -145,17 +148,17 @@ public class MuteCommand implements ICommandExecutorOverload {
             muteTimeUnit = TimeUnit.GetFromName(arguments[2]);
             if (muteTimeUnit == null) {
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                               .GetMessageWithStringTarget(commandLabel, command,
-                                                                                                                           commandSender, target.getName(),
-                                                                                                                           "Mute.NotATimeUnit")
+                                                                                               .GetMessageWithStringTarget(commandLabel, command, commandSender,
+                                                                                                                           target.getName(), "Mute.NotATimeUnit")
                                                                                                .replace("<TIMEUNIT>", arguments[2]));
                 return true;
             }
 
-            if (shadowMute)
+            if (shadowMute) {
                 reason = arguments.length >= 5? this.ExtractReason(4, arguments) : reason;
-            else
+            } else {
                 reason = arguments.length >= 4? this.ExtractReason(3, arguments) : reason;
+            }
         }
 
 
@@ -178,26 +181,26 @@ public class MuteCommand implements ICommandExecutorOverload {
     private static OfflinePlayer GetPlayer(String name) {
         OfflinePlayer player;
         player = Bukkit.getPlayer(name);
-        if (player == null)
-            player = Bukkit.getOfflinePlayer(name);
+        if (player == null) player = Bukkit.getOfflinePlayer(name);
         return player;
     }
 
     private String ExtractReason(int start, String... arguments) {
         var reasonBuilder = new StringBuilder();
         for (var index = start; index < arguments.length; index++)
-            if (index == arguments.length - 1)
+            if (index == arguments.length - 1) {
                 reasonBuilder.append(arguments[index]);
-            else
+            } else {
                 reasonBuilder.append(arguments[index]).append(" ");
+            }
         return reasonBuilder.toString();
     }
 
     private void SendSuccessMessageAndInvokeEvent(CommandSender commandSender, Command command, String commandLabel, OfflinePlayer target, String reason,
                                                   Moderation moderation) {
         commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                       .GetMessageWithStringTarget(commandLabel, command, commandSender,
-                                                                                                                   target.getName(), "Mute.Success")
+                                                                                       .GetMessageWithStringTarget(commandLabel, command, commandSender, target.getName(),
+                                                                                                                   "Mute.Success")
                                                                                        .replace("<REASON>", reason)
                                                                                        .replace("<UNMUTE_DATE>", moderation.GetExpireDate()));
 

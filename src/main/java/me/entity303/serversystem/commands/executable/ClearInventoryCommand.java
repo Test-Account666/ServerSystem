@@ -1,6 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Material;
@@ -8,6 +9,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+@ServerSystemCommand(name = "ClearInventory")
 public class ClearInventoryCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -24,14 +26,14 @@ public class ClearInventoryCommand implements ICommandExecutorOverload {
                 return true;
             }
 
-            if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.clearinventory.self.required"))
+            if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.clearinventory.self.required")) {
                 if (!this._plugin.GetPermissions().HasPermission(commandSender, "clearinventory.self.permission")) {
-                    commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                                 .GetNoPermission(this._plugin.GetPermissions()
-                                                                                                                             .GetPermission(
-                                                                                                                                     "clearinventory.self.permission")));
+                    var permission = this._plugin.GetPermissions().GetPermission("clearinventory.self.permission");
+
+                    commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                     return true;
                 }
+            }
 
             this.ClearInventory(commandSender, (Player) commandSender, command, commandLabel);
             return true;
@@ -58,8 +60,7 @@ public class ClearInventoryCommand implements ICommandExecutorOverload {
         for (var index = 0; index < (27 + 9); index++) {
             var itemStack = target.getInventory().getItem(index);
 
-            if (itemStack == null || itemStack.getType() == Material.AIR)
-                continue;
+            if (itemStack == null || itemStack.getType() == Material.AIR) continue;
 
             counter = counter + itemStack.getAmount();
         }
@@ -69,14 +70,10 @@ public class ClearInventoryCommand implements ICommandExecutorOverload {
         var leggings = target.getInventory().getLeggings();
         var boots = target.getInventory().getBoots();
 
-        if (helmet != null && helmet.getType() != Material.AIR)
-            counter = counter + helmet.getAmount();
-        if (chestPlate != null && chestPlate.getType() != Material.AIR)
-            counter = counter + chestPlate.getAmount();
-        if (leggings != null && leggings.getType() != Material.AIR)
-            counter = counter + leggings.getAmount();
-        if (boots != null && boots.getType() != Material.AIR)
-            counter = counter + boots.getAmount();
+        if (helmet != null && helmet.getType() != Material.AIR) counter = counter + helmet.getAmount();
+        if (chestPlate != null && chestPlate.getType() != Material.AIR) counter = counter + chestPlate.getAmount();
+        if (leggings != null && leggings.getType() != Material.AIR) counter = counter + leggings.getAmount();
+        if (boots != null && boots.getType() != Material.AIR) counter = counter + boots.getAmount();
 
         target.getInventory().setHelmet(null);
         target.getInventory().setChestplate(null);
@@ -86,20 +83,20 @@ public class ClearInventoryCommand implements ICommandExecutorOverload {
 
         if (target == commandSender) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                         .GetMessage(commandLabel, command.getName(), commandSender, null,
-                                                                                                     "ClearInventory.Self")
-                                                                                         .replace("<AMOUNT>", String.valueOf(counter)));
+                                                                                           .GetMessage(commandLabel, command.getName(), commandSender, null,
+                                                                                                       "ClearInventory.Self")
+                                                                                           .replace("<AMOUNT>", String.valueOf(counter)));
             return;
         }
 
         commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                     .GetMessage(commandLabel, command.getName(), commandSender, target,
-                                                                                                 "ClearInventory.Others.Sender")
-                                                                                     .replace("<AMOUNT>", String.valueOf(counter)));
+                                                                                       .GetMessage(commandLabel, command.getName(), commandSender, target,
+                                                                                                   "ClearInventory.Others.Sender")
+                                                                                       .replace("<AMOUNT>", String.valueOf(counter)));
 
         target.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                              .GetMessage(commandLabel, command.getName(), commandSender, target,
-                                                                                          "ClearInventory.Others.Target")
-                                                                              .replace("<AMOUNT>", String.valueOf(counter)));
+                                                                                .GetMessage(commandLabel, command.getName(), commandSender, target,
+                                                                                            "ClearInventory.Others.Target")
+                                                                                .replace("<AMOUNT>", String.valueOf(counter)));
     }
 }

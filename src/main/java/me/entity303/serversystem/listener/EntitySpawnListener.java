@@ -33,11 +33,10 @@ public class EntitySpawnListener implements Listener {
         } catch (NoSuchMethodException | ClassNotFoundException ignored) {
         }
 
-        if (this._getHandleMethod != null && this._collidesField != null)
+        if (this._getHandleMethod != null && this._collidesField != null) {
             for (var world : Bukkit.getWorlds())
                 for (Entity entity : world.getEntities()) {
-                    if (!(entity instanceof LivingEntity))
-                        continue;
+                    if (!(entity instanceof LivingEntity)) continue;
                     Object handle = null;
                     try {
                         handle = this._getHandleMethod.invoke(entity);
@@ -50,6 +49,7 @@ public class EntitySpawnListener implements Listener {
                         exception.printStackTrace();
                     }
                 }
+        }
     }
 
     @EventHandler
@@ -58,8 +58,7 @@ public class EntitySpawnListener implements Listener {
             HandlerList.unregisterAll(this);
             return;
         }
-        if (!(event.getEntity() instanceof LivingEntity))
-            return;
+        if (!(event.getEntity() instanceof LivingEntity)) return;
         try {
             var handle = this._getHandleMethod.invoke(event.getEntity());
             this._collidesField.set(handle, true);

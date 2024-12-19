@@ -25,8 +25,7 @@ public class EventManager {
     }
 
     public void RegisterEvents() {
-        if (!this._listeners.isEmpty())
-            this._listeners.forEach(HandlerList::unregisterAll);
+        if (!this._listeners.isEmpty()) this._listeners.forEach(HandlerList::unregisterAll);
 
         this._listeners.clear();
 
@@ -55,17 +54,15 @@ public class EventManager {
         var resetGodMode = this._serverSystem.GetConfigReader().GetBoolean("worldChange.resetGod");
         var resetFly = this._serverSystem.GetConfigReader().GetBoolean("worldChange.resetFly");
 
-        if (resetGameMode || resetGodMode || resetFly)
-            this.RegisterEvent(new WorldChangeListener(this._serverSystem, resetGameMode, resetGodMode, resetFly));
+        if (resetGameMode || resetGodMode || resetFly) this.RegisterEvent(new WorldChangeListener(this._serverSystem, resetGameMode, resetGodMode, resetFly));
 
-        if (this._serverSystem.GetConfigReader().GetBoolean("deactivateEntityCollision"))
+        if (this._serverSystem.GetConfigReader().GetBoolean("deactivateEntityCollision")) {
             Bukkit.getScheduler().runTaskLater(this._serverSystem, () -> this.RegisterEvent(new EntitySpawnListener(this._serverSystem)), 5L);
+        }
 
-        if (this._serverSystem.GetConfigReader().GetBoolean("no-redstone"))
-            this.RegisterEvent(new RedstoneListener(this._serverSystem));
+        if (this._serverSystem.GetConfigReader().GetBoolean("no-redstone")) this.RegisterEvent(new RedstoneListener(this._serverSystem));
 
-        if (this._serverSystem.GetConfigReader().GetBoolean("spawn.respawn"))
-            this.RegisterEvent(new RespawnListener(this._serverSystem));
+        if (this._serverSystem.GetConfigReader().GetBoolean("spawn.respawn")) this.RegisterEvent(new RespawnListener(this._serverSystem));
 
         this.RegisterEvent(new UnlimitedListener());
         this.RegisterEvent(new FreezeListener(this._serverSystem));

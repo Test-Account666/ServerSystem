@@ -1,6 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
@@ -8,7 +9,7 @@ import org.bukkit.command.CommandSender;
 
 import static java.lang.Integer.parseInt;
 
-
+@ServerSystemCommand(name = "Burn")
 public class BurnCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -39,14 +40,14 @@ public class BurnCommand implements ICommandExecutorOverload {
         try {
             target.setFireTicks(parseInt(arguments[1]) * 20);
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                         .GetMessage(commandLabel, command.getName(), commandSender, target,
-                                                                                                     "Burn.Success")
-                                                                                         .replace("<TIME>", arguments[1]));
+                                                                                           .GetMessage(commandLabel, command.getName(), commandSender, target,
+                                                                                                       "Burn.Success")
+                                                                                           .replace("<TIME>", arguments[1]));
         } catch (Exception ignored) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                         .GetMessage(commandLabel, command.getName(), commandSender, target,
-                                                                                                     "Burn.NotNumber")
-                                                                                         .replace("<NUMBER>", arguments[1]));
+                                                                                           .GetMessage(commandLabel, command.getName(), commandSender, target,
+                                                                                                       "Burn.NotNumber")
+                                                                                           .replace("<NUMBER>", arguments[1]));
         }
         return true;
     }

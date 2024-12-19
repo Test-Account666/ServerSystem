@@ -19,8 +19,7 @@ public class SomeVanishListener implements Listener {
 
     @EventHandler
     public void OnVehicleCollision(VehicleEntityCollisionEvent event) {
-        if (!(event.getEntity() instanceof Player player))
-            return;
+        if (!(event.getEntity() instanceof Player player)) return;
         if (this._plugin.GetVanish().IsVanish(player)) {
             event.setCancelled(true);
             event.setPickupCancelled(true);
@@ -32,23 +31,22 @@ public class SomeVanishListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void OnHangingBreak(HangingBreakByEntityEvent event) {
         var entity = event.getRemover();
-        if (!(entity instanceof Player player))
-            return;
+        if (!(entity instanceof Player player)) return;
         if (this._plugin.GetVanish().IsVanish(player) && this._plugin.GetVanish().GetAllowInteract().contains(player) &&
-            this._plugin.GetCommandManager().IsInteractActive())
+            this._plugin.GetCommandManager().IsInteractActive()) {
             event.setCancelled(true);
+        }
 
     }
 
     @EventHandler
     public void OnPlayerChangedWorld(PlayerChangedWorldEvent event) {
-        if (this._plugin.GetVanish().IsVanish(event.getPlayer()))
+        if (this._plugin.GetVanish().IsVanish(event.getPlayer())) {
             this._plugin.GetVanish().SetVanish(true, event.getPlayer());
-        else {
+        } else {
             var vanished = this._plugin.GetVanish().GetVanishList();
             for (var uuid : vanished)
-                if (Bukkit.getOfflinePlayer(uuid).isOnline())
-                    this._plugin.GetVanish().SetVanish(true, Bukkit.getPlayer(uuid));
+                if (Bukkit.getOfflinePlayer(uuid).isOnline()) this._plugin.GetVanish().SetVanish(true, Bukkit.getPlayer(uuid));
         }
 
     }

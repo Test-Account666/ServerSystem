@@ -1,14 +1,16 @@
 package me.entity303.serversystem.commands.executable;
 
 
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
-import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+@ServerSystemCommand(name = "ForceTeleport")
 public class TeleportForceCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -20,21 +22,24 @@ public class TeleportForceCommand implements ICommandExecutorOverload {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
         if (arguments.length == 0) {
-            if (this._plugin.GetPermissions().HasPermission(commandSender, "tpo.self", true) || this._plugin.GetPermissions().HasPermission(commandSender, "tpo.others", true)) {
-                
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Tpo"));
+            if (this._plugin.GetPermissions().HasPermission(commandSender, "tpo.self", true) ||
+                this._plugin.GetPermissions().HasPermission(commandSender, "tpo.others", true)) {
+
+                commandSender.sendMessage(
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Tpo"));
                 return true;
             }
             this._plugin.Info(ChatColor.TranslateAlternateColorCodes('&', this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.NoPermissionInfo"))
-                                      .replace("<SENDER>", commandSender.getName()));
+                                       .replace("<SENDER>", commandSender.getName()));
             var permission = this._plugin.GetPermissions().GetPermission("tpo.self") + " || " + this._plugin.GetPermissions().GetPermission("tpo.others");
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
             return true;
         }
         if (arguments.length == 1) {
             if ((!(commandSender instanceof Player))) {
-                
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Tpo"));
+
+                commandSender.sendMessage(
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Tpo"));
                 return true;
             }
             if (!this._plugin.GetPermissions().HasPermission(commandSender, "tpo.self")) {
@@ -52,7 +57,8 @@ public class TeleportForceCommand implements ICommandExecutorOverload {
             ((Player) commandSender).teleport(location);
 
 
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Tpo.Self"));
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Tpo.Self"));
             return true;
         }
         if (!this._plugin.GetPermissions().HasPermission(commandSender, "tpo.others")) {
@@ -74,8 +80,9 @@ public class TeleportForceCommand implements ICommandExecutorOverload {
         target1.teleport(target2.getLocation());
 
 
-        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                  this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target1, "Tpo.Others").replace("<TARGET2>", target2.getName()));
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                       .GetMessage(commandLabel, command, commandSender, target1, "Tpo.Others")
+                                                                                       .replace("<TARGET2>", target2.getName()));
         return true;
     }
 }

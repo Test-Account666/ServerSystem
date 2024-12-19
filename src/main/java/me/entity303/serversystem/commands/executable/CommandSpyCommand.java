@@ -2,12 +2,14 @@ package me.entity303.serversystem.commands.executable;
 
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 
+@ServerSystemCommand(name = "CommandSpy")
 public class CommandSpyCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -32,13 +34,13 @@ public class CommandSpyCommand implements ICommandExecutorOverload {
         if (!this._plugin.GetCommanddSpy().contains(commandSender)) {
             this._plugin.GetCommanddSpy().add((Player) commandSender);
 
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "CommandSpy.Activated"));
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "CommandSpy.Activated"));
         } else {
             this._plugin.GetCommanddSpy().remove(commandSender);
 
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "CommandSpy.Deactivated"));
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "CommandSpy.Deactivated"));
         }
         return true;
     }

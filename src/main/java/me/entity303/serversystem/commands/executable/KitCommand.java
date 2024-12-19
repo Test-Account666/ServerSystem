@@ -1,7 +1,9 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
+import me.entity303.serversystem.tabcompleter.KitTabCompleter;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -10,6 +12,7 @@ import org.bukkit.entity.Player;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+@ServerSystemCommand(name = "Kit", tabCompleter = KitTabCompleter.class)
 public class KitCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -21,8 +24,7 @@ public class KitCommand implements ICommandExecutorOverload {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
         if (arguments.length == 0) {
-            commandSender.sendMessage(
-                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Kit"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Kit"));
             return true;
         }
 
@@ -52,8 +54,7 @@ public class KitCommand implements ICommandExecutorOverload {
 
         if (!this._plugin.GetKitsManager().DoesKitExist(kitName)) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                           .GetMessage(commandLabel, command, commandSender, target,
-                                                                                                       "Kit.DoesntExist")
+                                                                                           .GetMessage(commandLabel, command, commandSender, target, "Kit.DoesntExist")
                                                                                            .replace("<KIT>", kitName.toUpperCase()));
             return;
         }
@@ -62,29 +63,27 @@ public class KitCommand implements ICommandExecutorOverload {
 
         if (!this._plugin.GetKitsManager().IsKitAllowed(commandSender, kitName, others)) return;
 
-        if (this._plugin.GetKitsManager().IsKitDelayed(target, kitName))
+        if (this._plugin.GetKitsManager().IsKitDelayed(target, kitName)) {
             if (!this._plugin.GetPermissions().HasPermission(commandSender, "kit.bypassdelay", true)) {
-                var delay = this._plugin.GetKitsManager().GetPlayerLastDelay(target.getUniqueId().toString(), kitName) +
-                            this._plugin.GetKitsManager().GetKitDelay(kitName);
+                var delay =
+                        this._plugin.GetKitsManager().GetPlayerLastDelay(target.getUniqueId().toString(), kitName) + this._plugin.GetKitsManager().GetKitDelay(kitName);
 
-                var dateFormat = new SimpleDateFormat(
-                        this._plugin.GetMessages().GetMessage(commandLabel, command.getName(), commandSender, null, "Kit.TimeFormat"));
+                var dateFormat = new SimpleDateFormat(this._plugin.GetMessages().GetMessage(commandLabel, command.getName(), commandSender, null, "Kit.TimeFormat"));
                 var date = new Date(delay);
 
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                               .GetMessage(commandLabel, command, commandSender, target,
-                                                                                                           "Kit.OnDelay")
+                                                                                               .GetMessage(commandLabel, command, commandSender, target, "Kit.OnDelay")
                                                                                                .replace("<KIT>", kitName.toUpperCase())
                                                                                                .replace("<DATE>", dateFormat.format(date)));
                 return;
             }
+        }
 
         this._plugin.GetKitsManager().GiveKit(target, kitName);
 
         if (!others) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                           .GetMessage(commandLabel, command, commandSender, target,
-                                                                                                       "Kit.Success.Self")
+                                                                                           .GetMessage(commandLabel, command, commandSender, target, "Kit.Success.Self")
                                                                                            .replace("<KIT>", kitName.toUpperCase()));
             return;
         }
@@ -95,8 +94,7 @@ public class KitCommand implements ICommandExecutorOverload {
                                                                                        .replace("<KIT>", kitName.toUpperCase()));
 
         target.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                .GetMessage(commandLabel, command, commandSender, target,
-                                                                                            "Kit.Success.Others.Target")
+                                                                                .GetMessage(commandLabel, command, commandSender, target, "Kit.Success.Others.Target")
                                                                                 .replace("<KIT>", kitName.toUpperCase()));
     }
 }

@@ -67,6 +67,7 @@ Messages:
     OfflineInvsee: "Syntax: &2/<LABEL> <OfflinePlayer>"
     Seen: "Syntax: &2/<LABEL> <Player>"
     Freeze: "Syntax: &2/<LABEL> <Player>"
+    ManageHomes: "Syntax: &2<LABEL> <Delete|Teleport|List> <Player> <Home>"
   Normal:
     GetPos:
       Self: "You are at coords &6X:&2<X> &6Y:&2<Y> &6Z:&2<Z> &6World:&2<WORLD>"
@@ -492,6 +493,12 @@ Messages:
       Enabled: "You are now afk!"
       Disabled: "You are no longer afk!"
       Kick: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4You got kicked!<BREAK>&6Reason: &cYou were afk for too long!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
+    ManageHomes:
+      NoHomesFound: "&4<TARGET> &cdoes not have any homes!"
+      HomeNotFound: "&4<TARGET> &cdoes not have a home called &4<HOME>&c!"
+      Deleted: "Successfully deleted home &2<HOME> &7from player &2<TARGET>&7!"
+      Teleported: "Successfully teleported to home &2<HOME> &7from player &2<TARGET>&7!"
+      Created: "Successfully created home &2<HOME> &7for player &2<TARGET>&7!"
   Misc:
     ServerFull: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4The Server is full!<BREAK>&cTo join anyway, you need the permission &4<PERMISSION>&c!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
     JoinMessage:

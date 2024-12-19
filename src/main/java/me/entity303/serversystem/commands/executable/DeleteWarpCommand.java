@@ -1,10 +1,13 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
+import me.entity303.serversystem.tabcompleter.WarpTabCompleter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+@ServerSystemCommand(name = "DelWarp", tabCompleter = WarpTabCompleter.class)
 public class DeleteWarpCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -31,17 +34,17 @@ public class DeleteWarpCommand implements ICommandExecutorOverload {
         var warpManager = this._plugin.GetWarpManager();
         if (!warpManager.DoesWarpExist(name)) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                         .GetMessage(commandLabel, command, commandSender, null,
-                                                                                                     "DelWarp.WarpDoesntExists")
-                                                                                         .replace("<WARP>", name.toUpperCase()));
+                                                                                           .GetMessage(commandLabel, command, commandSender, null,
+                                                                                                       "DelWarp.WarpDoesntExists")
+                                                                                           .replace("<WARP>", name.toUpperCase()));
             return true;
         }
 
         warpManager.DeleteWarp(name);
 
         commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                     .GetMessage(commandLabel, command, commandSender, null, "DelWarp.Success")
-                                                                                     .replace("<WARP>", name.toUpperCase()));
+                                                                                       .GetMessage(commandLabel, command, commandSender, null, "DelWarp.Success")
+                                                                                       .replace("<WARP>", name.toUpperCase()));
         return true;
     }
 }

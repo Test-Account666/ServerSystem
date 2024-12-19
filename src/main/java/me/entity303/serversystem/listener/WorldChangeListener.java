@@ -21,23 +21,26 @@ public class WorldChangeListener implements Listener {
 
     @EventHandler
     public void OnWorldChange(PlayerChangedWorldEvent event) {
-        if (this._resetGameMode)
-            if (!this._plugin.GetPermissions().HasPermission(event.getPlayer(), "worldchange.bypassreset.gamemode", true))
+        if (this._resetGameMode) {
+            if (!this._plugin.GetPermissions().HasPermission(event.getPlayer(), "worldchange.bypassreset.gamemode", true)) {
                 event.getPlayer().setGameMode(Bukkit.getDefaultGameMode());
-        if (this._resetGodMode)
-            if (!this._plugin.GetPermissions().HasPermission(event.getPlayer(), "worldchange.bypassreset.god", true))
-                this._plugin.GetGodList().remove(event.getPlayer());
-        if (this._resetFly)
+            }
+        }
+        if (this._resetGodMode) {
+            if (!this._plugin.GetPermissions().HasPermission(event.getPlayer(), "worldchange.bypassreset.god", true)) this._plugin.GetGodList().remove(event.getPlayer());
+        }
+        if (this._resetFly) {
             if (!this._plugin.GetPermissions().HasPermission(event.getPlayer(), "worldchange.bypassreset.fly", true)) {
                 event.getPlayer().setFlying(false);
                 event.getPlayer().setAllowFlight(false);
             }
+        }
 
         Bukkit.getScheduler().runTaskLater(this._plugin, () -> {
-            if (!this._plugin.GetPermissions().HasPermission(event.getPlayer(), "vanish.see", true))
+            if (!this._plugin.GetPermissions().HasPermission(event.getPlayer(), "vanish.see", true)) {
                 for (var all : Bukkit.getOnlinePlayers())
-                    if (this._plugin.GetVanish().IsVanish(all))
-                        event.getPlayer().hidePlayer(all);
+                    if (this._plugin.GetVanish().IsVanish(all)) event.getPlayer().hidePlayer(all);
+            }
         }, 1L);
     }
 }

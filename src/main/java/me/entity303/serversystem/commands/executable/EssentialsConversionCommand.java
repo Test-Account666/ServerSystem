@@ -6,13 +6,13 @@ import com.earth2me.essentials.Warps;
 import com.earth2me.essentials.commands.WarpNotFoundException;
 import me.entity303.serversystem.bansystem.moderation.MuteModeration;
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.FileUtils;
 import net.ess3.api.InvalidWorldException;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -22,12 +22,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.UUID;
 
+@ServerSystemCommand(name = "ConvertFromEssentials")
 public class EssentialsConversionCommand implements ICommandExecutorOverload {
     protected final ServerSystem _plugin;
     private boolean _starting = false;
 
     public EssentialsConversionCommand(ServerSystem plugin) {
         this._plugin = plugin;
+    }
+
+    public static boolean ShouldRegister(ServerSystem serverSystem) {
+        return Bukkit.getPluginManager().getPlugin("Essentials") != null;
     }
 
     @Override
@@ -49,15 +54,13 @@ public class EssentialsConversionCommand implements ICommandExecutorOverload {
         commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
                                   this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "ConvertFromEssentials.Start"));
 
-        if (!this.CreateBackup())
-            return true;
+        if (!this.CreateBackup()) return true;
 
         var essentialsDirectory = new File("plugins" + File.separator + "Essentials");
 
         if (!essentialsDirectory.exists()) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                         .GetMessage(commandLabel, command, commandSender, null,
-                                                                                                     "ConvertFromEssentials.Failed.NoDirectory"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "ConvertFromEssentials.Failed.NoDirectory"));
             return true;
         }
 
@@ -65,18 +68,15 @@ public class EssentialsConversionCommand implements ICommandExecutorOverload {
         assert essentials != null;
 
         var userDirectory = new File("plugins" + File.separator + "Essentials" + File.separator + "userdata");
-        if (userDirectory.exists())
-            this.ConvertUserData(userDirectory, essentials, commandSender, command, commandLabel);
+        if (userDirectory.exists()) this.ConvertUserData(userDirectory, essentials, commandSender, command, commandLabel);
 
         var warps = essentials.getWarps();
 
-        if (warps != null && !warps.isEmpty())
-            this.ConvertWarps(warps, commandSender, command, commandLabel);
+        if (warps != null && !warps.isEmpty()) this.ConvertWarps(warps, commandSender, command, commandLabel);
 
         //TODO: Convert kits
 
-        if (this._plugin.GetVaultHookManager() != null)
-            this._plugin.GetVaultHookManager().Hook(true);
+        if (this._plugin.GetVaultHookManager() != null) this._plugin.GetVaultHookManager().Hook(true);
 
 
         commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
@@ -111,8 +111,7 @@ public class EssentialsConversionCommand implements ICommandExecutorOverload {
     }
 
     private void ConvertUserData(File userDirectory, Essentials essentials, CommandSender commandSender, Command command, String commandLabel) {
-        if (!userDirectory.isDirectory())
-            return;
+        if (!userDirectory.isDirectory()) return;
 
         for (var userData : Objects.requireNonNull(userDirectory.listFiles()))
             try {
@@ -150,37 +149,34 @@ public class EssentialsConversionCommand implements ICommandExecutorOverload {
                 exception.printStackTrace();
 
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                             .GetMessageWithStringTarget(commandLabel, command, commandSender,
-                                                                                                                         "warpSetting;" + warp,
-                                                                                                                         "ConvertFromEssentials.Failed.Unknown"));
+                                                                                               .GetMessageWithStringTarget(commandLabel, command, commandSender,
+                                                                                                                           "warpSetting;" + warp,
+                                                                                                                           "ConvertFromEssentials.Failed" + ".Unknown"));
                 return;
             }
     }
 
     private void ConvertMute(User offlineUser, CommandSender commandSender, Command command, String commandLabel) {
-        if (!offlineUser.isMuted())
-            return;
+        if (!offlineUser.isMuted()) return;
 
         var target = offlineUser.getName();
         var reason = this._plugin.GetMessages().GetMessageWithStringTarget(commandLabel, command, commandSender, target, "Mute.DefaultReason");
 
-        if (offlineUser.hasMuteReason())
-            reason = offlineUser.getMuteReason();
+        if (offlineUser.hasMuteReason()) reason = offlineUser.getMuteReason();
 
         var unMute = offlineUser.getMuteTimeout();
 
         var date = this._plugin.GetMuteManager().ConvertLongToDate(unMute);
 
-        var mute =
-                new MuteModeration(UUID.fromString(offlineUser.getUUID().toString()),
-                                   this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.BanSystem." + "ConsoleName"), unMute, date, reason, false);
+        var mute = new MuteModeration(UUID.fromString(offlineUser.getUUID().toString()),
+                                      this._plugin.GetMessages().GetConfiguration().GetString("Messages.Misc.BanSystem." + "ConsoleName"), unMute, date, reason, false);
 
         this._plugin.GetMuteManager().CreateMute(mute);
     }
 
     private void ConvertHomes(User offlineUser, CommandSender commandSender, Command command, String commandLabel, File userData) {
         var homeFile = new File("plugins" + File.separator + "ServerSystem" + File.separator + "Homes", offlineUser.getConfigUUID().toString() + ".yml");
-        FileConfiguration homeCfg = YamlConfiguration.loadConfiguration(homeFile);
+        var homeCfg = YamlConfiguration.loadConfiguration(homeFile);
 
         var setHomes = false;
 
@@ -193,15 +189,13 @@ public class EssentialsConversionCommand implements ICommandExecutorOverload {
 
                 var target = "homeSetting;" + offlineUser.getName();
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                             .GetMessageWithStringTarget(commandLabel, command, commandSender,
-                                                                                                                         target,
-                                                                                                                         "ConvertFromEssentials.Failed.Unknown") +
+                                                                                               .GetMessageWithStringTarget(commandLabel, command, commandSender, target,
+                                                                                                                           "ConvertFromEssentials.Failed" + ".Unknown") +
                                           ";" + home);
                 return;
             }
 
-        if (!setHomes)
-            return;
+        if (!setHomes) return;
 
         try {
             homeCfg.save(homeFile);
@@ -209,9 +203,9 @@ public class EssentialsConversionCommand implements ICommandExecutorOverload {
             exception.printStackTrace();
 
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                         .GetMessageWithStringTarget(commandLabel, command, commandSender,
-                                                                                                                     "homeSaving;" + userData.getName(),
-                                                                                                                     "ConvertFromEssentials.Failed.Unknown"));
+                                                                                           .GetMessageWithStringTarget(commandLabel, command, commandSender,
+                                                                                                                       "homeSaving;" + userData.getName(),
+                                                                                                                       "ConvertFromEssentials.Failed" + ".Unknown"));
         }
     }
 }

@@ -31,8 +31,7 @@ public class BanManager_Yaml extends AbstractBanManager {
 
     @Override
     public boolean IsBanned(UUID uuid) {
-        if (!this._banFile.exists())
-            return false;
+        if (!this._banFile.exists()) return false;
         return this.GetBanByUUID(uuid) != null;
     }
 
@@ -40,12 +39,10 @@ public class BanManager_Yaml extends AbstractBanManager {
     @Override
     public List<String> GetBannedPlayerNames() {
         List<String> playerNameList = new ArrayList<>();
-        if (this._configuration.getConfigurationSection("Banned") == null)
-            return new ArrayList<>();
+        if (this._configuration.getConfigurationSection("Banned") == null) return new ArrayList<>();
         this._configuration.getConfigurationSection("Banned").getKeys(false);
 
-        if (this._configuration.getConfigurationSection("Banned").getKeys(false).isEmpty())
-            return new ArrayList<>();
+        if (this._configuration.getConfigurationSection("Banned").getKeys(false).isEmpty()) return new ArrayList<>();
         for (var uuid : this._configuration.getConfigurationSection("Banned").getKeys(false))
             playerNameList.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName());
         return playerNameList;
@@ -53,8 +50,7 @@ public class BanManager_Yaml extends AbstractBanManager {
 
     @Override
     public BanModeration GetBanByUUID(UUID uuid) {
-        if (!this._banFile.exists())
-            return null;
+        if (!this._banFile.exists()) return null;
 
         try {
 
@@ -70,14 +66,10 @@ public class BanManager_Yaml extends AbstractBanManager {
             var expireDate = this.ConvertLongToDate(expireTime);
             var reason = this._configuration.getString(str + "Reason");
 
-            if (senderUuid == null)
-                return null;
-            if (uuidBanned == null)
-                return null;
-            if (expireDate == null)
-                return null;
-            if (reason == null)
-                return null;
+            if (senderUuid == null) return null;
+            if (uuidBanned == null) return null;
+            if (expireDate == null) return null;
+            if (reason == null) return null;
 
             return new BanModeration(uuid, senderUuid, expireTime, expireDate, reason);
         } catch (NullPointerException ignored) {
@@ -92,11 +84,9 @@ public class BanManager_Yaml extends AbstractBanManager {
 
     @Override
     public BanModeration CreateBan(UUID banned, String senderUUID, String reason, Long howLong, TimeUnit timeUnit) {
-        if (this.IsBanned(banned))
-            this.UnBan(banned);
+        if (this.IsBanned(banned)) this.UnBan(banned);
         var expireTime = System.currentTimeMillis() + (howLong * timeUnit.GetValue());
-        if (howLong < 1)
-            expireTime = -1L;
+        if (howLong < 1) expireTime = -1L;
         this._configuration.set("Banned." + banned.toString() + ".Sender", senderUUID);
         this._configuration.set("Banned." + banned + ".Reason", reason);
         this._configuration.set("Banned." + banned + ".unbanTime", Long.toString(expireTime));

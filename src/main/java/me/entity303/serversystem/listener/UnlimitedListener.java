@@ -44,29 +44,24 @@ public class UnlimitedListener implements Listener {
 
     @EventHandler
     public void OnInvClick(InventoryClickEvent event) {
-        if (event.getClickedInventory() instanceof PlayerInventory playerInventory)
-            if (playerInventory.getHolder() == event.getWhoClicked())
-                this._openInventory.add(event.getWhoClicked());
+        if (event.getClickedInventory() instanceof PlayerInventory playerInventory) {
+            if (playerInventory.getHolder() == event.getWhoClicked()) this._openInventory.add(event.getWhoClicked());
+        }
     }
 
     @EventHandler
     public void OnProjectileLaunch(ProjectileLaunchEvent event) {
         if (event.getEntity().getShooter() instanceof Player player) {
 
-            if (player.getGameMode() == GameMode.CREATIVE)
-                return;
+            if (player.getGameMode() == GameMode.CREATIVE) return;
 
-            if (player.getInventory().getItemInMainHand() == null)
-                return;
+            if (player.getInventory().getItemInMainHand() == null) return;
 
-            if (player.getInventory().getItemInMainHand().getType() == Material.AIR)
-                return;
+            if (player.getInventory().getItemInMainHand().getType() == Material.AIR) return;
 
-            if (player.getInventory().getItemInMainHand().getType() == Material.BOW)
-                return;
+            if (player.getInventory().getItemInMainHand().getType() == Material.BOW) return;
 
-            if (player.getInventory().getItemInMainHand().getType().name().equalsIgnoreCase("CROSSBOW"))
-                return;
+            if (player.getInventory().getItemInMainHand().getType().name().equalsIgnoreCase("CROSSBOW")) return;
 
             var itemStack = player.getInventory().getItemInMainHand();
 
@@ -79,8 +74,7 @@ public class UnlimitedListener implements Listener {
 
     @EventHandler
     public void OnConsume(PlayerItemConsumeEvent event) {
-        if (event.getPlayer().getGameMode() == GameMode.CREATIVE)
-            return;
+        if (event.getPlayer().getGameMode() == GameMode.CREATIVE) return;
 
         if (IsUnlimited(event.getItem())) {
             var itemStack = event.getPlayer().getInventory().getItemInMainHand();
@@ -91,24 +85,18 @@ public class UnlimitedListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void OnBucketPlace(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
-            return;
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
-        if (event.getPlayer().getGameMode() == GameMode.CREATIVE)
-            return;
+        if (event.getPlayer().getGameMode() == GameMode.CREATIVE) return;
 
-        if (event.getItem() == null)
-            return;
+        if (event.getItem() == null) return;
 
-        if (event.getItem().getType() == Material.AIR)
-            return;
+        if (event.getItem().getType() == Material.AIR) return;
 
         if (event.getItem().getType() == Material.BUCKET) {
-            if (!IsUnlimited(event.getItem()))
-                return;
+            if (!IsUnlimited(event.getItem())) return;
 
-            if (event.isCancelled())
-                return;
+            if (event.isCancelled()) return;
 
             var slot = event.getPlayer().getInventory().getHeldItemSlot();
             var itemStack = event.getItem().clone();
@@ -118,14 +106,11 @@ public class UnlimitedListener implements Listener {
             return;
         }
 
-        if (event.getItem().getType() != Material.LAVA_BUCKET && event.getItem().getType() != Material.WATER_BUCKET)
-            return;
+        if (event.getItem().getType() != Material.LAVA_BUCKET && event.getItem().getType() != Material.WATER_BUCKET) return;
 
-        if (!IsUnlimited(event.getItem()))
-            return;
+        if (!IsUnlimited(event.getItem())) return;
 
-        if (event.isCancelled())
-            return;
+        if (event.isCancelled()) return;
 
         var itemStack = event.getItem().clone();
         var slot = event.getPlayer().getInventory().getHeldItemSlot();
@@ -137,8 +122,7 @@ public class UnlimitedListener implements Listener {
 
     @EventHandler
     public void OnDrop(PlayerDropItemEvent event) {
-        if (!IsUnlimited(event.getItemDrop().getItemStack()))
-            return;
+        if (!IsUnlimited(event.getItemDrop().getItemStack())) return;
 
         if (this._openInventory.contains(event.getPlayer())) {
             if (event.getPlayer().getGameMode() == GameMode.CREATIVE) {
@@ -154,8 +138,7 @@ public class UnlimitedListener implements Listener {
 
             if (event.getPlayer().getOpenInventory().getCursor() == null || event.getPlayer().getOpenInventory().getCursor().getType() == Material.AIR) {
                 var itemStack = event.getItemDrop().getItemStack();
-                if (itemStack.getAmount() > itemStack.getType().getMaxStackSize())
-                    itemStack.setAmount(itemStack.getMaxStackSize());
+                if (itemStack.getAmount() > itemStack.getType().getMaxStackSize()) itemStack.setAmount(itemStack.getMaxStackSize());
 
                 event.getPlayer().getOpenInventory().setCursor(itemStack);
 
@@ -177,9 +160,9 @@ public class UnlimitedListener implements Listener {
         }
 
         event.getPlayer()
-         .getInventory()
-         .getItemInMainHand()
-         .setAmount(event.getPlayer().getInventory().getItemInMainHand().getAmount() + event.getItemDrop().getItemStack().getAmount());
+             .getInventory()
+             .getItemInMainHand()
+             .setAmount(event.getPlayer().getInventory().getItemInMainHand().getAmount() + event.getItemDrop().getItemStack().getAmount());
         event.getPlayer().updateInventory();
     }
 
@@ -193,25 +176,25 @@ public class UnlimitedListener implements Listener {
 
     @EventHandler
     public void OnItemDamage(PlayerItemDamageEvent event) {
-        if (IsUnlimited(event.getItem()))
-            event.setCancelled(true);
+        if (IsUnlimited(event.getItem())) event.setCancelled(true);
     }
 
     @EventHandler
     public void OnBlockPlace(BlockPlaceEvent event) {
-        if (event.getPlayer().getGameMode() == GameMode.SURVIVAL || event.getPlayer().getGameMode() == GameMode.ADVENTURE)
+        if (event.getPlayer().getGameMode() == GameMode.SURVIVAL || event.getPlayer().getGameMode() == GameMode.ADVENTURE) {
             if (IsUnlimited(event.getItemInHand())) {
                 event.getItemInHand().setAmount(event.getItemInHand().getAmount() + 1);
                 Bukkit.getScheduler()
                       .runTaskLater(ServerSystem.getPlugin(ServerSystem.class), () -> event.getItemInHand().setAmount(event.getItemInHand().getAmount() - 1), 1L);
                 event.getPlayer().updateInventory();
             }
+        }
     }
 
     @EventHandler
     public void OnEntitySpawn(EntitySpawnEvent event) {
-        if (event.getEntity() instanceof Item item)
-            if (IsUnlimited(item.getItemStack()))
-                ServerSystem.getPlugin(ServerSystem.class).GetVersionStuff().GetNbtViewer().RemoveTag("unlimited", item.getItemStack());
+        if (event.getEntity() instanceof Item item) {
+            if (IsUnlimited(item.getItemStack())) ServerSystem.getPlugin(ServerSystem.class).GetVersionStuff().GetNbtViewer().RemoveTag("unlimited", item.getItemStack());
+        }
     }
 }

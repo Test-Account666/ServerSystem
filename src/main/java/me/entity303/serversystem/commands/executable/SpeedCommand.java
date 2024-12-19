@@ -1,13 +1,16 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
+import me.entity303.serversystem.tabcompleter.SpeedTabCompleter;
 import me.entity303.serversystem.utils.ChatColor;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
-import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+@ServerSystemCommand(name = "Speed", tabCompleter = SpeedTabCompleter.class)
 public class SpeedCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -24,7 +27,7 @@ public class SpeedCommand implements ICommandExecutorOverload {
             return true;
         }
         if (arguments.length == 0) {
-            
+
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Speed"));
             return true;
         }
@@ -34,8 +37,9 @@ public class SpeedCommand implements ICommandExecutorOverload {
 
         if (arguments.length == 1) {
             if (!(commandSender instanceof Player)) {
-                
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Speed"));
+
+                commandSender.sendMessage(
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Speed"));
                 return true;
             }
             player = (Player) commandSender;
@@ -43,22 +47,23 @@ public class SpeedCommand implements ICommandExecutorOverload {
             try {
                 speed = this.GetRealMoveSpeed(this.GetMoveSpeed(Float.parseFloat(arguments[0])), isFly);
             } catch (NumberFormatException ignored) {
-                
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Speed.NotANumber"));
+
+                commandSender.sendMessage(
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Speed.NotANumber"));
                 return true;
             }
         }
 
         if (arguments.length == 2) {
             var target = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[1]);
-            if (target == null)
+            if (target == null) {
                 if ("walk".equalsIgnoreCase(arguments[1]) || "laufen".equalsIgnoreCase(arguments[1]) || "walking".equalsIgnoreCase(arguments[1]) ||
                     "lauf".equalsIgnoreCase(arguments[1]) || "run".equalsIgnoreCase(arguments[1]) || "running".equalsIgnoreCase(arguments[1]) ||
                     "gehen".equalsIgnoreCase(arguments[1])) {
                     if (!(commandSender instanceof Player)) {
-                        
-                        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command,
-                                                                                                                              commandSender, null, "Speed"));
+
+                        commandSender.sendMessage(
+                                this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Speed"));
                         return true;
                     }
                     isFly = false;
@@ -66,9 +71,9 @@ public class SpeedCommand implements ICommandExecutorOverload {
                 } else if ("fly".equalsIgnoreCase(arguments[1]) || "flying".equalsIgnoreCase(arguments[1]) || "flight".equalsIgnoreCase(arguments[1]) ||
                            "flug".equalsIgnoreCase(arguments[1]) || "fliegen".equalsIgnoreCase(arguments[1])) {
                     if (!(commandSender instanceof Player)) {
-                        
-                        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command,
-                                                                                                                              commandSender, null, "Speed"));
+
+                        commandSender.sendMessage(
+                                this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Speed"));
                         return true;
                     }
                     isFly = true;
@@ -77,13 +82,15 @@ public class SpeedCommand implements ICommandExecutorOverload {
                     commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[1]));
                     return true;
                 }
-            else
+            } else {
                 player = target;
+            }
             try {
                 speed = this.GetRealMoveSpeed(this.GetMoveSpeed(Float.parseFloat(arguments[0])), isFly);
             } catch (NumberFormatException ignored) {
-                
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Speed.NotANumber"));
+
+                commandSender.sendMessage(
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Speed.NotANumber"));
                 return true;
             }
         }
@@ -93,25 +100,27 @@ public class SpeedCommand implements ICommandExecutorOverload {
             if (target == null) {
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoTarget(arguments[1]));
                 return true;
-            } else
+            } else {
                 player = target;
+            }
             if ("walk".equalsIgnoreCase(arguments[2]) || "laufen".equalsIgnoreCase(arguments[2]) || "walking".equalsIgnoreCase(arguments[2]) ||
-                "lauf".equalsIgnoreCase(arguments[2]) || "run".equalsIgnoreCase(arguments[2]) || "running".equalsIgnoreCase(arguments[2]) || "gehen".equalsIgnoreCase(
-                    arguments[2]))
+                "lauf".equalsIgnoreCase(arguments[2]) || "run".equalsIgnoreCase(arguments[2]) || "running".equalsIgnoreCase(arguments[2]) ||
+                "gehen".equalsIgnoreCase(arguments[2])) {
                 isFly = false;
-            else if ("fly".equalsIgnoreCase(arguments[2]) || "flying".equalsIgnoreCase(arguments[2]) || "flight".equalsIgnoreCase(arguments[2]) ||
-                     "flug".equalsIgnoreCase(arguments[2]) || "fliegen".equalsIgnoreCase(arguments[2]))
+            } else if ("fly".equalsIgnoreCase(arguments[2]) || "flying".equalsIgnoreCase(arguments[2]) || "flight".equalsIgnoreCase(arguments[2]) || "flug".equalsIgnoreCase(arguments[2]) || "fliegen".equalsIgnoreCase(arguments[2])) {
                 isFly = true;
-            else {
-                
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Speed"));
+            } else {
+
+                commandSender.sendMessage(
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Speed"));
                 return true;
             }
             try {
                 speed = this.GetRealMoveSpeed(this.GetMoveSpeed(Float.parseFloat(arguments[0])), isFly);
             } catch (NumberFormatException ignored) {
-                
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Speed.NotANumber"));
+
+                commandSender.sendMessage(
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Speed.NotANumber"));
                 return true;
             }
         }
@@ -141,42 +150,51 @@ public class SpeedCommand implements ICommandExecutorOverload {
         final var defaultSpeed = isFly? 0.1f : 0.2f;
         var maxSpeed = 1f;
 
-        if (userSpeed < 1f)
+        if (userSpeed < 1f) {
             return defaultSpeed * userSpeed;
-        else {
+        } else {
             var ratio = ((userSpeed - 1) / 9) * (maxSpeed - defaultSpeed);
             return ratio + defaultSpeed;
         }
     }
 
     private float GetMoveSpeed(float userSpeed) {
-        if (userSpeed > 10f)
+        if (userSpeed > 10f) {
             userSpeed = 10f;
-        else if (userSpeed < 0.0001f)
-            userSpeed = 0.0001f;
+        } else if (userSpeed < 0.0001f) userSpeed = 0.0001f;
         return userSpeed;
     }
 
     private void SetMovementSpeed(Player player, Float speed, boolean isFly, CommandSender commandSender, String sped, String command, String commandLabel) {
-        if (isFly)
+        if (isFly) {
             player.setFlySpeed(speed);
-        else
+        } else {
             player.setWalkSpeed(speed);
-        if (commandSender == player)
-            if (isFly)
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                               this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, player, "Speed.Fly.Self").replace("<SPEED>", sped));
-            else
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                               this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, player, "Speed.Walk.Self").replace("<SPEED>", sped));
-        else if (isFly) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                           this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, player, "Speed.Fly.Others.Sender").replace("<SPEED>", sped));
+        }
+        if (commandSender == player) {
+            if (isFly) {
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                               .GetMessage(commandLabel, command, commandSender, player,
+                                                                                                           "Speed.Fly" + ".Self")
+                                                                                               .replace("<SPEED>", sped));
+            } else {
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                               .GetMessage(commandLabel, command, commandSender, player,
+                                                                                                           "Speed.Walk.Self")
+                                                                                               .replace("<SPEED>", sped));
+            }
+        } else if (isFly) {
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                           .GetMessage(commandLabel, command, commandSender, player,
+                                                                                                       "Speed.Fly.Others.Sender")
+                                                                                           .replace("<SPEED>", sped));
             player.sendMessage(this._plugin.GetMessages().GetPrefix() +
                                this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, player, "Speed.Fly.Others.Target").replace("<SPEED>", sped));
         } else {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                           this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, player, "Speed.Walk.Others.Sender").replace("<SPEED>", sped));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                           .GetMessage(commandLabel, command, commandSender, player,
+                                                                                                       "Speed.Walk.Others.Sender")
+                                                                                           .replace("<SPEED>", sped));
             player.sendMessage(this._plugin.GetMessages().GetPrefix() +
                                this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, player, "Speed.Walk.Others.Target").replace("<SPEED>", sped));
         }

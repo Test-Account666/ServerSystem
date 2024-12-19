@@ -67,6 +67,7 @@ Messages:
     OfflineInvsee: "Syntax: &2/<LABEL> <Offline-Spieler>"
     Seen: "Syntax: &2/<LABEL> <Spieler>"
     Freeze: "Syntax: &2/<LABEL> <Spieler>"
+    ManageHomes: "Syntax: &2<LABEL> <Delete|Teleport|List> <Spieler> <Home>"
   Normal:
     GetPos:
       Self: "Du bist bei folgenden Koordinaten: &6X:&2<X> &6Y:&2<Y> &6Z:&2<Z> &6Welt:&2<WORLD>"
@@ -492,6 +493,12 @@ Messages:
       Enabled: "Du bist nun Afk!"
       Disabled: "Du bist nicht mehr Afk!"
       Kick: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4Du wurdest gekickt!<BREAK>&6Grund: &cDu warst zu lange Afk!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
+    ManageHomes:
+      NoHomesFound: "&4<TARGET> &hat keine Homes!"
+      HomeNotFound: "&4<TARGET> &chat keinen Home mit dem Namen &4<HOME>&c!"
+      Deleted: "Du hast den Home &2<HOME> &7von Spieler &2<TARGET> &7gelöscht!"
+      Teleported: "Du hast dich zum Home &2<HOME> &7von Spieler &2<TARGET> &7teleportiert!"
+      Created: "Du hast erfolgreich den Home &2<HOME> &7für den Spieler &2<TARGET> &7erstellt!"
   Misc:
     ServerFull: "&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]<BREAK>&4Der Server ist voll!<BREAK>&cUm trotzdem beitreten zu können, benötigst du die Permission &4<PERMISSION>&c!<BREAK>&2[]&7--------------------------------&2[]<BREAK>&2SERVER<BREAK>&2[]&7--------------------------------&2[]"
     JoinMessage:

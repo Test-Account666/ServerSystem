@@ -18,8 +18,7 @@ public class MuteManager_MySQL extends AbstractMuteManager {
 
     @Override
     public MuteModeration GetMute(OfflinePlayer player) {
-        if (!this.CheckPlayerInMYSQL(player.getUniqueId().toString()))
-            return null;
+        if (!this.CheckPlayerInMYSQL(player.getUniqueId().toString())) return null;
         var senderUUID = this.GetUUIDSender(player.getUniqueId().toString());
         var mutedUUID = player.getUniqueId();
         var unmuteTime = this.GetUnmuteTime(player.getUniqueId().toString());
@@ -32,8 +31,7 @@ public class MuteManager_MySQL extends AbstractMuteManager {
 
     @Override
     public void RemoveMute(UUID mutedUUID) {
-        if (!this.CheckPlayerInMYSQL(mutedUUID.toString()))
-            return;
+        if (!this.CheckPlayerInMYSQL(mutedUUID.toString())) return;
 
         this._plugin.GetMySQL().ExecuteUpdate("DELETE FROM MutedPlayers WHERE BannedUUID='" + mutedUUID + "'");
     }
@@ -45,12 +43,10 @@ public class MuteManager_MySQL extends AbstractMuteManager {
 
     @Override
     public MuteModeration CreateMute(UUID mutedUUID, String senderUUID, String reason, boolean shadow, Long howLong, TimeUnit timeUnit) {
-        if (this.IsMuted(Bukkit.getOfflinePlayer(mutedUUID)))
-            this.RemoveMute(mutedUUID);
+        if (this.IsMuted(Bukkit.getOfflinePlayer(mutedUUID))) this.RemoveMute(mutedUUID);
 
         var expireTime = System.currentTimeMillis() + (howLong * timeUnit.GetValue());
-        if (howLong < 1)
-            expireTime = -1L;
+        if (howLong < 1) expireTime = -1L;
 
         var mute = new MuteModeration(mutedUUID, senderUUID, expireTime, this.ConvertLongToDate(expireTime), reason, shadow);
 
@@ -65,11 +61,9 @@ public class MuteManager_MySQL extends AbstractMuteManager {
         var senderUUID = mute.GetSenderUuid();
         var reason = mute.GetReason();
 
-        if (this.IsMuted(Bukkit.getOfflinePlayer(mutedUUID)))
-            this.RemoveMute(mutedUUID);
+        if (this.IsMuted(Bukkit.getOfflinePlayer(mutedUUID))) this.RemoveMute(mutedUUID);
         long unbanTime = mute.GetExpireTime();
-        if (unbanTime < 1)
-            unbanTime = -1L;
+        if (unbanTime < 1) unbanTime = -1L;
 
         try {
             var query = "INSERT INTO `MutedPlayers` (BannedUUID, SenderUUID, Reason, Shadow, UnbanTime) VALUES (?, ?, ?, ?, ?)";
@@ -98,19 +92,15 @@ public class MuteManager_MySQL extends AbstractMuteManager {
 
         var resultSet = this._plugin.GetMySQL().GetResult("SELECT BannedUUID from MutedPlayers");
 
-        while (true)
-            try {
-                if (resultSet == null)
-                    break;
-                if (!resultSet.next())
-                    break;
-                var uuid = resultSet.getString("BannedUUID");
+        while (true) try {
+            if (resultSet == null) break;
+            if (!resultSet.next()) break;
+            var uuid = resultSet.getString("BannedUUID");
 
-                if (this.CheckPlayerInMYSQL(uuid))
-                    playerNames.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName());
-            } catch (SQLException exception) {
-                exception.printStackTrace();
-            }
+            if (this.CheckPlayerInMYSQL(uuid)) playerNames.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName());
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
 
         return playerNames;
     }
@@ -118,8 +108,7 @@ public class MuteManager_MySQL extends AbstractMuteManager {
     private boolean CheckPlayerInMYSQL(String uuid) {
         var resultSet = this._plugin.GetMySQL().GetResult("SELECT * FROM MutedPlayers WHERE BannedUUID='" + uuid + "'");
         try {
-            while (resultSet.next())
-                return true;
+            while (resultSet.next()) return true;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -129,8 +118,7 @@ public class MuteManager_MySQL extends AbstractMuteManager {
     private String GetUUIDSender(String uuid) {
         var resultSet = this._plugin.GetMySQL().GetResult("SELECT * FROM MutedPlayers WHERE BannedUUID='" + uuid + "'");
         try {
-            while (resultSet.next())
-                return resultSet.getString("SenderUUID");
+            while (resultSet.next()) return resultSet.getString("SenderUUID");
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -140,8 +128,7 @@ public class MuteManager_MySQL extends AbstractMuteManager {
     private Long GetUnmuteTime(String uuid) {
         var resultSet = this._plugin.GetMySQL().GetResult("SELECT * FROM MutedPlayers WHERE BannedUUID='" + uuid + "'");
         try {
-            while (resultSet.next())
-                return resultSet.getLong("UnbanTime");
+            while (resultSet.next()) return resultSet.getLong("UnbanTime");
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -151,8 +138,7 @@ public class MuteManager_MySQL extends AbstractMuteManager {
     private String GetReason(String uuid) {
         var resultSet = this._plugin.GetMySQL().GetResult("SELECT * FROM MutedPlayers WHERE BannedUUID='" + uuid + "'");
         try {
-            while (resultSet.next())
-                return resultSet.getString("Reason");
+            while (resultSet.next()) return resultSet.getString("Reason");
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -162,8 +148,7 @@ public class MuteManager_MySQL extends AbstractMuteManager {
     private boolean IsShadowMute(String uuid) {
         var resultSet = this._plugin.GetMySQL().GetResult("SELECT * FROM MutedPlayers WHERE BannedUUID='" + uuid + "'");
         try {
-            while (resultSet.next())
-                return resultSet.getInt("Shadow") == 1;
+            while (resultSet.next()) return resultSet.getInt("Shadow") == 1;
         } catch (SQLException exception) {
             exception.printStackTrace();
         }

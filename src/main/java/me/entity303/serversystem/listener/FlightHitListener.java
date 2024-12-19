@@ -22,14 +22,11 @@ public class FlightHitListener implements Listener {
             return;
         }
 
-        if (!(event.getEntity() instanceof Player player))
-            return;
+        if (!(event.getEntity() instanceof Player player)) return;
 
-        if (this._plugin.GetPermissions().HasPermission(event.getEntity(), "fly.bypassdamage", true))
-            return;
+        if (this._plugin.GetPermissions().HasPermission(event.getEntity(), "fly.bypassdamage", true)) return;
 
-        if (event.getCause() == EntityDamageEvent.DamageCause.STARVATION)
-            return;
+        if (event.getCause() == EntityDamageEvent.DamageCause.STARVATION) return;
 
         if (player.isFlying() || player.getAllowFlight()) {
             if (this._plugin.IsStopFlightOnHit()) {
@@ -37,8 +34,7 @@ public class FlightHitListener implements Listener {
                 player.setFlying(false);
                 event.getEntity().setFallDistance(0);
             }
-            if (this._plugin.IsDisableFlightOnHit())
-                player.setAllowFlight(false);
+            if (this._plugin.IsDisableFlightOnHit()) player.setAllowFlight(false);
         }
     }
 }

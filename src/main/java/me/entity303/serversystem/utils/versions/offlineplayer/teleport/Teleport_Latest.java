@@ -27,14 +27,13 @@ public class Teleport_Latest implements ITeleport {
     @Override
     public void Teleport(Player player, Location location) {
         try {
-            this._setLocationMethod =
-                    net.minecraft.world.entity.Entity.class.getDeclaredMethod("a", double.class, double.class, double.class, float.class, float.class);
+            this._setLocationMethod = net.minecraft.world.entity.Entity.class.getDeclaredMethod("a", double.class, double.class, double.class, float.class, float.class);
         } catch (NoSuchMethodException exception) {
             exception.printStackTrace();
         }
 
 
-        if (this._getHandleMethod == null)
+        if (this._getHandleMethod == null) {
             try {
                 this._getHandleMethod =
                         Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + "CraftWorld").getDeclaredMethod("getHandle");
@@ -42,6 +41,7 @@ public class Teleport_Latest implements ITeleport {
                 exception.printStackTrace();
                 return;
             }
+        }
 
         EntityPlayer entity;
         try {

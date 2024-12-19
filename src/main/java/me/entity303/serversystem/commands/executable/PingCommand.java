@@ -1,6 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
@@ -11,6 +12,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+@ServerSystemCommand(name = "Ping")
 public class PingCommand implements ICommandExecutorOverload {
     protected final ServerSystem _plugin;
     private Field _pingField;
@@ -30,12 +32,13 @@ public class PingCommand implements ICommandExecutorOverload {
                 return true;
             }
 
-            if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.ping.self.required"))
+            if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.ping.self.required")) {
                 if (!this._plugin.GetPermissions().HasPermission(commandSender, "ping.self.permission")) {
                     var permission = this._plugin.GetPermissions().GetPermission("ping.self.permission");
                     commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                     return true;
                 }
+            }
 
             this.SendPing((Player) commandSender, commandLabel);
             return true;
@@ -56,8 +59,8 @@ public class PingCommand implements ICommandExecutorOverload {
         var ping = this.GetPing(target);
 
         commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                     .GetMessage(commandLabel, command, commandSender, target, "Ping.Others")
-                                                                                     .replace("<PING>", String.valueOf(ping)));
+                                                                                       .GetMessage(commandLabel, command, commandSender, target, "Ping.Others")
+                                                                                       .replace("<PING>", String.valueOf(ping)));
         return true;
     }
 
@@ -66,8 +69,8 @@ public class PingCommand implements ICommandExecutorOverload {
             var ping = this.GetPing(player);
 
             player.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                  .GetMessage(commandLabel, "ping", player, null, "Ping.Self")
-                                                                                  .replace("<PING>", String.valueOf(Math.max(ping, 0))));
+                                                                                    .GetMessage(commandLabel, "ping", player, null, "Ping.Self")
+                                                                                    .replace("<PING>", String.valueOf(Math.max(ping, 0))));
         } catch (Exception exception) {
             player.sendMessage(this._plugin.GetMessages().GetPrefix() +
                                this._plugin.GetMessages().GetMessage(commandLabel, "ping", player, null, "Ping.Self").replace("<PING>", String.valueOf(666)));
@@ -83,8 +86,7 @@ public class PingCommand implements ICommandExecutorOverload {
     }
 
     private int GetPingInternal(Player player) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        if (this._plugin.GetVersionStuff().GetGetHandleMethod() == null)
-            this._plugin.GetVersionStuff().FetchGetHandleMethod(player);
+        if (this._plugin.GetVersionStuff().GetGetHandleMethod() == null) this._plugin.GetVersionStuff().FetchGetHandleMethod(player);
 
         var entityPlayer = this._plugin.GetVersionStuff().GetGetHandleMethod().invoke(player);
         if (this._pingField == null && this._getPingMethod == null) {
@@ -93,16 +95,16 @@ public class PingCommand implements ICommandExecutorOverload {
             } catch (NoSuchFieldError | NoSuchFieldException exception) {
                 this._getPingMethod = player.getClass().getDeclaredMethod("getPing");
             }
-            if (this._pingField != null)
-                this._pingField.setAccessible(true);
+            if (this._pingField != null) this._pingField.setAccessible(true);
         }
 
         var ping = 666;
 
-        if (this._getPingMethod != null)
+        if (this._getPingMethod != null) {
             ping = (int) this._getPingMethod.invoke(player);
-        else
+        } else {
             ping = this._pingField.getInt(entityPlayer);
+        }
 
         return Math.max(ping, 0);
     }

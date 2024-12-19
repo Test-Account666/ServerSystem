@@ -19,8 +19,7 @@ public class CommandListener implements Listener {
     @EventHandler
     public void OnCommand(PlayerCommandPreprocessEvent event) {
         if (event.getMessage().equalsIgnoreCase("/restart")) {
-            if (this._plugin.getCommand("restart") == null)
-                return;
+            if (this._plugin.getCommand("restart") == null) return;
 
             event.setCancelled(true);
             this._plugin.getCommand("restart").execute(event.getPlayer(), "restart", new String[] { });
@@ -40,8 +39,7 @@ public class CommandListener implements Listener {
     }
 
     private void SendCommandSpyMessages(ServerCommandEvent event) {
-        if (Bukkit.getOnlinePlayers().isEmpty())
-            return;
+        if (Bukkit.getOnlinePlayers().isEmpty()) return;
 
         Bukkit.getOnlinePlayers().forEach(all -> {
             if (this._plugin.GetCommanddSpy().contains(all)) {

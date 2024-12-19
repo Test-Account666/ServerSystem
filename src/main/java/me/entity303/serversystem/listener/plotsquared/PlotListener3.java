@@ -9,7 +9,8 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-@SuppressWarnings("UnstableApiUsage") public class PlotListener3 {
+@SuppressWarnings("UnstableApiUsage")
+public class PlotListener3 {
 
     public PlotListener3() {
         Class clazz;
@@ -48,10 +49,11 @@ import java.lang.reflect.Method;
     public void OnPlayerEnterPlot(PlayerEnterPlotEvent event) {
         var timeDisabledFlag = event.getPlot().getFlag((TimeFlag.TIME_DISABLED));
         var player = (Player) event.getPlotPlayer().getPlatformPlayer();
-        if (timeDisabledFlag > -9000000000L)
+        if (timeDisabledFlag > -9000000000L) {
             PlotListener.TIME_MAP.put(player, timeDisabledFlag);
-        else
+        } else {
             PlotListener.TIME_MAP.remove(player);
+        }
     }
 
     @Subscribe

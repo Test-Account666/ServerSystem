@@ -45,13 +45,18 @@ public final class CommandUtils {
     public static Player GetPlayer(ServerSystem plugin, CommandSender sender, String name, UUID uuid) {
         Player player = null;
 
-        if (name != null) player = Bukkit.getPlayer(name);
-        else if (uuid != null) player = Bukkit.getPlayer(uuid);
+        if (name != null) {
+            player = Bukkit.getPlayer(name);
+        } else if (uuid != null) player = Bukkit.getPlayer(uuid);
 
         if (player == null) return null;
-        if (sender instanceof Player)
-            if (!plugin.GetVanish().IsVanish(player) || plugin.GetPermissions().HasPermission(sender, "vanish.see", true)) return player;
-            else return null;
+        if (sender instanceof Player) {
+            if (!plugin.GetVanish().IsVanish(player) || plugin.GetPermissions().HasPermission(sender, "vanish.see", true)) {
+                return player;
+            } else {
+                return null;
+            }
+        }
         return player;
     }
 
@@ -62,27 +67,24 @@ public final class CommandUtils {
     public static Player GetHookedPlayer(ServerSystem plugin, OfflinePlayer offlineTarget) {
         try {
             // Create a subclass of CraftPlayer with overridden saveData method
-            var hookedPlayerClass =
-                    new ByteBuddy().subclass(Class.forName(String.format(NMS_CRAFT_PLAYER_CLASS_NAME, plugin.GetVersionManager().GetNMSVersion())))
-                                   .method(ElementMatchers.named("saveData"))
-                                   .intercept(MethodCall.invokeSuper()
-                                                        .withAllArguments()
-                                                        .andThen(MethodDelegation.withDefaultConfiguration()
-                                                                                 .withBinders(Morph.Binder.install(IMorpher.class))
-                                                                                 .to(new SaveDataInterceptor(plugin))))
-                                   .make()
-                                   .load(plugin.getClass().getClassLoader())
-                                   .getLoaded();
+            var hookedPlayerClass = new ByteBuddy().subclass(Class.forName(String.format(NMS_CRAFT_PLAYER_CLASS_NAME, plugin.GetVersionManager().GetNMSVersion())))
+                                                   .method(ElementMatchers.named("saveData"))
+                                                   .intercept(MethodCall.invokeSuper()
+                                                                        .withAllArguments()
+                                                                        .andThen(MethodDelegation.withDefaultConfiguration()
+                                                                                                 .withBinders(Morph.Binder.install(IMorpher.class))
+                                                                                                 .to(new SaveDataInterceptor(plugin))))
+                                                   .make()
+                                                   .load(plugin.getClass().getClassLoader())
+                                                   .getLoaded();
 
             // Instantiate the hooked player
             var hookedPlayerConstructor = hookedPlayerClass.getConstructors()[0];
-            var hookedPlayer =
-                    hookedPlayerConstructor.newInstance(Bukkit.getServer(), plugin.GetVersionStuff().GetEntityPlayer().GetEntityPlayer(offlineTarget));
+            var hookedPlayer = hookedPlayerConstructor.newInstance(Bukkit.getServer(), plugin.GetVersionStuff().GetEntityPlayer().GetEntityPlayer(offlineTarget));
 
             // Load data method setup
             if (_loadDataMethod == null) {
-                _loadDataMethod = Class.forName(String.format(NMS_CRAFT_PLAYER_CLASS_NAME, plugin.GetVersionManager().GetNMSVersion()))
-                                       .getDeclaredMethod("loadData");
+                _loadDataMethod = Class.forName(String.format(NMS_CRAFT_PLAYER_CLASS_NAME, plugin.GetVersionManager().GetNMSVersion())).getDeclaredMethod("loadData");
                 _loadDataMethod.setAccessible(true);
             }
 

@@ -47,7 +47,7 @@ public class SaveData_Latest implements ISaveData {
         }
 
         try {
-            if (SaveData_Latest.PLAYER_LIST == null)
+            if (SaveData_Latest.PLAYER_LIST == null) {
                 try {
                     var method = MinecraftServer.class.getDeclaredMethod("getPlayerList");
                     method.setAccessible(true);
@@ -64,6 +64,7 @@ public class SaveData_Latest implements ISaveData {
                     field.setAccessible(true);
                     SaveData_Latest.PLAYER_LIST = (PlayerList) field.get(MinecraftServer.getServer());
                 }
+            }
 
             if (SaveData_Latest.WORLD_NBT_FIELD == null) {
                 SaveData_Latest.WORLD_NBT_FIELD = Arrays.stream(PlayerList.class.getDeclaredFields())
@@ -71,12 +72,13 @@ public class SaveData_Latest implements ISaveData {
                                                         .findFirst()
                                                         .orElse(null);
 
-                if (SaveData_Latest.WORLD_NBT_FIELD == null)
+                if (SaveData_Latest.WORLD_NBT_FIELD == null) {
                     try {
                         throw new NoSuchFieldException("Couldn't find field 'worldNbt' in class " + PlayerList.class.getName());
                     } catch (Exception exception) {
                         exception.printStackTrace();
                     }
+                }
                 return;
 
             }
@@ -107,9 +109,7 @@ public class SaveData_Latest implements ISaveData {
                     SaveData_Latest.LOAD_METHOD = Arrays.stream(WorldNBTStorage.class.getDeclaredMethods())
                                                         .filter(method -> method.getReturnType().getName().equalsIgnoreCase(NBTTagCompound.class.getName()))
                                                         .filter(method -> method.getParameters().length == 1)
-                                                        .filter(method -> method.getParameters()[0].getType()
-                                                                                                  .getName()
-                                                                                                  .equalsIgnoreCase(EntityHuman.class.getName()))
+                                                        .filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(EntityHuman.class.getName()))
                                                         .findFirst()
                                                         .orElse(null);
                     if (SaveData_Latest.LOAD_METHOD == null) {
@@ -131,13 +131,13 @@ public class SaveData_Latest implements ISaveData {
                                                                    .filter(method -> method.getReturnType().getName().toLowerCase(Locale.ROOT).contains("boolean"))
                                                                    .filter(method -> method.getParameters().length == 2)
                                                                    .filter(method -> method.getParameters()[0].getType()
-                                                                                                          .getName()
-                                                                                                          .toLowerCase(Locale.ROOT)
-                                                                                                          .contains("string"))
+                                                                                                              .getName()
+                                                                                                              .toLowerCase(Locale.ROOT)
+                                                                                                              .contains("string"))
                                                                    .filter(method -> method.getParameters()[1].getType()
-                                                                                                          .getName()
-                                                                                                          .toLowerCase(Locale.ROOT)
-                                                                                                          .contains("int"))
+                                                                                                              .getName()
+                                                                                                              .toLowerCase(Locale.ROOT)
+                                                                                                              .contains("int"))
                                                                    .findFirst()
                                                                    .orElse(null);
 
@@ -158,9 +158,9 @@ public class SaveData_Latest implements ISaveData {
                                                                 .filter(method -> method.getReturnType().getName().equalsIgnoreCase(NBTTagCompound.class.getName()))
                                                                 .filter(method -> method.getParameters().length == 1)
                                                                 .filter(method -> method.getParameters()[0].getType()
-                                                                                                         .getName()
-                                                                                                         .toLowerCase(Locale.ROOT)
-                                                                                                         .contains("string"))
+                                                                                                           .getName()
+                                                                                                           .toLowerCase(Locale.ROOT)
+                                                                                                           .contains("string"))
                                                                 .findFirst()
                                                                 .orElse(null);
 
@@ -199,15 +199,15 @@ public class SaveData_Latest implements ISaveData {
                 }
 
 
-                if (oldData != null && (boolean) SaveData_Latest.HAS_KEY_OF_TYPE_METHOD.invoke(oldData, "RootVehicle", 10))
+                if (oldData != null && (boolean) SaveData_Latest.HAS_KEY_OF_TYPE_METHOD.invoke(oldData, "RootVehicle", 10)) {
                     SaveData_Latest.SET_METHOD.invoke(playerData, "RootVehicle", SaveData_Latest.GET_COMPOUND_METHOD.invoke(oldData, "RootVehicle"));
+                }
             }
 
             var file = new File(worldNBTStorage.getPlayerDir(), player.getUniqueId() + ".dat.tmp");
             var file1 = new File(worldNBTStorage.getPlayerDir(), player.getUniqueId() + ".dat");
             NBTCompressedStreamTools.a(playerData, Files.newOutputStream(file.toPath()));
-            if (file1.exists() && !file1.delete() || !file.renameTo(file1))
-                Bukkit.getLogger().severe("Failed to save player data for " + player.getDisplayName());
+            if (file1.exists() && !file1.delete() || !file.renameTo(file1)) Bukkit.getLogger().severe("Failed to save player data for " + player.getDisplayName());
         } catch (Exception var5) {
             var5.printStackTrace();
             Bukkit.getLogger().severe("Failed to save player data for " + player.getDisplayName());

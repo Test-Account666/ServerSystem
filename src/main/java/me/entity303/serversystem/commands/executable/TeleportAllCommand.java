@@ -1,6 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
@@ -9,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+@ServerSystemCommand(name = "TeleportAll")
 public class TeleportAllCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -33,8 +35,8 @@ public class TeleportAllCommand implements ICommandExecutorOverload {
 
             Bukkit.getOnlinePlayers().forEach(all -> all.teleport(((Entity) commandSender).getLocation()));
 
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "TpAll.Self"));
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "TpAll.Self"));
             return true;
         }
 
@@ -52,11 +54,10 @@ public class TeleportAllCommand implements ICommandExecutorOverload {
 
         Bukkit.getOnlinePlayers().forEach(all -> all.teleport(target.getLocation()));
         var command1 = command.getName();
-        target.sendMessage(
-                this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command1, commandSender, target, "TpAll.Self"));
+        target.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command1, commandSender, target, "TpAll.Self"));
 
-        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                  this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "TpAll.Others"));
+        commandSender.sendMessage(
+                this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "TpAll.Others"));
         return true;
     }
 }

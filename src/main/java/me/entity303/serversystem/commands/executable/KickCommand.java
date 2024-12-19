@@ -1,6 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
@@ -9,12 +10,17 @@ import org.bukkit.command.CommandSender;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@ServerSystemCommand(name = "Kick")
 public class KickCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
 
     public KickCommand(ServerSystem plugin) {
         this._plugin = plugin;
+    }
+
+    public static boolean ShouldRegister(ServerSystem serverSystem) {
+        return serverSystem.GetConfigReader().GetBoolean("banSystem.enabled");
     }
 
     @Override
@@ -26,8 +32,7 @@ public class KickCommand implements ICommandExecutorOverload {
         }
         if (arguments.length == 0) {
 
-            commandSender.sendMessage(
-                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Kick"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Kick"));
             return true;
         }
 
@@ -38,15 +43,14 @@ public class KickCommand implements ICommandExecutorOverload {
         }
 
         if (this._plugin.GetPermissions().HasPermission(target, "kick.exempt", true)) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Kick.CannotKick"));
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Kick.CannotKick"));
             return true;
         }
 
         var reason = this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Kick.DefaultReason");
 
-        if (arguments.length > 1)
-            reason = IntStream.range(1, arguments.length).mapToObj(index -> arguments[index] + " ").collect(Collectors.joining());
+        if (arguments.length > 1) reason = IntStream.range(1, arguments.length).mapToObj(index -> arguments[index] + " ").collect(Collectors.joining());
 
         target.kickPlayer(this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Kick.Kick").replace("<REASON>", reason));
 

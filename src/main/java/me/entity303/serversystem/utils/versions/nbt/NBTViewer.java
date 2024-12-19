@@ -23,11 +23,9 @@ public class NBTViewer implements INBTViewer {
 
     @Override
     public boolean IsTagSet(String tag, ItemStack itemStack) {
-        if (itemStack.getItemMeta() == null)
-            return false;
+        if (itemStack.getItemMeta() == null) return false;
 
-        if (!(itemStack.getItemMeta() instanceof PersistentDataHolder))
-            return false;
+        if (!(itemStack.getItemMeta() instanceof PersistentDataHolder)) return false;
 
         var meta = itemStack.getItemMeta();
         assert meta != null;
@@ -40,14 +38,11 @@ public class NBTViewer implements INBTViewer {
 
     @Override
     public ItemStack RemoveTag(String tag, ItemStack itemStack) {
-        if (itemStack.getItemMeta() == null)
-            return itemStack;
+        if (itemStack.getItemMeta() == null) return itemStack;
 
-        if (!(itemStack.getItemMeta() instanceof PersistentDataHolder))
-            return itemStack;
+        if (!(itemStack.getItemMeta() instanceof PersistentDataHolder)) return itemStack;
 
-        if (!this.IsTagSet(tag, itemStack))
-            return itemStack;
+        if (!this.IsTagSet(tag, itemStack)) return itemStack;
 
         var meta = itemStack.getItemMeta();
         assert meta != null;
@@ -56,8 +51,7 @@ public class NBTViewer implements INBTViewer {
 
         var namespacedKey = this.GetOrCreateKey(tag);
 
-        if (!container.has(namespacedKey, PersistentDataType.BYTE))
-            return itemStack;
+        if (!container.has(namespacedKey, PersistentDataType.BYTE)) return itemStack;
 
         container.remove(namespacedKey);
 
@@ -67,14 +61,13 @@ public class NBTViewer implements INBTViewer {
 
     @Override
     public ItemStack SetTag(String tag, ItemStack itemStack) {
-        if (itemStack.getItemMeta() == null)
-            throw new NullPointerException("ItemStack doesn't have ItemMeta, cannot set tag!");
+        if (itemStack.getItemMeta() == null) throw new NullPointerException("ItemStack doesn't have ItemMeta, cannot set tag!");
 
-        if (!(itemStack.getItemMeta() instanceof PersistentDataHolder))
+        if (!(itemStack.getItemMeta() instanceof PersistentDataHolder)) {
             throw new IllegalStateException("ItemStack ItemMeta doesn't extend PersistentDataHolder, cannot set tag!");
+        }
 
-        if (this.IsTagSet(tag, itemStack))
-            return itemStack;
+        if (this.IsTagSet(tag, itemStack)) return itemStack;
 
         var meta = itemStack.getItemMeta();
         assert meta != null;

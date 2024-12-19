@@ -14,10 +14,8 @@ public class AsyncUnbanEvent extends Event {
     private final String _reason;
 
     public AsyncUnbanEvent(CommandSender sender, OfflinePlayer target) {
-        this(sender, target, ServerSystem.getPlugin(ServerSystem.class)
-                                         .GetMessages()
-                                         .GetMessageWithStringTarget("unban", "unban", sender, target.getName(),
-                                                                     "Ban.DefaultReason"));
+        this(sender, target,
+             ServerSystem.getPlugin(ServerSystem.class).GetMessages().GetMessageWithStringTarget("unban", "unban", sender, target.getName(), "Ban.DefaultReason"));
     }
 
     public AsyncUnbanEvent(CommandSender sender, OfflinePlayer target, String reason) {

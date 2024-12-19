@@ -5,8 +5,8 @@ import org.bukkit.OfflinePlayer;
 
 public class EconomyManager_Disabled extends AbstractEconomyManager {
 
-    public EconomyManager_Disabled(String currencySingular, String currencyPlural, String startingMoney, String displayFormat, String moneyFormat,
-                                   String separator, String thousands, ServerSystem plugin) {
+    public EconomyManager_Disabled(String currencySingular, String currencyPlural, String startingMoney, String displayFormat, String moneyFormat, String separator,
+                                   String thousands, ServerSystem plugin) {
         super(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, plugin);
     }
 

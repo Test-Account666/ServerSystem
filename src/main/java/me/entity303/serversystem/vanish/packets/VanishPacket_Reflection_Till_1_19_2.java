@@ -59,14 +59,15 @@ public class VanishPacket_Reflection_Till_1_19_2 extends AbstractVanishPacket {
             return;
         }
 
-        if (this._collidesField != null)
+        if (this._collidesField != null) {
             try {
                 this._collidesField.set(entityPlayer, !vanish);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
-        else
+        } else {
             this._plugin.Warn("CollidesField null!");
+        }
 
         player.setCollidable(false);
 
@@ -81,27 +82,27 @@ public class VanishPacket_Reflection_Till_1_19_2 extends AbstractVanishPacket {
 
         Object playerListName = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + player.getPlayerListName() + "\"}");
 
-        if (this._playerInteractManagerField == null)
+        if (this._playerInteractManagerField == null) {
             try {
                 this._playerInteractManagerField = Class.forName("net.minecraft.server.level.EntityPlayer").getField("d");
             } catch (ClassNotFoundException | NoSuchFieldException exception) {
                 exception.printStackTrace();
             }
+        }
 
-        if (this._getProfileMethod == null)
+        if (this._getProfileMethod == null) {
             try {
                 this._getProfileMethod = Class.forName("net.minecraft.world.entity.player.EntityHuman").getMethod("getProfile");
             } catch (NoSuchMethodException | ClassNotFoundException exception) {
                 try {
                     for (var method : Class.forName("net.minecraft.world.entity.player.EntityHuman").getDeclaredMethods())
-                        if (method.getReturnType().getName().contains("GameProfile"))
-                            if (method.getParameters().length == 0)
-                                this._getProfileMethod = method;
+                        if (method.getReturnType().getName().contains("GameProfile")) if (method.getParameters().length == 0) this._getProfileMethod = method;
                 } catch (ClassNotFoundException exception1) {
                     exception1.addSuppressed(exception);
                     exception1.printStackTrace();
                 }
             }
+        }
 
         Object profile = null;
 
@@ -129,12 +130,9 @@ public class VanishPacket_Reflection_Till_1_19_2 extends AbstractVanishPacket {
             Constructor cons = null;
 
             for (var con : Class.forName("net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo").getConstructors())
-                if (con.getParameterCount() == 2)
-                    if (con.getParameterTypes()[1] == net.minecraft.server.level.EntityPlayer[].class)
-                        cons = con;
+                if (con.getParameterCount() == 2) if (con.getParameterTypes()[1] == net.minecraft.server.level.EntityPlayer[].class) cons = con;
 
-            if (cons == null)
-                return;
+            if (cons == null) return;
 
             playerInfo = cons.newInstance(Class.forName("net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo$EnumPlayerInfoAction").getEnumConstants()[0],
                                           entityPlayers);
@@ -153,12 +151,13 @@ public class VanishPacket_Reflection_Till_1_19_2 extends AbstractVanishPacket {
                         return;
                     }
 
-                    if (this._sendPacketMethod == null)
+                    if (this._sendPacketMethod == null) {
                         this._sendPacketMethod = Arrays.stream(PlayerConnection.class.getMethods())
                                                        .filter(method -> method.getParameters().length == 1)
                                                        .filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(Packet.class.getName()))
                                                        .findFirst()
                                                        .orElse(null);
+                    }
 
                     try {
                         this._sendPacketMethod.invoke(connection, playerInfo);
@@ -197,21 +196,21 @@ public class VanishPacket_Reflection_Till_1_19_2 extends AbstractVanishPacket {
             }
         }
 
-        if (!this._v19)
+        if (!this._v19) {
             try {
                 playerInfoData = this._constructor.newInstance(this._getProfileMethod.invoke(entityPlayer), this.GetPing(player),
                                                                Class.forName("net.minecraft.world.level.EnumGamemode").getEnumConstants()[3], playerListName);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | ClassNotFoundException instantiationException) {
                 instantiationException.printStackTrace();
             }
-        else
+        } else {
             try {
                 playerInfoData = this._constructor.newInstance(this._getProfileMethod.invoke(entityPlayer), this.GetPing(player),
-                                                               Class.forName("net.minecraft.world.level.EnumGamemode").getEnumConstants()[3], playerListName,
-                                                               null);
+                                                               Class.forName("net.minecraft.world.level.EnumGamemode").getEnumConstants()[3], playerListName, null);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | ClassNotFoundException instantiationException) {
                 instantiationException.printStackTrace();
             }
+        }
 
         Field bField = null;
         try {
@@ -232,8 +231,7 @@ public class VanishPacket_Reflection_Till_1_19_2 extends AbstractVanishPacket {
 
         for (var all : Bukkit.getOnlinePlayers())
             if (all != player) {
-                if (!this._plugin.GetPermissions().HasPermission(all, "vanish.see", true))
-                    continue;
+                if (!this._plugin.GetPermissions().HasPermission(all, "vanish.see", true)) continue;
                 Object connection = null;
                 try {
                     connection = this._playerConnectionField.get(this._getHandleMethod.invoke(all));
@@ -241,12 +239,13 @@ public class VanishPacket_Reflection_Till_1_19_2 extends AbstractVanishPacket {
                     exception.printStackTrace();
                 }
 
-                if (this._sendPacketMethod == null)
+                if (this._sendPacketMethod == null) {
                     this._sendPacketMethod = Arrays.stream(PlayerConnection.class.getMethods())
                                                    .filter(method -> method.getParameters().length == 1)
                                                    .filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(Packet.class.getName()))
                                                    .findFirst()
                                                    .orElse(null);
+                }
 
                 this._sendPacketMethod.setAccessible(true);
 

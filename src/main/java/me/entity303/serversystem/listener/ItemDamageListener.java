@@ -16,16 +16,15 @@ public class ItemDamageListener implements Listener {
     @EventHandler
     public void OnItemDamage(PlayerItemDamageEvent event) {
         var currentDurability = event.getItem().getType().getMaxDurability() - event.getDamage();
-        if (currentDurability > 20 || currentDurability <= -1)
-            return;
+        if (currentDurability > 20 || currentDurability <= -1) return;
 
         this._plugin.GetVersionStuff()
-                   .GetActionBar()
-                   .SendActionBar(event.getPlayer(), this._plugin.GetMessages()
-                                                            .GetMessage("break", "break", event.getPlayer(), null, "ItemBreaking")
-                                                            .replace("\"", "\\\"")
-                                                            .replace("<ITEM>", event.getItem().getType().name())
-                                                            .replace("<DURABILITY>", String.valueOf(currentDurability + 1))
-                                                            .replace("<MAXDURABILITY>", String.valueOf(event.getItem().getType().getMaxDurability() + 1)));
+                    .GetActionBar()
+                    .SendActionBar(event.getPlayer(), this._plugin.GetMessages()
+                                                                  .GetMessage("break", "break", event.getPlayer(), null, "ItemBreaking")
+                                                                  .replace("\"", "\\\"")
+                                                                  .replace("<ITEM>", event.getItem().getType().name())
+                                                                  .replace("<DURABILITY>", String.valueOf(currentDurability + 1))
+                                                                  .replace("<MAXDURABILITY>", String.valueOf(event.getItem().getType().getMaxDurability() + 1)));
     }
 }

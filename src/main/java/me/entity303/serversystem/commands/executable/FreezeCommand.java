@@ -1,6 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -9,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataHolder;
 
+@ServerSystemCommand(name = "Freeze")
 public class FreezeCommand implements ICommandExecutorOverload {
     protected final ServerSystem _plugin;
     private final NamespacedKey _namespacedKey;
@@ -43,8 +45,8 @@ public class FreezeCommand implements ICommandExecutorOverload {
 
         if (this.IsFrozen(target)) {
             this.UnFreeze(target);
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Freeze.UnFreeze"));
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Freeze.UnFreeze"));
             return true;
         }
 
@@ -69,13 +71,11 @@ public class FreezeCommand implements ICommandExecutorOverload {
     }
 
     public static boolean IsFrozen(Player player, NamespacedKey namespacedKey) {
-        if (!player.getPersistentDataContainer().has(namespacedKey, org.bukkit.persistence.PersistentDataType.BYTE))
-            return false;
+        if (!player.getPersistentDataContainer().has(namespacedKey, org.bukkit.persistence.PersistentDataType.BYTE)) return false;
 
         var frozen = player.getPersistentDataContainer().get(namespacedKey, org.bukkit.persistence.PersistentDataType.BYTE);
 
-        if (frozen == null)
-            return false;
+        if (frozen == null) return false;
 
         return frozen >= 1;
     }

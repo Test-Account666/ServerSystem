@@ -11,7 +11,6 @@ import net.minecraft.world.entity.player.PlayerInventory;
 import net.minecraft.world.inventory.Container;
 import net.minecraft.world.inventory.ContainerAccess;
 import net.minecraft.world.inventory.ContainerStonecutter;
-import net.minecraft.world.inventory.Containers;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryView;
 
@@ -24,9 +23,7 @@ public class VirtualStoneCutter_Latest extends AbstractVirtualStoneCutter {
     public void OpenStoneCutter(Player player) {
         if (AbstractVirtual.GET_INVENTORY_METHOD == null) {
             AbstractVirtual.GET_INVENTORY_METHOD = Arrays.stream(EntityHuman.class.getDeclaredMethods())
-                                                         .filter(method -> method.getReturnType()
-                                                                                 .getName()
-                                                                                 .equalsIgnoreCase(PlayerInventory.class.getName()))
+                                                         .filter(method -> method.getReturnType().getName().equalsIgnoreCase(PlayerInventory.class.getName()))
                                                          .filter(method -> method.getParameters().length == 0)
                                                          .findFirst()
                                                          .orElse(null);
@@ -53,15 +50,12 @@ public class VirtualStoneCutter_Latest extends AbstractVirtualStoneCutter {
             return;
         }
 
-        if (playerConnection == null)
-            return;
+        if (playerConnection == null) return;
 
         if (AbstractVirtual.SEND_PACKET_METHOD == null) {
             AbstractVirtual.SEND_PACKET_METHOD = Arrays.stream(playerConnection.getClass().getMethods())
                                                        .filter(method -> method.getParameters().length == 1)
-                                                       .filter(method -> method.getParameters()[0].getType()
-                                                                                                  .getName()
-                                                                                                  .equalsIgnoreCase(Packet.class.getName()))
+                                                       .filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(Packet.class.getName()))
                                                        .findFirst()
                                                        .orElse(null);
 
@@ -98,9 +92,7 @@ public class VirtualStoneCutter_Latest extends AbstractVirtualStoneCutter {
         if (AbstractVirtual.INIT_MENU_METHOD == null) {
             AbstractVirtual.INIT_MENU_METHOD = Arrays.stream(EntityPlayer.class.getDeclaredMethods())
                                                      .filter(method -> method.getParameters().length == 1)
-                                                     .filter(method -> method.getParameters()[0].getType()
-                                                                                                .getName()
-                                                                                                .equalsIgnoreCase(Container.class.getName()))
+                                                     .filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(Container.class.getName()))
                                                      .findFirst()
                                                      .orElse(null);
 
@@ -119,9 +111,7 @@ public class VirtualStoneCutter_Latest extends AbstractVirtualStoneCutter {
 
         EntityPlayer human;
         try {
-            human = (EntityPlayer) Class.forName("org.bukkit.craftbukkit." + this.GetVersion() + "entity.CraftPlayer")
-                                        .getDeclaredMethod("getHandle")
-                                        .invoke(player);
+            human = (EntityPlayer) Class.forName("org.bukkit.craftbukkit." + this.GetVersion() + "entity.CraftPlayer").getDeclaredMethod("getHandle").invoke(player);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException exception) {
             exception.printStackTrace();
             return;
@@ -139,14 +129,13 @@ public class VirtualStoneCutter_Latest extends AbstractVirtualStoneCutter {
             return;
         }
 
-        container.setTitle(IChatBaseComponent.ChatSerializer.a("{\"text\":\"Stonecutter\"}"));
+        container.setTitle((IChatBaseComponent) this._inventoryTitle);
 
         container.checkReachable = false;
 
         try {
-            AbstractVirtual.SEND_PACKET_METHOD.invoke(playerConnection, new PacketPlayOutOpenWindow(containerId, Containers.x,
-                                                                                                    IChatBaseComponent.ChatSerializer.a(
-                                                                                                            "{\"text\":\"Stonecutter\"}")));
+            AbstractVirtual.SEND_PACKET_METHOD.invoke(playerConnection,
+                                                      new PacketPlayOutOpenWindow(containerId, this._containers, (IChatBaseComponent) this._inventoryTitle));
         } catch (IllegalAccessException | InvocationTargetException exception) {
             exception.printStackTrace();
             return;

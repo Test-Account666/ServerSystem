@@ -1,7 +1,9 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
+import me.entity303.serversystem.tabcompleter.HomeTabCompleter;
 import me.entity303.serversystem.utils.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@ServerSystemCommand(name = "Home", tabCompleter = HomeTabCompleter.class)
 public class HomeCommand implements ICommandExecutorOverload {
     private final ServerSystem _plugin;
 
@@ -30,19 +33,20 @@ public class HomeCommand implements ICommandExecutorOverload {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetOnlyPlayer());
             return true;
         }
-        if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.home.required"))
+        if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.home.required")) {
             if (!this._plugin.GetPermissions().HasPermission(commandSender, "home.permission")) {
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
                                           this._plugin.GetMessages().GetNoPermission(this._plugin.GetPermissions().GetPermission("home.permission")));
                 return true;
             }
+        }
 
         var homesFile = new File("plugins//ServerSystem//Homes", ((Player) commandSender).getUniqueId() + ".yml");
-        FileConfiguration cfg = YamlConfiguration.loadConfiguration(homesFile);
+        var cfg = YamlConfiguration.loadConfiguration(homesFile);
 
         if (!homesFile.exists()) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                      this._plugin.GetMessages().GetMessage(commandLabel, command.getName(), commandSender, null, "Home.NoHomes"));
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command.getName(), commandSender, null, "Home.NoHomes"));
             return true;
         }
 
@@ -53,9 +57,9 @@ public class HomeCommand implements ICommandExecutorOverload {
 
         if (cfg.get("Homes." + arguments[0].toUpperCase()) == null) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                         .GetMessage(commandLabel, command.getName(), commandSender, null,
-                                                                                                     "Home.HomeDoesntExist")
-                                                                                         .replace("<HOME>", arguments[0].toUpperCase()));
+                                                                                           .GetMessage(commandLabel, command.getName(), commandSender, null,
+                                                                                                       "Home.HomeDoesntExist")
+                                                                                           .replace("<HOME>", arguments[0].toUpperCase()));
             return true;
         }
 
@@ -64,8 +68,7 @@ public class HomeCommand implements ICommandExecutorOverload {
             this._plugin.GetTeleportMap().put(((Player) commandSender), Bukkit.getScheduler().runTaskLater(this._plugin, () -> {
                 OfflinePlayer player = ((OfflinePlayer) commandSender).getPlayer();
                 assert player != null;
-                if (!player.isOnline())
-                    return;
+                if (!player.isOnline()) return;
 
                 var location = (Location) cfg.get("Homes." + arguments[0].toUpperCase());
 
@@ -73,16 +76,16 @@ public class HomeCommand implements ICommandExecutorOverload {
                 player1.teleport(location);
 
                 commandSender.sendMessage(HomeCommand.this._plugin.GetMessages().GetPrefix() + ChatColor.TranslateAlternateColorCodes('&',
-                                                                                                                                     HomeCommand.this._plugin.GetMessages()
-                                                                                                                                                            .GetConfiguration()
-                                                                                                                                                            .GetString(
-                                                                                                                                                                    "Messages.Misc.Teleportation.Success")));
+                                                                                                                                      HomeCommand.this._plugin.GetMessages()
+                                                                                                                                                              .GetConfiguration()
+                                                                                                                                                              .GetString(
+                                                                                                                                                                      "Messages.Misc.Teleportation.Success")));
                 HomeCommand.this._plugin.GetTeleportMap().remove(player);
             }, 20L * this._plugin.GetConfigReader().GetInt("teleportation.home.delay")));
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                         .GetMessage(commandLabel, command.getName(), commandSender, null,
-                                                                                                     "Home.Teleporting")
-                                                                                         .replace("<HOME>", arguments[0].toUpperCase()));
+                                                                                           .GetMessage(commandLabel, command.getName(), commandSender, null,
+                                                                                                       "Home.Teleporting")
+                                                                                           .replace("<HOME>", arguments[0].toUpperCase()));
             return true;
         }
 
@@ -91,9 +94,9 @@ public class HomeCommand implements ICommandExecutorOverload {
         ((Player) commandSender).teleport(location);
 
         commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                     .GetMessage(commandLabel, command.getName(), commandSender, null,
-                                                                                                 "Home.InstantTeleporting")
-                                                                                     .replace("<HOME>", arguments[0].toUpperCase()));
+                                                                                       .GetMessage(commandLabel, command.getName(), commandSender, null,
+                                                                                                   "Home.InstantTeleporting")
+                                                                                       .replace("<HOME>", arguments[0].toUpperCase()));
         return true;
     }
 
@@ -114,18 +117,17 @@ public class HomeCommand implements ICommandExecutorOverload {
             for (var home : homes)
                 homeBuilder.append(homeFormat.replace("<SEPERATOR>", separator).replace("<HOME>", home));
 
-            if (homeBuilder.toString().toLowerCase().startsWith(separator))
-                homeBuilder.delete(0, separator.length());
+            if (homeBuilder.toString().toLowerCase().startsWith(separator)) homeBuilder.delete(0, separator.length());
 
             var homeMessage = this._plugin.GetMessages()
-                                         .GetMessage(commandLabel, command.getName(), commandSender, null, "Home.HomeFormat.Message")
-                                         .replace("<AMOUNT>", String.valueOf(homes.size()))
-                                         .replace("<HOMES>", homeBuilder.toString());
+                                          .GetMessage(commandLabel, command.getName(), commandSender, null, "Home.HomeFormat.Message")
+                                          .replace("<AMOUNT>", String.valueOf(homes.size()))
+                                          .replace("<HOMES>", homeBuilder.toString());
 
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + homeMessage);
         } catch (ArrayIndexOutOfBoundsException ignored) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                      this._plugin.GetMessages().GetMessage(commandLabel, command.getName(), commandSender, null, "Home.NoHomes"));
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command.getName(), commandSender, null, "Home.NoHomes"));
         }
     }
 }

@@ -32,18 +32,62 @@ public class DefaultConfigReader implements IConfigReader {
         this._configuration = YamlConfiguration.loadConfiguration(file);
         this.FetchInternalConfig();
 
-        if (this.ValidateConfig())
-            return;
+        if (this.ValidateConfig()) return;
 
         this.CreateBackupAndSave();
     }
 
-    public static IConfigReader LoadConfiguration(File file) {
-        return LoadConfiguration(file, ServerSystem.getPlugin(ServerSystem.class));
+    private void FetchInternalConfig() {
+        if (this._plugin.getResource(this._file.getName()) != null) {
+            this._originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(this._plugin.getResource(this._file.getName())));
+        } else if (this._file.getName().equalsIgnoreCase("messages.yml")) {
+            if (this._plugin.getResource("messages_" + this._configuration.getString("language") + ".yml") != null) {
+                this._originalCfg = YamlConfiguration.loadConfiguration(
+                        new InputStreamReader(this._plugin.getResource("messages_" + this._configuration.getString("language") + ".yml")));
+            } else {
+                this._originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(this._plugin.getResource("messages_en.yml")));
+                this._plugin.Error("Couldn't find default message.yml for language'" + this._configuration.getString("language") + "'!");
+                this._plugin.Info("Using english...");
+            }
+        }
     }
 
-    public static IConfigReader LoadConfiguration(File file, ServerSystem serverSystem) {
-        return new DefaultConfigReader(file, serverSystem);
+    protected boolean ValidateConfig() {
+        var fixed = false;
+
+        var typeWarnings = new HashMap<Class<?>, String>();
+        typeWarnings.put(String.class, "Should be a string, but isn't");
+        typeWarnings.put(Integer.class, "Should be an integer, but isn't");
+        typeWarnings.put(Long.class, "Should be a long, but isn't");
+        typeWarnings.put(Boolean.class, "Should be a boolean, but isn't");
+        typeWarnings.put(Double.class, "Should be a double, but isn't");
+        typeWarnings.put(ItemStack.class, "Should be an ItemStack, but isn't");
+
+        for (var key : this._originalCfg.getConfigurationSection("").getKeys(true)) {
+            if (key.toLowerCase(Locale.ROOT).contains("example")) continue;
+
+            if (!this._configuration.isSet(key)) {
+                this._plugin.Warn("Fixing missing config entry '" + key + "' in file '" + this._file.getName() + "'");
+                this._configuration.set(key, this._originalCfg.get(key));
+                fixed = true;
+                continue;
+            }
+
+            var object = this._configuration.get(key);
+            var supposedToBeObject = this._originalCfg.get(key);
+            var objectType = object.getClass();
+            var supposedType = supposedToBeObject.getClass();
+
+            if (objectType.isAssignableFrom(supposedType)) continue;
+
+            var warningMessage = typeWarnings.get(supposedType);
+            if (warningMessage != null) {
+                this._plugin.Warn("Fixing invalid config entry '" + key + "' in file '" + this._file.getName() + "' (" + warningMessage + ")");
+                this._configuration.set(key, supposedToBeObject);
+                fixed = true;
+            }
+        }
+        return !fixed;
     }
 
     private void CreateBackupAndSave() {
@@ -65,58 +109,12 @@ public class DefaultConfigReader implements IConfigReader {
         this.Reload();
     }
 
-    private void FetchInternalConfig() {
-        if (this._plugin.getResource(this._file.getName()) != null)
-            this._originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(this._plugin.getResource(this._file.getName())));
-        else if (this._file.getName().equalsIgnoreCase("messages.yml"))
-            if (this._plugin.getResource("messages_" + this._configuration.getString("language") + ".yml") != null)
-                this._originalCfg = YamlConfiguration.loadConfiguration(
-                        new InputStreamReader(this._plugin.getResource("messages_" + this._configuration.getString("language") + ".yml")));
-            else {
-                this._originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(this._plugin.getResource("messages_en.yml")));
-                this._plugin.Error("Couldn't find default message.yml for language'" + this._configuration.getString("language") + "'!");
-                this._plugin.Info("Using english...");
-            }
+    public static IConfigReader LoadConfiguration(File file) {
+        return LoadConfiguration(file, ServerSystem.getPlugin(ServerSystem.class));
     }
 
-    protected boolean ValidateConfig() {
-        var fixed = false;
-
-        var typeWarnings = new HashMap<Class<?>, String>();
-        typeWarnings.put(String.class, "Should be a string, but isn't");
-        typeWarnings.put(Integer.class, "Should be an integer, but isn't");
-        typeWarnings.put(Long.class, "Should be a long, but isn't");
-        typeWarnings.put(Boolean.class, "Should be a boolean, but isn't");
-        typeWarnings.put(Double.class, "Should be a double, but isn't");
-        typeWarnings.put(ItemStack.class, "Should be an ItemStack, but isn't");
-
-        for (var key : this._originalCfg.getConfigurationSection("").getKeys(true)) {
-            if (key.toLowerCase(Locale.ROOT).contains("example"))
-                continue;
-
-            if (!this._configuration.isSet(key)) {
-                this._plugin.Warn("Fixing missing config entry '" + key + "' in file '" + this._file.getName() + "'");
-                this._configuration.set(key, this._originalCfg.get(key));
-                fixed = true;
-                continue;
-            }
-
-            var object = this._configuration.get(key);
-            var supposedToBeObject = this._originalCfg.get(key);
-            var objectType = object.getClass();
-            var supposedType = supposedToBeObject.getClass();
-
-            if (objectType.isAssignableFrom(supposedType))
-                continue;
-
-            var warningMessage = typeWarnings.get(supposedType);
-            if (warningMessage != null) {
-                this._plugin.Warn("Fixing invalid config entry '" + key + "' in file '" + this._file.getName() + "' (" + warningMessage + ")");
-                this._configuration.set(key, supposedToBeObject);
-                fixed = true;
-            }
-        }
-        return !fixed;
+    public static IConfigReader LoadConfiguration(File file, ServerSystem serverSystem) {
+        return new DefaultConfigReader(file, serverSystem);
     }
 
     @Override
@@ -349,14 +347,11 @@ public class DefaultConfigReader implements IConfigReader {
     }
 
     private void SetIfNotSet(String path) {
-        if (this._originalCfg == null)
-            return;
+        if (this._originalCfg == null) return;
 
-        if (this._configuration.isSet(path))
-            return;
+        if (this._configuration.isSet(path)) return;
 
-        if (!this._originalCfg.isSet(path))
-            return;
+        if (!this._originalCfg.isSet(path)) return;
 
         var partialPath = "";
         var periods = (int) Arrays.stream(SPLIT_PATTERN.split(path)).filter(period -> period.equalsIgnoreCase(".")).count();
@@ -370,11 +365,9 @@ public class DefaultConfigReader implements IConfigReader {
             }
         }
 
-        if (partialPath.endsWith("."))
-            partialPath = partialPath.substring(0, partialPath.length() - 1);
+        if (partialPath.endsWith(".")) partialPath = partialPath.substring(0, partialPath.length() - 1);
 
-        if (partialPath.startsWith("."))
-            partialPath = partialPath.substring(1);
+        if (partialPath.startsWith(".")) partialPath = partialPath.substring(1);
 
         if (partialPath.equalsIgnoreCase("")) {
             this._configuration.set(path, this._originalCfg.get(path));

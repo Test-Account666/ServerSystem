@@ -21,8 +21,7 @@ public class AbstractServerSystemEconomy extends AbstractEconomy {
 
     private OfflinePlayer GetPlayer(String username) {
         OfflinePlayer player = Bukkit.getPlayer(username);
-        if (player == null)
-            player = Bukkit.getOfflinePlayer(username);
+        if (player == null) player = Bukkit.getOfflinePlayer(username);
 
         return player;
     }
@@ -76,16 +75,14 @@ public class AbstractServerSystemEconomy extends AbstractEconomy {
 
     @Override
     public String currencyNamePlural() {
-        if (!this.isEnabled())
-            return this.GetCurrencySymbol();
+        if (!this.isEnabled()) return this.GetCurrencySymbol();
 
         return this._plugin.GetEconomyManager().GetCurrencyPlural();
     }
 
     @Override
     public String currencyNameSingular() {
-        if (!this.isEnabled())
-            return this.GetCurrencySymbol();
+        if (!this.isEnabled()) return this.GetCurrencySymbol();
 
         return this._plugin.GetEconomyManager().GetCurrencySingular();
     }
@@ -137,13 +134,11 @@ public class AbstractServerSystemEconomy extends AbstractEconomy {
     }
 
     private EconomyResponse AddMoney(String username, double amount) {
-        if (!this.isEnabled())
-            return new EconomyResponse(amount, -1, EconomyResponse.ResponseType.FAILURE, "EconomyManager hasn't loaded, yet?!");
+        if (!this.isEnabled()) return new EconomyResponse(amount, -1, EconomyResponse.ResponseType.FAILURE, "EconomyManager hasn't loaded, yet?!");
 
         var player = this.GetPlayer(username);
         var economyManager = this.GetPlugin().GetEconomyManager();
-        if (!economyManager.HasAccount(player))
-            return new EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "No account found for player " + username);
+        if (!economyManager.HasAccount(player)) return new EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "No account found for player " + username);
 
         economyManager.AddMoney(player, amount);
         var moneyAsNumber = economyManager.GetMoneyAsNumber(player);
@@ -211,8 +206,7 @@ public class AbstractServerSystemEconomy extends AbstractEconomy {
     }
 
     private boolean CreateAccount(String username) {
-        if (!this.isEnabled())
-            return false;
+        if (!this.isEnabled()) return false;
 
         var player = this.GetPlayer(username);
         this._plugin.GetEconomyManager().CreateAccount(player);
@@ -220,16 +214,15 @@ public class AbstractServerSystemEconomy extends AbstractEconomy {
     }
 
     private EconomyResponse RemoveMoney(String username, double amount) {
-        if (!this.isEnabled())
-            return new EconomyResponse(amount, -1, EconomyResponse.ResponseType.FAILURE, "EconomyManager hasn't loaded, yet?!");
+        if (!this.isEnabled()) return new EconomyResponse(amount, -1, EconomyResponse.ResponseType.FAILURE, "EconomyManager hasn't loaded, yet?!");
 
         var player = this.GetPlayer(username);
         var economyManager = this._plugin.GetEconomyManager();
-        if (!economyManager.HasAccount(player))
-            return new EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "No account found for player " + username);
+        if (!economyManager.HasAccount(player)) return new EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "No account found for player " + username);
 
-        if (!economyManager.HasEnoughMoney(player, amount))
+        if (!economyManager.HasEnoughMoney(player, amount)) {
             return new EconomyResponse(amount, 0.0, EconomyResponse.ResponseType.FAILURE, "Player " + username + " does not have enough money");
+        }
 
         economyManager.RemoveMoney(player, amount);
 
@@ -238,30 +231,25 @@ public class AbstractServerSystemEconomy extends AbstractEconomy {
     }
 
     private boolean HasMoney(String username, double amount) {
-        if (!this.isEnabled())
-            return false;
+        if (!this.isEnabled()) return false;
 
         var player = this.GetPlayer(username);
-        if (!this._plugin.GetEconomyManager().HasAccount(player))
-            return false;
+        if (!this._plugin.GetEconomyManager().HasAccount(player)) return false;
 
         return this._plugin.GetEconomyManager().HasEnoughMoney(player, amount);
     }
 
     private double GetMoney(String username) {
-        if (!this.isEnabled())
-            return -1;
+        if (!this.isEnabled()) return -1;
 
         var player = this.GetPlayer(username);
-        if (!this._plugin.GetEconomyManager().HasAccount(player))
-            return 0.0;
+        if (!this._plugin.GetEconomyManager().HasAccount(player)) return 0.0;
 
         return this._plugin.GetEconomyManager().GetMoneyAsNumber(player);
     }
 
     private boolean HasEconomyAccount(String username) {
-        if (!this.isEnabled())
-            return false;
+        if (!this.isEnabled()) return false;
 
         var player = this.GetPlayer(username);
         return this._plugin.GetEconomyManager().HasAccount(player);

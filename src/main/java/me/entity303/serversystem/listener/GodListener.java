@@ -19,26 +19,21 @@ public class GodListener implements Listener {
 
     @EventHandler
     public void OnDamage(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player))
-            return;
+        if (!(event.getEntity() instanceof Player)) return;
 
-        if (this._plugin.GetGodList().contains(((Player) event.getEntity()).getPlayer()))
-            event.setCancelled(true);
+        if (this._plugin.GetGodList().contains(((Player) event.getEntity()).getPlayer())) event.setCancelled(true);
     }
 
     @EventHandler
     public void OnDamage(EntityDamageByEntityEvent event) {
-        if (!(event.getEntity() instanceof Player))
-            return;
+        if (!(event.getEntity() instanceof Player)) return;
 
-        if (this._plugin.GetGodList().contains(((Player) event.getEntity()).getPlayer()))
-            event.setCancelled(true);
+        if (this._plugin.GetGodList().contains(((Player) event.getEntity()).getPlayer())) event.setCancelled(true);
     }
 
     @EventHandler
     public void OnFoodLevelChange(FoodLevelChangeEvent event) {
-        if (!(event.getEntity() instanceof Player))
-            return;
+        if (!(event.getEntity() instanceof Player)) return;
 
         if (this._plugin.GetGodList().contains(((Player) event.getEntity()).getPlayer())) {
             event.getEntity().setFoodLevel(20);
@@ -48,13 +43,10 @@ public class GodListener implements Listener {
 
     @EventHandler
     public void OnEntityTarget(EntityTargetLivingEntityEvent event) {
-        if (event.getTarget() == null)
-            return;
+        if (event.getTarget() == null) return;
 
-        if (!(event.getTarget() instanceof Player player))
-            return;
+        if (!(event.getTarget() instanceof Player player)) return;
 
-        if (this._plugin.GetGodList().contains(player))
-            event.setTarget(null);
+        if (this._plugin.GetGodList().contains(player)) event.setTarget(null);
     }
 }

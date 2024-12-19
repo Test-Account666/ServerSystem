@@ -15,8 +15,7 @@ public abstract class AbstractModeration {
     }
 
     public String ConvertLongToDate(Long longDate) {
-        if (longDate < 1)
-            return this.GetPermanentBanName();
+        if (longDate < 1) return this.GetPermanentBanName();
 
         var calendar = Calendar.getInstance();
 
@@ -32,20 +31,15 @@ public abstract class AbstractModeration {
         var minute = dates[4];
         var second = dates[5];
 
-        if (month.chars().count() == 1)
-            month = "0" + month;
+        if (month.chars().count() == 1) month = "0" + month;
 
-        if (day.chars().count() == 1)
-            day = "0" + day;
+        if (day.chars().count() == 1) day = "0" + day;
 
-        if (hour.chars().count() == 1)
-            hour = "0" + hour;
+        if (hour.chars().count() == 1) hour = "0" + hour;
 
-        if (minute.chars().count() == 1)
-            minute = "0" + minute;
+        if (minute.chars().count() == 1) minute = "0" + minute;
 
-        if (second.chars().count() == 1)
-            second = "0" + second;
+        if (second.chars().count() == 1) second = "0" + second;
 
         return this._dateFormat.replace("<YEAR>", year)
                                .replace("<MONTH>", month)

@@ -1,13 +1,15 @@
 package me.entity303.serversystem.commands.executable;
 
 
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
-import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 
+@ServerSystemCommand(name = "ForceTeleportHere")
 public class TeleportForceHereCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -24,8 +26,9 @@ public class TeleportForceHereCommand implements ICommandExecutorOverload {
             return true;
         }
         if (arguments.length < 1) {
-            
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "TpoHere"));
+
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "TpoHere"));
             return true;
         }
         var target = CommandUtils.GetPlayer(this._plugin, commandSender, arguments[0]);
@@ -39,8 +42,8 @@ public class TeleportForceHereCommand implements ICommandExecutorOverload {
         target.teleport((Entity) commandSender);
 
 
-        
-        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "TpoHere"));
+        commandSender.sendMessage(
+                this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "TpoHere"));
         return true;
     }
 }

@@ -32,8 +32,7 @@ public class MuteManager_Yaml extends AbstractMuteManager {
 
     @Override
     public void RemoveMute(UUID mutedUUID) {
-        if (!this.IsMuted(Bukkit.getOfflinePlayer(mutedUUID)))
-            return;
+        if (!this.IsMuted(Bukkit.getOfflinePlayer(mutedUUID))) return;
 
         this._configuration.set("Muted." + mutedUUID, null);
 
@@ -49,12 +48,10 @@ public class MuteManager_Yaml extends AbstractMuteManager {
 
     @Override
     public MuteModeration CreateMute(UUID mutedUUID, String senderUUID, String reason, boolean shadow, Long howLong, TimeUnit timeUnit) {
-        if (this.IsMuted(Bukkit.getOfflinePlayer(mutedUUID)))
-            this.RemoveMute(mutedUUID);
+        if (this.IsMuted(Bukkit.getOfflinePlayer(mutedUUID))) this.RemoveMute(mutedUUID);
 
         var expireTime = System.currentTimeMillis() + (howLong * timeUnit.GetValue());
-        if (howLong < 1)
-            expireTime = -1L;
+        if (howLong < 1) expireTime = -1L;
 
         var mute = new MuteModeration(mutedUUID, senderUUID, expireTime, this.ConvertLongToDate(expireTime), reason, shadow);
 
@@ -71,8 +68,7 @@ public class MuteManager_Yaml extends AbstractMuteManager {
         var shadow = mute.IsShadow();
         long unbanTime = mute.GetExpireTime();
 
-        if (this.IsMuted(Bukkit.getOfflinePlayer(mutedUUID)))
-            this.RemoveMute(mutedUUID);
+        if (this.IsMuted(Bukkit.getOfflinePlayer(mutedUUID))) this.RemoveMute(mutedUUID);
 
         this._configuration.set("Muted." + mutedUUID + ".Sender", senderUUID);
         this._configuration.set("Muted." + mutedUUID + ".Reason", reason);
@@ -86,18 +82,15 @@ public class MuteManager_Yaml extends AbstractMuteManager {
 
     @Override
     public boolean IsMuted(OfflinePlayer player) {
-        if (!this._muteFile.exists())
-            return false;
+        if (!this._muteFile.exists()) return false;
         return this.GetMute(player) != null;
     }
 
     @Override
     public List<String> GetMutedPlayerNames() {
-        if (this._configuration.getConfigurationSection("Muted") == null)
-            return new ArrayList<>();
+        if (this._configuration.getConfigurationSection("Muted") == null) return new ArrayList<>();
         this._configuration.getConfigurationSection("Muted").getKeys(false);
-        if (this._configuration.getConfigurationSection("Muted").getKeys(false).isEmpty())
-            return new ArrayList<>();
+        if (this._configuration.getConfigurationSection("Muted").getKeys(false).isEmpty()) return new ArrayList<>();
 
         try {
             return this._configuration.getConfigurationSection("Muted")
@@ -118,8 +111,7 @@ public class MuteManager_Yaml extends AbstractMuteManager {
     }
 
     public MuteModeration GetMute(UUID uuid) {
-        if (!this._muteFile.exists())
-            return null;
+        if (!this._muteFile.exists()) return null;
         try {
             var str = "Muted." + uuid.toString() + ".";
             var senderUuid = this._configuration.getString(str + "Sender");
@@ -133,12 +125,9 @@ public class MuteManager_Yaml extends AbstractMuteManager {
             var reason = this._configuration.getString(str + "Reason");
             var shadow = this._configuration.getBoolean(str + "Shadow");
 
-            if (senderUuid == null)
-                return null;
-            if (expireDate == null)
-                return null;
-            if (reason == null)
-                return null;
+            if (senderUuid == null) return null;
+            if (expireDate == null) return null;
+            if (reason == null) return null;
 
             return new MuteModeration(uuid, senderUuid, expireTime, expireDate, reason, shadow);
         } catch (NullPointerException ignored) {

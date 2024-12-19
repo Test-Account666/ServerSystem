@@ -36,8 +36,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -45,8 +43,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static me.entity303.serversystem.bansystem.TimeUnit.*;
 
@@ -341,23 +344,24 @@ public final class ServerSystem extends JavaPlugin {
     }
 
     private boolean CheckMainServerForUpdates(String currentVersion, boolean autoUpdate) {
+        var url = "http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem";
+
         var foundVersion = this.getDescription().getVersion();
 
-        Document doc;
+        var client = HttpClient.newHttpClient();
+        var request = HttpRequest.newBuilder().uri(URI.create(url)).header("Referer", "ServerSystem").timeout(java.time.Duration.ofSeconds(30)).build();
+
+        String responseBody;
         try {
-            doc = Jsoup.connect("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem").referrer("ServerSystem").timeout(30000).get();
-        } catch (IOException exception) {
+            var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            responseBody = response.body();
+        } catch (IOException | InterruptedException exception) {
             this.Error("An error occurred while trying to connect to the updater!");
-            //exception.printStackTrace();
             this.Info("Please ignore this error. The update server is currently down. Please be patient");
             return false;
         }
 
-        for (var remoteFile : doc.getElementsContainingOwnText(".jar")) {
-            var remoteFileName = remoteFile.attr("href");
-            remoteFileName = remoteFileName.substring(0, remoteFileName.lastIndexOf('.'));
-            foundVersion = remoteFileName;
-        }
+        foundVersion = FindVersion(foundVersion, responseBody);
 
         var isFoundVersionMoreRecent = this.IsFoundVersionMoreRecent(foundVersion, currentVersion);
 
@@ -385,8 +389,7 @@ public final class ServerSystem extends JavaPlugin {
         this.Info("Auto-updating!");
         this.Info("(You need to restart the server so the update can take effect)");
         try {
-            var inputStream =
-                    new BufferedInputStream(new URL("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem/" + foundVersion + ".jar").openStream());
+            var inputStream = new BufferedInputStream(new URL("http://pluginsupport.zapto.org:80/PluginSupport/ServerSystem/" + foundVersion + ".jar").openStream());
             var fileOutputStream = new FileOutputStream(new File("plugins/update", this._jarName));
             var dataBuffer = new byte[1024];
             int bytesRead;
@@ -400,6 +403,18 @@ public final class ServerSystem extends JavaPlugin {
             exception.printStackTrace();
         }
         return false;
+    }
+
+    public static String FindVersion(String foundVersion, String responseBody) {
+        var pattern = Pattern.compile("href=\"([^\"]*\\.jar)\"");
+        var matcher = pattern.matcher(responseBody);
+
+        while (matcher.find()) {
+            var remoteFileName = matcher.group(1);
+            remoteFileName = remoteFileName.substring(0, remoteFileName.lastIndexOf('.'));
+            foundVersion = remoteFileName;
+        }
+        return foundVersion;
     }
 
 
@@ -452,8 +467,11 @@ public final class ServerSystem extends JavaPlugin {
 
     @Override
     public void reloadConfig() {
-        if (this._configReader != null) this._configReader.Reload();
-        else this._configReader = new NonValidatingConfigReader(new File("plugins" + File.separator + "ServerSystem", "config.yml"), this);
+        if (this._configReader != null) {
+            this._configReader.Reload();
+        } else {
+            this._configReader = new NonValidatingConfigReader(new File("plugins" + File.separator + "ServerSystem", "config.yml"), this);
+        }
     }
 
 
@@ -523,11 +541,12 @@ public final class ServerSystem extends JavaPlugin {
 
         var file = new File("plugins//ServerSystem", "vanish.yml");
         if (file.exists()) {
-            FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+            var cfg = YamlConfiguration.loadConfiguration(file);
             var vanishConfiguration = cfg.getConfigurationSection("Vanish");
 
-            if (vanishConfiguration != null && !vanishConfiguration.getKeys(false).isEmpty())
+            if (vanishConfiguration != null && !vanishConfiguration.getKeys(false).isEmpty()) {
                 for (var uuidString : vanishConfiguration.getKeys(false)) this._vanish.GetVanishList().add(UUID.fromString(uuidString));
+            }
             file.delete();
         }
 
@@ -610,8 +629,9 @@ public final class ServerSystem extends JavaPlugin {
         var commandsFiles = new File("plugins//ServerSystem", "commands.yml");
         var commandsConfig = YamlConfiguration.loadConfiguration(commandsFiles);
 
-        if (commandsConfig.getBoolean("baltop"))
+        if (commandsConfig.getBoolean("Commands.baltop.enabled")) {
             Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> this._economyManager.FetchTopTen(), 20L, 72000L);
+        }
 
         this.StartSwappingCommands();
 
@@ -639,12 +659,14 @@ public final class ServerSystem extends JavaPlugin {
     }
 
     private boolean SyncCommands() {
-        if (this._syncCommandsMethod == null) try {
-            this._syncCommandsMethod = Bukkit.getServer().getClass().getDeclaredMethod("syncCommands");
-            this._syncCommandsMethod.setAccessible(true);
-        } catch (NoSuchMethodException exception) {
-            exception.printStackTrace();
-            return false;
+        if (this._syncCommandsMethod == null) {
+            try {
+                this._syncCommandsMethod = Bukkit.getServer().getClass().getDeclaredMethod("syncCommands");
+                this._syncCommandsMethod.setAccessible(true);
+            } catch (NoSuchMethodException exception) {
+                exception.printStackTrace();
+                return false;
+            }
         }
 
         try {
@@ -716,9 +738,11 @@ public final class ServerSystem extends JavaPlugin {
                     this._eventManager.RegisterEvent(this._essentialsCommandListener);
                 }
 
-                if (this.getServer().getPluginCommand(cmdFromToLower) == this.getServer().getPluginCommand(cmdFrom.toLowerCase()))
+                if (this.getServer().getPluginCommand(cmdFromToLower) == this.getServer().getPluginCommand(cmdFrom.toLowerCase())) {
                     this._essentialsCommandListener.AddCommand(cmdFrom, cmdTo);
-                else this._essentialsCommandListener.AddCommand(pluginFrom + ":" + cmdFrom, cmdTo);
+                } else {
+                    this._essentialsCommandListener.AddCommand(pluginFrom + ":" + cmdFrom, cmdTo);
+                }
             }
         }, 60L);
     }
@@ -830,19 +854,19 @@ public final class ServerSystem extends JavaPlugin {
                 this.Info("MySQL enabled, using it...");
                 if (this._configReader.GetBoolean("mysql.economy.enabled") && this._configReader.GetBoolean("economy.enabled")) {
                     this.Info("Using Economy with MySQL...");
-                    if (this._economyManager != null) this.Error("You cannot have two databases at the same time for economy activated!");
-                    else {
+                    if (this._economyManager != null) {
+                        this.Error("You cannot have two databases at the same time for economy activated!");
+                    } else {
                         this._serverName = this._configReader.GetString("mysql.economy.serverName");
                         this._economyManager =
-                                new EconomyManager_MySQL(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands,
-                                                         this);
+                                new EconomyManager_MySQL(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, this);
                     }
                 }
                 if (this._configReader.GetBoolean("mysql.banSystem") && this._configReader.GetBoolean("banSystem.enabled")) {
                     this.Info("Using BanSystem with MySQL...");
-                    if (this._banManager != null || this._muteManager != null)
+                    if (this._banManager != null || this._muteManager != null) {
                         this.Error("You cannot have two databases at the same time for BanSystem activated!");
-                    else {
+                    } else {
                         this._banManager = new BanManager_MySQL(dateFormat, this);
                         this._muteManager = new MuteManager_MySQL(this, dateFormat);
                     }
@@ -853,16 +877,19 @@ public final class ServerSystem extends JavaPlugin {
                 this.Info("H2 enabled, using it...");
                 if (this._configReader.GetBoolean("h2.economy") && this._configReader.GetBoolean("economy.enabled")) {
                     this.Info("Using Economy with H2...");
-                    if (this._economyManager != null) this.Error("You cannot have two databases at the same time for economy activated!");
-                    else this._economyManager =
-                            new EconomyManager_H2(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, this);
+                    if (this._economyManager != null) {
+                        this.Error("You cannot have two databases at the same time for economy activated!");
+                    } else {
+                        this._economyManager =
+                                new EconomyManager_H2(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, this);
+                    }
                 }
 
                 if (this._configReader.GetBoolean("h2.banSystem") && this._configReader.GetBoolean("banSystem.enabled")) {
                     this.Info("Using BanSystem with H2...");
-                    if (this._banManager != null || this._muteManager != null)
+                    if (this._banManager != null || this._muteManager != null) {
                         this.Error("You cannot have two databases at the same time for BanSystem activated!");
-                    else {
+                    } else {
                         this._banManager = new BanManager_H2(dateFormat, this);
                         this._muteManager = new MuteManager_H2(this, dateFormat);
                     }
@@ -873,17 +900,19 @@ public final class ServerSystem extends JavaPlugin {
                 this.Info("SQLite enabled, using it...");
                 if (this._configReader.GetBoolean("sqlite.economy") && this._configReader.GetBoolean("economy.enabled")) {
                     this.Info("Using Economy with SQLite...");
-                    if (this._economyManager != null) this.Error("You cannot have two databases at the same time for economy activated!");
-                    else this._economyManager =
-                            new EconomyManager_SQLite(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands,
-                                                      this);
+                    if (this._economyManager != null) {
+                        this.Error("You cannot have two databases at the same time for economy activated!");
+                    } else {
+                        this._economyManager =
+                                new EconomyManager_SQLite(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, this);
+                    }
                 }
 
                 if (this._configReader.GetBoolean("sqlite.banSystem") && this._configReader.GetBoolean("banSystem.enabled")) {
                     this.Info("Using BanSystem with SQLite...");
-                    if (this._banManager != null || this._muteManager != null)
+                    if (this._banManager != null || this._muteManager != null) {
                         this.Error("You cannot have two databases at the same time for BanSystem activated!");
-                    else {
+                    } else {
                         this._banManager = new BanManager_SQLite(dateFormat, this);
                         this._muteManager = new MuteManager_SQLite(this, dateFormat);
                     }
@@ -892,8 +921,7 @@ public final class ServerSystem extends JavaPlugin {
 
             if (this._economyManager == null) {
                 this.Warn("Not using any database for Economy...");
-                this._economyManager =
-                        new EconomyManager(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, this);
+                this._economyManager = new EconomyManager(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, this);
             }
             if (this._banManager == null) {
                 this.Warn("Not using any database for BanSystem...");
@@ -905,13 +933,12 @@ public final class ServerSystem extends JavaPlugin {
     }
 
 
-    private void LoadConfigs() {
+    public void LoadConfigs() {
         this.saveDefaultConfig();
         this.reloadConfig();
 
         var permFile = new File("plugins//ServerSystem", "permissions.yml");
         var commandsFile = new File("plugins//ServerSystem", "commands.yml");
-        var aliasesFile = new File("plugins//ServerSystem", "aliases.yml");
         var kitsFile = new File("plugins//ServerSystem", "kits.yml");
 
         if (!permFile.exists()) this.saveResource("permissions.yml", false);
@@ -919,8 +946,6 @@ public final class ServerSystem extends JavaPlugin {
         this.CreateMessagesFiles();
 
         if (!commandsFile.exists()) this.saveResource("commands.yml", false);
-
-        if (!aliasesFile.exists()) this.saveResource("aliases.yml", false);
 
         if (!kitsFile.exists()) this.saveResource("kits.yml", false);
 
@@ -941,7 +966,7 @@ public final class ServerSystem extends JavaPlugin {
 
         this.Info("Saving vanished players...");
         var file = new File("plugins//ServerSystem", "vanish.yml");
-        FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+        var cfg = YamlConfiguration.loadConfiguration(file);
         for (var uuid : this._vanish.GetVanishList())
             cfg.set("Vanish." + uuid.toString(), true);
         try {
@@ -1021,41 +1046,49 @@ public final class ServerSystem extends JavaPlugin {
 
         if (!msgFile.exists()) {
             var locale = System.getProperty("user.language");
-            if (locale.equalsIgnoreCase("de")) try {
-                Files.copy(msgDEFile, new File("plugins//ServerSystem", "messages.yml"));
-            } catch (IOException exception) {
-                exception.printStackTrace();
-            }
-            else if (locale.equalsIgnoreCase("cz")) try {
-                Files.copy(msgCZFile, new File("plugins//ServerSystem", "messages.yml"));
-            } catch (IOException exception) {
-                exception.printStackTrace();
-            }
-            else if (locale.equalsIgnoreCase("tr")) try {
-                Files.copy(msgTRFile, new File("plugins//ServerSystem", "messages.yml"));
-            } catch (IOException exception) {
-                exception.printStackTrace();
-            }
-            else if (locale.toLowerCase(Locale.ROOT).contains("zh")) try {
-                Files.copy(msgZHCNFile, new File("plugins//ServerSystem", "messages.yml"));
-            } catch (IOException exception) {
-                exception.printStackTrace();
-            }
-            else if (locale.toLowerCase(Locale.ROOT).contains("it")) try {
-                Files.copy(msgITFile, new File("plugins//ServerSystem", "messages.yml"));
-            } catch (IOException exception) {
-                exception.printStackTrace();
-            }
-            else if (locale.toLowerCase(Locale.ROOT).contains("ru")) try {
-                Files.copy(msgRUFile, new File("plugins//ServerSystem", "messages.yml"));
-            } catch (IOException exception) {
-                exception.printStackTrace();
-            }
-            else try {
+            if (locale.equalsIgnoreCase("de")) {
+                try {
+                    Files.copy(msgDEFile, new File("plugins//ServerSystem", "messages.yml"));
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+            } else if (locale.equalsIgnoreCase("cz")) {
+                try {
+                    Files.copy(msgCZFile, new File("plugins//ServerSystem", "messages.yml"));
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+            } else if (locale.equalsIgnoreCase("tr")) {
+                try {
+                    Files.copy(msgTRFile, new File("plugins//ServerSystem", "messages.yml"));
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+            } else if (locale.toLowerCase(Locale.ROOT).contains("zh")) {
+                try {
+                    Files.copy(msgZHCNFile, new File("plugins//ServerSystem", "messages.yml"));
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+            } else if (locale.toLowerCase(Locale.ROOT).contains("it")) {
+                try {
+                    Files.copy(msgITFile, new File("plugins//ServerSystem", "messages.yml"));
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+            } else if (locale.toLowerCase(Locale.ROOT).contains("ru")) {
+                try {
+                    Files.copy(msgRUFile, new File("plugins//ServerSystem", "messages.yml"));
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+            } else {
+                try {
                     Files.copy(msgENFile, new File("plugins//ServerSystem", "messages.yml"));
                 } catch (IOException exception) {
                     exception.printStackTrace();
                 }
+            }
         }
     }
 

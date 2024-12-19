@@ -222,23 +222,19 @@ public class VersionStuff {
         try {
             var entityPlayer = this.GetEntityPlayer(player);
 
-            if (entityPlayer == null)
-                return;
+            if (entityPlayer == null) return;
 
             var playerConnection = this.GetPlayerConnection(player);
 
-            if (playerConnection == null)
-                return;
+            if (playerConnection == null) return;
 
             var networkManager = this.GetNetworkManager(playerConnection);
 
-            if (networkManager == null)
-                return;
+            if (networkManager == null) return;
 
             var channel = this.GetChannel(player);
 
-            if (channel == null)
-                return;
+            if (channel == null) return;
 
             try {
                 channel.pipeline().addBefore("packet_handler", "recBookChecker", new RecBookPacketHandler(player));
@@ -250,8 +246,7 @@ public class VersionStuff {
                     Class msg;
 
                     try {
-                        msg = Class.forName(
-                                "net.minecraft.server." + this._serverSystem.GetVersionManager().GetNMSVersion() + "PacketPlayOutEntityStatus");
+                        msg = Class.forName("net.minecraft.server." + this._serverSystem.GetVersionManager().GetNMSVersion() + "PacketPlayOutEntityStatus");
                     } catch (ClassNotFoundException | NoClassDefFoundError ignored) {
                         msg = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutEntityStatus");
                     }
@@ -260,15 +255,11 @@ public class VersionStuff {
                         VersionStuff.this._packetPlayOutEntityStatusConstructor = Arrays.stream(msg.getDeclaredConstructors())
                                                                                         .filter(constructor -> constructor.getParameterCount() == 2)
                                                                                         .filter(constructor -> constructor.getParameterTypes()[0].getName()
-                                                                                                                                                 .toLowerCase(
-                                                                                                                                                         Locale.ROOT)
-                                                                                                                                                 .contains(
-                                                                                                                                                         "entity"))
+                                                                                                                                                 .toLowerCase(Locale.ROOT)
+                                                                                                                                                 .contains("entity"))
                                                                                         .filter(constructor -> constructor.getParameterTypes()[1].getName()
-                                                                                                                                                 .toLowerCase(
-                                                                                                                                                         Locale.ROOT)
-                                                                                                                                                 .contains(
-                                                                                                                                                         "byte"))
+                                                                                                                                                 .toLowerCase(Locale.ROOT)
+                                                                                                                                                 .contains("byte"))
                                                                                         .findFirst()
                                                                                         .orElse(null);
                         if (VersionStuff.this._packetPlayOutEntityStatusConstructor == null) {
@@ -279,17 +270,18 @@ public class VersionStuff {
                         VersionStuff.this._packetPlayOutEntityStatusConstructor.setAccessible(true);
                     }
 
-                    if (VersionStuff.this._getHandleWorldMethod == null)
+                    if (VersionStuff.this._getHandleWorldMethod == null) {
                         try {
-                            VersionStuff.this._getHandleWorldMethod = Class.forName(
-                                                                                   "org.bukkit.craftbukkit." + VersionStuff.this._serverSystem.GetVersionManager().GetNMSVersion() + "CraftWorld")
-                                                                           .getDeclaredMethod("getHandle");
+                            VersionStuff.this._getHandleWorldMethod =
+                                    Class.forName("org.bukkit.craftbukkit." + VersionStuff.this._serverSystem.GetVersionManager().GetNMSVersion() + "CraftWorld")
+                                         .getDeclaredMethod("getHandle");
                         } catch (ClassNotFoundException | NoClassDefFoundError | NoSuchMethodException | NoSuchMethodError ignored) {
                             VersionStuff.this._serverSystem.Error("Could not find method 'getHandle' in class 'CraftWorld'!");
                             return;
                         }
+                    }
 
-                    if (VersionStuff.this._getEntityMethod == null)
+                    if (VersionStuff.this._getEntityMethod == null) {
                         try {
                             VersionStuff.this._getEntityMethod =
                                     Class.forName("net.minecraft.server." + VersionStuff.this._serverSystem.GetVersionManager().GetNMSVersion() + "World")
@@ -297,7 +289,7 @@ public class VersionStuff {
                         } catch (ClassNotFoundException | NoClassDefFoundError | NoSuchMethodException | NoSuchMethodError exception) {
                             this.HandleException(exception);
 
-                            if (VersionStuff.this._getEntityMethod == null)
+                            if (VersionStuff.this._getEntityMethod == null) {
                                 try {
                                     this.FetchGetEntityMethod();
                                     if (VersionStuff.this._getEntityMethod == null) {
@@ -308,35 +300,32 @@ public class VersionStuff {
                                     VersionStuff.this._serverSystem.Error("Could not find method 'getEntity' in class 'World'!");
                                     return;
                                 }
+                            }
                         }
+                    }
 
-                    if (this._sendPacketMethod == null)
-                        this._sendPacketMethod = Arrays.stream(networkManager.getClass().getMethods())
-                                                       .filter(method -> method.getParameters().length == 1)
-                                                       .filter(method -> {
-                                                           try {
-                                                               return method.getParameters()[0].getType()
-                                                                                               .getName()
-                                                                                               .equalsIgnoreCase(Class.forName(
-                                                                                                       "net.minecraft.network.protocol.Packet").getName());
-                                                           } catch (ClassNotFoundException | NoClassDefFoundError exception) {
-                                                               try {
-                                                                   return method.getParameters()[0].getType()
-                                                                                                   .getName()
-                                                                                                   .equalsIgnoreCase(Class.forName(
-                                                                                                                                  "net.minecraft.server." +
-                                                                                                                                  this._serverSystem.GetVersionManager()
-                                                                                                                                                    .GetNMSVersion() + "Packet")
-                                                                                                                          .getName());
-                                                               } catch (ClassNotFoundException exception1) {
-                                                                   exception1.printStackTrace();
-                                                                   return false;
-                                                               }
+                    if (this._sendPacketMethod == null) {
+                        this._sendPacketMethod =
+                                Arrays.stream(networkManager.getClass().getMethods()).filter(method -> method.getParameters().length == 1).filter(method -> {
+                                    try {
+                                        return method.getParameters()[0].getType()
+                                                                        .getName()
+                                                                        .equalsIgnoreCase(Class.forName("net.minecraft.network.protocol.Packet").getName());
+                                    } catch (ClassNotFoundException | NoClassDefFoundError exception) {
+                                        try {
+                                            return method.getParameters()[0].getType()
+                                                                            .getName()
+                                                                            .equalsIgnoreCase(Class.forName(
+                                                                                    "net.minecraft.server." + this._serverSystem.GetVersionManager().GetNMSVersion() +
+                                                                                    "Packet").getName());
+                                        } catch (ClassNotFoundException exception1) {
+                                            exception1.printStackTrace();
+                                            return false;
+                                        }
 
-                                                           }
-                                                       })
-                                                       .findFirst()
-                                                       .orElse(null);
+                                    }
+                                }).findFirst().orElse(null);
+                    }
 
                     var world = this._getHandleWorldMethod.invoke(player.getWorld());
 
@@ -345,8 +334,7 @@ public class VersionStuff {
                     this._sendPacketMethod.invoke(networkManager, newStatus);
                 }
             } catch (NoSuchElementException exception) {
-                if (!this._notified)
-                    this._serverSystem.Warn("Couldn't find packet_handler field, are you using Mohist, CatServer or Magma?");
+                if (!this._notified) this._serverSystem.Warn("Couldn't find packet_handler field, are you using Mohist, CatServer or Magma?");
 
                 this._notified = true;
             }
@@ -355,12 +343,10 @@ public class VersionStuff {
         }
     }
 
-    public Object GetPlayerConnection(Player player) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException,
-            IllegalAccessException {
+    public Object GetPlayerConnection(Player player) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         var entityPlayer = this.GetEntityPlayer(player);
 
-        if (entityPlayer == null)
-            return null;
+        if (entityPlayer == null) return null;
 
         if (this._playerConnectionField == null) {
             this._playerConnectionField = Arrays.stream(entityPlayer.getClass().getDeclaredFields())
@@ -371,8 +357,7 @@ public class VersionStuff {
 
             if (this._playerConnectionField == null) {
                 this._serverSystem.Error("Couldn't find PlayerConnection field inside '" + entityPlayer.getClass().getName() + "'! (Modded environment?)");
-                Arrays.stream(entityPlayer.getClass().getDeclaredFields())
-                      .forEach(field -> this._serverSystem.Info(field.getType() + " -> " + field.getName()));
+                Arrays.stream(entityPlayer.getClass().getDeclaredFields()).forEach(field -> this._serverSystem.Info(field.getType() + " -> " + field.getName()));
                 this._serverSystem.Warn("Please forward this to the developer of ServerSystem!");
                 return null;
             }
@@ -383,10 +368,8 @@ public class VersionStuff {
         return this._playerConnectionField.get(entityPlayer);
     }
 
-    public Object GetNetworkManager(Object playerConnection) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException,
-            IllegalAccessException {
-        if (playerConnection instanceof Player player)
-            playerConnection = this.GetPlayerConnection(player);
+    public Object GetNetworkManager(Object playerConnection) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        if (playerConnection instanceof Player player) playerConnection = this.GetPlayerConnection(player);
 
         if (this._aMethod == null) {
             var aMethod = Arrays.stream(playerConnection.getClass().getDeclaredMethods())
@@ -402,12 +385,14 @@ public class VersionStuff {
                                   .orElse(null);
 
                 if (field == null) //Since 1.20.2 the field is located in SuperClass
+                {
                     field = Arrays.stream(playerConnection.getClass().getSuperclass().getDeclaredFields())
                                   .filter(field1 -> field1.getType().getName().toLowerCase(Locale.ROOT).contains("networkdispatcher") ||
                                                     field1.getType().getName().toLowerCase(Locale.ROOT).contains("networkmanager") ||
                                                     field1.getType().getName().equalsIgnoreCase("net.minecraft.network.Connection"))
                                   .findFirst()
                                   .orElse(null);
+                }
 
                 if (field == null) {
                     this._serverSystem.Error("Couldn't find NetworkManager field!");
@@ -427,8 +412,9 @@ public class VersionStuff {
                 }
 
                 this._aMethod = new MethodOrField(field);
-            } else
+            } else {
                 this._aMethod = new MethodOrField(aMethod);
+            }
         }
 
         return this._aMethod.Invoke(playerConnection);
@@ -437,8 +423,7 @@ public class VersionStuff {
     public Channel GetChannel(Player player) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         var playerConnection = this.GetPlayerConnection(player);
 
-        if (playerConnection == null)
-            return null;
+        if (playerConnection == null) return null;
 
         var networkManager = this.GetNetworkManager(playerConnection);
 
@@ -454,35 +439,28 @@ public class VersionStuff {
     }
 
     private void HandleException(Throwable exception) throws ClassNotFoundException {
-        if (exception instanceof NoSuchMethodException || exception instanceof NoSuchMethodError)
+        if (exception instanceof NoSuchMethodException || exception instanceof NoSuchMethodError) {
             VersionStuff.this._getEntityMethod = Arrays.stream(
-                                                               Class.forName("net.minecraft.server." + VersionStuff.this._serverSystem.GetVersionManager().GetNMSVersion() + "World")
-                                                                    .getDeclaredMethods())
+                                                               Class.forName("net.minecraft.server." + VersionStuff.this._serverSystem.GetVersionManager().GetNMSVersion() + "World").getDeclaredMethods())
                                                        .filter(method -> method.getReturnType().getName().toLowerCase(Locale.ROOT).contains("entity"))
                                                        .filter(method -> method.getParameterCount() == 1)
-                                                       .filter(method -> method.getParameters()[0].getType()
-                                                                                                  .getName()
-                                                                                                  .toLowerCase(Locale.ROOT)
-                                                                                                  .contains("int"))
+                                                       .filter(method -> method.getParameters()[0].getType().getName().toLowerCase(Locale.ROOT).contains("int"))
                                                        .findFirst()
                                                        .orElse(null);
+        }
     }
 
     private void FetchGetEntityMethod() throws ClassNotFoundException {
         VersionStuff.this._getEntityMethod = Arrays.stream(Class.forName("net.minecraft.world.level.World").getDeclaredMethods())
                                                    .filter(method -> method.getReturnType().getName().toLowerCase(Locale.ROOT).contains("entity"))
                                                    .filter(method -> method.getParameterCount() == 1)
-                                                   .filter(method -> method.getParameters()[0].getType()
-                                                                                              .getName()
-                                                                                              .toLowerCase(Locale.ROOT)
-                                                                                              .contains("int"))
+                                                   .filter(method -> method.getParameters()[0].getType().getName().toLowerCase(Locale.ROOT).contains("int"))
                                                    .findFirst()
                                                    .orElse(null);
     }
 
     public Object GetEntityPlayer(Player player) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        if (this._getHandleMethod == null)
-            this.FetchGetHandleMethod(player);
+        if (this._getHandleMethod == null) this.FetchGetHandleMethod(player);
 
         return this._getHandleMethod.invoke(player);
     }
@@ -506,8 +484,7 @@ public class VersionStuff {
 
             var playerConnection = this._playerConnectionField.get(entityPlayer);
 
-            if (this._aMethod == null)
-                this._aMethod = new MethodOrField(playerConnection.getClass().getDeclaredMethod("a"));
+            if (this._aMethod == null) this._aMethod = new MethodOrField(playerConnection.getClass().getDeclaredMethod("a"));
 
             var networkManager = this._aMethod.Invoke(playerConnection);
 
@@ -541,13 +518,14 @@ public class VersionStuff {
         }
 
         public Object Invoke(Object object) {
-            if (this._method != null)
+            if (this._method != null) {
                 try {
                     return this._method.invoke(object);
                 } catch (IllegalAccessException | InvocationTargetException exception) {
                     exception.printStackTrace();
                     return null;
                 }
+            }
 
             try {
                 return this._field.get(object);
@@ -570,13 +548,11 @@ public class VersionStuff {
         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
             if (PATTERN.matcher(msg.getClass().toString())
                        .replaceAll("")
-                       .equalsIgnoreCase("class net.minecraft.server." + VersionStuff.this._serverSystem.GetVersionManager().GetNMSVersion() +
-                                         "PacketPlayInAutoRecipe") || PATTERN.matcher(msg.getClass().toString())
-                                                                             .replaceAll("")
-                                                                             .equalsIgnoreCase(
-                                                                                     "class net.minecraft.network.protocol.game.PacketPlayInAutoRecipe"))
-                if (RecipeCommand.GetRecipeList().contains(this._player))
-                    return;
+                       .equalsIgnoreCase(
+                               "class net.minecraft.server." + VersionStuff.this._serverSystem.GetVersionManager().GetNMSVersion() + "PacketPlayInAutoRecipe") ||
+                PATTERN.matcher(msg.getClass().toString()).replaceAll("").equalsIgnoreCase("class net.minecraft.network.protocol.game.PacketPlayInAutoRecipe")) {
+                if (RecipeCommand.GetRecipeList().contains(this._player)) return;
+            }
             super.channelRead(ctx, msg);
         }
     }
@@ -593,7 +569,7 @@ public class VersionStuff {
 
         @Override
         public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-            if (VersionStuff.this._serverSystem.IsClientsideOp())
+            if (VersionStuff.this._serverSystem.IsClientsideOp()) {
                 if (msg.getClass().getName().contains("PacketPlayOutEntityStatus")) {
                     if (VersionStuff.this._aFieldStatus == null) {
                         VersionStuff.this._aFieldStatus = Arrays.stream(msg.getClass().getDeclaredFields())
@@ -638,15 +614,11 @@ public class VersionStuff {
                         VersionStuff.this._packetPlayOutEntityStatusConstructor = Arrays.stream(msg.getClass().getDeclaredConstructors())
                                                                                         .filter(constructor -> constructor.getParameterCount() == 2)
                                                                                         .filter(constructor -> constructor.getParameterTypes()[0].getName()
-                                                                                                                                                 .toLowerCase(
-                                                                                                                                                         Locale.ROOT)
-                                                                                                                                                 .contains(
-                                                                                                                                                         "entity"))
+                                                                                                                                                 .toLowerCase(Locale.ROOT)
+                                                                                                                                                 .contains("entity"))
                                                                                         .filter(constructor -> constructor.getParameterTypes()[1].getName()
-                                                                                                                                                 .toLowerCase(
-                                                                                                                                                         Locale.ROOT)
-                                                                                                                                                 .contains(
-                                                                                                                                                         "byte"))
+                                                                                                                                                 .toLowerCase(Locale.ROOT)
+                                                                                                                                                 .contains("byte"))
                                                                                         .findFirst()
                                                                                         .orElse(null);
                         if (VersionStuff.this._packetPlayOutEntityStatusConstructor == null) {
@@ -658,27 +630,28 @@ public class VersionStuff {
                         VersionStuff.this._packetPlayOutEntityStatusConstructor.setAccessible(true);
                     }
 
-                    if (VersionStuff.this._getHandleWorldMethod == null)
+                    if (VersionStuff.this._getHandleWorldMethod == null) {
                         try {
-                            VersionStuff.this._getHandleWorldMethod = Class.forName(
-                                                                                   "org.bukkit.craftbukkit." + VersionStuff.this._serverSystem.GetVersionManager().GetNMSVersion() + "CraftWorld")
-                                                                           .getDeclaredMethod("getHandle");
+                            VersionStuff.this._getHandleWorldMethod =
+                                    Class.forName("org.bukkit.craftbukkit." + VersionStuff.this._serverSystem.GetVersionManager().GetNMSVersion() + "CraftWorld")
+                                         .getDeclaredMethod("getHandle");
                         } catch (ClassNotFoundException | NoClassDefFoundError | NoSuchMethodException | NoSuchMethodError ignored) {
                             VersionStuff.this._serverSystem.Error("Could not find method 'getHandle' in class 'CraftWorld'!");
                             super.write(ctx, msg, promise);
                             return;
                         }
+                    }
 
                     var world = VersionStuff.this._getHandleWorldMethod.invoke(this._player.getWorld());
 
-                    if (VersionStuff.this._getEntityMethod == null)
+                    if (VersionStuff.this._getEntityMethod == null) {
                         try {
                             VersionStuff.this._getEntityMethod =
                                     Class.forName("net.minecraft.server." + VersionStuff.this._serverSystem.GetVersionManager().GetNMSVersion() + "World")
                                          .getDeclaredMethod("getEntity", int.class);
                         } catch (ClassNotFoundException | NoClassDefFoundError | NoSuchMethodException | NoSuchMethodError exception) {
                             VersionStuff.this.HandleException(exception);
-                            if (VersionStuff.this._getEntityMethod == null)
+                            if (VersionStuff.this._getEntityMethod == null) {
                                 try {
                                     VersionStuff.this.FetchGetEntityMethod();
                                     if (VersionStuff.this._getEntityMethod == null) {
@@ -691,23 +664,25 @@ public class VersionStuff {
                                     super.write(ctx, msg, promise);
                                     return;
                                 }
+                            }
                         }
+                    }
 
                     var newStatus = VersionStuff.this._packetPlayOutEntityStatusConstructor.newInstance(this._entityPlayer, (byte) 28);
                     super.write(ctx, newStatus, promise);
                     return;
                 }
+            }
 
 
-            if (PlotListener.TIME_MAP.containsKey(this._player))
+            if (PlotListener.TIME_MAP.containsKey(this._player)) {
                 if (CLASS_PATTERN.matcher(PATTERN.matcher(msg.getClass().toString()).replaceAll(""))
                                  .replaceFirst("")
-                                 .equalsIgnoreCase("net.minecraft.server." + VersionStuff.this._serverSystem.GetVersionManager().GetNMSVersion() +
-                                                   "PacketPlayOutUpdateTime")) {
+                                 .equalsIgnoreCase(
+                                         "net.minecraft.server." + VersionStuff.this._serverSystem.GetVersionManager().GetNMSVersion() + "PacketPlayOutUpdateTime")) {
                     if (VersionStuff.this._packetPlayOutUpdateTimeConstructor == null) {
                         VersionStuff.this._packetPlayOutUpdateTimeConstructor =
-                                Class.forName("net.minecraft.network.protocol.game.PacketPlayOutUpdateTime")
-                                     .getConstructor(long.class, long.class, boolean.class);
+                                Class.forName("net.minecraft.network.protocol.game.PacketPlayOutUpdateTime").getConstructor(long.class, long.class, boolean.class);
                         VersionStuff.this._packetPlayOutUpdateTimeConstructor.setAccessible(true);
                     }
 
@@ -717,10 +692,10 @@ public class VersionStuff {
                     }
 
                     super.write(ctx, VersionStuff.this._packetPlayOutUpdateTimeConstructor.newInstance(VersionStuff.this._aField.get(msg),
-                                                                                                       PlotListener.TIME_MAP.get(this._player), false),
-                                promise);
+                                                                                                       PlotListener.TIME_MAP.get(this._player), false), promise);
                     return;
                 }
+            }
             super.write(ctx, msg, promise);
         }
     }

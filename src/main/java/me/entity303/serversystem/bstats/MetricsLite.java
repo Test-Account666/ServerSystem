@@ -46,8 +46,9 @@ public class MetricsLite {
             final var defaultPackage = new String(new byte[] { 'o', 'r', 'g', '.', 'b', 's', 't', 'a', 't', 's', '.', 'b', 'u', 'k', 'k', 'i', 't' });
             final var examplePackage = new String(new byte[] { 'y', 'o', 'u', 'r', '.', 'p', 'a', 'c', 'k', 'a', 'g', 'e' });
             // We want to make sure nobody just copy & pastes the example and use the wrong package names
-            if (MetricsLite.class.getPackage().getName().equals(defaultPackage) || MetricsLite.class.getPackage().getName().equals(examplePackage))
+            if (MetricsLite.class.getPackage().getName().equals(defaultPackage) || MetricsLite.class.getPackage().getName().equals(examplePackage)) {
                 throw new IllegalStateException("bStats Metrics class has not been relocated correctly!");
+            }
         }
     }
 
@@ -66,8 +67,7 @@ public class MetricsLite {
      It can be found at <a href="https://bstats.org/what-is-my-plugin-id">What is my plugin id?</a>
      */
     public MetricsLite(ServerSystem plugin, int pluginId) {
-        if (plugin == null)
-            throw new IllegalArgumentException("Plugin cannot be null!");
+        if (plugin == null) throw new IllegalArgumentException("Plugin cannot be null!");
         this._plugin = plugin;
         this._pluginId = pluginId;
 
@@ -121,8 +121,7 @@ public class MetricsLite {
             // Register our service
             Bukkit.getServicesManager().register(MetricsLite.class, this, plugin, ServicePriority.Normal);
             // We are the first!
-            if (!found)
-                this.StartSubmitting();
+            if (!found) this.StartSubmitting();
         }
     }
 
@@ -164,9 +163,9 @@ public class MetricsLite {
                     try {
                         var plugin = provider.getService().getMethod("getPluginData").invoke(provider.getProvider());
                         // old bstats version compatibility
-                        if (plugin instanceof JsonObject)
+                        if (plugin instanceof JsonObject) {
                             pluginData.add((JsonObject) plugin);
-                        else
+                        } else {
                             try {
                                 var jsonObjectJsonSimple = Class.forName("org.json.simple.JSONObject");
                                 if (plugin.getClass().isAssignableFrom(jsonObjectJsonSimple)) {
@@ -183,6 +182,7 @@ public class MetricsLite {
                                     exception.printStackTrace();
                                 }
                             }
+                        }
                     } catch (NullPointerException | NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
                     }
             } catch (NoSuchFieldException ignored) {
@@ -261,12 +261,9 @@ public class MetricsLite {
      @throws Exception If the request failed.
      */
     private static void SendData(ServerSystem plugin, JsonObject data) throws Exception {
-        if (data == null)
-            throw new IllegalArgumentException("Data cannot be null!");
-        if (Bukkit.isPrimaryThread())
-            throw new IllegalAccessException("This method must not be called from the main thread!");
-        if (MetricsLite.LOG_SENT_DATA)
-            plugin.Info("Sending data to bStats: " + data);
+        if (data == null) throw new IllegalArgumentException("Data cannot be null!");
+        if (Bukkit.isPrimaryThread()) throw new IllegalAccessException("This method must not be called from the main thread!");
+        if (MetricsLite.LOG_SENT_DATA) plugin.Info("Sending data to bStats: " + data);
         var connection = (HttpsURLConnection) new URL(MetricsLite.SUBMIT_URL).openConnection();
 
         // Compress the data to save bandwidth
@@ -290,8 +287,7 @@ public class MetricsLite {
         var builder = new StringBuilder();
         try (var bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
             String line;
-            while ((line = bufferedReader.readLine()) != null)
-                builder.append(line);
+            while ((line = bufferedReader.readLine()) != null) builder.append(line);
         } catch (IOException exception) {
             if (!exception.getMessage().toLowerCase().contains("code: 429")) {
                 exception.printStackTrace();
@@ -299,8 +295,7 @@ public class MetricsLite {
             }
         }
 
-        if (MetricsLite.LOG_RESPONSE_DATA_TEXT)
-            plugin.Info("Sent data to bStats and received response: " + builder);
+        if (MetricsLite.LOG_RESPONSE_DATA_TEXT) plugin.Info("Sent data to bStats and received response: " + builder);
     }
 
     /**
@@ -313,8 +308,7 @@ public class MetricsLite {
      @throws IOException If the compression failed.
      */
     private static byte[] Compress(final String str) throws IOException {
-        if (str == null)
-            return null;
+        if (str == null) return null;
         var outputStream = new ByteArrayOutputStream();
         try (var gzip = new GZIPOutputStream(outputStream)) {
             gzip.write(str.getBytes(StandardCharsets.UTF_8));

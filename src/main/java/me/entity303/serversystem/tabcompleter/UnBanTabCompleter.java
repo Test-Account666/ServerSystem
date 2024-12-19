@@ -19,26 +19,22 @@ public class UnBanTabCompleter implements ITabCompleterOverload {
 
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (!this._plugin.GetPermissions().HasPermission(commandSender, "unban", true))
-            return Collections.singletonList("");
-        if (arguments.length == 1) {
-            if (this._plugin.GetBanManager().GetBannedPlayerNames().isEmpty())
-                return Collections.singletonList("");
-            var playerNameList = this._plugin.GetBanManager().GetBannedPlayerNames();
-            if (playerNameList == null)
-                return Collections.singletonList("");
-            if (playerNameList.isEmpty())
-                return Collections.singletonList("");
-            List<String> tabList = new ArrayList<>();
-            for (var playerName : playerNameList) {
-                if (playerName == null)
-                    continue;
-                if (playerName.toLowerCase().startsWith(arguments[0].toLowerCase()) || playerName.equalsIgnoreCase(arguments[0]))
-                    tabList.add(playerName);
-            }
-            return tabList.isEmpty()? playerNameList : tabList;
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "unban", true)) return Collections.singletonList("");
+        if (arguments.length != 1) return Collections.singletonList("");
+
+        if (this._plugin.GetBanManager().GetBannedPlayerNames().isEmpty()) return Collections.singletonList("");
+        var playerNameList = this._plugin.GetBanManager().GetBannedPlayerNames();
+        if (playerNameList == null) return Collections.singletonList("");
+        if (playerNameList.isEmpty()) return Collections.singletonList("");
+
+        var tabList = new ArrayList<String>();
+        for (var playerName : playerNameList) {
+            if (playerName == null) continue;
+            if (!playerName.toLowerCase().startsWith(arguments[0].toLowerCase()) && !playerName.equalsIgnoreCase(arguments[0])) continue;
+
+            tabList.add(playerName);
         }
-        return Collections.singletonList("");
+        return tabList.isEmpty()? playerNameList : tabList;
     }
 
     private ServerSystem GetPlugin() {

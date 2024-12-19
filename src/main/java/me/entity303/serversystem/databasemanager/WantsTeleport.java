@@ -24,11 +24,9 @@ public class WantsTeleport {
     }
 
     public boolean DoesPlayerWantTeleport(UUID uuid) {
-        if (!this._wantsTeleportFile.exists())
-            return true;
+        if (!this._wantsTeleportFile.exists()) return true;
 
-        if (!this._configuration.isSet("WantsTp." + uuid.toString()))
-            return true;
+        if (!this._configuration.isSet("WantsTp." + uuid.toString())) return true;
 
         return this._configuration.getBoolean("WantsTp." + uuid);
     }

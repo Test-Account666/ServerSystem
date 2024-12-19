@@ -8,8 +8,8 @@ import java.sql.SQLException;
 
 public class EconomyManager_SQLite extends AbstractEconomyManager_SQL {
 
-    public EconomyManager_SQLite(String currencySingular, String currencyPlural, String startingMoney, String displayFormat, String moneyFormat,
-                                 String separator, String thousands, ServerSystem plugin) {
+    public EconomyManager_SQLite(String currencySingular, String currencyPlural, String startingMoney, String displayFormat, String moneyFormat, String separator,
+                                 String thousands, ServerSystem plugin) {
         super(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, plugin);
     }
 
@@ -26,16 +26,15 @@ public class EconomyManager_SQLite extends AbstractEconomyManager_SQL {
 
     @Override
     public void Open() {
-        if (this._connection != null)
+        if (this._connection != null) {
             try {
-                if (!this._connection.isClosed())
-                    return;
+                if (!this._connection.isClosed()) return;
             } catch (SQLException exception) {
                 exception.printStackTrace();
             }
+        }
 
-        if (!this.Initialize())
-            return;
+        if (!this.Initialize()) return;
 
         try {
             this._connection = DriverManager.getConnection("jdbc:sqlite:" + new File("plugins//ServerSystem", "economy.sqlite").getAbsolutePath());

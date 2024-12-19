@@ -13,8 +13,8 @@ import java.util.UUID;
 public abstract class AbstractEconomyManager_SQL extends AbstractEconomyManager {
     protected Connection _connection;
 
-    public AbstractEconomyManager_SQL(String currencySingular, String currencyPlural, String startingMoney, String displayFormat, String moneyFormat,
-                                      String separator, String thousands, ServerSystem plugin) {
+    public AbstractEconomyManager_SQL(String currencySingular, String currencyPlural, String startingMoney, String displayFormat, String moneyFormat, String separator,
+                                      String thousands, ServerSystem plugin) {
         super(currencySingular, currencyPlural, startingMoney, displayFormat, moneyFormat, separator, thousands, plugin);
         this.Initialize();
         this.Open();
@@ -36,19 +36,16 @@ public abstract class AbstractEconomyManager_SQL extends AbstractEconomyManager 
     @Override
     public Double GetMoneyAsNumber(OfflinePlayer offlinePlayer) {
         this.Open();
-        if (offlinePlayer == null)
-            return 0.0D;
+        if (offlinePlayer == null) return 0.0D;
 
-        if (Bukkit.isPrimaryThread() && this._moneyCache.containsKey(offlinePlayer))
-            return this._moneyCache.get(offlinePlayer);
+        if (Bukkit.isPrimaryThread() && this._moneyCache.containsKey(offlinePlayer)) return this._moneyCache.get(offlinePlayer);
 
         try {
             var statement = this._connection.createStatement();
             var resultSet = statement.executeQuery("SELECT * FROM Economy WHERE UUID = '" + offlinePlayer.getUniqueId() + "'");
             try {
                 if (resultSet.isClosed()) {
-                    if (!statement.isClosed())
-                        statement.close();
+                    if (!statement.isClosed()) statement.close();
 
                     return 0.0D;
                 }
@@ -56,8 +53,7 @@ public abstract class AbstractEconomyManager_SQL extends AbstractEconomyManager 
                 if (!resultSet.next()) {
                     resultSet.close();
 
-                    if (!statement.isClosed())
-                        statement.close();
+                    if (!statement.isClosed()) statement.close();
 
                     return 0.0D;
                 }
@@ -66,18 +62,15 @@ public abstract class AbstractEconomyManager_SQL extends AbstractEconomyManager 
 
                 resultSet.close();
 
-                if (!statement.isClosed())
-                    statement.close();
+                if (!statement.isClosed()) statement.close();
 
                 this._moneyCache.remove(offlinePlayer);
                 this._moneyCache.put(offlinePlayer, money);
                 return money;
             } catch (SQLException exception) {
-                if (!exception.getMessage().toLowerCase().contains("closed"))
-                    exception.printStackTrace();
+                if (!exception.getMessage().toLowerCase().contains("closed")) exception.printStackTrace();
                 try {
-                    if (!statement.isClosed())
-                        statement.close();
+                    if (!statement.isClosed()) statement.close();
                 } catch (SQLException exception1) {
                     exception1.printStackTrace();
                 }
@@ -93,8 +86,7 @@ public abstract class AbstractEconomyManager_SQL extends AbstractEconomyManager 
     public void SetMoney(OfflinePlayer offlinePlayer, double amount) {
         this.Open();
 
-        if (offlinePlayer == null)
-            return;
+        if (offlinePlayer == null) return;
 
         amount = Double.parseDouble(String.format("%.2f", amount).replace(",", "."));
         this.DeleteAccountSync(offlinePlayer);
@@ -112,12 +104,10 @@ public abstract class AbstractEconomyManager_SQL extends AbstractEconomyManager 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         } finally {
-            if (statement == null)
-                return;
+            if (statement == null) return;
 
             try {
-                if (statement.isClosed())
-                    return;
+                if (statement.isClosed()) return;
 
                 statement.close();
             } catch (SQLException exception) {
@@ -130,13 +120,11 @@ public abstract class AbstractEconomyManager_SQL extends AbstractEconomyManager 
     @SuppressWarnings("ReturnInsideFinallyBlock")
     @Override
     public void CreateAccount(OfflinePlayer offlinePlayer) {
-        if (this.HasAccount(offlinePlayer))
-            return;
+        if (this.HasAccount(offlinePlayer)) return;
 
         this.Open();
 
-        if (offlinePlayer == null)
-            return;
+        if (offlinePlayer == null) return;
 
         this._moneyCache.remove(offlinePlayer);
         this._moneyCache.put(offlinePlayer, Double.valueOf(this._startingMoney));
@@ -149,12 +137,10 @@ public abstract class AbstractEconomyManager_SQL extends AbstractEconomyManager 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         } finally {
-            if (statement == null)
-                return;
+            if (statement == null) return;
 
             try {
-                if (statement.isClosed())
-                    return;
+                if (statement.isClosed()) return;
 
                 statement.close();
             } catch (SQLException exception) {
@@ -165,8 +151,7 @@ public abstract class AbstractEconomyManager_SQL extends AbstractEconomyManager 
 
     @Override
     public void DeleteAccount(OfflinePlayer offlinePlayer) {
-        if (!this.HasAccount(offlinePlayer))
-            return;
+        if (!this.HasAccount(offlinePlayer)) return;
 
         Bukkit.getScheduler().runTaskAsynchronously(this.GetPlugin(), () -> this.DeleteAccountSync(offlinePlayer));
     }
@@ -174,15 +159,13 @@ public abstract class AbstractEconomyManager_SQL extends AbstractEconomyManager 
     @Override
     public boolean HasAccount(OfflinePlayer offlinePlayer) {
         this.Open();
-        if (offlinePlayer == null)
-            return false;
+        if (offlinePlayer == null) return false;
 
         try {
             var statement = this._connection.createStatement();
             var resultSet = statement.executeQuery("SELECT * FROM Economy WHERE UUID = '" + offlinePlayer.getUniqueId() + "'");
             if (resultSet == null) {
-                if (statement.isClosed())
-                    return false;
+                if (statement.isClosed()) return false;
 
                 statement.close();
 
@@ -190,8 +173,7 @@ public abstract class AbstractEconomyManager_SQL extends AbstractEconomyManager 
             }
 
             if (resultSet.isClosed() || !resultSet.next()) {
-                if (statement.isClosed())
-                    return false;
+                if (statement.isClosed()) return false;
 
                 statement.close();
                 return false;
@@ -200,8 +182,7 @@ public abstract class AbstractEconomyManager_SQL extends AbstractEconomyManager 
             var uuid = resultSet.getString("UUID");
             resultSet.close();
             try {
-                if (statement.isClosed())
-                    return uuid != null;
+                if (statement.isClosed()) return uuid != null;
 
                 statement.close();
             } catch (SQLException exception) {
@@ -221,8 +202,7 @@ public abstract class AbstractEconomyManager_SQL extends AbstractEconomyManager 
     @Override
     public void Close() {
         try {
-            if (this._connection.isClosed())
-                return;
+            if (this._connection.isClosed()) return;
 
             this._connection.close();
         } catch (Exception ignored) {
@@ -248,8 +228,7 @@ public abstract class AbstractEconomyManager_SQL extends AbstractEconomyManager 
             exception.printStackTrace();
         } finally {
             try {
-                if (!statement.isClosed())
-                    statement.close();
+                if (!statement.isClosed()) statement.close();
             } catch (SQLException exception) {
                 exception.printStackTrace();
             }
@@ -259,8 +238,7 @@ public abstract class AbstractEconomyManager_SQL extends AbstractEconomyManager 
 
     public void DeleteAccountSync(OfflinePlayer offlinePlayer) {
         this.Open();
-        if (offlinePlayer == null)
-            return;
+        if (offlinePlayer == null) return;
 
         this._moneyCache.remove(offlinePlayer);
 
@@ -272,13 +250,10 @@ public abstract class AbstractEconomyManager_SQL extends AbstractEconomyManager 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         } finally {
-            if (statement == null) {
-                return;
-            }
+            if (statement == null) return;
 
             try {
-                if (!statement.isClosed())
-                    statement.close();
+                if (!statement.isClosed()) statement.close();
             } catch (SQLException exception) {
                 exception.printStackTrace();
             }

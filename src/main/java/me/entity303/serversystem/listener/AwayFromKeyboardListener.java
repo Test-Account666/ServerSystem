@@ -34,8 +34,7 @@ public class AwayFromKeyboardListener implements Listener {
                 var uuid = UUID.fromString(entryKey);
                 var duration = System.currentTimeMillis() - entry.getValue();
 
-                if (duration < maxDuration)
-                    continue;
+                if (duration < maxDuration) continue;
 
                 var player = Bukkit.getPlayer(uuid);
 
@@ -48,11 +47,9 @@ public class AwayFromKeyboardListener implements Listener {
                 var pluginMessages = this._plugin.GetMessages();
                 if (this.IsAwayFromKeyboard(player)) {
 
-                    if (kickDuration <= 0)
-                        continue;
+                    if (kickDuration <= 0) continue;
 
-                    if (duration < kickDuration)
-                        continue;
+                    if (duration < kickDuration) continue;
 
                     Bukkit.getScheduler().runTask(this._plugin, () -> {
                         this._awayFromKeyboardMap.remove(uuidString);
@@ -115,9 +112,7 @@ public class AwayFromKeyboardListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void OnMove(PlayerMoveEvent event) {
         var player = event.getPlayer();
-        if (player.getLocation().getYaw() == event.getTo().getYaw())
-            if (player.getLocation().getPitch() == event.getTo().getPitch())
-                return;
+        if (player.getLocation().getYaw() == event.getTo().getYaw()) if (player.getLocation().getPitch() == event.getTo().getPitch()) return;
 
         var awayFromKeyboard = this.IsAwayFromKeyboard(player);
 
@@ -126,8 +121,7 @@ public class AwayFromKeyboardListener implements Listener {
         var uuidString = player.getUniqueId().toString();
         this._awayFromKeyboardMap.put(uuidString, currentTime);
 
-        if (!awayFromKeyboard)
-            return;
+        if (!awayFromKeyboard) return;
 
         player.removeMetadata("afk", this._plugin);
         var metaValue = this._plugin.GetMetaValue().GetMetaValue(false);

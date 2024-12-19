@@ -32,9 +32,10 @@ public class EssentialsCommandListener implements Listener {
             event.setCancelled(true);
             List<String> arguments = new ArrayList<>();
 
-            if (event.getMessage().split(" ").length >= 2)
+            if (event.getMessage().split(" ").length >= 2) {
                 for (var index = 1; index < event.getMessage().split(" ").length; index++)
                     arguments.add(index - 1, event.getMessage().split(" ")[index]);
+            }
 
             var commandName = this._essentialsCommandMap.get(com);
             var essentialsCommand = this._plugin.getServer().getPluginCommand("essentials:" + commandName);
@@ -43,11 +44,10 @@ public class EssentialsCommandListener implements Listener {
 
             try {
                 command = (IEssentialsCommand) Essentials.class.getClassLoader()
-                                                           .loadClass("com.earth2me.essentials.commands.Command" + essentialsCommand.getName())
-                                                           .newInstance();
+                                                               .loadClass("com.earth2me.essentials.commands.Command" + essentialsCommand.getName())
+                                                               .newInstance();
             } catch (InstantiationException | IllegalAccessException | ClassNotFoundException instantiationException) {
-                if (!instantiationException.getMessage().isEmpty())
-                    event.getPlayer().sendMessage(instantiationException.getMessage());
+                if (!instantiationException.getMessage().isEmpty()) event.getPlayer().sendMessage(instantiationException.getMessage());
                 instantiationException.printStackTrace();
                 return;
             }
@@ -57,17 +57,17 @@ public class EssentialsCommandListener implements Listener {
 
             try {
                 command.run(this._essentials.getServer(), this._essentials.getUser(event.getPlayer().getUniqueId()), essentialsCommand.getName(), essentialsCommand,
-                        arguments.toArray(new String[0]));
+                            arguments.toArray(new String[0]));
             } catch (NotEnoughArgumentsException exception) {
                 event.getPlayer().sendMessage(essentialsCommand.getDescription());
                 event.getPlayer().sendMessage(essentialsCommand.getUsage().replace("<command>", com));
-                if (!exception.getMessage().isEmpty())
-                    event.getPlayer().sendMessage(exception.getMessage());
+                if (!exception.getMessage().isEmpty()) event.getPlayer().sendMessage(exception.getMessage());
             } catch (Exception exception) {
-                if (!exception.getMessage().isEmpty())
+                if (!exception.getMessage().isEmpty()) {
                     event.getPlayer().sendMessage(exception.getMessage());
-                else
+                } else {
                     exception.printStackTrace();
+                }
             }
         }
     }

@@ -2,7 +2,6 @@ package me.entity303.serversystem.utils.versions;
 
 import me.entity303.serversystem.actionbar.ActionBar;
 import me.entity303.serversystem.commands.executable.EditSignCommand;
-import me.entity303.serversystem.commands.executable.EditSignPlotSquaredCommand;
 import me.entity303.serversystem.commands.executable.SkullCommand;
 import me.entity303.serversystem.listener.vanish.InteractListener;
 import me.entity303.serversystem.main.ServerSystem;
@@ -13,8 +12,9 @@ import me.entity303.serversystem.utils.versions.offlineplayer.data.SaveData_Late
 import me.entity303.serversystem.utils.versions.offlineplayer.entityplayer.EntityPlayer_Latest;
 import me.entity303.serversystem.utils.versions.offlineplayer.teleport.Teleport_Latest;
 import me.entity303.serversystem.utils.versions.offlineplayer.teleport.Teleport_v1_17_R1;
-import me.entity303.serversystem.vanish.packets.VanishPacket_Reflection_Latest;
+import me.entity303.serversystem.vanish.packets.VanishPacket_Reflection_1_21;
 import me.entity303.serversystem.vanish.packets.VanishPacket_Reflection_Till_1_19_2;
+import me.entity303.serversystem.vanish.packets.VanishPacket_Reflection_Till_1_20;
 import me.entity303.serversystem.virtual.anvil.VirtualAnvil_Latest;
 import me.entity303.serversystem.virtual.cartography.VirtualCartography_Latest;
 import me.entity303.serversystem.virtual.grindstone.VirtualGrindstone_latest;
@@ -43,28 +43,28 @@ public class VersionManager {
 
         try {
             this._serverSystem.GetVersionStuff()
-                              .SetGetHandleMethod(
-                                      Class.forName("org.bukkit.craftbukkit." + this._nmsVersion + "entity.CraftPlayer").getDeclaredMethod("getHandle"));
+                              .SetGetHandleMethod(Class.forName("org.bukkit.craftbukkit." + this._nmsVersion + "entity.CraftPlayer").getDeclaredMethod("getHandle"));
         } catch (NoSuchMethodException | ClassNotFoundException exception) {
             exception.printStackTrace();
         }
 
-        if (this._version.contains("1.20")) {
-            this._serverSystem.Warn("Vanish is currently not fully functional in version 1.20+");
-            this._vanishFullyFunctional = false;
+        if (this._version.contains("1.21")) {
+            this._vanishFullyFunctional = true;
 
             this.HandleFullySupportedVersion();
-            Bukkit.getScheduler()
-                  .runTaskLater(this._serverSystem,
-                                () -> this._serverSystem.GetCommandManager().RegisterCommand("skull", new SkullCommand(this._serverSystem), null), 5L);
-        } else if (this._version.contains("1.19.R3")) {
+        } else if (this._version.contains("1.20")) {
+            this._vanishFullyFunctional = this._version.contains("1.20.5") || this._version.contains("1.20.6");
+            if (!this._vanishFullyFunctional) this._serverSystem.Warn("Vanish is not fully functional in version 1.20 - 1.20.4!");
+
             this.HandleFullySupportedVersion();
+        } else if (this._version.contains("1.19.R3")) {
+            this.HandleFullySupportedPre21Version();
             this.RegisterObsoleteEditSignCommand();
-        } else if (this._version.contains("1.19"))
+        } else if (this._version.contains("1.19")) {
             this.HandleLegacyVersions();
-        else if (this._version.contains("1.18"))
+        } else if (this._version.contains("1.18")) {
             this.HandleLegacyVersions();
-        else if (this._version.contains("1.17")) {
+        } else if (this._version.contains("1.17")) {
             this._serverSystem.GetVersionStuff().SetActionBar(new ActionBar());
             this._serverSystem.GetVersionStuff().SetVanishPacket(new VanishPacket_Reflection_Till_1_19_2(this._serverSystem));
             Bukkit.getPluginManager().registerEvents(new InteractListener(this._serverSystem), this._serverSystem);
@@ -79,24 +79,24 @@ public class VersionManager {
             this._serverSystem.Warn("Using a version older than that, will *NOT* work!");
             this._serverSystem.Warn("Also, only the latest version will always be fully supported!");
 
-            this._serverSystem.Warn("Vanish is currently not fully functional in version 1.20+");
-            this._vanishFullyFunctional = false;
+            this._vanishFullyFunctional = true;
             this.HandleFullySupportedVersion();
-            Bukkit.getScheduler()
-                  .runTaskLater(this._serverSystem,
-                                () -> this._serverSystem.GetCommandManager().RegisterCommand("skull", new SkullCommand(this._serverSystem), null), 5L);
         }
     }
 
     public void FetchVersion() {
-        if (this._version != null && !this._version.isEmpty())
-            return;
+        if (this._version != null && !this._version.isEmpty()) return;
 
-        try {
-            this._version = this._nmsVersion.replace("_", ".");
-        } catch (ArrayIndexOutOfBoundsException exception) {
-            exception.printStackTrace();
+        if (this._nmsVersion.isEmpty()) {
+            this._version = Bukkit.getVersion();
+
+            var cutoff = this._version.lastIndexOf(':') + 1;
+
+            this._version = this._version.substring(cutoff, this._version.length() - 1).replaceFirst(" ", "");
+            return;
         }
+
+        this._version = this._nmsVersion.replace("_", ".");
     }
 
     public boolean IsVanishFullyFunctional() {
@@ -104,8 +104,18 @@ public class VersionManager {
     }
 
     private void HandleFullySupportedVersion() {
+        var vanishPacket = this._vanishFullyFunctional? new VanishPacket_Reflection_1_21(this._serverSystem) : new VanishPacket_Reflection_Till_1_20(this._serverSystem);
         this._serverSystem.GetVersionStuff().SetActionBar(new ActionBar());
-        this._serverSystem.GetVersionStuff().SetVanishPacket(new VanishPacket_Reflection_Latest(this._serverSystem));
+        this._serverSystem.GetVersionStuff().SetVanishPacket(vanishPacket);
+        this.HandleGenericVersion();
+
+        Bukkit.getScheduler()
+              .runTaskLater(this._serverSystem, () -> this._serverSystem.GetCommandManager().RegisterCommand("skull", new SkullCommand(this._serverSystem), null), 5L);
+    }
+
+    private void HandleFullySupportedPre21Version() {
+        this._serverSystem.GetVersionStuff().SetActionBar(new ActionBar());
+        this._serverSystem.GetVersionStuff().SetVanishPacket(new VanishPacket_Reflection_Till_1_20(this._serverSystem));
         this.HandleGenericVersion();
     }
 
@@ -119,10 +129,7 @@ public class VersionManager {
 
     private void RegisterObsoleteEditSignCommand() {
         Bukkit.getScheduler().runTaskLater(this._serverSystem, () -> {
-            this._serverSystem.GetCommandManager()
-                              .RegisterCommand("editsign", Bukkit.getPluginManager().getPlugin("PlotSquared") != null?
-                                                           new EditSignPlotSquaredCommand(this._serverSystem) :
-                                                           new EditSignCommand(this._serverSystem), null);
+            this._serverSystem.GetCommandManager().RegisterCommand("editsign", new EditSignCommand(this._serverSystem), null);
             this._serverSystem.GetCommandManager().RegisterCommand("skull", new SkullCommand(this._serverSystem), null);
         }, 5L);
     }

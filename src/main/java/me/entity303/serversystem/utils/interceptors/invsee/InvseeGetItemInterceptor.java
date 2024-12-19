@@ -34,11 +34,10 @@ public class InvseeGetItemInterceptor {
     @SuppressWarnings("NewMethodNamingConvention")
     @RuntimeType
     public Object intercept(@This Object obj, @AllArguments Object[] allArguments, @Morph IMorpher morpher, @SuperMethod Method method) {
-        if (this._asNMSCopyMethod == null)
+        if (this._asNMSCopyMethod == null) {
             try {
                 this._asNMSCopyMethod = Arrays.stream(
-                                                      Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() +
-                                                                    "inventory.CraftItemStack")
+                                                      Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + "inventory" + ".CraftItemStack")
                                                            .getDeclaredMethods())
                                               .filter(method1 -> method1.getName().equalsIgnoreCase("asNMSCopy"))
                                               .filter(method1 -> method1.getParameters().length == 1)
@@ -49,9 +48,10 @@ public class InvseeGetItemInterceptor {
                 exception.printStackTrace();
                 return null;
             }
+        }
 
         if (this._masterInventoryNms == null) {
-            if (this._getInventoryMethod == null)
+            if (this._getInventoryMethod == null) {
                 try {
                     this._getInventoryMethod =
                             Class.forName("org.bukkit.craftbukkit." + this._plugin.GetVersionManager().GetNMSVersion() + "inventory.CraftInventoryPlayer")
@@ -60,6 +60,7 @@ public class InvseeGetItemInterceptor {
                     exception.printStackTrace();
                     return null;
                 }
+            }
 
             try {
                 this._masterInventoryNms = this._getInventoryMethod.invoke(this._masterInventory);
@@ -72,32 +73,30 @@ public class InvseeGetItemInterceptor {
         if (allArguments[0] instanceof Integer) {
             var index = (int) allArguments[0];
 
-            if (index > 45 - 5)
+            if (index > 45 - 5) {
                 try {
                     return this._asNMSCopyMethod.invoke(null, this._dropItemStack);
                 } catch (IllegalAccessException | InvocationTargetException exception) {
                     exception.printStackTrace();
                     return null;
                 }
+            }
 
             try {
-                if (this._getItemMethod == null)
-                    this._getItemMethod =
-                            Arrays.stream(this._masterInventoryNms.getClass().getDeclaredMethods()).filter(this::IsGetItem).findFirst().orElse(null);
+                if (this._getItemMethod == null) {
+                    this._getItemMethod = Arrays.stream(this._masterInventoryNms.getClass().getDeclaredMethods()).filter(this::IsGetItem).findFirst().orElse(null);
+                }
 
-                if (this._getItemMethod == null)
+                if (this._getItemMethod == null) {
                     for (var declaredMethod : this._masterInventoryNms.getClass().getDeclaredMethods()) {
-                        if (declaredMethod.getParameters().length != 1)
-                            continue;
-                        if (!declaredMethod.getParameters()[0].getType().getName().equalsIgnoreCase(int.class.getName()))
-                            continue;
-                        if (!declaredMethod.getReturnType().getName().toLowerCase(Locale.ROOT).contains("itemstack"))
-                            continue;
-                        if (!declaredMethod.getName().equalsIgnoreCase("a"))
-                            continue;
+                        if (declaredMethod.getParameters().length != 1) continue;
+                        if (!declaredMethod.getParameters()[0].getType().getName().equalsIgnoreCase(int.class.getName())) continue;
+                        if (!declaredMethod.getReturnType().getName().toLowerCase(Locale.ROOT).contains("itemstack")) continue;
+                        if (!declaredMethod.getName().equalsIgnoreCase("a")) continue;
                         this._getItemMethod = declaredMethod;
                         break;
                     }
+                }
 
                 return this._getItemMethod.invoke(this._masterInventoryNms, allArguments[0]);
             } catch (IllegalAccessException | InvocationTargetException exception) {

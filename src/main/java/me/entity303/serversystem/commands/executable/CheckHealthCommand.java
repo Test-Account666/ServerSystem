@@ -1,12 +1,14 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+@ServerSystemCommand(name = "CheckHealth")
 public class CheckHealthCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -24,8 +26,8 @@ public class CheckHealthCommand implements ICommandExecutorOverload {
         }
 
         if (arguments.length == 0) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                      this._plugin.GetMessages().GetSyntax(commandLabel, command.getName(), commandSender, null, "CheckHealth"));
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command.getName(), commandSender, null, "CheckHealth"));
             return true;
         }
 
@@ -36,12 +38,11 @@ public class CheckHealthCommand implements ICommandExecutorOverload {
         }
 
         commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                     .GetMessage(commandLabel, command.getName(), commandSender, target,
-                                                                                                 "CheckHealth")
-                                                                                     .replace("<HEALTH>", String.valueOf(target.getHealth()))
-                                                                                     .replace("<FOOD>", String.valueOf(target.getFoodLevel()))
-                                                                                     .replace("<MAXHEALTH>", String.valueOf(
-                                                                                             target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue())));
+                                                                                       .GetMessage(commandLabel, command.getName(), commandSender, target, "CheckHealth")
+                                                                                       .replace("<HEALTH>", String.valueOf(target.getHealth()))
+                                                                                       .replace("<FOOD>", String.valueOf(target.getFoodLevel()))
+                                                                                       .replace("<MAXHEALTH>", String.valueOf(
+                                                                                               target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue())));
         return true;
     }
 }

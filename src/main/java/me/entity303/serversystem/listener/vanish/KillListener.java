@@ -20,12 +20,11 @@ public class KillListener implements Listener {
     public void OnEntityDeath(EntityDeathEvent event) {
         try {
             var killer = event.getEntity().getKiller();
-            if (killer == null)
-                return;
-            if (this._plugin.GetVanish().IsVanish(killer))
+            if (killer == null) return;
+            if (this._plugin.GetVanish().IsVanish(killer)) {
                 for (var all : Bukkit.getOnlinePlayers())
-                    if (!this._plugin.GetPermissions().HasPermission(all, "vanish.see", true))
-                        all.hidePlayer(killer);
+                    if (!this._plugin.GetPermissions().HasPermission(all, "vanish.see", true)) all.hidePlayer(killer);
+            }
         } catch (Exception ignored) {
 
         }
@@ -36,8 +35,7 @@ public class KillListener implements Listener {
         if (this._plugin.GetVanish().IsVanish(event.getEntity())) {
             event.setDeathMessage(null);
             for (var all : Bukkit.getOnlinePlayers())
-                if (!this._plugin.GetPermissions().HasPermission(all, "vanish.see", true))
-                    all.hidePlayer(event.getEntity());
+                if (!this._plugin.GetPermissions().HasPermission(all, "vanish.see", true)) all.hidePlayer(event.getEntity());
         }
     }
 }

@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 
 import static me.entity303.serversystem.commands.executable.GameModeCommand.ExecuteGameMode;
 
+// Annotation isn't required, as this command will get registered in GameModeCommand.
 public class GameModeAdventureCommand implements ICommandExecutorOverload {
     private static final String GAME_MODE = "adventure";
     protected final ServerSystem _plugin;

@@ -2,6 +2,7 @@ package me.entity303.serversystem.commands.executable;
 
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.tabcompleter.WorldTabCompleter;
 import org.bukkit.Bukkit;
@@ -14,7 +15,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-
+@ServerSystemCommand(name = "Weather", tabCompleter = WorldTabCompleter.class)
 public class WeatherCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -22,17 +23,17 @@ public class WeatherCommand implements ICommandExecutorOverload {
     public WeatherCommand(ServerSystem plugin) {
         this._plugin = plugin;
 
-        this._plugin.GetCommandManager().RegisterCommand("sun", new SunCommand(this._plugin, this), new WorldTabCompleter());
-        this._plugin.GetCommandManager().RegisterCommand("rain", new RainCommand(this._plugin, this), new WorldTabCompleter());
+        plugin.GetCommandManager().RegisterCommand("sun", new SunCommand(plugin, this), new WorldTabCompleter(plugin));
+        plugin.GetCommandManager().RegisterCommand("rain", new RainCommand(plugin, this), new WorldTabCompleter(plugin));
     }
 
     @SuppressWarnings("DuplicatedCode")
     public void ExecuteWeather(String weather, CommandSender commandSender, Command command, String commandLabel, String... arguments) {
-        if (arguments.length == 0)
+        if (arguments.length == 0) {
             arguments = new String[] { weather };
-        else if (arguments.length == 1)
+        } else if (arguments.length == 1) {
             arguments = new String[] { weather, arguments[0] };
-        else {
+        } else {
             List<String> argumentList = new LinkedList<>();
 
             Collections.addAll(argumentList, arguments);
@@ -73,9 +74,8 @@ public class WeatherCommand implements ICommandExecutorOverload {
             var world = Bukkit.getWorld(arguments[1]);
             if (world == null) {
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                             .GetMessage(commandLabel, command, commandSender, null,
-                                                                                                         "Weather.NoWorld")
-                                                                                             .replace("<WORLD>", arguments[1]));
+                                                                                               .GetMessage(commandLabel, command, commandSender, null, "Weather.NoWorld")
+                                                                                               .replace("<WORLD>", arguments[1]));
                 return true;
             }
             this.HandleWeatherCommand(commandSender, arguments[0], world, command, commandLabel);

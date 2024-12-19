@@ -1,6 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.attribute.Attribute;
@@ -11,6 +12,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Objects;
 
+@ServerSystemCommand(name = "Heal")
 public class HealCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -39,8 +41,7 @@ public class HealCommand implements ICommandExecutorOverload {
         }
 
         if (!this._plugin.GetPermissions().HasPermission(commandSender, "heal.others")) {
-            commandSender.sendMessage(
-                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Heal"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Heal"));
             return true;
         }
 
@@ -58,8 +59,8 @@ public class HealCommand implements ICommandExecutorOverload {
         var maxHealth = Objects.requireNonNull(target.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue();
 
         if (maxHealth < 1.0) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Heal.NotHealable"));
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "Heal.NotHealable"));
             return;
         }
 

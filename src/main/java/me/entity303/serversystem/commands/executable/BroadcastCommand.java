@@ -1,12 +1,14 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+@ServerSystemCommand(name = "Broadcast")
 public class BroadcastCommand implements ICommandExecutorOverload {
     private final ServerSystem _plugin;
 
@@ -22,8 +24,8 @@ public class BroadcastCommand implements ICommandExecutorOverload {
             return true;
         }
         if (arguments.length == 0) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                      this._plugin.GetMessages().GetSyntax(commandLabel, command.getName(), commandSender, null, "BroadCast"));
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command.getName(), commandSender, null, "BroadCast"));
             return true;
         }
 
@@ -32,8 +34,8 @@ public class BroadcastCommand implements ICommandExecutorOverload {
             builder.append(argument).append(" ");
 
         Bukkit.broadcastMessage(this._plugin.GetMessages()
-                                           .GetMessage(commandLabel, command.getName(), commandSender, null, "Broadcast")
-                                           .replace("<MESSAGE>", ChatColor.TranslateAlternateColorCodes('&', builder.toString())));
+                                            .GetMessage(commandLabel, command.getName(), commandSender, null, "Broadcast")
+                                            .replace("<MESSAGE>", ChatColor.TranslateAlternateColorCodes('&', builder.toString())));
         return true;
     }
 }

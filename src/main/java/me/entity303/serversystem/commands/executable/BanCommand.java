@@ -3,8 +3,10 @@ package me.entity303.serversystem.commands.executable;
 import me.entity303.serversystem.bansystem.TimeUnit;
 import me.entity303.serversystem.bansystem.moderation.Moderation;
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.events.AsyncBanEvent;
 import me.entity303.serversystem.main.ServerSystem;
+import me.entity303.serversystem.tabcompleter.BanTabCompleter;
 import me.entity303.serversystem.utils.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -14,12 +16,17 @@ import org.bukkit.entity.Player;
 
 import static me.entity303.serversystem.bansystem.TimeUnit.*;
 
+@ServerSystemCommand(name = "Ban", tabCompleter = BanTabCompleter.class)
 public class BanCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
 
     public BanCommand(ServerSystem plugin) {
         this._plugin = plugin;
+    }
+
+    public static boolean ShouldRegister(ServerSystem serverSystem) {
+        return serverSystem.GetConfigReader().GetBoolean("banSystem.enabled");
     }
 
     @Override
@@ -54,10 +61,8 @@ public class BanCommand implements ICommandExecutorOverload {
         var target = GetPlayer(arguments[0]);
 
         if (target.isOnline() && this._plugin.GetPermissions().HasPermission(target.getPlayer(), "ban.exempt", true)) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                           .GetMessageWithStringTarget(commandLabel, command,
-                                                                                                                       commandSender, target.getName(),
-                                                                                                                       "Ban.Cannotban"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessageWithStringTarget(commandLabel, command, commandSender, target.getName(), "Ban.Cannotban"));
             return true;
         }
 
@@ -101,19 +106,18 @@ public class BanCommand implements ICommandExecutorOverload {
         var banTimeUnit = YEAR;
 
 
-        var reason = this._plugin.GetMessages()
-                                 .GetMessageWithStringTarget(commandLabel, command.getName(), commandSender, target.getName(), "Mute.DefaultReason");
+        var reason = this._plugin.GetMessages().GetMessageWithStringTarget(commandLabel, command.getName(), commandSender, target.getName(), "Mute.DefaultReason");
 
 
-        if (permanentBan) reason = arguments.length >= 3? this.ExtractReason(2, arguments) : reason;
-        else {
+        if (permanentBan) {
+            reason = arguments.length >= 3? this.ExtractReason(2, arguments) : reason;
+        } else {
             try {
                 banTime = Long.parseLong(arguments[1]);
             } catch (NumberFormatException ignored) {
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                               .GetMessageWithStringTarget(commandLabel, command,
-                                                                                                                           commandSender, target.getName(),
-                                                                                                                           "Ban.NotANumber")
+                                                                                               .GetMessageWithStringTarget(commandLabel, command, commandSender,
+                                                                                                                           target.getName(), "Ban.NotANumber")
                                                                                                .replace("<TIME>", arguments[1]));
                 return true;
             }
@@ -121,9 +125,8 @@ public class BanCommand implements ICommandExecutorOverload {
             banTimeUnit = TimeUnit.GetFromName(arguments[2]);
             if (banTimeUnit == null) {
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                               .GetMessageWithStringTarget(commandLabel, command,
-                                                                                                                           commandSender, target.getName(),
-                                                                                                                           "Ban.NotATimeUnit")
+                                                                                               .GetMessageWithStringTarget(commandLabel, command, commandSender,
+                                                                                                                           target.getName(), "Ban.NotATimeUnit")
                                                                                                .replace("<TIMEUNIT>", arguments[2]));
                 return true;
             }
@@ -158,8 +161,11 @@ public class BanCommand implements ICommandExecutorOverload {
     private String ExtractReason(int start, String... arguments) {
         var reasonBuilder = new StringBuilder();
         for (var index = start; index < arguments.length; index++)
-            if (index == arguments.length - 1) reasonBuilder.append(arguments[index]);
-            else reasonBuilder.append(arguments[index]).append(" ");
+            if (index == arguments.length - 1) {
+                reasonBuilder.append(arguments[index]);
+            } else {
+                reasonBuilder.append(arguments[index]).append(" ");
+            }
         return reasonBuilder.toString();
     }
 
@@ -175,8 +181,8 @@ public class BanCommand implements ICommandExecutorOverload {
         }
 
         commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                       .GetMessageWithStringTarget(commandLabel, command, commandSender,
-                                                                                                                   target.getName(), "Ban.Success")
+                                                                                       .GetMessageWithStringTarget(commandLabel, command, commandSender, target.getName(),
+                                                                                                                   "Ban.Success")
                                                                                        .replace("<REASON>", reason)
                                                                                        .replace("<DATE>", moderation.GetExpireDate()));
 

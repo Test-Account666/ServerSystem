@@ -7,7 +7,8 @@ import com.plotsquared.core.events.PlayerLeavePlotEvent;
 import com.plotsquared.core.plot.flag.implementations.TimeFlag;
 import org.bukkit.entity.Player;
 
-@SuppressWarnings("UnstableApiUsage") public class PlotListener4 {
+@SuppressWarnings("UnstableApiUsage")
+public class PlotListener4 {
 
     public PlotListener4() {
         var plotAPI = new PlotAPI();
@@ -18,10 +19,11 @@ import org.bukkit.entity.Player;
     public void OnPlayerEnterPlot(PlayerEnterPlotEvent event) {
         var timeDisabledFlag = event.getPlot().getFlag((TimeFlag.TIME_DISABLED));
         var player = (Player) event.getPlotPlayer().getPlatformPlayer();
-        if (timeDisabledFlag > -9000000000L)
+        if (timeDisabledFlag > -9000000000L) {
             PlotListener.TIME_MAP.put(player, timeDisabledFlag);
-        else
+        } else {
             PlotListener.TIME_MAP.remove(player);
+        }
     }
 
     @Subscribe

@@ -68,6 +68,7 @@ Messages:
     OfflineEnderChest: "Použij: &2/<LABEL> <OfflinePlayer>"
     Seen: "Použití: &2/<LABEL> <Hráč>"
     Freeze: "Použití: &2/<LABEL> <Hráč>"
+    ManageHomes: "用法: &2<LABEL> <Delete|Teleport|List> <玩家名> <家的名字>"
   Normal:
     GetPos:
       Self: "Jsi na souřadnicích &6X:&2<X> &6Y:&2<Y> &6Z:&2<Z> &6Svět:&2<WORLD>"
@@ -510,6 +511,12 @@ Messages:
       Disabled: "Už nejste AFK!"
       Kick: "&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&cByl
               jsi vyhozen ze serveru!<BREAK>&6Důvod: &cByli jste příliš dlouho AFK<BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]"
+    ManageHomes:
+      NoHomesFound: "&4<TARGET> &c还没有专属于自己的温暖小窝！"
+      HomeNotFound: "&4<TARGET> &c没有名为 &4<HOME>&c 的小窝！"
+      Deleted: "&2<HOME> &7已离 &2<TARGET> &7远去！"
+      Teleported: "成功来到了 &2<TARGET> &7的名为 &2<HOME> &7的小窝！"
+      Created: "Successfully created home &2<HOME> &7for player &2<TARGET>&7!"
   Misc:
     ServerFull: "&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]<BREAK>&4Server
       je plný!<BREAK>&cK přojení potřebuješ permissi &4<PERMISSION>&c!<BREAK>&8[]&7--------------------------------&8[]<BREAK>&2SERVER<BREAK>&8[]&7--------------------------------&8[]"

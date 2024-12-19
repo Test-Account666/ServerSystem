@@ -1,13 +1,15 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
-import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+@ServerSystemCommand(name = "Rename")
 public class RenameCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -29,15 +31,17 @@ public class RenameCommand implements ICommandExecutorOverload {
         }
 
         if (arguments.length == 0) {
-            
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Rename"));
+
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Rename"));
             return true;
         }
 
         ((Player) commandSender).getInventory().getItemInMainHand();
         if (((Player) commandSender).getInventory().getItemInMainHand().getType() == Material.AIR) {
-            
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Rename.NoItem"));
+
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Rename.NoItem"));
             return true;
         }
         var handStack = ((Player) commandSender).getInventory().getItemInMainHand();
@@ -52,9 +56,9 @@ public class RenameCommand implements ICommandExecutorOverload {
 
         handStack.setItemMeta(meta);
 
-        
-        commandSender.sendMessage(
-                this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Rename.Success").replace("<NAME>", name));
+
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                  this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Rename.Success").replace("<NAME>", name));
         return true;
     }
 }

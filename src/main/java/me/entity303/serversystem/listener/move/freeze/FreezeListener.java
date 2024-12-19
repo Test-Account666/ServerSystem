@@ -29,8 +29,7 @@ public class FreezeListener implements Listener {
 
     @EventHandler
     public void OnMove(PlayerMoveEvent event) {
-        if (!this.IsFrozen(event.getPlayer()))
-            return;
+        if (!this.IsFrozen(event.getPlayer())) return;
 
         event.getPlayer().sendBlockChange(event.getPlayer().getLocation().clone().add(0, -1, 0), Material.BARRIER.createBlockData());
 

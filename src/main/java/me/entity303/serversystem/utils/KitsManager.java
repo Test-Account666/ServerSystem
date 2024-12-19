@@ -46,8 +46,7 @@ public class KitsManager {
     }
 
     public boolean DoesKitExist(String name) {
-        if (!this._kitsFile.exists())
-            return false;
+        if (!this._kitsFile.exists()) return false;
         name = name.toLowerCase();
         return this._kitsConfiguration.contains("Kits." + name);
     }
@@ -66,8 +65,7 @@ public class KitsManager {
 
                 var hasPermission = this._plugin.GetPermissions().HasPermissionString(commandSender, permission);
 
-                if (!hasPermission)
-                    commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
+                if (!hasPermission) commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
 
                 return hasPermission;
             }
@@ -76,64 +74,69 @@ public class KitsManager {
         }
     }
 
-    public boolean IsKitAllowed(CommandSender commandSender, String kit, boolean others, boolean noFuck) {
+    public boolean IsKitAllowed(CommandSender commandSender, String kit, boolean others, boolean disableNoPermissionMessage) {
         try {
-            if (!others)
+            if (!others) {
                 return this._plugin.GetPermissions()
-                                  .HasPermissionString(commandSender, this._plugin.GetPermissions().GetPermission("kit.self").replace("<KIT>", kit.toLowerCase()), noFuck);
-            else
+                                   .HasPermissionString(commandSender, this._plugin.GetPermissions().GetPermission("kit.self").replace("<KIT>", kit.toLowerCase()),
+                                                        disableNoPermissionMessage);
+            } else {
                 return this._plugin.GetPermissions()
-                                  .HasPermissionString(commandSender, this._plugin.GetPermissions().GetPermission("kit.others").replace("<KIT>", kit.toLowerCase()), noFuck);
+                                   .HasPermissionString(commandSender, this._plugin.GetPermissions().GetPermission("kit.others").replace("<KIT>", kit.toLowerCase()),
+                                                        disableNoPermissionMessage);
+            }
         } catch (NullPointerException ignored) {
             return false;
         }
     }
 
     public KitsManager GiveKit(Player player, String kitName) {
-        if (!this._kitsFile.exists())
-            return this;
+        if (!this._kitsFile.exists()) return this;
         var kit = this.GetKit(kitName);
-        if (this.GetKits().isEmpty())
-            return this;
+        if (this.GetKits().isEmpty()) return this;
         for (var index = 0; index < 41; index++) {
-            if (kit.get(index) == null)
-                continue;
+            if (kit.get(index) == null) continue;
 
             if (index <= 35) {
-                if (player.getInventory().getItem(index) == null)
+                if (player.getInventory().getItem(index) == null) {
                     player.getInventory().setItem(index, kit.get(index));
-                else
+                } else {
                     player.getInventory().addItem(kit.get(index));
+                }
                 continue;
             }
 
             if (index == 36) {
-                if (player.getInventory().getHelmet() == null)
+                if (player.getInventory().getHelmet() == null) {
                     player.getInventory().setHelmet(kit.get(index));
-                else
+                } else {
                     player.getInventory().addItem(kit.get(index));
+                }
                 continue;
             }
 
             if (index == 37) {
-                if (player.getInventory().getChestplate() == null)
+                if (player.getInventory().getChestplate() == null) {
                     player.getInventory().setChestplate(kit.get(index));
-                else
+                } else {
                     player.getInventory().addItem(kit.get(index));
+                }
                 continue;
             }
             if (index == 38) {
-                if (player.getInventory().getLeggings() == null)
+                if (player.getInventory().getLeggings() == null) {
                     player.getInventory().setLeggings(kit.get(index));
-                else
+                } else {
                     player.getInventory().addItem(kit.get(index));
+                }
                 continue;
             }
             if (index == 39) {
-                if (player.getInventory().getBoots() == null)
+                if (player.getInventory().getBoots() == null) {
                     player.getInventory().setBoots(kit.get(index));
-                else
+                } else {
                     player.getInventory().addItem(kit.get(index));
+                }
                 continue;
             }
             player.getInventory().getItemInOffHand();
@@ -145,8 +148,7 @@ public class KitsManager {
 
     public Map<Integer, ItemStack> GetKit(String name) {
         Map<Integer, ItemStack> kit = new HashMap<>();
-        if (!this._kitsFile.exists())
-            return new HashMap<>();
+        if (!this._kitsFile.exists()) return new HashMap<>();
         try {
             for (var index = 0; index < 41; index++) {
                 if (!this._kitsConfiguration.contains("Kits." + name.toLowerCase() + "." + index)) {
@@ -162,14 +164,12 @@ public class KitsManager {
     }
 
     public List<Map<Integer, ItemStack>> GetKits() {
-        if (!this._kitsFile.exists())
-            return new ArrayList<>();
+        if (!this._kitsFile.exists()) return new ArrayList<>();
         return this.GetKitNames().stream().map(this::GetKit).collect(Collectors.toList());
     }
 
     public List<String> GetKitNames() {
-        if (!this._kitsFile.exists())
-            return new ArrayList<>();
+        if (!this._kitsFile.exists()) return new ArrayList<>();
         return new ArrayList<>(this._kitsConfiguration.getConfigurationSection("Kits").getKeys(false));
     }
 
@@ -185,15 +185,13 @@ public class KitsManager {
 
     public Long GetPlayerLastDelay(String uuid, String name) {
         name = name.toLowerCase();
-        if (this._delaysConfiguration.isSet("Players." + uuid + "." + name))
-            return this._delaysConfiguration.getLong("Players." + uuid + "." + name);
+        if (this._delaysConfiguration.isSet("Players." + uuid + "." + name)) return this._delaysConfiguration.getLong("Players." + uuid + "." + name);
         return 0L;
     }
 
     public KitsManager AddKit(String name, Map<Integer, ItemStack> kit, Long delay) {
         for (var index = 0; index < 41; index++) {
-            if (kit.get(index) == null)
-                continue;
+            if (kit.get(index) == null) continue;
             var item = kit.get(index);
             this._kitsConfiguration.set("Kits." + name.toLowerCase() + "." + index, item);
         }
@@ -215,8 +213,7 @@ public class KitsManager {
     }
 
     public KitsManager DeleteKit(String name) {
-        if (!this._kitsFile.exists())
-            return this;
+        if (!this._kitsFile.exists()) return this;
         this._kitsConfiguration.set("Kits." + name.toLowerCase(), null);
 
         try {

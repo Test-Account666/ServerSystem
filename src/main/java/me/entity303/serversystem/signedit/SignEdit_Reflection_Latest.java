@@ -40,18 +40,18 @@ public class SignEdit_Reflection_Latest implements ISignEdit {
             exception.printStackTrace();
         }
 
-        if (this._getPositionMethod == null)
+        if (this._getPositionMethod == null) {
             try {
                 this._getPositionMethod = Arrays.stream(Class.forName("net.minecraft.world.level.block.entity.TileEntity").getMethods())
                                                 .filter(method -> method.getParameters().length == 0)
                                                 .filter(method -> method.getReturnType().getName().equalsIgnoreCase(BlockPosition.class.getName()))
                                                 .findFirst()
                                                 .orElse(null);
-                if (this._getPositionMethod == null)
-                    throw new NoSuchMethodException("Could not find 'getPosition' method!");
+                if (this._getPositionMethod == null) throw new NoSuchMethodException("Could not find 'getPosition' method!");
             } catch (NoSuchMethodException | ClassNotFoundException exception) {
                 exception.printStackTrace();
             }
+        }
 
         if (this._playerConnectionField == null) {
             try {
@@ -59,20 +59,20 @@ public class SignEdit_Reflection_Latest implements ISignEdit {
                                                     .filter(field -> field.getType().getName().equalsIgnoreCase(PlayerConnection.class.getName()))
                                                     .findFirst()
                                                     .orElse(null);
-                if (this._playerConnectionField == null)
-                    throw new NoSuchFieldException("Couldn't find 'playerConnection' field!");
+                if (this._playerConnectionField == null) throw new NoSuchFieldException("Couldn't find 'playerConnection' field!");
             } catch (NoSuchFieldException exception) {
                 exception.printStackTrace();
             }
             this._playerConnectionField.setAccessible(true);
         }
 
-        if (this._getHandleMethodWorld == null)
+        if (this._getHandleMethodWorld == null) {
             try {
                 this._getHandleMethodWorld = paramSign.getWorld().getClass().getMethod("getHandle");
             } catch (NoSuchMethodException exception) {
                 exception.printStackTrace();
             }
+        }
 
 
         var lines = new String[4];
@@ -81,31 +81,31 @@ public class SignEdit_Reflection_Latest implements ISignEdit {
             lines[index] = paramSign.getLine(index).replace("§", "&");
         }
 
-        if (this._getTileEntityMethod == null)
+        if (this._getTileEntityMethod == null) {
             try {
-                this._getTileEntityMethod = this._getHandleMethodWorld.invoke(paramSign.getWorld())
-                                                                      .getClass()
-                                                                      .getMethod("getTileEntity", Class.forName("net.minecraft.core.BlockPosition"));
+                this._getTileEntityMethod =
+                        this._getHandleMethodWorld.invoke(paramSign.getWorld()).getClass().getMethod("getTileEntity", Class.forName("net.minecraft.core.BlockPosition"));
             } catch (NoSuchMethodException | NoSuchMethodError | IllegalAccessException | InvocationTargetException | ClassNotFoundException exception) {
-                if (exception instanceof NoSuchMethodException || exception instanceof NoSuchMethodError)
+                if (exception instanceof NoSuchMethodException || exception instanceof NoSuchMethodError) {
                     try {
                         this._getTileEntityMethod = this._getHandleMethodWorld.invoke(paramSign.getWorld())
                                                                               .getClass()
-                                                                              .getMethod("getBlockEntity",
-                                                                                         Class.forName("net.minecraft.core.BlockPosition"), boolean.class);
+                                                                              .getMethod("getBlockEntity", Class.forName("net.minecraft.core.BlockPosition"),
+                                                                                         boolean.class);
                     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException exception1) {
                         exception1.printStackTrace();
                     }
-                else
+                } else {
                     exception.printStackTrace();
+                }
             }
+        }
 
         Object tes = null;
         try {
             tes = this._getTileEntityMethod.getParameterCount() == 2?
                   this._getTileEntityMethod.invoke(this._getHandleMethodWorld.invoke(paramSign.getWorld()), Class.forName("net.minecraft.core.BlockPosition")
-                                                                                                                 .getConstructor(double.class, double.class,
-                                                                                                                            double.class)
+                                                                                                                 .getConstructor(double.class, double.class, double.class)
                                                                                                                  .newInstance(paramSign.getLocation().getX(),
                                                                                                                               paramSign.getLocation().getY(),
                                                                                                                               paramSign.getLocation().getZ()), false)
@@ -113,8 +113,7 @@ public class SignEdit_Reflection_Latest implements ISignEdit {
                                                                     :
 
                   this._getTileEntityMethod.invoke(this._getHandleMethodWorld.invoke(paramSign.getWorld()), Class.forName("net.minecraft.core.BlockPosition")
-                                                                                                                 .getConstructor(double.class, double.class,
-                                                                                                                            double.class)
+                                                                                                                 .getConstructor(double.class, double.class, double.class)
                                                                                                                  .newInstance(paramSign.getLocation().getX(),
                                                                                                                               paramSign.getLocation().getY(),
                                                                                                                               paramSign.getLocation().getZ()));
@@ -122,20 +121,22 @@ public class SignEdit_Reflection_Latest implements ISignEdit {
             exception.printStackTrace();
         }
 
-        if (this._setEditableField == null)
+        if (this._setEditableField == null) {
             try {
                 this._setEditableField = Class.forName("net.minecraft.world.level.block.entity.TileEntitySign").getField("f");
             } catch (NoSuchFieldException | ClassNotFoundException exception) {
                 exception.printStackTrace();
             }
+        }
 
-        if (this._gField == null)
+        if (this._gField == null) {
             try {
                 this._gField = Class.forName("net.minecraft.world.level.block.entity.TileEntitySign").getDeclaredField("g");
                 this._gField.setAccessible(true);
             } catch (NoSuchFieldException | ClassNotFoundException exception) {
                 exception.printStackTrace();
             }
+        }
 
         try {
             this._setEditableField.set(tes, true);
@@ -173,12 +174,13 @@ public class SignEdit_Reflection_Latest implements ISignEdit {
             exception.printStackTrace();
         }
 
-        if (this._sendPacketMethod == null)
+        if (this._sendPacketMethod == null) {
             this._sendPacketMethod = Arrays.stream(PlayerConnection.class.getMethods())
                                            .filter(method -> method.getParameters().length == 1)
                                            .filter(method -> method.getParameters()[0].getType().getName().equalsIgnoreCase(Packet.class.getName()))
                                            .findFirst()
                                            .orElse(null);
+        }
 
         try {
             this._sendPacketMethod.invoke(connection, packet2);

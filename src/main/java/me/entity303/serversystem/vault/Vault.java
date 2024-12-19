@@ -16,14 +16,12 @@ public class Vault {
 
     private void SetupChat() {
         var chatProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
-        if (chatProvider != null)
-            this._chat = chatProvider.getProvider();
+        if (chatProvider != null) this._chat = chatProvider.getProvider();
     }
 
     private void SetupPermissions() {
         var permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
-        if (permissionProvider != null)
-            this._permission = permissionProvider.getProvider();
+        if (permissionProvider != null) this._permission = permissionProvider.getProvider();
     }
 
     public Permission GetPermission() {

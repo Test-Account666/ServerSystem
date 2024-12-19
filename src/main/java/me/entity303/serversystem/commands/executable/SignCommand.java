@@ -1,10 +1,11 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
-import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@ServerSystemCommand(name = "Sign")
 public class SignCommand implements ICommandExecutorOverload {
 
     private static final Pattern SPLIT_PATTERN = Pattern.compile("\\n");
@@ -38,18 +40,20 @@ public class SignCommand implements ICommandExecutorOverload {
         }
         ((Player) commandSender).getInventory().getItemInMainHand();
         if (((Player) commandSender).getInventory().getItemInMainHand().getType() == Material.AIR) {
-            
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Sign.NoItem"));
+
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Sign.NoItem"));
             return true;
         }
         var meta = ((Player) commandSender).getInventory().getItemInMainHand().getItemMeta();
         if (meta.hasLore()) {
-            
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Sign.AlreadySigned"));
+
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Sign.AlreadySigned"));
             return true;
         }
         if (arguments.length == 0) {
-            
+
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Sign"));
             return true;
         }
@@ -85,8 +89,9 @@ public class SignCommand implements ICommandExecutorOverload {
 
         ((Player) commandSender).getInventory().getItemInMainHand().setItemMeta(meta);
         ((Player) commandSender).updateInventory();
-        
-        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Sign.Success"));
+
+        commandSender.sendMessage(
+                this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Sign.Success"));
         return true;
     }
 }

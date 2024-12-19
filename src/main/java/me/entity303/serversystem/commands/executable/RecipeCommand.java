@@ -1,7 +1,9 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
+import me.entity303.serversystem.tabcompleter.RecipeTabCompleter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -14,6 +16,8 @@ import org.bukkit.inventory.ShapelessRecipe;
 import java.util.*;
 import java.util.regex.Pattern;
 
+//TODO: This command probably requires a recode
+@ServerSystemCommand(name = "Recipe", tabCompleter = RecipeTabCompleter.class)
 public class RecipeCommand implements ICommandExecutorOverload {
     private final static List<Player> RECIPE_LIST = new ArrayList<>();
     private static final Pattern SPLIT_PATTERN = Pattern.compile("");
@@ -29,12 +33,13 @@ public class RecipeCommand implements ICommandExecutorOverload {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.recipe.required"))
+        if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.recipe.required")) {
             if (!this._plugin.GetPermissions().HasPermission(commandSender, "recipe.permission")) {
                 var permission = this._plugin.GetPermissions().GetPermission("recipe.permission");
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return true;
             }
+        }
         if (!(commandSender instanceof Player player)) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetOnlyPlayer());
             return true;
@@ -43,16 +48,15 @@ public class RecipeCommand implements ICommandExecutorOverload {
             var stack = player.getInventory().getItemInMainHand();
             if (stack.getType() == Material.AIR) {
 
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                          this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Recipe.NoItem"));
+                commandSender.sendMessage(
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Recipe.NoItem"));
                 return true;
             }
             var recipeList = Bukkit.getRecipesFor(stack);
             if (recipeList.isEmpty()) {
 
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                               .GetMessage(commandLabel, command, commandSender, null,
-                                                                                                           "Recipe.NoRecipe")
+                                                                                               .GetMessage(commandLabel, command, commandSender, null, "Recipe.NoRecipe")
                                                                                                .replace("<MATERIAL>", stack.getType().name()));
                 return true;
             }
@@ -93,8 +97,11 @@ public class RecipeCommand implements ICommandExecutorOverload {
                     var rowEdit = new StringBuilder(row);
                     var rowLength = SPLIT_PATTERN.split(row).length;
                     for (var character : SPLIT_PATTERN.split(row))
-                        if (character.equalsIgnoreCase(" ")) ingredient.put(character.charAt(0), null);
-                        else ingredient.put(character.charAt(0), shapedRecipe.getIngredientMap().get(character.charAt(0)));
+                        if (character.equalsIgnoreCase(" ")) {
+                            ingredient.put(character.charAt(0), null);
+                        } else {
+                            ingredient.put(character.charAt(0), shapedRecipe.getIngredientMap().get(character.charAt(0)));
+                        }
 
                     var usedCharacter = "";
 
@@ -124,16 +131,17 @@ public class RecipeCommand implements ICommandExecutorOverload {
 
 
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                           .GetMessage(commandLabel, command, commandSender, null,
-                                                                                                       "Recipe.NoRecipe")
+                                                                                           .GetMessage(commandLabel, command, commandSender, null, "Recipe.NoRecipe")
                                                                                            .replace("<MATERIAL>", stack.getType().name()));
             return true;
         }
 
         var name = arguments[0].toUpperCase().split(":")[0];
         var subId = 0;
-        if (name.contains(":")) try {
-        } catch (Exception ignored) {
+        if (name.contains(":")) {
+            try {
+            } catch (Exception ignored) {
+            }
         }
         var material = Material.getMaterial(name);
         if (material == null) {
@@ -159,10 +167,8 @@ public class RecipeCommand implements ICommandExecutorOverload {
         var recipeList = Bukkit.getRecipesFor(stack);
         if (recipeList.isEmpty()) {
 
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                           .GetMessage(commandLabel, command, commandSender, null,
-                                                                                                       "Recipe.NoRecipe")
-                                                                                           .replace("<MATERIAL>", name));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Recipe.NoRecipe").replace("<MATERIAL>", name));
             return true;
         }
         RecipeCommand.RECIPE_LIST.add((Player) commandSender);
@@ -202,8 +208,11 @@ public class RecipeCommand implements ICommandExecutorOverload {
                 var rowEdit = new StringBuilder(row);
                 var rowLength = SPLIT_PATTERN.split(row).length;
                 for (var character : SPLIT_PATTERN.split(row))
-                    if (character.equalsIgnoreCase(" ")) ingredient.put(character.charAt(0), null);
-                    else ingredient.put(character.charAt(0), shapedRecipe.getIngredientMap().get(character.charAt(0)));
+                    if (character.equalsIgnoreCase(" ")) {
+                        ingredient.put(character.charAt(0), null);
+                    } else {
+                        ingredient.put(character.charAt(0), shapedRecipe.getIngredientMap().get(character.charAt(0)));
+                    }
 
                 var usedCharacter = "";
 
@@ -232,10 +241,8 @@ public class RecipeCommand implements ICommandExecutorOverload {
         }
 
 
-        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                       .GetMessage(commandLabel, command, commandSender, null,
-                                                                                                   "Recipe.NoRecipe")
-                                                                                       .replace("<MATERIAL>", name));
+        commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                  this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Recipe.NoRecipe").replace("<MATERIAL>", name));
 
         return true;
     }

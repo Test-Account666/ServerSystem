@@ -7,7 +7,8 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.UUID;
 
-@SuppressWarnings("NewMethodNamingConvention") public class VanishAPI {
+@SuppressWarnings("NewMethodNamingConvention")
+public class VanishAPI {
     private final ServerSystem _plugin;
 
     public VanishAPI(ServerSystem plugin) {

@@ -1,10 +1,10 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ITabExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;
@@ -16,8 +16,8 @@ import org.bukkit.inventory.Inventory;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
+@ServerSystemCommand(name = "OfflineEnderChest")
 public class OfflineEnderChestCommand implements ITabExecutorOverload, Listener {
     protected final ServerSystem _plugin;
     private final Map<Player, Inventory> _cachedInventories = new HashMap<>();
@@ -42,8 +42,8 @@ public class OfflineEnderChestCommand implements ITabExecutorOverload, Listener 
         }
 
         if (arguments.length == 0) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                      this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "OfflineEnderChest"));
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "OfflineEnderChest"));
             return true;
         }
 
@@ -51,12 +51,9 @@ public class OfflineEnderChestCommand implements ITabExecutorOverload, Listener 
 
         if (!offlineTarget.hasPlayedBefore()) {
             var name = offlineTarget.getName();
-            if (name == null)
-                name = arguments[0];
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                           .GetMessageWithStringTarget(commandLabel, command,
-                                                                                                                       commandSender, name,
-                                                                                                                       "OfflineEnderChest.NeverPlayed"));
+            if (name == null) name = arguments[0];
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessageWithStringTarget(commandLabel, command, commandSender, name, "OfflineEnderChest.NeverPlayed"));
             return true;
         }
 
@@ -66,8 +63,7 @@ public class OfflineEnderChestCommand implements ITabExecutorOverload, Listener 
                 return true;
             }
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                           .GetMessage(commandLabel, command, commandSender,
-                                                                                                       offlineTarget.getPlayer(),
+                                                                                           .GetMessage(commandLabel, command, commandSender, offlineTarget.getPlayer(),
                                                                                                        "OfflineEnderChest.PlayerIsOnline"));
             return true;
         }
@@ -82,8 +78,7 @@ public class OfflineEnderChestCommand implements ITabExecutorOverload, Listener 
 
         taskId.set(Bukkit.getScheduler().scheduleSyncRepeatingTask(this._plugin, () -> {
             if (((Player) commandSender).getOpenInventory().getTopInventory() != player.getEnderChest()) {
-                if (!player.isOnline())
-                    player.saveData();
+                if (!player.isOnline()) player.saveData();
                 Bukkit.getScheduler().cancelTask(taskId.get());
             }
         }, 10L, 10L));
@@ -105,27 +100,25 @@ public class OfflineEnderChestCommand implements ITabExecutorOverload, Listener 
                 for (var human : new ArrayList<>(target.getEnderChest().getViewers())) {
                     var cursorStack = human.getItemOnCursor();
 
-                    if (tryOnlineCommand)
-                        human.setItemOnCursor(null);
+                    if (tryOnlineCommand) human.setItemOnCursor(null);
 
                     human.closeInventory();
 
-                    if (tryOnlineCommand)
+                    if (tryOnlineCommand) {
                         Bukkit.getScheduler().runTaskLater(this._plugin, () -> {
                             Bukkit.getScheduler().runTaskLater(this._plugin, () -> human.setItemOnCursor(cursorStack), 2L);
 
-                            if (!(human instanceof Player player))
-                                return;
+                            if (!(human instanceof Player player)) return;
 
-                            if (!this._plugin.GetPermissions().HasPermission(player, "enderchest.others", true))
-                                return;
+                            if (!this._plugin.GetPermissions().HasPermission(player, "enderchest.others", true)) return;
 
                             player.chat("/enderchest " + target);
                         }, 2L);
+                    }
 
                     human.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                           .GetMessage("offlineenderchest", "offlineenderchest", human,
-                                                                                                       target, "OfflineEnderChest.PlayerCameOnline"));
+                                                                                           .GetMessage("offlineenderchest", "offlineenderchest", human, target,
+                                                                                                       "OfflineEnderChest.PlayerCameOnline"));
                 }
 
                 this._cachedInventories.remove(target);
@@ -135,23 +128,27 @@ public class OfflineEnderChestCommand implements ITabExecutorOverload, Listener 
 
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (!this._plugin.GetPermissions().HasPermission(commandSender, "offlineenderchest", true))
-            return Collections.singletonList("");
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "offlineenderchest", true)) return Collections.singletonList("");
 
         return GetOfflinePlayers(arguments);
     }
 
     static List<String> GetOfflinePlayers(String... arguments) {
-        var players = Arrays.stream(Bukkit.getOfflinePlayers())
-                            .filter(offlinePlayer -> !offlinePlayer.isOnline())
-                            .map(OfflinePlayer::getName)
-                            .collect(Collectors.toList());
+        var players = new ArrayList<String>();
+        for (var offlinePlayer : Bukkit.getOfflinePlayers()) {
+            if (offlinePlayer.isOnline()) continue;
 
-        List<String> possiblePlayers = new ArrayList<>();
+            var name = offlinePlayer.getName();
+            players.add(name);
+        }
 
-        for (var player : players)
-            if (player.toLowerCase(Locale.ROOT).startsWith(arguments[0].toLowerCase(Locale.ROOT)))
-                possiblePlayers.add(player);
+        var possiblePlayers = new ArrayList<String>();
+
+        for (var player : players) {
+            if (!player.toLowerCase(Locale.ROOT).startsWith(arguments[0].toLowerCase(Locale.ROOT))) continue;
+
+            possiblePlayers.add(player);
+        }
 
         return !possiblePlayers.isEmpty()? possiblePlayers : players;
     }

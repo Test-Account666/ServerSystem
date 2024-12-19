@@ -18,9 +18,9 @@ public class PlotListener2 implements Listener {
 
     @EventHandler
     public void OnPlotEnter(PlayerEnterPlotEvent event) {
-        if (event.getPlot().hasFlag(TIME))
-            if (event.getPlot().getFlag(TIME).isPresent())
-                PlotListener.TIME_MAP.put(event.getPlayer(), event.getPlot().getFlag(TIME).get());
+        if (event.getPlot().hasFlag(TIME)) {
+            if (event.getPlot().getFlag(TIME).isPresent()) PlotListener.TIME_MAP.put(event.getPlayer(), event.getPlot().getFlag(TIME).get());
+        }
     }
 
     @EventHandler

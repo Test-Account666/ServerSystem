@@ -22,16 +22,15 @@ public class BanManager_H2 extends AbstractBanManager {
         this.Open();
         try {
             this._connection.createStatement()
-                            .executeUpdate(
-                                    "CREATE TABLE IF NOT EXISTS BannedPlayers (BannedUUID VARCHAR(100), SenderUUID VARCHAR(100), Reason VARCHAR(100), " +
-                                    "UnbanTime BIGINT)");
+                            .executeUpdate("CREATE TABLE IF NOT EXISTS BannedPlayers (BannedUUID VARCHAR(100), SenderUUID VARCHAR(100), Reason VARCHAR(100), " +
+                                           "UnbanTime BIGINT)");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
     }
 
     public boolean Open() {
-        if (this.Initialize())
+        if (this.Initialize()) {
             try {
                 this._connection = DriverManager.getConnection("jdbc:h2:file:" + new File("plugins//ServerSystem", "bans.h2").getAbsolutePath());
                 return true;
@@ -39,8 +38,9 @@ public class BanManager_H2 extends AbstractBanManager {
                 this._plugin.Error("Could not establish an H2 connection, SQLException: " + var2.getMessage());
                 return false;
             }
-        else
+        } else {
             return false;
+        }
     }
 
     protected boolean Initialize() {
@@ -77,27 +77,22 @@ public class BanManager_H2 extends AbstractBanManager {
             throwables.printStackTrace();
         }
 
-        while (true)
-            try {
-                if (resultSet == null)
-                    break;
-                if (!resultSet.next())
-                    break;
-                var uuid = resultSet.getString("BannedUUID");
+        while (true) try {
+            if (resultSet == null) break;
+            if (!resultSet.next()) break;
+            var uuid = resultSet.getString("BannedUUID");
 
-                if (this.CheckPlayerInH2(uuid))
-                    playerNames.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName());
-            } catch (SQLException exception) {
-                exception.printStackTrace();
-            }
+            if (this.CheckPlayerInH2(uuid)) playerNames.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName());
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
 
         return playerNames;
     }
 
     @Override
     public BanModeration GetBanByUUID(UUID uuid) {
-        if (!this.CheckPlayerInH2(uuid.toString()))
-            return null;
+        if (!this.CheckPlayerInH2(uuid.toString())) return null;
 
         var reason = this.GetReason(uuid.toString());
         long expireTime = this.GetUnbanTime(uuid.toString());
@@ -120,8 +115,7 @@ public class BanManager_H2 extends AbstractBanManager {
             throwables.printStackTrace();
         }
         try {
-            while (resultSet.next())
-                return true;
+            while (resultSet.next()) return true;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -136,8 +130,7 @@ public class BanManager_H2 extends AbstractBanManager {
             throwables.printStackTrace();
         }
         try {
-            while (resultSet.next())
-                return resultSet.getString("Reason");
+            while (resultSet.next()) return resultSet.getString("Reason");
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -153,8 +146,7 @@ public class BanManager_H2 extends AbstractBanManager {
             throwables.printStackTrace();
         }
         try {
-            while (resultSet.next())
-                return resultSet.getLong("UnbanTime");
+            while (resultSet.next()) return resultSet.getLong("UnbanTime");
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -169,8 +161,7 @@ public class BanManager_H2 extends AbstractBanManager {
             throwables.printStackTrace();
         }
         try {
-            while (resultSet.next())
-                return resultSet.getString("SenderUUID");
+            while (resultSet.next()) return resultSet.getString("SenderUUID");
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -179,11 +170,9 @@ public class BanManager_H2 extends AbstractBanManager {
 
     @Override
     public BanModeration CreateBan(UUID banned, String senderUUID, String reason, Long howLong, TimeUnit timeUnit) {
-        if (this.IsBanned(banned))
-            this.UnBan(banned);
+        if (this.IsBanned(banned)) this.UnBan(banned);
         var expireTime = System.currentTimeMillis() + (howLong * timeUnit.GetValue());
-        if (howLong < 1)
-            expireTime = -1L;
+        if (howLong < 1) expireTime = -1L;
         try {
             var query = "INSERT INTO BANNEDPLAYERS (BannedUUID, SenderUUID, Reason, UnbanTime) VALUES (?, ?, ?, ?)";
             var preparedStatement = this._connection.prepareStatement(query);

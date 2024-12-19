@@ -20,8 +20,7 @@ public class PlotListener1 implements Listener {
     public void OnPlotEnter(PlayerEnterPlotEvent event) {
         if (event.getPlot().hasFlag(Flags.TIME)) {
             var optionalLong = event.getPlot().getFlag(Flags.TIME);
-            if (optionalLong.isPresent())
-                PlotListener.TIME_MAP.put(event.getPlayer(), optionalLong.get());
+            if (optionalLong.isPresent()) PlotListener.TIME_MAP.put(event.getPlayer(), optionalLong.get());
         }
     }
 

@@ -28,9 +28,20 @@ public class EconomyManager extends AbstractEconomyManager {
     }
 
     @Override
+    public Double GetMoneyAsNumber(OfflinePlayer offlinePlayer) {
+        if (offlinePlayer == null) return 0.0D;
+
+        try {
+            if (!this._file.exists()) return 0.0;
+            return Double.valueOf(this._configuration.getString("Money." + offlinePlayer.getUniqueId()));
+        } catch (NullPointerException ignored) {
+            return 0.0;
+        }
+    }
+
+    @Override
     public void SetMoney(OfflinePlayer offlinePlayer, double amount) {
-        if (offlinePlayer == null)
-            return;
+        if (offlinePlayer == null) return;
         this._configuration.set("Money." + offlinePlayer.getUniqueId(), String.valueOf(amount));
 
 
@@ -50,8 +61,7 @@ public class EconomyManager extends AbstractEconomyManager {
 
     @Override
     public void CreateAccount(OfflinePlayer offlinePlayer) {
-        if (offlinePlayer == null)
-            return;
+        if (offlinePlayer == null) return;
 
         this._configuration.set("Money." + offlinePlayer.getUniqueId(), String.valueOf(this._startingMoney));
 
@@ -72,8 +82,7 @@ public class EconomyManager extends AbstractEconomyManager {
 
     @Override
     public void DeleteAccount(OfflinePlayer offlinePlayer) {
-        if (offlinePlayer == null)
-            return;
+        if (offlinePlayer == null) return;
 
         this._configuration.set("Money." + offlinePlayer.getUniqueId(), null);
 
@@ -91,27 +100,11 @@ public class EconomyManager extends AbstractEconomyManager {
     }
 
     @Override
-    public Double GetMoneyAsNumber(OfflinePlayer offlinePlayer) {
-        if (offlinePlayer == null)
-            return 0.0D;
-
-        try {
-            if (!this._file.exists())
-                return 0.0;
-            return Double.valueOf(this._configuration.getString("Money." + offlinePlayer.getUniqueId()));
-        } catch (NullPointerException ignored) {
-            return 0.0;
-        }
-    }
-
-    @Override
     public boolean HasAccount(OfflinePlayer offlinePlayer) {
-        if (offlinePlayer == null)
-            return false;
+        if (offlinePlayer == null) return false;
 
         try {
-            if (!this._file.exists())
-                return false;
+            if (!this._file.exists()) return false;
             return (this._configuration.getString("Money." + offlinePlayer.getUniqueId()) != null &&
                     !this._configuration.getString("Money." + offlinePlayer.getUniqueId()).equalsIgnoreCase("null"));
         } catch (NullPointerException ignored) {
@@ -119,31 +112,22 @@ public class EconomyManager extends AbstractEconomyManager {
         }
     }
 
-    @Override
-    public void Close() {
-
-    }
-
-
-    ///////////////////////////////////
+    /// ////////////////////////////////
 
     @Override
     public void FetchTopTen() {
-        if (!this._topTen.isEmpty())
-            this._topTen.clear();
+        if (!this._topTen.isEmpty()) this._topTen.clear();
 
         var topTenMoneyHash = new HashMap<OfflinePlayer, Double>();
 
-        if (this._configuration.getConfigurationSection("Money") == null)
-            return;
+        if (this._configuration.getConfigurationSection("Money") == null) return;
 
         this._configuration.getConfigurationSection("Money").getKeys(false).forEach(uuid -> {
             Double money = this._configuration.getDouble("Money." + uuid);
             topTenMoneyHash.put(Bukkit.getOfflinePlayer(UUID.fromString(uuid)), money);
         });
 
-        if (topTenMoneyHash.isEmpty())
-            return;
+        if (topTenMoneyHash.isEmpty()) return;
 
         LinkedHashMap<OfflinePlayer, Double> topTenMoneyHashSorted;
 
@@ -165,5 +149,10 @@ public class EconomyManager extends AbstractEconomyManager {
         }
 
         this._topTen = topTenMoney;
+    }
+
+    @Override
+    public void Close() {
+
     }
 }

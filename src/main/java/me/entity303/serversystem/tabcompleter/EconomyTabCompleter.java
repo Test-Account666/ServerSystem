@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class EconomyTabCompleter implements ITabCompleterOverload {
-
     protected final ServerSystem _plugin;
 
     public EconomyTabCompleter(ServerSystem plugin) {
@@ -23,15 +22,11 @@ public class EconomyTabCompleter implements ITabCompleterOverload {
             var ecoSet = this._plugin.GetPermissions().HasPermission(commandSender, "economy.set", true);
             var ecoAdd = this._plugin.GetPermissions().HasPermission(commandSender, "economy.Give", true);
             var ecoTake = this._plugin.GetPermissions().HasPermission(commandSender, "economy.set", true);
-            if (!ecoSet && !ecoAdd && !ecoTake)
-                return null;
+            if (!ecoSet && !ecoAdd && !ecoTake) return null;
             List<String> possibleCompletions = new ArrayList<>();
-            if (ecoSet)
-                possibleCompletions.add("set");
-            if (ecoAdd)
-                possibleCompletions.add("add");
-            if (ecoTake)
-                possibleCompletions.add("take");
+            if (ecoSet) possibleCompletions.add("set");
+            if (ecoAdd) possibleCompletions.add("add");
+            if (ecoTake) possibleCompletions.add("take");
             var completions = possibleCompletions.stream().filter(argument -> argument.toLowerCase().startsWith(arguments[0].toLowerCase())).collect(Collectors.toList());
             return completions.isEmpty()? possibleCompletions : completions;
         }

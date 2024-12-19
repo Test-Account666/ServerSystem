@@ -1,6 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.command.Command;
@@ -9,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Objects;
 
+@ServerSystemCommand(name = "GetPosition")
 public class GetPositionCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -58,19 +60,18 @@ public class GetPositionCommand implements ICommandExecutorOverload {
         var world = Objects.requireNonNull(target.getLocation().getWorld()).getName();
 
         var message = this._plugin.GetMessages()
-                                 .GetMessage(commandLabel, command, sender, target, target.equals(sender)? "GetPos.Self" : "GetPos.Others")
-                                 .replace("<X>", xCoordinate)
-                                 .replace("<Y>", yCoordinate)
-                                 .replace("<Z>", zCoordinate)
-                                 .replace("<WORLD>", world);
+                                  .GetMessage(commandLabel, command, sender, target, target.equals(sender)? "GetPos.Self" : "GetPos.Others")
+                                  .replace("<X>", xCoordinate)
+                                  .replace("<Y>", yCoordinate)
+                                  .replace("<Z>", zCoordinate)
+                                  .replace("<WORLD>", world);
         sender.sendMessage(this._plugin.GetMessages().GetPrefix() + message);
     }
 
     private String FormatCoordinate(double coordinate) {
         var formatted = String.valueOf(coordinate);
         var parts = formatted.split("\\.");
-        if (parts.length > 1 && parts[1].length() > 2)
-            formatted = parts[0] + "." + parts[1].substring(0, 2);
+        if (parts.length > 1 && parts[1].length() > 2) formatted = parts[0] + "." + parts[1].substring(0, 2);
         return formatted;
     }
 }

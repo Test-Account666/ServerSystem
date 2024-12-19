@@ -6,6 +6,7 @@ import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+// Annotation isn't required, as this command will get registered in TimeCommand.
 public class NoonCommand implements ICommandExecutorOverload {
     private static final String TIME = "noon";
     protected final ServerSystem _plugin;

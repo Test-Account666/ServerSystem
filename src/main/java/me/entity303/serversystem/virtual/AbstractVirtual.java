@@ -2,12 +2,15 @@ package me.entity303.serversystem.virtual;
 
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.virtual.containeraccess.ContainerAccessWrapper;
+import net.minecraft.world.inventory.Container;
+import net.minecraft.world.inventory.Containers;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 
 public abstract class AbstractVirtual {
     protected static Method GET_INVENTORY_METHOD = null;
@@ -16,10 +19,31 @@ public abstract class AbstractVirtual {
     protected static Method GET_BUKKIT_VIEW_METHOD = null;
     protected static Field CONTAINER_FIELD = null;
     protected final ServerSystem _plugin;
+    public Containers<?> _containers;
+    public Object _inventoryTitle = null;
     protected String _version = null;
 
-    public AbstractVirtual() {
+    public AbstractVirtual(Class<? extends Container> containerClass) {
         this._plugin = ServerSystem.getPlugin(ServerSystem.class);
+
+        for (var field : Containers.class.getFields()) {
+            var genericType = field.getGenericType();
+
+            if (!(genericType instanceof ParameterizedType parameterizedType)) continue;
+
+            var typeArguments = parameterizedType.getActualTypeArguments();
+
+            for (var type : typeArguments) {
+                if (type != containerClass) continue;
+
+                try {
+                    this._containers = (Containers<?>) field.get(null);
+                    break;
+                } catch (IllegalAccessException exception) {
+                    throw new RuntimeException(exception);
+                }
+            }
+        }
     }
 
     protected ContainerAccessWrapper GetWrapper(Player player) {
@@ -41,7 +65,7 @@ public abstract class AbstractVirtual {
     }
 
     protected String GetVersion() {
-        if (this._version == null)
+        if (this._version == null) {
             try {
                 var splitVersion = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
 
@@ -50,6 +74,7 @@ public abstract class AbstractVirtual {
                 exception.printStackTrace();
                 return null;
             }
+        }
         return this._version;
     }
 }

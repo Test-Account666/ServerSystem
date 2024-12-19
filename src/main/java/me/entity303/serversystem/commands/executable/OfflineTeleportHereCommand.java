@@ -1,6 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ITabExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import static me.entity303.serversystem.commands.executable.OfflineEnderChestCommand.GetOfflinePlayers;
 
+@ServerSystemCommand(name = "OfflineTeleportHere")
 public class OfflineTeleportHereCommand implements ITabExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -36,8 +38,8 @@ public class OfflineTeleportHereCommand implements ITabExecutorOverload {
         }
 
         if (arguments.length == 0) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                      this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "OfflineTeleportHere"));
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "OfflineTeleportHere"));
             return true;
         }
 
@@ -45,11 +47,9 @@ public class OfflineTeleportHereCommand implements ITabExecutorOverload {
 
         if (!offlineTarget.hasPlayedBefore()) {
             var name = offlineTarget.getName();
-            if (name == null)
-                name = arguments[0];
+            if (name == null) name = arguments[0];
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                           .GetMessageWithStringTarget(commandLabel, command,
-                                                                                                                       commandSender, name,
+                                                                                           .GetMessageWithStringTarget(commandLabel, command, commandSender, name,
                                                                                                                        "OfflineTeleportHere.NeverPlayed"));
             return true;
         }
@@ -62,14 +62,12 @@ public class OfflineTeleportHereCommand implements ITabExecutorOverload {
 
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
                                                                                                .GetMessage(commandLabel, command, commandSender,
-                                                                                                           offlineTarget.getPlayer(),
-                                                                                                           "OfflineTeleportHere.Success"));
+                                                                                                           offlineTarget.getPlayer(), "OfflineTeleportHere.Success"));
                 return true;
             }
             CommandSender target = offlineTarget.getPlayer();
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                           .GetMessage(commandLabel, command, commandSender, target,
-                                                                                                       "OfflineTeleportHere.PlayerIsOnline"));
+            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
+                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "OfflineTeleportHere.PlayerIsOnline"));
             return true;
         }
 
@@ -85,8 +83,7 @@ public class OfflineTeleportHereCommand implements ITabExecutorOverload {
 
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (!this._plugin.GetPermissions().HasPermission(commandSender, "offlineteleporthere", true))
-            return Collections.singletonList("");
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "offlineteleporthere", true)) return Collections.singletonList("");
 
         return GetOfflinePlayers(arguments);
     }

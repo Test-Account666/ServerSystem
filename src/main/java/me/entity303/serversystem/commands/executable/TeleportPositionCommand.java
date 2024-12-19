@@ -1,18 +1,20 @@
 package me.entity303.serversystem.commands.executable;
 
+import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
-import me.entity303.serversystem.commands.ICommandExecutorOverload;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Locale;
 import java.util.regex.Pattern;
 
+@ServerSystemCommand(name = "TeleportPosition")
 public class TeleportPositionCommand implements ICommandExecutorOverload {
 
     private static final Pattern WORLD_PATTERN = Pattern.compile("(world|w):");
@@ -24,15 +26,16 @@ public class TeleportPositionCommand implements ICommandExecutorOverload {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
-        if (!this._plugin.GetPermissions().HasPermission(commandSender, "tppos.self", true))
+        if (!this._plugin.GetPermissions().HasPermission(commandSender, "tppos.self", true)) {
             if (!this._plugin.GetPermissions().HasPermission(commandSender, "tppos.others", true)) {
                 var permission = this._plugin.GetPermissions().GetPermission("tppos.self");
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return true;
             }
+        }
 
         if (arguments.length == 0) {
-            
+
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "TPPos"));
             return true;
         }
@@ -54,20 +57,20 @@ public class TeleportPositionCommand implements ICommandExecutorOverload {
             world = Bukkit.getWorlds().stream().filter(world1 -> world1.getName().equalsIgnoreCase(finalPotentialWorld)).findFirst().orElse(null);
 
             //TODO: Send error
-            if (world == null)
-                return true;
+            if (world == null) return true;
         }
 
         if (arguments.length <= 2) {
-            
+
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "TPPos"));
             return true;
         }
 
         if (arguments.length == 3) {
             if (!(commandSender instanceof Player)) {
-                
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "TPPos"));
+
+                commandSender.sendMessage(
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "TPPos"));
                 return true;
             }
 
@@ -77,28 +80,30 @@ public class TeleportPositionCommand implements ICommandExecutorOverload {
                 return true;
             }
 
-            var location = this.GetLocationFromString(commandSender, commandLabel, command.getName(), ((Player) commandSender), world, arguments[0], arguments[1], arguments[2]);
+            var location =
+                    this.GetLocationFromString(commandSender, commandLabel, command.getName(), ((Player) commandSender), world, arguments[0], arguments[1], arguments[2]);
 
             //TODO: Send error
-            if (!location.getWorld().getWorldBorder().isInside(location))
-                return true;
+            if (!location.getWorld().getWorldBorder().isInside(location)) return true;
 
             var playerLocation = ((Player) commandSender).getLocation();
 
-            if (location.getWorld().getName().equalsIgnoreCase(playerLocation.getWorld().getName()))
-                if (location.distance(playerLocation) <= 0)
-                    if (Math.max(playerLocation.getYaw(), location.getYaw()) - Math.min(playerLocation.getYaw(), location.getYaw()) <= 0)
-                        if (Math.max(playerLocation.getPitch(), location.getPitch()) - Math.min(playerLocation.getPitch(), location.getPitch()) <= 0)
-                            return true;
+            if (location.getWorld().getName().equalsIgnoreCase(playerLocation.getWorld().getName())) {
+                if (location.distance(playerLocation) <= 0) {
+                    if (Math.max(playerLocation.getYaw(), location.getYaw()) - Math.min(playerLocation.getYaw(), location.getYaw()) <= 0) {
+                        if (Math.max(playerLocation.getPitch(), location.getPitch()) - Math.min(playerLocation.getPitch(), location.getPitch()) <= 0) return true;
+                    }
+                }
+            }
 
             ((Player) commandSender).teleport(location);
 
 
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                         .GetMessage(commandLabel, command, commandSender, null, "TPPos.Success.Self")
-                                                                                         .replace("<X>", String.format("%.2f", location.getX()))
-                                                                                         .replace("<Y>", String.format("%.2f", location.getY()))
-                                                                                         .replace("<Z>", String.format("%.2f", location.getZ())));
+                                                                                           .GetMessage(commandLabel, command, commandSender, null, "TPPos.Success.Self")
+                                                                                           .replace("<X>", String.format("%.2f", location.getX()))
+                                                                                           .replace("<Y>", String.format("%.2f", location.getY()))
+                                                                                           .replace("<Z>", String.format("%.2f", location.getZ())));
             return true;
         }
 
@@ -119,33 +124,36 @@ public class TeleportPositionCommand implements ICommandExecutorOverload {
             var location = this.GetLocationFromString(commandSender, commandLabel, command.getName(), target, world, arguments[1], arguments[2], arguments[3]);
 
             //TODO: Send error
-            if (!location.getWorld().getWorldBorder().isInside(location))
-                return true;
+            if (!location.getWorld().getWorldBorder().isInside(location)) return true;
 
             var playerLocation = target.getLocation();
 
-            if (location.getWorld().getName().equalsIgnoreCase(playerLocation.getWorld().getName()))
-                if (location.distance(playerLocation) <= 0)
-                    if (Math.max(playerLocation.getYaw(), location.getYaw()) - Math.min(playerLocation.getYaw(), location.getYaw()) <= 0)
-                        if (Math.max(playerLocation.getPitch(), location.getPitch()) - Math.min(playerLocation.getPitch(), location.getPitch()) <= 0)
-                            return true;
+            if (location.getWorld().getName().equalsIgnoreCase(playerLocation.getWorld().getName())) {
+                if (location.distance(playerLocation) <= 0) {
+                    if (Math.max(playerLocation.getYaw(), location.getYaw()) - Math.min(playerLocation.getYaw(), location.getYaw()) <= 0) {
+                        if (Math.max(playerLocation.getPitch(), location.getPitch()) - Math.min(playerLocation.getPitch(), location.getPitch()) <= 0) return true;
+                    }
+                }
+            }
 
             var player = target.getPlayer();
             player.teleport(location);
 
 
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                         .GetMessage(commandLabel, command, commandSender, target, "TPPos.Success.Others")
-                                                                                         .replace("<X>", String.format("%.2f", location.getX()))
-                                                                                         .replace("<Y>", String.format("%.2f", location.getY()))
-                                                                                         .replace("<Z>", String.format("%.2f", location.getZ())));
+                                                                                           .GetMessage(commandLabel, command, commandSender, target,
+                                                                                                       "TPPos.Success.Others")
+                                                                                           .replace("<X>", String.format("%.2f", location.getX()))
+                                                                                           .replace("<Y>", String.format("%.2f", location.getY()))
+                                                                                           .replace("<Z>", String.format("%.2f", location.getZ())));
             return true;
         }
 
         if (arguments.length == 5) {
             if (!(commandSender instanceof Player)) {
-                
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "TPPos"));
+
+                commandSender.sendMessage(
+                        this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "TPPos"));
                 return true;
             }
 
@@ -155,29 +163,32 @@ public class TeleportPositionCommand implements ICommandExecutorOverload {
                 return true;
             }
 
-            var location = this.GetLocationFromString(commandSender, commandLabel, command.getName(), ((Player) commandSender), world, arguments[0], arguments[1], arguments[2], arguments[3], arguments[4]);
+            var location =
+                    this.GetLocationFromString(commandSender, commandLabel, command.getName(), ((Player) commandSender), world, arguments[0], arguments[1], arguments[2],
+                                               arguments[3], arguments[4]);
 
 
             //TODO: Send error
-            if (!location.getWorld().getWorldBorder().isInside(location))
-                return true;
+            if (!location.getWorld().getWorldBorder().isInside(location)) return true;
 
             var playerLocation = ((Player) commandSender).getLocation();
 
-            if (location.getWorld().getName().equalsIgnoreCase(playerLocation.getWorld().getName()))
-                if (location.distance(playerLocation) <= 0)
-                    if (Math.max(playerLocation.getYaw(), location.getYaw()) - Math.min(playerLocation.getYaw(), location.getYaw()) <= 0)
-                        if (Math.max(playerLocation.getPitch(), location.getPitch()) - Math.min(playerLocation.getPitch(), location.getPitch()) <= 0)
-                            return true;
+            if (location.getWorld().getName().equalsIgnoreCase(playerLocation.getWorld().getName())) {
+                if (location.distance(playerLocation) <= 0) {
+                    if (Math.max(playerLocation.getYaw(), location.getYaw()) - Math.min(playerLocation.getYaw(), location.getYaw()) <= 0) {
+                        if (Math.max(playerLocation.getPitch(), location.getPitch()) - Math.min(playerLocation.getPitch(), location.getPitch()) <= 0) return true;
+                    }
+                }
+            }
 
             ((Player) commandSender).teleport(location);
 
 
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                         .GetMessage(commandLabel, command, commandSender, null, "TPPos.Success.Self")
-                                                                                         .replace("<X>", String.format("%.2f", location.getX()))
-                                                                                         .replace("<Y>", String.format("%.2f", location.getY()))
-                                                                                         .replace("<Z>", String.format("%.2f", location.getZ())));
+                                                                                           .GetMessage(commandLabel, command, commandSender, null, "TPPos.Success.Self")
+                                                                                           .replace("<X>", String.format("%.2f", location.getX()))
+                                                                                           .replace("<Y>", String.format("%.2f", location.getY()))
+                                                                                           .replace("<Z>", String.format("%.2f", location.getZ())));
             return true;
         }
 
@@ -194,37 +205,38 @@ public class TeleportPositionCommand implements ICommandExecutorOverload {
             return true;
         }
 
-        var location = this.GetLocationFromString(commandSender, commandLabel, command.getName(), target, world, arguments[1], arguments[2], arguments[3], arguments[4], arguments[5]);
+        var location = this.GetLocationFromString(commandSender, commandLabel, command.getName(), target, world, arguments[1], arguments[2], arguments[3], arguments[4],
+                                                  arguments[5]);
 
         //TODO: Send error
-        if (!location.getWorld().getWorldBorder().isInside(location))
-            return true;
+        if (!location.getWorld().getWorldBorder().isInside(location)) return true;
 
         var playerLocation = target.getLocation();
 
-        if (location.getWorld().getName().equalsIgnoreCase(playerLocation.getWorld().getName()))
-            if (location.distance(playerLocation) <= 0)
-                if (Math.max(playerLocation.getYaw(), location.getYaw()) - Math.min(playerLocation.getYaw(), location.getYaw()) <= 0)
-                    if (Math.max(playerLocation.getPitch(), location.getPitch()) - Math.min(playerLocation.getPitch(), location.getPitch()) <= 0)
-                        return true;
+        if (location.getWorld().getName().equalsIgnoreCase(playerLocation.getWorld().getName())) {
+            if (location.distance(playerLocation) <= 0) {
+                if (Math.max(playerLocation.getYaw(), location.getYaw()) - Math.min(playerLocation.getYaw(), location.getYaw()) <= 0) {
+                    if (Math.max(playerLocation.getPitch(), location.getPitch()) - Math.min(playerLocation.getPitch(), location.getPitch()) <= 0) return true;
+                }
+            }
+        }
 
         var player = target.getPlayer();
         player.teleport(location);
 
 
         commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                     .GetMessage(commandLabel, command, commandSender, null, "TPPos.Success.Others")
-                                                                                     .replace("<X>", String.format("%.2f", location.getX()))
-                                                                                     .replace("<Y>", String.format("%.2f", location.getY()))
-                                                                                     .replace("<Z>", String.format("%.2f", location.getZ())));
+                                                                                       .GetMessage(commandLabel, command, commandSender, null, "TPPos.Success.Others")
+                                                                                       .replace("<X>", String.format("%.2f", location.getX()))
+                                                                                       .replace("<Y>", String.format("%.2f", location.getY()))
+                                                                                       .replace("<Z>", String.format("%.2f", location.getZ())));
         return true;
     }
 
 
     private Location GetLocationFromString(CommandSender commandSender, String commandLabel, String command, Player target, World world, String... locationData) {
         for (var index = 0; index < locationData.length; index++) {
-            if (!locationData[index].startsWith("~"))
-                continue;
+            if (!locationData[index].startsWith("~")) continue;
 
             double add = 0;
             if (locationData[index].length() > 1) {
@@ -232,8 +244,10 @@ public class TeleportPositionCommand implements ICommandExecutorOverload {
                 try {
                     add = Double.parseDouble(addition);
                 } catch (NumberFormatException exception) {
-                    commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                   this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "TPPos.NotANumber").replace("<NUMBER>", addition));
+                    commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                                   .GetMessage(commandLabel, command, commandSender, target,
+                                                                                                               "TPPos.NotANumber")
+                                                                                                   .replace("<NUMBER>", addition));
                     return target.getLocation();
                 }
             }
@@ -263,29 +277,34 @@ public class TeleportPositionCommand implements ICommandExecutorOverload {
             try {
                 location.setX(Double.parseDouble(locationData[0]));
             } catch (NumberFormatException ignored) {
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                               this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "TPPos.NotANumber").replace("<NUMBER>", locationData[0]));
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                               .GetMessage(commandLabel, command, commandSender, target,
+                                                                                                           "TPPos.NotANumber")
+                                                                                               .replace("<NUMBER>", locationData[0]));
                 return target.getLocation();
             }
 
             try {
                 location.setY(Double.parseDouble(locationData[1]));
             } catch (NumberFormatException ignored) {
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                               this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "TPPos.NotANumber").replace("<NUMBER>", locationData[1]));
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                               .GetMessage(commandLabel, command, commandSender, target,
+                                                                                                           "TPPos.NotANumber")
+                                                                                               .replace("<NUMBER>", locationData[1]));
                 return target.getLocation();
             }
 
             try {
                 location.setZ(Double.parseDouble(locationData[2]));
             } catch (NumberFormatException ignored) {
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                               this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "TPPos.NotANumber").replace("<NUMBER>", locationData[2]));
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                               .GetMessage(commandLabel, command, commandSender, target,
+                                                                                                           "TPPos.NotANumber")
+                                                                                               .replace("<NUMBER>", locationData[2]));
                 return target.getLocation();
             }
 
-            if (world != null)
-                location.setWorld(world);
+            if (world != null) location.setWorld(world);
             return location;
         }
 
@@ -295,24 +314,30 @@ public class TeleportPositionCommand implements ICommandExecutorOverload {
             try {
                 location.setX(Double.parseDouble(locationData[0]));
             } catch (NumberFormatException ignored) {
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                               this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "TPPos.NotANumber").replace("<NUMBER>", locationData[0]));
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                               .GetMessage(commandLabel, command, commandSender, target,
+                                                                                                           "TPPos.NotANumber")
+                                                                                               .replace("<NUMBER>", locationData[0]));
                 return target.getLocation();
             }
 
             try {
                 location.setY(Double.parseDouble(locationData[1]));
             } catch (NumberFormatException ignored) {
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                               this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "TPPos.NotANumber").replace("<NUMBER>", locationData[1]));
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                               .GetMessage(commandLabel, command, commandSender, target,
+                                                                                                           "TPPos.NotANumber")
+                                                                                               .replace("<NUMBER>", locationData[1]));
                 return target.getLocation();
             }
 
             try {
                 location.setZ(Double.parseDouble(locationData[2]));
             } catch (NumberFormatException ignored) {
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                               this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "TPPos.NotANumber").replace("<NUMBER>", locationData[2]));
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                               .GetMessage(commandLabel, command, commandSender, target,
+                                                                                                           "TPPos.NotANumber")
+                                                                                               .replace("<NUMBER>", locationData[2]));
                 return target.getLocation();
             }
 
@@ -320,21 +345,24 @@ public class TeleportPositionCommand implements ICommandExecutorOverload {
             try {
                 location.setYaw(Float.parseFloat(locationData[3]));
             } catch (NumberFormatException ignored) {
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                               this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "TPPos.NotANumber").replace("<NUMBER>", locationData[5]));
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                               .GetMessage(commandLabel, command, commandSender, target,
+                                                                                                           "TPPos.NotANumber")
+                                                                                               .replace("<NUMBER>", locationData[5]));
                 return target.getLocation();
             }
 
             try {
                 location.setPitch(Float.parseFloat(locationData[4]));
             } catch (NumberFormatException ignored) {
-                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                               this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, target, "TPPos.NotANumber").replace("<NUMBER>", locationData[4]));
+                commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
+                                                                                               .GetMessage(commandLabel, command, commandSender, target,
+                                                                                                           "TPPos.NotANumber")
+                                                                                               .replace("<NUMBER>", locationData[4]));
                 return target.getLocation();
             }
 
-            if (world != null)
-                location.setWorld(world);
+            if (world != null) location.setWorld(world);
             return location;
         }
         return null;

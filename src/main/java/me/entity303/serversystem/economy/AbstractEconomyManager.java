@@ -21,8 +21,8 @@ public abstract class AbstractEconomyManager {
     protected final HashMap<OfflinePlayer, Boolean> _accountCache = new HashMap<>();
     protected LinkedHashMap<OfflinePlayer, Double> _topTen = new LinkedHashMap<>();
 
-    public AbstractEconomyManager(String currencySingular, String currencyPlural, String startingMoney, String displayFormat, String moneyFormat,
-                                  String separator, String thousands, ServerSystem plugin) {
+    public AbstractEconomyManager(String currencySingular, String currencyPlural, String startingMoney, String displayFormat, String moneyFormat, String separator,
+                                  String thousands, ServerSystem plugin) {
         this._plugin = plugin;
         this._currencySingular = currencySingular;
         this._currencyPlural = currencyPlural;
@@ -66,14 +66,11 @@ public abstract class AbstractEconomyManager {
 
         var moneyWorth = money;
 
-        if (money < 0)
-            moneyWorth = money * -1;
+        if (money < 0) moneyWorth = money * -1;
 
-        if (moneyWorth < 1)
-            plural = true;
+        if (moneyWorth < 1) plural = true;
 
-        if (money > 1)
-            plural = true;
+        if (money > 1) plural = true;
 
         return this._displayFormat.replace("<MONEY>", formattedMoney).replace("<CURRENCY>", plural? this._currencyPlural : this._currencySingular);
     }
@@ -90,12 +87,9 @@ public abstract class AbstractEconomyManager {
 
         }
 
-        if (last.length() == 1)
-            last = last + "0";
-        formattedMoney = this._moneyFormat.replace("<FIRST>", first)
-                                          .replace("<LAST>", last)
-                                          .replace("<SEPARATOR>", this._separator)
-                                          .replace("<THOUSAND>", this.GetThousands());
+        if (last.length() == 1) last = last + "0";
+        formattedMoney =
+                this._moneyFormat.replace("<FIRST>", first).replace("<LAST>", last).replace("<SEPARATOR>", this._separator).replace("<THOUSAND>", this.GetThousands());
         return formattedMoney;
     }
 
@@ -108,10 +102,8 @@ public abstract class AbstractEconomyManager {
     }
 
     public final void MakeTransaction(OfflinePlayer sender, OfflinePlayer target, double amount) {
-        if (sender == null)
-            return;
-        if (target == null)
-            return;
+        if (sender == null) return;
+        if (target == null) return;
 
         this.RemoveMoney(sender, amount);
         this.AddMoney(target, amount);
@@ -134,11 +126,9 @@ public abstract class AbstractEconomyManager {
     }
 
     private double Clamp(double value) {
-        if (value < 0.0)
-            value = 0.0;
+        if (value < 0.0) value = 0.0;
 
-        if (value > Double.MAX_VALUE)
-            value = Double.MAX_VALUE;
+        if (value > Double.MAX_VALUE) value = Double.MAX_VALUE;
 
         return value;
     }

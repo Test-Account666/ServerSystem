@@ -22,17 +22,15 @@ public class MuteManager_H2 extends AbstractMuteManager {
         this.Open();
         try {
             this._connection.createStatement()
-                            .executeUpdate(
-                                    "CREATE TABLE IF NOT EXISTS MutedPlayers (BannedUUID VARCHAR(100), SenderUUID VARCHAR(100), Reason VARCHAR(100), " +
-                                    "Shadow INT, UnbanTime BIGINT)");
+                            .executeUpdate("CREATE TABLE IF NOT EXISTS MutedPlayers (BannedUUID VARCHAR(100), SenderUUID VARCHAR(100), Reason VARCHAR(100), " +
+                                           "Shadow INT, UnbanTime BIGINT)");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
     }
 
     public void Open() {
-        if (!this.Initialize())
-            return;
+        if (!this.Initialize()) return;
 
         try {
             this._connection = DriverManager.getConnection("jdbc:h2:file:" + new File("plugins//ServerSystem", "mutes.h2").getAbsolutePath());
@@ -53,8 +51,7 @@ public class MuteManager_H2 extends AbstractMuteManager {
 
     @Override
     public MuteModeration GetMute(OfflinePlayer player) {
-        if (!this.CheckPlayerInH2(player.getUniqueId().toString()))
-            return null;
+        if (!this.CheckPlayerInH2(player.getUniqueId().toString())) return null;
 
         var senderUUID = this.GetUUIDSender(player.getUniqueId().toString());
         var mutedUUID = player.getUniqueId();
@@ -68,8 +65,7 @@ public class MuteManager_H2 extends AbstractMuteManager {
 
     @Override
     public void RemoveMute(UUID mutedUUID) {
-        if (!this.CheckPlayerInH2(mutedUUID.toString()))
-            return;
+        if (!this.CheckPlayerInH2(mutedUUID.toString())) return;
 
         try {
             var query = "DELETE FROM MutedPlayers WHERE BannedUUID=?";
@@ -90,12 +86,10 @@ public class MuteManager_H2 extends AbstractMuteManager {
 
     @Override
     public MuteModeration CreateMute(UUID mutedUUID, String senderUUID, String reason, boolean shadow, Long howLong, TimeUnit timeUnit) {
-        if (this.IsMuted(Bukkit.getOfflinePlayer(mutedUUID)))
-            this.RemoveMute(mutedUUID);
+        if (this.IsMuted(Bukkit.getOfflinePlayer(mutedUUID))) this.RemoveMute(mutedUUID);
 
         var expireTime = System.currentTimeMillis() + (howLong * timeUnit.GetValue());
-        if (howLong < 1)
-            expireTime = -1L;
+        if (howLong < 1) expireTime = -1L;
 
         var mute = new MuteModeration(mutedUUID, senderUUID, expireTime, this.ConvertLongToDate(expireTime), reason, shadow);
 
@@ -110,11 +104,9 @@ public class MuteManager_H2 extends AbstractMuteManager {
         var senderUUID = mute.GetSenderUuid();
         var reason = mute.GetReason();
 
-        if (this.IsMuted(Bukkit.getOfflinePlayer(mutedUUID)))
-            this.RemoveMute(mutedUUID);
+        if (this.IsMuted(Bukkit.getOfflinePlayer(mutedUUID))) this.RemoveMute(mutedUUID);
         long unbanTime = mute.GetExpireTime();
-        if (unbanTime < 1)
-            unbanTime = -1L;
+        if (unbanTime < 1) unbanTime = -1L;
         try {
             var query = "INSERT INTO MutedPlayers (BannedUUID, SenderUUID, Reason, Shadow, UnbanTime) VALUES (?, ?, ?, ?, ?)";
             var preparedStatement = this._connection.prepareStatement(query);
@@ -148,19 +140,15 @@ public class MuteManager_H2 extends AbstractMuteManager {
             throwables.printStackTrace();
         }
 
-        while (true)
-            try {
-                if (resultSet == null)
-                    break;
-                if (!resultSet.next())
-                    break;
-                var uuid = resultSet.getString("BannedUUID");
+        while (true) try {
+            if (resultSet == null) break;
+            if (!resultSet.next()) break;
+            var uuid = resultSet.getString("BannedUUID");
 
-                if (this.CheckPlayerInH2(uuid))
-                    playerNames.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName());
-            } catch (SQLException exception) {
-                exception.printStackTrace();
-            }
+            if (this.CheckPlayerInH2(uuid)) playerNames.add(Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName());
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
 
         return playerNames;
     }
@@ -173,8 +161,7 @@ public class MuteManager_H2 extends AbstractMuteManager {
             throwables.printStackTrace();
         }
         try {
-            while (resultSet.next())
-                return true;
+            while (resultSet.next()) return true;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -189,8 +176,7 @@ public class MuteManager_H2 extends AbstractMuteManager {
             throwables.printStackTrace();
         }
         try {
-            while (resultSet.next())
-                return resultSet.getString("SenderUUID");
+            while (resultSet.next()) return resultSet.getString("SenderUUID");
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -205,8 +191,7 @@ public class MuteManager_H2 extends AbstractMuteManager {
             throwables.printStackTrace();
         }
         try {
-            while (resultSet.next())
-                return resultSet.getLong("UnbanTime");
+            while (resultSet.next()) return resultSet.getLong("UnbanTime");
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -221,8 +206,7 @@ public class MuteManager_H2 extends AbstractMuteManager {
             throwables.printStackTrace();
         }
         try {
-            while (resultSet.next())
-                return resultSet.getString("Reason");
+            while (resultSet.next()) return resultSet.getString("Reason");
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -237,8 +221,7 @@ public class MuteManager_H2 extends AbstractMuteManager {
             throwables.printStackTrace();
         }
         try {
-            while (resultSet.next())
-                return resultSet.getInt("Shadow") == 1;
+            while (resultSet.next()) return resultSet.getInt("Shadow") == 1;
         } catch (SQLException exception) {
             exception.printStackTrace();
         }

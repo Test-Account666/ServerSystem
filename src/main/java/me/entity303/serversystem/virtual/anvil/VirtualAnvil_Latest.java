@@ -11,7 +11,6 @@ import net.minecraft.world.entity.player.PlayerInventory;
 import net.minecraft.world.inventory.Container;
 import net.minecraft.world.inventory.ContainerAccess;
 import net.minecraft.world.inventory.ContainerAnvil;
-import net.minecraft.world.inventory.Containers;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryView;
 
@@ -51,8 +50,7 @@ public class VirtualAnvil_Latest extends AbstractVirtualAnvil {
             return;
         }
 
-        if (playerConnection == null)
-            return;
+        if (playerConnection == null) return;
 
         if (AbstractVirtual.SEND_PACKET_METHOD == null) {
             AbstractVirtual.SEND_PACKET_METHOD = Arrays.stream(playerConnection.getClass().getMethods())
@@ -112,9 +110,7 @@ public class VirtualAnvil_Latest extends AbstractVirtualAnvil {
 
         EntityPlayer human;
         try {
-            human = (EntityPlayer) Class.forName("org.bukkit.craftbukkit." + this.GetVersion() + "entity.CraftPlayer")
-                                        .getDeclaredMethod("getHandle")
-                                        .invoke(player);
+            human = (EntityPlayer) Class.forName("org.bukkit.craftbukkit." + this.GetVersion() + "entity.CraftPlayer").getDeclaredMethod("getHandle").invoke(player);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException exception) {
             exception.printStackTrace();
             return;
@@ -130,14 +126,14 @@ public class VirtualAnvil_Latest extends AbstractVirtualAnvil {
             return;
         }
 
-        container.setTitle(IChatBaseComponent.ChatSerializer.a("{\"text\":\"Repairing\"}"));
+        container.setTitle((IChatBaseComponent) this._inventoryTitle);
 
         container.checkReachable = false;
 
 
         try {
             AbstractVirtual.SEND_PACKET_METHOD.invoke(playerConnection,
-                                                      new PacketPlayOutOpenWindow(containerId, Containers.h, IChatBaseComponent.ChatSerializer.a("{\"text\":\"Repairing\"}")));
+                                                      new PacketPlayOutOpenWindow(containerId, this._containers, (IChatBaseComponent) this._inventoryTitle));
         } catch (IllegalAccessException | InvocationTargetException exception) {
             exception.printStackTrace();
             return;

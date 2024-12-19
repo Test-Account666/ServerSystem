@@ -28,8 +28,7 @@ public class InventoryClickListener implements Listener {
             var contents = new ItemStack[10];
             for (var index = 0; index < 10; index++)
                 contents[index] = null;
-            if (event.getInventory() instanceof CraftingInventory)
-                event.getInventory().setContents(contents);
+            if (event.getInventory() instanceof CraftingInventory) event.getInventory().setContents(contents);
         }
         RecipeCommand.GetRecipeList().remove(event.getPlayer());
     }
@@ -37,66 +36,53 @@ public class InventoryClickListener implements Listener {
 
     @EventHandler
     public void OnInventoryClick(InventoryClickEvent event) {
-        if (event.getClickedInventory() == null)
-            return;
+        if (event.getClickedInventory() == null) return;
 
-        if (event.getView().getTopInventory() instanceof PlayerInventory)
+        if (event.getView().getTopInventory() instanceof PlayerInventory) {
             if (event.getView().getTopInventory().getSize() == 45) {
                 var action = event.getAction();
                 if (action.name().equalsIgnoreCase("CLONE_STACK")) {
-                    if (event.getSlot() > 40)
-                        event.setCancelled(true);
-                    if (event.getCursor().getType() == Material.DROPPER)
-                        event.setCancelled(true);
+                    if (event.getSlot() > 40) event.setCancelled(true);
+                    if (event.getCursor().getType() == Material.DROPPER) event.setCancelled(true);
                     return;
                 } else if (action.name().equalsIgnoreCase("HOTBAR_MOVE_AND_READD") || action.name().equalsIgnoreCase("HOTBAR_SWAP") ||
                            action.name().equalsIgnoreCase("MOVE_TO_OTHER_INVENTORY")) {
-                    if (event.getSlot() > 40)
-                        event.setCancelled(true);
+                    if (event.getSlot() > 40) event.setCancelled(true);
 
-                    if (event.getCursor().getType() == Material.DROPPER)
-                        event.setCancelled(true);
+                    if (event.getCursor().getType() == Material.DROPPER) event.setCancelled(true);
                     return;
                 } else if (action.name().equalsIgnoreCase("COLLECT_TO_CURSOR")) {
-                    if (event.getCursor().getType() == Material.DROPPER)
-                        event.setCancelled(true);
+                    if (event.getCursor().getType() == Material.DROPPER) event.setCancelled(true);
                     return;
                 }
                 return;
             }
+        }
 
         if (RecipeCommand.GetRecipeList().contains(event.getWhoClicked())) {
-            if (event.getClickedInventory() instanceof PlayerInventory)
-                return;
+            if (event.getClickedInventory() instanceof PlayerInventory) return;
             event.setCancelled(true);
             return;
         }
 
         if (this._plugin.GetEnderchest().containsKey(event.getWhoClicked())) {
             var owner = this._plugin.GetEnderchest().get(event.getWhoClicked());
-            if (owner == event.getWhoClicked())
-                return;
-            if (!this._plugin.GetPermissions().HasPermission(owner, "enderchest.exempt", true))
-                return;
+            if (owner == event.getWhoClicked()) return;
+            if (!this._plugin.GetPermissions().HasPermission(owner, "enderchest.exempt", true)) return;
             event.setCancelled(true);
             return;
         }
 
-        if (event.getClickedInventory().getHolder() == null)
-            return;
-        if (event.getClickedInventory().getHolder() == event.getWhoClicked())
-            return;
+        if (event.getClickedInventory().getHolder() == null) return;
+        if (event.getClickedInventory().getHolder() == event.getWhoClicked()) return;
         var holder = event.getInventory().getHolder();
-        if (!(holder instanceof HumanEntity targetEntity))
-            return;
+        if (!(holder instanceof HumanEntity targetEntity)) return;
         if (event.getInventory().getType() == InventoryType.ENDER_CHEST) {
-            if (!this._plugin.GetPermissions().HasPermission(targetEntity, "enderchest.exempt", true))
-                return;
+            if (!this._plugin.GetPermissions().HasPermission(targetEntity, "enderchest.exempt", true)) return;
             event.setCancelled(true);
             return;
         }
-        if (!this._plugin.GetPermissions().HasPermission(targetEntity, "invsee.exempt", true))
-            return;
+        if (!this._plugin.GetPermissions().HasPermission(targetEntity, "invsee.exempt", true)) return;
         event.setCancelled(true);
     }
 }

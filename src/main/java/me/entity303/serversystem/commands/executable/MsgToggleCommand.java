@@ -1,11 +1,13 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+@ServerSystemCommand(name = "MsgToggle")
 public class MsgToggleCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -32,15 +34,14 @@ public class MsgToggleCommand implements ICommandExecutorOverload {
         if (this._plugin.GetMsgOff().contains(player)) {
             this._plugin.GetMsgOff().remove(player);
 
-            player.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                               this._plugin.GetMessages().GetMessage(commandLabel, command, player, null, "MsgToggle.Activated"));
+            player.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, player, null, "MsgToggle.Activated"));
             return true;
         }
 
         this._plugin.GetMsgOff().add(player);
 
-        player.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                           this._plugin.GetMessages().GetMessage(commandLabel, command, player, null, "MsgToggle.Deactivated"));
+        player.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, player, null, "MsgToggle.Deactivated"));
         return true;
     }
 }

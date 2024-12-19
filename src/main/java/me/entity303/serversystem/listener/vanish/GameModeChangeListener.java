@@ -15,7 +15,6 @@ public class GameModeChangeListener implements Listener {
 
     @EventHandler
     public void OnGameModeChange(PlayerGameModeChangeEvent event) {
-        if (this._plugin.GetVanish().IsVanish(event.getPlayer()))
-            this._plugin.GetVersionStuff().GetVanishPacket().SetVanish(event.getPlayer(), true);
+        if (this._plugin.GetVanish().IsVanish(event.getPlayer())) this._plugin.GetVersionStuff().GetVanishPacket().SetVanish(event.getPlayer(), true);
     }
 }

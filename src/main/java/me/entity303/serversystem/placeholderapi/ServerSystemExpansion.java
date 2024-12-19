@@ -37,52 +37,41 @@ public class ServerSystemExpansion extends PlaceholderExpansion {
 
     @Override
     public boolean register() {
-        if (this.isRegistered())
-            return false;
+        if (this.isRegistered()) return false;
         return super.register();
     }
 
     @SuppressWarnings("ParameterNameDiffersFromOverriddenParameter")
     @Override
     public String onRequest(OfflinePlayer offlinePlayer, String params) {
-        if (params.equalsIgnoreCase("money"))
-            return String.valueOf(this._plugin.GetEconomyManager().GetMoneyAsNumber(offlinePlayer));
-        if (params.equalsIgnoreCase("formattedmoney"))
-            return this._plugin.GetEconomyManager().GetMoney(offlinePlayer);
+        if (params.equalsIgnoreCase("money")) return String.valueOf(this._plugin.GetEconomyManager().GetMoneyAsNumber(offlinePlayer));
+        if (params.equalsIgnoreCase("formattedmoney")) return this._plugin.GetEconomyManager().GetMoney(offlinePlayer);
         if (params.equalsIgnoreCase("drop")) {
-            if (!offlinePlayer.isOnline())
-                return "false";
+            if (!offlinePlayer.isOnline()) return "false";
             return String.valueOf(this._plugin.GetVanish().GetAllowDrop().contains(offlinePlayer.getPlayer()));
         }
         if (params.equalsIgnoreCase("pickup")) {
-            if (!offlinePlayer.isOnline())
-                return "false";
+            if (!offlinePlayer.isOnline()) return "false";
             return String.valueOf(this._plugin.GetVanish().GetAllowPickup().contains(offlinePlayer.getPlayer()));
         }
         if (params.equalsIgnoreCase("chat")) {
-            if (!offlinePlayer.isOnline())
-                return "false";
+            if (!offlinePlayer.isOnline()) return "false";
             return String.valueOf(this._plugin.GetVanish().GetAllowChat().contains(offlinePlayer.getPlayer()));
         }
         if (params.equalsIgnoreCase("interact")) {
-            if (!offlinePlayer.isOnline())
-                return "false";
+            if (!offlinePlayer.isOnline()) return "false";
             return String.valueOf(this._plugin.GetVanish().GetAllowInteract().contains(offlinePlayer.getPlayer()));
         }
-        if (params.equalsIgnoreCase("vanish"))
-            return String.valueOf(this._plugin.GetVanish().IsVanish(offlinePlayer));
+        if (params.equalsIgnoreCase("vanish")) return String.valueOf(this._plugin.GetVanish().IsVanish(offlinePlayer));
         if (params.equalsIgnoreCase("god")) {
-            if (!offlinePlayer.isOnline())
-                return "false";
+            if (!offlinePlayer.isOnline()) return "false";
             return String.valueOf(this._plugin.GetGodList().contains(offlinePlayer.getPlayer()));
         }
 
         if (params.equalsIgnoreCase("onlineplayers")) {
-            if (!offlinePlayer.isOnline())
-                return null;
+            if (!offlinePlayer.isOnline()) return null;
             var player = (Player) offlinePlayer;
-            return String.valueOf(
-                    Bukkit.getOnlinePlayers().size() - (int) Bukkit.getOnlinePlayers().stream().filter(player1 -> !player.canSee(player1)).count());
+            return String.valueOf(Bukkit.getOnlinePlayers().size() - (int) Bukkit.getOnlinePlayers().stream().filter(player1 -> !player.canSee(player1)).count());
         }
 
         if (params.startsWith("baltop_formattedmoney_")) {
@@ -90,11 +79,9 @@ public class ServerSystemExpansion extends PlaceholderExpansion {
             try {
                 var place = Integer.parseInt(placeString);
 
-                if (place <= 0)
-                    place = 1;
+                if (place <= 0) place = 1;
 
-                if (place > 10)
-                    throw new UnsupportedOperationException("Currently, only top 10 is supported!");
+                if (place > 10) throw new UnsupportedOperationException("Currently, only top 10 is supported!");
 
                 return this._plugin.GetEconomyManager().Format(this.GetTopXBalance(place));
             } catch (NumberFormatException exception) {
@@ -108,11 +95,9 @@ public class ServerSystemExpansion extends PlaceholderExpansion {
             try {
                 var place = Integer.parseInt(placeString);
 
-                if (place <= 0)
-                    place = 1;
+                if (place <= 0) place = 1;
 
-                if (place > 10)
-                    throw new UnsupportedOperationException("Currently, only top 10 is supported!");
+                if (place > 10) throw new UnsupportedOperationException("Currently, only top 10 is supported!");
 
                 return String.valueOf(this.GetTopXBalance(place));
             } catch (NumberFormatException exception) {
@@ -126,11 +111,9 @@ public class ServerSystemExpansion extends PlaceholderExpansion {
             try {
                 var place = Integer.parseInt(placeString);
 
-                if (place <= 0)
-                    place = 1;
+                if (place <= 0) place = 1;
 
-                if (place > 10)
-                    throw new UnsupportedOperationException("Currently, only top 10 is supported!");
+                if (place > 10) throw new UnsupportedOperationException("Currently, only top 10 is supported!");
 
                 return this.GetTopXName(place);
             } catch (NumberFormatException exception) {
@@ -161,8 +144,7 @@ public class ServerSystemExpansion extends PlaceholderExpansion {
 
             lastPlace = topX;
 
-            if (currentPlace == place)
-                return topX;
+            if (currentPlace == place) return topX;
         }
 
         return lastPlace;

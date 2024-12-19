@@ -1,10 +1,11 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
+import me.entity303.serversystem.tabcompleter.HomeTabCompleter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@ServerSystemCommand(name = "DelHome", tabCompleter = HomeTabCompleter.class)
 public class DelHomeCommand implements ICommandExecutorOverload {
     private final ServerSystem _plugin;
 
@@ -27,12 +29,13 @@ public class DelHomeCommand implements ICommandExecutorOverload {
             return true;
         }
 
-        if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.delhome.required"))
+        if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.delhome.required")) {
             if (!this._plugin.GetPermissions().HasPermission(commandSender, "delhome.permission")) {
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
                                           this._plugin.GetMessages().GetNoPermission(this._plugin.GetPermissions().GetPermission("delhome.permission")));
                 return true;
             }
+        }
 
         if (arguments.length == 0) {
             commandSender.sendMessage(
@@ -41,7 +44,7 @@ public class DelHomeCommand implements ICommandExecutorOverload {
         }
 
         var homeFile = new File("plugins//ServerSystem//Homes", ((Player) commandSender).getUniqueId() + ".yml");
-        FileConfiguration homeCfg = YamlConfiguration.loadConfiguration(homeFile);
+        var homeCfg = YamlConfiguration.loadConfiguration(homeFile);
 
         if (!homeFile.exists()) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
@@ -61,9 +64,9 @@ public class DelHomeCommand implements ICommandExecutorOverload {
 
         homeCfg.set("Homes." + arguments[0].toUpperCase(), null);
         commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                     .GetMessage(commandLabel, command.getName(), commandSender, null,
-                                                                                                 "DelHome.Success")
-                                                                                     .replace("<HOME>", arguments[0].toUpperCase()));
+                                                                                       .GetMessage(commandLabel, command.getName(), commandSender, null,
+                                                                                                   "DelHome.Success")
+                                                                                       .replace("<HOME>", arguments[0].toUpperCase()));
 
         try {
             homeCfg.save(homeFile);

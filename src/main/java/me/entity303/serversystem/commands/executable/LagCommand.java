@@ -1,6 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.ChatColor;
 import org.bukkit.command.Command;
@@ -10,6 +11,7 @@ import java.text.DecimalFormat;
 
 import static java.lang.Runtime.getRuntime;
 
+@ServerSystemCommand(name = "Lag")
 public class LagCommand implements ICommandExecutorOverload {
     private static final DecimalFormat TWO_DECIMALS_FORMAT = new DecimalFormat("#,###.##");
     protected final ServerSystem _plugin;
@@ -28,12 +30,13 @@ public class LagCommand implements ICommandExecutorOverload {
 
         var tps = this._plugin.GetTimer().GetAverageTPS();
         ChatColor color;
-        if (tps >= 18.0)
+        if (tps >= 18.0) {
             color = ChatColor.GREEN;
-        else if (tps >= 15.0)
+        } else if (tps >= 15.0) {
             color = ChatColor.YELLOW;
-        else
+        } else {
             color = ChatColor.RED;
+        }
 
         var maxMemory = getRuntime().maxMemory();
         var totalMemory = getRuntime().totalMemory();
@@ -48,11 +51,11 @@ public class LagCommand implements ICommandExecutorOverload {
         return true;
     }
 
-    private ServerSystem GetPlugin() {
-        return this._plugin;
-    }
-
     private static String FormatDouble(double value) {
         return LagCommand.TWO_DECIMALS_FORMAT.format(value);
+    }
+
+    private ServerSystem GetPlugin() {
+        return this._plugin;
     }
 }

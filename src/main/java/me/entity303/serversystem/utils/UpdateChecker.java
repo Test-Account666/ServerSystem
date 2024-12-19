@@ -21,8 +21,7 @@ public class UpdateChecker {
         Bukkit.getScheduler().scheduleSyncDelayedTask(this._plugin, () -> {
             try (var inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this._resourceId).openStream();
                  var scanner = new Scanner(inputStream)) {
-                if (scanner.hasNext())
-                    consumer.accept(scanner.next());
+                if (scanner.hasNext()) consumer.accept(scanner.next());
             } catch (IOException exception) {
                 this._plugin.Error("Cannot look for updates: " + exception.getMessage());
             }

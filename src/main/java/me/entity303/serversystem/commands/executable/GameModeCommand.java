@@ -1,7 +1,9 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
+import me.entity303.serversystem.tabcompleter.GameModeTabCompleter;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
@@ -12,6 +14,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+@ServerSystemCommand(name = "GameMode", tabCompleter = GameModeTabCompleter.class)
 public class GameModeCommand implements ICommandExecutorOverload {
     protected final ServerSystem _plugin;
 
@@ -32,11 +35,11 @@ public class GameModeCommand implements ICommandExecutorOverload {
     @SuppressWarnings("DuplicatedCode")
     public static boolean ExecuteGameMode(CommandSender commandSender, Command command, String commandLabel, String[] arguments, String gameMode,
                                           GameModeCommand gameModeCommand) {
-        if (arguments.length == 0)
+        if (arguments.length == 0) {
             arguments = new String[] { gameMode };
-        else if (arguments.length == 1)
+        } else if (arguments.length == 1) {
             arguments = new String[] { gameMode, arguments[0] };
-        else {
+        } else {
             List<String> argumentList = new LinkedList<>();
 
             Collections.addAll(argumentList, arguments);
@@ -55,17 +58,12 @@ public class GameModeCommand implements ICommandExecutorOverload {
 
         if (gameMode == null) {
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                           .GetMessage(commandLabel, command, commandSender, null,
-                                                                                                       "GameMode.NotGameMode")
+                                                                                           .GetMessage(commandLabel, command, commandSender, null, "GameMode.NotGameMode")
                                                                                            .replace("<MODE>", arguments[0].toUpperCase()));
             return true;
         }
 
-        if (!this.HasPermission(commandSender, gameMode, arguments)) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                      this._plugin.GetMessages().GetNoPermission(this._plugin.GetPermissions().GetPermission("gamemode")));
-            return true;
-        }
+        if (!this.HasPermission(commandSender, command, commandLabel, gameMode, arguments)) return true;
 
         if (arguments.length == 0) {
             commandSender.sendMessage(
@@ -98,18 +96,24 @@ public class GameModeCommand implements ICommandExecutorOverload {
         };
     }
 
-    private boolean HasPermission(CommandSender sender, GameMode parsedGameMode, String... arguments) {
+    private boolean HasPermission(CommandSender sender, Command command, String commandLabel, GameMode parsedGameMode, String... arguments) {
+        var messages = this._plugin.GetMessages();
+
         var permission = arguments.length == 1? "gamemode.self." : "gamemode.others.";
 
         assert parsedGameMode != null;
         permission += this.GetGameModeName(parsedGameMode).toLowerCase();
-        return this._plugin.GetPermissions().HasPermission(sender, permission, true);
+
+        var hasPermission = this._plugin.GetPermissions().HasPermission(sender, permission, true);
+
+        if (!hasPermission) sender.sendMessage(messages.GetPrefix() + messages.GetNoPermission(this._plugin.GetPermissions().GetPermission(permission)));
+
+        return hasPermission;
     }
 
     private void ChangeGameMode(CommandSender sender, GameMode gameMode, Command command, String commandLabel) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(
-                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, sender, null, "GameMode"));
+            sender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, sender, null, "GameMode"));
             return;
         }
         player.setGameMode(gameMode);

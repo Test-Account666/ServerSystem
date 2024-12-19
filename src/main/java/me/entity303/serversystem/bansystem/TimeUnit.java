@@ -37,26 +37,19 @@ public enum TimeUnit {
     }
 
     public static TimeUnit GetFromName(String name) {
-        if (name.equalsIgnoreCase(TimeUnit.YEAR_NAME))
-            return TimeUnit.YEAR;
+        if (name.equalsIgnoreCase(TimeUnit.YEAR_NAME)) return TimeUnit.YEAR;
 
-        if (name.equalsIgnoreCase(TimeUnit.MONTH_NAME))
-            return TimeUnit.MONTH;
+        if (name.equalsIgnoreCase(TimeUnit.MONTH_NAME)) return TimeUnit.MONTH;
 
-        if (name.equalsIgnoreCase(TimeUnit.WEEK_NAME))
-            return TimeUnit.WEEK;
+        if (name.equalsIgnoreCase(TimeUnit.WEEK_NAME)) return TimeUnit.WEEK;
 
-        if (name.equalsIgnoreCase(TimeUnit.DAY_NAME))
-            return TimeUnit.DAY;
+        if (name.equalsIgnoreCase(TimeUnit.DAY_NAME)) return TimeUnit.DAY;
 
-        if (name.equalsIgnoreCase(TimeUnit.HOUR_NAME))
-            return TimeUnit.HOUR;
+        if (name.equalsIgnoreCase(TimeUnit.HOUR_NAME)) return TimeUnit.HOUR;
 
-        if (name.equalsIgnoreCase(TimeUnit.MINUTE_NAME))
-            return TimeUnit.MINUTE;
+        if (name.equalsIgnoreCase(TimeUnit.MINUTE_NAME)) return TimeUnit.MINUTE;
 
-        if (name.equalsIgnoreCase(TimeUnit.SECOND_NAME))
-            return TimeUnit.SECOND;
+        if (name.equalsIgnoreCase(TimeUnit.SECOND_NAME)) return TimeUnit.SECOND;
         return null;
     }
 

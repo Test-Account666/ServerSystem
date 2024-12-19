@@ -1,12 +1,14 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+@ServerSystemCommand(name = "Break")
 public class BreakCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -30,17 +32,18 @@ public class BreakCommand implements ICommandExecutorOverload {
 
         var block = player.getTargetBlock(null, 10);
         if (block.getType() == Material.AIR) {
-            commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() +
-                                      this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Break.NoBlockFound"));
+            commandSender.sendMessage(
+                    this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, commandSender, null, "Break.NoBlockFound"));
             return true;
         }
 
-        if (block.getType() == Material.BEDROCK)
+        if (block.getType() == Material.BEDROCK) {
             if (!this._plugin.GetPermissions().HasPermission(commandSender, "break.bedrock")) {
                 var permission = this._plugin.GetPermissions().GetPermission("break.bedrock");
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                 return true;
             }
+        }
 
         if (block.getType() == Material.BARRIER) {
             if (!this._plugin.GetPermissions().HasPermission(commandSender, "break.barrier")) {
@@ -72,10 +75,10 @@ public class BreakCommand implements ICommandExecutorOverload {
         block.setType(Material.AIR);
 
         commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                     .GetMessage(commandLabel, command, commandSender, null, "Break.BlockBroke")
-                                                                                     .replace("<X>", String.valueOf(block.getX()))
-                                                                                     .replace("<Y>", String.valueOf(block.getY()))
-                                                                                     .replace("<Z>", String.valueOf(block.getZ())));
+                                                                                       .GetMessage(commandLabel, command, commandSender, null, "Break.BlockBroke")
+                                                                                       .replace("<X>", String.valueOf(block.getX()))
+                                                                                       .replace("<Y>", String.valueOf(block.getY()))
+                                                                                       .replace("<Z>", String.valueOf(block.getZ())));
         return true;
     }
 }

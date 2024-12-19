@@ -1,6 +1,7 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import me.entity303.serversystem.utils.CommandUtils;
 import org.bukkit.Bukkit;
@@ -9,12 +10,17 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+@ServerSystemCommand(name = "Money")
 public class MoneyCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
 
     public MoneyCommand(ServerSystem plugin) {
         this._plugin = plugin;
+    }
+
+    public static boolean ShouldRegister(ServerSystem serverSystem) {
+        return serverSystem.GetConfigReader().GetBoolean("economy.enabled");
     }
 
     @Override
@@ -27,23 +33,23 @@ public class MoneyCommand implements ICommandExecutorOverload {
                             this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetSyntax(commandLabel, command, commandSender, null, "Money"));
                     return;
                 }
-                if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.money.self.required"))
+                if (this._plugin.GetPermissions().GetConfiguration().GetBoolean("Permissions.money.self.required")) {
                     if (!this._plugin.GetPermissions().HasPermission(commandSender, "money.self.permission")) {
                         var permission = this._plugin.GetPermissions().GetPermission("money.self.permission");
                         commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetNoPermission(permission));
                         return;
                     }
-                if (!this._plugin.GetEconomyManager().HasAccount((OfflinePlayer) commandSender))
+                }
+                if (!this._plugin.GetEconomyManager().HasAccount((OfflinePlayer) commandSender)) {
                     this._plugin.GetEconomyManager().CreateAccount((OfflinePlayer) commandSender);
+                }
 
                 commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                             .GetMessage(commandLabel, command, commandSender, null, "Money.Self")
-                                                                                             .replace("<BALANCE>", this._plugin
-                                                                                                                       .GetEconomyManager()
-                                                                                                                       .Format(this._plugin
-                                                                                                                                   .GetEconomyManager()
-                                                                                                                                   .GetMoneyAsNumber(
-                                                                                                                                           (Player) commandSender))));
+                                                                                               .GetMessage(commandLabel, command, commandSender, null, "Money.Self")
+                                                                                               .replace("<BALANCE>", this._plugin.GetEconomyManager()
+                                                                                                                                 .Format(this._plugin.GetEconomyManager()
+                                                                                                                                                     .GetMoneyAsNumber(
+                                                                                                                                                             (Player) commandSender))));
                 return;
             }
 
@@ -60,12 +66,11 @@ public class MoneyCommand implements ICommandExecutorOverload {
             }
 
             commandSender.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages()
-                                                                                         .GetMessage(commandLabel, command, commandSender, target, "Money.Others")
-                                                                                         .replace("<BALANCE>", this._plugin
-                                                                                                                   .GetEconomyManager()
-                                                                                                                   .Format(this._plugin
-                                                                                                                               .GetEconomyManager()
-                                                                                                                               .GetMoneyAsNumber(target))));
+                                                                                           .GetMessage(commandLabel, command, commandSender, target, "Money.Others")
+                                                                                           .replace("<BALANCE>", this._plugin.GetEconomyManager()
+                                                                                                                             .Format(this._plugin.GetEconomyManager()
+                                                                                                                                                 .GetMoneyAsNumber(
+                                                                                                                                                         target))));
         });
         return true;
     }

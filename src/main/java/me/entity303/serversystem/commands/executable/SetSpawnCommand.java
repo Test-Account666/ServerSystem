@@ -1,16 +1,17 @@
 package me.entity303.serversystem.commands.executable;
 
 import me.entity303.serversystem.commands.ICommandExecutorOverload;
+import me.entity303.serversystem.commands.ServerSystemCommand;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
 
+@ServerSystemCommand(name = "SetSpawn")
 public class SetSpawnCommand implements ICommandExecutorOverload {
 
     protected final ServerSystem _plugin;
@@ -36,7 +37,7 @@ public class SetSpawnCommand implements ICommandExecutorOverload {
 
 
         var spawnFile = new File("plugins//ServerSystem", "spawn.yml");
-        FileConfiguration cfg = YamlConfiguration.loadConfiguration(spawnFile);
+        var cfg = YamlConfiguration.loadConfiguration(spawnFile);
         var spawnLocation = (player).getLocation();
         cfg.set("Spawn.X", spawnLocation.getX());
         cfg.set("Spawn.Y", spawnLocation.getY());
@@ -45,8 +46,7 @@ public class SetSpawnCommand implements ICommandExecutorOverload {
         cfg.set("Spawn.Pitch", spawnLocation.getPitch());
         cfg.set("Spawn.World", spawnLocation.getWorld().getName());
 
-        player.sendMessage(
-                this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, player, null, "SetSpawn"));
+        player.sendMessage(this._plugin.GetMessages().GetPrefix() + this._plugin.GetMessages().GetMessage(commandLabel, command, player, null, "SetSpawn"));
         try {
             cfg.save(spawnFile);
         } catch (IOException exception) {

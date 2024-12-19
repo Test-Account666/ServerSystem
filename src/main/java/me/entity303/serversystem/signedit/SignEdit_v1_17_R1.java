@@ -34,12 +34,13 @@ public class SignEdit_v1_17_R1 implements ISignEdit {
             exception.printStackTrace();
         }
 
-        if (this._getPositionMethod == null)
+        if (this._getPositionMethod == null) {
             try {
                 this._getPositionMethod = Class.forName("net.minecraft.world.level.block.entity.TileEntity").getMethod("getPosition");
             } catch (NoSuchMethodException | ClassNotFoundException exception) {
                 exception.printStackTrace();
             }
+        }
 
         if (this._playerConnectionField == null) {
             try {
@@ -50,12 +51,13 @@ public class SignEdit_v1_17_R1 implements ISignEdit {
             this._playerConnectionField.setAccessible(true);
         }
 
-        if (this._getHandleMethodWorld == null)
+        if (this._getHandleMethodWorld == null) {
             try {
                 this._getHandleMethodWorld = paramSign.getWorld().getClass().getMethod("getHandle");
             } catch (NoSuchMethodException exception) {
                 exception.printStackTrace();
             }
+        }
 
 
         var lines = new String[4];
@@ -68,29 +70,32 @@ public class SignEdit_v1_17_R1 implements ISignEdit {
             tes = this._getHandleMethodWorld.invoke(paramSign.getWorld())
                                             .getClass()
                                             .getMethod("getTileEntity", Class.forName("net.minecraft.core.BlockPosition"))
-                                            .invoke(this._getHandleMethodWorld.invoke(paramSign.getWorld()),
-                                                    Class.forName("net.minecraft.core.BlockPosition")
-                                                         .getConstructor(double.class, double.class, double.class)
-                                                         .newInstance(paramSign.getLocation().getX(), paramSign.getLocation().getY(),
-                                                                      paramSign.getLocation().getZ()));
+                                            .invoke(this._getHandleMethodWorld.invoke(paramSign.getWorld()), Class.forName("net.minecraft.core.BlockPosition")
+                                                                                                                  .getConstructor(double.class, double.class,
+                                                                                                                                  double.class)
+                                                                                                                  .newInstance(paramSign.getLocation().getX(),
+                                                                                                                               paramSign.getLocation().getY(),
+                                                                                                                               paramSign.getLocation().getZ()));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException | InstantiationException exception) {
             exception.printStackTrace();
         }
 
-        if (this._setEditableField == null)
+        if (this._setEditableField == null) {
             try {
                 this._setEditableField = Class.forName("net.minecraft.world.level.block.entity.TileEntitySign").getField("f");
             } catch (NoSuchFieldException | ClassNotFoundException exception) {
                 exception.printStackTrace();
             }
+        }
 
-        if (this._gField == null)
+        if (this._gField == null) {
             try {
                 this._gField = Class.forName("net.minecraft.world.level.block.entity.TileEntitySign").getDeclaredField("g");
                 this._gField.setAccessible(true);
             } catch (NoSuchFieldException | ClassNotFoundException exception) {
                 exception.printStackTrace();
             }
+        }
 
         try {
             this._setEditableField.set(tes, true);

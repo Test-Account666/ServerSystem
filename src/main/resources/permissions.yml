@@ -284,3 +284,4 @@ Permissions:
   offlineenderchest: "server.offlineenderchest"
   seen: "server.seen"
   freeze: "server.freeze"
+  managehomes: "server.managehomes"

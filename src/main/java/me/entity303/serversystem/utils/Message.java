@@ -1,7 +1,7 @@
 package me.entity303.serversystem.utils;
 
-import me.entity303.serversystem.config.IConfigReader;
 import me.entity303.serversystem.config.DefaultConfigReader;
+import me.entity303.serversystem.config.IConfigReader;
 import me.entity303.serversystem.main.ServerSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -26,16 +26,16 @@ public class Message {
     }
 
     public String GetMessageWithStringTarget(String commandLabel, String command, CommandSender sender, String target, String action) {
-        if (sender == null)
-            throw new IllegalArgumentException("Sender cannot be null!");
+        if (sender == null) throw new IllegalArgumentException("Sender cannot be null!");
 
         var senderName = sender.getName();
         String senderDisplayName;
 
-        if (sender instanceof Player)
+        if (sender instanceof Player) {
             senderDisplayName = ((Player) sender).getDisplayName();
-        else
+        } else {
             senderDisplayName = senderName;
+        }
 
         String targetName;
         String targetDisplayName;
@@ -68,9 +68,7 @@ public class Message {
                                    .replace("<SENDERDISPLAY>", senderDisplayName)
                                    .replace("<TARGETDISPLAY>", targetDisplayName);
 
-            return sender instanceof Player && this._placeholderAPI?
-                   me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) :
-                   message;
+            return sender instanceof Player && this._placeholderAPI? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
         } catch (NullPointerException ignored) {
             return "Error! Path: Normal." + action;
         }
@@ -81,26 +79,26 @@ public class Message {
     }
 
     public String GetMessage(String commandLabel, String command, CommandSender sender, CommandSender target, String action) {
-        if (sender == null)
-            throw new IllegalArgumentException("Sender cannot be null!");
-        if (target == null)
-            target = sender;
+        if (sender == null) throw new IllegalArgumentException("Sender cannot be null!");
+        if (target == null) target = sender;
 
         var senderName = sender.getName();
         String senderDisplayName;
 
-        if (sender instanceof Player)
+        if (sender instanceof Player) {
             senderDisplayName = ((Player) sender).getDisplayName();
-        else
+        } else {
             senderDisplayName = senderName;
+        }
 
         var targetName = target.getName();
         String targetDisplayName;
 
-        if (target instanceof Player)
+        if (target instanceof Player) {
             targetDisplayName = ((Player) target).getDisplayName();
-        else
+        } else {
             targetDisplayName = targetName;
+        }
 
         if (senderName.equalsIgnoreCase("console") || senderName.equalsIgnoreCase("konsole")) {
             senderName = this._configuration.GetString("Messages.Misc.BanSystem.ConsoleName");
@@ -122,17 +120,14 @@ public class Message {
                                                                                          .replace("<TARGETDISPLAY>", targetDisplayName)
                                                                                          .replace("<BREAK>", "\n")
                                                                                          .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq"));
-            return sender instanceof Player && this._placeholderAPI?
-                   me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) :
-                   message;
+            return sender instanceof Player && this._placeholderAPI? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
         } catch (NullPointerException ignored) {
             return "Error! Path: Normal." + action;
         }
     }
 
     public String GetMessage(String commandLabel, String command, String sender, CommandSender target, String action) {
-        if (sender == null)
-            throw new IllegalArgumentException("Sender cannot be null!");
+        if (sender == null) throw new IllegalArgumentException("Sender cannot be null!");
 
         var senderName = sender;
         var senderDisplayName = senderName;
@@ -142,10 +137,11 @@ public class Message {
 
         if (target != null) {
             targetName = target.getName();
-            if (target instanceof Player)
+            if (target instanceof Player) {
                 targetDisplayName = ((Player) target).getDisplayName();
-            else
+            } else {
                 targetDisplayName = targetName;
+            }
         } else {
             targetName = senderName;
             targetDisplayName = senderDisplayName;
@@ -177,26 +173,26 @@ public class Message {
     }
 
     public String GetMiscMessage(String commandLabel, String command, CommandSender sender, CommandSender target, String action) {
-        if (sender == null)
-            throw new IllegalArgumentException("Sender cannot be null!");
-        if (target == null)
-            target = sender;
+        if (sender == null) throw new IllegalArgumentException("Sender cannot be null!");
+        if (target == null) target = sender;
 
         var senderName = sender.getName();
         String senderDisplayName;
 
-        if (sender instanceof Player)
+        if (sender instanceof Player) {
             senderDisplayName = ((Player) sender).getDisplayName();
-        else
+        } else {
             senderDisplayName = senderName;
+        }
 
         var targetName = target.getName();
         String targetDisplayName;
 
-        if (target instanceof Player)
+        if (target instanceof Player) {
             targetDisplayName = ((Player) target).getDisplayName();
-        else
+        } else {
             targetDisplayName = targetName;
+        }
 
         if (senderName.equalsIgnoreCase("console") || senderName.equalsIgnoreCase("konsole")) {
             senderName = this._configuration.GetString("Messages.Misc.BanSystem.ConsoleName");
@@ -217,35 +213,33 @@ public class Message {
                                                                                          .replace("<TARGETDISPLAY>", targetDisplayName)
                                                                                          .replace("<BREAK>", "\n")
                                                                                          .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq"));
-            return sender instanceof Player && this._placeholderAPI?
-                   me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) :
-                   message;
+            return sender instanceof Player && this._placeholderAPI? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
         } catch (NullPointerException ignored) {
             return "Error! Path: Misc." + action;
         }
     }
 
     public String GetMessage(String commandLabel, String command, CommandSender sender, CommandSender target, String action, boolean colorless) {
-        if (sender == null)
-            throw new IllegalArgumentException("Sender cannot be null!");
-        if (target == null)
-            target = sender;
+        if (sender == null) throw new IllegalArgumentException("Sender cannot be null!");
+        if (target == null) target = sender;
 
         var senderName = sender.getName();
         String senderDisplayName;
 
-        if (sender instanceof Player)
+        if (sender instanceof Player) {
             senderDisplayName = ((Player) sender).getDisplayName();
-        else
+        } else {
             senderDisplayName = senderName;
+        }
 
         var targetName = target.getName();
         String targetDisplayName;
 
-        if (target instanceof Player)
+        if (target instanceof Player) {
             targetDisplayName = ((Player) target).getDisplayName();
-        else
+        } else {
             targetDisplayName = targetName;
+        }
 
         if (senderName.equalsIgnoreCase("console") || senderName.equalsIgnoreCase("konsole")) {
             senderName = this._configuration.GetString("Messages.Misc.BanSystem.ConsoleName");
@@ -256,7 +250,7 @@ public class Message {
             targetName = this._configuration.GetString("Messages.Misc.BanSystem.ConsoleName");
             targetDisplayName = targetName;
         }
-        if (colorless)
+        if (colorless) {
             try {
                 return this._configuration.GetString("Messages.Normal." + action)
                                           .replace("<LABEL>", commandLabel)
@@ -270,7 +264,7 @@ public class Message {
             } catch (NullPointerException ignored) {
                 return "Error! Path: " + action;
             }
-        else
+        } else {
             try {
                 var message = ChatColor.TranslateAlternateColorCodes('&', this._configuration.GetString("Messages.Normal." + action)
                                                                                              .replace("<LABEL>", commandLabel)
@@ -279,12 +273,11 @@ public class Message {
                                                                                              .replace("<TARGET>", targetName)
                                                                                              .replace("<BREAK>", "\n")
                                                                                              .replace("https://discord.gg/TbnyUrJ", "https://discord.gg/dBhfCzdZxq"));
-                return sender instanceof Player && this._placeholderAPI?
-                       me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) :
-                       message;
+                return sender instanceof Player && this._placeholderAPI? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
             } catch (NullPointerException ignored) {
                 return "Error! Path: Normal." + action;
             }
+        }
     }
 
     public String GetSyntax(String commandLabel, Command command, CommandSender sender, CommandSender target, String action) {
@@ -292,26 +285,26 @@ public class Message {
     }
 
     public String GetSyntax(String commandLabel, String command, CommandSender sender, CommandSender target, String action) {
-        if (sender == null)
-            throw new IllegalArgumentException("Sender cannot be null!");
-        if (target == null)
-            target = sender;
+        if (sender == null) throw new IllegalArgumentException("Sender cannot be null!");
+        if (target == null) target = sender;
 
         var senderName = sender.getName();
         String senderDisplayName;
 
-        if (sender instanceof Player)
+        if (sender instanceof Player) {
             senderDisplayName = ((Player) sender).getDisplayName();
-        else
+        } else {
             senderDisplayName = senderName;
+        }
 
         var targetName = target.getName();
         String targetDisplayName;
 
-        if (target instanceof Player)
+        if (target instanceof Player) {
             targetDisplayName = ((Player) target).getDisplayName();
-        else
+        } else {
             targetDisplayName = targetName;
+        }
 
         if (senderName.equalsIgnoreCase("console") || senderName.equalsIgnoreCase("konsole")) {
             senderName = this._configuration.GetString("Messages.Misc.BanSystem.ConsoleName");
@@ -332,9 +325,7 @@ public class Message {
                                    .replace("<TARGET>", targetName)
                                    .replace("<SENDERDISPLAY>", senderDisplayName)
                                    .replace("<TARGETDISPLAY>", targetDisplayName);
-            return sender instanceof Player && this._placeholderAPI?
-                   me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) :
-                   message;
+            return sender instanceof Player && this._placeholderAPI? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
         } catch (NullPointerException ignored) {
             return "Error! Path: Syntax." + action;
         }
@@ -345,16 +336,16 @@ public class Message {
     }
 
     public String GetSyntaxWithStringTarget(String commandLabel, String command, CommandSender sender, String target, String action) {
-        if (sender == null)
-            throw new IllegalArgumentException("Sender cannot be null!");
+        if (sender == null) throw new IllegalArgumentException("Sender cannot be null!");
 
         var senderName = sender.getName();
         String senderDisplayName;
 
-        if (sender instanceof Player)
+        if (sender instanceof Player) {
             senderDisplayName = ((Player) sender).getDisplayName();
-        else
+        } else {
             senderDisplayName = senderName;
+        }
 
         String targetName;
         String targetDisplayName;
@@ -386,9 +377,7 @@ public class Message {
                                    .replace("<TARGET>", targetName)
                                    .replace("<SENDERDISPLAY>", senderDisplayName)
                                    .replace("<TARGETDISPLAY>", targetDisplayName);
-            return sender instanceof Player && this._placeholderAPI?
-                   me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) :
-                   message;
+            return sender instanceof Player && this._placeholderAPI? me.clip.placeholderapi.PlaceholderAPI.setPlaceholders((Player) sender, message) : message;
         } catch (NullPointerException ignored) {
             return "Error! Path: Syntax." + action;
         }
@@ -409,8 +398,7 @@ public class Message {
     }
 
     public String GetNoPermission(String permission) {
-        if (permission == null)
-            permission = "No permission found";
+        if (permission == null) permission = "No permission found";
         try {
             return ChatColor.TranslateAlternateColorCodes('&', this._configuration.GetString("Messages.Misc.NoPermissions")
                                                                                   .replace("<PERMISSION>", permission)
