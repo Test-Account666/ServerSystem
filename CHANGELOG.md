@@ -1,3 +1,9 @@
+## 2.4.1
+
+\* Fixed `/managehomes list` command<br>
+\* Fixed command system registering commands when it shouldn't<br>
+\# Locked some features behind paper as they will not work on Spigot<br>
+
 ## 2.4.0
 
 \+ Added `/managehomes` command<br>
