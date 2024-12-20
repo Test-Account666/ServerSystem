@@ -51,10 +51,20 @@ public class VersionManager {
         if (this._version.contains("1.21")) {
             this._vanishFullyFunctional = true;
 
+            if (!this._serverSystem.isRunningPaper()) {
+                this._serverSystem.Warn("It seems you're running Spigot! Due to recent changes, vanish requires Paper to be fully functional!");
+                this._vanishFullyFunctional = false;
+            }
+
             this.HandleFullySupportedVersion();
         } else if (this._version.contains("1.20")) {
             this._vanishFullyFunctional = this._version.contains("1.20.5") || this._version.contains("1.20.6");
             if (!this._vanishFullyFunctional) this._serverSystem.Warn("Vanish is not fully functional in version 1.20 - 1.20.4!");
+
+            if (this._vanishFullyFunctional && !this._serverSystem.isRunningPaper()) {
+                this._serverSystem.Warn("It seems you're running Spigot! Due to recent changes, vanish requires Paper to be fully functional!");
+                this._vanishFullyFunctional = false;
+            }
 
             this.HandleFullySupportedVersion();
         } else if (this._version.contains("1.19.R3")) {
@@ -79,7 +89,11 @@ public class VersionManager {
             this._serverSystem.Warn("Using a version older than that, will *NOT* work!");
             this._serverSystem.Warn("Also, only the latest version will always be fully supported!");
 
-            this._vanishFullyFunctional = true;
+            if (!this._serverSystem.isRunningPaper()) {
+                this._serverSystem.Warn("It seems you're running Spigot! Due to recent changes, vanish requires Paper to be fully functional!");
+            }
+
+            this._vanishFullyFunctional = this._serverSystem.isRunningPaper();
             this.HandleFullySupportedVersion();
         }
     }
@@ -142,12 +156,14 @@ public class VersionManager {
     }
 
     private void SetLatestVirtualInventories() {
-        this._serverSystem.GetVersionStuff().SetVirtualAnvil(new VirtualAnvil_Latest());
-        this._serverSystem.GetVersionStuff().SetVirtualCartography(new VirtualCartography_Latest());
-        this._serverSystem.GetVersionStuff().SetVirtualGrindstone(new VirtualGrindstone_latest());
-        this._serverSystem.GetVersionStuff().SetVirtualLoom(new VirtualLoom_Latest());
-        this._serverSystem.GetVersionStuff().SetVirtualStoneCutter(new VirtualStoneCutter_Latest());
-        this._serverSystem.GetVersionStuff().SetVirtualSmithing(new VirtualSmithing_Latest());
+        if (this._serverSystem.isRunningPaper()) {
+            this._serverSystem.GetVersionStuff().SetVirtualAnvil(new VirtualAnvil_Latest());
+            this._serverSystem.GetVersionStuff().SetVirtualCartography(new VirtualCartography_Latest());
+            this._serverSystem.GetVersionStuff().SetVirtualGrindstone(new VirtualGrindstone_latest());
+            this._serverSystem.GetVersionStuff().SetVirtualLoom(new VirtualLoom_Latest());
+            this._serverSystem.GetVersionStuff().SetVirtualStoneCutter(new VirtualStoneCutter_Latest());
+            this._serverSystem.GetVersionStuff().SetVirtualSmithing(new VirtualSmithing_Latest());
+        }
         this._serverSystem.GetVersionStuff().SetSaveData(new SaveData_Latest(this._serverSystem));
         this._serverSystem.GetVersionStuff().SetEntityPlayer(new EntityPlayer_Latest(this._serverSystem));
     }

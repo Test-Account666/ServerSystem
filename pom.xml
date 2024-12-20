@@ -161,12 +161,20 @@
             <systemPath>${project.basedir}/libs/PlotSquared-Bukkit-4.494.jar</systemPath>
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>plotsquared</groupId>
             <artifactId>plotsquared-6.0.6</artifactId>
             <version>6.0.6</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/PlotSquared-Bukkit-6.0.6-SNAPSHOT.jar</systemPath>
+        </dependency>-->
+
+        <dependency>
+            <groupId>plotsquared</groupId>
+            <artifactId>7.4.1</artifactId>
+            <version>7.4.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/PlotSquared-Bukkit-7.4.1-SNAPSHOT.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -182,20 +190,6 @@
             </exclusions>
         </dependency>
 
-        <!--<dependency>
-            <groupId>spigot</groupId>
-            <artifactId>spigot-1.17</artifactId>
-            <version>1.17</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/spigot-1.17.jar</systemPath>
-        </dependency>-->
-        <!--<dependency>
-            <groupId>spigot</groupId>
-            <artifactId>spigot-1.18</artifactId>
-            <version>1.18</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/spigot-1.18.jar</systemPath>
-        </dependency>-->
         <dependency>
             <groupId>spigot</groupId>
             <artifactId>spigot-1.18.2</artifactId>
@@ -211,8 +205,8 @@
             <systemPath>${project.basedir}/libs/spigot-1.19.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>spigot</groupId>
-            <artifactId>spigot-1.21.4</artifactId>
+            <groupId>paper</groupId>
+            <artifactId>paper-1.21.4</artifactId>
             <version>1.21.4</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/paper-1.21.4.jar</systemPath>

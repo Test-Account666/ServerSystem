@@ -15,6 +15,14 @@ public class AnvilCommand implements ICommandExecutorOverload {
         this._plugin = plugin;
     }
 
+    public static boolean ShouldRegister(ServerSystem serverSystem) {
+        var shouldRegister = serverSystem.isRunningPaper();
+
+        if (!shouldRegister) serverSystem.Warn("Looks like you're running Spigot! Due to recent changes, the anvil command requires Paper to be running!");
+
+        return shouldRegister && serverSystem.GetVersionStuff().GetVirtualAnvil() != null;
+    }
+
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
         var messages = this._plugin.GetMessages();

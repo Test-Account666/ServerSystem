@@ -108,6 +108,7 @@ public final class ServerSystem extends JavaPlugin {
     private FileConfiguration _rulesConfig;
     private Method _syncCommandsMethod = null;
     private IConfigReader _configReader;
+    private boolean _runningPaper = false;
 
     @SuppressWarnings("NewMethodNamingConvention")
     public static EconomyAPI getEconomyApi() {
@@ -127,6 +128,10 @@ public final class ServerSystem extends JavaPlugin {
     @SuppressWarnings("NewMethodNamingConvention")
     public static VanishAPI getVanishApi() {
         return ServerSystem.VANISH_API;
+    }
+
+    public boolean isRunningPaper() {
+        return this._runningPaper;
     }
 
     public WantsTeleport GetWantsTeleport() {
@@ -513,6 +518,12 @@ public final class ServerSystem extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        try {
+            Class.forName("io.papermc.paper.PaperBootstrap");
+            this._runningPaper = true;
+        } catch (Throwable ignored) {
+        }
+
         this.LoadConfigs();
 
         this.ReloadConfigValidating();

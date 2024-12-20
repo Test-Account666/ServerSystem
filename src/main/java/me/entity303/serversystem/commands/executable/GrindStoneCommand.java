@@ -16,8 +16,13 @@ public class GrindStoneCommand implements ICommandExecutorOverload {
         this._plugin = plugin;
     }
 
+
     public static boolean ShouldRegister(ServerSystem serverSystem) {
-        return serverSystem.GetVersionStuff().GetVirtualGrindstone() != null;
+        var shouldRegister = serverSystem.isRunningPaper();
+
+        if (!shouldRegister) serverSystem.Warn("Looks like you're running Spigot! Due to recent changes, the grindstone command requires Paper to be running!");
+
+        return shouldRegister && serverSystem.GetVersionStuff().GetVirtualGrindstone() != null;
     }
 
     @Override

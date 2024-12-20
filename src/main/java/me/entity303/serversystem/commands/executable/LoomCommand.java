@@ -17,7 +17,11 @@ public class LoomCommand implements ICommandExecutorOverload {
     }
 
     public static boolean ShouldRegister(ServerSystem serverSystem) {
-        return serverSystem.GetVersionStuff().GetVirtualLoom() != null;
+        var shouldRegister = serverSystem.isRunningPaper();
+
+        if (!shouldRegister) serverSystem.Warn("Looks like you're running Spigot! Due to recent changes, the loom command requires Paper to be running!");
+
+        return shouldRegister && serverSystem.GetVersionStuff().GetVirtualLoom() != null;
     }
 
     @Override

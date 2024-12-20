@@ -17,7 +17,11 @@ public class SmithingTableCommand implements ICommandExecutorOverload {
     }
 
     public static boolean ShouldRegister(ServerSystem serverSystem) {
-        return serverSystem.GetVersionStuff().GetVirtualSmithing() != null;
+        var shouldRegister = serverSystem.isRunningPaper();
+
+        if (!shouldRegister) serverSystem.Warn("Looks like you're running Spigot! Due to recent changes, the smithing command requires Paper to be running!");
+
+        return shouldRegister && serverSystem.GetVersionStuff().GetVirtualSmithing() != null;
     }
 
     @Override

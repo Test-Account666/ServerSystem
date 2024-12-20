@@ -17,7 +17,11 @@ public class StoneCutterCommand implements ICommandExecutorOverload {
     }
 
     public static boolean ShouldRegister(ServerSystem serverSystem) {
-        return serverSystem.GetVersionStuff().GetVirtualStoneCutter() != null;
+        var shouldRegister = serverSystem.isRunningPaper();
+
+        if (!shouldRegister) serverSystem.Warn("Looks like you're running Spigot! Due to recent changes, the stonecutter command requires Paper to be running!");
+
+        return shouldRegister && serverSystem.GetVersionStuff().GetVirtualStoneCutter() != null;
     }
 
     @Override

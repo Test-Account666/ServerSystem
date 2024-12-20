@@ -154,7 +154,7 @@ public final class CommandManager {
             if (!commandClass.isAnnotationPresent(ServerSystemCommand.class)) continue;
 
             try {
-                var shouldRegisterMethod = commandClass.getDeclaredMethod("shouldRegister", ServerSystem.class);
+                var shouldRegisterMethod = commandClass.getDeclaredMethod("ShouldRegister", ServerSystem.class);
 
                 var shouldRegister = (boolean) shouldRegisterMethod.invoke(null, this._serverSystem);
 

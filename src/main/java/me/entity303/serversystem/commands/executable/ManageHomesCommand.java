@@ -51,7 +51,7 @@ public class ManageHomesCommand implements ICommandExecutorOverload {
 
         var homesConfiguration = cfg.getConfigurationSection("Homes");
 
-        var homes = homesConfiguration != null? homesConfiguration.getConfigurationSection("Homes").getKeys(false) : new HashSet<String>();
+        var homes = homesConfiguration != null? homesConfiguration.getKeys(false) : new HashSet<String>();
 
         if (arguments.length == 2 || "list".startsWith(arguments[0].toLowerCase())) {
             this.ExecuteListHomes(commandSender, command, commandLabel, offlinePlayer, homes);
