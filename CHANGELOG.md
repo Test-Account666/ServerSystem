@@ -1,3 +1,7 @@
+## 2.4.2
+
+\* Fixed MariaDB connections<br>
+
 ## 2.4.1
 
 \* Fixed `/managehomes list` command<br>
