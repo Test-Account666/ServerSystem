@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 
-@ServerSystemCommand(name = "Disposal^ ")
+@ServerSystemCommand(name = "Disposal")
 public class DisposalCommand implements ICommandExecutorOverload {
     private final ServerSystem _plugin;
 
