@@ -519,8 +519,13 @@ public final class ServerSystem extends JavaPlugin {
     @Override
     public void onLoad() {
         try {
-            Class.forName("io.papermc.paper.PaperBootstrap");
-            this._runningPaper = true;
+            var bukkitVersion = Bukkit.getVersion().toLowerCase();
+            this._runningPaper = !bukkitVersion.contains("bukkit") && !bukkitVersion.contains("spigot");
+
+            if (!this._runningPaper) {
+                Class.forName("io.papermc.paper.util.ObfHelper");
+                this._runningPaper = true;
+            }
         } catch (Throwable ignored) {
         }
 
