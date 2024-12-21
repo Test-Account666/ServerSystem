@@ -1,5 +1,5 @@
 name: ServerSystem
-version: 2.4.3
+version: 2.4.4
 main: me.entity303.serversystem.main.ServerSystem
 api-version: 1.13
 authors: [ Entity303 ]
