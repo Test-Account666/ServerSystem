@@ -182,9 +182,9 @@ Commands:
   smelt:
     enabled: true
     aliases: "smelt"
-  tpall:
+  teleportall:
     enabled: true
-    aliases: "tpall"
+    aliases: "teleportall, tpall"
   back:
     enabled: true
     aliases: "back"
