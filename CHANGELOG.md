@@ -1,3 +1,7 @@
+## 2.4.3
+
+\* Fixed `/teleportall` and `/disposal`<br>
+
 ## 2.4.2
 
 \* Fixed MariaDB connections<br>
