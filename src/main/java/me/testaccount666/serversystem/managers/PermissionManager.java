@@ -8,9 +8,10 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Path;
 
 public class PermissionManager {
-    private static final File PERMISSION_FILE = new File("plugins${File.separator}ServerSystem", "permissions.yml");
+    private static final File PERMISSION_FILE = Path.of("plugins", "ServerSystem", "permissions.yml").toFile();
     private static ConfigReader ConfigReader;
 
     public static void initialize(Plugin plugin) throws FileNotFoundException {
