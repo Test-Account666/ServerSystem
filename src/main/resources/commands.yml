@@ -1,0 +1,17 @@
+Commands:
+  gamemode:
+    Enabled: true
+    Aliases: "gamemode, gm"
+    Variants:
+      gms:
+        Enabled: true
+        Aliases: "gms"
+      gmc:
+        Enabled: true
+        Aliases: "gmc"
+      gma:
+        Enabled: true
+        Aliases: "gma"
+      gmsp:
+        Enabled: true
+        Aliases: "gmsp"
