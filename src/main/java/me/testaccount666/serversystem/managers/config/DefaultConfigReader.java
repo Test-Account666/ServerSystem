@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -106,7 +107,6 @@ public class DefaultConfigReader implements ConfigReader {
     private void loadDefaultConfig() throws FileNotFoundException {
         var filename = file.getName();
 
-        // Try to load the default configuration with the same name
         if (plugin.getResource(filename) != null) {
             originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource(filename)));
             return;
@@ -191,11 +191,10 @@ public class DefaultConfigReader implements ConfigReader {
             var dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm-ss");
             var now = LocalDateTime.now();
             var date = dtf.format(now);
-            var backupFile = new File("plugins${File.separator}ServerSystem", "${filename}.backup-${date}");
+            var backupFile = Path.of("plugins", "ServerSystem", "${filename}.backup-${date}").toFile();
 
             FileUtils.copyFile(file, backupFile);
 
-            // Save and reload the configuration
             save();
             reload();
 
@@ -217,16 +216,11 @@ public class DefaultConfigReader implements ConfigReader {
 
     @Override
     public Object getObject(String path, Object def) {
-        var other = this;
-        while (true) {
-            if (other.newReader != null) {
-                other = other.newReader;
-                continue;
-            }
+        var configReader = this;
+        if (newReader != null) configReader = newReader;
 
-            other.ensureConfigHasValue(path);
-            return other.configuration.get(path, def);
-        }
+        configReader.ensureConfigHasValue(path);
+        return configReader.configuration.get(path, def);
     }
 
     @Override
@@ -236,16 +230,11 @@ public class DefaultConfigReader implements ConfigReader {
 
     @Override
     public boolean getBoolean(String path, boolean def) {
-        var other = this;
-        while (true) {
-            if (other.newReader != null) {
-                other = other.newReader;
-                continue;
-            }
+        var configReader = this;
+        if (newReader != null) configReader = newReader;
 
-            other.ensureConfigHasValue(path);
-            return other.configuration.getBoolean(path, def);
-        }
+        configReader.ensureConfigHasValue(path);
+        return configReader.configuration.getBoolean(path, def);
     }
 
     @Override
@@ -255,16 +244,11 @@ public class DefaultConfigReader implements ConfigReader {
 
     @Override
     public String getString(String path, String def) {
-        var other = this;
-        while (true) {
-            if (other.newReader != null) {
-                other = other.newReader;
-                continue;
-            }
+        var configReader = this;
+        if (newReader != null) configReader = newReader;
 
-            other.ensureConfigHasValue(path);
-            return other.configuration.getString(path, def);
-        }
+        configReader.ensureConfigHasValue(path);
+        return configReader.configuration.getString(path, def);
     }
 
     @Override
@@ -274,16 +258,11 @@ public class DefaultConfigReader implements ConfigReader {
 
     @Override
     public int getInt(String path, int def) {
-        var other = this;
-        while (true) {
-            if (other.newReader != null) {
-                other = other.newReader;
-                continue;
-            }
+        var configReader = this;
+        if (newReader != null) configReader = newReader;
 
-            other.ensureConfigHasValue(path);
-            return other.configuration.getInt(path, def);
-        }
+        configReader.ensureConfigHasValue(path);
+        return configReader.configuration.getInt(path, def);
     }
 
     @Override
@@ -293,16 +272,11 @@ public class DefaultConfigReader implements ConfigReader {
 
     @Override
     public long getLong(String path, long def) {
-        var other = this;
-        while (true) {
-            if (other.newReader != null) {
-                other = other.newReader;
-                continue;
-            }
+        var configReader = this;
+        if (newReader != null) configReader = newReader;
 
-            other.ensureConfigHasValue(path);
-            return other.configuration.getLong(path, def);
-        }
+        configReader.ensureConfigHasValue(path);
+        return configReader.configuration.getLong(path, def);
     }
 
     @Override
@@ -312,16 +286,11 @@ public class DefaultConfigReader implements ConfigReader {
 
     @Override
     public double getDouble(String path, double def) {
-        var other = this;
-        while (true) {
-            if (other.newReader != null) {
-                other = other.newReader;
-                continue;
-            }
+        var configReader = this;
+        if (newReader != null) configReader = newReader;
 
-            other.ensureConfigHasValue(path);
-            return other.configuration.getDouble(path, def);
-        }
+        configReader.ensureConfigHasValue(path);
+        return configReader.configuration.getDouble(path, def);
     }
 
     @Override
@@ -331,16 +300,11 @@ public class DefaultConfigReader implements ConfigReader {
 
     @Override
     public ItemStack getItemStack(String path, ItemStack def) {
-        var other = this;
-        while (true) {
-            if (other.newReader != null) {
-                other = other.newReader;
-                continue;
-            }
+        var configReader = this;
+        if (newReader != null) configReader = newReader;
 
-            other.ensureConfigHasValue(path);
-            return other.configuration.getItemStack(path, def);
-        }
+        configReader.ensureConfigHasValue(path);
+        return configReader.configuration.getItemStack(path, def);
     }
 
     @Override
@@ -350,61 +314,42 @@ public class DefaultConfigReader implements ConfigReader {
 
     @Override
     public void set(String path, Object object) {
-        var other = this;
-        while (true) {
-            if (other.newReader != null) {
-                other = other.newReader;
-                continue;
-            }
+        var configReader = this;
+        if (newReader != null) configReader = newReader;
 
-            other.configuration.set(path, object);
-            return;
-        }
+        configReader.configuration.set(path, object);
     }
 
     @Override
     public void save() {
-        var other = this;
-        //TODO: Fix this stupid thing
-        while (true) {
-            if (other.newReader != null) {
-                other = other.newReader;
-                continue;
-            }
+        var configReader = this;
+        if (newReader != null) configReader = newReader;
 
-            try {
-                other.configuration.save(other.file);
-            } catch (IOException exception) {
-                Bukkit.getLogger().severe("Failed to save configuration file '${other.file.getName()}'");
-                exception.printStackTrace();
-            }
-            return;
+        try {
+            configReader.configuration.save(configReader.file);
+        } catch (IOException exception) {
+            Bukkit.getLogger().severe("Failed to save configuration file '${configReader.file.getName()}'");
+            exception.printStackTrace();
         }
     }
 
     @Override
     public void reload() {
-        var other = this;
-        while (true) {
-            if (other.newReader != null) {
-                other = other.newReader;
-                continue;
-            }
+        var configReader = this;
+        if (newReader != null) configReader = newReader;
 
-            try {
-                other.configuration.load(other.file);
-            } catch (IOException | InvalidConfigurationException exception) {
-                Bukkit.getLogger().severe("Failed to reload configuration file '${other.file.getName()}'");
-                exception.printStackTrace();
-            }
-            return;
+        try {
+            configReader.configuration.load(configReader.file);
+        } catch (IOException | InvalidConfigurationException exception) {
+            Bukkit.getLogger().severe("Failed to reload configuration file '${configReader.file.getName()}'");
+            exception.printStackTrace();
         }
     }
 
     @Override
     public void load(File file) {
         try {
-            newReader = new DefaultConfigReader(file, ServerSystem.getPlugin(ServerSystem.class));
+            newReader = new DefaultConfigReader(file, ServerSystem.Instance);
         } catch (Exception exception) {
             Bukkit.getLogger().severe("Failed to load configuration from file '${file.getName()}'");
             exception.printStackTrace();
@@ -413,28 +358,19 @@ public class DefaultConfigReader implements ConfigReader {
 
     @Override
     public ConfigurationSection getConfigurationSection(String path) {
-        var other = this;
-        while (true) {
-            if (other.newReader != null) {
-                other = other.newReader;
-                continue;
-            }
+        var configReader = this;
+        if (newReader != null) configReader = newReader;
 
-            other.ensureConfigHasValue(path);
-            return other.configuration.getConfigurationSection(path);
-        }
+        configReader.ensureConfigHasValue(path);
+        return configReader.configuration.getConfigurationSection(path);
     }
 
     @Override
     public boolean isConfigurationSection(String path) {
-        var other = this;
-        while (true) {
-            if (other.newReader != null) {
-                other = other.newReader;
-                continue;
-            }
-            return other.configuration.isConfigurationSection(path);
-        }
+        var configReader = this;
+        if (newReader != null) configReader = newReader;
+
+        return configReader.configuration.isConfigurationSection(path);
     }
 
     /**
@@ -513,6 +449,5 @@ public class DefaultConfigReader implements ConfigReader {
             exception.printStackTrace();
         }
     }
-
 }
 
