@@ -1,5 +1,6 @@
 package me.testaccount666.serversystem.userdata;
 
+import me.testaccount666.serversystem.ServerSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -9,85 +10,87 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class UserManager {
     private static final Path USER_DATA_PATH = Path.of("plugins", "ServerSystem", "UserData");
     private static final ConsoleUser consoleUser = new ConsoleUser();
-    //TODO: Make sure online Users get converted into OfflineUsers and vice versa upon joining/quitting
-    private final Map<String, OfflineUser> userMap = new ConcurrentHashMap<>();
-    private final Map<UUID, OfflineUser> userUuidMap = new ConcurrentHashMap<>();
+    private final Map<String, CachedUser> userMap = new ConcurrentHashMap<>();
+    private final Map<UUID, CachedUser> userUuidMap = new ConcurrentHashMap<>();
+
+    public UserManager() {
+        Bukkit.getScheduler().scheduleAsyncRepeatingTask(ServerSystem.Instance, this::cleanStaleUsers, 15 * 20 * 60, 15 * 20 * 60); // 15 Minutes
+    }
 
     private static File getUserFile(UUID uuid) {
         return USER_DATA_PATH.resolve("${uuid}.yml").toFile();
-    }
-
-    private static OfflineUser createOfflineUser(UUID uuid) {
-        return new OfflineUser(getUserFile(uuid));
-    }
-
-    private static User createUser(UUID uuid) {
-        return new User(getUserFile(uuid));
     }
 
     public static ConsoleUser getConsoleUser() {
         return consoleUser;
     }
 
-    private Optional<User> createAndStoreUser(String name) {
-        var player = Bukkit.getPlayer(name);
-        if (player == null) return Optional.empty();
-        return createAndStoreUser(player.getUniqueId());
-    }
-
-    private Optional<User> createAndStoreUser(UUID uuid) {
-        var player = Bukkit.getPlayer(uuid);
-        if (player == null) return Optional.empty();
-        var user = createUser(uuid);
-        userMap.put(player.getName(), user);
-        userUuidMap.put(uuid, user);
-        return Optional.of(user);
-    }
-
-    private Optional<OfflineUser> createAndStoreOfflineUser(UUID uuid, String name) {
-        var offlineUser = createOfflineUser(uuid);
-        userMap.put(name, offlineUser);
-        userUuidMap.put(uuid, offlineUser);
-        return Optional.of(offlineUser);
-    }
-
-    public Optional<User> getUser(UUID uuid) {
-        return getOfflineUser(uuid)
-                .filter(User.class::isInstance)
-                .map(User.class::cast)
-                .or(() -> createAndStoreUser(uuid));
-    }
-
-    public Optional<User> getUser(Player player) {
+    public Optional<CachedUser> getUser(Player player) {
         return getUser(player.getUniqueId());
     }
 
-    public Optional<OfflineUser> getOfflineUser(String name) {
-        if (userMap.containsKey(name)) return Optional.of(userMap.get(name));
+    public Optional<CachedUser> getUser(UUID uuid) {
+        if (userUuidMap.containsKey(uuid)) {
+            var cachedUser = userUuidMap.get(uuid);
+            cachedUser.updateLastAccessTime();
 
-        var offlinePlayer = Bukkit.getOfflinePlayer(name);
-        if (offlinePlayer.getName() == null) return Optional.empty();
+            return Optional.of(cachedUser);
+        }
 
-        return createAndStoreOfflineUser(offlinePlayer.getUniqueId(), offlinePlayer.getName());
+        var player = Bukkit.getPlayer(uuid);
+        if (player != null) return Optional.of(createOnlineUser(uuid));
+
+        return createOfflineUser(uuid);
     }
 
-    public Optional<OfflineUser> getOfflineUser(UUID uuid) {
-        if (userUuidMap.containsKey(uuid)) return Optional.of(userUuidMap.get(uuid));
+    public Optional<CachedUser> getUser(String name) {
+        if (userMap.containsKey(name)) {
+            var cachedUser = userMap.get(name);
+            cachedUser.updateLastAccessTime();
 
-        var offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-        if (offlinePlayer.getName() == null) return Optional.empty();
+            return Optional.of(cachedUser);
+        }
 
-        return createAndStoreOfflineUser(uuid, offlinePlayer.getName());
+        var player = Bukkit.getPlayer(name);
+        if (player != null) return Optional.of(createOnlineUser(player.getUniqueId()));
+
+        var offlineUser = Bukkit.getOfflinePlayer(name);
+        if (offlineUser.getName() == null) return Optional.empty();
+
+        return createOfflineUser(offlineUser.getUniqueId());
     }
 
-    public Optional<User> getUser(String name) {
-        return getOfflineUser(name)
-                .filter(User.class::isInstance)
-                .map(User.class::cast)
-                .or(() -> createAndStoreUser(name));
+    private Optional<CachedUser> createOfflineUser(UUID uuid) {
+        var userFile = getUserFile(uuid);
+        var user = new OfflineUser(userFile);
+
+        var cachedUser = new CachedUser(user);
+        userUuidMap.put(uuid, cachedUser);
+        userMap.put(user.getName(), cachedUser);
+
+        return Optional.of(cachedUser);
+    }
+
+    private CachedUser createOnlineUser(UUID uuid) {
+        var userFile = getUserFile(uuid);
+        var user = new User(userFile);
+
+        var cachedUser = new CachedUser(user);
+        userUuidMap.put(uuid, cachedUser);
+        userMap.put(user.getName(), cachedUser);
+
+        return cachedUser;
+    }
+
+    public void cleanStaleUsers() {
+        var staleUsers = userMap.values().stream().filter(CachedUser::isStale).collect(Collectors.toSet());
+
+        userMap.entrySet().removeIf(entry -> staleUsers.contains(entry.getValue()));
+        userUuidMap.entrySet().removeIf(entry -> staleUsers.contains(entry.getValue()));
     }
 }

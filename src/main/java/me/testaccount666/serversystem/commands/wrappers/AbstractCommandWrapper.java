@@ -10,7 +10,16 @@ import java.util.Optional;
 
 public abstract class AbstractCommandWrapper {
     protected static Optional<User> resolveCommandUser(CommandSender commandSender) {
-        if (commandSender instanceof Player player) return ServerSystem.Instance.getUserManager().getUser(player.getUniqueId());
-        return Optional.of(UserManager.getConsoleUser());
+        if (!(commandSender instanceof Player player)) return Optional.of(UserManager.getConsoleUser());
+
+        var cachedUserOptional = ServerSystem.Instance.getUserManager().getUser(player);
+
+        if (cachedUserOptional.isEmpty()) return Optional.empty();
+
+        var cachedUser = cachedUserOptional.get();
+
+        if (!cachedUser.isOnlineUser()) return Optional.empty();
+
+        return Optional.of((User) cachedUser.getOfflineUser());
     }
 }

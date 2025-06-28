@@ -4,14 +4,30 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.io.IOException;
 
 public class User extends OfflineUser {
     protected Player player;
 
     protected User(File userFile) {
         super(userFile);
+    }
 
-        player = getPlayer();
+    protected User(OfflineUser offlineUser) {
+        this(offlineUser.userFile);
+    }
+
+    @Override
+    protected void loadBasicData() {
+        super.loadBasicData();
+
+        userConfig.set("User.LastKnownName", getPlayer().getName());
+
+        try {
+            userConfig.save(userFile);
+        } catch (IOException exception) {
+            throw new RuntimeException("Error while trying to save last known name for user '${getName()}' ('${getUuid()}')", exception);
+        }
     }
 
     @Override
@@ -19,6 +35,11 @@ public class User extends OfflineUser {
         if (player == null) player = (Player) super.getPlayer();
 
         return player;
+    }
+
+    @Override
+    public String getName() {
+        return getPlayer().getName();
     }
 
     public CommandSender getCommandSender() {
