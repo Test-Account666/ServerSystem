@@ -5,8 +5,8 @@ import java.math.BigInteger;
 import java.util.UUID;
 
 public abstract class AbstractBankAccount {
-    private UUID owner;
-    private BigInteger accountId;
+    protected final UUID owner;
+    protected final BigInteger accountId;
 
     public AbstractBankAccount(UUID owner, BigInteger accountId) {
         this.owner = owner;

@@ -24,7 +24,7 @@ public final class ServerSystem extends JavaPlugin {
         try {
             commandsConfigReader = loadCommandsConfig();
         } catch (FileNotFoundException exception) {
-            throw new RuntimeException("Failed loading 'commands.yml'!", exception);
+            throw new RuntimeException("Failed to load 'commands.yml'!", exception);
         }
 
         userManager = new UserManager();

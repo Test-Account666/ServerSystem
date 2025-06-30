@@ -1,5 +1,7 @@
 package me.testaccount666.serversystem.userdata.home;
 
+import me.testaccount666.serversystem.globaldata.DefaultsData;
+import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.Bukkit;
@@ -60,13 +62,37 @@ public class HomeManager {
                 .findFirst();
     }
 
+    public boolean hasHome(String name) {
+        return getHomeByName(name).isPresent();
+    }
+
 
     public Optional<Integer> getMaxHomeCount() {
-        if (!(owner instanceof User)) return Optional.empty();
+        if (!(owner instanceof User user)) return Optional.empty();
 
-        //TODO: Actually implement this!
-        return null;
+        var defaultValue = DefaultsData.Home().getDefaultMaxHomes();
+        var maxHomes = -1;
+
+        var permissionPattern = PermissionManager.getPermission("Homes.MaxHomes");
+        if (!permissionPattern.endsWith(".")) permissionPattern += ".";
+
+        for (var effectivePermission : user.getPlayer().getEffectivePermissions()) {
+            var permission = effectivePermission.getPermission();
+            if (!permission.toLowerCase().startsWith(permissionPattern.toLowerCase())) continue;
+
+            try {
+                var parsed = Integer.parseInt(permission.substring(permissionPattern.length()));
+                if (parsed > maxHomes) maxHomes = parsed;
+            } catch (NumberFormatException ignored) {
+                // I don't think we need to print this
+            }
+        }
+
+        if (maxHomes == -1) maxHomes = defaultValue;
+
+        return Optional.of(maxHomes);
     }
+
 
     private void saveHomes() {
         config.set("User.Homes", null);
@@ -101,21 +127,29 @@ public class HomeManager {
         for (var name : homeNames) {
             var prefix = "User.Homes.${name}";
 
-            var x = config.getDouble("${prefix}.X");
-            var y = config.getDouble("${prefix}.Y");
-            var z = config.getDouble("${prefix}.Z");
+            var home = parseHome(name, prefix);
 
-            var yaw = (float) config.getDouble("${prefix}.Yaw");
-            var pitch = (float) config.getDouble("${prefix}.Pitch");
+            if (home.isEmpty()) continue;
 
-            var worldName = config.getString("${prefix}.World", "");
-            var world = Bukkit.getWorld(worldName);
-
-            if (world == null) continue;
-
-            var location = new Location(world, x, y, z, yaw, pitch);
-
-            homes.add(new Home(name, location));
+            homes.add(home.get());
         }
+    }
+
+    private Optional<Home> parseHome(String name, String prefix) {
+        var x = config.getDouble("${prefix}.X");
+        var y = config.getDouble("${prefix}.Y");
+        var z = config.getDouble("${prefix}.Z");
+
+        var yaw = (float) config.getDouble("${prefix}.Yaw");
+        var pitch = (float) config.getDouble("${prefix}.Pitch");
+
+        var worldName = config.getString("${prefix}.World", "");
+        var world = Bukkit.getWorld(worldName);
+
+        if (world == null) return Optional.empty();
+
+        var location = new Location(world, x, y, z, yaw, pitch);
+
+        return Optional.of(new Home(name, location));
     }
 }

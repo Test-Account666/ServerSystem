@@ -39,11 +39,11 @@ public class UserManager {
             var cachedUser = userUuidMap.get(uuid);
             cachedUser.updateLastAccessTime();
 
-            return Optional.of(cachedUser);
+            return Optional.ofNullable(cachedUser);
         }
 
         var player = Bukkit.getPlayer(uuid);
-        if (player != null) return Optional.of(createOnlineUser(uuid));
+        if (player != null) return Optional.ofNullable(createOnlineUser(uuid));
 
         return createOfflineUser(uuid);
     }
@@ -53,11 +53,11 @@ public class UserManager {
             var cachedUser = userMap.get(name);
             cachedUser.updateLastAccessTime();
 
-            return Optional.of(cachedUser);
+            return Optional.ofNullable(cachedUser);
         }
 
         var player = Bukkit.getPlayer(name);
-        if (player != null) return Optional.of(createOnlineUser(player.getUniqueId()));
+        if (player != null) return Optional.ofNullable(createOnlineUser(player.getUniqueId()));
 
         var offlineUser = Bukkit.getOfflinePlayer(name);
         if (offlineUser.getName() == null) return Optional.empty();
@@ -73,7 +73,7 @@ public class UserManager {
         userUuidMap.put(uuid, cachedUser);
         userMap.put(user.getName(), cachedUser);
 
-        return Optional.of(cachedUser);
+        return Optional.ofNullable(cachedUser);
     }
 
     private CachedUser createOnlineUser(UUID uuid) {

@@ -6,7 +6,7 @@ import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
-@ServerSystemCommand(name = "gamemode", variants = {"gms", "gmc", "gma", "gmsp"})
+@ServerSystemCommand(name = "gamemode", variants = {"gms", "gmc", "gma", "gmsp"}, tabCompleter = TabCompleterGameMode.class)
 public class CommandGameMode implements ServerSystemCommandExecutor {
 
     @Override

@@ -8,7 +8,7 @@ public class Home {
     private String displayName;
 
     public Home(String name, Location location) {
-        this.name = name;
+        this.name = name.toLowerCase();
         this.location = location;
     }
 

@@ -1,0 +1,8 @@
+Mappings:
+  GameMode:
+    survival: "Survival"
+    creative: "Creative"
+    adventure: "Adventure"
+    spectator: "Spectator"
+  Console: "Console"
+language: "en"
