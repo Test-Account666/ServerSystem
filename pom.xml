@@ -14,7 +14,7 @@
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <manifold.version>2025.1.23</manifold.version>
+        <manifold.version>2025.1.24</manifold.version>
     </properties>
 
     <build>
