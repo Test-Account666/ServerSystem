@@ -8,9 +8,9 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -28,6 +28,7 @@ public class OfflineUser {
     protected boolean isGodMode;
     protected boolean acceptsTeleports;
     protected boolean acceptsMessages;
+    protected String playerLanguage;
     protected Set<UUID> ignoredPlayers = new HashSet<>();
 
     //TODO: Add more data. Homes, for example.
@@ -55,6 +56,9 @@ public class OfflineUser {
         isGodMode = userConfig.getBoolean("User.IsGodMode", false);
         acceptsTeleports = userConfig.getBoolean("User.AcceptsTeleports", true);
         acceptsMessages = userConfig.getBoolean("User.AcceptsMessages", true);
+
+        //TODO: Make default language configurable instead of depending on system properties
+        playerLanguage = userConfig.getString("User.PlayerLanguage", System.getProperty("user.language"));
 
         var ignoredPlayersList = userConfig.getStringList("User.IgnoredPlayers");
         ignoredPlayers.addAll(ignoredPlayersList.stream().map(UUID::fromString).collect(Collectors.toSet()));
@@ -87,8 +91,8 @@ public class OfflineUser {
         return player;
     }
 
-    public @Nullable String getName() {
-        return name;
+    public Optional<String> getName() {
+        return Optional.ofNullable(name);
     }
 
     public UUID getUuid() {

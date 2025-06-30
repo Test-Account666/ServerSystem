@@ -18,7 +18,7 @@ public class ConsoleUser extends User {
 
     @Override
     protected void loadBasicData() {
-        name = getName();
+        name = "Server";
         uuid = ConsoleUser.CONSOLE_UUID;
         bankAccount = new ConsoleBankAccount();
     }
@@ -31,10 +31,5 @@ public class ConsoleUser extends User {
     @Override
     public CommandSender getCommandSender() {
         return Bukkit.getConsoleSender();
-    }
-
-    @Override
-    public String getName() {
-        return "Console";
     }
 }

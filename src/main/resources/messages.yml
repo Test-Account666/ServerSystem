@@ -1,0 +1,14 @@
+Messages:
+  Commands:
+    GameMode:
+      Success: "Your gamemode has been changed to <GAMEMODE>."
+      SuccessOther: "You have changed <TARGET>'s gamemode to <GAMEMODE>."
+      NoPermission: "You don't have permission to use this command."
+      NoPermissionOther: "You don't have permission to change other players' gamemode."
+      NotPlayer: "You must be a player to use this command on yourself."
+      InvalidGameMode: "Invalid gamemode specified."
+  General:
+    Prefix: "ServerSystem » "
+    NoPermission: "You don't have permission to do this."
+    PlayerNotFound: "Player <TARGET> not found."
+    InvalidArguments: "Invalid arguments. Usage: <USAGE>"

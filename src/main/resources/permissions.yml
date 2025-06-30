@@ -1,3 +1,11 @@
 Permissions:
+  Commands:
+    GameMode:
+      Use: "serversystem.command.gamemode.use"
+      Other: "serversystem.command.gamemode.other"
+      Survival: "serversystem.command.gamemode.survival"
+      Creative: "serversystem.command.gamemode.creative"
+      Adventure: "serversystem.command.gamemode.adventure"
+      Spectator: "serversystem.command.gamemode.spectator"
   Homes:
     MaxHomes: "server.homes."

@@ -69,9 +69,11 @@ public class UserManager {
         var userFile = getUserFile(uuid);
         var user = new OfflineUser(userFile);
 
+        if (user.getName().isEmpty()) return Optional.empty();
+
         var cachedUser = new CachedUser(user);
         _userUuidMap.put(uuid, cachedUser);
-        _userMap.put(user.getName(), cachedUser);
+        _userMap.put(user.getName().get(), cachedUser);
 
         return Optional.of(cachedUser);
     }
@@ -82,7 +84,7 @@ public class UserManager {
 
         var cachedUser = new CachedUser(user);
         _userUuidMap.put(uuid, cachedUser);
-        _userMap.put(user.getName(), cachedUser);
+        _userMap.put(user.getName().get(), cachedUser);
 
         return cachedUser;
     }

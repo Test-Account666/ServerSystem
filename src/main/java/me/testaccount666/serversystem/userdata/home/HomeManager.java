@@ -1,7 +1,7 @@
 package me.testaccount666.serversystem.userdata.home;
 
-import me.testaccount666.serversystem.globaldata.DefaultsData;
 import me.testaccount666.serversystem.managers.PermissionManager;
+import me.testaccount666.serversystem.managers.globaldata.DefaultsData;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.Bukkit;

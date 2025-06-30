@@ -1,24 +1,24 @@
 package me.testaccount666.serversystem.commands.executables.gamemode;
 
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabCompleter;
-import me.testaccount666.serversystem.globaldata.MappingsData;
+import me.testaccount666.serversystem.managers.globaldata.MappingsData;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class TabCompleterGameMode implements ServerSystemTabCompleter {
 
     @Override
-    public @Nullable List<String> tabComplete(User commandSender, Command command, String label, String... arguments) {
+    public Optional<List<String>> tabComplete(User commandSender, Command command, String label, String... arguments) {
         if (command.getName().equalsIgnoreCase("gamemode")) return handleGameModeCommand(arguments);
 
-        return arguments.length == 1? null : List.of();
+        return arguments.length == 1? Optional.empty() : Optional.of(List.of());
     }
 
-    private @Nullable List<String> handleGameModeCommand(String[] arguments) {
+    private Optional<List<String>> handleGameModeCommand(String[] arguments) {
         if (arguments.length == 1) {
             var possibleCompletions = new ArrayList<>(List.of("0", "1", "2", "3"));
             possibleCompletions.addAll(MappingsData.GameMode().getGameModeNames());
@@ -31,11 +31,11 @@ public class TabCompleterGameMode implements ServerSystemTabCompleter {
                 completions.add(possibleCompletion);
             }
 
-            return completions.isEmpty()? possibleCompletions : completions;
+            return Optional.of(completions.isEmpty()? possibleCompletions : completions);
         }
 
-        if (arguments.length == 2) return null;
+        if (arguments.length == 2) return Optional.empty();
 
-        return List.of();
+        return Optional.of(List.of());
     }
 }

@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
 public class User extends OfflineUser {
     protected Player player;
@@ -38,8 +39,8 @@ public class User extends OfflineUser {
     }
 
     @Override
-    public String getName() {
-        return getPlayer().getName();
+    public Optional<String> getName() {
+        return Optional.of(getPlayer().getName());
     }
 
     public CommandSender getCommandSender() {

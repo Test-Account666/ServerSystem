@@ -1,5 +1,6 @@
 package me.testaccount666.serversystem.commands.management;
 
+import io.github.classgraph.ClassGraph;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor;
@@ -7,7 +8,6 @@ import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabComplet
 import me.testaccount666.serversystem.commands.wrappers.CommandExecutorWrapper;
 import me.testaccount666.serversystem.commands.wrappers.TabCompleterWrapper;
 import me.testaccount666.serversystem.managers.config.ConfigReader;
-import me.testaccount666.serversystem.utils.ClassList;
 import me.testaccount666.serversystem.utils.ConstructorAccessor;
 import me.testaccount666.serversystem.utils.FieldAccessor;
 import me.testaccount666.serversystem.utils.MethodAccessor;
@@ -68,9 +68,13 @@ public class CommandManager {
     }
 
     public void registerCommands() {
-        var commandExecutors = ClassList.getClassesOfType(ServerSystemCommandExecutor.class);
-
-        for (var clazz : commandExecutors) processCommandExecutor(clazz);
+        try (var scanResult = new ClassGraph()
+                .enableAllInfo()
+                .acceptPackages("me.testaccount666.serversystem.commands.executables")
+                .scan()) {
+            var serverSystemCommands = scanResult.getClassesWithAnnotation(ServerSystemCommand.class);
+            serverSystemCommands.forEach(clazz -> processCommandExecutor(clazz.loadClass()));
+        }
 
         syncCommands();
     }
@@ -115,7 +119,7 @@ public class CommandManager {
         for (var variant : variants) {
             if (!isVariantEnabled(command, variant)) continue;
 
-            var variantAliases = getAliases("Commands.${command}.${variant}.Aliases");
+            var variantAliases = getAliases("Commands.${command}.Variants.${variant}.Aliases");
             variantAliasMap.put(variant, variantAliases);
         }
 

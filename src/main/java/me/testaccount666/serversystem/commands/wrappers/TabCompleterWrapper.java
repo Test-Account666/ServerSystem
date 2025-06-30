@@ -27,6 +27,6 @@ public class TabCompleterWrapper extends AbstractCommandWrapper implements TabCo
             return List.of();
         }
 
-        return _tabCompleter.tabComplete(commandUser.get(), command, label, arguments);
+        return _tabCompleter.tabComplete(commandUser.get(), command, label, arguments).orElse(null);
     }
 }

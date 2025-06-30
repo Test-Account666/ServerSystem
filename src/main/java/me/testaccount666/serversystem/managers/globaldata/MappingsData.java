@@ -1,4 +1,4 @@
-package me.testaccount666.serversystem.globaldata;
+package me.testaccount666.serversystem.managers.globaldata;
 
 import me.testaccount666.serversystem.managers.config.ConfigReader;
 import org.bukkit.Bukkit;
