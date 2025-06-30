@@ -3,38 +3,38 @@ package me.testaccount666.serversystem.userdata;
 import org.bukkit.Bukkit;
 
 public class CachedUser {
-    private static final long STALE_TIME_MILLIS = 1000 * 60 * 60; // One hour
+    private static final long _STALE_TIME_MILLIS = 1000 * 60 * 60; // One hour
 
-    private OfflineUser offlineUser;
-    private long lastAccessTime;
+    private OfflineUser _offlineUser;
+    private long _lastAccessTime;
 
     protected CachedUser(OfflineUser offlineUser) {
-        this.offlineUser = offlineUser;
+        _offlineUser = offlineUser;
 
-        lastAccessTime = System.currentTimeMillis();
+        _lastAccessTime = System.currentTimeMillis();
     }
 
     public boolean isOnlineUser() {
-        return offlineUser instanceof User;
+        return _offlineUser instanceof User;
     }
 
     public OfflineUser getOfflineUser() {
-        return offlineUser;
+        return _offlineUser;
     }
 
     public boolean isStale() {
-        return System.currentTimeMillis() - lastAccessTime > STALE_TIME_MILLIS;
+        return System.currentTimeMillis() - _lastAccessTime > _STALE_TIME_MILLIS;
     }
 
     protected void updateLastAccessTime() {
-        lastAccessTime = System.currentTimeMillis();
+        _lastAccessTime = System.currentTimeMillis();
     }
 
     protected void convertToOnlineUser() {
-        var player = Bukkit.getPlayer(offlineUser.getUuid());
+        var player = Bukkit.getPlayer(_offlineUser.getUuid());
 
         if (player == null) throw new IllegalStateException("Cannot convert offline user to online user!");
 
-        offlineUser = new User(offlineUser);
+        _offlineUser = new User(_offlineUser);
     }
 }

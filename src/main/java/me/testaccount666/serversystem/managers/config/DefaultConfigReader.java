@@ -27,11 +27,11 @@ import java.util.Map;
  */
 public class DefaultConfigReader implements ConfigReader {
     //TODO: Make sure nothing broke with the new implementation
-    private final Plugin plugin;
-    private final File file;
-    private final FileConfiguration configuration;
-    private FileConfiguration originalCfg = null;
-    private DefaultConfigReader newReader = null;
+    private final Plugin _plugin;
+    private final File _file;
+    private final FileConfiguration _configuration;
+    private FileConfiguration _originalCfg = null;
+    private DefaultConfigReader _newReader = null;
 
     /**
      * Creates a new DefaultConfigReader for the specified file and plugin.
@@ -41,9 +41,9 @@ public class DefaultConfigReader implements ConfigReader {
      * @throws FileNotFoundException If the default configuration cannot be found
      */
     public DefaultConfigReader(File file, Plugin plugin) throws FileNotFoundException {
-        this.plugin = plugin;
-        this.file = file;
-        configuration = YamlConfiguration.loadConfiguration(file);
+        _plugin = plugin;
+        _file = file;
+        _configuration = YamlConfiguration.loadConfiguration(file);
         loadDefaultConfig();
 
         if (!validateAndFixConfig()) createBackupAndSave();
@@ -95,7 +95,7 @@ public class DefaultConfigReader implements ConfigReader {
      * @param problem The problem description
      */
     private void logConfigFix(String key, String problem) {
-        Bukkit.getLogger().warning("Fixing ${problem} config entry '${key}' in file '${file.getName()}'");
+        Bukkit.getLogger().warning("Fixing ${problem} config entry '${key}' in file '${_file.getName()}'");
     }
 
     /**
@@ -105,23 +105,23 @@ public class DefaultConfigReader implements ConfigReader {
      * @throws FileNotFoundException If the default configuration file cannot be found
      */
     private void loadDefaultConfig() throws FileNotFoundException {
-        var filename = file.getName();
+        var filename = _file.getName();
 
-        if (plugin.getResource(filename) != null) {
-            originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource(filename)));
+        if (_plugin.getResource(filename) != null) {
+            _originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(_plugin.getResource(filename)));
             return;
         }
 
         // Special handling for messages.yml with language support
         if (filename.equalsIgnoreCase("messages.yml")) {
-            var language = configuration.getString("language", "en");
+            var language = _configuration.getString("language", "en");
             var languageFile = "messages_${language}.yml";
 
-            if (plugin.getResource(languageFile) != null)
-                originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource(languageFile)));
+            if (_plugin.getResource(languageFile) != null)
+                _originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(_plugin.getResource(languageFile)));
             else {
                 // Fallback to English
-                originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("messages_en.yml")));
+                _originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(_plugin.getResource("messages_en.yml")));
                 Bukkit.getLogger().warning("Couldn't find messages file for language '${language}', using English instead");
             }
             return;
@@ -137,11 +137,11 @@ public class DefaultConfigReader implements ConfigReader {
      * @return true if the configuration is valid (no fixes needed), false otherwise
      */
     protected boolean validateAndFixConfig() {
-        if (originalCfg == null) return true; // No default config to validate against
+        if (_originalCfg == null) return true; // No default config to validate against
 
         var isValid = true;
         var typeWarnings = initializeTypeWarnings();
-        var defaultSection = originalCfg.getConfigurationSection("");
+        var defaultSection = _originalCfg.getConfigurationSection("");
 
         if (defaultSection == null) return true; // Empty default config
 
@@ -150,16 +150,16 @@ public class DefaultConfigReader implements ConfigReader {
             if (key.toLowerCase(Locale.ROOT).contains("example")) continue;
 
             // Fix missing entries
-            if (!configuration.isSet(key)) {
+            if (!_configuration.isSet(key)) {
                 logConfigFix(key, "missing");
-                configuration.set(key, originalCfg.get(key));
+                _configuration.set(key, _originalCfg.get(key));
                 isValid = false;
                 continue;
             }
 
             // Fix type mismatches
-            var userValue = configuration.get(key);
-            var defaultValue = originalCfg.get(key);
+            var userValue = _configuration.get(key);
+            var defaultValue = _originalCfg.get(key);
 
             if (userValue == null || defaultValue == null) continue;
 
@@ -171,7 +171,7 @@ public class DefaultConfigReader implements ConfigReader {
             var warningMessage = typeWarnings.get(defaultType);
             if (warningMessage != null) {
                 logConfigFix(key, warningMessage);
-                configuration.set(key, defaultValue);
+                _configuration.set(key, defaultValue);
                 isValid = false;
             }
         }
@@ -183,7 +183,7 @@ public class DefaultConfigReader implements ConfigReader {
      * Creates a backup of the configuration file, saves changes, and reloads the configuration.
      */
     private void createBackupAndSave() {
-        var filename = file.getName();
+        var filename = _file.getName();
         Bukkit.getLogger().warning("One or more errors with your '${filename}' file were found and fixed, a backup was made before saving");
 
         try {
@@ -193,7 +193,7 @@ public class DefaultConfigReader implements ConfigReader {
             var date = dtf.format(now);
             var backupFile = Path.of("plugins", "ServerSystem", "${filename}.backup-${date}").toFile();
 
-            FileUtils.copyFile(file, backupFile);
+            FileUtils.copyFile(_file, backupFile);
 
             save();
             reload();
@@ -206,21 +206,21 @@ public class DefaultConfigReader implements ConfigReader {
 
     @Override
     public FileConfiguration getConfiguration() {
-        return configuration;
+        return _configuration;
     }
 
     @Override
     public File getFile() {
-        return file;
+        return _file;
     }
 
     @Override
     public Object getObject(String path, Object def) {
         var configReader = this;
-        if (newReader != null) configReader = newReader;
+        if (_newReader != null) configReader = _newReader;
 
         configReader.ensureConfigHasValue(path);
-        return configReader.configuration.get(path, def);
+        return configReader._configuration.get(path, def);
     }
 
     @Override
@@ -231,10 +231,10 @@ public class DefaultConfigReader implements ConfigReader {
     @Override
     public boolean getBoolean(String path, boolean def) {
         var configReader = this;
-        if (newReader != null) configReader = newReader;
+        if (_newReader != null) configReader = _newReader;
 
         configReader.ensureConfigHasValue(path);
-        return configReader.configuration.getBoolean(path, def);
+        return configReader._configuration.getBoolean(path, def);
     }
 
     @Override
@@ -245,10 +245,10 @@ public class DefaultConfigReader implements ConfigReader {
     @Override
     public String getString(String path, String def) {
         var configReader = this;
-        if (newReader != null) configReader = newReader;
+        if (_newReader != null) configReader = _newReader;
 
         configReader.ensureConfigHasValue(path);
-        return configReader.configuration.getString(path, def);
+        return configReader._configuration.getString(path, def);
     }
 
     @Override
@@ -259,10 +259,10 @@ public class DefaultConfigReader implements ConfigReader {
     @Override
     public int getInt(String path, int def) {
         var configReader = this;
-        if (newReader != null) configReader = newReader;
+        if (_newReader != null) configReader = _newReader;
 
         configReader.ensureConfigHasValue(path);
-        return configReader.configuration.getInt(path, def);
+        return configReader._configuration.getInt(path, def);
     }
 
     @Override
@@ -273,10 +273,10 @@ public class DefaultConfigReader implements ConfigReader {
     @Override
     public long getLong(String path, long def) {
         var configReader = this;
-        if (newReader != null) configReader = newReader;
+        if (_newReader != null) configReader = _newReader;
 
         configReader.ensureConfigHasValue(path);
-        return configReader.configuration.getLong(path, def);
+        return configReader._configuration.getLong(path, def);
     }
 
     @Override
@@ -287,10 +287,10 @@ public class DefaultConfigReader implements ConfigReader {
     @Override
     public double getDouble(String path, double def) {
         var configReader = this;
-        if (newReader != null) configReader = newReader;
+        if (_newReader != null) configReader = _newReader;
 
         configReader.ensureConfigHasValue(path);
-        return configReader.configuration.getDouble(path, def);
+        return configReader._configuration.getDouble(path, def);
     }
 
     @Override
@@ -301,10 +301,10 @@ public class DefaultConfigReader implements ConfigReader {
     @Override
     public ItemStack getItemStack(String path, ItemStack def) {
         var configReader = this;
-        if (newReader != null) configReader = newReader;
+        if (_newReader != null) configReader = _newReader;
 
         configReader.ensureConfigHasValue(path);
-        return configReader.configuration.getItemStack(path, def);
+        return configReader._configuration.getItemStack(path, def);
     }
 
     @Override
@@ -315,20 +315,20 @@ public class DefaultConfigReader implements ConfigReader {
     @Override
     public void set(String path, Object object) {
         var configReader = this;
-        if (newReader != null) configReader = newReader;
+        if (_newReader != null) configReader = _newReader;
 
-        configReader.configuration.set(path, object);
+        configReader._configuration.set(path, object);
     }
 
     @Override
     public void save() {
         var configReader = this;
-        if (newReader != null) configReader = newReader;
+        if (_newReader != null) configReader = _newReader;
 
         try {
-            configReader.configuration.save(configReader.file);
+            configReader._configuration.save(configReader._file);
         } catch (IOException exception) {
-            Bukkit.getLogger().severe("Failed to save configuration file '${configReader.file.getName()}'");
+            Bukkit.getLogger().severe("Failed to save configuration file '${configReader._file.getName()}'");
             exception.printStackTrace();
         }
     }
@@ -336,12 +336,12 @@ public class DefaultConfigReader implements ConfigReader {
     @Override
     public void reload() {
         var configReader = this;
-        if (newReader != null) configReader = newReader;
+        if (_newReader != null) configReader = _newReader;
 
         try {
-            configReader.configuration.load(configReader.file);
+            configReader._configuration.load(configReader._file);
         } catch (IOException | InvalidConfigurationException exception) {
-            Bukkit.getLogger().severe("Failed to reload configuration file '${configReader.file.getName()}'");
+            Bukkit.getLogger().severe("Failed to reload configuration file '${configReader._file.getName()}'");
             exception.printStackTrace();
         }
     }
@@ -349,7 +349,7 @@ public class DefaultConfigReader implements ConfigReader {
     @Override
     public void load(File file) {
         try {
-            newReader = new DefaultConfigReader(file, ServerSystem.Instance);
+            _newReader = new DefaultConfigReader(file, ServerSystem.Instance);
         } catch (Exception exception) {
             Bukkit.getLogger().severe("Failed to load configuration from file '${file.getName()}'");
             exception.printStackTrace();
@@ -359,18 +359,18 @@ public class DefaultConfigReader implements ConfigReader {
     @Override
     public ConfigurationSection getConfigurationSection(String path) {
         var configReader = this;
-        if (newReader != null) configReader = newReader;
+        if (_newReader != null) configReader = _newReader;
 
         configReader.ensureConfigHasValue(path);
-        return configReader.configuration.getConfigurationSection(path);
+        return configReader._configuration.getConfigurationSection(path);
     }
 
     @Override
     public boolean isConfigurationSection(String path) {
         var configReader = this;
-        if (newReader != null) configReader = newReader;
+        if (_newReader != null) configReader = _newReader;
 
-        return configReader.configuration.isConfigurationSection(path);
+        return configReader._configuration.isConfigurationSection(path);
     }
 
     /**
@@ -379,10 +379,10 @@ public class DefaultConfigReader implements ConfigReader {
      * @param path The configuration path to check
      */
     private void ensureConfigHasValue(String path) {
-        if (originalCfg == null) return;
+        if (_originalCfg == null) return;
 
         // Don't do anything if the value is already set or not in the default config
-        if (configuration.isSet(path) || !originalCfg.isSet(path)) return;
+        if (_configuration.isSet(path) || !_originalCfg.isSet(path)) return;
 
         // Find the closest existing parent path, if any
         var partialPath = findClosestExistingParentPath(path);
@@ -394,14 +394,14 @@ public class DefaultConfigReader implements ConfigReader {
         }
 
         // Attempt to set the value through the parent section
-        var section = configuration.getConfigurationSection(partialPath);
+        var section = _configuration.getConfigurationSection(partialPath);
         if (section == null) {
             restoreConfigValue(path);
             return;
         }
 
         // Set the value through the parent section and save
-        section.set(path.substring(partialPath.length() + 1), originalCfg.get(path));
+        section.set(path.substring(partialPath.length() + 1), _originalCfg.get(path));
         saveAndReload();
     }
 
@@ -421,7 +421,7 @@ public class DefaultConfigReader implements ConfigReader {
             if (i > 0) currentPath.append(".");
             currentPath.append(pathParts[i]);
 
-            if (configuration.isSet(currentPath.toString())) return currentPath.toString();
+            if (_configuration.isSet(currentPath.toString())) return currentPath.toString();
         }
 
         return "";
@@ -433,7 +433,7 @@ public class DefaultConfigReader implements ConfigReader {
      * @param path The path to restore
      */
     private void restoreConfigValue(String path) {
-        configuration.set(path, originalCfg.get(path));
+        _configuration.set(path, _originalCfg.get(path));
         saveAndReload();
     }
 
@@ -442,10 +442,10 @@ public class DefaultConfigReader implements ConfigReader {
      */
     private void saveAndReload() {
         try {
-            configuration.save(file);
-            configuration.load(file);
+            _configuration.save(_file);
+            _configuration.load(_file);
         } catch (IOException | InvalidConfigurationException exception) {
-            Bukkit.getLogger().severe("Failed to save/reload configuration file '${file.getName()}'");
+            Bukkit.getLogger().severe("Failed to save/reload configuration file '${_file.getName()}'");
             exception.printStackTrace();
         }
     }

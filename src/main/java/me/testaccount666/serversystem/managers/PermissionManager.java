@@ -11,11 +11,11 @@ import java.io.FileNotFoundException;
 import java.nio.file.Path;
 
 public class PermissionManager {
-    private static final File PERMISSION_FILE = Path.of("plugins", "ServerSystem", "permissions.yml").toFile();
-    private static ConfigReader ConfigReader;
+    private static final File _PERMISSION_FILE = Path.of("plugins", "ServerSystem", "permissions.yml").toFile();
+    private static ConfigReader _ConfigReader;
 
     public static void initialize(Plugin plugin) throws FileNotFoundException {
-        ConfigReader = new DefaultConfigReader(PERMISSION_FILE, plugin);
+        _ConfigReader = new DefaultConfigReader(_PERMISSION_FILE, plugin);
     }
 
     public static boolean hasCommandPermission(CommandSender commandSender, String permissionPath) {
@@ -47,11 +47,11 @@ public class PermissionManager {
     }
 
     public static String getPermission(String permissionPath) {
-        if (ConfigReader == null) throw new IllegalStateException("PermissionManager was not yet initialized. Call initialize first.");
+        if (_ConfigReader == null) throw new IllegalStateException("PermissionManager was not yet initialized. Call initialize first.");
 
         permissionPath = "Permissions.${permissionPath}";
 
-        var permission = ConfigReader.getString(permissionPath, null);
+        var permission = _ConfigReader.getString(permissionPath, null);
 
         if (permission == null) Bukkit.getLogger().warning("Permission '${permissionPath}' not found! (Denying permission)");
 

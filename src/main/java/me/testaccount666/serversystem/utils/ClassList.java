@@ -12,7 +12,7 @@ import java.util.jar.JarFile;
 
 //TODO: Figure out a nicer way to access the list of classes
 public final class ClassList {
-    private static final List<Class<?>> classes = new ArrayList<>();
+    private static final List<Class<?>> _CLASSES = new ArrayList<>();
 
     private ClassList() {
     }
@@ -30,7 +30,7 @@ public final class ClassList {
     }
 
     public static List<Class<?>> getAllClasses() {
-        if (!classes.isEmpty()) return Collections.unmodifiableList(classes);
+        if (!_CLASSES.isEmpty()) return Collections.unmodifiableList(_CLASSES);
 
         try {
             /*
@@ -47,7 +47,7 @@ public final class ClassList {
                 if (!entry.getName().endsWith(".class")) continue;
 
                 try {
-                    classes.add(Class.forName(entry.getName().replace("/", ".").replace(".class", "")));
+                    _CLASSES.add(Class.forName(entry.getName().replace("/", ".").replace(".class", "")));
                 } catch (Throwable ignored) {
                 }
             }
@@ -55,6 +55,6 @@ public final class ClassList {
             exception.printStackTrace();
         }
 
-        return Collections.unmodifiableList(classes);
+        return Collections.unmodifiableList(_CLASSES);
     }
 }

@@ -12,8 +12,8 @@ import java.nio.file.Path;
 
 public final class ServerSystem extends JavaPlugin {
     public static ServerSystem Instance;
-    private UserManager userManager;
-    private CommandManager commandManager;
+    private UserManager _userManager;
+    private CommandManager _commandManager;
 
     @Override
     public void onEnable() {
@@ -27,10 +27,10 @@ public final class ServerSystem extends JavaPlugin {
             throw new RuntimeException("Failed to load 'commands.yml'!", exception);
         }
 
-        userManager = new UserManager();
-        commandManager = new CommandManager(commandsConfigReader);
+        _userManager = new UserManager();
+        _commandManager = new CommandManager(commandsConfigReader);
 
-        Bukkit.getScheduler().runTaskLater(this, commandManager::registerCommands, 1);
+        Bukkit.getScheduler().runTaskLater(this, _commandManager::registerCommands, 1);
     }
 
     private ConfigReader loadCommandsConfig() throws FileNotFoundException {
@@ -43,10 +43,10 @@ public final class ServerSystem extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (commandManager != null) commandManager.unregisterCommands();
+        if (_commandManager != null) _commandManager.unregisterCommands();
     }
 
     public UserManager getUserManager() {
-        return userManager;
+        return _userManager;
     }
 }

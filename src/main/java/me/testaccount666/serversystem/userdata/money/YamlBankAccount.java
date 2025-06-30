@@ -11,33 +11,33 @@ import java.math.BigInteger;
 import java.util.UUID;
 
 public class YamlBankAccount extends AbstractBankAccount {
-    private final File userFile;
-    private final FileConfiguration fileConfig;
+    private final File _userFile;
+    private final FileConfiguration _fileConfig;
 
     public YamlBankAccount(UUID owner, BigInteger accountId, File userFile) {
         super(owner, accountId);
-        this.userFile = userFile;
-        fileConfig = YamlConfiguration.loadConfiguration(userFile);
+        _userFile = userFile;
+        _fileConfig = YamlConfiguration.loadConfiguration(userFile);
     }
 
     @Override
     public BigDecimal getBalance() {
         //TODO: Default balance
-        var balance = fileConfig.getString("User.BankAccounts.${accountId.toString()}.Balance", "");
+        var balance = _fileConfig.getString("User.BankAccounts.${accountId.toString()}.Balance", "");
 
         return new BigDecimal(balance);
     }
 
     @Override
     public void setBalance(BigDecimal balance) {
-        fileConfig.set("User.BankAccounts.${accountId.toString()}.Balance", balance.toString());
+        _fileConfig.set("User.BankAccounts.${accountId.toString()}.Balance", balance.toString());
         save();
     }
 
     private void save() {
         try {
-            fileConfig.save(userFile);
-            fileConfig.load(userFile);
+            _fileConfig.save(_userFile);
+            _fileConfig.load(_userFile);
         } catch (IOException | InvalidConfigurationException exception) {
             throw new RuntimeException("Encountered error trying to save bank account '${accountId.toString()}' of user '${owner.toString()}'!", exception);
         }
@@ -45,7 +45,7 @@ public class YamlBankAccount extends AbstractBankAccount {
 
     @Override
     public void delete() {
-        fileConfig.set("User.BankAccounts.${accountId.toString()}", null);
+        _fileConfig.set("User.BankAccounts.${accountId.toString()}", null);
         save();
     }
 }

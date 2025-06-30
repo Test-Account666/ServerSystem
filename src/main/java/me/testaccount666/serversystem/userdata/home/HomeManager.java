@@ -15,21 +15,21 @@ import java.util.Optional;
 import java.util.Set;
 
 public class HomeManager {
-    private final OfflineUser owner;
-    private final File userFile;
-    private final Set<Home> homes = new HashSet<>();
-    private final FileConfiguration config;
+    private final OfflineUser _owner;
+    private final File _userFile;
+    private final Set<Home> _homes = new HashSet<>();
+    private final FileConfiguration _config;
 
     public HomeManager(OfflineUser owner, File userFile, FileConfiguration config) {
-        this.owner = owner;
-        this.userFile = userFile;
-        this.config = config;
+        _owner = owner;
+        _userFile = userFile;
+        _config = config;
 
         loadHomes();
     }
 
     public Set<Home> getHomes() {
-        return homes;
+        return _homes;
     }
 
     public void addHome(String name, Location location) {
@@ -45,19 +45,19 @@ public class HomeManager {
     }
 
     public void addHome(Home home, boolean saveHomes) {
-        homes.add(home);
+        _homes.add(home);
 
         if (saveHomes) saveHomes();
     }
 
     public void removeHome(String name) {
-        homes.removeIf(home -> home.getName().equalsIgnoreCase(name));
+        _homes.removeIf(home -> home.getName().equalsIgnoreCase(name));
 
         saveHomes();
     }
 
     public Optional<Home> getHomeByName(String name) {
-        return homes.stream()
+        return _homes.stream()
                 .filter(home -> home.getName().equalsIgnoreCase(name))
                 .findFirst();
     }
@@ -68,7 +68,7 @@ public class HomeManager {
 
 
     public Optional<Integer> getMaxHomeCount() {
-        if (!(owner instanceof User user)) return Optional.empty();
+        if (!(_owner instanceof User user)) return Optional.empty();
 
         var defaultValue = DefaultsData.Home().getDefaultMaxHomes();
         var maxHomes = -1;
@@ -95,34 +95,34 @@ public class HomeManager {
 
 
     private void saveHomes() {
-        config.set("User.Homes", null);
+        _config.set("User.Homes", null);
 
-        for (var home : homes) {
+        for (var home : _homes) {
             var prefix = "User.Homes.${home.getName()}";
 
-            config.set("${prefix}.X", home.getLocation().getX());
-            config.set("${prefix}.Y", home.getLocation().getY());
-            config.set("${prefix}.Z", home.getLocation().getZ());
+            _config.set("${prefix}.X", home.getLocation().getX());
+            _config.set("${prefix}.Y", home.getLocation().getY());
+            _config.set("${prefix}.Z", home.getLocation().getZ());
 
-            config.set("${prefix}.Yaw", home.getLocation().getYaw());
-            config.set("${prefix}.Pitch", home.getLocation().getPitch());
+            _config.set("${prefix}.Yaw", home.getLocation().getYaw());
+            _config.set("${prefix}.Pitch", home.getLocation().getPitch());
 
-            config.set("${prefix}.World", home.getLocation().getWorld().getName());
+            _config.set("${prefix}.World", home.getLocation().getWorld().getName());
         }
 
         try {
-            config.save(userFile);
+            _config.save(_userFile);
         } catch (IOException exception) {
-            throw new RuntimeException("Error saving homes for user '${owner.getName()}' ('${owner.getUuid()}')", exception);
+            throw new RuntimeException("Error saving homes for user '${_owner.getName()}' ('${_owner.getUuid()}')", exception);
         }
     }
 
     private void loadHomes() {
-        homes.clear();
+        _homes.clear();
 
-        if (!config.isConfigurationSection("User.Homes")) return;
+        if (!_config.isConfigurationSection("User.Homes")) return;
 
-        var homeNames = config.getConfigurationSection("User.Homes").getKeys(false);
+        var homeNames = _config.getConfigurationSection("User.Homes").getKeys(false);
 
         for (var name : homeNames) {
             var prefix = "User.Homes.${name}";
@@ -131,19 +131,19 @@ public class HomeManager {
 
             if (home.isEmpty()) continue;
 
-            homes.add(home.get());
+            _homes.add(home.get());
         }
     }
 
     private Optional<Home> parseHome(String name, String prefix) {
-        var x = config.getDouble("${prefix}.X");
-        var y = config.getDouble("${prefix}.Y");
-        var z = config.getDouble("${prefix}.Z");
+        var x = _config.getDouble("${prefix}.X");
+        var y = _config.getDouble("${prefix}.Y");
+        var z = _config.getDouble("${prefix}.Z");
 
-        var yaw = (float) config.getDouble("${prefix}.Yaw");
-        var pitch = (float) config.getDouble("${prefix}.Pitch");
+        var yaw = (float) _config.getDouble("${prefix}.Yaw");
+        var pitch = (float) _config.getDouble("${prefix}.Pitch");
 
-        var worldName = config.getString("${prefix}.World", "");
+        var worldName = _config.getString("${prefix}.World", "");
         var world = Bukkit.getWorld(worldName);
 
         if (world == null) return Optional.empty();

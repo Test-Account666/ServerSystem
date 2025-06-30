@@ -3,25 +3,25 @@ package me.testaccount666.serversystem.globaldata;
 import me.testaccount666.serversystem.managers.config.ConfigReader;
 
 public class DefaultsData {
-    private static Home Home;
+    private static Home _Home;
 
     public static void initialize(ConfigReader config) {
-        Home = new Home(config);
+        _Home = new Home(config);
     }
 
     public static Home Home() {
-        return Home;
+        return _Home;
     }
 
     public static class Home {
-        private final int defaultMaxHomes;
+        private final int _defaultMaxHomes;
 
         public Home(ConfigReader config) {
-            defaultMaxHomes = config.getInt("Defaults.MaxHomes");
+            _defaultMaxHomes = config.getInt("Defaults.MaxHomes");
         }
 
         public int getDefaultMaxHomes() {
-            return defaultMaxHomes;
+            return _defaultMaxHomes;
         }
     }
 }

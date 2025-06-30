@@ -6,19 +6,19 @@ import org.bukkit.Bukkit;
 import java.util.*;
 
 public class MappingsData {
-    private static GameMode GameMode;
+    private static GameMode _GameMode;
 
     public static void initialize(ConfigReader config) {
-        GameMode = new GameMode(config);
+        _GameMode = new GameMode(config);
     }
 
     public static GameMode GameMode() {
-        return GameMode;
+        return _GameMode;
     }
 
 
     public static class GameMode {
-        private final Map<org.bukkit.GameMode, String> gameModeMappings = new HashMap<>();
+        private final Map<org.bukkit.GameMode, String> _gameModeMappings = new HashMap<>();
 
         public GameMode(ConfigReader config) {
             for (var gameMode : org.bukkit.GameMode.values()) {
@@ -29,16 +29,16 @@ public class MappingsData {
                     continue;
                 }
 
-                gameModeMappings.put(gameMode, gameModeName);
+                _gameModeMappings.put(gameMode, gameModeName);
             }
         }
 
         public Optional<String> getGameModeName(org.bukkit.GameMode gameMode) {
-            return Optional.ofNullable(gameModeMappings.getOrDefault(gameMode, null));
+            return Optional.ofNullable(_gameModeMappings.getOrDefault(gameMode, null));
         }
 
         public Set<String> getGameModeNames() {
-            return new HashSet<>(gameModeMappings.values());
+            return new HashSet<>(_gameModeMappings.values());
         }
     }
 }

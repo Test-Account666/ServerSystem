@@ -8,10 +8,10 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 public class CommandExecutorWrapper extends AbstractCommandWrapper implements CommandExecutor {
-    private final ServerSystemCommandExecutor commandExecutor;
+    private final ServerSystemCommandExecutor _commandExecutor;
 
     public CommandExecutorWrapper(ServerSystemCommandExecutor commandExecutor) {
-        this.commandExecutor = commandExecutor;
+        _commandExecutor = commandExecutor;
     }
 
     @Override
@@ -24,7 +24,7 @@ public class CommandExecutorWrapper extends AbstractCommandWrapper implements Co
             return false;
         }
 
-        commandExecutor.execute(commandUser.get(), command, label, arguments);
+        _commandExecutor.execute(commandUser.get(), command, label, arguments);
         return true;
     }
 }

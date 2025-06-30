@@ -11,10 +11,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class TabCompleterWrapper extends AbstractCommandWrapper implements TabCompleter {
-    private final ServerSystemTabCompleter tabCompleter;
+    private final ServerSystemTabCompleter _tabCompleter;
 
     public TabCompleterWrapper(ServerSystemTabCompleter tabCompleter) {
-        this.tabCompleter = tabCompleter;
+        _tabCompleter = tabCompleter;
     }
 
     @Override
@@ -27,6 +27,6 @@ public class TabCompleterWrapper extends AbstractCommandWrapper implements TabCo
             return List.of();
         }
 
-        return tabCompleter.tabComplete(commandUser.get(), command, label, arguments);
+        return _tabCompleter.tabComplete(commandUser.get(), command, label, arguments);
     }
 }

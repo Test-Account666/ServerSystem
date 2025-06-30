@@ -13,21 +13,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class UserManager {
-    private static final Path USER_DATA_PATH = Path.of("plugins", "ServerSystem", "UserData");
-    private static final ConsoleUser consoleUser = new ConsoleUser();
-    private final Map<String, CachedUser> userMap = new ConcurrentHashMap<>();
-    private final Map<UUID, CachedUser> userUuidMap = new ConcurrentHashMap<>();
+    private static final Path _USER_DATA_PATH = Path.of("plugins", "ServerSystem", "UserData");
+    private static final ConsoleUser _CONSOLE_USER = new ConsoleUser();
+    private final Map<String, CachedUser> _userMap = new ConcurrentHashMap<>();
+    private final Map<UUID, CachedUser> _userUuidMap = new ConcurrentHashMap<>();
 
     public UserManager() {
         Bukkit.getScheduler().scheduleAsyncRepeatingTask(ServerSystem.Instance, this::cleanStaleUsers, 15 * 20 * 60, 15 * 20 * 60); // 15 Minutes
     }
 
     private static File getUserFile(UUID uuid) {
-        return USER_DATA_PATH.resolve("${uuid}.yml").toFile();
+        return _USER_DATA_PATH.resolve("${uuid}.yml").toFile();
     }
 
     public static ConsoleUser getConsoleUser() {
-        return consoleUser;
+        return _CONSOLE_USER;
     }
 
     public Optional<CachedUser> getUser(Player player) {
@@ -35,29 +35,29 @@ public class UserManager {
     }
 
     public Optional<CachedUser> getUser(UUID uuid) {
-        if (userUuidMap.containsKey(uuid)) {
-            var cachedUser = userUuidMap.get(uuid);
+        if (_userUuidMap.containsKey(uuid)) {
+            var cachedUser = _userUuidMap.get(uuid);
             cachedUser.updateLastAccessTime();
 
-            return Optional.ofNullable(cachedUser);
+            return Optional.of(cachedUser);
         }
 
         var player = Bukkit.getPlayer(uuid);
-        if (player != null) return Optional.ofNullable(createOnlineUser(uuid));
+        if (player != null) return Optional.of(createOnlineUser(uuid));
 
         return createOfflineUser(uuid);
     }
 
     public Optional<CachedUser> getUser(String name) {
-        if (userMap.containsKey(name)) {
-            var cachedUser = userMap.get(name);
+        if (_userMap.containsKey(name)) {
+            var cachedUser = _userMap.get(name);
             cachedUser.updateLastAccessTime();
 
-            return Optional.ofNullable(cachedUser);
+            return Optional.of(cachedUser);
         }
 
         var player = Bukkit.getPlayer(name);
-        if (player != null) return Optional.ofNullable(createOnlineUser(player.getUniqueId()));
+        if (player != null) return Optional.of(createOnlineUser(player.getUniqueId()));
 
         var offlineUser = Bukkit.getOfflinePlayer(name);
         if (offlineUser.getName() == null) return Optional.empty();
@@ -70,10 +70,10 @@ public class UserManager {
         var user = new OfflineUser(userFile);
 
         var cachedUser = new CachedUser(user);
-        userUuidMap.put(uuid, cachedUser);
-        userMap.put(user.getName(), cachedUser);
+        _userUuidMap.put(uuid, cachedUser);
+        _userMap.put(user.getName(), cachedUser);
 
-        return Optional.ofNullable(cachedUser);
+        return Optional.of(cachedUser);
     }
 
     private CachedUser createOnlineUser(UUID uuid) {
@@ -81,16 +81,16 @@ public class UserManager {
         var user = new User(userFile);
 
         var cachedUser = new CachedUser(user);
-        userUuidMap.put(uuid, cachedUser);
-        userMap.put(user.getName(), cachedUser);
+        _userUuidMap.put(uuid, cachedUser);
+        _userMap.put(user.getName(), cachedUser);
 
         return cachedUser;
     }
 
     public void cleanStaleUsers() {
-        var staleUsers = userMap.values().stream().filter(CachedUser::isStale).collect(Collectors.toSet());
+        var staleUsers = _userMap.values().stream().filter(CachedUser::isStale).collect(Collectors.toSet());
 
-        userMap.entrySet().removeIf(entry -> staleUsers.contains(entry.getValue()));
-        userUuidMap.entrySet().removeIf(entry -> staleUsers.contains(entry.getValue()));
+        _userMap.entrySet().removeIf(entry -> staleUsers.contains(entry.getValue()));
+        _userUuidMap.entrySet().removeIf(entry -> staleUsers.contains(entry.getValue()));
     }
 }

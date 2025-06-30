@@ -3,32 +3,32 @@ package me.testaccount666.serversystem.userdata.home;
 import org.bukkit.Location;
 
 public class Home {
-    private final String name;
-    private final Location location;
-    private String displayName;
+    private final String _name;
+    private final Location _location;
+    private String _displayName;
 
     public Home(String name, Location location) {
-        this.name = name.toLowerCase();
-        this.location = location;
+        _name = name.toLowerCase();
+        _location = location;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public String getDisplayName() {
-        if (displayName != null) return displayName;
+        if (_displayName != null) return _displayName;
 
-        displayName = getName().toLowerCase();
-        var chars = displayName.toCharArray();
+        _displayName = getName().toLowerCase();
+        var chars = _displayName.toCharArray();
         chars[0] = Character.toUpperCase(chars[0]);
 
-        displayName = new String(chars);
+        _displayName = new String(chars);
 
-        return displayName;
+        return _displayName;
     }
 
     public Location getLocation() {
-        return location;
+        return _location;
     }
 }

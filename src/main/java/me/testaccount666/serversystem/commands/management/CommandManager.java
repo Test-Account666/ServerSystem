@@ -26,23 +26,23 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class CommandManager {
-    private final Function<SimpleCommandMap, Map<String, Command>> commandMapAccessor = FieldAccessor.createGetter(SimpleCommandMap.class, "knownCommands");
-    private final BiFunction<String, Plugin, PluginCommand> pluginCommandConstructor = ConstructorAccessor.createConstructor(PluginCommand.class, String.class, Plugin.class);
-    private final Consumer<? extends Server> syncCommandsAccessor = MethodAccessor.createVoidAccessor(Bukkit.getServer().getClass(), "syncCommands");
-    private final ConfigReader configReader;
-    private final Set<String> registeredCommands = new HashSet<>();
+    private final Function<SimpleCommandMap, Map<String, Command>> _commandMapAccessor = FieldAccessor.createGetter(SimpleCommandMap.class, "knownCommands");
+    private final BiFunction<String, Plugin, PluginCommand> _pluginCommandConstructor = ConstructorAccessor.createConstructor(PluginCommand.class, String.class, Plugin.class);
+    private final Consumer<? extends Server> _syncCommandsAccessor = MethodAccessor.createVoidAccessor(Bukkit.getServer().getClass(), "syncCommands");
+    private final ConfigReader _configReader;
+    private final Set<String> _registeredCommands = new HashSet<>();
 
     public CommandManager(ConfigReader configReader) {
-        this.configReader = configReader;
+        _configReader = configReader;
     }
 
     private Map<String, Command> getCommandMap() {
         var commandMap = (SimpleCommandMap) Bukkit.getCommandMap();
-        return commandMapAccessor.apply(commandMap);
+        return _commandMapAccessor.apply(commandMap);
     }
 
     private PluginCommand createCommand(String name) {
-        return pluginCommandConstructor.apply(name, ServerSystem.Instance);
+        return _pluginCommandConstructor.apply(name, ServerSystem.Instance);
     }
 
     private void registerCommand(ServerSystemCommandExecutor command, ServerSystemTabCompleter completer, Map<String, List<String>> variantAliasMap) {
@@ -61,8 +61,8 @@ public class CommandManager {
                 commandMap.put(alias, bukkitCommand);
                 commandMap.put("serversystem:${alias}", bukkitCommand);
 
-                registeredCommands.add(alias);
-                registeredCommands.add("serversystem:${alias}");
+                _registeredCommands.add(alias);
+                _registeredCommands.add("serversystem:${alias}");
             }
         });
     }
@@ -78,8 +78,8 @@ public class CommandManager {
     public void unregisterCommands() {
         var commandMap = getCommandMap();
 
-        registeredCommands.forEach(commandMap::remove);
-        registeredCommands.clear();
+        _registeredCommands.forEach(commandMap::remove);
+        _registeredCommands.clear();
     }
 
     private void processCommandExecutor(Class<?> clazz) {
@@ -99,11 +99,11 @@ public class CommandManager {
     }
 
     private boolean isCommandEnabled(String command) {
-        return configReader.getBoolean("Commands.${command}.Enabled", false);
+        return _configReader.getBoolean("Commands.${command}.Enabled", false);
     }
 
     private boolean isVariantEnabled(String command, String variant) {
-        return configReader.getBoolean("Commands.${command}.Variants.${variant}.Enabled", false);
+        return _configReader.getBoolean("Commands.${command}.Variants.${variant}.Enabled", false);
     }
 
     private Map<String, List<String>> buildVariantAliasMap(String command, String[] variants) {
@@ -123,7 +123,7 @@ public class CommandManager {
     }
 
     private List<String> getAliases(String configPath) {
-        return Arrays.stream(configReader.getString(configPath, "").split(","))
+        return Arrays.stream(_configReader.getString(configPath, "").split(","))
                 .map(String::trim)
                 .filter(alias -> !alias.isEmpty())
                 .toList();
@@ -146,7 +146,7 @@ public class CommandManager {
 
     private void syncCommands() {
         //noinspection unchecked,rawtypes
-        ((Consumer) syncCommandsAccessor).accept(Bukkit.getServer());
+        ((Consumer) _syncCommandsAccessor).accept(Bukkit.getServer());
 
         Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
     }
