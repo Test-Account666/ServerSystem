@@ -5,7 +5,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.nio.file.Path;
 import java.util.UUID;
 
 public class ConsoleUser extends User {
@@ -13,7 +12,7 @@ public class ConsoleUser extends User {
     public static final UUID CONSOLE_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     protected ConsoleUser() {
-        super(Path.of("plugins", "ServerSystem", "UserData", "${CONSOLE_UUID}.yml").toFile());
+        super(UserManager.USER_DATA_PATH.resolve("${CONSOLE_UUID}.yml").toFile());
     }
 
     @Override

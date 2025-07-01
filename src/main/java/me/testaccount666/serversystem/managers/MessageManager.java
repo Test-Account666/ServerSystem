@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.Optional;
 
+//TODO: Completely forgot, this needs user-specific language support!
 public class MessageManager {
     private static final File _MESSAGES_FILE = Path.of("plugins", "ServerSystem", "messages.yml").toFile();
     private static ConfigReader _ConfigReader;
@@ -64,7 +65,7 @@ public class MessageManager {
     public static boolean sendMessageString(CommandSender commandSender, String message, @Nullable String targetName, @Nullable String label) {
         if (message == null) return false;
 
-        message = _PlaceholderManager.applyPlaceholders(message, commandSender, targetName, label != null ? label : "");
+        message = _PlaceholderManager.applyPlaceholders(message, commandSender, targetName, label != null? label : "");
         commandSender.sendMessage(message);
 
         return true;

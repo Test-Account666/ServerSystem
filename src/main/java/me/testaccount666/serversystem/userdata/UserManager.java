@@ -8,12 +8,13 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class UserManager {
-    private static final Path _USER_DATA_PATH = Path.of("plugins", "ServerSystem", "UserData");
+    public static final Path USER_DATA_PATH = Path.of("plugins", "ServerSystem", "UserData");
     private static final ConsoleUser _CONSOLE_USER = new ConsoleUser();
     private final Map<String, CachedUser> _userMap = new ConcurrentHashMap<>();
     private final Map<UUID, CachedUser> _userUuidMap = new ConcurrentHashMap<>();
@@ -23,7 +24,7 @@ public class UserManager {
     }
 
     private static File getUserFile(UUID uuid) {
-        return _USER_DATA_PATH.resolve("${uuid}.yml").toFile();
+        return USER_DATA_PATH.resolve("${uuid}.yml").toFile();
     }
 
     public static ConsoleUser getConsoleUser() {
@@ -87,6 +88,10 @@ public class UserManager {
         _userMap.put(user.getName().get(), cachedUser);
 
         return cachedUser;
+    }
+
+    public Set<CachedUser> getCachedUsers() {
+        return Set.copyOf(_userMap.values());
     }
 
     public void cleanStaleUsers() {

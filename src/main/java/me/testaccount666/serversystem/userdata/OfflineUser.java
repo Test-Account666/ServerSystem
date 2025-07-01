@@ -39,7 +39,9 @@ public class OfflineUser {
         loadBasicData();
     }
 
-    protected OfflineUser(User onlineUser) {
+    //Warning can be safely ignored
+    @SuppressWarnings("CopyConstructorMissesField")
+    protected OfflineUser(OfflineUser onlineUser) {
         this(onlineUser.userFile);
     }
 

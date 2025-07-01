@@ -18,7 +18,7 @@ public abstract class AbstractCommandWrapper {
 
         var cachedUser = cachedUserOptional.get();
 
-        if (!cachedUser.isOnlineUser()) return Optional.empty();
+        if (cachedUser.isOfflineUser()) return Optional.empty();
 
         return Optional.ofNullable((User) cachedUser.getOfflineUser());
     }

@@ -18,6 +18,10 @@ public class CachedUser {
         return _offlineUser instanceof User;
     }
 
+    public boolean isOfflineUser() {
+        return !isOnlineUser();
+    }
+
     public OfflineUser getOfflineUser() {
         return _offlineUser;
     }
@@ -30,11 +34,19 @@ public class CachedUser {
         _lastAccessTime = System.currentTimeMillis();
     }
 
-    protected void convertToOnlineUser() {
+    public void convertToOnlineUser() {
         var player = Bukkit.getPlayer(_offlineUser.getUuid());
 
         if (player == null) throw new IllegalStateException("Cannot convert offline user to online user!");
 
+        _offlineUser.save();
+
         _offlineUser = new User(_offlineUser);
+    }
+
+    public void convertToOfflineUser() {
+        _offlineUser.save();
+
+        _offlineUser = new OfflineUser(_offlineUser);
     }
 }
