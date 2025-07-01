@@ -10,16 +10,29 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Manages homes for a specific user.
+ * This class handles the creation, deletion, and retrieval of homes,
+ * as well as loading and saving homes to the user's configuration file.
+ */
 public class HomeManager {
     private final OfflineUser _owner;
     private final File _userFile;
     private final Set<Home> _homes = new HashSet<>();
     private final FileConfiguration _config;
 
+    /**
+     * Creates a new HomeManager for the specified user.
+     *
+     * @param owner    The user who owns the homes
+     * @param userFile The user's configuration file
+     * @param config   The user's configuration
+     */
     public HomeManager(OfflineUser owner, File userFile, FileConfiguration config) {
         _owner = owner;
         _userFile = userFile;
@@ -28,45 +41,99 @@ public class HomeManager {
         loadHomes();
     }
 
+    /**
+     * Gets all homes owned by the user.
+     *
+     * @return An unmodifiable set of all homes owned by the user
+     */
     public Set<Home> getHomes() {
-        return _homes;
+        return Collections.unmodifiableSet(_homes);
     }
 
+    /**
+     * Adds a new home with the specified name and location.
+     * The home will be saved to the user's configuration file.
+     *
+     * @param name     The name of the home
+     * @param location The location of the home
+     */
     public void addHome(String name, Location location) {
         addHome(name, location, true);
     }
 
+    /**
+     * Adds a new home with the specified name and location.
+     *
+     * @param name      The name of the home
+     * @param location  The location of the home
+     * @param saveHomes Whether to save the homes to the user's configuration file
+     */
     public void addHome(String name, Location location, boolean saveHomes) {
         addHome(new Home(name, location), saveHomes);
     }
 
+    /**
+     * Adds the specified home.
+     * The home will be saved to the user's configuration file.
+     *
+     * @param home The home to add
+     */
     public void addHome(Home home) {
         addHome(home, true);
     }
 
+    /**
+     * Adds the specified home.
+     *
+     * @param home      The home to add
+     * @param saveHomes Whether to save the homes to the user's configuration file
+     */
     public void addHome(Home home, boolean saveHomes) {
         _homes.add(home);
 
         if (saveHomes) saveHomes();
     }
 
+    /**
+     * Removes the home with the specified name.
+     * The change will be saved to the user's configuration file.
+     *
+     * @param name The name of the home to remove
+     */
     public void removeHome(String name) {
         _homes.removeIf(home -> home.getName().equalsIgnoreCase(name));
 
         saveHomes();
     }
 
+    /**
+     * Gets the home with the specified name.
+     *
+     * @param name The name of the home to get
+     * @return An Optional containing the home, or an empty Optional if no home with the specified name exists
+     */
     public Optional<Home> getHomeByName(String name) {
         return _homes.stream()
                 .filter(home -> home.getName().equalsIgnoreCase(name))
                 .findFirst();
     }
 
+    /**
+     * Checks if a home with the specified name exists.
+     *
+     * @param name The name of the home to check for
+     * @return true if a home with the specified name exists, false otherwise
+     */
     public boolean hasHome(String name) {
         return getHomeByName(name).isPresent();
     }
 
-
+    /**
+     * Gets the maximum number of homes the user can have.
+     * This is determined by the user's permissions.
+     *
+     * @return An Optional containing the maximum number of homes, or an empty Optional if the user is offline
+     */
     public Optional<Integer> getMaxHomeCount() {
         if (!(_owner instanceof User user)) return Optional.empty();
 

@@ -7,6 +7,11 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
+/**
+ * Represents the Console CommandSender as a User.
+ * <p>
+ * Has benefits like infinite money
+ */
 public class ConsoleUser extends User {
     // 00000000-0000-0000-0000-000000000000 is never a player, so let's just use that for the console
     public static final UUID CONSOLE_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");

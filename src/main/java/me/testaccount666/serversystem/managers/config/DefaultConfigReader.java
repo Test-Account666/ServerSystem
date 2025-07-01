@@ -63,13 +63,13 @@ public class DefaultConfigReader implements ConfigReader {
     /**
      * Static factory method to load a configuration file with a specific plugin instance.
      *
-     * @param file         The configuration file to load
-     * @param serverSystem The plugin instance to use
+     * @param file   The configuration file to load
+     * @param plugin The plugin instance to use
      * @return A ConfigReader instance for the file
      * @throws FileNotFoundException If the default configuration cannot be found
      */
-    public static ConfigReader loadConfiguration(File file, ServerSystem serverSystem) throws FileNotFoundException {
-        return new DefaultConfigReader(file, serverSystem);
+    public static ConfigReader loadConfiguration(File file, Plugin plugin) throws FileNotFoundException {
+        return new DefaultConfigReader(file, plugin);
     }
 
     /**
@@ -384,7 +384,6 @@ public class DefaultConfigReader implements ConfigReader {
         // Don't do anything if the value is already set or not in the default config
         if (_configuration.isSet(path) || !_originalCfg.isSet(path)) return;
 
-        // Find the closest existing parent path, if any
         var partialPath = findClosestExistingParentPath(path);
 
         if (partialPath.isEmpty()) {
@@ -393,14 +392,12 @@ public class DefaultConfigReader implements ConfigReader {
             return;
         }
 
-        // Attempt to set the value through the parent section
         var section = _configuration.getConfigurationSection(partialPath);
         if (section == null) {
             restoreConfigValue(path);
             return;
         }
 
-        // Set the value through the parent section and save
         section.set(path.substring(partialPath.length() + 1), _originalCfg.get(path));
         saveAndReload();
     }

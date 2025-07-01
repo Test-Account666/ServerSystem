@@ -9,6 +9,11 @@ import me.testaccount666.serversystem.userdata.UserManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * Main plugin class for ServerSystem.
+ * This class serves as the entry point for the plugin and manages the initialization
+ * and shutdown of all plugin components.
+ */
 public final class ServerSystem extends JavaPlugin {
     public static ServerSystem Instance;
     private UserManager _userManager;
@@ -55,6 +60,11 @@ public final class ServerSystem extends JavaPlugin {
         _userManager.getCachedUsers().stream().map(CachedUser::getOfflineUser).forEach(OfflineUser::save);
     }
 
+    /**
+     * Gets the UserManager instance for this plugin.
+     * 
+     * @return The UserManager instance that manages all user-related functionality
+     */
     public UserManager getUserManager() {
         return _userManager;
     }

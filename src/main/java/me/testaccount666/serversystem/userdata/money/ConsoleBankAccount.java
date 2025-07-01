@@ -20,6 +20,11 @@ public class ConsoleBankAccount extends AbstractBankAccount {
     }
 
     @Override
+    public boolean hasEnoughMoney(BigDecimal amount) {
+        return true;
+    }
+
+    @Override
     public void delete() {
     }
 }

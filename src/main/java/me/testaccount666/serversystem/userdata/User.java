@@ -6,6 +6,11 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.util.Optional;
 
+/**
+ * Represents an online user.
+ * This class extends OfflineUser and provides additional functionality
+ * for interacting with online players.
+ */
 public class User extends OfflineUser {
     protected Player player;
 
@@ -26,6 +31,11 @@ public class User extends OfflineUser {
         save();
     }
 
+    /**
+     * Gets the Player object associated with this user.
+     *
+     * @return The Player object for this user
+     */
     @Override
     public Player getPlayer() {
         if (player == null) player = (Player) super.getPlayer();
@@ -33,11 +43,23 @@ public class User extends OfflineUser {
         return player;
     }
 
+    /**
+     * Gets the name of this user.
+     *
+     * @return An Optional containing the name of this user
+     */
     @Override
     public Optional<String> getName() {
         return Optional.of(getPlayer().getName());
     }
 
+    /**
+     * Gets the CommandSender object associated with this user.
+     * This can be used to interact with the user without
+     * using User#getPlayer()
+     *
+     * @return The CommandSender object for this user
+     */
     public CommandSender getCommandSender() {
         return getPlayer();
     }

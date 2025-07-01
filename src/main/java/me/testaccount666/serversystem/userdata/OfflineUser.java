@@ -15,6 +15,11 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Represents an offline user.
+ * This class provides functionality for managing user data that persists
+ * even when the player is offline.
+ */
 public class OfflineUser {
     protected String name;
     protected UUID uuid;
@@ -68,6 +73,12 @@ public class OfflineUser {
         homeManager = new HomeManager(this, userFile, userConfig);
     }
 
+    /**
+     * Saves the user's data to their configuration file.
+     * This method should be called whenever user data is modified.
+     *
+     * @throws RuntimeException if there is an error saving the user data
+     */
     public void save() {
         userConfig.set("User.LastKnownName", name);
 
@@ -87,16 +98,31 @@ public class OfflineUser {
         }
     }
 
+    /**
+     * Gets the OfflinePlayer object associated with this user.
+     *
+     * @return The OfflinePlayer object for this user
+     */
     public OfflinePlayer getPlayer() {
         if (player == null) player = Bukkit.getOfflinePlayer(uuid);
 
         return player;
     }
 
+    /**
+     * Gets the name of this user.
+     *
+     * @return An Optional containing the name of this user, or an empty Optional if the name is not available
+     */
     public Optional<String> getName() {
         return Optional.ofNullable(name);
     }
 
+    /**
+     * Gets the UUID of this user.
+     *
+     * @return The UUID of this user
+     */
     public UUID getUuid() {
         return uuid;
     }
