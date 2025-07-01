@@ -27,63 +27,65 @@ public class MessageManager {
         _PlaceholderManager = new PlaceholderManager();
     }
 
-    public static boolean sendCommandMessage(CommandSender commandSender, String messagePath) {
-        return sendMessage(commandSender, "Commands.${messagePath}");
+    public static Optional<String> getCommandMessage(CommandSender commandSender, String messagePath, @Nullable String targetName, String label) {
+        return getFormattedMessage(commandSender, "Commands.${messagePath}", targetName, label);
     }
 
-    public static boolean sendCommandMessage(User user, String messagePath) {
-        return sendMessage(user, "Commands.${messagePath}");
+    public static Optional<String> getCommandMessage(User user, String messagePath, @Nullable String targetName, String label) {
+        return getCommandMessage(user.getCommandSender(), messagePath, targetName, label);
     }
 
-    public static boolean sendMessage(CommandSender commandSender, String messagePath) {
-        return sendMessage(commandSender, messagePath, null, null);
+    public static Optional<String> getNoPermissionMessage(CommandSender commandSender, String permission, @Nullable String targetName, String label) {
+        return getFormattedMessage(commandSender, "General.NoPermission", targetName, label)
+                .map(message -> message.replace("<PERMISSION>", PermissionManager.getPermission(permission)));
     }
 
-    public static boolean sendMessage(User user, String messagePath) {
-        return sendMessage(user.getCommandSender(), messagePath, null, null);
+    public static Optional<String> getNoPermissionMessage(User user, String permission, @Nullable String targetName, String label) {
+        return getNoPermissionMessage(user.getCommandSender(), permission, targetName, label);
     }
 
-    public static boolean sendMessage(CommandSender commandSender, String messagePath, @Nullable String targetName, @Nullable String label) {
-        var messageOptional = getMessage(messagePath);
-
-        return messageOptional.map(message -> sendMessageString(commandSender, message, targetName, label))
-                .orElse(false);
+    public static Optional<String> getFormattedMessage(CommandSender commandSender, String messagePath) {
+        return getFormattedMessage(commandSender, messagePath, null, null);
     }
 
-    public static boolean sendMessage(User user, String messagePath, @Nullable String targetName, @Nullable String label) {
-        return sendMessage(user.getCommandSender(), messagePath, targetName, label);
+    public static Optional<String> getFormattedMessage(User user, String messagePath) {
+        return getFormattedMessage(user.getCommandSender(), messagePath);
     }
 
-    public static boolean sendMessageString(CommandSender commandSender, String message) {
-        return sendMessageString(commandSender, message, null, null);
+    public static Optional<String> getFormattedMessage(CommandSender commandSender, String messagePath, @Nullable String targetName, @Nullable String label) {
+        return getMessage(messagePath).map(message -> formatMessage(message, commandSender, targetName, label));
     }
 
-    public static boolean sendMessageString(User user, String message) {
-        return sendMessageString(user.getCommandSender(), message, null, null);
+    public static Optional<String> getFormattedMessage(User user, String messagePath, @Nullable String targetName, @Nullable String label) {
+        return getFormattedMessage(user.getCommandSender(), messagePath, targetName, label);
     }
 
-    public static boolean sendMessageString(CommandSender commandSender, String message, @Nullable String targetName, @Nullable String label) {
-        if (message == null) return false;
-
-        message = _PlaceholderManager.applyPlaceholders(message, commandSender, targetName, label != null? label : "");
-        commandSender.sendMessage(message);
-
-        return true;
+    public static String formatMessage(String message, User user) {
+        return formatMessage(message, user.getCommandSender());
     }
 
-    public static boolean sendMessageString(User user, String message, @Nullable String targetName, @Nullable String label) {
-        return sendMessageString(user.getCommandSender(), message, targetName, label);
+    public static String formatMessage(String message, CommandSender commandSender) {
+        return formatMessage(message, commandSender, null, null);
+    }
+
+    public static String formatMessage(String message, User user, @Nullable String targetName, @Nullable String label) {
+        return formatMessage(message, user.getCommandSender(), targetName, label);
+    }
+
+    public static String formatMessage(String message, CommandSender commandSender, @Nullable String targetName, @Nullable String label) {
+        if (message == null) return "";
+        return _PlaceholderManager.applyPlaceholders(message, commandSender, targetName, label != null? label : "");
     }
 
     public static Optional<String> getMessage(String messagePath) {
         if (_ConfigReader == null) throw new IllegalStateException("MessageManager was not yet initialized. Call initialize first.");
 
-        messagePath = "Messages.${messagePath}";
+        messagePath = "Messages." + messagePath;
 
         var message = _ConfigReader.getString(messagePath, null);
 
         if (message == null) {
-            Bukkit.getLogger().warning("Message '${messagePath}' not found!");
+            Bukkit.getLogger().warning("Message '" + messagePath + "' not found!");
             return Optional.empty();
         }
 

@@ -3,17 +3,18 @@ package me.testaccount666.serversystem.userdata.listener;
 import me.testaccount666.serversystem.ServerSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class UserQuitListener implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onUserQuit(PlayerQuitEvent event) {
         var cachedUserOptional = ServerSystem.Instance.getUserManager().getUser(event.getPlayer());
 
         if (cachedUserOptional.isEmpty()) {
-            Bukkit.getLogger().warning("User '${event.getPlayer().getName()}' is not cached! This should not happen!");
+            Bukkit.getLogger().warning("(UserQuitListener) User '${event.getPlayer().getName()}' is not cached! This should not happen!");
             return;
         }
 

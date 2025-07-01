@@ -7,5 +7,11 @@ Permissions:
       Creative: "serversystem.command.gamemode.creative"
       Adventure: "serversystem.command.gamemode.adventure"
       Spectator: "serversystem.command.gamemode.spectator"
+    God:
+      Use: "serversystem.command.god.use"
+      Other: "serversystem.command.god.other"
+    Fly:
+      Use: "serversystem.command.fly.use"
+      Other: "serversystem.command.fly.other"
   Homes:
     MaxHomes: "server.homes."

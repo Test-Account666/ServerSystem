@@ -27,4 +27,8 @@ public class ConsoleBankAccount extends AbstractBankAccount {
     @Override
     public void delete() {
     }
+
+    @Override
+    public void save() {
+    }
 }

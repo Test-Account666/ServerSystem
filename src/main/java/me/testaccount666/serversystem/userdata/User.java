@@ -26,8 +26,7 @@ public class User extends OfflineUser {
     protected void loadBasicData() {
         super.loadBasicData();
 
-        userConfig.set("User.LastKnownName", getPlayer().getName());
-
+        name = getPlayer().getName();
         save();
     }
 
@@ -62,5 +61,15 @@ public class User extends OfflineUser {
      */
     public CommandSender getCommandSender() {
         return getPlayer();
+    }
+
+    /**
+     * Uses User#getCommandSender() to send a message.
+     * Used as a shortcut.
+     *
+     * @param message The message to be sent
+     */
+    public void sendMessage(String message) {
+        getCommandSender().sendMessage(message);
     }
 }

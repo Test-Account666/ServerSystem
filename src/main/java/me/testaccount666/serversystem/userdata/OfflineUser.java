@@ -1,5 +1,6 @@
 package me.testaccount666.serversystem.userdata;
 
+import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.userdata.home.HomeManager;
 import me.testaccount666.serversystem.userdata.money.AbstractBankAccount;
 import org.bukkit.Bukkit;
@@ -9,10 +10,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.math.BigInteger;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -71,6 +70,8 @@ public class OfflineUser {
         ignoredPlayers.addAll(ignoredPlayersList.stream().map(UUID::fromString).collect(Collectors.toSet()));
 
         homeManager = new HomeManager(this, userFile, userConfig);
+
+        bankAccount = ServerSystem.Instance.getEconomyManager().instantiateBankAccount(this, BigInteger.valueOf(0), userFile);
     }
 
     /**
@@ -90,6 +91,8 @@ public class OfflineUser {
 
         var ignoredPlayersList = ignoredPlayers.stream().map(UUID::toString).collect(Collectors.toList());
         userConfig.set("User.IgnoredPlayers", ignoredPlayersList);
+
+        bankAccount.save();
 
         try {
             userConfig.save(userFile);
@@ -125,5 +128,57 @@ public class OfflineUser {
      */
     public UUID getUuid() {
         return uuid;
+    }
+
+    public boolean isVanish() {
+        return isVanish;
+    }
+
+    public void setVanish(boolean vanish) {
+        isVanish = vanish;
+    }
+
+    public boolean isAcceptsMessages() {
+        return acceptsMessages;
+    }
+
+    public void setAcceptsMessages(boolean acceptsMessages) {
+        this.acceptsMessages = acceptsMessages;
+    }
+
+    public boolean isAcceptsTeleports() {
+        return acceptsTeleports;
+    }
+
+    public void setAcceptsTeleports(boolean acceptsTeleports) {
+        this.acceptsTeleports = acceptsTeleports;
+    }
+
+    public boolean isGodMode() {
+        return isGodMode;
+    }
+
+    public void setGodMode(boolean godMode) {
+        isGodMode = godMode;
+    }
+
+    public void setLogoutPosition(Location logoutPosition) {
+        this.logoutPosition = logoutPosition;
+    }
+
+    public Set<UUID> getIgnoredPlayers() {
+        return Collections.unmodifiableSet(ignoredPlayers);
+    }
+
+    public boolean isIgnoredPlayer(UUID uuid) {
+        return ignoredPlayers.contains(uuid);
+    }
+
+    public void addIgnoredPlayer(UUID uuid) {
+        ignoredPlayers.add(uuid);
+    }
+
+    public void removeIgnoredPlayer(UUID uuid) {
+        ignoredPlayers.remove(uuid);
     }
 }

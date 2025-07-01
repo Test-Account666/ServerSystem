@@ -1,0 +1,14 @@
+Economy:
+  Enabled: true
+  StartingBalance: "1000"
+  Format:
+    CurrencySymbol:
+      Singular: "$"
+      Plural: "$"
+    Separators:
+      Thousands: "."
+      Decimals: ","
+    MoneyFormat: "<MAJOR><DECIMAL_SEPARATOR><DECIMAL><CURRENCY>"
+  StorageType:
+    Value: "YAML"
+    Description: "How money is stored. Currently available: YAML, MySQL"

@@ -3,12 +3,25 @@ Messages:
     GameMode:
       Success: "Your gamemode has been changed to <GAMEMODE>."
       SuccessOther: "You have changed <TARGET>'s gamemode to <GAMEMODE>."
-      NoPermission: "You don't have permission to use this command."
-      NoPermissionOther: "You don't have permission to change other players' gamemode."
-      NotPlayer: "You must be a player to use this command on yourself."
       InvalidGameMode: "Invalid gamemode specified."
+    God:
+      Success:
+        Enabled: "You are now immortal."
+        Disabled: "You are no longer immortal."
+      SuccessOther:
+        Enabled: "<TARGET> is now immortal."
+        Disabled: "<TARGET> is no longer immortal."
+    Fly:
+      Success:
+        Enabled: "You can now fly."
+        Disabled: "You can no longer fly."
+      SuccessOther:
+        Enabled: "<TARGET> can now fly."
+        Disabled: "<TARGET> can no longer fly."
   General:
     Prefix: "ServerSystem » "
-    NoPermission: "You don't have permission to do this."
+    NoPermission: "You don't have permission to do this. (<PERMISSION>)"
     PlayerNotFound: "Player <TARGET> not found."
+    NotPlayer: "You must be a player to use this command on yourself."
     InvalidArguments: "Invalid arguments. Usage: <USAGE>"
+    ErrorOccurred: "An error occured. Please see logs for more information."

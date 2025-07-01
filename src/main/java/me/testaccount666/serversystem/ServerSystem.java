@@ -6,6 +6,7 @@ import me.testaccount666.serversystem.managers.config.ConfigurationManager;
 import me.testaccount666.serversystem.userdata.CachedUser;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.UserManager;
+import me.testaccount666.serversystem.userdata.money.EconomyManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -19,6 +20,7 @@ public final class ServerSystem extends JavaPlugin {
     private UserManager _userManager;
     private CommandManager _commandManager;
     private ListenerManager _listenerManager;
+    private EconomyManager _economyManager;
     private ConfigurationManager _configManager;
 
     @Override
@@ -34,6 +36,10 @@ public final class ServerSystem extends JavaPlugin {
             return;
         }
 
+        //TODO: Should this be inside UserManager?
+        //Load all users that are currently online
+        Bukkit.getOnlinePlayers().forEach(_userManager::getUser);
+
         _listenerManager.registerListeners();
         Bukkit.getScheduler().runTaskLater(this, _commandManager::registerCommands, 1);
     }
@@ -45,6 +51,7 @@ public final class ServerSystem extends JavaPlugin {
         _userManager = new UserManager();
         _commandManager = new CommandManager(_configManager.getCommandsConfig());
         _listenerManager = new ListenerManager();
+        _economyManager = new EconomyManager(_configManager.getEconomyConfig());
     }
 
     @Override
@@ -62,10 +69,14 @@ public final class ServerSystem extends JavaPlugin {
 
     /**
      * Gets the UserManager instance for this plugin.
-     * 
+     *
      * @return The UserManager instance that manages all user-related functionality
      */
     public UserManager getUserManager() {
         return _userManager;
+    }
+
+    public EconomyManager getEconomyManager() {
+        return _economyManager;
     }
 }

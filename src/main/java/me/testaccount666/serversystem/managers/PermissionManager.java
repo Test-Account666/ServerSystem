@@ -2,6 +2,7 @@ package me.testaccount666.serversystem.managers;
 
 import me.testaccount666.serversystem.managers.config.ConfigReader;
 import me.testaccount666.serversystem.managers.config.DefaultConfigReader;
+import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -20,6 +21,10 @@ public class PermissionManager {
 
     public static boolean hasCommandPermission(CommandSender commandSender, String permissionPath) {
         return hasPermission(commandSender, "Commands.${permissionPath}");
+    }
+
+    public static boolean hasCommandPermission(User commandSender, String permissionPath) {
+        return hasCommandPermission(commandSender.getCommandSender(), permissionPath);
     }
 
     public static boolean hasPermission(CommandSender commandSender, String permissionPath) {

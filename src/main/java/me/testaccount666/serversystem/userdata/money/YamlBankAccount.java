@@ -1,6 +1,6 @@
 package me.testaccount666.serversystem.userdata.money;
 
-import org.bukkit.configuration.InvalidConfigurationException;
+import me.testaccount666.serversystem.ServerSystem;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -22,8 +22,8 @@ public class YamlBankAccount extends AbstractBankAccount {
 
     @Override
     public BigDecimal getBalance() {
-        //TODO: Default balance
-        var balance = _fileConfig.getString("User.BankAccounts.${accountId.toString()}.Balance", "");
+        var balance = _fileConfig.getString("User.BankAccounts.${accountId.toString()}.Balance");
+        if (balance == null) balance = ServerSystem.Instance.getEconomyManager().getDefaultBalance();
 
         return new BigDecimal(balance);
     }
@@ -31,21 +31,27 @@ public class YamlBankAccount extends AbstractBankAccount {
     @Override
     public void setBalance(BigDecimal balance) {
         _fileConfig.set("User.BankAccounts.${accountId.toString()}.Balance", balance.toString());
-        save();
+        save(false);
     }
 
-    private void save() {
+    public void save(boolean setBalance) {
+        if (setBalance) _fileConfig.set("User.BankAccounts.${accountId.toString()}.Balance", getBalance().toString());
+
         try {
             _fileConfig.save(_userFile);
-            _fileConfig.load(_userFile);
-        } catch (IOException | InvalidConfigurationException exception) {
+        } catch (IOException exception) {
             throw new RuntimeException("Encountered error trying to save bank account '${accountId.toString()}' of user '${owner.toString()}'!", exception);
         }
     }
 
     @Override
+    public void save() {
+        save(true);
+    }
+
+    @Override
     public void delete() {
         _fileConfig.set("User.BankAccounts.${accountId.toString()}", null);
-        save();
+        save(false);
     }
 }

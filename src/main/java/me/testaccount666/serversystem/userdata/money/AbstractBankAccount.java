@@ -27,6 +27,8 @@ public abstract class AbstractBankAccount {
 
     public abstract void delete();
 
+    public abstract void save();
+
     public void deposit(BigDecimal amount) {
         setBalance(getBalance().add(amount));
     }

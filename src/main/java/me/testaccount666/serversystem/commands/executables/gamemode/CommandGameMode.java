@@ -42,13 +42,16 @@ public class CommandGameMode implements ServerSystemCommandExecutor {
 
         // Handle /gamemode <Mode> <Target> command
         if (arguments.length < 1) {
-            MessageManager.sendMessage(commandSender, "General.InvalidArguments", null, label);
+            MessageManager.getFormattedMessage(commandSender, "General.InvalidArguments", null, label).ifPresent(commandSender::sendMessage);
             return;
         }
 
         var gameModeOptional = parseGameMode(arguments[0]);
         if (gameModeOptional.isEmpty()) {
-            MessageManager.sendCommandMessage(commandSender, "GameMode.InvalidGameMode");
+            MessageManager.getCommandMessage(commandSender, "GameMode.InvalidGameMode", null, label).ifPresent(message -> {
+                message = message.replace("<GAMEMODE>", arguments[0]);
+                commandSender.sendMessage(message);
+            });
             return;
         }
 
@@ -56,8 +59,8 @@ public class CommandGameMode implements ServerSystemCommandExecutor {
     }
 
     private void handleGameModeCommand(User commandSender, GameMode gameMode, String[] arguments, String label) {
-        if (!PermissionManager.hasCommandPermission(commandSender.getCommandSender(), "GameMode.Use")) {
-            MessageManager.sendCommandMessage(commandSender, "GameMode.NoPermission");
+        if (!PermissionManager.hasCommandPermission(commandSender, "GameMode.Use")) {
+            MessageManager.getNoPermissionMessage(commandSender, "Commands.GameMode.Use", null, label).ifPresent(commandSender::sendMessage);
             return;
         }
 
@@ -68,8 +71,8 @@ public class CommandGameMode implements ServerSystemCommandExecutor {
             case SPECTATOR -> "GameMode.Spectator";
         };
 
-        if (!PermissionManager.hasCommandPermission(commandSender.getCommandSender(), gameModePermission)) {
-            MessageManager.sendCommandMessage(commandSender, "GameMode.NoPermission");
+        if (!PermissionManager.hasCommandPermission(commandSender, gameModePermission)) {
+            MessageManager.getNoPermissionMessage(commandSender, "Commands.${gameModePermission}", null, label).ifPresent(commandSender::sendMessage);
             return;
         }
 
@@ -77,20 +80,20 @@ public class CommandGameMode implements ServerSystemCommandExecutor {
 
         if (arguments.length == 0) {
             if (commandSender instanceof ConsoleUser) {
-                MessageManager.sendCommandMessage(commandSender, "GameMode.NotPlayer");
+                MessageManager.getFormattedMessage(commandSender, "General.NotPlayer", null, label).ifPresent(commandSender::sendMessage);
                 return;
             }
 
             targetPlayer = commandSender.getPlayer();
         } else {
-            if (!PermissionManager.hasCommandPermission(commandSender.getCommandSender(), "GameMode.Other")) {
-                MessageManager.sendCommandMessage(commandSender, "GameMode.NoPermissionOther");
+            if (!PermissionManager.hasCommandPermission(commandSender, "GameMode.Other")) {
+                MessageManager.getNoPermissionMessage(commandSender, "Commands.GameMode.Other", arguments[0], label).ifPresent(commandSender::sendMessage);
                 return;
             }
 
             targetPlayer = Bukkit.getPlayer(arguments[0]);
             if (targetPlayer == null) {
-                MessageManager.sendMessage(commandSender, "General.PlayerNotFound", arguments[0], label);
+                MessageManager.getFormattedMessage(commandSender, "General.PlayerNotFound", arguments[0], label).ifPresent(commandSender::sendMessage);
                 return;
             }
         }
@@ -100,11 +103,18 @@ public class CommandGameMode implements ServerSystemCommandExecutor {
         var gameModeName = MappingsData.GameMode().getGameModeName(gameMode).orElse(gameMode.name());
 
         var isSelf = targetPlayer == commandSender.getPlayer();
-        var messageKey = isSelf? "Commands.GameMode.Success" : "Commands.GameMode.SuccessOther";
+        var messageKey = isSelf? "GameMode.Success" : "GameMode.SuccessOther";
 
-        MessageManager.getMessage(messageKey).ifPresent(message -> {
-            var formatted = message.replace("<GAMEMODE>", gameModeName);
-            MessageManager.sendMessageString(commandSender, formatted, targetPlayer.getName(), label);
+        MessageManager.getCommandMessage(commandSender, messageKey, targetPlayer.getName(), label).ifPresent(message -> {
+            message = message.replace("<GAMEMODE>", gameModeName);
+            commandSender.sendMessage(message);
+        });
+
+        if (isSelf) return;
+        MessageManager.getCommandMessage(targetPlayer, "GameMode.Success", null, label).ifPresent(message -> {
+            message = message.replace("<GAMEMODE>", gameModeName);
+
+            targetPlayer.sendMessage(message);
         });
     }
 

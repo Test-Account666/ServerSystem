@@ -2,12 +2,13 @@ package me.testaccount666.serversystem.userdata.listener;
 
 import me.testaccount666.serversystem.ServerSystem;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 public class UserJoinListener implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onUserJoin(PlayerJoinEvent event) {
         var cachedUserOptional = ServerSystem.Instance.getUserManager().getUser(event.getPlayer());
 

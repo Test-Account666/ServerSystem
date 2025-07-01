@@ -15,3 +15,9 @@ Commands:
       gmsp:
         Enabled: true
         Aliases: "gmsp"
+  god:
+    Enabled: true
+    Aliases: "god"
+  fly:
+    Enabled: true
+    Aliases: "fly"
