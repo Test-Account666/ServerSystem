@@ -10,11 +10,6 @@ import me.testaccount666.serversystem.userdata.money.EconomyManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-/**
- * Main plugin class for ServerSystem.
- * This class serves as the entry point for the plugin and manages the initialization
- * and shutdown of all plugin components.
- */
 public final class ServerSystem extends JavaPlugin {
     public static ServerSystem Instance;
     private UserManager _userManager;
@@ -76,6 +71,11 @@ public final class ServerSystem extends JavaPlugin {
         return _userManager;
     }
 
+    /**
+     * Gets the EconomyManager instance for this plugin.
+     *
+     * @return The EconomyManager instance that manages all economy-related functionality (Mostly config)
+     */
     public EconomyManager getEconomyManager() {
         return _economyManager;
     }

@@ -15,9 +15,24 @@ import org.bukkit.entity.Player;
 import java.util.Arrays;
 import java.util.Optional;
 
+/**
+ * Command executor for the gamemode command.
+ * This command allows players to switch game modes for themselves or other players.
+ */
 @ServerSystemCommand(name = "gamemode", variants = {"gms", "gmc", "gma", "gmsp"}, tabCompleter = TabCompleterGameMode.class)
 public class CommandGameMode implements ServerSystemCommandExecutor {
 
+    /**
+     * Executes the gamemode command and it's variants.
+     * This method switches game modes for the target player if the sender has the required permissions.
+     * If no target is specified, the sender is used as the target.
+     *
+     * @param commandSender The user who executed the command
+     * @param command       The command that was executed
+     * @param label         The alias of the command that was used
+     * @param arguments     The arguments passed to the command, where, depending on the command variant,
+     *                      the first or second argument can be a target player name
+     */
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (command.getName().equalsIgnoreCase("gms")) {

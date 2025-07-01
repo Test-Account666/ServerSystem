@@ -14,9 +14,7 @@ public class ListenerManager {
     private final Set<Listener> _registeredListeners = new HashSet<>();
 
     public void registerListeners() {
-        try (var scan = new ClassGraph()
-                .enableAllInfo()
-                .scan()) {
+        try (var scan = new ClassGraph().enableAllInfo().scan()) {
             var listeners = scan.getClassesImplementing(Listener.class);
 
             listeners.forEach(listenerClass -> {

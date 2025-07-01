@@ -13,6 +13,11 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+/**
+ * Manages ServerSystem's user data.
+ * This class is responsible for creating, caching, and retrieving user objects,
+ * as well as cleaning up stale user data to prevent memory leaks.
+ */
 public class UserManager {
     public static final Path USER_DATA_PATH = Path.of("plugins", "ServerSystem", "UserData");
     private static final ConsoleUser _CONSOLE_USER = new ConsoleUser();
@@ -27,14 +32,34 @@ public class UserManager {
         return USER_DATA_PATH.resolve("${uuid}.yml").toFile();
     }
 
+    /**
+     * Gets the console user instance.
+     *
+     * @return The console user instance
+     */
     public static ConsoleUser getConsoleUser() {
         return _CONSOLE_USER;
     }
 
+    /**
+     * Gets a cached user by player instance.
+     *
+     * @param player The player to get the user for
+     * @return An Optional containing the cached user or empty if the user doesn't exist
+     */
     public Optional<CachedUser> getUser(Player player) {
         return getUser(player.getUniqueId());
     }
 
+    /**
+     * Gets a cached user by UUID.
+     * If the user is already cached, returns the cached instance.
+     * If the user is online but not cached, creates and caches a new online user.
+     * If the user is offline, creates and caches a new offline user.
+     *
+     * @param uuid The UUID of the user to get
+     * @return An Optional containing the cached user or empty if the user doesn't exist
+     */
     public Optional<CachedUser> getUser(UUID uuid) {
         if (_userUuidMap.containsKey(uuid)) {
             var cachedUser = _userUuidMap.get(uuid);
@@ -49,6 +74,15 @@ public class UserManager {
         return createOfflineUser(uuid);
     }
 
+    /**
+     * Gets a cached user by name.
+     * If the user is already cached, returns the cached instance.
+     * If the user is online but not cached, creates and caches a new online user.
+     * If the user is offline, creates and caches a new offline user.
+     *
+     * @param name The name of the user to get
+     * @return An Optional containing the cached user or empty if the user doesn't exist
+     */
     public Optional<CachedUser> getUser(String name) {
         if (_userMap.containsKey(name)) {
             var cachedUser = _userMap.get(name);
@@ -66,6 +100,12 @@ public class UserManager {
         return createOfflineUser(offlineUser.getUniqueId());
     }
 
+    /**
+     * Creates and caches an offline user for the given UUID.
+     *
+     * @param uuid The UUID of the user to create
+     * @return An Optional containing the cached user or empty if the user doesn't exist
+     */
     private Optional<CachedUser> createOfflineUser(UUID uuid) {
         var userFile = getUserFile(uuid);
         var user = new OfflineUser(userFile);
@@ -79,6 +119,12 @@ public class UserManager {
         return Optional.of(cachedUser);
     }
 
+    /**
+     * Creates and caches an online user for the given UUID.
+     *
+     * @param uuid The UUID of the user to create
+     * @return The cached user
+     */
     private CachedUser createOnlineUser(UUID uuid) {
         var userFile = getUserFile(uuid);
         var user = new User(userFile);
@@ -90,10 +136,19 @@ public class UserManager {
         return cachedUser;
     }
 
+    /**
+     * Gets a copy of all currently cached users.
+     *
+     * @return A set containing all cached users
+     */
     public Set<CachedUser> getCachedUsers() {
         return Set.copyOf(_userMap.values());
     }
 
+    /**
+     * Removes stale users from the cache to prevent memory leaks.
+     * This method is called periodically by a scheduled task.
+     */
     public void cleanStaleUsers() {
         var staleUsers = _userMap.values().stream().filter(CachedUser::isStale).collect(Collectors.toSet());
 

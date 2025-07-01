@@ -13,8 +13,22 @@ import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
+/**
+ * Command executor for the god command.
+ * This command allows players to toggle god mode (invulnerability) for themselves or other players.
+ */
 @ServerSystemCommand(name = "god")
 public class CommandGod implements ServerSystemCommandExecutor {
+    /**
+     * Executes the god command.
+     * This method toggles god mode (invulnerability) for the target player if the sender has the required permissions.
+     * If no target is specified, the sender is used as the target.
+     *
+     * @param commandSender The user who executed the command
+     * @param command       The command that was executed
+     * @param label         The alias of the command that was used
+     * @param arguments     The arguments passed to the command, where the first argument can be a target player name
+     */
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (!PermissionManager.hasCommandPermission(commandSender, "God.Use")) {
@@ -66,6 +80,17 @@ public class CommandGod implements ServerSystemCommandExecutor {
         MessageManager.getCommandMessage(targetPlayer, "God.Success." + (isGod? "Enabled" : "Disabled"), null, label).ifPresent(targetPlayer::sendMessage);
     }
 
+    //TODO: Nice Javadocs, but maybe throw this into a Utilities class
+
+    /**
+     * Gets the target player for the god command.
+     * If arguments are provided, tries to find a player with the name specified in the first argument.
+     * If no arguments are provided, uses the command sender as the target.
+     *
+     * @param commandSender The user who executed the command
+     * @param arguments     The arguments passed to the command
+     * @return An Optional containing the target player, or empty if the target player is not found
+     */
     private Optional<Player> getTargetPlayer(User commandSender, String... arguments) {
         if (arguments.length > 0) return Optional.ofNullable(Bukkit.getPlayer(arguments[0]));
 

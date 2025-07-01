@@ -27,6 +27,7 @@ import java.util.Map;
  */
 public class DefaultConfigReader implements ConfigReader {
     //TODO: Make sure nothing broke with the new implementation
+    // Edit: I think nothing broke, but more extensive testing is required
     private final Plugin _plugin;
     private final File _file;
     private final FileConfiguration _configuration;

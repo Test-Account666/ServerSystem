@@ -7,7 +7,6 @@ import org.bukkit.inventory.ItemStack;
 import java.io.File;
 
 public interface ConfigReader {
-    //TODO: Create NonValidationConfigReader
 
     FileConfiguration getConfiguration();
 
