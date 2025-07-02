@@ -28,15 +28,27 @@ public class MessageManager {
     }
 
     public static Optional<String> getCommandMessage(CommandSender commandSender, String messagePath, @Nullable String targetName, String label) {
-        return getFormattedMessage(commandSender, "Commands.${messagePath}", targetName, label);
+        return getCommandMessage(commandSender, messagePath, targetName, label, true);
+    }
+
+    public static Optional<String> getCommandMessage(CommandSender commandSender, String messagePath, @Nullable String targetName, String label, boolean addPrefix) {
+        return getFormattedMessage(commandSender, "Commands.${messagePath}", targetName, label, addPrefix);
     }
 
     public static Optional<String> getCommandMessage(User user, String messagePath, @Nullable String targetName, String label) {
         return getCommandMessage(user.getCommandSender(), messagePath, targetName, label);
     }
 
+    public static Optional<String> getCommandMessage(User user, String messagePath, @Nullable String targetName, String label, boolean addPrefix) {
+        return getCommandMessage(user.getCommandSender(), messagePath, targetName, label, addPrefix);
+    }
+
     public static Optional<String> getNoPermissionMessage(CommandSender commandSender, String permission, @Nullable String targetName, String label) {
-        return getFormattedMessage(commandSender, "General.NoPermission", targetName, label)
+        return getNoPermissionMessage(commandSender, permission, targetName, label, true);
+    }
+
+    public static Optional<String> getNoPermissionMessage(CommandSender commandSender, String permission, @Nullable String targetName, String label, boolean addPrefix) {
+        return getFormattedMessage(commandSender, "General.NoPermission", targetName, label, addPrefix)
                 .map(message -> message.replace("<PERMISSION>", PermissionManager.getPermission(permission)));
     }
 
@@ -44,36 +56,78 @@ public class MessageManager {
         return getNoPermissionMessage(user.getCommandSender(), permission, targetName, label);
     }
 
+    public static Optional<String> getNoPermissionMessage(User user, String permission, @Nullable String targetName, String label, boolean addPrefix) {
+        return getNoPermissionMessage(user.getCommandSender(), permission, targetName, label, addPrefix);
+    }
+
     public static Optional<String> getFormattedMessage(CommandSender commandSender, String messagePath) {
         return getFormattedMessage(commandSender, messagePath, null, null);
+    }
+
+    public static Optional<String> getFormattedMessage(CommandSender commandSender, String messagePath, boolean addPrefix) {
+        return getFormattedMessage(commandSender, messagePath, null, null, addPrefix);
     }
 
     public static Optional<String> getFormattedMessage(User user, String messagePath) {
         return getFormattedMessage(user.getCommandSender(), messagePath);
     }
 
+    public static Optional<String> getFormattedMessage(User user, String messagePath, boolean addPrefix) {
+        return getFormattedMessage(user.getCommandSender(), messagePath, addPrefix);
+    }
+
     public static Optional<String> getFormattedMessage(CommandSender commandSender, String messagePath, @Nullable String targetName, @Nullable String label) {
-        return getMessage(messagePath).map(message -> formatMessage(message, commandSender, targetName, label));
+        return getFormattedMessage(commandSender, messagePath, targetName, label, true);
+    }
+
+    public static Optional<String> getFormattedMessage(CommandSender commandSender, String messagePath, @Nullable String targetName, @Nullable String label, boolean addPrefix) {
+        return getMessage(messagePath).map(message -> formatMessage(message, commandSender, targetName, label, addPrefix));
     }
 
     public static Optional<String> getFormattedMessage(User user, String messagePath, @Nullable String targetName, @Nullable String label) {
         return getFormattedMessage(user.getCommandSender(), messagePath, targetName, label);
     }
 
+    public static Optional<String> getFormattedMessage(User user, String messagePath, @Nullable String targetName, @Nullable String label, boolean addPrefix) {
+        return getFormattedMessage(user.getCommandSender(), messagePath, targetName, label, addPrefix);
+    }
+
     public static String formatMessage(String message, User user) {
         return formatMessage(message, user.getCommandSender());
+    }
+
+    public static String formatMessage(String message, User user, boolean addPrefix) {
+        return formatMessage(message, user.getCommandSender(), addPrefix);
     }
 
     public static String formatMessage(String message, CommandSender commandSender) {
         return formatMessage(message, commandSender, null, null);
     }
 
+    public static String formatMessage(String message, CommandSender commandSender, boolean addPrefix) {
+        return formatMessage(message, commandSender, null, null, addPrefix);
+    }
+
     public static String formatMessage(String message, User user, @Nullable String targetName, @Nullable String label) {
         return formatMessage(message, user.getCommandSender(), targetName, label);
     }
 
+    public static String formatMessage(String message, User user, @Nullable String targetName, @Nullable String label, boolean addPrefix) {
+        return formatMessage(message, user.getCommandSender(), targetName, label, addPrefix);
+    }
+
     public static String formatMessage(String message, CommandSender commandSender, @Nullable String targetName, @Nullable String label) {
+        return formatMessage(message, commandSender, targetName, label, true);
+    }
+
+    public static String formatMessage(String message, CommandSender commandSender, @Nullable String targetName, @Nullable String label, boolean addPrefix) {
         if (message == null) return "";
+
+        if (addPrefix) {
+            var prefix = getMessage("General.Prefix").orElse("");
+            message = prefix + message;
+        }
+
         return _PlaceholderManager.applyPlaceholders(message, commandSender, targetName, label != null? label : "");
     }
 

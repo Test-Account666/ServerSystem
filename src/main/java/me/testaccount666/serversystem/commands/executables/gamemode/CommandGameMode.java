@@ -1,16 +1,13 @@
 package me.testaccount666.serversystem.commands.executables.gamemode;
 
+import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
-import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor;
-import me.testaccount666.serversystem.managers.MessageManager;
-import me.testaccount666.serversystem.managers.PermissionManager;
+import me.testaccount666.serversystem.commands.executables.AbstractPlayerTargetingCommand;
 import me.testaccount666.serversystem.managers.globaldata.MappingsData;
-import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
-import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -20,7 +17,7 @@ import java.util.Optional;
  * This command allows players to switch game modes for themselves or other players.
  */
 @ServerSystemCommand(name = "gamemode", variants = {"gms", "gmc", "gma", "gmsp"}, tabCompleter = TabCompleterGameMode.class)
-public class CommandGameMode implements ServerSystemCommandExecutor {
+public class CommandGameMode extends AbstractPlayerTargetingCommand {
 
     /**
      * Executes the gamemode command and it's variants.
@@ -57,27 +54,25 @@ public class CommandGameMode implements ServerSystemCommandExecutor {
 
         // Handle /gamemode <Mode> <Target> command
         if (arguments.length < 1) {
-            MessageManager.getFormattedMessage(commandSender, "General.InvalidArguments", null, label).ifPresent(commandSender::sendMessage);
+            //TODO: Add syntax
+            sendGeneralMessage(commandSender, "InvalidArguments", null, label, null);
             return;
         }
 
         var gameModeOptional = parseGameMode(arguments[0]);
         if (gameModeOptional.isEmpty()) {
-            MessageManager.getCommandMessage(commandSender, "GameMode.InvalidGameMode", null, label).ifPresent(message -> {
-                message = message.replace("<GAMEMODE>", arguments[0]);
-                commandSender.sendMessage(message);
-            });
+            sendCommandMessage(commandSender, "GameMode.InvalidGameMode", null, label,
+                    message -> replaceGameModePlaceholder(message, arguments[0]));
             return;
         }
 
-        handleGameModeCommand(commandSender, gameModeOptional.get(), arguments.length > 1? new String[]{arguments[1]} : new String[0], label);
+        var newArguments = arguments.length > 1? new String[]{arguments[1]} : new String[0];
+
+        handleGameModeCommand(commandSender, gameModeOptional.get(), newArguments, label);
     }
 
     private void handleGameModeCommand(User commandSender, GameMode gameMode, String[] arguments, String label) {
-        if (!PermissionManager.hasCommandPermission(commandSender, "GameMode.Use")) {
-            MessageManager.getNoPermissionMessage(commandSender, "Commands.GameMode.Use", null, label).ifPresent(commandSender::sendMessage);
-            return;
-        }
+        if (!checkBasePermission(commandSender, "GameMode.Use", label)) return;
 
         var gameModePermission = switch (gameMode) {
             case SURVIVAL -> "GameMode.Survival";
@@ -86,33 +81,20 @@ public class CommandGameMode implements ServerSystemCommandExecutor {
             case SPECTATOR -> "GameMode.Spectator";
         };
 
-        if (!PermissionManager.hasCommandPermission(commandSender, gameModePermission)) {
-            MessageManager.getNoPermissionMessage(commandSender, "Commands.${gameModePermission}", null, label).ifPresent(commandSender::sendMessage);
+        if (!checkBasePermission(commandSender, gameModePermission, label)) return;
+
+        if (handleConsoleWithNoTarget(commandSender, label, arguments)) return;
+
+        var targetPlayerOptional = getTargetPlayer(commandSender, arguments);
+
+        if (arguments.length > 0 && !checkOtherPermission(commandSender, "GameMode.Other", arguments[0], label)) return;
+
+        if (targetPlayerOptional.isEmpty()) {
+            if (arguments.length > 0) sendMissingPlayerMessage(commandSender, label, arguments[0]);
             return;
         }
 
-        Player targetPlayer;
-
-        if (arguments.length == 0) {
-            if (commandSender instanceof ConsoleUser) {
-                MessageManager.getFormattedMessage(commandSender, "General.NotPlayer", null, label).ifPresent(commandSender::sendMessage);
-                return;
-            }
-
-            targetPlayer = commandSender.getPlayer();
-        } else {
-            if (!PermissionManager.hasCommandPermission(commandSender, "GameMode.Other")) {
-                MessageManager.getNoPermissionMessage(commandSender, "Commands.GameMode.Other", arguments[0], label).ifPresent(commandSender::sendMessage);
-                return;
-            }
-
-            targetPlayer = Bukkit.getPlayer(arguments[0]);
-            if (targetPlayer == null) {
-                MessageManager.getFormattedMessage(commandSender, "General.PlayerNotFound", arguments[0], label).ifPresent(commandSender::sendMessage);
-                return;
-            }
-        }
-
+        var targetPlayer = targetPlayerOptional.get();
         targetPlayer.setGameMode(gameMode);
 
         var gameModeName = MappingsData.GameMode().getGameModeName(gameMode).orElse(gameMode.name());
@@ -120,17 +102,26 @@ public class CommandGameMode implements ServerSystemCommandExecutor {
         var isSelf = targetPlayer == commandSender.getPlayer();
         var messageKey = isSelf? "GameMode.Success" : "GameMode.SuccessOther";
 
-        MessageManager.getCommandMessage(commandSender, messageKey, targetPlayer.getName(), label).ifPresent(message -> {
-            message = message.replace("<GAMEMODE>", gameModeName);
-            commandSender.sendMessage(message);
-        });
+        sendCommandMessage(commandSender, messageKey, targetPlayer.getName(), label, message -> replaceGameModePlaceholder(message, gameModeName));
 
         if (isSelf) return;
-        MessageManager.getCommandMessage(targetPlayer, "GameMode.Success", null, label).ifPresent(message -> {
-            message = message.replace("<GAMEMODE>", gameModeName);
 
-            targetPlayer.sendMessage(message);
-        });
+        var targetUserOptional = ServerSystem.Instance.getUserManager().getUser(targetPlayer);
+
+        if (targetUserOptional.isEmpty()) {
+            Bukkit.getLogger().warning("(CommandGameMode) User '${targetPlayer.getName()}' is not cached! This should not happen!");
+            sendGeneralMessage(commandSender, "ErrorOccurred", targetPlayer.getName(), label, null);
+            return;
+        }
+
+        // Target should be online, so casting, without additional checks, should be safe
+        var targetUser = (User) targetUserOptional.get().getOfflineUser();
+
+        sendCommandMessage(targetUser, "GameMode.Success", null, label, message -> replaceGameModePlaceholder(message, gameModeName));
+    }
+
+    private String replaceGameModePlaceholder(String message, String gameModeName) {
+        return message.replace("<GAMEMODE>", gameModeName);
     }
 
     private Optional<GameMode> parseGameMode(String input) {

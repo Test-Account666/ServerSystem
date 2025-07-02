@@ -1,21 +1,27 @@
 package me.testaccount666.serversystem.managers.globaldata;
 
 import me.testaccount666.serversystem.managers.config.ConfigReader;
+import me.testaccount666.serversystem.utils.ChatColor;
 import org.bukkit.Bukkit;
 
 import java.util.*;
 
 public class MappingsData {
     private static GameMode _GameMode;
+    private static MessageColors _MessageColors;
 
     public static void initialize(ConfigReader config) {
         _GameMode = new GameMode(config);
+        _MessageColors = new MessageColors(config);
     }
 
     public static GameMode GameMode() {
         return _GameMode;
     }
 
+    public static MessageColors MessageColors() {
+        return _MessageColors;
+    }
 
     public static class GameMode {
         private final Map<org.bukkit.GameMode, String> _gameModeMappings = new HashMap<>();
@@ -39,6 +45,30 @@ public class MappingsData {
 
         public Set<String> getGameModeNames() {
             return new HashSet<>(_gameModeMappings.values());
+        }
+    }
+
+    public static class MessageColors {
+        private final Map<String, String> _messageColorMappings = new HashMap<>();
+
+        public MessageColors(ConfigReader config) {
+            var prefixColor = ChatColor.translateColorCodes(config.getString("Mappings.MessageColors.prefix"));
+            var separatorColor = ChatColor.translateColorCodes(config.getString("Mappings.MessageColors.separators"));
+            var messageColor = ChatColor.translateColorCodes(config.getString("Mappings.MessageColors.message"));
+            var highlightColor = ChatColor.translateColorCodes(config.getString("Mappings.MessageColors.highlight"));
+            var errorMessageColor = ChatColor.translateColorCodes(config.getString("Mappings.MessageColors.error.message"));
+            var errorHighlightColor = ChatColor.translateColorCodes(config.getString("Mappings.MessageColors.error.highlight"));
+
+            _messageColorMappings.put("Prefix", prefixColor);
+            _messageColorMappings.put("Separator", separatorColor);
+            _messageColorMappings.put("Message", messageColor);
+            _messageColorMappings.put("Highlight", highlightColor);
+            _messageColorMappings.put("ErrorMessage", errorMessageColor);
+            _messageColorMappings.put("ErrorHighlight", errorHighlightColor);
+        }
+
+        public Optional<String> getMessageColor(String colorId) {
+            return Optional.ofNullable(_messageColorMappings.getOrDefault(colorId, null));
         }
     }
 }

@@ -4,4 +4,12 @@ Mappings:
     creative: "Creative"
     adventure: "Adventure"
     spectator: "Spectator"
+  MessageColors:
+    prefix: "&#7FBF06"
+    separators: "&8"
+    message: "&7"
+    highlight: "&2"
+    error:
+      message: "&c"
+      highlight: "&4"
 language: "en"

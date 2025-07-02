@@ -1,27 +1,27 @@
 Messages:
   Commands:
     GameMode:
-      Success: "Your gamemode has been changed to <GAMEMODE>."
-      SuccessOther: "You have changed <TARGET>'s gamemode to <GAMEMODE>."
-      InvalidGameMode: "Invalid gamemode specified."
+      Success: "Your gamemode has been changed to <Color:Highlight><GAMEMODE><Color:Message>."
+      SuccessOther: "You have changed <Color:Highlight><TARGET>'s <Color:Message>gamemode to <Color:Highlight><GAMEMODE><Color:Message>."
+      InvalidGameMode: "<Color:Error.Message>Invalid gamemode specified."
     God:
       Success:
         Enabled: "You are now immortal."
         Disabled: "You are no longer immortal."
       SuccessOther:
-        Enabled: "<TARGET> is now immortal."
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>is now immortal."
         Disabled: "<TARGET> is no longer immortal."
     Fly:
       Success:
         Enabled: "You can now fly."
         Disabled: "You can no longer fly."
       SuccessOther:
-        Enabled: "<TARGET> can now fly."
-        Disabled: "<TARGET> can no longer fly."
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>can now fly."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>can no longer fly."
   General:
-    Prefix: "ServerSystem » "
-    NoPermission: "You don't have permission to do this. (<PERMISSION>)"
-    PlayerNotFound: "Player <TARGET> not found."
-    NotPlayer: "You must be a player to use this command on yourself."
-    InvalidArguments: "Invalid arguments. Usage: <USAGE>"
-    ErrorOccurred: "An error occured. Please see logs for more information."
+    Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
+    NoPermission: "<Color:Error.Message>You don't have permission to do this. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"
+    PlayerNotFound: "<Color:Error.Message>Player <Color:Error.Highlight><TARGET> <Color:Error.Message>not found."
+    NotPlayer: "<Color:Error.Message>You must be a player to use this command on yourself."
+    InvalidArguments: "<Color:Error.Message>Invalid arguments. Usage: <Color:Error.Highlight><USAGE>"
+    ErrorOccurred: "<Color:Error.Message>An error occured. Please see logs for more information."
