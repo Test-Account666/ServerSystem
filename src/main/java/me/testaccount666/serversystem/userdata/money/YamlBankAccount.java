@@ -2,7 +2,6 @@ package me.testaccount666.serversystem.userdata.money;
 
 import me.testaccount666.serversystem.ServerSystem;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,10 +13,10 @@ public class YamlBankAccount extends AbstractBankAccount {
     private final File _userFile;
     private final FileConfiguration _fileConfig;
 
-    public YamlBankAccount(UUID owner, BigInteger accountId, File userFile) {
+    public YamlBankAccount(UUID owner, BigInteger accountId, File userFile, FileConfiguration userConfig) {
         super(owner, accountId);
         _userFile = userFile;
-        _fileConfig = YamlConfiguration.loadConfiguration(userFile);
+        _fileConfig = userConfig;
     }
 
     @Override

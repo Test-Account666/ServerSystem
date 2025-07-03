@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -30,6 +31,11 @@ public class ConsoleUser extends User {
     @Override
     public Player getPlayer() {
         return null;
+    }
+
+    @Override
+    public Optional<String> getName() {
+        return Optional.of(name);
     }
 
     @Override

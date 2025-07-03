@@ -3,6 +3,7 @@ package me.testaccount666.serversystem;
 import me.testaccount666.serversystem.commands.management.CommandManager;
 import me.testaccount666.serversystem.listener.management.ListenerManager;
 import me.testaccount666.serversystem.managers.config.ConfigurationManager;
+import me.testaccount666.serversystem.managers.database.DatabaseManager;
 import me.testaccount666.serversystem.userdata.CachedUser;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.UserManager;
@@ -17,6 +18,7 @@ public final class ServerSystem extends JavaPlugin {
     private ListenerManager _listenerManager;
     private EconomyManager _economyManager;
     private ConfigurationManager _configManager;
+    private DatabaseManager _databaseManager;
 
     @Override
     public void onEnable() {
@@ -46,7 +48,8 @@ public final class ServerSystem extends JavaPlugin {
         _userManager = new UserManager();
         _commandManager = new CommandManager(_configManager.getCommandsConfig());
         _listenerManager = new ListenerManager();
-        _economyManager = new EconomyManager(_configManager.getEconomyConfig());
+        _databaseManager = new DatabaseManager(_configManager.getEconomyConfig());
+        _economyManager = new EconomyManager(_configManager.getEconomyConfig(), _databaseManager);
     }
 
     @Override
@@ -56,6 +59,8 @@ public final class ServerSystem extends JavaPlugin {
         if (_commandManager != null) _commandManager.unregisterCommands();
 
         if (_listenerManager != null) _listenerManager.unregisterListeners();
+
+        if (_databaseManager != null) _databaseManager.shutdown();
     }
 
     private void saveAllUsers() {
@@ -78,5 +83,14 @@ public final class ServerSystem extends JavaPlugin {
      */
     public EconomyManager getEconomyManager() {
         return _economyManager;
+    }
+
+    /**
+     * Gets the DatabaseManager instance for this plugin.
+     *
+     * @return The DatabaseManager instance that manages database connections
+     */
+    public DatabaseManager getDatabaseManager() {
+        return _databaseManager;
     }
 }

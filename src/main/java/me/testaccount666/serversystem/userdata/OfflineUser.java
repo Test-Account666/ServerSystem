@@ -71,7 +71,11 @@ public class OfflineUser {
 
         homeManager = new HomeManager(this, userFile, userConfig);
 
-        bankAccount = ServerSystem.Instance.getEconomyManager().instantiateBankAccount(this, BigInteger.valueOf(0), userFile);
+        bankAccount = ServerSystem.Instance.getEconomyManager().instantiateBankAccount(this, BigInteger.valueOf(0), userFile, userConfig);
+    }
+
+    public AbstractBankAccount getBankAccount() {
+        return bankAccount;
     }
 
     /**
@@ -88,6 +92,7 @@ public class OfflineUser {
         userConfig.set("User.IsGodMode", isGodMode);
         userConfig.set("User.AcceptsTeleports", acceptsTeleports);
         userConfig.set("User.AcceptsMessages", acceptsMessages);
+        userConfig.set("User.PlayerLanguage", playerLanguage);
 
         var ignoredPlayersList = ignoredPlayers.stream().map(UUID::toString).collect(Collectors.toList());
         userConfig.set("User.IgnoredPlayers", ignoredPlayersList);

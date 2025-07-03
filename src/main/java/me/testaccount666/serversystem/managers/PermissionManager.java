@@ -33,7 +33,9 @@ public class PermissionManager {
     }
 
     public static boolean hasPermission(CommandSender commandSender, String permissionPath, boolean sendFailInfo) {
-        var permission = getPermission(permissionPath);
+        if (!isPermissionRequired(permissionPath)) return true;
+
+        var permission = getPermission("${permissionPath}.Value");
 
         return hasPermissionString(commandSender, permission, sendFailInfo);
     }
@@ -50,6 +52,14 @@ public class PermissionManager {
             Bukkit.getLogger().info("${commandSender.getName()} has failed a permission check! Permission: ${permission}");
 
         return hasPermission;
+    }
+
+    private static boolean isPermissionRequired(String permissionPath) {
+        if (_ConfigReader == null) throw new IllegalStateException("PermissionManager was not yet initialized. Call initialize first.");
+
+        permissionPath = "Permissions.${permissionPath}.Required";
+
+        return _ConfigReader.getBoolean(permissionPath, true);
     }
 
     public static String getPermission(String permissionPath) {

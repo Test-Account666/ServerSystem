@@ -28,3 +28,9 @@ Commands:
       teleportposition:
         Enabled: true
         Aliases: "tppos"
+  balance:
+    Enabled: true
+    Aliases: "money, balance"
+  pay:
+    Enabled: true
+    Aliases: "pay"

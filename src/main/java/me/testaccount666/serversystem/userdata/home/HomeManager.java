@@ -137,6 +137,8 @@ public class HomeManager {
     public Optional<Integer> getMaxHomeCount() {
         if (!(_owner instanceof User user)) return Optional.empty();
 
+        if (PermissionManager.hasPermission(user.getPlayer(), "Homes.Unlimited", false)) return Optional.of(Integer.MAX_VALUE);
+
         var defaultValue = DefaultsData.Home().getDefaultMaxHomes();
         var maxHomes = -1;
 

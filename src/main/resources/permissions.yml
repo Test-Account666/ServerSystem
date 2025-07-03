@@ -1,24 +1,70 @@
 Permissions:
   Commands:
     GameMode:
-      Use: "serversystem.command.gamemode.use"
-      Other: "serversystem.command.gamemode.other"
-      Survival: "serversystem.command.gamemode.survival"
-      Creative: "serversystem.command.gamemode.creative"
-      Adventure: "serversystem.command.gamemode.adventure"
-      Spectator: "serversystem.command.gamemode.spectator"
+      Use:
+        Required: true
+        Value: "serversystem.command.gamemode.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.gamemode.other"
+      Survival:
+        Required: true
+        Value: "serversystem.command.gamemode.survival"
+      Creative:
+        Required: true
+        Value: "serversystem.command.gamemode.creative"
+      Adventure:
+        Required: true
+        Value: "serversystem.command.gamemode.adventure"
+      Spectator:
+        Required: true
+        Value: "serversystem.command.gamemode.spectator"
     God:
-      Use: "serversystem.command.god.use"
-      Other: "serversystem.command.god.other"
+      Use:
+        Required: true
+        Value: "serversystem.command.god.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.god.other"
     Fly:
-      Use: "serversystem.command.fly.use"
-      Other: "serversystem.command.fly.other"
+      Use:
+        Required: true
+        Value: "serversystem.command.fly.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.fly.other"
     Teleport:
-      Use: "serversystem.command.teleport.use"
-      Other: "serversystem.command.teleport.other"
+      Use:
+        Required: true
+        Value: "serversystem.command.teleport.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.teleport.other"
     TeleportPosition:
-      Use: "serversystem.command.teleportposition.use"
-      Other: "serversystem.command.teleportposition.other"
-      World: "serversystem.command.teleportposition.world"
+      Use:
+        Required: true
+        Value: "serversystem.command.teleportposition.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.teleportposition.other"
+      World:
+        Required: true
+        Value: "serversystem.command.teleportposition.world"
+    Balance:
+      Use:
+        Required: false
+        Value: "serversystem.command.balance.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.balance.other"
+    Pay:
+      Use:
+        Required: false
+        Value: "serversystem.command.pay.use"
   Homes:
-    MaxHomes: "server.homes."
+    MaxHomes:
+      Required: true
+      Value: "server.homes."
+    Unlimited:
+      Required: true
+      Value: "server.homes.unlimited"

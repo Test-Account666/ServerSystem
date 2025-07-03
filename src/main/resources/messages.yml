@@ -26,6 +26,15 @@ Messages:
       SuccessOther: "You teleported <Color:Highlight><TARGET> <Color:Message>to <Color:Highlight>X:<X> Y:<Y> Z:<Z> World:<WORLD><Color:Message>."
       InvalidLocation: "<Color:Error.Message>Invalid location specified."
       OutsideBorder: "<Color:Error.Message>Specified location is outside the world border."
+    Balance:
+      Success: "Your balance is <Color:Highlight><BALANCE><Color:Message>."
+      SuccessOther: "<Color:Highlight><TARGET>'s <Color:Message>balance is <Color:Highlight><BALANCE><Color:Message>."
+    Pay:
+      Success: "You sent <Color:Highlight><AMOUNT> <Color:Message>to <Color:Highlight><TARGET><Color:Message>."
+      SuccessOther: "You received <Color:Highlight><AMOUNT> <Color:Message>from <Color:Highlight><TARGET><Color:Message>."
+      CannotPaySelf: "<Color:Error.Message>You cannot pay yourself."
+      NotEnoughMoney: "<Color:Error.Message>You do not have enough money."
+      InvalidAmount: "<Color:Error.Message>Invalid amount specified."
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>You don't have permission to do this. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"

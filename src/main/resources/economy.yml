@@ -12,3 +12,10 @@ Economy:
   StorageType:
     Value: "YAML"
     Description: "How money is stored. Currently available: YAML, MySQL"
+  MySQL:
+    Host: "127.0.0.1"
+    Port: 3306
+    Database: "serversystem"
+    Username: "economy"
+    Password: "password"
+    UseSSL: false
