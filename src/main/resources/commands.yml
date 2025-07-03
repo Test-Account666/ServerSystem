@@ -34,3 +34,25 @@ Commands:
   pay:
     Enabled: true
     Aliases: "pay"
+  workbench:
+    Enabled: true
+    Aliases: "workbench, craft, wb"
+    Variants:
+      anvil:
+        Enabled: true
+        Aliases: "anvil"
+      smithing:
+        Enabled: true
+        Aliases: "smithing"
+      loom:
+        Enabled: true
+        Aliases: "loom"
+      grindstone:
+        Enabled: true
+        Aliases: "grindstone"
+      cartography:
+        Enabled: true
+        Aliases: "cartography"
+      stonecutter:
+        Enabled: true
+        Aliases: "stonecutter"

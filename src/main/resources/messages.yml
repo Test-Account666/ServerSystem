@@ -39,6 +39,6 @@ Messages:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>You don't have permission to do this. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"
     PlayerNotFound: "<Color:Error.Message>Player <Color:Error.Highlight><TARGET> <Color:Error.Message>not found."
-    NotPlayer: "<Color:Error.Message>You must be a player to use this command on yourself."
+    NotPlayer: "<Color:Error.Message>You must be a player to use this command."
     InvalidArguments: "<Color:Error.Message>Invalid arguments. Usage: <Color:Error.Highlight><USAGE>"
     ErrorOccurred: "<Color:Error.Message>An error occured. Please see logs for more information."

@@ -8,8 +8,11 @@ import me.testaccount666.serversystem.userdata.CachedUser;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.UserManager;
 import me.testaccount666.serversystem.userdata.money.EconomyManager;
+import me.testaccount666.serversystem.utils.Version;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.logging.Level;
 
 public final class ServerSystem extends JavaPlugin {
     public static ServerSystem Instance;
@@ -19,6 +22,16 @@ public final class ServerSystem extends JavaPlugin {
     private EconomyManager _economyManager;
     private ConfigurationManager _configManager;
     private DatabaseManager _databaseManager;
+
+    public static Version getServerVersion() {
+        var version = Bukkit.getVersion();
+
+        version = version.substring(version.indexOf("MC: ") + 4, version.indexOf(")"));
+
+        Bukkit.getLogger().log(Level.FINE, "Server version: ${version}");
+
+        return new Version(version);
+    }
 
     @Override
     public void onEnable() {

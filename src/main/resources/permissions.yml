@@ -61,6 +61,34 @@ Permissions:
       Use:
         Required: false
         Value: "serversystem.command.pay.use"
+    Workbench:
+      Use:
+        Required: true
+        Value: "serversystem.command.workbench.use"
+    Anvil:
+      Use:
+        Required: true
+        Value: "serversystem.command.anvil.use"
+    Smithing:
+      Use:
+        Required: true
+        Value: "serversystem.command.smithing.use"
+    Loom:
+      Use:
+        Required: true
+        Value: "serversystem.command.loom.use"
+    Grindstone:
+      Use:
+        Required: true
+        Value: "serversystem.command.grindstone.use"
+    Cartography:
+      Use:
+        Required: true
+        Value: "serversystem.command.cartography.use"
+    Stonecutter:
+      Use:
+        Required: true
+        Value: "serversystem.command.stonecutter.use"
   Homes:
     MaxHomes:
       Required: true
