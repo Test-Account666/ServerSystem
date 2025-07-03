@@ -33,10 +33,6 @@ public final class ServerSystem extends JavaPlugin {
             return;
         }
 
-        //TODO: Should this be inside UserManager?
-        //Load all users that are currently online
-        Bukkit.getOnlinePlayers().forEach(_userManager::getUser);
-
         _listenerManager.registerListeners();
         Bukkit.getScheduler().runTaskLater(this, _commandManager::registerCommands, 1);
     }

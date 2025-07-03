@@ -26,6 +26,8 @@ public class UserManager {
 
     public UserManager() {
         Bukkit.getScheduler().scheduleAsyncRepeatingTask(ServerSystem.Instance, this::cleanStaleUsers, 15 * 20 * 60, 15 * 20 * 60); // 15 Minutes
+
+        Bukkit.getOnlinePlayers().forEach(this::getUser);
     }
 
     private static File getUserFile(UUID uuid) {
