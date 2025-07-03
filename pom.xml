@@ -6,7 +6,7 @@
 
     <groupId>me.testaccount666</groupId>
     <artifactId>ServerSystem</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.0.${buildNumber}</version>
     <packaging>jar</packaging>
 
     <name>ServerSystem</name>
@@ -17,9 +17,55 @@
         <manifold.version>2025.1.24</manifold.version>
     </properties>
 
+    <scm>
+        <connection>scm:git:${project.basedir}</connection>
+        <developerConnection>scm:git:${project.basedir}</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+
     <build>
         <defaultGoal>clean package</defaultGoal>
         <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <copy file="${project.build.directory}/${project.artifactId}-${project.version}.jar"
+                                      tofile="${project.build.directory}/${project.artifactId}.jar"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <doCheck>false</doCheck>
+                    <doUpdate>false</doUpdate>
+                    <shortRevisionLength>8</shortRevisionLength>
+                    <revisionOnScmFailure>unknown</revisionOnScmFailure>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
