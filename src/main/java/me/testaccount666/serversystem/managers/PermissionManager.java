@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 
+//TODO: Handle deactivation of permissions
 public class PermissionManager {
     private static final File _PERMISSION_FILE = Path.of("plugins", "ServerSystem", "permissions.yml").toFile();
     private static ConfigReader _ConfigReader;

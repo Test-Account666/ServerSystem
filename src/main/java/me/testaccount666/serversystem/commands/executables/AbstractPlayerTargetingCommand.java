@@ -1,5 +1,6 @@
 package me.testaccount666.serversystem.commands.executables;
 
+import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor;
 import me.testaccount666.serversystem.managers.MessageManager;
 import me.testaccount666.serversystem.managers.PermissionManager;
@@ -88,15 +89,15 @@ public abstract class AbstractPlayerTargetingCommand implements ServerSystemComm
      * Handles the case when the console executes a command without specifying a target player at the given index.
      * Sends a message to the console indicating that a player target is required.
      *
-     * @param commandSender The user who executed the command
-     * @param label         The command label that was used
-     * @param index         The index in the arguments array to look for the player name
-     * @param arguments     The arguments passed to the command
+     * @param commandSender  The user who executed the command
+     * @param label          The command label that was used
+     * @param expectedLength The array length expected with target argument -1
+     * @param arguments      The arguments passed to the command
      * @return true if the command was executed by console without a target, false otherwise
      */
-    protected boolean handleConsoleWithNoTarget(User commandSender, String label, int index, String... arguments) {
-        if (arguments.length <= index && commandSender instanceof ConsoleUser) {
-            sendGeneralMessage(commandSender, "General.NotPlayer", null, label, null);
+    protected boolean handleConsoleWithNoTarget(User commandSender, String label, int expectedLength, String... arguments) {
+        if (arguments.length <= expectedLength && commandSender instanceof ConsoleUser) {
+            sendGeneralMessage(commandSender, "NotPlayer", null, label, null);
             return true;
         }
         return false;
@@ -234,5 +235,17 @@ public abstract class AbstractPlayerTargetingCommand implements ServerSystemComm
                 .map(message -> messageModifier != null? messageModifier.apply(message) : message)
                 .map(message -> MessageManager.formatMessage(message, recipient, targetName, label, addPrefix))
                 .ifPresent(recipient::sendMessage);
+    }
+
+    protected Optional<User> validateAndGetUser(User commandSender, Player player, String label, String context) {
+        var userOptional = ServerSystem.Instance.getUserManager().getUser(player);
+
+        if (userOptional.isEmpty()) {
+            Bukkit.getLogger().warning("(Command${context}) User '${player.getName()}' is not cached! This should not happen!");
+            sendGeneralMessage(commandSender, "ErrorOccurred", player.getName(), label, null);
+            return Optional.empty();
+        }
+
+        return Optional.of((User) userOptional.get().getOfflineUser());
     }
 }

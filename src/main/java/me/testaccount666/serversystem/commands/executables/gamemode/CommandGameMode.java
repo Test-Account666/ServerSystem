@@ -1,11 +1,9 @@
 package me.testaccount666.serversystem.commands.executables.gamemode;
 
-import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractPlayerTargetingCommand;
 import me.testaccount666.serversystem.managers.globaldata.MappingsData;
 import me.testaccount666.serversystem.userdata.User;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 
@@ -106,16 +104,10 @@ public class CommandGameMode extends AbstractPlayerTargetingCommand {
 
         if (isSelf) return;
 
-        var targetUserOptional = ServerSystem.Instance.getUserManager().getUser(targetPlayer);
+        var targetUserOptional = validateAndGetUser(commandSender, targetPlayer, label, "GameMode");
+        if (targetUserOptional.isEmpty()) return;
 
-        if (targetUserOptional.isEmpty()) {
-            Bukkit.getLogger().warning("(CommandGameMode) User '${targetPlayer.getName()}' is not cached! This should not happen!");
-            sendGeneralMessage(commandSender, "ErrorOccurred", targetPlayer.getName(), label, null);
-            return;
-        }
-
-        // Target should be online, so casting, without additional checks, should be safe
-        var targetUser = (User) targetUserOptional.get().getOfflineUser();
+        var targetUser = targetUserOptional.get();
 
         sendCommandMessage(targetUser, "GameMode.Success", null, label, message -> replaceGameModePlaceholder(message, gameModeName));
     }

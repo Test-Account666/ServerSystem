@@ -13,5 +13,12 @@ Permissions:
     Fly:
       Use: "serversystem.command.fly.use"
       Other: "serversystem.command.fly.other"
+    Teleport:
+      Use: "serversystem.command.teleport.use"
+      Other: "serversystem.command.teleport.other"
+    TeleportPosition:
+      Use: "serversystem.command.teleportposition.use"
+      Other: "serversystem.command.teleportposition.other"
+      World: "serversystem.command.teleportposition.world"
   Homes:
     MaxHomes: "server.homes."

@@ -18,6 +18,14 @@ Messages:
       SuccessOther:
         Enabled: "<Color:Highlight><TARGET> <Color:Message>can now fly."
         Disabled: "<Color:Highlight><TARGET> <Color:Message>can no longer fly."
+    Teleport:
+      Success: "You teleported yourself to <Color:Highlight><TARGET><Color:Message>."
+      SuccessOther: "You teleported <Color:Highlight><TARGET> <Color:Message>to <Color:Highlight><TARGET2><Color:Message>."
+    TeleportPosition:
+      Success: "You teleported yourself to <Color:Highlight>X:<X> Y:<Y> Z:<Z> World:<WORLD><Color:Message>."
+      SuccessOther: "You teleported <Color:Highlight><TARGET> <Color:Message>to <Color:Highlight>X:<X> Y:<Y> Z:<Z> World:<WORLD><Color:Message>."
+      InvalidLocation: "<Color:Error.Message>Invalid location specified."
+      OutsideBorder: "<Color:Error.Message>Specified location is outside the world border."
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>You don't have permission to do this. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"

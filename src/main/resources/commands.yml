@@ -21,3 +21,10 @@ Commands:
   fly:
     Enabled: true
     Aliases: "fly"
+  teleport:
+    Enabled: true
+    Aliases: "teleport, tp"
+    Variants:
+      teleportposition:
+        Enabled: true
+        Aliases: "tppos"

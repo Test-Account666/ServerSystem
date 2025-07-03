@@ -1,10 +1,8 @@
 package me.testaccount666.serversystem.commands.executables.god;
 
-import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractPlayerTargetingCommand;
 import me.testaccount666.serversystem.userdata.User;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 
 /**
@@ -37,16 +35,11 @@ public class CommandGod extends AbstractPlayerTargetingCommand {
         }
 
         var targetPlayer = targetPlayerOptional.get();
-        var targetUserOptional = ServerSystem.Instance.getUserManager().getUser(targetPlayer);
 
-        if (targetUserOptional.isEmpty()) {
-            Bukkit.getLogger().warning("(CommandGod) User '${targetPlayer.getName()}' is not cached! This should not happen!");
-            sendGeneralMessage(commandSender, "ErrorOccurred", targetPlayer.getName(), label, null);
-            return;
-        }
+        var targetUserOptional = validateAndGetUser(commandSender, targetPlayer, label, "God");
+        if (targetUserOptional.isEmpty()) return;
 
-        // Target should be online, so casting, without additional checks, should be safe
-        var targetUser = (User) targetUserOptional.get().getOfflineUser();
+        var targetUser = targetUserOptional.get();
         var isSelf = targetUser == commandSender;
 
         if (!isSelf && !checkOtherPermission(commandSender, "God.Other", targetPlayer.getName(), label)) return;
