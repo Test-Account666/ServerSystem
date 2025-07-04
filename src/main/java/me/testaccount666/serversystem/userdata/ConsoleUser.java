@@ -18,7 +18,7 @@ public class ConsoleUser extends User {
     public static final UUID CONSOLE_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     protected ConsoleUser() {
-        super(UserManager.USER_DATA_PATH.resolve("${CONSOLE_UUID}.yml").toFile());
+        super(UserManager.USER_DATA_PATH.resolve("${CONSOLE_UUID}.yml.gz").toFile());
     }
 
     @Override

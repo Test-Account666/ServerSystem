@@ -1,6 +1,7 @@
 package me.testaccount666.serversystem.commands.executables.gamemode;
 
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabCompleter;
+import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.managers.globaldata.MappingsData;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
@@ -13,6 +14,8 @@ public class TabCompleterGameMode implements ServerSystemTabCompleter {
 
     @Override
     public Optional<List<String>> tabComplete(User commandSender, Command command, String label, String... arguments) {
+        if (!PermissionManager.hasPermission(commandSender.getCommandSender(), "Commands.GameMode.Use", false)) return Optional.empty();
+
         if (command.getName().equalsIgnoreCase("gamemode")) return handleGameModeCommand(arguments);
 
         return arguments.length == 1? Optional.empty() : Optional.of(List.of());

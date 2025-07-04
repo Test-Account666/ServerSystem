@@ -27,6 +27,9 @@ public class User extends OfflineUser {
         super.loadBasicData();
 
         name = getPlayer().getName();
+        lastSeen = System.currentTimeMillis();
+        lastKnownIp = getPlayer().getAddress().getAddress().getHostAddress();
+
         save();
     }
 

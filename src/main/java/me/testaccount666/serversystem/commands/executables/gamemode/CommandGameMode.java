@@ -1,7 +1,7 @@
 package me.testaccount666.serversystem.commands.executables.gamemode;
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
-import me.testaccount666.serversystem.commands.executables.AbstractPlayerTargetingCommand;
+import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.managers.globaldata.MappingsData;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.GameMode;
@@ -15,7 +15,7 @@ import java.util.Optional;
  * This command allows players to switch game modes for themselves or other players.
  */
 @ServerSystemCommand(name = "gamemode", variants = {"gms", "gmc", "gma", "gmsp"}, tabCompleter = TabCompleterGameMode.class)
-public class CommandGameMode extends AbstractPlayerTargetingCommand {
+public class CommandGameMode extends AbstractServerSystemCommand {
 
     /**
      * Executes the gamemode command and it's variants.
@@ -83,16 +83,16 @@ public class CommandGameMode extends AbstractPlayerTargetingCommand {
 
         if (handleConsoleWithNoTarget(commandSender, label, arguments)) return;
 
-        var targetPlayerOptional = getTargetPlayer(commandSender, arguments);
+        var targetUserOptional = getTargetUser(commandSender, arguments);
 
-        if (arguments.length > 0 && !checkOtherPermission(commandSender, "GameMode.Other", arguments[0], label)) return;
-
-        if (targetPlayerOptional.isEmpty()) {
-            if (arguments.length > 0) sendMissingPlayerMessage(commandSender, label, arguments[0]);
+        if (targetUserOptional.isEmpty()) {
+            sendMissingPlayerMessage(commandSender, label, arguments[0]);
             return;
         }
 
-        var targetPlayer = targetPlayerOptional.get();
+        var targetUser = targetUserOptional.get();
+        var targetPlayer = targetUser.getPlayer();
+
         targetPlayer.setGameMode(gameMode);
 
         var gameModeName = MappingsData.GameMode().getGameModeName(gameMode).orElse(gameMode.name());
@@ -103,11 +103,6 @@ public class CommandGameMode extends AbstractPlayerTargetingCommand {
         sendCommandMessage(commandSender, messageKey, targetPlayer.getName(), label, message -> replaceGameModePlaceholder(message, gameModeName));
 
         if (isSelf) return;
-
-        var targetUserOptional = validateAndGetUser(commandSender, targetPlayer, label, "GameMode");
-        if (targetUserOptional.isEmpty()) return;
-
-        var targetUser = targetUserOptional.get();
 
         sendCommandMessage(targetUser, "GameMode.Success", null, label, message -> replaceGameModePlaceholder(message, gameModeName));
     }

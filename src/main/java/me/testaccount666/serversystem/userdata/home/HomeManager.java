@@ -8,8 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
@@ -22,20 +20,17 @@ import java.util.Set;
  */
 public class HomeManager {
     private final OfflineUser _owner;
-    private final File _userFile;
     private final Set<Home> _homes = new HashSet<>();
     private final FileConfiguration _config;
 
     /**
      * Creates a new HomeManager for the specified user.
      *
-     * @param owner    The user who owns the homes
-     * @param userFile The user's configuration file
-     * @param config   The user's configuration
+     * @param owner  The user who owns the homes
+     * @param config The user's configuration
      */
-    public HomeManager(OfflineUser owner, File userFile, FileConfiguration config) {
+    public HomeManager(OfflineUser owner, FileConfiguration config) {
         _owner = owner;
-        _userFile = userFile;
         _config = config;
 
         loadHomes();
@@ -102,6 +97,12 @@ public class HomeManager {
      */
     public void removeHome(String name) {
         _homes.removeIf(home -> home.getName().equalsIgnoreCase(name));
+
+        saveHomes();
+    }
+
+    public void removeHome(Home home) {
+        _homes.removeIf(savedHome -> savedHome.getName().equalsIgnoreCase(home.getName()));
 
         saveHomes();
     }
@@ -179,11 +180,7 @@ public class HomeManager {
             _config.set("${prefix}.World", home.getLocation().getWorld().getName());
         }
 
-        try {
-            _config.save(_userFile);
-        } catch (IOException exception) {
-            throw new RuntimeException("Error saving homes for user '${_owner.getName()}' ('${_owner.getUuid()}')", exception);
-        }
+        _owner.save();
     }
 
     private void loadHomes() {

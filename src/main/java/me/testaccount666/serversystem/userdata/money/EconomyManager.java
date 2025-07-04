@@ -6,7 +6,6 @@ import me.testaccount666.serversystem.userdata.OfflineUser;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.SQLException;
@@ -43,9 +42,9 @@ public class EconomyManager {
         if (_economyType == Type.MYSQL) _databaseManager.initialize();
     }
 
-    public AbstractBankAccount instantiateBankAccount(OfflineUser offlineUser, BigInteger accountId, File userFile, FileConfiguration userConfig) {
+    public AbstractBankAccount instantiateBankAccount(OfflineUser offlineUser, BigInteger accountId, FileConfiguration userConfig) {
         return switch (_economyType) {
-            case YAML -> new YamlBankAccount(offlineUser.getUuid(), accountId, userFile, userConfig);
+            case YAML -> new YamlBankAccount(offlineUser, accountId, userConfig);
             case MYSQL -> {
                 try {
                     yield new MySqlBankAccount(offlineUser.getUuid(), accountId, _databaseManager.getConnection());
@@ -86,6 +85,14 @@ public class EconomyManager {
 
     public Type getEconomyType() {
         return _economyType;
+    }
+
+    public String getCurrencySingular() {
+        return _currencySingular;
+    }
+
+    public String getCurrencyPlural() {
+        return _currencyPlural;
     }
 
     public enum Type {

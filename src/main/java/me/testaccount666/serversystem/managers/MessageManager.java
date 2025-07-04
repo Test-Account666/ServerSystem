@@ -3,6 +3,7 @@ package me.testaccount666.serversystem.managers;
 import me.testaccount666.serversystem.managers.config.ConfigReader;
 import me.testaccount666.serversystem.managers.config.DefaultConfigReader;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.utils.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -128,18 +129,18 @@ public class MessageManager {
             message = prefix + message;
         }
 
-        return _PlaceholderManager.applyPlaceholders(message, commandSender, targetName, label != null? label : "");
+        return ChatColor.translateColorCodes(_PlaceholderManager.applyPlaceholders(message, commandSender, targetName, label != null? label : ""));
     }
 
     public static Optional<String> getMessage(String messagePath) {
         if (_ConfigReader == null) throw new IllegalStateException("MessageManager was not yet initialized. Call initialize first.");
 
-        messagePath = "Messages." + messagePath;
+        messagePath = "Messages.${messagePath}";
 
         var message = _ConfigReader.getString(messagePath, null);
 
         if (message == null) {
-            Bukkit.getLogger().warning("Message '" + messagePath + "' not found!");
+            Bukkit.getLogger().warning("Message '${messagePath}' not found!");
             return Optional.empty();
         }
 

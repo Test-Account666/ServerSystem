@@ -1,7 +1,7 @@
 package me.testaccount666.serversystem.commands.executables.god;
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
-import me.testaccount666.serversystem.commands.executables.AbstractPlayerTargetingCommand;
+import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
 
@@ -10,7 +10,7 @@ import org.bukkit.command.Command;
  * This command allows players to toggle god mode (invulnerability) for themselves or other players.
  */
 @ServerSystemCommand(name = "god")
-public class CommandGod extends AbstractPlayerTargetingCommand {
+public class CommandGod extends AbstractServerSystemCommand {
     /**
      * Executes the god command.
      * This method toggles god mode (invulnerability) for the target player if the sender has the required permissions.
@@ -27,19 +27,16 @@ public class CommandGod extends AbstractPlayerTargetingCommand {
 
         if (handleConsoleWithNoTarget(commandSender, label, arguments)) return;
 
-        var targetPlayerOptional = getTargetPlayer(commandSender, arguments);
+        var targetUserOptional = getTargetUser(commandSender, arguments);
 
-        if (targetPlayerOptional.isEmpty()) {
-            if (arguments.length > 0) sendMissingPlayerMessage(commandSender, label, arguments[0]);
+        if (targetUserOptional.isEmpty()) {
+            sendMissingPlayerMessage(commandSender, label, arguments[0]);
             return;
         }
 
-        var targetPlayer = targetPlayerOptional.get();
-
-        var targetUserOptional = validateAndGetUser(commandSender, targetPlayer, label, "God");
-        if (targetUserOptional.isEmpty()) return;
-
         var targetUser = targetUserOptional.get();
+        var targetPlayer = targetUser.getPlayer();
+
         var isSelf = targetUser == commandSender;
 
         if (!isSelf && !checkOtherPermission(commandSender, "God.Other", targetPlayer.getName(), label)) return;

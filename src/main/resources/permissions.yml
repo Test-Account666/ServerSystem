@@ -47,6 +47,14 @@ Permissions:
       Other:
         Required: true
         Value: "serversystem.command.teleportposition.other"
+    TeleportHere:
+      Use:
+        Required: true
+        Value: "serversystem.command.teleporthere.use"
+    TeleportAll:
+      Use:
+        Required: true
+        Value: "serversystem.command.teleportall.use"
       World:
         Required: true
         Value: "serversystem.command.teleportposition.world"
@@ -89,10 +97,115 @@ Permissions:
       Use:
         Required: true
         Value: "serversystem.command.stonecutter.use"
+    Broadcast:
+      Use:
+        Required: true
+        Value: "serversystem.command.broadcast.use"
+    EnderChest:
+      Use:
+        Required: true
+        Value: "serversystem.command.enderchest.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.enderchest.other"
+    Disposal:
+      Use:
+        Required: true
+        Value: "serversystem.command.disposal.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.disposal.other"
+    Heal:
+      Use:
+        Required: true
+        Value: "serversystem.command.heal.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.heal.other"
+    Feed:
+      Use:
+        Required: true
+        Value: "serversystem.command.feed.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.feed.other"
+    Seen:
+      Use:
+        Required: true
+        Value: "serversystem.command.seen.use"
+    CommandSpy:
+      Use:
+        Required: true
+        Value: "serversystem.command.commandspy.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.commandspy.other"
+    ClearChat:
+      Use:
+        Required: true
+        Value: "serversystem.command.clearchat.use"
+      Bypass:
+        Required: true
+        Value: "serversystem.command.clearchat.bypass"
+    Spawn:
+      Use:
+        Required: false
+        Value: "serversystem.command.spawn.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.spawn.other"
+    SetSpawn:
+      Use:
+        Required: true
+        Value: "serversystem.command.setspawn.use"
+    Home:
+      Use:
+        Required: false
+        Value: "serversystem.command.home.use"
+    SetHome:
+      Use:
+        Required: false
+        Value: "serversystem.command.sethome.use"
+    DeleteHome:
+      Use:
+        Required: false
+        Value: "serversystem.command.deletehome.use"
+    AdminHome:
+      Use:
+        Required: true
+        Value: "serversystem.command.home.admin"
+    AdminSetHome:
+      Use:
+        Required: true
+        Value: "serversystem.command.sethome.admin"
+    AdminDeleteHome:
+      Use:
+        Required: false
+        Value: "serversystem.command.deletehome.admin"
+    Economy:
+      Use:
+        Required: true
+        Value: "serversystem.command.economy.use"
+      Set:
+        Required: true
+        Value: "serversystem.command.economy.set"
+      Take:
+        Required: true
+        Value: "serversystem.command.economy.take"
+      Give:
+        Required: true
+        Value: "serversystem.command.economy.give"
+    Time:
+      Use:
+        Required: true
+        Value: "serversystem.command.time.use"
+      World:
+        Required: true
+        Value: "serversystem.command.time.world"
   Homes:
     MaxHomes:
       Required: true
-      Value: "server.homes."
+      Value: "serversystem.homes."
     Unlimited:
       Required: true
-      Value: "server.homes.unlimited"
+      Value: "serversystem.homes.unlimited"

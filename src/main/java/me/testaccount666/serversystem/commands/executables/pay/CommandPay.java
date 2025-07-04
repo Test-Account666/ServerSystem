@@ -2,7 +2,7 @@ package me.testaccount666.serversystem.commands.executables.pay;
 
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
-import me.testaccount666.serversystem.commands.executables.AbstractPlayerTargetingCommand;
+import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
 
@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @ServerSystemCommand(name = "pay")
-public class CommandPay extends AbstractPlayerTargetingCommand {
+public class CommandPay extends AbstractServerSystemCommand {
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
@@ -22,17 +22,16 @@ public class CommandPay extends AbstractPlayerTargetingCommand {
             return;
         }
 
-        var targetPlayerOptional = getTargetPlayer(commandSender, false, arguments);
-        if (targetPlayerOptional.isEmpty()) {
+        var targetUserOptional = getTargetUser(commandSender, arguments);
+
+        if (targetUserOptional.isEmpty()) {
             sendMissingPlayerMessage(commandSender, label, arguments[0]);
             return;
         }
 
-        var targetPlayer = targetPlayerOptional.get();
-        var targetUserOptional = validateAndGetUser(commandSender, targetPlayer, label, "Pay");
-        if (targetUserOptional.isEmpty()) return;
-
         var targetUser = targetUserOptional.get();
+        var targetPlayer = targetUser.getPlayer();
+
         var isSelf = targetUser == commandSender;
 
         if (isSelf) {

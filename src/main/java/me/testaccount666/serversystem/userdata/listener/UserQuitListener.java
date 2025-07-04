@@ -11,7 +11,7 @@ public class UserQuitListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onUserQuit(PlayerQuitEvent event) {
-        var cachedUserOptional = ServerSystem.Instance.getUserManager().getUser(event.getPlayer());
+        var cachedUserOptional = ServerSystem.Instance.getUserManager().getUser(event.getPlayer().getUniqueId());
 
         if (cachedUserOptional.isEmpty()) {
             Bukkit.getLogger().warning("(UserQuitListener) User '${event.getPlayer().getName()}' is not cached! This should not happen!");
@@ -24,5 +24,6 @@ public class UserQuitListener implements Listener {
         if (user.isOfflineUser()) Bukkit.getLogger().warning("User '${event.getPlayer().getName()}' is not an online user! This should not happen!");
 
         user.getOfflineUser().save();
+        user.convertToOfflineUser();
     }
 }

@@ -8,6 +8,7 @@ import me.testaccount666.serversystem.userdata.CachedUser;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.UserManager;
 import me.testaccount666.serversystem.userdata.money.EconomyManager;
+import me.testaccount666.serversystem.userdata.money.vault.VaultAPI;
 import me.testaccount666.serversystem.utils.Version;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -46,19 +47,23 @@ public final class ServerSystem extends JavaPlugin {
             return;
         }
 
-        _listenerManager.registerListeners();
-        Bukkit.getScheduler().runTaskLater(this, _commandManager::registerCommands, 1);
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            _commandManager.registerCommands();
+            _listenerManager.registerListeners();
+        }, 1);
     }
 
     private void initialize() throws Exception {
         _configManager = new ConfigurationManager(this);
         _configManager.loadAllConfigs();
 
-        _userManager = new UserManager();
-        _commandManager = new CommandManager(_configManager.getCommandsConfig());
-        _listenerManager = new ListenerManager();
         _databaseManager = new DatabaseManager(_configManager.getEconomyConfig());
+        _commandManager = new CommandManager(_configManager.getCommandsConfig());
+        _listenerManager = new ListenerManager(_commandManager);
         _economyManager = new EconomyManager(_configManager.getEconomyConfig(), _databaseManager);
+        _userManager = new UserManager();
+
+        if (VaultAPI.isVaultInstalled()) VaultAPI.initialize();
     }
 
     @Override
@@ -101,5 +106,14 @@ public final class ServerSystem extends JavaPlugin {
      */
     public DatabaseManager getDatabaseManager() {
         return _databaseManager;
+    }
+
+    /**
+     * Gets the ConfigurationManager instance for this plugin.
+     *
+     * @return The ConfigurationManager instance that manages all configurations
+     */
+    public ConfigurationManager getConfigManager() {
+        return _configManager;
     }
 }

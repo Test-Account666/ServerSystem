@@ -1,21 +1,24 @@
 package me.testaccount666.serversystem.userdata.money;
 
 import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.userdata.OfflineUser;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.UUID;
 
+/**
+ * A bank account implementation that stores data in a YAML file.
+ * This class supports compression of the user file when saving,
+ * using the same compression settings as OfflineUser.
+ */
 public class YamlBankAccount extends AbstractBankAccount {
-    private final File _userFile;
     private final FileConfiguration _fileConfig;
+    private final OfflineUser _owner;
 
-    public YamlBankAccount(UUID owner, BigInteger accountId, File userFile, FileConfiguration userConfig) {
-        super(owner, accountId);
-        _userFile = userFile;
+    public YamlBankAccount(OfflineUser owner, BigInteger accountId, FileConfiguration userConfig) {
+        super(owner.getUuid(), accountId);
+        _owner = owner;
         _fileConfig = userConfig;
     }
 
@@ -29,6 +32,8 @@ public class YamlBankAccount extends AbstractBankAccount {
 
     @Override
     public void setBalance(BigDecimal balance) {
+        balance = balance.max(BigDecimal.ZERO);
+
         _fileConfig.set("User.BankAccounts.${accountId.toString()}.Balance", balance.toString());
         save(false);
     }
@@ -36,11 +41,7 @@ public class YamlBankAccount extends AbstractBankAccount {
     public void save(boolean setBalance) {
         if (setBalance) _fileConfig.set("User.BankAccounts.${accountId.toString()}.Balance", getBalance().toString());
 
-        try {
-            _fileConfig.save(_userFile);
-        } catch (IOException exception) {
-            throw new RuntimeException("Encountered error trying to save bank account '${accountId.toString()}' of user '${owner.toString()}'!", exception);
-        }
+        _owner.save();
     }
 
     @Override

@@ -47,6 +47,8 @@ public abstract class AbstractSqlBankAccount extends AbstractBankAccount {
 
     @Override
     public void setBalance(BigDecimal balance) {
+        balance = balance.max(BigDecimal.ZERO);
+
         try {
             var query = isInDatabase()? "UPDATE Economy SET Balance = ? WHERE Owner = ? AND AccountId = ?"
                     : "INSERT INTO Economy (Balance, Owner, AccountId) VALUES (?, ?, ?)";

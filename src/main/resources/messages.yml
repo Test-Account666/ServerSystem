@@ -26,6 +26,10 @@ Messages:
       SuccessOther: "You teleported <Color:Highlight><TARGET> <Color:Message>to <Color:Highlight>X:<X> Y:<Y> Z:<Z> World:<WORLD><Color:Message>."
       InvalidLocation: "<Color:Error.Message>Invalid location specified."
       OutsideBorder: "<Color:Error.Message>Specified location is outside the world border."
+    TeleportHere:
+      Success: "You teleported <Color:Highlight><TARGET> <Color:Message>to yourself."
+    TeleportAll:
+      Success: "You teleported <Color:Highlight>everyone <Color:Message>to yourself."
     Balance:
       Success: "Your balance is <Color:Highlight><BALANCE><Color:Message>."
       SuccessOther: "<Color:Highlight><TARGET>'s <Color:Message>balance is <Color:Highlight><BALANCE><Color:Message>."
@@ -35,6 +39,59 @@ Messages:
       CannotPaySelf: "<Color:Error.Message>You cannot pay yourself."
       NotEnoughMoney: "<Color:Error.Message>You do not have enough money."
       InvalidAmount: "<Color:Error.Message>Invalid amount specified."
+    Broadcast:
+      Format: "<Color:Prefix>Server <Color:Separators>» <Color:Message><BROADCAST>"
+    Disposal:
+      Success: "You opened a trash can for <Color:Highlight><TARGET><Color:Message>."
+    Heal:
+      Success: "You have been healed."
+      SuccessOther: "You have healed <Color:Highlight><TARGET><Color:Message>."
+    Feed:
+      Success: "You have been fed."
+      SuccessOther: "You have fed <Color:Highlight><TARGET><Color:Message>."
+    Seen:
+      Success: "User <Color:Highlight><TARGET> <Color:Message>was last seen on <Color:Highlight><DATE> <Color:Message>with ip <Color:Highlight><IP><Color:Message>."
+    CommandSpy:
+      Success:
+        Enabled: "CommandSpy was enabled."
+        Disabled: "CommandSpy was disabled."
+      SuccessOther:
+        Enabled: "CommandSpy was enabled for <Color:Highlight><TARGET><Color:Message>."
+        Disabled: "CommandSpy was disabled for <Color:Highlight><TARGET><Color:Message>."
+      Format: "<Color:Prefix>CommandSpy <Color:Separators>» <Color:Highlight><TARGET> <Color:Message>-> <Color:Highlight><COMMAND>"
+    ClearChat:
+      Success: "The chat has been cleared by <Color:Highlight><TARGET><Color:Message>."
+    Spawn:
+      Success: "You have been teleported to spawn."
+      SuccessOther: "You have teleported <Color:Highlight><TARGET> <Color:Message>to spawn."
+      NoSpawnSet: "<Color:Error.Message>No spawn was set."
+    SetSpawn:
+      Success: "You have set spawn to your current location."
+    Home:
+      Success: "You teleported to the home <Color:Highlight><HOME><Color:Message>."
+      DoesNotExist: "<Color:Error.Message>The specified home <Color:Error.Highlight><HOME> <Color:Error.Message>does not exist."
+    DeleteHome:
+      Success: "You deleted the home <Color:Highlight><HOME><Color:Message>."
+      DoesNotExist: "<Color:Error.Message>The specified home <Color:Error.Highlight><HOME> <Color:Error.Message>does not exist."
+    SetHome:
+      Success: "You created the home <Color:Highlight><HOME><Color:Message>."
+      AlreadyExists: "<Color:Error.Message>The specified home <Color:Error.Highlight><HOME> <Color:Error.Message>already exists."
+      MaxHomes: "<Color:Error.Message>You already reached your home limit: <Color:Error.Highlight><CURRENT_HOMES><Color:Error.Message>/<Color:Error.Highlight><MAX_HOMES><Color:Error.Message>."
+      InvalidName: "<Color:Error.Message>The specified name is not alphanumeric."
+    Economy:
+      Give:
+        Success: "You added <Color:Highlight><AMOUNT> <Color:Message>to <Color:Highlight><TARGET>'s <Color:Message>balance."
+        SuccessOther: "<Color:Highlight><TARGET> <Color:Message>added <Color:Highlight><AMOUNT> <Color:Message>to your balance."
+      Take:
+        Success: "You removed <Color:Highlight><AMOUNT> <Color:Message>from <Color:Highlight><TARGET>'s <Color:Message>balance."
+        SuccessOther: "<Color:Highlight><TARGET> <Color:Message>removed <Color:Highlight><AMOUNT> <Color:Message>from your balance."
+      Set:
+        Success: "You set <Color:Highlight><TARGET>'s <Color:Message>balance to <Color:Highlight><AMOUNT><Color:Message>."
+        SuccessOther: "<Color:Highlight><TARGET> <Color:Message>set your balance to <Color:Highlight><AMOUNT><Color:Message>."
+      InvalidAmount: "<Color:Error.Message>Invalid amount specified."
+    Time:
+      Success: "You set the time in <Color:Highlight><WORLD> <Color:Message>to <Color:Highlight><TIME><Color:Message>."
+      WorldNotFound: "<Color:Error.Message>Invalid world specified."
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>You don't have permission to do this. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"

@@ -31,7 +31,7 @@ public class UserManager {
     }
 
     private static File getUserFile(UUID uuid) {
-        return USER_DATA_PATH.resolve("${uuid}.yml").toFile();
+        return USER_DATA_PATH.resolve("${uuid}.yml.gz").toFile();
     }
 
     /**
@@ -50,7 +50,7 @@ public class UserManager {
      * @return An Optional containing the cached user or empty if the user doesn't exist
      */
     public Optional<CachedUser> getUser(Player player) {
-        return getUser(player.getUniqueId());
+        return getUser(player.getUniqueId(), true);
     }
 
     /**
@@ -63,8 +63,24 @@ public class UserManager {
      * @return An Optional containing the cached user or empty if the user doesn't exist
      */
     public Optional<CachedUser> getUser(UUID uuid) {
+        return getUser(uuid, false);
+    }
+
+    /**
+     * Gets a cached user by UUID.
+     * If the user is already cached, returns the cached instance.
+     * If the user is online but not cached, creates and caches a new online user.
+     * If the user is offline, creates and caches a new offline user.
+     *
+     * @param uuid            The UUID of the user to get
+     * @param forceOnlineUser If the method should only return online users
+     * @return An Optional containing the cached user or empty if the user doesn't exist
+     */
+    public Optional<CachedUser> getUser(UUID uuid, boolean forceOnlineUser) {
         if (_userUuidMap.containsKey(uuid)) {
             var cachedUser = _userUuidMap.get(uuid);
+            if (cachedUser.isOfflineUser() && forceOnlineUser) return Optional.empty();
+
             cachedUser.updateLastAccessTime();
 
             return Optional.of(cachedUser);
@@ -72,6 +88,7 @@ public class UserManager {
 
         var player = Bukkit.getPlayer(uuid);
         if (player != null) return Optional.of(createOnlineUser(uuid));
+        if (forceOnlineUser) return Optional.empty();
 
         return createOfflineUser(uuid);
     }
@@ -86,8 +103,25 @@ public class UserManager {
      * @return An Optional containing the cached user or empty if the user doesn't exist
      */
     public Optional<CachedUser> getUser(String name) {
+        return getUser(name, false);
+    }
+
+    /**
+     * Gets a cached user by name.
+     * If the user is already cached, returns the cached instance.
+     * If the user is online but not cached, creates and caches a new online user.
+     * If the user is offline, creates and caches a new offline user.
+     *
+     * @param name            The name of the user to get
+     * @param forceOnlineUser If the method should only return online users
+     * @return An Optional containing the cached user or empty if the user doesn't exist
+     */
+    public Optional<CachedUser> getUser(String name, boolean forceOnlineUser) {
         if (_userMap.containsKey(name)) {
             var cachedUser = _userMap.get(name);
+
+            if (cachedUser.isOfflineUser() && forceOnlineUser) return Optional.empty();
+
             cachedUser.updateLastAccessTime();
 
             return Optional.of(cachedUser);
@@ -95,6 +129,7 @@ public class UserManager {
 
         var player = Bukkit.getPlayer(name);
         if (player != null) return Optional.of(createOnlineUser(player.getUniqueId()));
+        if (forceOnlineUser) return Optional.empty();
 
         var offlineUser = Bukkit.getOfflinePlayer(name);
         if (offlineUser.getName() == null) return Optional.empty();

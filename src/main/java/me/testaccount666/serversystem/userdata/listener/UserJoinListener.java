@@ -10,7 +10,7 @@ public class UserJoinListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onUserJoin(PlayerJoinEvent event) {
-        var cachedUserOptional = ServerSystem.Instance.getUserManager().getUser(event.getPlayer());
+        var cachedUserOptional = ServerSystem.Instance.getUserManager().getUser(event.getPlayer().getUniqueId());
 
         if (cachedUserOptional.isEmpty()) throw new RuntimeException("Couldn't cache User '${event.getPlayer().getName()}'! This should not happen!");
 

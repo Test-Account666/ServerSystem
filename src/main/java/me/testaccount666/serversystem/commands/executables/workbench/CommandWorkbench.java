@@ -2,7 +2,7 @@ package me.testaccount666.serversystem.commands.executables.workbench;
 
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
-import me.testaccount666.serversystem.commands.executables.AbstractPlayerTargetingCommand;
+import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.utils.Version;
@@ -17,7 +17,7 @@ import java.util.logging.Level;
 //TODO: I dunno, this class feels kinda random because it's different from how I did the other commands
 @SuppressWarnings("UnstableApiUsage")
 @ServerSystemCommand(name = "workbench", variants = {"anvil", "smithing", "loom", "grindstone", "cartography", "stonecutter"})
-public class CommandWorkbench extends AbstractPlayerTargetingCommand {
+public class CommandWorkbench extends AbstractServerSystemCommand {
     private final boolean _legacyVersion;
 
     private final Map<String, Consumer<Player>> _menuOpeners = Map.of(

@@ -1,9 +1,10 @@
 package me.testaccount666.serversystem.commands.executables.teleport;
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
-import me.testaccount666.serversystem.commands.executables.AbstractPlayerTargetingCommand;
+import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Entity;
@@ -12,8 +13,8 @@ import org.bukkit.util.Vector;
 import java.text.DecimalFormat;
 import java.util.Optional;
 
-@ServerSystemCommand(name = "teleport", variants = "teleportposition")
-public class CommandTeleport extends AbstractPlayerTargetingCommand {
+@ServerSystemCommand(name = "teleport", variants = {"teleportposition", "teleporthere", "teleportall"})
+public class CommandTeleport extends AbstractServerSystemCommand {
     private static final Vector _X_AXIS = new Vector(1, 0, 0);
     private static final Vector _Y_AXIS = new Vector(0, 1, 0);
     private static final Vector _Z_AXIS = new Vector(0, 0, 1);
@@ -26,40 +27,78 @@ public class CommandTeleport extends AbstractPlayerTargetingCommand {
             return;
         }
 
+        if (command.getName().equalsIgnoreCase("teleporthere")) {
+            executeTeleportHere(commandSender, label, arguments);
+            return;
+        }
+
+        if (command.getName().equalsIgnoreCase("teleportall")) {
+            executeTeleportAll(commandSender, label, arguments);
+            return;
+        }
+
         executeTeleport(commandSender, label, arguments);
+    }
+
+    private void executeTeleportAll(User commandSender, String label, String[] arguments) {
+        if (!checkBasePermission(commandSender, "TeleportAll.Use", label)) return;
+
+        if (commandSender instanceof ConsoleUser) {
+            sendGeneralMessage(commandSender, "NotPlayer", null, label, null);
+            return;
+        }
+
+        Bukkit.getOnlinePlayers().forEach(player -> player.teleport(commandSender.getPlayer().getLocation()));
+
+        sendCommandMessage(commandSender, "TeleportAll.Success", "*", label, null);
+    }
+
+    private void executeTeleportHere(User commandSender, String label, String[] arguments) {
+        if (!checkBasePermission(commandSender, "TeleportHere.Use", label)) return;
+
+        if (commandSender instanceof ConsoleUser) {
+            sendGeneralMessage(commandSender, "NotPlayer", null, label, null);
+            return;
+        }
+
+        var targetUserOptional = getTargetUser(commandSender, arguments);
+
+        if (targetUserOptional.isEmpty()) {
+            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            return;
+        }
+
+        var targetUser = targetUserOptional.get();
+        var targetPlayer = targetUser.getPlayer();
+
+        targetPlayer.teleport(commandSender.getPlayer().getLocation());
+
+        sendCommandMessage(commandSender, "TeleportHere.Success", targetPlayer.getName(), label, null);
     }
 
     private void executeTeleport(User commandSender, String label, String[] arguments) {
         if (!checkBasePermission(commandSender, "Teleport.Use", label)) return;
         if (handleConsoleWithNoTarget(commandSender, label, 1, arguments)) return;
 
-        var targetPlayerOptional = getTargetPlayer(commandSender, false, arguments);
+        var targetUserOptional = getTargetUser(commandSender, arguments);
 
-        if (targetPlayerOptional.isEmpty() && arguments.length == 0) {
-            sendGeneralMessage(commandSender, "InvalidArguments", null, label, null);
-            return;
-        }
-
-        if (targetPlayerOptional.isEmpty()) {
+        if (targetUserOptional.isEmpty()) {
             sendMissingPlayerMessage(commandSender, label, arguments[0]);
             return;
         }
 
-        var targetPlayer = targetPlayerOptional.get();
+        var targetUser = targetUserOptional.get();
+        var targetPlayer = targetUser.getPlayer();
 
-        @SuppressWarnings("LocalVariableNamingConvention")
-        var targetPlayer2Optional = getTargetPlayer(commandSender, 1, arguments);
-        if (targetPlayer2Optional.isEmpty()) {
+        var targetUser2Optional = getTargetUser(commandSender, 1, arguments);
+
+        if (targetUser2Optional.isEmpty()) {
             sendMissingPlayerMessage(commandSender, label, arguments[1]);
             return;
         }
 
-        var targetPlayer2 = targetPlayer2Optional.get();
-
-        var targetUser2Optional = validateAndGetUser(commandSender, targetPlayer2, label, "Teleport");
-        if (targetUser2Optional.isEmpty()) return;
-
         var targetUser2 = targetUser2Optional.get();
+        var targetPlayer2 = targetUser2.getPlayer();
 
         var isSelf = commandSender == targetUser2;
 
@@ -79,19 +118,15 @@ public class CommandTeleport extends AbstractPlayerTargetingCommand {
         }
         if (handleConsoleWithNoTarget(commandSender, label, 3, arguments)) return;
 
-        var targetPlayerOptional = arguments.length == 3? Optional.of(commandSender.getPlayer()) : getTargetPlayer(commandSender, arguments);
+        var targetUserOptional = arguments.length == 3? Optional.of(commandSender) : getTargetUser(commandSender, arguments);
 
-        if (targetPlayerOptional.isEmpty()) {
+        if (targetUserOptional.isEmpty()) {
             sendMissingPlayerMessage(commandSender, label, arguments[0]);
             return;
         }
 
-        var targetPlayer = targetPlayerOptional.get();
-
-        var targetUserOptional = validateAndGetUser(commandSender, targetPlayer, label, "TeleportPosition");
-        if (targetUserOptional.isEmpty()) return;
-
         var targetUser = targetUserOptional.get();
+        var targetPlayer = targetUser.getPlayer();
 
         var isSelf = commandSender == targetUser;
 

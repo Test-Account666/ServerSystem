@@ -1,7 +1,7 @@
 package me.testaccount666.serversystem.commands.executables.fly;
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
-import me.testaccount666.serversystem.commands.executables.AbstractPlayerTargetingCommand;
+import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
 
@@ -10,7 +10,7 @@ import org.bukkit.command.Command;
  * This command allows players to toggle flight mode for themselves or other players.
  */
 @ServerSystemCommand(name = "fly")
-public class CommandFly extends AbstractPlayerTargetingCommand {
+public class CommandFly extends AbstractServerSystemCommand {
 
     /**
      * Executes the fly command.
@@ -27,19 +27,16 @@ public class CommandFly extends AbstractPlayerTargetingCommand {
         if (!checkBasePermission(commandSender, "Fly.Use", label)) return;
         if (handleConsoleWithNoTarget(commandSender, label, arguments)) return;
 
-        var targetPlayerOptional = getTargetPlayer(commandSender, arguments);
+        var targetUserOptional = getTargetUser(commandSender, arguments);
 
-        if (targetPlayerOptional.isEmpty()) {
+        if (targetUserOptional.isEmpty()) {
             sendMissingPlayerMessage(commandSender, label, arguments[0]);
             return;
         }
 
-        var targetPlayer = targetPlayerOptional.get();
-        var targetUserOptional = validateAndGetUser(commandSender, targetPlayer, label, "Fly");
-
-        if (targetUserOptional.isEmpty()) return;
-
         var targetUser = targetUserOptional.get();
+        var targetPlayer = targetUser.getPlayer();
+
         var isSelf = targetUser == commandSender;
 
         if (!isSelf && !checkOtherPermission(commandSender, "Fly.Other", targetPlayer.getName(), label)) return;

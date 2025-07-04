@@ -3,5 +3,7 @@ version: '${project.version}'
 main: me.testaccount666.serversystem.ServerSystem
 api-version: '1.21'
 authors: [ TestAccount666 ]
+softdepend:
+  - Vault
 libraries:
   - io.github.classgraph:classgraph:4.8.180

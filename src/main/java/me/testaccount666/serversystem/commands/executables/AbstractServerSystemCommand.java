@@ -12,51 +12,52 @@ import org.bukkit.entity.Player;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 
-public abstract class AbstractPlayerTargetingCommand implements ServerSystemCommandExecutor {
+public abstract class AbstractServerSystemCommand implements ServerSystemCommandExecutor {
+
 
     /**
-     * Gets the target player for a command.
+     * Gets the target user for a command.
      * If arguments are provided, tries to find a player with the name specified in the first argument.
      * If no arguments are provided, uses the command sender as the target.
      *
      * @param commandSender The user who executed the command
      * @param arguments     The arguments passed to the command
-     * @return An Optional containing the target player, or empty if the target player is not found
+     * @return An Optional containing the target user, or empty if the target user is not found
      */
-    protected Optional<Player> getTargetPlayer(User commandSender, String... arguments) {
-        return getTargetPlayer(commandSender, true, arguments);
+    protected Optional<User> getTargetUser(User commandSender, String... arguments) {
+        return getTargetUser(commandSender, true, arguments);
     }
 
     /**
-     * Gets the target player for the command, with control over returning the sender as fallback.
+     * Gets the target user for the command, with control over returning the sender as fallback.
      * If arguments are provided, tries to find a player with the name specified in the first argument.
      * If no arguments are provided and returnSender is true, uses the command sender as the target.
      *
      * @param commandSender The user who executed the command
      * @param returnSender  Whether to return the command sender when no target is specified
      * @param arguments     The arguments passed to the command
-     * @return An Optional containing the target player, or empty if the target player is not found
+     * @return An Optional containing the target user, or empty if the target user is not found
      */
-    protected Optional<Player> getTargetPlayer(User commandSender, boolean returnSender, String... arguments) {
-        return getTargetPlayer(commandSender, 0, returnSender, arguments);
+    protected Optional<User> getTargetUser(User commandSender, boolean returnSender, String... arguments) {
+        return getTargetUser(commandSender, 0, returnSender, arguments);
     }
 
     /**
-     * Gets the target player for the command using a specific argument index.
+     * Gets the target user for the command using a specific argument index.
      * If arguments are provided, tries to find a player with the name specified at the given index.
      * If no arguments are provided or the index is out of bounds, uses the command sender as the target.
      *
      * @param commandSender The user who executed the command
      * @param index         The index in the arguments array to look for the player name
      * @param arguments     The arguments passed to the command
-     * @return An Optional containing the target player, or empty if the target player is not found
+     * @return An Optional containing the target user, or empty if the target user is not found
      */
-    protected Optional<Player> getTargetPlayer(User commandSender, int index, String... arguments) {
-        return getTargetPlayer(commandSender, index, true, arguments);
+    protected Optional<User> getTargetUser(User commandSender, int index, String... arguments) {
+        return getTargetUser(commandSender, index, true, arguments);
     }
 
     /**
-     * Gets the target player for the command with full control over index and fallback behavior.
+     * Gets the target user for the command with full control over index and fallback behavior.
      * If arguments are provided, tries to find a player with the name specified at the given index.
      * If no arguments are provided or the index is out of bounds and returnSender is true,
      * uses the command sender as the target.
@@ -65,11 +66,14 @@ public abstract class AbstractPlayerTargetingCommand implements ServerSystemComm
      * @param index         The index in the arguments array to look for the player name
      * @param returnSender  Whether to return the command sender when no target is specified
      * @param arguments     The arguments passed to the command
-     * @return An Optional containing the target player, or empty if the target player is not found
+     * @return An Optional containing the target user, or empty if the target user is not found
      */
-    protected Optional<Player> getTargetPlayer(User commandSender, int index, boolean returnSender, String... arguments) {
-        if (arguments.length > index) return Optional.ofNullable(Bukkit.getPlayer(arguments[index]));
-        return returnSender? Optional.of(commandSender.getPlayer()) : Optional.empty();
+    protected Optional<User> getTargetUser(User commandSender, int index, boolean returnSender, String... arguments) {
+        if (arguments.length > index) {
+            var userOptional = ServerSystem.Instance.getUserManager().getUser(arguments[index], true);
+            return userOptional.map(user -> (User) user.getOfflineUser());
+        }
+        return returnSender? Optional.of(commandSender) : Optional.empty();
     }
 
     /**

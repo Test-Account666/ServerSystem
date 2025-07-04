@@ -17,7 +17,7 @@ public class DefaultsData {
         private final int _defaultMaxHomes;
 
         public Home(ConfigReader config) {
-            _defaultMaxHomes = config.getInt("Defaults.MaxHomes");
+            _defaultMaxHomes = config.getInt("DefaultValues.Home.MaxHomes");
         }
 
         public int getDefaultMaxHomes() {

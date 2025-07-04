@@ -2,6 +2,7 @@ package me.testaccount666.serversystem.userdata.home;
 
 import org.bukkit.Location;
 
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -20,11 +21,17 @@ public class Home {
      * @param location The location of the home
      * @throws IllegalArgumentException if the home name is not alphanumeric
      */
-    public Home(String name, Location location) {
-        if (!_HOME_NAME_PATTERN.matcher(name).matches()) throw new IllegalArgumentException("Home name must be alphanumeric!");
+    Home(String name, Location location) {
+        if (!_HOME_NAME_PATTERN.matcher(name).matches()) throw new IllegalArgumentException("Home name must be alphanumeric");
 
         _name = name.toLowerCase();
         _location = location;
+    }
+
+    public static Optional<Home> of(String name, Location location) {
+        if (!_HOME_NAME_PATTERN.matcher(name).matches()) return Optional.empty();
+
+        return Optional.of(new Home(name, location));
     }
 
     /**

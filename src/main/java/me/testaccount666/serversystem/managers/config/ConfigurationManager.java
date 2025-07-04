@@ -2,6 +2,7 @@ package me.testaccount666.serversystem.managers.config;
 
 import me.testaccount666.serversystem.managers.MessageManager;
 import me.testaccount666.serversystem.managers.PermissionManager;
+import me.testaccount666.serversystem.managers.globaldata.DefaultsData;
 import me.testaccount666.serversystem.managers.globaldata.MappingsData;
 import org.bukkit.plugin.Plugin;
 
@@ -14,6 +15,7 @@ public class ConfigurationManager {
     private final Path _pluginFolder;
     private ConfigReader _commandsConfig;
     private ConfigReader _economyConfig;
+    private ConfigReader _userDataConfig;
 
     public ConfigurationManager(Plugin plugin) {
         _plugin = plugin;
@@ -25,8 +27,16 @@ public class ConfigurationManager {
         initializePermissionsConfig();
         initializeMessagesConfig();
         initializeMappingsConfig();
+        initializeDefaultsConfig();
         initializeEconomyConfig();
+        initializeUserDataConfig();
         createUserDataFolder();
+    }
+
+    private void initializeUserDataConfig() throws FileNotFoundException {
+        var userDataFile = _pluginFolder.resolve("userdata.yml").toFile();
+        ensureConfigFileExists(userDataFile, "userdata.yml");
+        _userDataConfig = new DefaultConfigReader(userDataFile, _plugin);
     }
 
     private void initializeCommandsConfig() throws FileNotFoundException {
@@ -53,6 +63,12 @@ public class ConfigurationManager {
         MappingsData.initialize(new DefaultConfigReader(mappingsFile, _plugin));
     }
 
+    private void initializeDefaultsConfig() throws FileNotFoundException {
+        var defaultsFile = _pluginFolder.resolve("defaults.yml").toFile();
+        ensureConfigFileExists(defaultsFile, "defaults.yml");
+        DefaultsData.initialize(new DefaultConfigReader(defaultsFile, _plugin));
+    }
+
     private void initializeEconomyConfig() throws FileNotFoundException {
         var economyFile = _pluginFolder.resolve("economy.yml").toFile();
         ensureConfigFileExists(economyFile, "economy.yml");
@@ -74,5 +90,9 @@ public class ConfigurationManager {
 
     public ConfigReader getEconomyConfig() {
         return _economyConfig;
+    }
+
+    public ConfigReader getUserDataConfig() {
+        return _userDataConfig;
     }
 }

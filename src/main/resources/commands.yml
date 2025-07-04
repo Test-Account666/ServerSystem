@@ -28,6 +28,12 @@ Commands:
       teleportposition:
         Enabled: true
         Aliases: "tppos"
+      teleporthere:
+        Enabled: true
+        Aliases: "tphere"
+      teleportall:
+        Enabled: true
+        Aliases: "tpall"
   balance:
     Enabled: true
     Aliases: "money, balance"
@@ -56,3 +62,70 @@ Commands:
       stonecutter:
         Enabled: true
         Aliases: "stonecutter"
+      disposal:
+        Enabled: true
+        Aliases: "trash, trashcan"
+  heal:
+    Enabled: true
+    Aliases: "heal"
+    Variants:
+      feed:
+        Enabled: true
+        Aliases: "feed"
+  seen:
+    Enabled: true
+    Aliases: "seen"
+  broadcast:
+    Enabled: true
+    Aliases: "broadcast, bc"
+  commandspy:
+    Enabled: true
+    Aliases: "commandspy"
+  clearchat:
+    Enabled: true
+    Aliases: "clearchat, cc"
+  spawn:
+    Enabled: true
+    Aliases: "spawn"
+    Variants:
+      setspawn:
+        Enabled: true
+        Aliases: "setspawn"
+  home:
+    Enabled: true
+    Aliases: "home"
+    Variants:
+      sethome:
+        Enabled: true
+        Aliases: "sethome"
+      deletehome:
+        Enabled: true
+        Aliases: "delhome"
+      adminhome:
+        Enabled: true
+        Aliases: "adminhome"
+      adminsethome:
+        Enabled: true
+        Aliases: "adminsethome"
+      admindeletehome:
+        Enabled: true
+        Aliases: "admindelhome"
+  economy:
+    Enabled: true
+    Aliases: "economy, eco"
+  time:
+    Enabled: true
+    Aliases: "time"
+    Variants:
+      day:
+        Enabled: true
+        Aliases: "day"
+      night:
+        Enabled: true
+        Aliases: "night"
+      noon:
+        Enabled: true
+        Aliases: "noon"
+      midnight:
+        Enabled: true
+        Aliases: "midnight"

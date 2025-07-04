@@ -31,6 +31,7 @@ public class CommandManager {
     private final Consumer<? extends Server> _syncCommandsAccessor = MethodAccessor.createVoidAccessor(Bukkit.getServer().getClass(), "syncCommands");
     private final ConfigReader _configReader;
     private final Set<String> _registeredCommands = new HashSet<>();
+    private final Set<ServerSystemCommandExecutor> _registeredCommandInstances = new HashSet<>();
 
     public CommandManager(ConfigReader configReader) {
         _configReader = configReader;
@@ -55,15 +56,22 @@ public class CommandManager {
             bukkitCommand.setExecutor(new CommandExecutorWrapper(command));
             bukkitCommand.setTabCompleter(new TabCompleterWrapper(completer));
 
-            bukkitCommand.setAliases(aliases);
-
             for (var alias : aliases) {
                 commandMap.put(alias, bukkitCommand);
                 commandMap.put("serversystem:${alias}", bukkitCommand);
 
                 _registeredCommands.add(alias);
                 _registeredCommands.add("serversystem:${alias}");
+
+                _registeredCommandInstances.add(command);
             }
+
+            // Make aliases List modifiable
+            aliases = new ArrayList<>(aliases);
+
+            // Paper, for some reason, throws an error if the alias and command name are the same...
+            aliases.remove(bukkitCommand.getName());
+            bukkitCommand.setAliases(aliases);
         });
     }
 
@@ -84,6 +92,15 @@ public class CommandManager {
 
         _registeredCommands.forEach(commandMap::remove);
         _registeredCommands.clear();
+        _registeredCommandInstances.clear();
+    }
+
+    public Set<String> getRegisteredCommands() {
+        return Collections.unmodifiableSet(_registeredCommands);
+    }
+
+    public Set<ServerSystemCommandExecutor> getRegisteredCommandInstances() {
+        return Collections.unmodifiableSet(_registeredCommandInstances);
     }
 
     private void processCommandExecutor(Class<?> clazz) {
