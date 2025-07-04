@@ -3,6 +3,10 @@ package me.testaccount666.serversystem.userdata;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.userdata.home.HomeManager;
 import me.testaccount666.serversystem.userdata.money.AbstractBankAccount;
+import me.testaccount666.serversystem.userdata.persistence.LocationFieldHandler;
+import me.testaccount666.serversystem.userdata.persistence.PersistenceManager;
+import me.testaccount666.serversystem.userdata.persistence.SaveableField;
+import me.testaccount666.serversystem.userdata.persistence.UuidSetFieldHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -12,7 +16,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.*;
 import java.math.BigInteger;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -25,6 +28,7 @@ import java.util.zip.GZIPOutputStream;
  * Compression can be enabled or disabled in the userdata.yml configuration file.
  */
 public class OfflineUser {
+    @SaveableField(path = "User.LastKnownName")
     protected String name;
     protected UUID uuid;
     protected OfflinePlayer player;
@@ -32,19 +36,32 @@ public class OfflineUser {
     protected HomeManager homeManager;
     protected File userFile;
     protected FileConfiguration userConfig;
+    @SaveableField(path = "User.LastSeen")
     protected long lastSeen;
+    @SaveableField(path = "User.LastKnownIp")
     protected String lastKnownIp;
+    @SaveableField(path = "User.LogoutPosition", handler = LocationFieldHandler.class)
     protected Location logoutPosition;
+    @SaveableField(path = "User.IsVanish")
     protected boolean isVanish;
+    @SaveableField(path = "User.IsGodMode")
     protected boolean isGodMode;
+    @SaveableField(path = "User.AcceptsTeleports")
     protected boolean acceptsTeleports;
+    @SaveableField(path = "User.AcceptsMessages")
     protected boolean acceptsMessages;
+    @SaveableField(path = "User.SocialSpyEnabled")
     protected boolean socialSpyEnabled;
+    @SaveableField(path = "User.CommandSpyEnabled")
     protected boolean commandSpyEnabled;
+    @SaveableField(path = "User.LastDeathLocation", handler = LocationFieldHandler.class)
+    protected Location lastDeathLocation;
+    @SaveableField(path = "User.LastTeleportLocation", handler = LocationFieldHandler.class)
+    protected Location lastTeleportLocation;
+    @SaveableField(path = "User.PlayerLanguage")
     protected String playerLanguage;
+    @SaveableField(path = "User.IgnoredPlayers", handler = UuidSetFieldHandler.class)
     protected Set<UUID> ignoredPlayers = new HashSet<>();
-
-    //TODO: Add more data. Homes, for example.
 
     protected OfflineUser(File userFile) {
         this.userFile = userFile;
@@ -88,11 +105,11 @@ public class OfflineUser {
         if (!isCompressed(file)) return YamlConfiguration.loadConfiguration(file);
 
         // File is compressed, decompress it first
-        try (var fis = new FileInputStream(file);
-             var gzis = new GZIPInputStream(fis);
-             var reader = new InputStreamReader(gzis)) {
+        try (var fileInputStream = new FileInputStream(file);
+             var gzipInputStream = new GZIPInputStream(fileInputStream);
+             var inputReader = new InputStreamReader(gzipInputStream)) {
 
-            return YamlConfiguration.loadConfiguration(reader);
+            return YamlConfiguration.loadConfiguration(inputReader);
         } catch (IOException e) {
             // If decompression fails, try loading normally as fallback
             return YamlConfiguration.loadConfiguration(file);
@@ -103,28 +120,25 @@ public class OfflineUser {
         userConfig = loadYamlConfiguration(userFile);
 
         uuid = UUID.fromString(userFile.getName().replace(".yml.gz", ""));
-        name = userConfig.getString("User.LastKnownName", null);
+
+        // Set default values before loading from config
+        name = null;
+        lastSeen = System.currentTimeMillis();
+        lastKnownIp = "Unknown";
+        isVanish = false;
+        isGodMode = false;
+        acceptsTeleports = true;
+        acceptsMessages = true;
+        socialSpyEnabled = false;
+        commandSpyEnabled = false;
+        playerLanguage = System.getProperty("user.language");
+
+        // PersistenceManager loads all annotated fields
+        PersistenceManager.loadFields(this, userConfig);
 
         if (name == null) name = getPlayer().getName();
 
-        logoutPosition = userConfig.getLocation("User.LogoutPosition", null);
-        lastSeen = userConfig.getLong("User.LastSeen", System.currentTimeMillis());
-        lastKnownIp = userConfig.getString("User.LastKnownIp", "Unknown");
-        isVanish = userConfig.getBoolean("User.IsVanish", false);
-        isGodMode = userConfig.getBoolean("User.IsGodMode", false);
-        acceptsTeleports = userConfig.getBoolean("User.AcceptsTeleports", true);
-        acceptsMessages = userConfig.getBoolean("User.AcceptsMessages", true);
-        socialSpyEnabled = userConfig.getBoolean("User.SocialSpyEnabled", false);
-        commandSpyEnabled = userConfig.getBoolean("User.CommandSpyEnabled", false);
-
-        //TODO: Make default language configurable instead of depending on system properties
-        playerLanguage = userConfig.getString("User.PlayerLanguage", System.getProperty("user.language"));
-
-        var ignoredPlayersList = userConfig.getStringList("User.IgnoredPlayers");
-        ignoredPlayers.addAll(ignoredPlayersList.stream().map(UUID::fromString).collect(Collectors.toSet()));
-
         homeManager = new HomeManager(this, userConfig);
-
         bankAccount = ServerSystem.Instance.getEconomyManager().instantiateBankAccount(this, BigInteger.valueOf(0), userConfig);
     }
 
@@ -158,17 +172,6 @@ public class OfflineUser {
     }
 
     /**
-     * Saves a YAML configuration to a file without compression.
-     *
-     * @param config The YAML configuration to save
-     * @param file   The file to save to
-     * @throws IOException If an I/O error occurs
-     */
-    private void saveYamlConfiguration(FileConfiguration config, File file) throws IOException {
-        config.save(file);
-    }
-
-    /**
      * Saves the user's data to their configuration file.
      * This method should be called whenever user data is modified.
      * If compression is enabled in the configuration, the data will be compressed.
@@ -176,25 +179,12 @@ public class OfflineUser {
      * @throws RuntimeException if there is an error saving the user data
      */
     public void save() {
-        userConfig.set("User.LastKnownName", name);
-
-        userConfig.set("User.LogoutPosition", logoutPosition);
-        userConfig.set("User.LastSeen", lastSeen);
-        userConfig.set("User.LastKnownIp", lastKnownIp);
-        userConfig.set("User.IsVanish", isVanish);
-        userConfig.set("User.IsGodMode", isGodMode);
-        userConfig.set("User.AcceptsTeleports", acceptsTeleports);
-        userConfig.set("User.AcceptsMessages", acceptsMessages);
-        userConfig.set("User.PlayerLanguage", playerLanguage);
-        userConfig.set("User.SocialSpyEnabled", socialSpyEnabled);
-        userConfig.set("User.CommandSpyEnabled", commandSpyEnabled);
-
-        var ignoredPlayersList = ignoredPlayers.stream().map(UUID::toString).collect(Collectors.toList());
-        userConfig.set("User.IgnoredPlayers", ignoredPlayersList);
+        // PersistenceManager saves all annotated fields
+        PersistenceManager.saveFields(this, userConfig);
 
         try {
             if (isCompressionEnabled()) saveCompressedYamlConfiguration(userConfig, userFile);
-            else saveYamlConfiguration(userConfig, userFile);
+            else userConfig.save(userFile);
         } catch (Exception exception) {
             throw new RuntimeException("Error while trying to save user data for user '${getName()}' ('${getUuid()}')", exception);
         }
@@ -319,5 +309,21 @@ public class OfflineUser {
 
     public void setCommandSpyEnabled(boolean commandSpyEnabled) {
         this.commandSpyEnabled = commandSpyEnabled;
+    }
+
+    public Location getLastDeathLocation() {
+        return lastDeathLocation;
+    }
+
+    public void setLastDeathLocation(Location lastDeathLocation) {
+        this.lastDeathLocation = lastDeathLocation;
+    }
+
+    public Location getLastTeleportLocation() {
+        return lastTeleportLocation;
+    }
+
+    public void setLastTeleportLocation(Location lastTeleportLocation) {
+        this.lastTeleportLocation = lastTeleportLocation;
     }
 }

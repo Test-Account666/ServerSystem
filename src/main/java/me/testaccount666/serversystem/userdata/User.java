@@ -26,6 +26,7 @@ public class User extends OfflineUser {
     protected void loadBasicData() {
         super.loadBasicData();
 
+        // Update online-specific fields
         name = getPlayer().getName();
         lastSeen = System.currentTimeMillis();
         lastKnownIp = getPlayer().getAddress().getAddress().getHostAddress();
