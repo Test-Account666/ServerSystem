@@ -21,8 +21,7 @@ public class CommandClearChat extends AbstractServerSystemCommand {
 
         var sentError = new AtomicBoolean(false);
         Bukkit.getOnlinePlayers().forEach(everyone -> {
-            if (!PermissionManager.hasPermission(everyone, "ClearChat.Bypass", false)) {
-
+            if (!PermissionManager.hasPermission(everyone, "Commands.ClearChat.Bypass", false)) {
                 for (var index = 0; index < _CLEAR_LINES; index++) {
                     var randomChar = (char) (33 + (Math.random() * (126 - 33))); // Safe ASCII range
                     everyone.sendMessage(String.valueOf(randomChar));

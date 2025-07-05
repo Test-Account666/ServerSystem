@@ -129,3 +129,29 @@ Commands:
       midnight:
         Enabled: true
         Aliases: "midnight"
+  teleportask:
+    Enabled: true
+    Aliases: "tpa"
+    Variants:
+      teleporthereask:
+        Enabled: true
+        Aliases: "tpahere"
+      teleportaccept:
+        Enabled: true
+        Aliases: "tpaccept"
+      teleportdeny:
+        Enabled: true
+        Aliases: "tpdeny"
+      teleporttoggle:
+        Enabled: true
+        Aliases: "tptoggle"
+  back:
+    Enabled: true
+    Aliases: "back"
+  privatemessage:
+    Enabled: true
+    Aliases: "msg, tell, whisper"
+    Variants:
+      reply:
+        Enabled: true
+        Aliases: "reply, r"

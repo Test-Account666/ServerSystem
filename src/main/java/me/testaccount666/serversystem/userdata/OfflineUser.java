@@ -1,12 +1,10 @@
 package me.testaccount666.serversystem.userdata;
 
 import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.commands.executables.back.CommandBack;
 import me.testaccount666.serversystem.userdata.home.HomeManager;
 import me.testaccount666.serversystem.userdata.money.AbstractBankAccount;
-import me.testaccount666.serversystem.userdata.persistence.LocationFieldHandler;
-import me.testaccount666.serversystem.userdata.persistence.PersistenceManager;
-import me.testaccount666.serversystem.userdata.persistence.SaveableField;
-import me.testaccount666.serversystem.userdata.persistence.UuidSetFieldHandler;
+import me.testaccount666.serversystem.userdata.persistence.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -58,6 +56,8 @@ public class OfflineUser {
     protected Location lastDeathLocation;
     @SaveableField(path = "User.LastTeleportLocation", handler = LocationFieldHandler.class)
     protected Location lastTeleportLocation;
+    @SaveableField(path = "User.LastBackType", handler = EnumFieldHandler.class)
+    protected CommandBack.BackType lastBackType;
     @SaveableField(path = "User.PlayerLanguage")
     protected String playerLanguage;
     @SaveableField(path = "User.IgnoredPlayers", handler = UuidSetFieldHandler.class)
@@ -132,6 +132,7 @@ public class OfflineUser {
         socialSpyEnabled = false;
         commandSpyEnabled = false;
         playerLanguage = System.getProperty("user.language");
+        lastBackType = CommandBack.BackType.NONE;
 
         // PersistenceManager loads all annotated fields
         PersistenceManager.loadFields(this, userConfig);
@@ -325,5 +326,13 @@ public class OfflineUser {
 
     public void setLastTeleportLocation(Location lastTeleportLocation) {
         this.lastTeleportLocation = lastTeleportLocation;
+    }
+
+    public CommandBack.BackType getLastBackType() {
+        return lastBackType;
+    }
+
+    public void setLastBackType(CommandBack.BackType lastBackType) {
+        this.lastBackType = lastBackType;
     }
 }

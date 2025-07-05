@@ -1,5 +1,6 @@
 package me.testaccount666.serversystem.userdata;
 
+import me.testaccount666.serversystem.commands.executables.teleportask.TeleportRequest;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -13,6 +14,8 @@ import java.util.Optional;
  */
 public class User extends OfflineUser {
     protected Player player;
+    protected TeleportRequest teleportRequest;
+    protected User replyUser;
 
     protected User(File userFile) {
         super(userFile);
@@ -75,5 +78,21 @@ public class User extends OfflineUser {
      */
     public void sendMessage(String message) {
         getCommandSender().sendMessage(message);
+    }
+
+    public TeleportRequest getTeleportRequest() {
+        return teleportRequest;
+    }
+
+    public void setTeleportRequest(TeleportRequest teleportRequest) {
+        this.teleportRequest = teleportRequest;
+    }
+
+    public User getReplyUser() {
+        return replyUser;
+    }
+
+    public void setReplyUser(User replyUser) {
+        this.replyUser = replyUser;
     }
 }

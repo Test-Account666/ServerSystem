@@ -12,4 +12,8 @@ Mappings:
     error:
       message: "&c"
       highlight: "&4"
+  BackType:
+    death: "Death"
+    teleport: "Teleport"
+    none: "NONE"
 language: "en"

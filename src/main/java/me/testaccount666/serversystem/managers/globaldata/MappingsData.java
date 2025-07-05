@@ -1,5 +1,6 @@
 package me.testaccount666.serversystem.managers.globaldata;
 
+import me.testaccount666.serversystem.commands.executables.back.CommandBack;
 import me.testaccount666.serversystem.managers.config.ConfigReader;
 import me.testaccount666.serversystem.utils.ChatColor;
 import org.bukkit.Bukkit;
@@ -9,10 +10,12 @@ import java.util.*;
 public class MappingsData {
     private static GameMode _GameMode;
     private static MessageColors _MessageColors;
+    private static BackType _BackType;
 
     public static void initialize(ConfigReader config) {
         _GameMode = new GameMode(config);
         _MessageColors = new MessageColors(config);
+        _BackType = new BackType(config);
     }
 
     public static GameMode GameMode() {
@@ -21,6 +24,31 @@ public class MappingsData {
 
     public static MessageColors MessageColors() {
         return _MessageColors;
+    }
+
+    public static BackType BackType() {
+        return _BackType;
+    }
+
+    public static class BackType {
+        private final Map<CommandBack.BackType, String> _backTypeMappings = new HashMap<>();
+
+        public BackType(ConfigReader config) {
+            for (var backType : CommandBack.BackType.values()) {
+                var backTypeName = config.getString("Mappings.BackType.${backType.name().toLowerCase()}");
+
+                if (backTypeName == null) {
+                    Bukkit.getLogger().warning("BackType mapping for '${backType.name()}' is not defined in the config!");
+                    continue;
+                }
+
+                _backTypeMappings.put(backType, backTypeName);
+            }
+        }
+
+        public Optional<String> getBackTypeName(CommandBack.BackType backType) {
+            return Optional.ofNullable(_backTypeMappings.getOrDefault(backType, null));
+        }
     }
 
     public static class GameMode {

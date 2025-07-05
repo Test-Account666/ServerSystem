@@ -92,6 +92,45 @@ Messages:
     Time:
       Success: "You set the time in <Color:Highlight><WORLD> <Color:Message>to <Color:Highlight><TIME><Color:Message>."
       WorldNotFound: "<Color:Error.Message>Invalid world specified."
+    TeleportAsk:
+      Success: "You asked to teleport to <Color:Highlight><TARGET><Color:Message>."
+      SuccessOther: "<Color:Highlight><TARGET> <Color:Message>asked to teleport to you, you have 2 minutes to accept."
+      Buttons:
+        Accept:
+          Name: "<Color:Highlight>Accept"
+          Tooltip: "<Color:Highlight>Accept"
+        Deny:
+          Name: "<Color:Error.Highlight>Deny"
+          Tooltip: "<Color:Error.Highlight>Deny"
+      CannotTeleportSelf: "<Color:Error.Message>You cannot teleport to yourself."
+      NoTeleport: "<Color:Error.Highlight><TARGET> <Color:Error.Message>does not accept teleport requests."
+      Moved: "<Color:Error.Message>Your teleport was cancelled, since you moved."
+      TeleportFinished: "You have been teleported to <Color:Highlight><TARGET><Color:Message>."
+      StartingTeleporting: "Starting teleport, please stand still..."
+    TeleportHereAsk:
+      Success: "You asked <Color:Highlight><TARGET> <Color:Message>to teleport to you."
+      SuccessOther: "<Color:Highlight><TARGET> <Color:Message>asked you to teleport to them, you have 2 minutes to accept."
+    TeleportDeny:
+      Success: "You denied the teleport request."
+      SuccessOther: "<Color:Error.Highlight><TARGET> <Color:Error.Message>denied your teleport request."
+    TeleportAccept:
+      NoRequest: "<Color:Error.Message>You do not have a teleport request."
+      SuccessOther: "<Color:Highlight><TARGET> <Color:Message>accepted your teleport request."
+    Back: "You have been teleported to your last <TYPE> location."
+    PrivateMessage:
+      CannotSendToSelf: "<Color:Error.Message>You cannot message yourself."
+      NoMessages: "<Color:Error.Highlight><TARGET> <Color:Error.Message>does not accept messages."
+      Success: "&6MSG <Color:Separators>» <Color:Highlight>You <Color:Message>to <Color:Highlight><TARGET><Color:Separators>: <Color:Message><MESSAGE>"
+      SuccessOther: "&6MSG <Color:Separators>» <Color:Highlight><SENDER><Color:Separators>: <Color:Message><MESSAGE>"
+    Reply:
+      NoReply: "<Color:Error.Message>You do not have anyone to reply to."
+    TeleportToggle:
+      Success:
+        Enabled: "You now accept teleport requests."
+        Disabled: "You no longer accept teleport requests."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>now accepts teleport requests."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>no longer accepts teleport requests."
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>You don't have permission to do this. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"

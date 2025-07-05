@@ -202,6 +202,44 @@ Permissions:
       World:
         Required: true
         Value: "serversystem.command.time.world"
+    TeleportAsk:
+      Use:
+        Required: false
+        Value: "serversystem.command.teleportask.use"
+      InstantTeleport:
+        Required: true
+        Value: "serversystem.command.teleportask.instant"
+    TeleportHereAsk:
+      Use:
+        Required: false
+        Value: "serversystem.command.teleporthereask.use"
+    TeleportAccept:
+      Use:
+        Required: false
+        Value: "serversystem.command.teleportaccept.use"
+    TeleportDeny:
+      Use:
+        Required: false
+        Value: "serversystem.command.teleportdeny.use"
+    TeleportToggle:
+      Use:
+        Required: false
+        Value: "serversystem.command.teleporttoggle.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.teleporttoggle.other"
+    Back:
+      Use:
+        Required: true
+        Value: "serversystem.command.back.use"
+    PrivateMessage:
+      Use:
+        Required: false
+        Value: "serversystem.command.privatemessage.use"
+    Reply:
+      Use:
+        Required: false
+        Value: "serversystem.command.reply.use"
   Homes:
     MaxHomes:
       Required: true

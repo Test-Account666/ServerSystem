@@ -19,11 +19,14 @@ public class UserQuitListener implements Listener {
         }
 
         var user = cachedUserOptional.get();
+        var offlineUser = user.getOfflineUser();
 
         //TODO: Should we really still save in this case?
         if (user.isOfflineUser()) Bukkit.getLogger().warning("User '${event.getPlayer().getName()}' is not an online user! This should not happen!");
 
-        user.getOfflineUser().save();
+        offlineUser.setLogoutPosition(event.getPlayer().getLocation());
+
+        offlineUser.save();
         user.convertToOfflineUser();
     }
 }
