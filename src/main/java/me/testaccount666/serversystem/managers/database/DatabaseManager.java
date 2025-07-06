@@ -49,7 +49,7 @@ public class DatabaseManager {
             setupKeepAlive();
             createTablesIfNotExist();
         } catch (SQLException e) {
-            Bukkit.getLogger().severe("Failed to initialize database connection: " + e.getMessage());
+            Bukkit.getLogger().severe("Failed to initialize database connection: ${e.getMessage()}");
             e.printStackTrace();
         }
     }
@@ -85,11 +85,11 @@ public class DatabaseManager {
 
                 Bukkit.getLogger().fine("Database keep-alive ping successful.");
             } catch (SQLException e) {
-                Bukkit.getLogger().warning("Database keep-alive ping failed: " + e.getMessage());
+                Bukkit.getLogger().warning("Database keep-alive ping failed: ${e.getMessage()}");
                 try {
                     initializeConnection();
                 } catch (SQLException reconnectEx) {
-                    Bukkit.getLogger().severe("Failed to reconnect to database: " + reconnectEx.getMessage());
+                    Bukkit.getLogger().severe("Failed to reconnect to database: ${reconnectEx.getMessage()}");
                 }
             }
         }, _KEEP_ALIVE_INTERVAL_SECONDS, _KEEP_ALIVE_INTERVAL_SECONDS, TimeUnit.SECONDS);

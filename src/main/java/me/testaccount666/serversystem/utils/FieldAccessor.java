@@ -48,7 +48,7 @@ public final class FieldAccessor {
             // Field not found in this class, try the superclass
             currentClass = currentClass.getSuperclass();
         }
-        throw new NoSuchFieldException("Field '" + fieldName + "' not found in class " + clazz.getName() + " or any of its superclasses");
+        throw new NoSuchFieldException("Field '${fieldName}' not found in class ${clazz.getName()} or any of its superclasses");
     }
 
     public static <T, R> Function<T, R> createGetter(Class<T> targetClass, String fieldName, Class<R> fieldType) {
@@ -105,11 +105,11 @@ public final class FieldAccessor {
                     field.set(instance, value);
                     return value;
                 } catch (IllegalAccessException e) {
-                    throw new RuntimeException("Failed to set field value for " + targetClass.getName() + "." + fieldName, e);
+                    throw new RuntimeException("Failed to set field value for ${targetClass.getName()}.${fieldName}", e);
                 }
             };
         } catch (NoSuchFieldException e) {
-            throw new RuntimeException("Failed to create field accessor for " + targetClass.getName() + "." + fieldName, e);
+            throw new RuntimeException("Failed to create field accessor for ${targetClass.getName()}.${fieldName}", e);
         }
     }
 }

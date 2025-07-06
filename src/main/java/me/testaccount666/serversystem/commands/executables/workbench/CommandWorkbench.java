@@ -49,7 +49,7 @@ public class CommandWorkbench extends AbstractServerSystemCommand {
         if (!checkPermission(commandSender, commandName, label)) return;
 
         var opener = _menuOpeners.get(commandName);
-        if (opener == null) throw new IllegalStateException("Unexpected command name: " + commandName);
+        if (opener == null) throw new IllegalStateException("Unexpected command name: ${commandName}");
 
         opener.accept(player);
     }

@@ -235,7 +235,7 @@ public abstract class AbstractServerSystemCommand implements ServerSystemCommand
      * @param addPrefix       Whether to add the prefix to the message
      */
     protected void sendCommandMessage(User recipient, String path, String targetName, String label, UnaryOperator<String> messageModifier, boolean addPrefix) {
-        MessageManager.getMessage("Commands." + path)
+        MessageManager.getMessage("Commands.${path}")
                 .map(message -> messageModifier != null? messageModifier.apply(message) : message)
                 .map(message -> MessageManager.formatMessage(message, recipient, targetName, label, addPrefix))
                 .ifPresent(recipient::sendMessage);
