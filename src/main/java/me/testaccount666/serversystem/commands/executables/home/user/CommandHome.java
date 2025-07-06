@@ -106,9 +106,6 @@ public class CommandHome extends AbstractServerSystemCommand {
 
         var maxHomes = maxHomesOptional.get();
 
-
-        Bukkit.getLogger().info("(CommandHome) Max homes: " + maxHomes + ", current homes: " + currentHomeCount);
-
         if (maxHomes <= currentHomeCount) {
             sendCommandMessage(commandSender, "SetHome.MaxHomes", null, label,
                     message -> message.replace("<MAX_HOMES>", String.valueOf(maxHomes))
