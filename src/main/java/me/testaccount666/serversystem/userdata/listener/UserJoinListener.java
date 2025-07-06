@@ -1,6 +1,7 @@
 package me.testaccount666.serversystem.userdata.listener;
 
 import me.testaccount666.serversystem.ServerSystem;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -14,10 +15,16 @@ public class UserJoinListener implements Listener {
 
         if (cachedUserOptional.isEmpty()) throw new RuntimeException("Couldn't cache User '${event.getPlayer().getName()}'! This should not happen!");
 
-        var user = cachedUserOptional.get();
+        var cachedUser = cachedUserOptional.get();
 
-        if (user.isOnlineUser()) return;
+        if (cachedUser.isOnlineUser()) return;
 
-        user.convertToOnlineUser();
+        cachedUser.convertToOnlineUser();
+
+        Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> {
+            var user = cachedUser.getOfflineUser();
+
+            event.getPlayer().teleport(user.getLogoutPosition());
+        }, 10L);
     }
 }

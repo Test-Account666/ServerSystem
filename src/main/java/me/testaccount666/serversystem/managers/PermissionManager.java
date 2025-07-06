@@ -34,7 +34,7 @@ public class PermissionManager {
     public static boolean hasPermission(CommandSender commandSender, String permissionPath, boolean sendFailInfo) {
         if (!isPermissionRequired(permissionPath)) return true;
 
-        var permission = getPermission("${permissionPath}.Value");
+        var permission = getPermission("${permissionPath}");
 
         return hasPermissionString(commandSender, permission, sendFailInfo);
     }
@@ -64,7 +64,7 @@ public class PermissionManager {
     public static String getPermission(String permissionPath) {
         if (_ConfigReader == null) throw new IllegalStateException("PermissionManager was not yet initialized. Call initialize first.");
 
-        permissionPath = "Permissions.${permissionPath}";
+        permissionPath = "Permissions.${permissionPath}.Value";
 
         var permission = _ConfigReader.getString(permissionPath, null);
 

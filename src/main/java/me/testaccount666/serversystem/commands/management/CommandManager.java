@@ -37,6 +37,11 @@ public class CommandManager {
         _configReader = configReader;
     }
 
+    public Optional<Command> getCommand(String commandName) {
+        var commandMap = getCommandMap();
+        return Optional.ofNullable(commandMap.get(commandName));
+    }
+
     private Map<String, Command> getCommandMap() {
         var commandMap = (SimpleCommandMap) Bukkit.getCommandMap();
         return _commandMapAccessor.apply(commandMap);

@@ -116,4 +116,8 @@ public final class ServerSystem extends JavaPlugin {
     public ConfigurationManager getConfigManager() {
         return _configManager;
     }
+
+    public CommandManager getCommandManager() {
+        return _commandManager;
+    }
 }

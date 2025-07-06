@@ -92,6 +92,9 @@ Messages:
     Time:
       Success: "You set the time in <Color:Highlight><WORLD> <Color:Message>to <Color:Highlight><TIME><Color:Message>."
       WorldNotFound: "<Color:Error.Message>Invalid world specified."
+    Weather:
+      Success: "You set the weather in <Color:Highlight><WORLD> <Color:Message>to <Color:Highlight><WEATHER><Color:Message>."
+      WorldNotFound: "<Color:Error.Message>Invalid world specified."
     TeleportAsk:
       Success: "You asked to teleport to <Color:Highlight><TARGET><Color:Message>."
       SuccessOther: "<Color:Highlight><TARGET> <Color:Message>asked to teleport to you, you have 2 minutes to accept."
@@ -116,7 +119,8 @@ Messages:
     TeleportAccept:
       NoRequest: "<Color:Error.Message>You do not have a teleport request."
       SuccessOther: "<Color:Highlight><TARGET> <Color:Message>accepted your teleport request."
-    Back: "You have been teleported to your last <TYPE> location."
+    Back:
+      Success: "You have been teleported to your last <TYPE> location."
     PrivateMessage:
       CannotSendToSelf: "<Color:Error.Message>You cannot message yourself."
       NoMessages: "<Color:Error.Highlight><TARGET> <Color:Error.Message>does not accept messages."
@@ -131,6 +135,65 @@ Messages:
       SuccessOther:
         Enabled: "<Color:Highlight><TARGET> <Color:Message>now accepts teleport requests."
         Disabled: "<Color:Highlight><TARGET> <Color:Message>no longer accepts teleport requests."
+    MessageToggle:
+      Success:
+        Enabled: "You now accept private messages."
+        Disabled: "You no longer accept private messages."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>now accepts private messages."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>no longer accepts private messages."
+    Unlimited:
+      Success:
+        Enabled: "The item in your hand is now unlimited"
+        Disabled: "The item in your hand is no longer unlimited"
+    ClearInventory:
+      Success: "You inventory has been cleared."
+      SuccessOther: "You cleared <Color:Highlight><TARGET>'s <Color:Message>inventory."
+    Sudo:
+      Success: "You executed a command for <Color:Highlight><TARGET><Color:Highlight>."
+    OfflineTeleport:
+      Success: "You teleported yourself to <Color:Highlight><TARGET>'s <Color:Message>logout location."
+      TargetOnline: "<Color:Error.Message>Specified target <Color:Error.Highlight><TARGET> <Color:Error.Message>is online."
+    OfflineTeleportHere:
+      Success: "You set <Color:Highlight><TARGET>'s <Color:Message>logout location to your current location."
+    Vanish:
+      Success:
+        Enabled: "You are now in vanish."
+        Disabled: "You are no longer in vanish."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>is now in vanish."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>is no longer in vanish."
+      Denied:
+        Drop: "<Color:Error.Highlight>You currently cannot drop items in Vanish."
+        Message: "<Color:Error.Highlight>You currently cannot send messages in Vanish."
+    Drop:
+      Success:
+        Enabled: "You can now drop items in vanish."
+        Disabled: "You can no longer drop items in vanish."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>can now drop items in vanish."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>can no longer drop items in vanish."
+    Pickup:
+      Success:
+        Enabled: "You can now pickup items in vanish."
+        Disabled: "You can no longer pickup items in vanish."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>can now pickup items in vanish."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>can no longer pickup items in vanish."
+    Interact:
+      Success:
+        Enabled: "You can now interact in vanish."
+        Disabled: "You can no longer interact in vanish."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>can now interact in vanish."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>can no longer interace in vanish."
+    Message:
+      Success:
+        Enabled: "You can now send messages in vanish."
+        Disabled: "You can no longer send messages in vanish."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>can now send messages in vanish."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>can no longer send messages in vanish."
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>You don't have permission to do this. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"

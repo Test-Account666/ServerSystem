@@ -5,7 +5,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Represents an online user.
@@ -16,6 +19,7 @@ public class User extends OfflineUser {
     protected Player player;
     protected TeleportRequest teleportRequest;
     protected User replyUser;
+    protected Set<CachedUser> messageListeners = new HashSet<>();
 
     protected User(File userFile) {
         super(userFile);
@@ -78,6 +82,16 @@ public class User extends OfflineUser {
      */
     public void sendMessage(String message) {
         getCommandSender().sendMessage(message);
+
+        for (var listener : Collections.unmodifiableSet(messageListeners)) {
+            if (listener.isOfflineUser()) {
+                messageListeners.remove(listener);
+                continue;
+            }
+
+            var user = (User) listener.getOfflineUser();
+            user.sendMessage(message);
+        }
     }
 
     public TeleportRequest getTeleportRequest() {
@@ -94,5 +108,13 @@ public class User extends OfflineUser {
 
     public void setReplyUser(User replyUser) {
         this.replyUser = replyUser;
+    }
+
+    public void addMessageListener(CachedUser cachedUser) {
+        messageListeners.add(cachedUser);
+    }
+
+    public void removeMessageListener(CachedUser cachedUser) {
+        messageListeners.remove(cachedUser);
     }
 }

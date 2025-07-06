@@ -6,6 +6,7 @@ import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExe
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 

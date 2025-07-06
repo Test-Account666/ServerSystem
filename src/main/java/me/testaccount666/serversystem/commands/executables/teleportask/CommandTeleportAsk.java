@@ -103,12 +103,15 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
 
         var timeOut = System.currentTimeMillis() + (1000 * 60 * 2); // Two minutes
 
-        var teleportRequest = new TeleportRequest(commandSender, targetUser, timeOut, false);
-        targetUser.setTeleportRequest(teleportRequest);
 
         sendCommandMessage(commandSender, "TeleportAsk.Success", targetPlayer.getName(), label, null);
+
+        if (targetUser.isIgnoredPlayer(commandSender.getUuid())) return;
+
         sendCommandMessage(targetUser, "TeleportAsk.SuccessOther", commandSender.getName().get(), label, null);
 
+        var teleportRequest = new TeleportRequest(commandSender, targetUser, timeOut, false);
+        targetUser.setTeleportRequest(teleportRequest);
         sendAcceptDenyButtons(commandSender, targetUser, label);
     }
 
@@ -122,12 +125,14 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
 
         var timeOut = System.currentTimeMillis() + (1000 * 60 * 2); // Two minutes
 
-        var teleportRequest = new TeleportRequest(commandSender, targetUser, timeOut, true);
-        targetUser.setTeleportRequest(teleportRequest);
-
         sendCommandMessage(commandSender, "TeleportHereAsk.Success", targetPlayer.getName(), label, null);
+
+        if (targetUser.isIgnoredPlayer(commandSender.getUuid())) return;
+
         sendCommandMessage(targetUser, "TeleportHereAsk.SuccessOther", commandSender.getName().get(), label, null);
 
+        var teleportRequest = new TeleportRequest(commandSender, targetUser, timeOut, true);
+        targetUser.setTeleportRequest(teleportRequest);
         sendAcceptDenyButtons(commandSender, targetUser, label);
     }
 

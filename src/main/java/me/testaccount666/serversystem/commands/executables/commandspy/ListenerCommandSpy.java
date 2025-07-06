@@ -2,6 +2,7 @@ package me.testaccount666.serversystem.commands.executables.commandspy;
 
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.managers.MessageManager;
+import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.userdata.UserManager;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -27,15 +28,11 @@ public class ListenerCommandSpy implements Listener {
         for (var cachedUser : ServerSystem.Instance.getUserManager().getCachedUsers()) {
             if (!cachedUser.isOnlineUser()) continue;
 
-            var user = cachedUser.getOfflineUser();
+            var user = (User) cachedUser.getOfflineUser();
 
             if (!user.isCommandSpyEnabled()) continue;
 
-            var player = user.getPlayer().getPlayer();
-
-            if (player == null) continue;
-
-            var formatOptional = MessageManager.getCommandMessage(player, "CommandSpy.Format", sender, null, false);
+            var formatOptional = MessageManager.getCommandMessage(user, "CommandSpy.Format", sender, null, false);
             if (formatOptional.isEmpty()) {
                 Bukkit.getLogger().warning("An error occurred trying to fetch CommandSpy Format!");
                 continue;
@@ -44,7 +41,7 @@ public class ListenerCommandSpy implements Listener {
             var format = formatOptional.get();
             format = format.replace("<COMMAND>", command);
 
-            player.sendMessage(format);
+            user.sendMessage(format);
         }
     }
 }

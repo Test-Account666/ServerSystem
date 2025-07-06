@@ -7,7 +7,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 
 @ServerSystemCommand(name = "heal", variants = "feed")
-public class HealCommand extends AbstractServerSystemCommand {
+public class CommandHeal extends AbstractServerSystemCommand {
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {

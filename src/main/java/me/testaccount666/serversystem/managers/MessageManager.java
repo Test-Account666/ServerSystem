@@ -5,7 +5,6 @@ import me.testaccount666.serversystem.managers.config.DefaultConfigReader;
 import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.utils.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
@@ -28,100 +27,52 @@ public class MessageManager {
         _PlaceholderManager = new PlaceholderManager();
     }
 
-    public static Optional<String> getCommandMessage(CommandSender commandSender, String messagePath, @Nullable String targetName, String label) {
+    public static Optional<String> getCommandMessage(User commandSender, String messagePath, @Nullable String targetName, String label) {
         return getCommandMessage(commandSender, messagePath, targetName, label, true);
     }
 
-    public static Optional<String> getCommandMessage(CommandSender commandSender, String messagePath, @Nullable String targetName, String label, boolean addPrefix) {
+    public static Optional<String> getCommandMessage(User commandSender, String messagePath, @Nullable String targetName, String label, boolean addPrefix) {
         return getFormattedMessage(commandSender, "Commands.${messagePath}", targetName, label, addPrefix);
     }
 
-    public static Optional<String> getCommandMessage(User user, String messagePath, @Nullable String targetName, String label) {
-        return getCommandMessage(user.getCommandSender(), messagePath, targetName, label);
-    }
-
-    public static Optional<String> getCommandMessage(User user, String messagePath, @Nullable String targetName, String label, boolean addPrefix) {
-        return getCommandMessage(user.getCommandSender(), messagePath, targetName, label, addPrefix);
-    }
-
-    public static Optional<String> getNoPermissionMessage(CommandSender commandSender, String permission, @Nullable String targetName, String label) {
+    public static Optional<String> getNoPermissionMessage(User commandSender, String permission, @Nullable String targetName, String label) {
         return getNoPermissionMessage(commandSender, permission, targetName, label, true);
     }
 
-    public static Optional<String> getNoPermissionMessage(CommandSender commandSender, String permission, @Nullable String targetName, String label, boolean addPrefix) {
+    public static Optional<String> getNoPermissionMessage(User commandSender, String permission, @Nullable String targetName, String label, boolean addPrefix) {
         return getFormattedMessage(commandSender, "General.NoPermission", targetName, label, addPrefix)
                 .map(message -> message.replace("<PERMISSION>", PermissionManager.getPermission(permission)));
     }
 
-    public static Optional<String> getNoPermissionMessage(User user, String permission, @Nullable String targetName, String label) {
-        return getNoPermissionMessage(user.getCommandSender(), permission, targetName, label);
-    }
-
-    public static Optional<String> getNoPermissionMessage(User user, String permission, @Nullable String targetName, String label, boolean addPrefix) {
-        return getNoPermissionMessage(user.getCommandSender(), permission, targetName, label, addPrefix);
-    }
-
-    public static Optional<String> getFormattedMessage(CommandSender commandSender, String messagePath) {
+    public static Optional<String> getFormattedMessage(User commandSender, String messagePath) {
         return getFormattedMessage(commandSender, messagePath, null, null);
     }
 
-    public static Optional<String> getFormattedMessage(CommandSender commandSender, String messagePath, boolean addPrefix) {
+    public static Optional<String> getFormattedMessage(User commandSender, String messagePath, boolean addPrefix) {
         return getFormattedMessage(commandSender, messagePath, null, null, addPrefix);
     }
 
-    public static Optional<String> getFormattedMessage(User user, String messagePath) {
-        return getFormattedMessage(user.getCommandSender(), messagePath);
-    }
-
-    public static Optional<String> getFormattedMessage(User user, String messagePath, boolean addPrefix) {
-        return getFormattedMessage(user.getCommandSender(), messagePath, addPrefix);
-    }
-
-    public static Optional<String> getFormattedMessage(CommandSender commandSender, String messagePath, @Nullable String targetName, @Nullable String label) {
+    public static Optional<String> getFormattedMessage(User commandSender, String messagePath, @Nullable String targetName, @Nullable String label) {
         return getFormattedMessage(commandSender, messagePath, targetName, label, true);
     }
 
-    public static Optional<String> getFormattedMessage(CommandSender commandSender, String messagePath, @Nullable String targetName, @Nullable String label, boolean addPrefix) {
+    public static Optional<String> getFormattedMessage(User commandSender, String messagePath, @Nullable String targetName, @Nullable String label, boolean addPrefix) {
         return getMessage(messagePath).map(message -> formatMessage(message, commandSender, targetName, label, addPrefix));
     }
 
-    public static Optional<String> getFormattedMessage(User user, String messagePath, @Nullable String targetName, @Nullable String label) {
-        return getFormattedMessage(user.getCommandSender(), messagePath, targetName, label);
-    }
-
-    public static Optional<String> getFormattedMessage(User user, String messagePath, @Nullable String targetName, @Nullable String label, boolean addPrefix) {
-        return getFormattedMessage(user.getCommandSender(), messagePath, targetName, label, addPrefix);
-    }
-
-    public static String formatMessage(String message, User user) {
-        return formatMessage(message, user.getCommandSender());
-    }
-
-    public static String formatMessage(String message, User user, boolean addPrefix) {
-        return formatMessage(message, user.getCommandSender(), addPrefix);
-    }
-
-    public static String formatMessage(String message, CommandSender commandSender) {
+    public static String formatMessage(String message, User commandSender) {
         return formatMessage(message, commandSender, null, null);
     }
 
-    public static String formatMessage(String message, CommandSender commandSender, boolean addPrefix) {
+    public static String formatMessage(String message, User commandSender, boolean addPrefix) {
         return formatMessage(message, commandSender, null, null, addPrefix);
     }
 
-    public static String formatMessage(String message, User user, @Nullable String targetName, @Nullable String label) {
-        return formatMessage(message, user.getCommandSender(), targetName, label);
-    }
-
-    public static String formatMessage(String message, User user, @Nullable String targetName, @Nullable String label, boolean addPrefix) {
-        return formatMessage(message, user.getCommandSender(), targetName, label, addPrefix);
-    }
-
-    public static String formatMessage(String message, CommandSender commandSender, @Nullable String targetName, @Nullable String label) {
+    public static String formatMessage(String message, User commandSender, @Nullable String targetName, @Nullable String label) {
         return formatMessage(message, commandSender, targetName, label, true);
     }
 
-    public static String formatMessage(String message, CommandSender commandSender, @Nullable String targetName, @Nullable String label, boolean addPrefix) {
+    public static String formatMessage(String message, User commandSender, @Nullable String targetName, @Nullable String label, boolean addPrefix) {
         if (message == null) return "";
 
         if (addPrefix) {

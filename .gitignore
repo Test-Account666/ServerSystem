@@ -117,3 +117,4 @@ buildNumber.properties
 run/
 qodana.yaml
 *guidelines.md
+/.paper-nms/mappings_1.21.6.tiny

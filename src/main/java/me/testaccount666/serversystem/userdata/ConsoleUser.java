@@ -26,6 +26,7 @@ public class ConsoleUser extends User {
         name = "Server";
         uuid = ConsoleUser.CONSOLE_UUID;
         bankAccount = new ConsoleBankAccount();
+        acceptsMessages = true;
     }
 
     @Override

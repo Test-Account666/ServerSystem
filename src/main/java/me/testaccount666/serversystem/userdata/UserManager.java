@@ -77,6 +77,8 @@ public class UserManager {
      * @return An Optional containing the cached user or empty if the user doesn't exist
      */
     public Optional<CachedUser> getUser(UUID uuid, boolean forceOnlineUser) {
+        if (!forceOnlineUser && uuid.equals(ConsoleUser.CONSOLE_UUID)) return Optional.of(new CachedUser(getConsoleUser()));
+
         if (_userUuidMap.containsKey(uuid)) {
             var cachedUser = _userUuidMap.get(uuid);
             if (cachedUser.isOfflineUser() && forceOnlineUser) return Optional.empty();

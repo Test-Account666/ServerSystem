@@ -5,6 +5,7 @@ import me.testaccount666.serversystem.commands.executables.back.CommandBack;
 import me.testaccount666.serversystem.userdata.home.HomeManager;
 import me.testaccount666.serversystem.userdata.money.AbstractBankAccount;
 import me.testaccount666.serversystem.userdata.persistence.*;
+import me.testaccount666.serversystem.userdata.vanish.VanishData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -40,8 +41,10 @@ public class OfflineUser {
     protected String lastKnownIp;
     @SaveableField(path = "User.LogoutPosition", handler = LocationFieldHandler.class)
     protected Location logoutPosition;
-    @SaveableField(path = "User.IsVanish")
+    @SaveableField(path = "User.VanishData.IsVanish")
     protected boolean isVanish;
+    @SaveableField(path = "User.VanishData.Data", handler = VanishDataFieldHandler.class)
+    protected VanishData vanishData;
     @SaveableField(path = "User.IsGodMode")
     protected boolean isGodMode;
     @SaveableField(path = "User.AcceptsTeleports")
@@ -126,6 +129,7 @@ public class OfflineUser {
         lastSeen = System.currentTimeMillis();
         lastKnownIp = "Unknown";
         isVanish = false;
+        vanishData = new VanishData(false, false, false, false);
         isGodMode = false;
         acceptsTeleports = true;
         acceptsMessages = true;
@@ -226,6 +230,10 @@ public class OfflineUser {
 
     public void setVanish(boolean vanish) {
         isVanish = vanish;
+    }
+
+    public VanishData getVanishData() {
+        return vanishData;
     }
 
     public boolean isAcceptsMessages() {

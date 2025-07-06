@@ -202,6 +202,13 @@ Permissions:
       World:
         Required: true
         Value: "serversystem.command.time.world"
+    Weather:
+      Use:
+        Required: true
+        Value: "serversystem.command.weather.use"
+      World:
+        Required: true
+        Value: "serversystem.command.weather.world"
     TeleportAsk:
       Use:
         Required: false
@@ -240,6 +247,45 @@ Permissions:
       Use:
         Required: false
         Value: "serversystem.command.reply.use"
+    MessageToggle:
+      Use:
+        Required: false
+        Value: "serversystem.command.messagetoggle.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.messagetoggle.other"
+    Unlimited:
+      Use:
+        Required: true
+        Value: "serversystem.command.unlimited.use"
+    ClearInventory:
+      Use:
+        Required: true
+        Value: "serversystem.command.clearinventory.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.clearinventory.other"
+    Skull:
+      Use:
+        Required: true
+        Value: "serversystem.command.skull.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.skull.use"
+    Sudo:
+      Use:
+        Required: true
+        Value: "serversystem.command.sudo.use"
+      Exempt:
+        Required: true
+        Value: "serversystem.command.sudo.exempt"
+    Vanish:
+      Use:
+        Required: true
+        Value: "serversystem.command.vanish.use"
+      Show:
+        Required: true
+        Value: "serversystem.command.vanish.show"
   Homes:
     MaxHomes:
       Required: true

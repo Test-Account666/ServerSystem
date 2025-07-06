@@ -155,3 +155,51 @@ Commands:
       reply:
         Enabled: true
         Aliases: "reply, r"
+      messagetoggle:
+        Enabled: true
+        Aliases: "msgtoggle"
+  unlimited:
+    Enabled: true
+    Aliases: "unlimited"
+  weather:
+    Enabled: true
+    Aliases: "weather"
+    Variants:
+      sun:
+        Enabled: true
+        Aliases: "sun"
+      rain:
+        Enabled: true
+        Aliases: "rain"
+      storm:
+        Enabled: true
+        Aliases: "storm"
+  clearinventory:
+    Enabled: true
+    Aliases: "clearinventory, clear, ci"
+  sudo:
+    Enabled: true
+    Aliases: "sudo"
+  offlineteleport:
+    Enabled: true
+    Aliases: "otp, offlinetp"
+    Variants:
+      offlineteleporthere:
+        Enabled: true
+        Aliases: "otphere, offlinetphere"
+  vanish:
+    Enabled: true
+    Aliases: "v, vanish"
+    Variants:
+      drop:
+        Enabled: true
+        Aliases: "drop"
+      pickup:
+        Enabled: true
+        Aliases: "pickup"
+      interact:
+        Enabled: true
+        Aliases: "interact"
+      message:
+        Enabled: true
+        Aliases: "message"

@@ -1,9 +1,9 @@
 package me.testaccount666.serversystem.managers;
 
 import me.testaccount666.serversystem.managers.globaldata.MappingsData;
+import me.testaccount666.serversystem.userdata.ConsoleUser;
+import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 
@@ -30,8 +30,13 @@ public class PlaceholderManager {
      * @param label         The command label to replace the {@code <LABEL>} placeholder.
      * @return The message with placeholders replaced by the corresponding values.
      */
-    public String applyPlaceholders(String message, CommandSender commandSender, @Nullable String targetName, String label) {
-        if (targetName == null) targetName = commandSender.getName();
+    public String applyPlaceholders(String message, User commandSender, @Nullable String targetName, String label) {
+        if (commandSender.getName().isEmpty()) {
+            Bukkit.getLogger().warning("CommandSender (${commandSender.getUuid()}) has no name! This should not happen!");
+            return message;
+        }
+
+        if (targetName == null) targetName = commandSender.getName().get();
 
         message = applyColorPlaceholder(message, "<Color:Prefix>", "Prefix");
         message = applyColorPlaceholder(message, "<Color:Separators>", "Separator");
@@ -40,11 +45,12 @@ public class PlaceholderManager {
         message = applyColorPlaceholder(message, "<Color:Error.Message>", "ErrorMessage");
         message = applyColorPlaceholder(message, "<Color:Error.Highlight>", "ErrorHighlight");
 
-        message = message.replace("<SENDER>", commandSender.getName())
+        message = message.replace("<SENDER>", commandSender.getName().get())
                 .replace("<TARGET>", targetName)
                 .replace("<LABEL>", label);
 
-        if (_placeholders && commandSender instanceof Player player) message = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, message);
+        if (_placeholders && !(commandSender instanceof ConsoleUser))
+            message = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(commandSender.getPlayer(), message);
 
         return message;
     }
