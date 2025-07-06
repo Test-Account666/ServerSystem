@@ -80,7 +80,6 @@ public class CommandGameMode extends AbstractServerSystemCommand {
         };
 
         if (!checkBasePermission(commandSender, gameModePermission, label)) return;
-
         if (handleConsoleWithNoTarget(commandSender, label, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
