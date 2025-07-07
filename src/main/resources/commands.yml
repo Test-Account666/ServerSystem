@@ -203,3 +203,6 @@ Commands:
       message:
         Enabled: true
         Aliases: "message"
+  inventorysee:
+    Enabled: true
+    Aliases: "invsee"

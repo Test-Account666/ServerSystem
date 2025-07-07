@@ -286,6 +286,13 @@ Permissions:
       Show:
         Required: true
         Value: "serversystem.command.vanish.show"
+    InventorySee:
+      Use:
+        Required: true
+        Value: "serversystem.command.inventorysee.use"
+      Modify:
+        Required: true
+        Value: "serversystem.command.inventorysee.modify"
   Homes:
     MaxHomes:
       Required: true

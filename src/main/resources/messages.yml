@@ -194,6 +194,8 @@ Messages:
       SuccessOther:
         Enabled: "<Color:Highlight><TARGET> <Color:Message>can now send messages in vanish."
         Disabled: "<Color:Highlight><TARGET> <Color:Message>can no longer send messages in vanish."
+    InventorySee:
+      CannotSeeSelf: "<Color:Error.Message>You cannot open your own inventory."
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>You don't have permission to do this. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"
