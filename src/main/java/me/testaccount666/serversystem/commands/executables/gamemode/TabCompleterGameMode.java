@@ -34,7 +34,7 @@ public class TabCompleterGameMode implements ServerSystemTabCompleter {
                 completions.add(possibleCompletion);
             }
 
-            return Optional.of(completions.isEmpty()? possibleCompletions : completions);
+            return Optional.of(completions);
         }
 
         if (arguments.length == 2) return Optional.empty();

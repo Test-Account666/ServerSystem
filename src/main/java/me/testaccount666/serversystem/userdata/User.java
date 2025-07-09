@@ -16,10 +16,10 @@ import java.util.Set;
  * for interacting with online players.
  */
 public class User extends OfflineUser {
+    protected final Set<CachedUser> messageListeners = new HashSet<>();
     protected Player player;
     protected TeleportRequest teleportRequest;
     protected User replyUser;
-    protected Set<CachedUser> messageListeners = new HashSet<>();
 
     protected User(File userFile) {
         super(userFile);

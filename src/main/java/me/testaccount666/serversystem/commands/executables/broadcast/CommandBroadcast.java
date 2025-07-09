@@ -3,10 +3,12 @@ package me.testaccount666.serversystem.commands.executables.broadcast;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.managers.MessageManager;
+import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.utils.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
+import org.bukkit.entity.Player;
 
 @ServerSystemCommand(name = "broadcast")
 public class CommandBroadcast extends AbstractServerSystemCommand {
@@ -36,5 +38,10 @@ public class CommandBroadcast extends AbstractServerSystemCommand {
         messageFormat = messageFormat.replace("<BROADCAST>", ChatColor.translateColorCodes(broadcast.toString().trim()));
 
         Bukkit.broadcastMessage(messageFormat);
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        return PermissionManager.hasCommandPermission(player, "Broadcast.Use", false);
     }
 }

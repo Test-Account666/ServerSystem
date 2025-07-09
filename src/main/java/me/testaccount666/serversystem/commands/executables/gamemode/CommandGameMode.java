@@ -2,10 +2,12 @@ package me.testaccount666.serversystem.commands.executables.gamemode;
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
+import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.managers.globaldata.MappingsData;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
+import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -133,5 +135,10 @@ public class CommandGameMode extends AbstractServerSystemCommand {
         return MappingsData.GameMode().getGameModeName(gameMode)
                 .map(name -> name.toLowerCase().startsWith(input.toLowerCase()))
                 .orElse(false);
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        return PermissionManager.hasCommandPermission(player, "GameMode.Use", false);
     }
 }

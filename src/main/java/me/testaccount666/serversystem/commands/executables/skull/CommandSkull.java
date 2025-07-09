@@ -2,9 +2,11 @@ package me.testaccount666.serversystem.commands.executables.skull;
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
+import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.net.MalformedURLException;
@@ -73,5 +75,10 @@ public class CommandSkull extends AbstractServerSystemCommand {
         if (parsedUrl != null) return _skullCreator.getSkullByTexture(parsedUrl);
 
         return _skullCreator.getSkull(input);
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        return PermissionManager.hasCommandPermission(player, "Skull.Use", false);
     }
 }

@@ -17,7 +17,7 @@ public class TabCompleterEconomy implements ServerSystemTabCompleter {
         if (arguments.length == 1) {
             var potentialCompletions = List.of("set", "take", "give");
             var completions = potentialCompletions.stream().filter(completion -> completion.toLowerCase().startsWith(arguments[0].toLowerCase())).toList();
-            return Optional.of(completions.isEmpty()? potentialCompletions : completions);
+            return Optional.of(completions);
         }
 
         if (arguments.length == 2) return Optional.empty();

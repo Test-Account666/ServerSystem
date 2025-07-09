@@ -3,8 +3,10 @@ package me.testaccount666.serversystem.commands.executables.vanish;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
+import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
+import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.function.BooleanSupplier;
@@ -12,7 +14,7 @@ import java.util.function.Consumer;
 
 @ServerSystemCommand(name = "vanish", variants = {"drop", "pickup", "interact", "message"})
 public class CommandVanish extends AbstractServerSystemCommand {
-    protected VanishPacket vanishPacket;
+    protected final VanishPacket vanishPacket;
 
     public CommandVanish() {
         vanishPacket = new VanishPacket();
@@ -107,5 +109,10 @@ public class CommandVanish extends AbstractServerSystemCommand {
 
         if (isSelf) return;
         sendCommandMessage(targetUser, "Vanish.Success." + (enableVanish? "Enabled" : "Disabled"), commandSender.getName().get(), label, null);
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        return PermissionManager.hasCommandPermission(player, "Vanish.Use", false);
     }
 }

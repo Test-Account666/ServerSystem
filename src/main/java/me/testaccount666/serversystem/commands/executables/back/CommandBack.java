@@ -2,10 +2,12 @@ package me.testaccount666.serversystem.commands.executables.back;
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
+import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.managers.globaldata.MappingsData;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
+import org.bukkit.entity.Player;
 
 @ServerSystemCommand(name = "back")
 public class CommandBack extends AbstractServerSystemCommand {
@@ -55,6 +57,11 @@ public class CommandBack extends AbstractServerSystemCommand {
 
         sendCommandMessage(commandSender, "Back.Success", null, label,
                 message -> message.replace("<TYPE>", typeName));
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        return PermissionManager.hasCommandPermission(player, "Back.Use", false);
     }
 
     public enum BackType {

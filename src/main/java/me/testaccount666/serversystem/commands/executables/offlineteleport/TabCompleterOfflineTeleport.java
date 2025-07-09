@@ -4,13 +4,12 @@ import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabComplet
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+
+import static me.testaccount666.serversystem.commands.common.tabcompleters.OfflinePlayerTabCompletion.getOfflinePlayerNames;
 
 public class TabCompleterOfflineTeleport implements ServerSystemTabCompleter {
 
@@ -29,9 +28,6 @@ public class TabCompleterOfflineTeleport implements ServerSystemTabCompleter {
         if (!PermissionManager.hasPermission(commandSender.getCommandSender(), permissionName, false)) return Optional.of(List.of());
         if (arguments.length != 1) return Optional.of(List.of());
 
-        var possibleCompletions = Arrays.stream(Bukkit.getOfflinePlayers()).map(OfflinePlayer::getName).filter(Objects::nonNull).toList();
-        var completions = possibleCompletions.stream().filter(completion -> completion.toLowerCase().startsWith(arguments[0].toLowerCase())).toList();
-
-        return Optional.of(completions.isEmpty()? possibleCompletions : completions);
+        return getOfflinePlayerNames(arguments);
     }
 }

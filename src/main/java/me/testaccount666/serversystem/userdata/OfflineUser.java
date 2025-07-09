@@ -27,13 +27,15 @@ import java.util.zip.GZIPOutputStream;
  * Compression can be enabled or disabled in the userdata.yml configuration file.
  */
 public class OfflineUser {
+    protected final File userFile;
+    @SaveableField(path = "User.IgnoredPlayers", handler = UuidSetFieldHandler.class)
+    protected final Set<UUID> ignoredPlayers = new HashSet<>();
     @SaveableField(path = "User.LastKnownName")
     protected String name;
     protected UUID uuid;
     protected OfflinePlayer player;
     protected AbstractBankAccount bankAccount;
     protected HomeManager homeManager;
-    protected File userFile;
     protected FileConfiguration userConfig;
     @SaveableField(path = "User.LastSeen")
     protected long lastSeen;
@@ -63,8 +65,6 @@ public class OfflineUser {
     protected CommandBack.BackType lastBackType;
     @SaveableField(path = "User.PlayerLanguage")
     protected String playerLanguage;
-    @SaveableField(path = "User.IgnoredPlayers", handler = UuidSetFieldHandler.class)
-    protected Set<UUID> ignoredPlayers = new HashSet<>();
 
     protected OfflineUser(File userFile) {
         this.userFile = userFile;

@@ -5,15 +5,16 @@ import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.annotations.RequiredCommands;
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor;
 import me.testaccount666.serversystem.commands.management.CommandManager;
+import me.testaccount666.serversystem.utils.MethodAccessor;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 public class ListenerManager {
     private final CommandManager _commandManager;
@@ -73,16 +74,12 @@ public class ListenerManager {
             instances.add(instance.get());
         }
 
-        Method canRegisterMethod;
         try {
-            canRegisterMethod = listener.getClass().getDeclaredMethod("canRegister", Set.class);
-        } catch (NoSuchMethodException | NoSuchMethodError exception) {
-            throw new RuntimeException("'${listener.getClass().getName()}' requires a canRegister method!");
-        }
+            var methodAccessor = MethodAccessor.createAccessor(listener.getClass(), "canRegister", Set.class, Boolean.class);
 
-        try {
-            return (boolean) canRegisterMethod.invoke(listener, instances);
-        } catch (IllegalAccessException | InvocationTargetException exception) {
+            return ((BiFunction<Listener, Set, Boolean>) methodAccessor).apply(listener, instances);
+        } catch (RuntimeException | NoSuchMethodError exception) {
+            Bukkit.getLogger().severe("Listener ${listener.getClass().getName()} requires the method 'canRegister(Set<ServerSystemCommandExecutor>, Boolean)' to be implemented! This should not happen!");
             exception.printStackTrace();
             return false;
         }

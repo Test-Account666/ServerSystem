@@ -6,7 +6,7 @@ import me.testaccount666.serversystem.managers.MessageManager;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
-import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
@@ -14,6 +14,7 @@ import java.util.function.UnaryOperator;
 
 public abstract class AbstractServerSystemCommand implements ServerSystemCommandExecutor {
 
+    public abstract boolean hasCommandAccess(Player player, Command command);
 
     /**
      * Gets the target user for a command.
@@ -239,17 +240,5 @@ public abstract class AbstractServerSystemCommand implements ServerSystemCommand
                 .map(message -> messageModifier != null? messageModifier.apply(message) : message)
                 .map(message -> MessageManager.formatMessage(message, recipient, targetName, label, addPrefix))
                 .ifPresent(recipient::sendMessage);
-    }
-
-    protected Optional<User> validateAndGetUser(User commandSender, Player player, String label, String context) {
-        var userOptional = ServerSystem.Instance.getUserManager().getUser(player);
-
-        if (userOptional.isEmpty()) {
-            Bukkit.getLogger().warning("(Command${context}) User '${player.getName()}' is not cached! This should not happen!");
-            sendGeneralMessage(commandSender, "ErrorOccurred", player.getName(), label, null);
-            return Optional.empty();
-        }
-
-        return Optional.of((User) userOptional.get().getOfflineUser());
     }
 }

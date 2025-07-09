@@ -3,10 +3,11 @@ package me.testaccount666.serversystem.commands.executables.home.user;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.home.admin.CommandAdminHome;
+import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.userdata.home.Home;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
+import org.bukkit.entity.Player;
 
 @ServerSystemCommand(name = "home", variants = {"sethome", "deletehome", "adminhome", "adminsethome", "admindeletehome"}, tabCompleter = TabCompleterHome.class)
 public class CommandHome extends AbstractServerSystemCommand {
@@ -133,5 +134,16 @@ public class CommandHome extends AbstractServerSystemCommand {
 
         sendCommandMessage(commandSender, "SetHome.Success", null, label,
                 message -> message.replace("<HOME>", newHome.getDisplayName()));
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        if (command.getName().toLowerCase().startsWith("admin")) return _commandAdminHome.hasCommandAccess(player, command);
+
+        if (command.getName().equalsIgnoreCase("sethome")) return PermissionManager.hasCommandPermission(player, "SetHome.Use", false);
+
+        if (command.getName().equalsIgnoreCase("deletehome")) return PermissionManager.hasCommandPermission(player, "DeleteHome.Use", false);
+
+        return PermissionManager.hasCommandPermission(player, "Home.Use", false);
     }
 }

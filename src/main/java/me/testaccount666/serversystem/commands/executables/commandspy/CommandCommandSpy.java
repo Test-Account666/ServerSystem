@@ -2,8 +2,10 @@ package me.testaccount666.serversystem.commands.executables.commandspy;
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
+import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
+import org.bukkit.entity.Player;
 
 @ServerSystemCommand(name = "commandspy")
 public class CommandCommandSpy extends AbstractServerSystemCommand {
@@ -21,7 +23,6 @@ public class CommandCommandSpy extends AbstractServerSystemCommand {
 
         var targetUser = targetUserOptional.get();
         var targetPlayer = targetUser.getPlayer();
-
         var isSelf = targetUser == commandSender;
 
         if (!isSelf && !checkOtherPermission(commandSender, "CommandSpy.Other", targetPlayer.getName(), label)) return;
@@ -39,5 +40,10 @@ public class CommandCommandSpy extends AbstractServerSystemCommand {
 
         if (isSelf) return;
         sendCommandMessage(targetUser, "CommandSpy.Success." + (isEnabled? "Enabled" : "Disabled"), null, label, null);
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        return PermissionManager.hasCommandPermission(player, "CommandSpy.Use", false);
     }
 }

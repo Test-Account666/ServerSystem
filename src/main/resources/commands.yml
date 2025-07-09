@@ -206,3 +206,7 @@ Commands:
   inventorysee:
     Enabled: true
     Aliases: "invsee"
+    Variants:
+      offlineinventorysee:
+        Enabled: true
+        Aliases: "offlineinvsee, oinvsee"

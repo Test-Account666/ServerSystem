@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 public abstract class AbstractSqlBankAccount extends AbstractBankAccount {
-    protected Connection connection;
+    protected final Connection connection;
 
     public AbstractSqlBankAccount(UUID owner, BigInteger accountId, Connection connection) {
         super(owner, accountId);

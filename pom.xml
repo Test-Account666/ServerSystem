@@ -151,6 +151,12 @@
             <id>jitpack</id>
             <url>https://jitpack.io/</url>
         </repository>
+        <!-- NBT API -->
+        <repository>
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.io/repository/maven-public/</url>
+            <layout>default</layout>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -197,6 +203,12 @@
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
             <version>1.17.6</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api-plugin</artifactId>
+            <version>2.15.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

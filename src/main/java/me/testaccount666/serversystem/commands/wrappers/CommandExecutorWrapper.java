@@ -14,6 +14,10 @@ public class CommandExecutorWrapper extends AbstractCommandWrapper implements Co
         _commandExecutor = commandExecutor;
     }
 
+    public ServerSystemCommandExecutor getCommandExecutor() {
+        return _commandExecutor;
+    }
+
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] arguments) {
         var commandUser = resolveCommandUser(commandSender);

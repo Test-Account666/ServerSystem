@@ -2,6 +2,7 @@ package me.testaccount666.serversystem.commands.executables.spawn;
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
+import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.Bukkit;
@@ -9,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,10 +19,10 @@ import java.util.Optional;
 
 @ServerSystemCommand(name = "spawn", variants = "setspawn")
 public class CommandSpawn extends AbstractServerSystemCommand {
+    protected final FileConfiguration spawnConfiguration;
+    protected final boolean teleportOnJoin;
+    protected final boolean teleportOnFirstJoin;
     private final File _spawnFile = Path.of("plugins", "ServerSystem", "spawn.yml").toFile();
-    protected FileConfiguration spawnConfiguration;
-    protected boolean teleportOnJoin;
-    protected boolean teleportOnFirstJoin;
     protected Optional<Location> spawnLocation = Optional.empty();
 
     public CommandSpawn() {
@@ -136,5 +138,12 @@ public class CommandSpawn extends AbstractServerSystemCommand {
         } catch (IOException exception) {
             throw new RuntimeException("Error while trying to spawn 'spawn.yml'", exception);
         }
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        if (command.getName().equalsIgnoreCase("spawn")) return PermissionManager.hasCommandPermission(player, "Spawn.Use");
+
+        return PermissionManager.hasCommandPermission(player, "SetSpawn.Use");
     }
 }

@@ -1,7 +1,9 @@
-package me.testaccount666.serversystem.commands.executables.inventorysee;
+package me.testaccount666.serversystem.commands.executables.inventorysee.online;
 
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.annotations.RequiredCommands;
+import me.testaccount666.serversystem.commands.executables.inventorysee.utils.AbstractInventorySeeListener;
+import me.testaccount666.serversystem.commands.executables.inventorysee.utils.InventorySeeUtils;
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import org.bukkit.Bukkit;
@@ -12,28 +14,23 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.Inventory;
 
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @RequiredCommands(requiredCommands = CommandInventorySee.class)
-public class ListenerInventorySee implements Listener {
+public class ListenerInventorySee extends AbstractInventorySeeListener implements Listener {
 
-    private CommandInventorySee _commandInventorySee;
-
+    /**
+     * Checks if the listener can be registered by finding the required CommandInventorySee instance.
+     *
+     * @param commands Set of available commands
+     * @return true if the listener can be registered, false otherwise
+     */
     public boolean canRegister(Set<ServerSystemCommandExecutor> commands) {
-        var canRegister = new AtomicBoolean(false);
-
-        commands.forEach(command -> {
-            if (!(command instanceof CommandInventorySee foundCommand)) return;
-
-            _commandInventorySee = foundCommand;
-            canRegister.set(true);
-        });
-
-        return canRegister.get();
+        return internalCanRegister(commands);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -52,7 +49,7 @@ public class ListenerInventorySee implements Listener {
         if (cachedInventory == null || (cachedInventory != topInventory && cachedInventory != bottomInventory)) return;
 
         if (!PermissionManager.hasPermission(viewerPlayer, "Commands.InventorySee.Modify", false)
-                || event.getSlot() > 44) event.setCancelled(true);
+                || (event.getRawSlot() > 44 && event.getRawSlot() < 54)) event.setCancelled(true);
 
         Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> _commandInventorySee.applyChangesToOwner(owner, cachedInventory), 1L);
     }
@@ -94,5 +91,17 @@ public class ListenerInventorySee implements Listener {
 
         Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> _commandInventorySee.refreshInventoryContents(player, cachedInventory), 1L);
     }
-}
 
+    @EventHandler
+    public void onViewedQuit(PlayerQuitEvent event) {
+        var player = event.getPlayer();
+
+        if (!_commandInventorySee.inventoryCache.containsKey(player)) return;
+
+        var inventory = _commandInventorySee.inventoryCache.get(player);
+        _commandInventorySee.inventoryCache.remove(player);
+
+        InventorySeeUtils.handleInventoryViewers(inventory, player, 10L,
+                (user, playerName) -> _commandInventorySee._offlineInventorySee.processOfflineInventorySee(user, "", playerName));
+    }
+}

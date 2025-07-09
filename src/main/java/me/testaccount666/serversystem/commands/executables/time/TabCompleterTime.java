@@ -21,7 +21,7 @@ public class TabCompleterTime implements ServerSystemTabCompleter {
                 var possibleCompletions = List.of("day", "night", "noon", "midnight");
                 var completions = possibleCompletions.stream().filter(completion -> completion.toLowerCase().startsWith(arguments[0].toLowerCase())).toList();
 
-                return Optional.of(completions.isEmpty()? possibleCompletions : completions);
+                return Optional.of(completions);
             }
 
             if (arguments.length == 2) return handleWorldCompletions(1, arguments);
@@ -40,6 +40,6 @@ public class TabCompleterTime implements ServerSystemTabCompleter {
         var possibleCompletions = Bukkit.getWorlds().stream().map(World::getName).toList();
         var completions = possibleCompletions.stream().filter(completion -> completion.toLowerCase().startsWith(arguments[index].toLowerCase())).toList();
 
-        return Optional.of(completions.isEmpty()? possibleCompletions : completions);
+        return Optional.of(completions);
     }
 }

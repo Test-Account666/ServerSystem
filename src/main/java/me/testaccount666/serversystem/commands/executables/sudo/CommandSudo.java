@@ -148,4 +148,9 @@ public class CommandSudo extends AbstractServerSystemCommand {
 
         return targetPlayer;
     }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        return PermissionManager.hasCommandPermission(player, "Sudo.Use", false);
+    }
 }

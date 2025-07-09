@@ -196,6 +196,9 @@ Messages:
         Disabled: "<Color:Highlight><TARGET> <Color:Message>can no longer send messages in vanish."
     InventorySee:
       CannotSeeSelf: "<Color:Error.Message>You cannot open your own inventory."
+    OfflineInventorySee:
+      NeverPlayed: "<Color:Error:Message>Specified player <Color:Error:Highlight><TARGET> <Color:Error:Message>has never played."
+      NotOffline: "<Color:Error:Message>Specified player <Color:Error:Highlight><TARGET> <Color:Error:Message>is online."
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>You don't have permission to do this. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"
@@ -203,3 +206,4 @@ Messages:
     NotPlayer: "<Color:Error.Message>You must be a player to use this command."
     InvalidArguments: "<Color:Error.Message>Invalid arguments. Usage: <Color:Error.Highlight><USAGE>"
     ErrorOccurred: "<Color:Error.Message>An error occured. Please see logs for more information."
+    CommandDisabled: "<Color:Error.Message>This command has been automatically disabled. Reason: <REASON>"

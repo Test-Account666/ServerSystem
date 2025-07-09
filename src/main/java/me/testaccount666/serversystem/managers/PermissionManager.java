@@ -19,6 +19,10 @@ public class PermissionManager {
         _ConfigReader = new DefaultConfigReader(_PERMISSION_FILE, plugin);
     }
 
+    public static boolean hasCommandPermission(CommandSender commandSender, String permissionPath, boolean sendFailInfo) {
+        return hasPermission(commandSender, "Commands.${permissionPath}", sendFailInfo);
+    }
+
     public static boolean hasCommandPermission(CommandSender commandSender, String permissionPath) {
         return hasPermission(commandSender, "Commands.${permissionPath}");
     }

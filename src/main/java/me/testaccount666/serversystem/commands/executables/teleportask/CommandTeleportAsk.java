@@ -15,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
+import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -323,5 +324,20 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
 
         if (isSelf) return;
         sendCommandMessage(targetUser, "TeleportToggle.Success." + (acceptsTeleports? "Enabled" : "Disabled"), commandSender.getName().get(), label, null);
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        var permissionPath = switch (command.getName()) {
+            case "teleportask" -> "TeleportAsk.Use";
+            case "teleportaccept" -> "TeleportAccept.Use";
+            case "teleportdeny" -> "TeleportDeny.Use";
+            case "teleporthereask" -> "TeleportHereAsk.Use";
+            case "teleporttoggle" -> "TeleportToggle.Use";
+            default -> null;
+        };
+        if (permissionPath == null) return false;
+
+        return PermissionManager.hasCommandPermission(player, permissionPath, false);
     }
 }

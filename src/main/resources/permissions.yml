@@ -293,6 +293,13 @@ Permissions:
       Modify:
         Required: true
         Value: "serversystem.command.inventorysee.modify"
+    OfflineInventorySee:
+      Use:
+        Required: true
+        Value: "serversystem.command.offlineinventorysee.use"
+      Modify:
+        Required: true
+        Value: "serversystem.command.offlineinventorysee.modify"
   Homes:
     MaxHomes:
       Required: true

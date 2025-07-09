@@ -3,8 +3,10 @@ package me.testaccount666.serversystem.commands.executables.balance;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
+import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
+import org.bukkit.entity.Player;
 
 @ServerSystemCommand(name = "balance")
 public class CommandBalance extends AbstractServerSystemCommand {
@@ -35,5 +37,10 @@ public class CommandBalance extends AbstractServerSystemCommand {
 
         sendCommandMessage(commandSender, messagePath, targetPlayer.getName(), label,
                 message -> message.replace("<BALANCE>", formattedBalance));
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        return PermissionManager.hasCommandPermission(player, "Balance.Use", false);
     }
 }

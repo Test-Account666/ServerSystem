@@ -1,34 +1,42 @@
-package me.testaccount666.serversystem.commands.executables.inventorysee;
+package me.testaccount666.serversystem.commands.executables.inventorysee.online;
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
+import me.testaccount666.serversystem.commands.executables.inventorysee.offline.CommandOfflineInventorySee;
+import me.testaccount666.serversystem.commands.executables.inventorysee.utils.InventorySeeUtils;
+import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@ServerSystemCommand(name = "inventorysee")
+@ServerSystemCommand(name = "inventorysee", variants = "offlineinventorysee", tabCompleter = TabCompleterInventorySee.class)
 public class CommandInventorySee extends AbstractServerSystemCommand {
-    protected final Map<Player, Inventory> inventoryCache = new HashMap<>();
+    public final Map<Player, Inventory> inventoryCache = new HashMap<>();
+    public final CommandOfflineInventorySee _offlineInventorySee;
+
+    public CommandInventorySee() {
+        _offlineInventorySee = new CommandOfflineInventorySee(this);
+    }
 
     @Override
     public void execute(User sender, Command command, String label, String... arguments) {
-        if (!command.getName().equalsIgnoreCase("inventorysee")) return;
+        if (command.getName().toLowerCase().startsWith("offline")) {
+            _offlineInventorySee.execute(sender, command, label, arguments);
+            return;
+        }
 
+        if (!command.getName().equalsIgnoreCase("inventorysee")) return;
         processInventorySee(sender, label, arguments);
     }
 
-    private void processInventorySee(User sender, String label, String... arguments) {
+    public void processInventorySee(User sender, String label, String... arguments) {
         if (!checkBasePermission(sender, "InventorySee.Use", label)) return;
 
         if (sender instanceof ConsoleUser) {
@@ -42,7 +50,10 @@ public class CommandInventorySee extends AbstractServerSystemCommand {
         }
 
         var targetUserOptional = getTargetUser(sender, arguments[0]);
-        if (targetUserOptional.isEmpty()) return;
+        if (targetUserOptional.isEmpty()) {
+            sendMissingPlayerMessage(sender, label, arguments[0]);
+            return;
+        }
 
         var targetUser = targetUserOptional.get();
         if (targetUser == sender) {
@@ -58,7 +69,7 @@ public class CommandInventorySee extends AbstractServerSystemCommand {
     }
 
     private Inventory createAndInitializeInventory(Player ownerPlayer) {
-        var newInventory = Bukkit.createInventory(ownerPlayer, 54);
+        var newInventory = Bukkit.createInventory(ownerPlayer, 54, "${ownerPlayer.getName()}'s Inventory");
         refreshInventoryContents(ownerPlayer, newInventory);
         return newInventory;
     }
@@ -77,23 +88,12 @@ public class CommandInventorySee extends AbstractServerSystemCommand {
         displayInventory.setItem(41, owner.getOpenInventory().getCursor());
     }
 
-    private void addSectionDecorators(Inventory displayInventory) {
-        placeFilledMarkers(displayInventory, Material.ARMOR_STAND, "Armor", 45, 49);
-        placeFilledMarkers(displayInventory, Material.APPLE, "Off-Hand", 49, 50);
-        placeFilledMarkers(displayInventory, Material.WHITE_WOOL, "Cursor", 50, 51);
-        placeFilledMarkers(displayInventory, Material.DROPPER, "Drop item", 51, 54);
+    public void addSectionDecorators(Inventory displayInventory) {
+        InventorySeeUtils.addSectionDecorators(displayInventory, false);
     }
 
-    private void placeFilledMarkers(Inventory inventory, Material material, String displayName, int startSlot, int endSlot) {
-        var markerItem = new ItemStack(material);
-        var itemMeta = markerItem.getItemMeta();
-        itemMeta.displayName(Component.text(displayName)
-                .decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE)
-                .color(TextColor.color(255, 0, 0))
-                .asComponent());
-        markerItem.setItemMeta(itemMeta);
-
-        for (var slot = startSlot; slot < endSlot; slot++) inventory.setItem(slot, markerItem);
+    public void placeFilledMarkers(Inventory inventory, Material material, String displayName, int startSlot, int endSlot) {
+        InventorySeeUtils.placeFilledMarkers(inventory, material, displayName, startSlot, endSlot);
     }
 
     protected void applyChangesToOwner(Player owner, Inventory displayInventory) {
@@ -115,5 +115,12 @@ public class CommandInventorySee extends AbstractServerSystemCommand {
                     .setVelocity(owner.getLocation().getDirection().multiply(0.35));
             item.setAmount(0);
         }
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        if (command.getName().toLowerCase().startsWith("offline")) return _offlineInventorySee.hasCommandAccess(player, command);
+
+        return PermissionManager.hasCommandPermission(player, "InventorySee.Use", false);
     }
 }

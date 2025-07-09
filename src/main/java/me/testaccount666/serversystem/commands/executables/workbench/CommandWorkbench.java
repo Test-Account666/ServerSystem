@@ -3,6 +3,7 @@ package me.testaccount666.serversystem.commands.executables.workbench;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
+import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.utils.Version;
@@ -46,17 +47,13 @@ public class CommandWorkbench extends AbstractServerSystemCommand {
         var player = commandSender.getPlayer();
         var commandName = capitalizeFirstLetter(command.getName());
 
-        if (!checkPermission(commandSender, commandName, label)) return;
+        var permissionPath = "${commandName}.Use";
+        if (!checkBasePermission(commandSender, permissionPath, label)) return;
 
         var opener = _menuOpeners.get(commandName);
         if (opener == null) throw new IllegalStateException("Unexpected command name: ${commandName}");
 
         opener.accept(player);
-    }
-
-    private boolean checkPermission(User user, String commandName, String label) {
-        var permissionSuffix = "${commandName}.Use";
-        return checkBasePermission(user, permissionSuffix, label);
     }
 
     private String capitalizeFirstLetter(String input) {
@@ -97,5 +94,23 @@ public class CommandWorkbench extends AbstractServerSystemCommand {
     private void openStonecutter(Player player) {
         if (_legacyVersion) player.openStonecutter(player.getLocation(), true);
         else org.bukkit.inventory.MenuType.STONECUTTER.create(player).open();
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        var permissionPath = switch (command.getName()) {
+            case "workbench" -> "Workbench.Use";
+            case "anvil" -> "Anvil.Use";
+            case "smithing" -> "Smithing.Use";
+            case "loom" -> "Loom.Use";
+            case "grindstone" -> "Grindstone.Use";
+            case "cartography" -> "Cartography.Use";
+            case "stonecutter" -> "Stonecutter.Use";
+            default -> null;
+        };
+
+        if (permissionPath == null) return false;
+
+        return PermissionManager.hasCommandPermission(player, permissionPath, false);
     }
 }

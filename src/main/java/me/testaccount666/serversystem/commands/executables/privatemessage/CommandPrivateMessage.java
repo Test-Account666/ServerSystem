@@ -3,12 +3,14 @@ package me.testaccount666.serversystem.commands.executables.privatemessage;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.managers.MessageManager;
+import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
+import org.bukkit.entity.Player;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -159,4 +161,15 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
         return targetUser.getPlayer() != null && targetUser.getPlayer().isOnline();
     }
 
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        if (command.getName().equalsIgnoreCase("privatemessage")) return PermissionManager.hasCommandPermission(player, "PrivateMessage.Use", false);
+
+        if (command.getName().equalsIgnoreCase("reply")) return PermissionManager.hasCommandPermission(player, "Reply.Use", false);
+
+        if (command.getName().equalsIgnoreCase("messagetoggle")) return PermissionManager.hasCommandPermission(player, "MessageToggle.Use", false);
+
+        return false;
+
+    }
 }

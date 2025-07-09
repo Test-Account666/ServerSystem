@@ -7,6 +7,7 @@ import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
+import org.bukkit.entity.Player;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -40,5 +41,10 @@ public class CommandClearChat extends AbstractServerSystemCommand {
             var message = messageOptional.get();
             everyone.sendMessage(message);
         });
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        return PermissionManager.hasCommandPermission(player, "ClearChat.Use", false);
     }
 }

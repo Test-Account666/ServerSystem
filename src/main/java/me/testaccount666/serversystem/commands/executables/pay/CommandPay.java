@@ -3,8 +3,10 @@ package me.testaccount666.serversystem.commands.executables.pay;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
+import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
+import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -59,5 +61,10 @@ public class CommandPay extends AbstractServerSystemCommand {
         } catch (NumberFormatException ignored) {
             sendCommandMessage(commandSender, "Pay.InvalidAmount", targetPlayer.getName(), label, null);
         }
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        return PermissionManager.hasCommandPermission(player, "ServerSystem.Pay.Use", false);
     }
 }

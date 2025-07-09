@@ -60,6 +60,6 @@ public class TabCompleterAdminHome implements ServerSystemTabCompleter {
         var potentialCompletions = homeManager.getHomes().stream().map(Home::getDisplayName).toList();
         var foundCompletions = potentialCompletions.stream().filter(completion -> completion.toLowerCase().startsWith(arguments[1].toLowerCase())).toList();
 
-        return foundCompletions.isEmpty()? Optional.of(potentialCompletions) : Optional.of(foundCompletions);
+        return Optional.of(foundCompletions);
     }
 }

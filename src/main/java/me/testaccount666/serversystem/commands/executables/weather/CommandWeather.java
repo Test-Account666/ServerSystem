@@ -2,11 +2,13 @@ package me.testaccount666.serversystem.commands.executables.weather;
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
+import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
+import org.bukkit.entity.Player;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -101,5 +103,10 @@ public class CommandWeather extends AbstractServerSystemCommand {
         sendCommandMessage(commandSender, "Weather.Success", world.getName(), label,
                 message -> message.replace("<WEATHER>", arguments[0])
                         .replace("<WORLD>", world.getName()));
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        return PermissionManager.hasCommandPermission(player, "Weather.Use");
     }
 }

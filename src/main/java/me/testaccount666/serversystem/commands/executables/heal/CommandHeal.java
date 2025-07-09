@@ -2,9 +2,11 @@ package me.testaccount666.serversystem.commands.executables.heal;
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
+import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
+import org.bukkit.entity.Player;
 
 @ServerSystemCommand(name = "heal", variants = "feed")
 public class CommandHeal extends AbstractServerSystemCommand {
@@ -74,5 +76,10 @@ public class CommandHeal extends AbstractServerSystemCommand {
 
         if (isSelf) return;
         sendCommandMessage(targetUser, "Heal.Success", commandSender.getName().get(), label, null);
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        return PermissionManager.hasCommandPermission(player, "Heal.Use", false);
     }
 }

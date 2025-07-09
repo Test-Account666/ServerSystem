@@ -2,12 +2,14 @@ package me.testaccount666.serversystem.commands.executables.teleport;
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
+import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.text.DecimalFormat;
@@ -215,4 +217,17 @@ public class CommandTeleport extends AbstractServerSystemCommand {
                 + axis.getZ() * location.getZ();
     }
 
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        if (command.getName().equalsIgnoreCase("teleportposition"))
+            return PermissionManager.hasCommandPermission(player, "TeleportPosition.Use", false);
+
+        if (command.getName().equalsIgnoreCase("teleporthere"))
+            return PermissionManager.hasCommandPermission(player, "TeleportHere.Use", false);
+
+        if (command.getName().equalsIgnoreCase("teleportall"))
+            return PermissionManager.hasCommandPermission(player, "TeleportAll.Use", false);
+
+        return PermissionManager.hasCommandPermission(player, "Teleport.Use", false);
+    }
 }

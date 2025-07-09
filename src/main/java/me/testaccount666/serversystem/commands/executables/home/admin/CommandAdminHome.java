@@ -1,10 +1,12 @@
 package me.testaccount666.serversystem.commands.executables.home.admin;
 
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
+import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.userdata.home.Home;
 import org.bukkit.command.Command;
+import org.bukkit.entity.Player;
 
 public class CommandAdminHome extends AbstractServerSystemCommand {
 
@@ -146,5 +148,16 @@ public class CommandAdminHome extends AbstractServerSystemCommand {
 
         sendCommandMessage(commandSender, "SetHome.Success", null, label,
                 message -> message.replace("<HOME>", newHome.getDisplayName()));
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        var commandName = command.getName().substring("admin".length());
+
+        if (commandName.equalsIgnoreCase("sethome")) return PermissionManager.hasCommandPermission(player, "AdminSetHome.Use", false);
+
+        if (commandName.equalsIgnoreCase("deletehome")) return PermissionManager.hasCommandPermission(player, "AdminDeleteHome.Use", false);
+
+        return PermissionManager.hasCommandPermission(player, "AdminHome.Use", false);
     }
 }
