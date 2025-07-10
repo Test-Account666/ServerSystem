@@ -210,3 +210,25 @@ Commands:
       offlineinventorysee:
         Enabled: true
         Aliases: "offlineinvsee, oinvsee"
+  enderchest:
+    Enabled: true
+    Aliases: "enderchest, ec"
+    Variants:
+      offlineenderchest:
+        Enabled: true
+        Aliases: "offlineenderchest, oenderchest, oec"
+  smelt:
+    Enabled: true
+    Aliases: "smelt"
+  stack:
+    Enabled: true
+    Aliases: "stack"
+  repair:
+    Enabled: true
+    Aliases: "repair"
+  ping:
+    Enabled: true
+    Aliases: "ping"
+  ip:
+    Enabled: true
+    Aliases: "ip"

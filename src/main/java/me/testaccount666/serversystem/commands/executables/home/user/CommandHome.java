@@ -9,6 +9,9 @@ import me.testaccount666.serversystem.userdata.home.Home;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 @ServerSystemCommand(name = "home", variants = {"sethome", "deletehome", "adminhome", "adminsethome", "admindeletehome"}, tabCompleter = TabCompleterHome.class)
 public class CommandHome extends AbstractServerSystemCommand {
     private final CommandAdminHome _commandAdminHome;
@@ -38,10 +41,10 @@ public class CommandHome extends AbstractServerSystemCommand {
     }
 
     private void handleHomeCommand(User commandSender, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "Home.Use", label)) return;
+        if (!checkBasePermission(commandSender, "Home.Use")) return;
 
         if (arguments.length == 0) {
-            sendGeneralMessage(commandSender, "InvalidArguments", null, label, null);
+            general("InvalidArguments", commandSender).label(label).build();
             return;
         }
 
@@ -49,8 +52,8 @@ public class CommandHome extends AbstractServerSystemCommand {
         var homeOptional = homeManager.getHomeByName(arguments[0]);
 
         if (homeOptional.isEmpty()) {
-            sendCommandMessage(commandSender, "Home.DoesNotExist", null, label,
-                    message -> message.replace("<HOME>", arguments[0]));
+            command("Home.DoesNotExist", commandSender)
+                    .modifier(message -> message.replace("<HOME>", arguments[0])).build();
             return;
         }
 
@@ -59,15 +62,15 @@ public class CommandHome extends AbstractServerSystemCommand {
 
         commandSender.getPlayer().teleport(homeLocation);
 
-        sendCommandMessage(commandSender, "Home.Success", null, label,
-                message -> message.replace("<HOME>", home.getDisplayName()));
+        command("Home.Success", commandSender)
+                .modifier(message -> message.replace("<HOME>", home.getDisplayName())).build();
     }
 
     private void handleDeleteHomeCommand(User commandSender, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "DeleteHome.Use", label)) return;
+        if (!checkBasePermission(commandSender, "DeleteHome.Use")) return;
 
         if (arguments.length == 0) {
-            sendGeneralMessage(commandSender, "InvalidArguments", null, label, null);
+            general("InvalidArguments", commandSender).label(label).build();
             return;
         }
 
@@ -75,23 +78,23 @@ public class CommandHome extends AbstractServerSystemCommand {
         var homeOptional = homeManager.getHomeByName(arguments[0]);
 
         if (homeOptional.isEmpty()) {
-            sendCommandMessage(commandSender, "DeleteHome.DoesNotExist", null, label,
-                    message -> message.replace("<HOME>", arguments[0]));
+            command("Home.DoesNotExist", commandSender)
+                    .modifier(message -> message.replace("<HOME>", arguments[0])).build();
             return;
         }
 
         var home = homeOptional.get();
         homeManager.removeHome(home);
 
-        sendCommandMessage(commandSender, "DeleteHome.Success", null, label,
-                message -> message.replace("<HOME>", home.getDisplayName()));
+        command("DeleteHome.Success", commandSender)
+                .modifier(message -> message.replace("<HOME>", home.getDisplayName())).build();
     }
 
     private void handleSetHomeCommand(User commandSender, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "SetHome.Use", label)) return;
+        if (!checkBasePermission(commandSender, "SetHome.Use")) return;
 
         if (arguments.length == 0) {
-            sendGeneralMessage(commandSender, "InvalidArguments", null, label, null);
+            general("InvalidArguments", commandSender).label(label).build();
             return;
         }
 
@@ -99,7 +102,7 @@ public class CommandHome extends AbstractServerSystemCommand {
         var maxHomesOptional = homeManager.getMaxHomeCount();
 
         if (maxHomesOptional.isEmpty()) {
-            sendGeneralMessage(commandSender, "NotPlayer", null, label, null);
+            general("ErrorOccurred", commandSender).label(label).build();
             return;
         }
 
@@ -108,32 +111,33 @@ public class CommandHome extends AbstractServerSystemCommand {
         var maxHomes = maxHomesOptional.get();
 
         if (maxHomes <= currentHomeCount) {
-            sendCommandMessage(commandSender, "SetHome.MaxHomes", null, label,
-                    message -> message.replace("<MAX_HOMES>", String.valueOf(maxHomes))
-                            .replace("<CURRENT_HOMES>", String.valueOf(currentHomeCount)));
+
+            command("SetHome.MaxHomes", commandSender)
+                    .modifier(message -> message.replace("<MAX_HOMES>", String.valueOf(maxHomes))
+                            .replace("<CURRENT_HOMES>", String.valueOf(currentHomeCount))).build();
             return;
         }
 
         var homeName = arguments[0];
 
         if (homeManager.hasHome(homeName)) {
-            sendCommandMessage(commandSender, "SetHome.AlreadyExists", null, label,
-                    message -> message.replace("<HOME>", homeName));
+            command("SetHome.AlreadyExists", commandSender)
+                    .modifier(message -> message.replace("<HOME>", homeName)).build();
             return;
         }
 
         var newHomeOptional = Home.of(homeName, commandSender.getPlayer().getLocation());
 
         if (newHomeOptional.isEmpty()) {
-            sendCommandMessage(commandSender, "SetHome.InvalidName", null, label, null);
+            command("SetHome.InvalidName", commandSender).build();
             return;
         }
 
         var newHome = newHomeOptional.get();
         homeManager.addHome(newHome);
 
-        sendCommandMessage(commandSender, "SetHome.Success", null, label,
-                message -> message.replace("<HOME>", newHome.getDisplayName()));
+        command("SetHome.Success", commandSender)
+                .modifier(message -> message.replace("<HOME>", newHome.getDisplayName())).build();
     }
 
     @Override

@@ -11,6 +11,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 public class CommandOfflineInventorySee extends AbstractServerSystemCommand {
     public final InventoryLoader inventoryLoader;
 
@@ -33,8 +35,9 @@ public class CommandOfflineInventorySee extends AbstractServerSystemCommand {
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (inventoryLoader == null) {
-            sendGeneralMessage(commandSender, "CommandDisabled", null, label,
-                    message -> message.replace("<REASON>", "NBTAPI is not installed, Offline-InventorySee will not work!"));
+
+            general("CommandDisabled", commandSender).label(label)
+                    .modifier(message -> message.replace("<REASON>", "NBTAPI is not installed, Offline-InventorySee will not work!"));
             return;
         }
 
@@ -44,27 +47,27 @@ public class CommandOfflineInventorySee extends AbstractServerSystemCommand {
     }
 
     public void processOfflineInventorySee(User commandSender, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "OfflineInventorySee.Use", label)) return;
+        if (!checkBasePermission(commandSender, "OfflineInventorySee.Use")) return;
 
         if (commandSender instanceof ConsoleUser) {
-            sendGeneralMessage(commandSender, "NotPlayer", null, label, null);
+            general("NotPlayer", commandSender).build();
             return;
         }
 
         if (arguments.length < 1) {
-            sendGeneralMessage(commandSender, "InvalidArguments", null, label, null);
+            general("InvalidArguments", commandSender).label(label).build();
             return;
         }
 
         var cachedUserOptional = ServerSystem.Instance.getUserManager().getUser(arguments[0]);
         if (cachedUserOptional.isEmpty()) {
-            sendCommandMessage(commandSender, "OfflineInventorySee.NeverPlayed", arguments[0], label, null);
+            general("Offline.NeverPlayed", commandSender).target(arguments[0]).build();
             return;
         }
 
         var cachedUser = cachedUserOptional.get();
         if (cachedUser.isOnlineUser()) {
-            sendCommandMessage(commandSender, "OfflineInventorySee.NotOffline", arguments[0], label, null);
+            general("Offline.NotOffline", commandSender).target(arguments[0]).build();
             return;
         }
 
@@ -73,7 +76,7 @@ public class CommandOfflineInventorySee extends AbstractServerSystemCommand {
 
         var inventoryOptional = inventoryLoader.loadOfflineInventory(targetPlayer);
         if (inventoryOptional.isEmpty()) {
-            sendGeneralMessage(commandSender, "ErrorOccurred", arguments[0], label, null);
+            general("ErrorOccurred", commandSender).label(label).target(arguments[0]).build();
             return;
         }
 

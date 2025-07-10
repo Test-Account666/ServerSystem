@@ -16,6 +16,9 @@ import org.bukkit.inventory.Inventory;
 import java.util.HashMap;
 import java.util.Map;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 @ServerSystemCommand(name = "inventorysee", variants = "offlineinventorysee", tabCompleter = TabCompleterInventorySee.class)
 public class CommandInventorySee extends AbstractServerSystemCommand {
     public final Map<Player, Inventory> inventoryCache = new HashMap<>();
@@ -37,27 +40,27 @@ public class CommandInventorySee extends AbstractServerSystemCommand {
     }
 
     public void processInventorySee(User sender, String label, String... arguments) {
-        if (!checkBasePermission(sender, "InventorySee.Use", label)) return;
+        if (!checkBasePermission(sender, "InventorySee.Use")) return;
 
         if (sender instanceof ConsoleUser) {
-            sendGeneralMessage(sender, "NotPlayer", null, label, null);
+            general("NotPlayer", sender).build();
             return;
         }
 
         if (arguments.length < 1) {
-            sendGeneralMessage(sender, "InvalidArguments", null, label, null);
+            general("InvalidArguments", sender).label(label).build();
             return;
         }
 
         var targetUserOptional = getTargetUser(sender, arguments[0]);
         if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(sender, label, arguments[0]);
+            general("PlayerNotFound", sender).target(arguments[0]).build();
             return;
         }
 
         var targetUser = targetUserOptional.get();
         if (targetUser == sender) {
-            sendCommandMessage(sender, "InventorySee.CannotSeeSelf", targetUser.getPlayer().getName(), label, null);
+            command("InventorySee.CannotSeeSelf", sender).build();
             return;
         }
 

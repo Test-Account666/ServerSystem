@@ -51,6 +51,17 @@ Permissions:
       Use:
         Required: true
         Value: "serversystem.command.teleporthere.use"
+    OfflineTeleport:
+      Use:
+        Required: true
+        Value: "serversystem.command.offlineteleport.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.offlineteleport.other"
+    OfflineTeleportHere:
+      Use:
+        Required: true
+        Value: "serversystem.command.offlineteleporthere.use"
     TeleportAll:
       Use:
         Required: true
@@ -108,6 +119,13 @@ Permissions:
       Other:
         Required: true
         Value: "serversystem.command.enderchest.other"
+    OfflineEnderChest:
+      Use:
+        Required: true
+        Value: "serversystem.command.offlineenderchest.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.offlineenderchest.other"
     Disposal:
       Use:
         Required: true
@@ -300,6 +318,37 @@ Permissions:
       Modify:
         Required: true
         Value: "serversystem.command.offlineinventorysee.modify"
+    Smelt:
+      Use:
+        Required: true
+        Value: "serversystem.command.smelt.use"
+    Stack:
+      Use:
+        Required: true
+        Value: "serversystem.command.stack.use"
+    Repair:
+      Use:
+        Required: true
+        Value: "serversystem.command.repair.use"
+    Ping:
+      Use:
+        Required: false
+        Value: "serversystem.command.ping.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.ping.other"
+    Ip:
+      Use:
+        Required: true
+        Value: "serversystem.command.ip.use"
+    Ignore:
+      Use:
+        Required: false
+        Value: "serversystem.command.ignore.use"
+    Unignore:
+      Use:
+        Required: false
+        Value: "serversystem.command.unignore.use"
   Homes:
     MaxHomes:
       Required: true

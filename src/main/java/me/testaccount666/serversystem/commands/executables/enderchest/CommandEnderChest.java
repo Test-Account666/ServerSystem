@@ -2,28 +2,45 @@ package me.testaccount666.serversystem.commands.executables.enderchest;
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
+import me.testaccount666.serversystem.commands.executables.enderchest.offline.CommandOfflineEnderChest;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
-@ServerSystemCommand(name = "enderchest")
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
+@ServerSystemCommand(name = "enderchest", variants = "offlineenderchest")
 public class CommandEnderChest extends AbstractServerSystemCommand {
-    //TODO: Offline EnderChest
+    public final CommandOfflineEnderChest offlineEnderChest;
+
+    public CommandEnderChest() {
+        offlineEnderChest = new CommandOfflineEnderChest();
+    }
+
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "EnderChest.Use", label)) return;
+        if (command.getName().toLowerCase().startsWith("offline")) {
+            offlineEnderChest.execute(commandSender, command, label, arguments);
+            return;
+        }
+
+        executeEnderChestCommand(commandSender, arguments);
+    }
+
+    public void executeEnderChestCommand(User commandSender, String... arguments) {
+        if (!checkBasePermission(commandSender, "EnderChest.Use")) return;
 
         if (commandSender instanceof ConsoleUser) {
-            sendGeneralMessage(commandSender, "NotPlayer", null, label, null);
+            general("NotPlayer", commandSender).build();
             return;
         }
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
 
         if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
@@ -32,9 +49,9 @@ public class CommandEnderChest extends AbstractServerSystemCommand {
 
         var isSelf = targetUser == commandSender;
 
-        if (!isSelf && !checkOtherPermission(commandSender, "EnderChest.Other", targetPlayer.getName(), label)) return;
+        if (!isSelf && !checkOtherPermission(commandSender, "EnderChest.Other", targetPlayer.getName())) return;
 
-        targetPlayer.openInventory(targetPlayer.getEnderChest());
+        commandSender.getPlayer().openInventory(targetPlayer.getEnderChest());
     }
 
     @Override

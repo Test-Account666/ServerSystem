@@ -8,17 +8,20 @@ import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 @ServerSystemCommand(name = "clearinventory")
 public class CommandClearInventory extends AbstractServerSystemCommand {
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "ClearInventory.Use", label)) return;
-        if (handleConsoleWithNoTarget(commandSender, label, arguments)) return;
+        if (!checkBasePermission(commandSender, "ClearInventory.Use")) return;
+        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
         if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
@@ -27,7 +30,7 @@ public class CommandClearInventory extends AbstractServerSystemCommand {
 
         var isSelf = targetUser == commandSender;
 
-        if (!isSelf && !checkOtherPermission(commandSender, "ClearInventory.Other", targetPlayer.getName(), label)) return;
+        if (!isSelf && !checkOtherPermission(commandSender, "ClearInventory.Other", targetPlayer.getName())) return;
 
         var inventory = targetPlayer.getInventory();
         inventory.clear();
@@ -37,11 +40,13 @@ public class CommandClearInventory extends AbstractServerSystemCommand {
         inventory.setStorageContents(new ItemStack[0]);
 
         var messagePath = isSelf? "ClearInventory.Success" : "ClearInventory.SuccessOther";
+        command(messagePath, commandSender).target(targetPlayer.getName()).build();
 
-        sendCommandMessage(commandSender, messagePath, targetPlayer.getName(), label, null);
 
         if (isSelf) return;
-        sendCommandMessage(targetUser, "ClearInventory.Success", commandSender.getName().get(), label, null);
+
+        command("ClearInventory.Success", targetUser)
+                .sender(commandSender.getName().get()).target(targetPlayer.getName()).build();
     }
 
     @Override

@@ -7,6 +7,9 @@ import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 /**
  * Command executor for the god command.
  * This command allows players to toggle god mode (invulnerability) for themselves or other players.
@@ -25,36 +28,34 @@ public class CommandGod extends AbstractServerSystemCommand {
      */
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "God.Use", label)) return;
-
-        if (handleConsoleWithNoTarget(commandSender, label, arguments)) return;
+        if (!checkBasePermission(commandSender, "God.Use")) return;
+        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
 
         if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
         var targetUser = targetUserOptional.get();
         var targetPlayer = targetUser.getPlayer();
-
         var isSelf = targetUser == commandSender;
 
-        if (!isSelf && !checkOtherPermission(commandSender, "God.Other", targetPlayer.getName(), label)) return;
+        if (!isSelf && !checkOtherPermission(commandSender, "God.Other", targetPlayer.getName())) return;
 
-        var messagePath = isSelf? "God.Success" : "God.SuccessOther";
         var isGod = !targetUser.isGodMode();
-
+        var messagePath = isSelf? "God.Success" : "God.SuccessOther";
         messagePath = isGod? "${messagePath}.Enabled" : "${messagePath}.Disabled";
 
         targetUser.setGodMode(isGod);
         targetUser.save();
 
-        sendCommandMessage(commandSender, messagePath, targetPlayer.getName(), label, null);
+        command(messagePath, commandSender).target(targetPlayer.getName()).build();
 
         if (isSelf) return;
-        sendCommandMessage(targetUser, "God.Success." + (isGod? "Enabled" : "Disabled"), null, label, null);
+        command("God.Success." + (isGod? "Enabled" : "Disabled"), targetUser)
+                .sender(commandSender.getName().get()).target(targetPlayer.getName()).build();
     }
 
     @Override

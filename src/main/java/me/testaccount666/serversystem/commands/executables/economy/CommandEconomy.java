@@ -9,22 +9,26 @@ import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
+import java.util.function.UnaryOperator;
+
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 
 @ServerSystemCommand(name = "economy", tabCompleter = TabCompleterEconomy.class)
 public class CommandEconomy extends AbstractServerSystemCommand {
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "Economy.Use", label)) return;
+        if (!checkBasePermission(commandSender, "Economy.Use")) return;
 
         if (arguments.length <= 2) {
-            sendGeneralMessage(commandSender, "InvalidArguments", null, label, null);
+            general("InvalidArguments", commandSender).target(label).build();
             return;
         }
 
         var targetUserOptional = getTargetUser(commandSender, 1, false, arguments);
         if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[1]);
+            general("PlayerNotFound", commandSender).target(arguments[1]).build();
             return;
         }
 
@@ -34,7 +38,7 @@ public class CommandEconomy extends AbstractServerSystemCommand {
         try {
             amount = new BigDecimal(arguments[2]);
         } catch (NumberFormatException ignored) {
-            sendCommandMessage(commandSender, "Economy.InvalidAmount", targetUser.getName().get(), label, null);
+            command("Economy.InvalidAmount", commandSender).build();
             return;
         }
 
@@ -44,44 +48,41 @@ public class CommandEconomy extends AbstractServerSystemCommand {
             case "set" -> handleSetEconomy(commandSender, label, targetUser, amount);
             case "give", "add" -> handleGiveEconomy(commandSender, label, targetUser, amount);
             case "take", "remove" -> handleTakeEconomy(commandSender, label, targetUser, amount);
-            default -> sendGeneralMessage(commandSender, "InvalidArguments", null, label, null);
+            default -> general("InvalidArguments", commandSender).target(label).build();
         }
     }
 
     private void handleSetEconomy(User commandSender, String label, User targetUser, BigDecimal amount) {
-        if (!checkBasePermission(commandSender, "Economy.Set", label)) return;
+        if (!checkBasePermission(commandSender, "Economy.Set")) return;
 
         targetUser.getBankAccount().setBalance(amount);
-
-        sendCommandMessage(commandSender, "Economy.Set.Success", targetUser.getName().get(), label,
-                message -> message.replace("<AMOUNT>", ServerSystem.Instance.getEconomyManager().formatMoney(amount)));
-
-        sendCommandMessage(targetUser, "Economy.Set.SuccessOther", commandSender.getName().get(), label,
-                message -> message.replace("<AMOUNT>", ServerSystem.Instance.getEconomyManager().formatMoney(amount)));
+        sendSuccess(commandSender, label, targetUser, amount, "Set");
     }
 
     private void handleGiveEconomy(User commandSender, String label, User targetUser, BigDecimal amount) {
-        if (!checkBasePermission(commandSender, "Economy.Give", label)) return;
+        if (!checkBasePermission(commandSender, "Economy.Give")) return;
 
         targetUser.getBankAccount().deposit(amount);
-
-        sendCommandMessage(commandSender, "Economy.Give.Success", targetUser.getName().get(), label,
-                message -> message.replace("<AMOUNT>", ServerSystem.Instance.getEconomyManager().formatMoney(amount)));
-
-        sendCommandMessage(targetUser, "Economy.Give.SuccessOther", commandSender.getName().get(), label,
-                message -> message.replace("<AMOUNT>", ServerSystem.Instance.getEconomyManager().formatMoney(amount)));
+        sendSuccess(commandSender, label, targetUser, amount, "Give");
     }
 
     private void handleTakeEconomy(User commandSender, String label, User targetUser, BigDecimal amount) {
-        if (!checkBasePermission(commandSender, "Economy.Take", label)) return;
+        if (!checkBasePermission(commandSender, "Economy.Take")) return;
 
         targetUser.getBankAccount().withdraw(amount);
+        sendSuccess(commandSender, label, targetUser, amount, "Take");
+    }
 
-        sendCommandMessage(commandSender, "Economy.Take.Success", targetUser.getName().get(), label,
-                message -> message.replace("<AMOUNT>", ServerSystem.Instance.getEconomyManager().formatMoney(amount)));
+    public void sendSuccess(User commandSender, String label, User targetUser, BigDecimal amount, String key) {
+        var formattedAmount = ServerSystem.Instance.getEconomyManager().formatMoney(amount);
+        UnaryOperator<String> modifier = message -> message.replace("<AMOUNT>", formattedAmount);
 
-        sendCommandMessage(targetUser, "Economy.Take.SuccessOther", commandSender.getName().get(), label,
-                message -> message.replace("<AMOUNT>", ServerSystem.Instance.getEconomyManager().formatMoney(amount)));
+        command("Economy.${key}.Success", commandSender)
+                .target(targetUser.getName().get()).modifier(modifier).build();
+
+        command("Economy.${key}.SuccessOther", targetUser)
+                .sender(commandSender.getName().get()).target(targetUser.getName().get())
+                .modifier(modifier).build();
     }
 
     @Override

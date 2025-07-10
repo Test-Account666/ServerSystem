@@ -14,6 +14,10 @@ import org.bukkit.util.Vector;
 
 import java.text.DecimalFormat;
 import java.util.Optional;
+import java.util.function.Consumer;
+
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 
 @ServerSystemCommand(name = "teleport", variants = {"teleportposition", "teleporthere", "teleportall"})
 public class CommandTeleport extends AbstractServerSystemCommand {
@@ -24,148 +28,167 @@ public class CommandTeleport extends AbstractServerSystemCommand {
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        if (command.getName().equalsIgnoreCase("teleportposition") || arguments.length > 2) {
-            executeTeleportPosition(commandSender, label, arguments);
-            return;
+        var commandName = command.getName().toLowerCase();
+        switch (commandName) {
+            case "teleportposition" -> executeTeleportPosition(commandSender, arguments);
+            case "teleporthere" -> executeTeleportHere(commandSender, arguments);
+            case "teleportall" -> executeTeleportAll(commandSender);
+            default -> {
+                if (arguments.length == 2) executeTeleportOther(commandSender, arguments);
+                else if (arguments.length > 2) executeTeleportPosition(commandSender, arguments);
+                else executeTeleport(commandSender, arguments);
+            }
         }
-
-        if (command.getName().equalsIgnoreCase("teleporthere")) {
-            executeTeleportHere(commandSender, label, arguments);
-            return;
-        }
-
-        if (command.getName().equalsIgnoreCase("teleportall")) {
-            executeTeleportAll(commandSender, label, arguments);
-            return;
-        }
-
-        executeTeleport(commandSender, label, arguments);
     }
 
-    private void executeTeleportAll(User commandSender, String label, String[] arguments) {
-        if (!checkBasePermission(commandSender, "TeleportAll.Use", label)) return;
+    private void executeTeleportAll(User commandSender) {
+        if (!validateSenderAndPermission(commandSender, "TeleportAll.Use")) return;
 
-        if (commandSender instanceof ConsoleUser) {
-            sendGeneralMessage(commandSender, "NotPlayer", null, label, null);
-            return;
-        }
-
-        Bukkit.getOnlinePlayers().forEach(player -> player.teleport(commandSender.getPlayer().getLocation()));
-
-        sendCommandMessage(commandSender, "TeleportAll.Success", "*", label, null);
+        var senderLocation = commandSender.getPlayer().getLocation();
+        Bukkit.getOnlinePlayers().forEach(player -> player.teleport(senderLocation));
+        command("TeleportAll.Success", commandSender).target("*").build();
     }
 
-    private void executeTeleportHere(User commandSender, String label, String[] arguments) {
-        if (!checkBasePermission(commandSender, "TeleportHere.Use", label)) return;
+    private void executeTeleportHere(User commandSender, String[] arguments) {
+        if (!validateSenderAndPermission(commandSender, "TeleportHere.Use")) return;
 
-        if (commandSender instanceof ConsoleUser) {
-            sendGeneralMessage(commandSender, "NotPlayer", null, label, null);
-            return;
-        }
-
-        var targetUserOptional = getTargetUser(commandSender, arguments);
-
-        if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
-            return;
-        }
-
-        var targetUser = targetUserOptional.get();
-        var targetPlayer = targetUser.getPlayer();
-
-        targetPlayer.teleport(commandSender.getPlayer().getLocation());
-
-        sendCommandMessage(commandSender, "TeleportHere.Success", targetPlayer.getName(), label, null);
+        getTargetUserAndTeleport(commandSender, arguments,
+                targetPlayer -> targetPlayer.teleport(commandSender.getPlayer().getLocation()),
+                "TeleportHere.Success");
     }
 
-    private void executeTeleport(User commandSender, String label, String[] arguments) {
-        if (!checkBasePermission(commandSender, "Teleport.Use", label)) return;
-        if (handleConsoleWithNoTarget(commandSender, label, 1, arguments)) return;
+    private void executeTeleport(User commandSender, String[] arguments) {
+        if (!validateSenderAndPermission(commandSender, "Teleport.Use")) return;
 
-        var targetUserOptional = getTargetUser(commandSender, arguments);
-
-        if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
-            return;
-        }
-
-        var targetUser = targetUserOptional.get();
-        var targetPlayer = targetUser.getPlayer();
-
-        var targetUser2Optional = getTargetUser(commandSender, 1, arguments);
-
-        if (targetUser2Optional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[1]);
-            return;
-        }
-
-        var targetUser2 = targetUser2Optional.get();
-        var targetPlayer2 = targetUser2.getPlayer();
-
-        var isSelf = commandSender == targetUser2;
-
-        targetPlayer.teleport(targetPlayer2.getLocation());
-
-        var messagePath = isSelf? "Teleport.Success" : "Teleport.SuccessOther";
-        sendCommandMessage(commandSender, messagePath, targetPlayer.getName(), label,
-                message -> message.replace("<TARGET2>", targetPlayer2.getName()));
+        getTargetUserAndTeleport(commandSender, arguments,
+                targetPlayer -> commandSender.getPlayer().teleport(targetPlayer.getLocation()),
+                "Teleport.Success");
     }
 
-    private void executeTeleportPosition(User commandSender, String label, String[] arguments) {
-        if (!checkBasePermission(commandSender, "TeleportPosition.Use", label)) return;
+    private void executeTeleportOther(User commandSender, String[] arguments) {
+        if (!validatePermissions(commandSender, "Teleport.Use", "Teleport.Other")) return;
+        if (handleConsoleWithNoTarget(commandSender, 1, arguments)) return;
 
+        var sourceUserOpt = getTargetUser(commandSender, arguments);
+        var targetUserOpt = getTargetUser(commandSender, 1, false, arguments);
+
+        if (sourceUserOpt.isEmpty()) {
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
+            return;
+        }
+        if (targetUserOpt.isEmpty()) {
+            general("PlayerNotFound", commandSender).target(arguments[1]).build();
+            return;
+        }
+
+        var sourcePlayer = sourceUserOpt.get().getPlayer();
+        var targetPlayer = targetUserOpt.get().getPlayer();
+
+        sourcePlayer.teleport(targetPlayer.getLocation());
+        command("Teleport.SuccessOther", commandSender)
+                .target(sourcePlayer.getName())
+                .modifier(message -> message.replace("<TARGET2>", targetPlayer.getName()))
+                .build();
+    }
+
+    private void executeTeleportPosition(User commandSender, String[] arguments) {
+        if (!validatePermissions(commandSender, "TeleportPosition.Use")) return;
         if (arguments.length < 3) {
-            sendGeneralMessage(commandSender, "InvalidArguments", null, label, null);
-            return;
-        }
-        if (handleConsoleWithNoTarget(commandSender, label, 3, arguments)) return;
-
-        var targetUserOptional = arguments.length == 3? Optional.of(commandSender) : getTargetUser(commandSender, arguments);
-
-        if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            general("InvalidArguments", commandSender).build();
             return;
         }
 
-        var targetUser = targetUserOptional.get();
+        var isSelf = arguments.length == 3;
+        if (handleConsoleWithNoTarget(commandSender, 3, arguments)) return;
+
+        var targetUserOpt = isSelf? Optional.of(commandSender) : getTargetUser(commandSender, arguments);
+        if (targetUserOpt.isEmpty()) {
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
+            return;
+        }
+
+        var targetUser = targetUserOpt.get();
         var targetPlayer = targetUser.getPlayer();
 
-        var isSelf = commandSender == targetUser;
-
-        if (!isSelf && !checkOtherPermission(commandSender, "TeleportPosition.Other", targetPlayer.getName(), label)) return;
+        if (!isSelf && !checkOtherPermission(commandSender, "TeleportPosition.Other", targetPlayer.getName())) return;
 
         var executionLocation = commandSender instanceof ConsoleUser? targetPlayer.getLocation() : commandSender.getPlayer().getLocation();
 
-        var locationOptional = extractLocation(executionLocation, targetPlayer, arguments, isSelf && arguments.length == 3? 0 : 1);
+        var locationOpt = extractLocation(
+                executionLocation,
+                targetPlayer,
+                arguments,
+                isSelf? 0 : 1
+        );
 
-        if (locationOptional.isEmpty()) {
-            sendCommandMessage(commandSender, "TeleportPosition.InvalidLocation", targetPlayer.getName(), label, null);
+        if (locationOpt.isEmpty()) {
+            command("TeleportPosition.InvalidLocation", commandSender).target(targetPlayer.getName()).build();
             return;
         }
 
-        var location = locationOptional.get();
+        var location = locationOpt.get();
         location.setYaw(targetPlayer.getLocation().getYaw());
         location.setPitch(targetPlayer.getLocation().getPitch());
 
-        var worldBorder = location.getWorld().getWorldBorder();
+        if (!isValidTeleportLocation(location, commandSender, targetPlayer)) return;
 
-        if (!worldBorder.isInside(location)) {
-            sendCommandMessage(commandSender, "TeleportPosition.OutsideBorder", targetPlayer.getName(), label, null);
+        targetPlayer.teleport(location);
+        sendTeleportPositionSuccess(commandSender, targetPlayer, location, isSelf);
+    }
+
+    private boolean isValidTeleportLocation(Location location, User commandSender, Player targetPlayer) {
+        if (!location.getWorld().getWorldBorder().isInside(location)) {
+            command("TeleportPosition.OutsideBorder", commandSender).target(targetPlayer.getName()).build();
+            return false;
+        }
+
+        if (location.getWorld() != targetPlayer.getWorld() &&
+                !checkBasePermission(commandSender, "TeleportPosition.World")) return false;
+
+        return true;
+    }
+
+    private void sendTeleportPositionSuccess(User commandSender, Player targetPlayer, Location location, boolean isSelf) {
+        var messagePath = isSelf? "TeleportPosition.Success" : "TeleportPosition.SuccessOther";
+        command(messagePath, commandSender)
+                .target(targetPlayer.getName())
+                .modifier(message -> formatLocationMessage(message, location))
+                .build();
+    }
+
+    private String formatLocationMessage(String message, Location location) {
+        return message.replace("<X>", roundDecimal(location.getX()))
+                .replace("<Y>", roundDecimal(location.getY()))
+                .replace("<Z>", roundDecimal(location.getZ()))
+                .replace("<WORLD>", location.getWorld().getName());
+    }
+
+    private boolean validateSenderAndPermission(User commandSender, String permission) {
+        if (!checkBasePermission(commandSender, permission)) return false;
+        if (commandSender instanceof ConsoleUser) {
+            general("NotPlayer", commandSender).build();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validatePermissions(User commandSender, String... permissions) {
+        for (var permission : permissions) if (!checkBasePermission(commandSender, permission)) return false;
+        return true;
+    }
+
+    private void getTargetUserAndTeleport(User commandSender, String[] arguments, Consumer<Player> teleportAction, String successMessage) {
+        var targetUserOptional = getTargetUser(commandSender, arguments);
+        if (targetUserOptional.isEmpty()) {
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
-        if (location.getWorld() != targetPlayer.getWorld() && !checkBasePermission(commandSender, "TeleportPosition.World", label)) return;
-
-        targetPlayer.teleport(location);
-
-        var messagePath = isSelf? "TeleportPosition.Success" : "TeleportPosition.SuccessOther";
-
-        sendCommandMessage(commandSender, messagePath, targetPlayer.getName(), label, message ->
-                message.replace("<X>", roundDecimal(location.getX()))
-                        .replace("<Y>", roundDecimal(location.getY()))
-                        .replace("<Z>", roundDecimal(location.getZ()))
-                        .replace("<WORLD>", location.getWorld().getName()));
+        var targetPlayer = targetUserOptional.get().getPlayer();
+        teleportAction.accept(targetPlayer);
+        command(successMessage, commandSender).target(targetPlayer.getName()).build();
     }
+
 
     private String roundDecimal(double location) {
         var format = new DecimalFormat("0.##");
@@ -219,15 +242,14 @@ public class CommandTeleport extends AbstractServerSystemCommand {
 
     @Override
     public boolean hasCommandAccess(Player player, Command command) {
-        if (command.getName().equalsIgnoreCase("teleportposition"))
-            return PermissionManager.hasCommandPermission(player, "TeleportPosition.Use", false);
-
-        if (command.getName().equalsIgnoreCase("teleporthere"))
-            return PermissionManager.hasCommandPermission(player, "TeleportHere.Use", false);
-
-        if (command.getName().equalsIgnoreCase("teleportall"))
-            return PermissionManager.hasCommandPermission(player, "TeleportAll.Use", false);
-
-        return PermissionManager.hasCommandPermission(player, "Teleport.Use", false);
+        var commandName = command.getName().toLowerCase();
+        var permission = switch (commandName) {
+            case "teleportposition" -> "TeleportPosition.Use";
+            case "teleporthere" -> "TeleportHere.Use";
+            case "teleportall" -> "TeleportAll.Use";
+            default -> "Teleport.Use";
+        };
+        return PermissionManager.hasCommandPermission(player, permission, false);
     }
+
 }

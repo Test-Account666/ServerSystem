@@ -7,6 +7,9 @@ import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 /**
  * Command executor for the fly command.
  * This command allows players to toggle flight mode for themselves or other players.
@@ -26,13 +29,13 @@ public class CommandFly extends AbstractServerSystemCommand {
      */
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "Fly.Use", label)) return;
-        if (handleConsoleWithNoTarget(commandSender, label, arguments)) return;
+        if (!checkBasePermission(commandSender, "Fly.Use")) return;
+        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
 
         if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
@@ -41,11 +44,10 @@ public class CommandFly extends AbstractServerSystemCommand {
 
         var isSelf = targetUser == commandSender;
 
-        if (!isSelf && !checkOtherPermission(commandSender, "Fly.Other", targetPlayer.getName(), label)) return;
+        if (!isSelf && !checkOtherPermission(commandSender, "Fly.Other", targetPlayer.getName())) return;
 
-        var messagePath = isSelf? "Fly.Success" : "Fly.SuccessOther";
         var isFlying = !targetPlayer.getAllowFlight();
-
+        var messagePath = isSelf? "Fly.Success" : "Fly.SuccessOther";
         messagePath = isFlying? "${messagePath}.Enabled" : "${messagePath}.Disabled";
 
         var isOnGround = targetPlayer.getLocation().add(0, -.3, 0).getBlock().getType().isSolid();
@@ -53,10 +55,10 @@ public class CommandFly extends AbstractServerSystemCommand {
         targetPlayer.setAllowFlight(isFlying);
         if (!isOnGround) targetPlayer.setFlying(isFlying);
 
-        sendCommandMessage(commandSender, messagePath, targetPlayer.getName(), label, null);
+        command("Fly.Success", targetUser).target(targetPlayer.getName()).build();
 
         if (isSelf) return;
-        sendCommandMessage(targetUser, "Fly.Success." + (isFlying? "Enabled" : "Disabled"), null, label, null);
+        command("Fly.Success" + (isFlying? "Enabled" : "Disabled"), commandSender).target(targetPlayer.getName()).build();
     }
 
     @Override

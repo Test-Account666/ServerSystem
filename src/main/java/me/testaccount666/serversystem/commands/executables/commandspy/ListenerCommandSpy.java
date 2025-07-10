@@ -1,14 +1,14 @@
 package me.testaccount666.serversystem.commands.executables.commandspy;
 
 import me.testaccount666.serversystem.ServerSystem;
-import me.testaccount666.serversystem.managers.MessageManager;
 import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.userdata.UserManager;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
+
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
 
 public class ListenerCommandSpy implements Listener {
 
@@ -32,16 +32,9 @@ public class ListenerCommandSpy implements Listener {
 
             if (!user.isCommandSpyEnabled()) continue;
 
-            var formatOptional = MessageManager.getCommandMessage(user, "CommandSpy.Format", sender, null, false);
-            if (formatOptional.isEmpty()) {
-                Bukkit.getLogger().warning("An error occurred trying to fetch CommandSpy Format!");
-                continue;
-            }
-
-            var format = formatOptional.get();
-            format = format.replace("<COMMAND>", command);
-
-            user.sendMessage(format);
+            var finalCommand = command;
+            command("CommandSpy.Format", user).prefix(false).target(sender)
+                    .modifier(message -> message.replace("<COMMAND>", finalCommand)).build();
         }
     }
 }

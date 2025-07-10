@@ -9,15 +9,18 @@ import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 @ServerSystemCommand(name = "back")
 public class CommandBack extends AbstractServerSystemCommand {
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "Back.Use", label)) return;
+        if (!checkBasePermission(commandSender, "Back.Use")) return;
 
         if (commandSender instanceof ConsoleUser) {
-            sendGeneralMessage(commandSender, "NotPlayer", null, label, null);
+            general("NotPlayer", commandSender).build();
             return;
         }
 
@@ -28,7 +31,7 @@ public class CommandBack extends AbstractServerSystemCommand {
             case "death" -> BackType.DEATH;
             case "teleport", "tp" -> BackType.TELEPORT;
             default -> {
-                sendGeneralMessage(commandSender, "InvalidArguments", null, label, null);
+                general("InvalidArguments", commandSender).label(label).build();
                 yield null;
             }
         };
@@ -39,13 +42,13 @@ public class CommandBack extends AbstractServerSystemCommand {
             case DEATH -> commandSender.getLastDeathLocation();
             case TELEPORT -> commandSender.getLastTeleportLocation();
             default -> {
-                sendGeneralMessage(commandSender, "ErrorOccurred", null, label, null);
+                general("ErrorOccurred", commandSender).label(label).build();
                 throw new IllegalStateException("Unexpected value: ${backType}");
             }
         };
 
         if (backLocation == null) {
-            sendGeneralMessage(commandSender, "NoBackLocation", null, label, null);
+            command("Back.NoBackLocation", commandSender).build();
             return;
         }
 
@@ -55,8 +58,8 @@ public class CommandBack extends AbstractServerSystemCommand {
         var typeNameOptional = MappingsData.BackType().getBackTypeName(finalBackType);
         var typeName = typeNameOptional.orElse("ERROR");
 
-        sendCommandMessage(commandSender, "Back.Success", null, label,
-                message -> message.replace("<TYPE>", typeName));
+        command("Back.Success", commandSender)
+                .modifier(message -> message.replace("<TYPE>", typeName)).build();
     }
 
     @Override

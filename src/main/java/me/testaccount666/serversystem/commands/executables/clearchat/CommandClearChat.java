@@ -2,14 +2,13 @@ package me.testaccount666.serversystem.commands.executables.clearchat;
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
-import me.testaccount666.serversystem.managers.MessageManager;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
 
 @ServerSystemCommand(name = "clearchat")
 public class CommandClearChat extends AbstractServerSystemCommand {
@@ -18,9 +17,8 @@ public class CommandClearChat extends AbstractServerSystemCommand {
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "ClearChat.Use", label)) return;
+        if (!checkBasePermission(commandSender, "ClearChat.Use")) return;
 
-        var sentError = new AtomicBoolean(false);
         Bukkit.getOnlinePlayers().forEach(everyone -> {
             if (!PermissionManager.hasPermission(everyone, "Commands.ClearChat.Bypass", false)) {
                 for (var index = 0; index < _CLEAR_LINES; index++) {
@@ -30,13 +28,9 @@ public class CommandClearChat extends AbstractServerSystemCommand {
                 for (var index = 0; index < _CLEAR_LINES; index++) everyone.sendMessage(_EMPTY_LINE);
             }
 
-            var messageOptional = MessageManager.getCommandMessage(commandSender, "ClearChat.Success", commandSender.getName().get(), label);
+            var messageOptional = command("ClearChat.Success", commandSender).send(false).build();
 
-            if (messageOptional.isEmpty() && !sentError.get()) {
-                sentError.set(true);
-                sendGeneralMessage(commandSender, "ErrorOccurred", "*", label, null);
-                return;
-            }
+            if (messageOptional.isEmpty()) return;
 
             var message = messageOptional.get();
             everyone.sendMessage(message);

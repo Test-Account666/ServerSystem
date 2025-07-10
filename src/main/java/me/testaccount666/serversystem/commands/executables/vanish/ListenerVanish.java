@@ -5,7 +5,6 @@ import io.papermc.paper.event.player.AsyncChatEvent;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.annotations.RequiredCommands;
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor;
-import me.testaccount666.serversystem.managers.MessageManager;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.Bukkit;
@@ -27,6 +26,8 @@ import org.bukkit.metadata.FixedMetadataValue;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
 
 @RequiredCommands(requiredCommands = CommandVanish.class)
 public class ListenerVanish implements Listener {
@@ -91,12 +92,12 @@ public class ListenerVanish implements Listener {
 
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent event) {
-        handleVanishRestriction(event.getPlayer(), event, user -> user.getVanishData().canDrop(), "Commands.Vanish.Denied.Drop");
+        handleVanishRestriction(event.getPlayer(), event, user -> user.getVanishData().canDrop(), "Vanish.Denied.Drop");
     }
 
     @EventHandler
     public void onChat(AsyncChatEvent event) {
-        handleVanishRestriction(event.getPlayer(), event, user -> user.getVanishData().canMessage(), "Commands.Vanish.Denied.Message");
+        handleVanishRestriction(event.getPlayer(), event, user -> user.getVanishData().canMessage(), "Vanish.Denied.Message");
     }
 
     @EventHandler
@@ -168,7 +169,8 @@ public class ListenerVanish implements Listener {
         cancellable.setCancelled(true);
 
         if (messagePath == null) return;
-        MessageManager.getFormattedMessage(user, messagePath, null, null).ifPresent(user::sendMessage);
+
+        command(messagePath, user).build();
     }
 
     private void temporarilySetSpectatorMode(PlayerInteractEvent event) {

@@ -11,23 +11,26 @@ import org.bukkit.entity.Player;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 @ServerSystemCommand(name = "pay")
 public class CommandPay extends AbstractServerSystemCommand {
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "Pay.Use", label)) return;
-        if (handleConsoleWithNoTarget(commandSender, label, 1, arguments)) return;
+        if (!checkBasePermission(commandSender, "Pay.Use")) return;
+        if (handleConsoleWithNoTarget(commandSender, 1, arguments)) return;
 
         if (arguments.length < 2) {
-            sendGeneralMessage(commandSender, "InvalidArguments", null, label, null);
+            general("InvalidArguments", commandSender).label(label).build();
             return;
         }
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
 
         if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
@@ -37,7 +40,7 @@ public class CommandPay extends AbstractServerSystemCommand {
         var isSelf = targetUser == commandSender;
 
         if (isSelf) {
-            sendCommandMessage(commandSender, "Pay.CannotPaySelf", targetPlayer.getName(), label, null);
+            command("Pay.CannotPaySelf", commandSender).build();
             return;
         }
 
@@ -48,7 +51,7 @@ public class CommandPay extends AbstractServerSystemCommand {
             var bankAccount = commandSender.getBankAccount();
 
             if (!bankAccount.hasEnoughMoney(amount)) {
-                sendCommandMessage(commandSender, "Pay.NotEnoughMoney", targetPlayer.getName(), label, null);
+                command("Pay.NotEnoughMoney", commandSender).target(targetPlayer.getName()).build();
                 return;
             }
 
@@ -56,15 +59,20 @@ public class CommandPay extends AbstractServerSystemCommand {
             targetUser.getBankAccount().deposit(amount);
 
             var formattedAmount = ServerSystem.Instance.getEconomyManager().formatMoney(amount);
-            sendCommandMessage(commandSender, "Pay.Success", targetPlayer.getName(), label, message -> message.replace("<AMOUNT>", formattedAmount));
-            sendCommandMessage(targetUser, "Pay.SuccessOther", commandSender.getName().get(), label, message -> message.replace("<AMOUNT>", formattedAmount));
+
+
+            command("Pay.Success", commandSender).target(targetPlayer.getName())
+                    .modifier(message -> message.replace("<AMOUNT>", formattedAmount)).build();
+
+            command("Pay.SuccessOther", targetUser).target(targetPlayer.getName()).sender(commandSender.getName().get())
+                    .modifier(message -> message.replace("<AMOUNT>", formattedAmount)).build();
         } catch (NumberFormatException ignored) {
-            sendCommandMessage(commandSender, "Pay.InvalidAmount", targetPlayer.getName(), label, null);
+            command("Pay.InvalidAmount", commandSender).target(targetPlayer.getName()).build();
         }
     }
 
     @Override
     public boolean hasCommandAccess(Player player, Command command) {
-        return PermissionManager.hasCommandPermission(player, "ServerSystem.Pay.Use", false);
+        return PermissionManager.hasCommandPermission(player, "Pay.Use", false);
     }
 }

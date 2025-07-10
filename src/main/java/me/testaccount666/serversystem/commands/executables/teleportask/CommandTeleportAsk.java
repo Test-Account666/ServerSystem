@@ -3,7 +3,6 @@ package me.testaccount666.serversystem.commands.executables.teleportask;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
-import me.testaccount666.serversystem.managers.MessageManager;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
@@ -19,6 +18,9 @@ import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 
 @ServerSystemCommand(name = "teleportask", variants = {"teleporthereask", "teleportaccept", "teleportdeny", "teleporttoggle"})
 public class CommandTeleportAsk extends AbstractServerSystemCommand {
@@ -47,7 +49,7 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
         var targetUserOptional = getTargetUser(commandSender, arguments);
 
         if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return null;
         }
 
@@ -57,12 +59,12 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
         var isSelf = targetUser == commandSender;
 
         if (isSelf) {
-            sendCommandMessage(commandSender, "TeleportAsk.CannotTeleportSelf", targetPlayer.getName(), label, null);
+            command("TeleportAsk.CannotTeleportSelf", commandSender).build();
             return null;
         }
 
         if (!targetUser.isAcceptsTeleports()) {
-            sendCommandMessage(commandSender, "TeleportAsk.NoTeleport", targetPlayer.getName(), label, null);
+            command("TeleportAsk.NoTeleport", commandSender).target(targetPlayer.getName()).build();
             return null;
         }
 
@@ -79,15 +81,15 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
      * @return true if validation failed and command should exit, false to continue processing
      */
     private boolean validateTeleportCommand(User commandSender, String permissionSuffix, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, permissionSuffix, label)) return true;
+        if (!checkBasePermission(commandSender, permissionSuffix)) return true;
 
         if (commandSender instanceof ConsoleUser) {
-            sendGeneralMessage(commandSender, "NotPlayer", null, label, null);
+            general("NotPlayer", commandSender).build();
             return true;
         }
 
         if (arguments.length == 0) {
-            sendGeneralMessage(commandSender, "InvalidArguments", null, label, null);
+            general("InvalidArguments", commandSender).label(label).build();
             return true;
         }
 
@@ -105,11 +107,11 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
         var timeOut = System.currentTimeMillis() + (1000 * 60 * 2); // Two minutes
 
 
-        sendCommandMessage(commandSender, "TeleportAsk.Success", targetPlayer.getName(), label, null);
+        command("TeleportAsk.Success", commandSender).target(targetPlayer.getName()).build();
 
         if (targetUser.isIgnoredPlayer(commandSender.getUuid())) return;
 
-        sendCommandMessage(targetUser, "TeleportAsk.SuccessOther", commandSender.getName().get(), label, null);
+        command("TeleportAsk.SuccessOther", targetUser).sender(commandSender.getName().get()).build();
 
         var teleportRequest = new TeleportRequest(commandSender, targetUser, timeOut, false);
         targetUser.setTeleportRequest(teleportRequest);
@@ -126,11 +128,11 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
 
         var timeOut = System.currentTimeMillis() + (1000 * 60 * 2); // Two minutes
 
-        sendCommandMessage(commandSender, "TeleportHereAsk.Success", targetPlayer.getName(), label, null);
+        command("TeleportHereAsk.Success", commandSender).target(targetPlayer.getName()).build();
 
         if (targetUser.isIgnoredPlayer(commandSender.getUuid())) return;
 
-        sendCommandMessage(targetUser, "TeleportHereAsk.SuccessOther", commandSender.getName().get(), label, null);
+        command("TeleportHereAsk.SuccessOther", targetUser).sender(commandSender.getName().get()).build();
 
         var teleportRequest = new TeleportRequest(commandSender, targetUser, timeOut, true);
         targetUser.setTeleportRequest(teleportRequest);
@@ -140,21 +142,28 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
     private void sendAcceptDenyButtons(User commandSender, User targetUser, String label) {
         var targetPlayer = targetUser.getPlayer();
 
-        var acceptButton = MessageManager.getFormattedMessage(targetUser, "Commands.TeleportAsk.Buttons.Accept.Name", false);
-        var denyButton = MessageManager.getFormattedMessage(targetUser, "Commands.TeleportAsk.Buttons.Deny.Name", false);
+
+        var acceptButton = command("TeleportAsk.Buttons.Accept.Name", targetUser)
+                .send(false).prefix(false).build();
+
+        var denyButton = command("TeleportAsk.Buttons.Deny.Name", targetUser)
+                .send(false).prefix(false).build();
 
         if (acceptButton.isEmpty() || denyButton.isEmpty()) {
             Bukkit.getLogger().warning("Couldn't find accept or deny button for ${targetUser.getName().get()} in the language file. Please check the language file for errors.");
-            sendGeneralMessage(targetUser, "ErrorOccurred", commandSender.getName().get(), label, null);
+            general("ErrorOccurred", targetUser).label(label).build();
             return;
         }
 
-        var acceptButtonTooltip = MessageManager.getFormattedMessage(targetUser, "Commands.TeleportAsk.Buttons.Accept.Tooltip", false);
-        var denyButtonTooltip = MessageManager.getFormattedMessage(targetUser, "Commands.TeleportAsk.Buttons.Deny.Tooltip", false);
+        var acceptButtonTooltip = command("TeleportAsk.Buttons.Accept.Tooltip", targetUser)
+                .prefix(false).send(false).build();
+
+        var denyButtonTooltip = command("TeleportAsk.Buttons.Deny.Tooltip", targetUser)
+                .prefix(false).send(false).build();
 
         if (acceptButtonTooltip.isEmpty() || denyButtonTooltip.isEmpty()) {
             Bukkit.getLogger().warning("Couldn't find accept or deny button tooltip for ${targetUser.getName().get()} in the language file. Please check the language file for errors.");
-            sendGeneralMessage(targetUser, "ErrorOccurred", commandSender.getName().get(), label, null);
+            general("ErrorOccurred", targetUser).label(label).build();
             return;
         }
 
@@ -180,22 +189,21 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
      *
      * @param commandSender    The user who is accepting/denying
      * @param permissionSuffix The permission suffix to check
-     * @param label            The command label
      * @return The teleport request if valid, null otherwise
      */
-    private TeleportRequest validateTeleportRequest(User commandSender, String permissionSuffix, String label) {
-        if (!checkBasePermission(commandSender, permissionSuffix, label)) return null;
+    private TeleportRequest validateTeleportRequest(User commandSender, String permissionSuffix) {
+        if (!checkBasePermission(commandSender, permissionSuffix)) return null;
 
         var teleportRequest = commandSender.getTeleportRequest();
 
         if (teleportRequest == null || teleportRequest.isExpired()) {
-            sendCommandMessage(commandSender, "TeleportAccept.NoRequest", null, label, null);
+            command("TeleportAccept.NoRequest", commandSender).build();
             return null;
         }
 
         var requester = teleportRequest.getSender();
         if (requester.getPlayer() == null || !requester.getPlayer().isOnline()) {
-            sendCommandMessage(commandSender, "TeleportAccept.NoRequest", null, label, null);
+            command("TeleportAccept.NoRequest", commandSender).build();
             return null;
         }
 
@@ -203,14 +211,14 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
     }
 
     private void handleTeleportAccept(User commandSender, String label) {
-        var teleportRequest = validateTeleportRequest(commandSender, "TeleportAccept.Use", label);
+        var teleportRequest = validateTeleportRequest(commandSender, "TeleportAccept.Use");
         if (teleportRequest == null) return;
 
         var requester = teleportRequest.getSender();
 
         commandSender.setTeleportRequest(null);
 
-        sendCommandMessage(requester, "TeleportAccept.SuccessOther", commandSender.getName().get(), label, null);
+        command("TeleportAccept.SuccessOther", requester).target(commandSender.getName().get()).build();
 
         var teleporter = teleportRequest.isTeleportHere()? commandSender : requester;
         var target = teleportRequest.isTeleportHere()? requester : commandSender;
@@ -222,20 +230,20 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
             return;
         }
 
-        sendCommandMessage(teleporter, "TeleportAsk.StartingTeleporting", target.getName().get(), label, null);
+        command("TeleportAsk.StartingTeleporting", teleporter).target(target.getName().get()).build();
         startTeleportTimer(teleporter, target, teleportRequest);
     }
 
     private void handleTeleportDeny(User commandSender, String label) {
-        var teleportRequest = validateTeleportRequest(commandSender, "TeleportDeny.Use", label);
+        var teleportRequest = validateTeleportRequest(commandSender, "TeleportDeny.Use");
         if (teleportRequest == null) return;
 
         var requester = teleportRequest.getSender();
 
         commandSender.setTeleportRequest(null);
 
-        sendCommandMessage(commandSender, "TeleportDeny.Success", requester.getName().get(), label, null);
-        sendCommandMessage(requester, "TeleportDeny.SuccessOther", commandSender.getName().get(), label, null);
+        command("TeleportDeny.Success", commandSender).target(requester.getName().get()).build();
+        command("TeleportDeny.SuccessOther", requester).target(commandSender.getName().get()).build();
     }
 
     private void startTeleportTimer(User teleporter, User target, TeleportRequest teleportRequest) {
@@ -266,7 +274,7 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
         teleporter.getPlayer().teleport(targetLocation);
         playAnimation(targetLocation);
 
-        sendCommandMessage(teleporter, "TeleportAsk.TeleportFinished", target.getName().get(), label, null);
+        command("TeleportAsk.TeleportFinished", teleporter).target(target.getName().get()).build();
     }
 
     /**
@@ -296,13 +304,13 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
     }
 
     private void handleTeleportToggle(User commandSender, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "TeleportToggle.Use", label)) return;
-        if (handleConsoleWithNoTarget(commandSender, label, arguments)) return;
+        if (!checkBasePermission(commandSender, "TeleportToggle.Use")) return;
+        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
 
         if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
@@ -310,7 +318,7 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
         var targetPlayer = targetUser.getPlayer();
         var isSelf = targetUser == commandSender;
 
-        if (!isSelf && !checkOtherPermission(commandSender, "TeleportToggle.Other", targetPlayer.getName(), label)) return;
+        if (!isSelf && !checkOtherPermission(commandSender, "TeleportToggle.Other", targetPlayer.getName())) return;
 
         var acceptsTeleports = !targetUser.isAcceptsTeleports();
 
@@ -320,10 +328,12 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
         targetUser.setAcceptsTeleports(acceptsTeleports);
         targetUser.save();
 
-        sendCommandMessage(commandSender, messagePath, targetPlayer.getName(), label, null);
+        command(messagePath, commandSender).target(targetPlayer.getName()).build();
 
         if (isSelf) return;
-        sendCommandMessage(targetUser, "TeleportToggle.Success." + (acceptsTeleports? "Enabled" : "Disabled"), commandSender.getName().get(), label, null);
+
+        command("TeleportToggle.Success" + (acceptsTeleports? "Enabled" : "Disabled"), targetUser)
+                .sender(commandSender.getName().get()).build();
     }
 
     @Override

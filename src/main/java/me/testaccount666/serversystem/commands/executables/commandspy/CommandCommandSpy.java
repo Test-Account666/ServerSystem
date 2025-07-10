@@ -7,17 +7,20 @@ import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 @ServerSystemCommand(name = "commandspy")
 public class CommandCommandSpy extends AbstractServerSystemCommand {
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "CommandSpy.Use", label)) return;
-        if (handleConsoleWithNoTarget(commandSender, label, arguments)) return;
+        if (!checkBasePermission(commandSender, "CommandSpy.Use")) return;
+        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
         if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
@@ -25,7 +28,7 @@ public class CommandCommandSpy extends AbstractServerSystemCommand {
         var targetPlayer = targetUser.getPlayer();
         var isSelf = targetUser == commandSender;
 
-        if (!isSelf && !checkOtherPermission(commandSender, "CommandSpy.Other", targetPlayer.getName(), label)) return;
+        if (!isSelf && !checkOtherPermission(commandSender, "CommandSpy.Other", targetPlayer.getName())) return;
 
         var isEnabled = !targetUser.isCommandSpyEnabled();
 
@@ -36,10 +39,10 @@ public class CommandCommandSpy extends AbstractServerSystemCommand {
         targetUser.setCommandSpyEnabled(isEnabled);
         targetUser.save();
 
-        sendCommandMessage(commandSender, messagePath, targetPlayer.getName(), label, null);
+        command(messagePath, commandSender).target(targetPlayer.getName()).build();
 
         if (isSelf) return;
-        sendCommandMessage(targetUser, "CommandSpy.Success." + (isEnabled? "Enabled" : "Disabled"), null, label, null);
+        command("CommandSpy.Success" + (isEnabled? "Enabled" : "Disabled"), targetUser).build();
     }
 
     @Override

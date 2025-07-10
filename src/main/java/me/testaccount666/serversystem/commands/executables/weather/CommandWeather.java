@@ -12,6 +12,9 @@ import org.bukkit.entity.Player;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 @ServerSystemCommand(name = "weather", variants = {"sun", "storm", "rain"}, tabCompleter = TabCompleterWeather.class)
 public class CommandWeather extends AbstractServerSystemCommand {
 
@@ -23,19 +26,19 @@ public class CommandWeather extends AbstractServerSystemCommand {
         }
 
         if (commandSender instanceof ConsoleUser && arguments.length == 0) {
-            sendGeneralMessage(commandSender, "InvalidArguments", null, label, null);
+            general("InvalidArguments", commandSender).label(label).build();
             return;
         }
 
         World world;
 
         if (arguments.length >= 1) {
-            if (!checkBasePermission(commandSender, "Weather.World", label)) return;
+            if (!checkBasePermission(commandSender, "Weather.World")) return;
             world = Bukkit.getWorld(arguments[0]);
         } else world = commandSender.getPlayer().getWorld();
 
         if (world == null) {
-            sendCommandMessage(commandSender, "Weather.WorldNotFound", arguments[0], label, null);
+            command("Weather.WorldNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
@@ -43,27 +46,27 @@ public class CommandWeather extends AbstractServerSystemCommand {
     }
 
     private void handleWeatherCommand(User commandSender, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "Weather.Use", label)) return;
+        if (!checkBasePermission(commandSender, "Weather.Use")) return;
 
         if (arguments.length == 0) {
-            sendGeneralMessage(commandSender, "InvalidArguments", null, label, null);
+            general("InvalidArguments", commandSender).label(label).build();
             return;
         }
 
         if (commandSender instanceof ConsoleUser && arguments.length == 1) {
-            sendGeneralMessage(commandSender, "InvalidArguments", null, label, null);
+            general("InvalidArguments", commandSender).label(label).build();
             return;
         }
 
         World world;
 
         if (arguments.length >= 2) {
-            if (!checkBasePermission(commandSender, "Weather.World", label)) return;
+            if (!checkBasePermission(commandSender, "Weather.World")) return;
             world = Bukkit.getWorld(arguments[1]);
         } else world = commandSender.getPlayer().getWorld();
 
         if (world == null) {
-            sendCommandMessage(commandSender, "Weather.WorldNotFound", arguments[1], label, null);
+            command("Weather.WorldNotFound", commandSender).target(arguments[1]).build();
             return;
         }
 
@@ -95,18 +98,18 @@ public class CommandWeather extends AbstractServerSystemCommand {
                 world.setWeatherDuration(weatherDuration);
                 break;
             default: {
-                sendGeneralMessage(commandSender, "InvalidArguments", null, label, null);
+                general("InvalidArguments", commandSender).label(label).build();
                 return;
             }
         }
 
-        sendCommandMessage(commandSender, "Weather.Success", world.getName(), label,
-                message -> message.replace("<WEATHER>", arguments[0])
+        command("Weather.Success", commandSender).target(world.getName())
+                .modifier(message -> message.replace("<WEATHER>", arguments[0])
                         .replace("<WORLD>", world.getName()));
     }
 
     @Override
     public boolean hasCommandAccess(Player player, Command command) {
-        return PermissionManager.hasCommandPermission(player, "Weather.Use");
+        return PermissionManager.hasCommandPermission(player, "Weather.Use", false);
     }
 }

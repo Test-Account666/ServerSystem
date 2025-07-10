@@ -14,6 +14,8 @@ import java.net.URI;
 import java.net.URL;
 import java.util.UUID;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 @ServerSystemCommand(name = "skull")
 public class CommandSkull extends AbstractServerSystemCommand {
     private final SkullCreator _skullCreator;
@@ -40,9 +42,9 @@ public class CommandSkull extends AbstractServerSystemCommand {
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "Skull.Use", label)) return;
+        if (!checkBasePermission(commandSender, "Skull.Use")) return;
         if (commandSender instanceof ConsoleUser) {
-            sendGeneralMessage(commandSender, "NotPlayer", null, label, null);
+            general("NotPlayer", commandSender).build();
             return;
         }
 
@@ -51,7 +53,7 @@ public class CommandSkull extends AbstractServerSystemCommand {
             return;
         }
 
-        if (!checkOtherPermission(commandSender, "Skull.Other", arguments[0], label)) return;
+        if (!checkOtherPermission(commandSender, "Skull.Other", arguments[0])) return;
         executeOtherSkull(commandSender, arguments);
     }
 

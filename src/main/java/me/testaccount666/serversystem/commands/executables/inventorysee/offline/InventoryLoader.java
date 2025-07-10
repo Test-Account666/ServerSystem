@@ -5,7 +5,6 @@ import me.testaccount666.serversystem.commands.executables.inventorysee.online.C
 import me.testaccount666.serversystem.commands.executables.inventorysee.utils.InventorySeeUtils;
 import me.testaccount666.serversystem.utils.BiDirectionalHashMap;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.Inventory;
 
@@ -28,7 +27,7 @@ public class InventoryLoader {
         var playerUUID = offlinePlayer.getUniqueId();
         if (inventoryMap.containsKey(playerUUID)) return inventoryMap.getValue(playerUUID);
 
-        var playerDataFile = Path.of(Bukkit.getWorlds().get(0).getWorldFolder().getPath(), "playerdata", "${playerUUID}.dat").toFile();
+        var playerDataFile = Path.of(Bukkit.getWorlds().getFirst().getWorldFolder().getPath(), "playerdata", "${playerUUID}.dat").toFile();
 
         if (!playerDataFile.exists()) {
             Bukkit.getLogger().warning("Player data file not found for ${offlinePlayer.getName()} (${offlinePlayer.getUniqueId()})");
@@ -78,7 +77,7 @@ public class InventoryLoader {
 
     public void saveOfflineInventory(UUID playerUUID, Inventory inventory) {
         var offlinePlayer = Bukkit.getOfflinePlayer(playerUUID);
-        var playerDataFile = Path.of(Bukkit.getWorlds().get(0).getWorldFolder().getPath(), "playerdata", "${playerUUID}.dat").toFile();
+        var playerDataFile = Path.of(Bukkit.getWorlds().getFirst().getWorldFolder().getPath(), "playerdata", "${playerUUID}.dat").toFile();
 
         if (!playerDataFile.exists()) {
             Bukkit.getLogger().warning("Player data file not found for ${offlinePlayer.getName()} (${offlinePlayer.getUniqueId()})");
@@ -93,7 +92,7 @@ public class InventoryLoader {
 
             for (var slot = 0; slot < 41; slot++) {
                 var item = inventory.getItem(slot);
-                if (item == null || item.getType() == Material.AIR) continue;
+                if (item == null || item.getType().isAir()) continue;
 
                 var itemTag = NBT.itemStackToNBT(item);
                 itemTag.setByte("Slot", (byte) slot);
@@ -108,7 +107,7 @@ public class InventoryLoader {
                 var equipmentSlot = equipmentSlotList[i];
                 var slotIndex = 36 + i;
                 var item = inventory.getItem(slotIndex);
-                if (item == null || item.getType() == Material.AIR) {
+                if (item == null || item.getType().isAir()) {
                     equipmentTag.removeKey(equipmentSlot);
                     continue;
                 }

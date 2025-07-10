@@ -12,13 +12,16 @@ import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 @ServerSystemCommand(name = "offlineteleport", variants = "offlineteleporthere", tabCompleter = TabCompleterOfflineTeleport.class)
 public class CommandOfflineTeleport extends AbstractServerSystemCommand {
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (commandSender instanceof ConsoleUser) {
-            sendGeneralMessage(commandSender, "NotPlayer", null, label, null);
+            general("NotPlayer", commandSender).build();
             return;
         }
 
@@ -39,7 +42,7 @@ public class CommandOfflineTeleport extends AbstractServerSystemCommand {
 
         commandSender.getPlayer().teleport(cachedUser.getOfflineUser().getLogoutPosition());
 
-        sendCommandMessage(commandSender, "OfflineTeleport.Success", targetName, label, null);
+        command("OfflineTeleport.Success", commandSender).target(targetName).build();
     }
 
     private void handleOfflineTeleportHere(User commandSender, Command command, String label, String... arguments) {
@@ -52,14 +55,14 @@ public class CommandOfflineTeleport extends AbstractServerSystemCommand {
         cachedUser.getOfflineUser().setLogoutPosition(commandSender.getPlayer().getLocation());
         cachedUser.getOfflineUser().save();
 
-        sendCommandMessage(commandSender, "OfflineTeleportHere.Success", targetName, label, null);
+        command("OfflineTeleportHere.Success", commandSender).target(targetName).build();
     }
 
     private Optional<CachedUser> getTargetUser(User commandSender, String label, String name) {
         var cachedUserOptional = ServerSystem.Instance.getUserManager().getUser(name);
 
         if (cachedUserOptional.isEmpty()) {
-            sendGeneralMessage(commandSender, "ErrorOccurred", name, label, null);
+            general("ErrorOccurred", commandSender).label(label).target(name).build();
             return Optional.empty();
         }
 
@@ -67,7 +70,7 @@ public class CommandOfflineTeleport extends AbstractServerSystemCommand {
         var targetName = cachedUser.getOfflineUser().getName().orElse(name);
 
         if (cachedUser.isOnlineUser()) {
-            sendCommandMessage(commandSender, "OfflineTeleport.TargetOnline", targetName, label, null);
+            general("Offline.NotOffline", commandSender).target(targetName).build();
             return Optional.empty();
         }
 

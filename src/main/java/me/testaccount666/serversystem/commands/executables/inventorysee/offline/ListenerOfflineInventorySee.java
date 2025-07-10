@@ -5,7 +5,6 @@ import me.testaccount666.serversystem.commands.executables.inventorysee.online.C
 import me.testaccount666.serversystem.commands.executables.inventorysee.utils.AbstractInventorySeeListener;
 import me.testaccount666.serversystem.commands.executables.inventorysee.utils.InventorySeeUtils;
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -42,12 +41,7 @@ public class ListenerOfflineInventorySee extends AbstractInventorySeeListener im
         var inventoryMap = inventoryLoader.inventoryMap;
 
         var inventoryOptional = inventoryMap.getValue(uuid);
-        if (inventoryOptional.isEmpty()) {
-            Bukkit.getLogger().info("Player is joining, but no inventory is being viewed!");
-            return;
-        }
-
-        Bukkit.getLogger().warning("Player is joining while offline inventory is being viewed!");
+        if (inventoryOptional.isEmpty()) return;
 
         var inventory = inventoryOptional.get();
 

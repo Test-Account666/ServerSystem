@@ -12,6 +12,9 @@ import org.bukkit.entity.Player;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 /**
  * Command executor for the gamemode command.
  * This command allows players to switch game modes for themselves or other players.
@@ -54,15 +57,16 @@ public class CommandGameMode extends AbstractServerSystemCommand {
 
         // Handle /gamemode <Mode> <Target> command
         if (arguments.length < 1) {
-            //TODO: Add syntax
-            sendGeneralMessage(commandSender, "InvalidArguments", null, label, null);
+            general("InvalidArguments", commandSender).label(label).build();
             return;
         }
 
         var gameModeOptional = parseGameMode(arguments[0]);
         if (gameModeOptional.isEmpty()) {
-            sendCommandMessage(commandSender, "GameMode.InvalidGameMode", null, label,
-                    message -> replaceGameModePlaceholder(message, arguments[0]));
+
+
+            command("GameMode.InvalidGameMode", commandSender)
+                    .modifier(message -> replaceGameModePlaceholder(message, arguments[0])).build();
             return;
         }
 
@@ -72,7 +76,7 @@ public class CommandGameMode extends AbstractServerSystemCommand {
     }
 
     private void handleGameModeCommand(User commandSender, GameMode gameMode, String[] arguments, String label) {
-        if (!checkBasePermission(commandSender, "GameMode.Use", label)) return;
+        if (!checkBasePermission(commandSender, "GameMode.Use")) return;
 
         var gameModePermission = switch (gameMode) {
             case SURVIVAL -> "GameMode.Survival";
@@ -81,31 +85,33 @@ public class CommandGameMode extends AbstractServerSystemCommand {
             case SPECTATOR -> "GameMode.Spectator";
         };
 
-        if (!checkBasePermission(commandSender, gameModePermission, label)) return;
-        if (handleConsoleWithNoTarget(commandSender, label, arguments)) return;
+        if (!checkBasePermission(commandSender, gameModePermission)) return;
+        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
 
         if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
         var targetUser = targetUserOptional.get();
         var targetPlayer = targetUser.getPlayer();
+        var isSelf = targetPlayer == commandSender.getPlayer();
 
         targetPlayer.setGameMode(gameMode);
 
         var gameModeName = MappingsData.GameMode().getGameModeName(gameMode).orElse(gameMode.name());
-
-        var isSelf = targetPlayer == commandSender.getPlayer();
         var messageKey = isSelf? "GameMode.Success" : "GameMode.SuccessOther";
 
-        sendCommandMessage(commandSender, messageKey, targetPlayer.getName(), label, message -> replaceGameModePlaceholder(message, gameModeName));
+        command(messageKey, commandSender).target(targetPlayer.getName())
+                .modifier(message -> replaceGameModePlaceholder(message, gameModeName)).build();
 
         if (isSelf) return;
 
-        sendCommandMessage(targetUser, "GameMode.Success", null, label, message -> replaceGameModePlaceholder(message, gameModeName));
+        command("GameMode.Success", targetUser)
+                .sender(commandSender.getName().get()).target(targetPlayer.getName())
+                .modifier(message -> replaceGameModePlaceholder(message, gameModeName)).build();
     }
 
     private String replaceGameModePlaceholder(String message, String gameModeName) {

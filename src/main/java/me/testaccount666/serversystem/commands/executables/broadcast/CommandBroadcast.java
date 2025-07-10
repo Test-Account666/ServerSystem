@@ -2,7 +2,6 @@ package me.testaccount666.serversystem.commands.executables.broadcast;
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
-import me.testaccount666.serversystem.managers.MessageManager;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.utils.ChatColor;
@@ -10,32 +9,31 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 @ServerSystemCommand(name = "broadcast")
 public class CommandBroadcast extends AbstractServerSystemCommand {
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "Broadcast.Use", label)) return;
+        if (!checkBasePermission(commandSender, "Broadcast.Use")) return;
 
         if (arguments.length == 0) {
-            sendGeneralMessage(commandSender, "InvalidArguments", null, label, null);
+            general("InvalidArguments", commandSender).label(label).build();
             return;
         }
 
-        var broadcast = new StringBuilder();
-
-        for (var argument : arguments) broadcast.append(argument).append(" ");
-
-        var messageFormatOptional = MessageManager.getCommandMessage(commandSender, "Broadcast.Format", "*", label, false);
+        var broadcast = ChatColor.translateColorCodes(String.join(" ", arguments).trim());
+        var messageFormatOptional = command("Broadcast.Format", commandSender)
+                .target("*").prefix(false).send(false)
+                .modifier(message -> message.replace("<BROADCAST>", broadcast)).build();
 
         if (messageFormatOptional.isEmpty()) {
-            sendGeneralMessage(commandSender, "ErrorOccurred", "*", label, null);
+            general("ErrorOccurred", commandSender).label(label).target("*").build();
             return;
         }
-
         var messageFormat = messageFormatOptional.get();
-
-        messageFormat = messageFormat.replace("<BROADCAST>", ChatColor.translateColorCodes(broadcast.toString().trim()));
 
         Bukkit.broadcastMessage(messageFormat);
     }

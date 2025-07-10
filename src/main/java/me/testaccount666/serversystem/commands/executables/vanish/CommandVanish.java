@@ -12,6 +12,9 @@ import org.bukkit.metadata.FixedMetadataValue;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 @ServerSystemCommand(name = "vanish", variants = {"drop", "pickup", "interact", "message"})
 public class CommandVanish extends AbstractServerSystemCommand {
     protected final VanishPacket vanishPacket;
@@ -22,12 +25,12 @@ public class CommandVanish extends AbstractServerSystemCommand {
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "Vanish.Use", label)) return;
-        if (handleConsoleWithNoTarget(commandSender, label, arguments)) return;
+        if (!checkBasePermission(commandSender, "Vanish.Use")) return;
+        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
         if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
@@ -63,7 +66,7 @@ public class CommandVanish extends AbstractServerSystemCommand {
     private void handleToggleCommand(User commandSender, String label, User targetUser,
                                      boolean isSelf, String featureName,
                                      BooleanSupplier getCurrentState, Consumer<Boolean> setState) {
-        var messagePath = isSelf? featureName + ".Success" : featureName + ".SuccessOther";
+        var messagePath = isSelf? "${featureName}.Success" : "${featureName}.SuccessOther";
         var enableFeature = !getCurrentState.getAsBoolean();
 
         messagePath = enableFeature? "${messagePath}.Enabled" : "${messagePath}.Disabled";
@@ -71,10 +74,12 @@ public class CommandVanish extends AbstractServerSystemCommand {
         setState.accept(enableFeature);
         targetUser.save();
 
-        sendCommandMessage(commandSender, messagePath, targetUser.getName().get(), label, null);
+        command(messagePath, commandSender).target(targetUser.getName().get()).build();
 
         if (isSelf) return;
-        sendCommandMessage(targetUser, "${featureName}.Success." + (enableFeature? "Enabled" : "Disabled"), commandSender.getName().get(), label, null);
+
+        command("${featureName}.Success" + (enableFeature? "Enabled" : "Disabled"), targetUser)
+                .sender(commandSender.getName().get()).build();
     }
 
 
@@ -105,10 +110,11 @@ public class CommandVanish extends AbstractServerSystemCommand {
 
         vanishPacket.sendVanishPacket(targetUser);
 
-        sendCommandMessage(commandSender, messagePath, targetUser.getName().get(), label, null);
+        command(messagePath, commandSender).target(targetUser.getName().get()).build();
 
         if (isSelf) return;
-        sendCommandMessage(targetUser, "Vanish.Success." + (enableVanish? "Enabled" : "Disabled"), commandSender.getName().get(), label, null);
+
+        command("Vanish.Success" + (enableVanish? "Enabled" : "Disabled"), targetUser).sender(commandSender.getName().get()).build();
     }
 
     @Override

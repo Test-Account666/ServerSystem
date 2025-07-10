@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 @ServerSystemCommand(name = "spawn", variants = "setspawn")
 public class CommandSpawn extends AbstractServerSystemCommand {
     protected final FileConfiguration spawnConfiguration;
@@ -57,21 +60,21 @@ public class CommandSpawn extends AbstractServerSystemCommand {
             return;
         }
 
-        handleSetSpawnCommand(commandSender, label, arguments);
+        handleSetSpawnCommand(commandSender, label);
     }
 
     protected void handleSpawnCommand(User commandSender, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "Spawn.Use", label)) return;
-        if (handleConsoleWithNoTarget(commandSender, label, arguments)) return;
+        if (!checkBasePermission(commandSender, "Spawn.Use")) return;
+        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
 
         if (spawnLocation.isEmpty()) {
-            sendCommandMessage(commandSender, "Spawn.NoSpawnSet", null, label, null);
+            command("Spawn.NoSpawnSet", commandSender).build();
             return;
         }
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
         if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
@@ -79,23 +82,23 @@ public class CommandSpawn extends AbstractServerSystemCommand {
         var targetPlayer = targetUser.getPlayer();
         var isSelf = targetUser == commandSender;
 
-        if (!isSelf && !checkOtherPermission(commandSender, "Spawn.Other", targetPlayer.getName(), label)) return;
+        if (!isSelf && !checkOtherPermission(commandSender, "Spawn.Other", targetPlayer.getName())) return;
 
         targetPlayer.teleport(spawnLocation.get());
 
         var messagePath = isSelf? "Spawn.Success" : "Spawn.SuccessOther";
 
-        sendCommandMessage(commandSender, messagePath, targetPlayer.getName(), label, null);
+        command(messagePath, commandSender).target(targetPlayer.getName()).build();
 
         if (isSelf) return;
-        sendCommandMessage(targetUser, "Spawn.Success", commandSender.getName().get(), label, null);
+        command("Spawn.Success", targetUser).sender(commandSender.getName().get()).build();
     }
 
-    private void handleSetSpawnCommand(User commandSender, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "SetSpawn.Use", label)) return;
+    private void handleSetSpawnCommand(User commandSender, String label) {
+        if (!checkBasePermission(commandSender, "SetSpawn.Use")) return;
 
         if (commandSender instanceof ConsoleUser) {
-            sendGeneralMessage(commandSender, "NotPlayer", null, label, null);
+            general("NotPlayer", commandSender).build();
             return;
         }
 
@@ -112,13 +115,13 @@ public class CommandSpawn extends AbstractServerSystemCommand {
             spawnConfiguration.save(_spawnFile);
         } catch (IOException exception) {
             exception.printStackTrace();
-            sendGeneralMessage(commandSender, "ErrorOccurred", null, label, null);
+            general("ErrorOccurred", commandSender).label(label).build();
             return;
         }
 
         spawnLocation = Optional.of(currentLocation);
 
-        sendCommandMessage(commandSender, "SetSpawn.Success", null, label, null);
+        command("SetSpawn.Success", commandSender).build();
     }
 
     private void saveDefaultConfig() {
@@ -142,8 +145,8 @@ public class CommandSpawn extends AbstractServerSystemCommand {
 
     @Override
     public boolean hasCommandAccess(Player player, Command command) {
-        if (command.getName().equalsIgnoreCase("spawn")) return PermissionManager.hasCommandPermission(player, "Spawn.Use");
+        if (command.getName().equalsIgnoreCase("spawn")) return PermissionManager.hasCommandPermission(player, "Spawn.Use", false);
 
-        return PermissionManager.hasCommandPermission(player, "SetSpawn.Use");
+        return PermissionManager.hasCommandPermission(player, "SetSpawn.Use", false);
     }
 }

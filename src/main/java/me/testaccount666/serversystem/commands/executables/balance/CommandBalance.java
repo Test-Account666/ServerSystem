@@ -8,18 +8,21 @@ import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 @ServerSystemCommand(name = "balance")
 public class CommandBalance extends AbstractServerSystemCommand {
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "Balance.Use", label)) return;
-        if (handleConsoleWithNoTarget(commandSender, label, arguments)) return;
+        if (!checkBasePermission(commandSender, "Balance.Use")) return;
+        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
 
         if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
@@ -28,15 +31,16 @@ public class CommandBalance extends AbstractServerSystemCommand {
 
         var isSelf = targetUser == commandSender;
 
-        if (!isSelf && !checkOtherPermission(commandSender, "Balance.Other", targetPlayer.getName(), label)) return;
+        if (!isSelf && !checkOtherPermission(commandSender, "Balance.Other", targetPlayer.getName())) return;
 
         var balance = targetUser.getBankAccount().getBalance();
         var formattedBalance = ServerSystem.Instance.getEconomyManager().formatMoney(balance);
 
         var messagePath = isSelf? "Balance.Success" : "Balance.SuccessOther";
 
-        sendCommandMessage(commandSender, messagePath, targetPlayer.getName(), label,
-                message -> message.replace("<BALANCE>", formattedBalance));
+        command(messagePath, commandSender)
+                .target(targetPlayer.getName())
+                .modifier(message -> message.replace("<BALANCE>", formattedBalance)).build();
     }
 
     @Override

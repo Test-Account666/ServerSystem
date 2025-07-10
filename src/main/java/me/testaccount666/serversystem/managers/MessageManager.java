@@ -27,51 +27,6 @@ public class MessageManager {
         _PlaceholderManager = new PlaceholderManager();
     }
 
-    public static Optional<String> getCommandMessage(User commandSender, String messagePath, @Nullable String targetName, String label) {
-        return getCommandMessage(commandSender, messagePath, targetName, label, true);
-    }
-
-    public static Optional<String> getCommandMessage(User commandSender, String messagePath, @Nullable String targetName, String label, boolean addPrefix) {
-        return getFormattedMessage(commandSender, "Commands.${messagePath}", targetName, label, addPrefix);
-    }
-
-    public static Optional<String> getNoPermissionMessage(User commandSender, String permission, @Nullable String targetName, String label) {
-        return getNoPermissionMessage(commandSender, permission, targetName, label, true);
-    }
-
-    public static Optional<String> getNoPermissionMessage(User commandSender, String permission, @Nullable String targetName, String label, boolean addPrefix) {
-        return getFormattedMessage(commandSender, "General.NoPermission", targetName, label, addPrefix)
-                .map(message -> message.replace("<PERMISSION>", PermissionManager.getPermission(permission)));
-    }
-
-    public static Optional<String> getFormattedMessage(User commandSender, String messagePath) {
-        return getFormattedMessage(commandSender, messagePath, null, null);
-    }
-
-    public static Optional<String> getFormattedMessage(User commandSender, String messagePath, boolean addPrefix) {
-        return getFormattedMessage(commandSender, messagePath, null, null, addPrefix);
-    }
-
-    public static Optional<String> getFormattedMessage(User commandSender, String messagePath, @Nullable String targetName, @Nullable String label) {
-        return getFormattedMessage(commandSender, messagePath, targetName, label, true);
-    }
-
-    public static Optional<String> getFormattedMessage(User commandSender, String messagePath, @Nullable String targetName, @Nullable String label, boolean addPrefix) {
-        return getMessage(messagePath).map(message -> formatMessage(message, commandSender, targetName, label, addPrefix));
-    }
-
-    public static String formatMessage(String message, User commandSender) {
-        return formatMessage(message, commandSender, null, null);
-    }
-
-    public static String formatMessage(String message, User commandSender, boolean addPrefix) {
-        return formatMessage(message, commandSender, null, null, addPrefix);
-    }
-
-    public static String formatMessage(String message, User commandSender, @Nullable String targetName, @Nullable String label) {
-        return formatMessage(message, commandSender, targetName, label, true);
-    }
-
     public static String formatMessage(String message, User commandSender, @Nullable String targetName, @Nullable String label, boolean addPrefix) {
         if (message == null) return "";
 

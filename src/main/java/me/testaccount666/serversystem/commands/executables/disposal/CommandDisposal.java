@@ -9,17 +9,20 @@ import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 @ServerSystemCommand(name = "disposal")
 public class CommandDisposal extends AbstractServerSystemCommand {
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "Disposal.Use", label)) return;
-        if (handleConsoleWithNoTarget(commandSender, label, arguments)) return;
+        if (!checkBasePermission(commandSender, "Disposal.Use")) return;
+        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
         if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
@@ -27,13 +30,12 @@ public class CommandDisposal extends AbstractServerSystemCommand {
         var targetPlayer = targetUser.getPlayer();
         var isSelf = targetUser == commandSender;
 
-        if (!isSelf && !checkOtherPermission(commandSender, "Disposal.Other", targetPlayer.getName(), label)) return;
+        if (!isSelf && !checkOtherPermission(commandSender, "Disposal.Other", targetPlayer.getName())) return;
 
         targetPlayer.openInventory(Bukkit.createInventory(targetPlayer, InventoryType.CHEST.getDefaultSize() * 2, "§cTrash"));
 
         if (isSelf) return;
-
-        sendCommandMessage(commandSender, "Disposal.Success", targetPlayer.getName(), label, null);
+        command("Disposal.Success", targetUser).target(targetPlayer.getName()).build();
     }
 
     @Override

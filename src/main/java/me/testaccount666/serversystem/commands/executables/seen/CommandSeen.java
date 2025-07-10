@@ -13,15 +13,18 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 @ServerSystemCommand(name = "seen", tabCompleter = TabCompleterSeen.class)
 public class CommandSeen extends AbstractServerSystemCommand {
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "Seen.Use", label)) return;
+        if (!checkBasePermission(commandSender, "Seen.Use")) return;
 
         if (arguments.length == 0) {
-            sendGeneralMessage(commandSender, "InvalidArguments", null, label, null);
+            general("InvalidArguments", commandSender).label(label).build();
             return;
         }
 
@@ -29,14 +32,14 @@ public class CommandSeen extends AbstractServerSystemCommand {
 
         if (cachedUserOptional.isEmpty()) {
             Bukkit.getLogger().warning("(CommandSeen) User '${arguments[0]}' is not cached! This should not happen!");
-            sendGeneralMessage(commandSender, "ErrorOccurred", arguments[0], label, null);
+            general("ErrorOccurred", commandSender).label(label).build();
             return;
         }
 
         var targetUser = cachedUserOptional.get().getOfflineUser();
 
         if (targetUser.getName().isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
@@ -46,9 +49,9 @@ public class CommandSeen extends AbstractServerSystemCommand {
 
         var formattedDate = parseDate(lastSeen);
 
-        sendCommandMessage(commandSender, "Seen.Success", targetUser.getName().get(), label, message ->
-                message.replace("<DATE>", formattedDate)
-                        .replace("<IP>", targetUser.getLastKnownIp()));
+        command("Seen.SuccessOther", commandSender).target(targetUser.getName().get())
+                .modifier(message -> message.replace("<DATE>", formattedDate)
+                        .replace("<IP>", targetUser.getLastKnownIp())).build();
     }
 
 

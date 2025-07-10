@@ -35,7 +35,7 @@ Messages:
       SuccessOther: "<Color:Highlight><TARGET>'s <Color:Message>balance is <Color:Highlight><BALANCE><Color:Message>."
     Pay:
       Success: "You sent <Color:Highlight><AMOUNT> <Color:Message>to <Color:Highlight><TARGET><Color:Message>."
-      SuccessOther: "You received <Color:Highlight><AMOUNT> <Color:Message>from <Color:Highlight><TARGET><Color:Message>."
+      SuccessOther: "You received <Color:Highlight><AMOUNT> <Color:Message>from <Color:Highlight><SENDER><Color:Message>."
       CannotPaySelf: "<Color:Error.Message>You cannot pay yourself."
       NotEnoughMoney: "<Color:Error.Message>You do not have enough money."
       InvalidAmount: "<Color:Error.Message>Invalid amount specified."
@@ -81,7 +81,7 @@ Messages:
     Economy:
       Give:
         Success: "You added <Color:Highlight><AMOUNT> <Color:Message>to <Color:Highlight><TARGET>'s <Color:Message>balance."
-        SuccessOther: "<Color:Highlight><TARGET> <Color:Message>added <Color:Highlight><AMOUNT> <Color:Message>to your balance."
+        SuccessOther: "<Color:Highlight><SENDER> <Color:Message>added <Color:Highlight><AMOUNT> <Color:Message>to your balance."
       Take:
         Success: "You removed <Color:Highlight><AMOUNT> <Color:Message>from <Color:Highlight><TARGET>'s <Color:Message>balance."
         SuccessOther: "<Color:Highlight><TARGET> <Color:Message>removed <Color:Highlight><AMOUNT> <Color:Message>from your balance."
@@ -97,7 +97,7 @@ Messages:
       WorldNotFound: "<Color:Error.Message>Invalid world specified."
     TeleportAsk:
       Success: "You asked to teleport to <Color:Highlight><TARGET><Color:Message>."
-      SuccessOther: "<Color:Highlight><TARGET> <Color:Message>asked to teleport to you, you have 2 minutes to accept."
+      SuccessOther: "<Color:Highlight><SENDER> <Color:Message>asked to teleport to you, you have 2 minutes to accept."
       Buttons:
         Accept:
           Name: "<Color:Highlight>Accept"
@@ -112,7 +112,7 @@ Messages:
       StartingTeleporting: "Starting teleport, please stand still..."
     TeleportHereAsk:
       Success: "You asked <Color:Highlight><TARGET> <Color:Message>to teleport to you."
-      SuccessOther: "<Color:Highlight><TARGET> <Color:Message>asked you to teleport to them, you have 2 minutes to accept."
+      SuccessOther: "<Color:Highlight><SENDER> <Color:Message>asked you to teleport to them, you have 2 minutes to accept."
     TeleportDeny:
       Success: "You denied the teleport request."
       SuccessOther: "<Color:Error.Highlight><TARGET> <Color:Error.Message>denied your teleport request."
@@ -144,8 +144,9 @@ Messages:
         Disabled: "<Color:Highlight><TARGET> <Color:Message>no longer accepts private messages."
     Unlimited:
       Success:
-        Enabled: "The item in your hand is now unlimited"
-        Disabled: "The item in your hand is no longer unlimited"
+        Enabled: "The item in your hand is now unlimited."
+        Disabled: "The item in your hand is no longer unlimited."
+      NoItemInHand: "<Color:Error:Message>You're not holding an item."
     ClearInventory:
       Success: "You inventory has been cleared."
       SuccessOther: "You cleared <Color:Highlight><TARGET>'s <Color:Message>inventory."
@@ -153,7 +154,6 @@ Messages:
       Success: "You executed a command for <Color:Highlight><TARGET><Color:Highlight>."
     OfflineTeleport:
       Success: "You teleported yourself to <Color:Highlight><TARGET>'s <Color:Message>logout location."
-      TargetOnline: "<Color:Error.Message>Specified target <Color:Error.Highlight><TARGET> <Color:Error.Message>is online."
     OfflineTeleportHere:
       Success: "You set <Color:Highlight><TARGET>'s <Color:Message>logout location to your current location."
     Vanish:
@@ -196,9 +196,29 @@ Messages:
         Disabled: "<Color:Highlight><TARGET> <Color:Message>can no longer send messages in vanish."
     InventorySee:
       CannotSeeSelf: "<Color:Error.Message>You cannot open your own inventory."
-    OfflineInventorySee:
-      NeverPlayed: "<Color:Error:Message>Specified player <Color:Error:Highlight><TARGET> <Color:Error:Message>has never played."
-      NotOffline: "<Color:Error:Message>Specified player <Color:Error:Highlight><TARGET> <Color:Error:Message>is online."
+    Smelt:
+      NoItemInHand: "<Color:Error.Message>You're not holding an item."
+      NoSmeltedItem: "<Color:Error.Message>This item is not smeltable."
+      Success: "The item in your hand has been smelted."
+    Stack:
+      NoItemInHand: "<Color:Error.Message>You're not holding an item."
+      Success: "You filled the stack in your hand."
+    Repair:
+      NotRepairable: "<Color:Error.Message>Specified item is not repairable."
+      Success: "You repaired <Color:Highlight><COUNT> <Color:Message>items."
+    Ping:
+      Success: "You ping is <Color:Highlight><PING><Color:Message>."
+      Other: "<Color:Highlight><TARGET>'s <Color:Message>ping is <Color:Highlight><PING><Color:Message>."
+    Ip:
+      Success: "<Color:Highlight><TARGET>'s <Color:Message>ip is <Color:Highlight><IP><Color:Message>."
+    Ignore:
+      Success: "You are now ignoring <Color:Highlight><TARGET><Color:Message>."
+      AlreadyIgnored: "You are already ignoring <Color:Highlight><TARGET><Color:Message>."
+      Self: "<Color:Error.Message>You cannot ignore yourself."
+    Unignore:
+      Success: "You are no longer ignoring <Color:Highlight><TARGET><Color:Message>."
+      NotIgnored: "You are not ignoring <Color:Highlight><TARGET><Color:Message>."
+      Self: "<Color:Error.Message>You cannot ignore yourself."
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>You don't have permission to do this. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"
@@ -206,4 +226,10 @@ Messages:
     NotPlayer: "<Color:Error.Message>You must be a player to use this command."
     InvalidArguments: "<Color:Error.Message>Invalid arguments. Usage: <Color:Error.Highlight><USAGE>"
     ErrorOccurred: "<Color:Error.Message>An error occured. Please see logs for more information."
-    CommandDisabled: "<Color:Error.Message>This command has been automatically disabled. Reason: <REASON>"
+    CommandDisabled: "<Color:Error.Message>Command <Color:Error.Highlight>/<LABEL> <Color:Error.Message>has been automatically disabled. Reason: <REASON>"
+    AwayFromKeyboard:
+      NowAfk: "You are now considered AFK."
+      NoLongerAfk: "You are no longer considered AFK."
+    Offline:
+      NeverPlayed: "<Color:Error:Message>Specified player <Color:Message:Highlight><TARGET> <Color:Error.Message>has never played."
+      NotOffline: "<Color:Error:Message>Specified player <Color:Message:Highlight><TARGET> <Color:Error.Message>is not offline."

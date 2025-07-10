@@ -24,18 +24,21 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 @ServerSystemCommand(name = "sudo")
 public class CommandSudo extends AbstractServerSystemCommand {
     private static Method _GetHandleMethod;
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "Sudo.Use", label)) return;
-        if (handleConsoleWithNoTarget(commandSender, label, arguments)) return;
+        if (!checkBasePermission(commandSender, "Sudo.Use")) return;
+        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, false, arguments);
         if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
@@ -45,38 +48,39 @@ public class CommandSudo extends AbstractServerSystemCommand {
 
         // No inception here. You can't sudo yourself. Nice try, DiCaprio.
         if (isSelf) {
-            sendCommandMessage(commandSender, "Sudo.CannotSudoSelf", targetPlayer.getName(), label, null);
+            command("Sudo.CannotSudoSelf", commandSender).build();
             return;
         }
 
         if (arguments.length <= 1) {
-            sendGeneralMessage(commandSender, "InvalidArguments", targetPlayer.getName(), label, null);
+            general("InvalidArguments", commandSender).label(label).build();
             return;
         }
 
         var sudoCommand = arguments[1];
 
         if (sudoCommand.isBlank()) {
-            sendGeneralMessage(commandSender, "InvalidArguments", targetPlayer.getName(), label, null);
+            general("InvalidArguments", commandSender).label(label).build();
             return;
         }
 
         if (!(commandSender instanceof ConsoleUser) && PermissionManager.hasPermission(targetPlayer, "Commands.Sudo.Exempt", false)) {
-            sendCommandMessage(commandSender, "Sudo.CannotSudo", targetPlayer.getName(), label, null);
+            command("Sudo.CannotSudoExempt", commandSender).target(targetPlayer.getName()).build();
             return;
         }
 
         var cachedSenderOptional = ServerSystem.Instance.getUserManager().getUser(commandSender.getUuid());
         if (cachedSenderOptional.isEmpty()) {
             Bukkit.getLogger().warning("(CommandSudo) Couldn't find cached command sender?!");
-            sendGeneralMessage(commandSender, "ErrorOccurred", targetPlayer.getName(), label, null);
+            general("ErrorOccurred", commandSender).label(label).build();
             return;
         }
 
         var cachedSender = cachedSenderOptional.get();
         targetUser.addMessageListener(cachedSender);
 
-        sendCommandMessage(commandSender, "Sudo.Success", targetPlayer.getName(), label, message -> message.replace("<COMMAND>", sudoCommand));
+        command("Sudo.Success", commandSender).target(targetPlayer.getName())
+                .modifier(message -> message.replace("<COMMAND>", sudoCommand)).build();
 
         if (!sudoCommand.startsWith("/")) {
             targetPlayer.chat(sudoCommand);
@@ -86,7 +90,7 @@ public class CommandSudo extends AbstractServerSystemCommand {
         var hookedTargetPlayer = createHookedPlayer(targetPlayer, commandSender.getCommandSender());
 
         if (hookedTargetPlayer == null) {
-            sendGeneralMessage(commandSender, "ErrorOccurred", targetPlayer.getName(), label, null);
+            general("ErrorOccurred", commandSender).label(label).build();
             return;
         }
 

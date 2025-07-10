@@ -11,6 +11,9 @@ import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 @ServerSystemCommand(name = "unlimited")
 public class CommandUnlimited extends AbstractServerSystemCommand {
     protected final NamespacedKey unlimitedKey;
@@ -21,16 +24,16 @@ public class CommandUnlimited extends AbstractServerSystemCommand {
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "Unlimited.Use", label)) return;
+        if (!checkBasePermission(commandSender, "Unlimited.Use")) return;
         if (commandSender instanceof ConsoleUser) {
-            sendGeneralMessage(commandSender, "NotPlayer", null, label, null);
+            general("NotPlayer", commandSender).build();
             return;
         }
 
         var itemInHand = commandSender.getPlayer().getInventory().getItemInMainHand();
 
         if (itemInHand.getType().isAir()) {
-            sendGeneralMessage(commandSender, "NoItemInHand", null, label, null);
+            command("Unlimited.NoItemInHand", commandSender).build();
             return;
         }
 
@@ -45,7 +48,7 @@ public class CommandUnlimited extends AbstractServerSystemCommand {
         itemInHand.setItemMeta(itemMeta);
 
         var messagePath = setUnlimited? "Unlimited.Success.Enabled" : "Unlimited.Success.Disabled";
-        sendCommandMessage(commandSender, messagePath, null, label, null);
+        command(messagePath, commandSender).build();
     }
 
     @Override

@@ -2,7 +2,6 @@ package me.testaccount666.serversystem.commands.executables.privatemessage;
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
-import me.testaccount666.serversystem.managers.MessageManager;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
@@ -14,6 +13,9 @@ import org.bukkit.entity.Player;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 
 @ServerSystemCommand(name = "privatemessage", variants = {"reply", "messagetoggle"})
 public class CommandPrivateMessage extends AbstractServerSystemCommand {
@@ -35,12 +37,12 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
     }
 
     private void handleMessageToggleCommand(User commandSender, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "MessageToggle.Use", label)) return;
-        if (handleConsoleWithNoTarget(commandSender, label, arguments)) return;
+        if (!checkBasePermission(commandSender, "MessageToggle.Use")) return;
+        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
         if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
@@ -49,7 +51,7 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
 
         var isSelf = targetUser == commandSender;
 
-        if (!isSelf && !checkOtherPermission(commandSender, "MessageToggle.Other", targetPlayer.getName(), label)) return;
+        if (!isSelf && !checkOtherPermission(commandSender, "MessageToggle.Other", targetPlayer.getName())) return;
 
         var acceptsMessages = !targetUser.isAcceptsMessages();
 
@@ -59,19 +61,20 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
         var messagePath = isSelf? "MessageToggle.Success" : "MessageToggle.SuccessOther";
         messagePath = acceptsMessages? "${messagePath}.Enabled" : "${messagePath}.Disabled";
 
-        sendCommandMessage(commandSender, messagePath, targetPlayer.getName(), label, null);
+        command(messagePath, commandSender).target(targetPlayer.getName()).build();
 
         if (isSelf) return;
-        sendCommandMessage(targetUser, "MessageToggle.Success." + (acceptsMessages? "Enabled" : "Disabled"), commandSender.getName().get(), label, null);
+        command("MessageToggle.Success" + (acceptsMessages? "Enabled" : "Disabled"), targetUser)
+                .sender(commandSender.getName().get()).build();
     }
 
     private void handleReplyCommand(User commandSender, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "Reply.Use", label)) return;
+        if (!checkBasePermission(commandSender, "Reply.Use")) return;
 
         var targerUser = commandSender.getReplyUser();
 
         if (!isValidReplyTarget(targerUser)) {
-            sendCommandMessage(commandSender, "Reply.NoReply", null, label, null);
+            command("Reply.NoReply", commandSender).build();
             return;
         }
 
@@ -84,17 +87,16 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
 
     private void handlePrivateMessageCommand(User commandSender, String label, String... arguments) {
         if (_privateMessageCommand == null) _privateMessageCommand = label;
-
-        if (!checkBasePermission(commandSender, "PrivateMessage.Use", label)) return;
+        if (!checkBasePermission(commandSender, "PrivateMessage.Use")) return;
 
         if (arguments.length <= 1) {
-            sendGeneralMessage(commandSender, "InvalidArguments", null, label, null);
+            general("InvalidArguments", commandSender).build();
             return;
         }
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
         if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
@@ -105,7 +107,7 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
     private void sendPrivateMessage(User commandSender, User targetUser, String label, String... arguments) {
         var nameOptional = targetUser.getName();
         if (nameOptional.isEmpty()) {
-            sendGeneralMessage(commandSender, "ErrorOccurred", targetUser.getUuid().toString(), label, null);
+            general("ErrorOccurred", commandSender).label(label).target(targetUser.getUuid().toString()).build();
             return;
         }
 
@@ -114,33 +116,39 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
         var isSelf = targetUser == commandSender;
 
         if (isSelf) {
-            sendCommandMessage(commandSender, "PrivateMessage.CannotSendToSelf", targetName, label, null);
+            command("PrivateMessage.CannotSendToSelf", commandSender).build();
             return;
         }
 
         if (!targetUser.isAcceptsMessages()) {
-            sendCommandMessage(commandSender, "PrivateMessage.NoMessages", targetName, label, null);
+            command("PrivateMessage.NoMessages", commandSender).target(targetName).build();
             return;
         }
 
         var message = IntStream.range(1, arguments.length).mapToObj(index -> "${arguments[index]} ").collect(Collectors.joining()).trim();
-        var successOptional = MessageManager.getFormattedMessage(commandSender, "Commands.PrivateMessage.Success", targetName, label, false);
-        var successOtherOptional = MessageManager.getFormattedMessage(commandSender, "Commands.PrivateMessage.SuccessOther", targetName, label, false);
+
+        var successOptional = command("PrivateMessage.Success", commandSender)
+                .target(targetName).prefix(false).send(false)
+                .modifier(msg -> msg.replace("<MESSAGE>", message)).build();
+
+        var successOtherOptional = command("PrivateMessage.SuccessOther", targetUser)
+                .sender(commandSender.getName().get()).prefix(false).send(false)
+                .modifier(msg -> msg.replace("<MESSAGE>", message)).build();
 
         if (successOptional.isEmpty() || successOtherOptional.isEmpty()) {
             Bukkit.getLogger().warning("Couldn't find message for path Commands.PrivateMessage.Success or Commands.PrivateMessage.SuccessOther");
-            sendGeneralMessage(commandSender, "ErrorOccurred", targetName, label, null);
+            general("ErrorOccurred", commandSender).label(label).target(targetName).build();
             return;
         }
 
         var success = successOptional.get();
         var successOther = successOtherOptional.get();
 
-        var successComponent = Component.text(success.replace("<MESSAGE>", message))
+        var successComponent = Component.text(success)
                 .clickEvent(ClickEvent.suggestCommand("/${_privateMessageCommand} ${targetName} "))
                 .asComponent();
 
-        var successOtherComponent = Component.text(successOther.replace("<MESSAGE>", message))
+        var successOtherComponent = Component.text(successOther)
                 .clickEvent(ClickEvent.suggestCommand("/${_privateMessageCommand} ${commandSender.getName().get()} "))
                 .asComponent();
 

@@ -20,6 +20,8 @@ public class User extends OfflineUser {
     protected Player player;
     protected TeleportRequest teleportRequest;
     protected User replyUser;
+    protected boolean isAfk = false;
+    protected long afkSince;
 
     protected User(File userFile) {
         super(userFile);
@@ -116,5 +118,21 @@ public class User extends OfflineUser {
 
     public void removeMessageListener(CachedUser cachedUser) {
         messageListeners.remove(cachedUser);
+    }
+
+    public boolean isAfk() {
+        return isAfk;
+    }
+
+    public void setAfk(boolean afk) {
+        // Don't update afkSince if the user is already afk
+        if (isAfk == afk) return;
+
+        isAfk = afk;
+        afkSince = afk? System.currentTimeMillis() : 0;
+    }
+
+    public long getAfkSince() {
+        return afkSince;
     }
 }

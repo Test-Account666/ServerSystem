@@ -8,6 +8,9 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
+
 @ServerSystemCommand(name = "heal", variants = "feed")
 public class CommandHeal extends AbstractServerSystemCommand {
 
@@ -22,49 +25,48 @@ public class CommandHeal extends AbstractServerSystemCommand {
     }
 
     private void handleFeedCommand(User commandSender, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "Feed.Use", label)) return;
-        if (handleConsoleWithNoTarget(commandSender, label, arguments)) return;
+        if (!checkBasePermission(commandSender, "Feed.Use")) return;
+        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
         if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
         var targetUser = targetUserOptional.get();
         var targetPlayer = targetUser.getPlayer();
-
         var isSelf = targetUser == commandSender;
 
-        if (!isSelf && !checkOtherPermission(commandSender, "Feed.Other", targetPlayer.getName(), label)) return;
+        if (!isSelf && !checkOtherPermission(commandSender, "Feed.Other", targetPlayer.getName())) return;
 
         targetPlayer.setFoodLevel(20);
         targetPlayer.setSaturation(20);
 
         var messagePath = isSelf? "Feed.Success" : "Feed.SuccessOther";
 
-        sendCommandMessage(commandSender, messagePath, targetPlayer.getName(), label, null);
+        command(messagePath, commandSender).target(targetPlayer.getName()).build();
 
         if (isSelf) return;
-        sendCommandMessage(targetUser, "Feed.Success", commandSender.getName().get(), label, null);
+        command("Feed.Success", targetUser)
+                .sender(commandSender.getName().get()).target(targetPlayer.getName()).build();
     }
 
     private void handleHealCommand(User commandSender, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "Heal.Use", label)) return;
-        if (handleConsoleWithNoTarget(commandSender, label, arguments)) return;
+        if (!checkBasePermission(commandSender, "Heal.Use")) return;
+        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
         if (targetUserOptional.isEmpty()) {
-            sendMissingPlayerMessage(commandSender, label, arguments[0]);
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
         var targetUser = targetUserOptional.get();
         var targetPlayer = targetUser.getPlayer();
-
         var isSelf = targetUser == commandSender;
 
-        if (!isSelf && !checkOtherPermission(commandSender, "Heal.Other", targetPlayer.getName(), label)) return;
+        if (!isSelf && !checkOtherPermission(commandSender, "Heal.Other", targetPlayer.getName())) return;
 
         targetPlayer.setHealth(targetPlayer.getAttribute(Attribute.MAX_HEALTH).getBaseValue());
         targetPlayer.setFoodLevel(20);
@@ -72,10 +74,11 @@ public class CommandHeal extends AbstractServerSystemCommand {
 
         var messagePath = isSelf? "Heal.Success" : "Heal.SuccessOther";
 
-        sendCommandMessage(commandSender, messagePath, targetPlayer.getName(), label, null);
+        command(messagePath, commandSender).target(targetPlayer.getName()).build();
 
         if (isSelf) return;
-        sendCommandMessage(targetUser, "Heal.Success", commandSender.getName().get(), label, null);
+        command("Heal.Success", targetUser)
+                .sender(commandSender.getName().get()).target(targetPlayer.getName()).build();
     }
 
     @Override

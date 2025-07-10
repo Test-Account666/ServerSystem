@@ -2,7 +2,6 @@ package me.testaccount666.serversystem.commands.executables.teleportask;
 
 import me.testaccount666.serversystem.annotations.RequiredCommands;
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor;
-import me.testaccount666.serversystem.managers.MessageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
@@ -12,6 +11,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
 
 @RequiredCommands(requiredCommands = CommandTeleportAsk.class)
 public class ListenerTeleportRequest implements Listener {
@@ -66,8 +67,8 @@ public class ListenerTeleportRequest implements Listener {
             teleportRequest.setCancelled(true);
             _commandTeleportAsk.activeTeleportRequests.remove(teleportRequest);
 
-            var messageOptional = MessageManager.getCommandMessage(teleporter, "TeleportAsk.Moved", null, null);
-            messageOptional.ifPresent(teleporterPlayer::sendMessage);
+
+            command("TeleportAsk.Moved", teleporter).build();
         });
     }
 }
