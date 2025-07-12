@@ -2,6 +2,13 @@ package me.testaccount666.serversystem.userdata;
 
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.executables.back.CommandBack;
+import me.testaccount666.serversystem.managers.database.moderation.MySqlModerationDatabaseManager;
+import me.testaccount666.serversystem.managers.database.moderation.SqliteModerationDatabaseManager;
+import me.testaccount666.serversystem.moderation.AbstractModerationManager;
+import me.testaccount666.serversystem.moderation.ban.MySqlBanManager;
+import me.testaccount666.serversystem.moderation.ban.SqliteBanManager;
+import me.testaccount666.serversystem.moderation.mute.MySqlMuteManager;
+import me.testaccount666.serversystem.moderation.mute.SqliteMuteManager;
 import me.testaccount666.serversystem.userdata.home.HomeManager;
 import me.testaccount666.serversystem.userdata.money.AbstractBankAccount;
 import me.testaccount666.serversystem.userdata.persistence.*;
@@ -14,6 +21,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
 import java.math.BigInteger;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -34,6 +42,8 @@ public class OfflineUser {
     protected String name;
     protected UUID uuid;
     protected OfflinePlayer player;
+    protected AbstractModerationManager banManager;
+    protected AbstractModerationManager muteManager;
     protected AbstractBankAccount bankAccount;
     protected HomeManager homeManager;
     protected FileConfiguration userConfig;
@@ -144,7 +154,30 @@ public class OfflineUser {
         if (name == null) name = getPlayer().getName();
 
         homeManager = new HomeManager(this, userConfig);
-        bankAccount = ServerSystem.Instance.getEconomyManager().instantiateBankAccount(this, BigInteger.valueOf(0), userConfig);
+        bankAccount = ServerSystem.Instance.getEconomyProvider().instantiateBankAccount(this, BigInteger.valueOf(0), userConfig);
+
+        var moderationManager = ServerSystem.Instance.getModerationDatabaseManager();
+        if (moderationManager instanceof SqliteModerationDatabaseManager) try {
+            banManager = new SqliteBanManager(uuid, moderationManager.getConnection());
+        } catch (SQLException exception) {
+            throw new RuntimeException("Error loading userdata! (BanManager)", exception);
+        }
+        else if (moderationManager instanceof MySqlModerationDatabaseManager) try {
+            banManager = new MySqlBanManager(uuid, moderationManager.getConnection());
+        } catch (SQLException exception) {
+            throw new RuntimeException("Error loading userdata! (BanManager)", exception);
+        }
+
+        if (moderationManager instanceof SqliteModerationDatabaseManager) try {
+            muteManager = new SqliteMuteManager(uuid, moderationManager.getConnection());
+        } catch (SQLException exception) {
+            throw new RuntimeException("Error loading userdata! (MuteManager)", exception);
+        }
+        else if (moderationManager instanceof MySqlModerationDatabaseManager) try {
+            muteManager = new MySqlMuteManager(uuid, moderationManager.getConnection());
+        } catch (SQLException exception) {
+            throw new RuntimeException("Error loading userdata! (MuteManager)", exception);
+        }
     }
 
     public AbstractBankAccount getBankAccount() {
@@ -342,5 +375,13 @@ public class OfflineUser {
 
     public void setLastBackType(CommandBack.BackType lastBackType) {
         this.lastBackType = lastBackType;
+    }
+
+    public AbstractModerationManager getBanManager() {
+        return banManager;
+    }
+
+    public AbstractModerationManager getMuteManager() {
+        return muteManager;
     }
 }

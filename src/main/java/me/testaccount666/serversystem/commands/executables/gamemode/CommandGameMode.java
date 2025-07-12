@@ -36,22 +36,22 @@ public class CommandGameMode extends AbstractServerSystemCommand {
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (command.getName().equalsIgnoreCase("gms")) {
-            handleGameModeCommand(commandSender, GameMode.SURVIVAL, arguments, label);
+            handleGameModeCommand(commandSender, GameMode.SURVIVAL, arguments);
             return;
         }
 
         if (command.getName().equalsIgnoreCase("gmc")) {
-            handleGameModeCommand(commandSender, GameMode.CREATIVE, arguments, label);
+            handleGameModeCommand(commandSender, GameMode.CREATIVE, arguments);
             return;
         }
 
         if (command.getName().equalsIgnoreCase("gma")) {
-            handleGameModeCommand(commandSender, GameMode.ADVENTURE, arguments, label);
+            handleGameModeCommand(commandSender, GameMode.ADVENTURE, arguments);
             return;
         }
 
         if (command.getName().equalsIgnoreCase("gmsp")) {
-            handleGameModeCommand(commandSender, GameMode.SPECTATOR, arguments, label);
+            handleGameModeCommand(commandSender, GameMode.SPECTATOR, arguments);
             return;
         }
 
@@ -72,10 +72,10 @@ public class CommandGameMode extends AbstractServerSystemCommand {
 
         var newArguments = arguments.length > 1? new String[]{arguments[1]} : new String[0];
 
-        handleGameModeCommand(commandSender, gameModeOptional.get(), newArguments, label);
+        handleGameModeCommand(commandSender, gameModeOptional.get(), newArguments);
     }
 
-    private void handleGameModeCommand(User commandSender, GameMode gameMode, String[] arguments, String label) {
+    public void handleGameModeCommand(User commandSender, GameMode gameMode, String[] arguments) {
         if (!checkBasePermission(commandSender, "GameMode.Use")) return;
 
         var gameModePermission = switch (gameMode) {

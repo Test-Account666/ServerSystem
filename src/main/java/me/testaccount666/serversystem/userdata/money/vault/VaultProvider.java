@@ -30,17 +30,17 @@ public class VaultProvider extends AbstractEconomy {
 
     @Override
     public String format(double amount) {
-        return ServerSystem.Instance.getEconomyManager().formatMoney(new BigDecimal(amount));
+        return ServerSystem.Instance.getEconomyProvider().formatMoney(new BigDecimal(amount));
     }
 
     @Override
     public String currencyNamePlural() {
-        return ServerSystem.Instance.getEconomyManager().getCurrencyPlural();
+        return ServerSystem.Instance.getEconomyProvider().getCurrencyPlural();
     }
 
     @Override
     public String currencyNameSingular() {
-        return ServerSystem.Instance.getEconomyManager().getCurrencySingular();
+        return ServerSystem.Instance.getEconomyProvider().getCurrencySingular();
     }
 
     @Override

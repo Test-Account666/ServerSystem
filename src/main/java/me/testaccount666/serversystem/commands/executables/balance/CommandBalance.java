@@ -34,7 +34,7 @@ public class CommandBalance extends AbstractServerSystemCommand {
         if (!isSelf && !checkOtherPermission(commandSender, "Balance.Other", targetPlayer.getName())) return;
 
         var balance = targetUser.getBankAccount().getBalance();
-        var formattedBalance = ServerSystem.Instance.getEconomyManager().formatMoney(balance);
+        var formattedBalance = ServerSystem.Instance.getEconomyProvider().formatMoney(balance);
 
         var messagePath = isSelf? "Balance.Success" : "Balance.SuccessOther";
 

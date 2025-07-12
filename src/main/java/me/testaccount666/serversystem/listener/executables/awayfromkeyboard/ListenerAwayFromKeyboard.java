@@ -12,10 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +23,7 @@ public class ListenerAwayFromKeyboard implements Listener {
     private final Map<UUID, Long> _lastActionMap = new HashMap<>();
     private final Map<UUID, Location> _chunkLocationMap = new HashMap<>();
     private final Map<UUID, Long> _lastMouseMovement = new HashMap<>();
+    private final Map<UUID, Long> _lastReelMap = new HashMap<>();
 
     public ListenerAwayFromKeyboard() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(ServerSystem.Instance, () -> Bukkit.getOnlinePlayers().forEach(player -> {
@@ -51,6 +49,13 @@ public class ListenerAwayFromKeyboard implements Listener {
         _lastActionMap.remove(event.getPlayer().getUniqueId());
         _chunkLocationMap.remove(event.getPlayer().getUniqueId());
         _lastMouseMovement.remove(event.getPlayer().getUniqueId());
+    }
+
+    @EventHandler
+    public void onPlayerFish(PlayerFishEvent event) {
+        if (event.getState() == PlayerFishEvent.State.FISHING) return;
+
+        _lastActionMap.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
     }
 
     @EventHandler

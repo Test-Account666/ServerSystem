@@ -11,11 +11,13 @@ public class MappingsData {
     private static GameMode _GameMode;
     private static MessageColors _MessageColors;
     private static BackType _BackType;
+    private static Moderation _Moderation;
 
     public static void initialize(ConfigReader config) {
         _GameMode = new GameMode(config);
         _MessageColors = new MessageColors(config);
         _BackType = new BackType(config);
+        _Moderation = new Moderation(config);
     }
 
     public static GameMode GameMode() {
@@ -28,6 +30,10 @@ public class MappingsData {
 
     public static BackType BackType() {
         return _BackType;
+    }
+
+    public static Moderation Moderation() {
+        return _Moderation;
     }
 
     public static class BackType {
@@ -97,6 +103,25 @@ public class MappingsData {
 
         public Optional<String> getMessageColor(String colorId) {
             return Optional.ofNullable(_messageColorMappings.getOrDefault(colorId, null));
+        }
+    }
+
+    public static class Moderation {
+        private final Map<String, String> _moderationMappings = new HashMap<>();
+
+        public Moderation(ConfigReader config) {
+            var neverName = config.getString("Mappings.Moderation.Permanent");
+
+            if (neverName == null) {
+                Bukkit.getLogger().warning("Moderation mapping for 'Permanent' is not defined in the config!");
+                return;
+            }
+
+            _moderationMappings.put("permanent", neverName);
+        }
+
+        public Optional<String> getName(String key) {
+            return Optional.ofNullable(_moderationMappings.getOrDefault(key, null));
         }
     }
 }

@@ -3,72 +3,69 @@ Permissions:
     GameMode:
       Use:
         Required: true
-        Value: "serversystem.command.gamemode.use"
+        Value: "serversystem.admin.command.gamemode.use"
       Other:
         Required: true
-        Value: "serversystem.command.gamemode.other"
+        Value: "serversystem.admin.command.gamemode.other"
       Survival:
         Required: true
-        Value: "serversystem.command.gamemode.survival"
+        Value: "serversystem.admin.command.gamemode.survival"
       Creative:
         Required: true
-        Value: "serversystem.command.gamemode.creative"
+        Value: "serversystem.admin.command.gamemode.creative"
       Adventure:
         Required: true
-        Value: "serversystem.command.gamemode.adventure"
+        Value: "serversystem.admin.command.gamemode.adventure"
       Spectator:
         Required: true
-        Value: "serversystem.command.gamemode.spectator"
+        Value: "serversystem.admin.command.gamemode.spectator"
     God:
       Use:
         Required: true
-        Value: "serversystem.command.god.use"
+        Value: "serversystem.support.command.god.use"
       Other:
         Required: true
-        Value: "serversystem.command.god.other"
+        Value: "serversystem.support.command.god.other"
     Fly:
       Use:
         Required: true
-        Value: "serversystem.command.fly.use"
+        Value: "serversystem.support.command.fly.use"
       Other:
         Required: true
-        Value: "serversystem.command.fly.other"
+        Value: "serversystem.support.command.fly.other"
     Teleport:
       Use:
         Required: true
-        Value: "serversystem.command.teleport.use"
+        Value: "serversystem.support.command.teleport.use"
       Other:
         Required: true
-        Value: "serversystem.command.teleport.other"
+        Value: "serversystem.support.command.teleport.other"
     TeleportPosition:
       Use:
         Required: true
-        Value: "serversystem.command.teleportposition.use"
+        Value: "serversystem.support.command.teleportposition.use"
       Other:
         Required: true
-        Value: "serversystem.command.teleportposition.other"
+        Value: "serversystem.support.command.teleportposition.other"
     TeleportHere:
       Use:
         Required: true
-        Value: "serversystem.command.teleporthere.use"
+        Value: "serversystem.support.command.teleporthere.use"
     OfflineTeleport:
       Use:
         Required: true
-        Value: "serversystem.command.offlineteleport.use"
-      Other:
-        Required: true
-        Value: "serversystem.command.offlineteleport.other"
+        Value: "serversystem.moderation.command.offlineteleport.use"
     OfflineTeleportHere:
       Use:
         Required: true
-        Value: "serversystem.command.offlineteleporthere.use"
+        Value: "serversystem.moderation.command.offlineteleporthere.use"
     TeleportAll:
       Use:
         Required: true
-        Value: "serversystem.command.teleportall.use"
+        Value: "serversystem.admin.command.teleportall.use"
       World:
         Required: true
-        Value: "serversystem.command.teleportposition.world"
+        Value: "serversystem.admin.command.teleportposition.world"
     Balance:
       Use:
         Required: false
@@ -111,7 +108,7 @@ Permissions:
     Broadcast:
       Use:
         Required: true
-        Value: "serversystem.command.broadcast.use"
+        Value: "serversystem.moderation.command.broadcast.use"
     EnderChest:
       Use:
         Required: true
@@ -122,13 +119,13 @@ Permissions:
     OfflineEnderChest:
       Use:
         Required: true
-        Value: "serversystem.command.offlineenderchest.use"
+        Value: "serversystem.admin.command.offlineenderchest.use"
       Other:
         Required: true
-        Value: "serversystem.command.offlineenderchest.other"
+        Value: "serversystem.admin.command.offlineenderchest.other"
     Disposal:
       Use:
-        Required: true
+        Required: false
         Value: "serversystem.command.disposal.use"
       Other:
         Required: true
@@ -136,35 +133,28 @@ Permissions:
     Heal:
       Use:
         Required: true
-        Value: "serversystem.command.heal.use"
+        Value: "serversystem.support.command.heal.use"
       Other:
         Required: true
-        Value: "serversystem.command.heal.other"
+        Value: "serversystem.support.command.heal.other"
     Feed:
       Use:
         Required: true
-        Value: "serversystem.command.feed.use"
+        Value: "serversystem.support.command.feed.use"
       Other:
         Required: true
-        Value: "serversystem.command.feed.other"
+        Value: "serversystem.support.command.feed.other"
     Seen:
       Use:
         Required: true
-        Value: "serversystem.command.seen.use"
+        Value: "serversystem.support.command.seen.use"
     CommandSpy:
       Use:
         Required: true
-        Value: "serversystem.command.commandspy.use"
+        Value: "serversystem.moderation.command.commandspy.use"
       Other:
         Required: true
-        Value: "serversystem.command.commandspy.other"
-    ClearChat:
-      Use:
-        Required: true
-        Value: "serversystem.command.clearchat.use"
-      Bypass:
-        Required: true
-        Value: "serversystem.command.clearchat.bypass"
+        Value: "serversystem.moderation.command.commandspy.other"
     Spawn:
       Use:
         Required: false
@@ -172,61 +162,56 @@ Permissions:
       Other:
         Required: true
         Value: "serversystem.command.spawn.other"
-    SetSpawn:
-      Use:
+      Set:
         Required: true
-        Value: "serversystem.command.setspawn.use"
+        Value: "serversystem.admin.command.spawn.set"
     Home:
       Use:
         Required: false
         Value: "serversystem.command.home.use"
-    SetHome:
-      Use:
+      Set:
         Required: false
-        Value: "serversystem.command.sethome.use"
-    DeleteHome:
-      Use:
+        Value: "serversystem.command.home.set"
+      Delete:
         Required: false
-        Value: "serversystem.command.deletehome.use"
+        Value: "serversystem.command.home.delete"
     AdminHome:
       Use:
         Required: true
-        Value: "serversystem.command.home.admin"
-    AdminSetHome:
-      Use:
+        Value: "serversystem.moderation.command.home.use"
+      Set:
         Required: true
-        Value: "serversystem.command.sethome.admin"
-    AdminDeleteHome:
-      Use:
-        Required: false
-        Value: "serversystem.command.deletehome.admin"
+        Value: "serversystem.moderation.command.home.set"
+      Delete:
+        Required: true
+        Value: "serversystem.moderation.command.home.delete"
     Economy:
       Use:
         Required: true
-        Value: "serversystem.command.economy.use"
+        Value: "serversystem.admin.command.economy.use"
       Set:
         Required: true
-        Value: "serversystem.command.economy.set"
+        Value: "serversystem.admin.command.economy.set"
       Take:
         Required: true
-        Value: "serversystem.command.economy.take"
+        Value: "serversystem.admin.command.economy.take"
       Give:
         Required: true
-        Value: "serversystem.command.economy.give"
+        Value: "serversystem.admin.command.economy.give"
     Time:
       Use:
         Required: true
-        Value: "serversystem.command.time.use"
+        Value: "serversystem.admin.command.time.use"
       World:
         Required: true
-        Value: "serversystem.command.time.world"
+        Value: "serversystem.admin.command.time.world"
     Weather:
       Use:
         Required: true
-        Value: "serversystem.command.weather.use"
+        Value: "serversystem.admin.command.weather.use"
       World:
         Required: true
-        Value: "serversystem.command.weather.world"
+        Value: "serversystem.admin.command.weather.world"
     TeleportAsk:
       Use:
         Required: false
@@ -261,63 +246,59 @@ Permissions:
       Use:
         Required: false
         Value: "serversystem.command.privatemessage.use"
-    Reply:
-      Use:
-        Required: false
-        Value: "serversystem.command.reply.use"
-    MessageToggle:
-      Use:
-        Required: false
-        Value: "serversystem.command.messagetoggle.use"
-      Other:
-        Required: true
-        Value: "serversystem.command.messagetoggle.other"
+      Toggle:
+        Use:
+          Required: false
+          Value: "serversystem.command.messagetoggle.use"
+        Other:
+          Required: true
+          Value: "serversystem.command.messagetoggle.other"
     Unlimited:
       Use:
         Required: true
-        Value: "serversystem.command.unlimited.use"
+        Value: "serversystem.admin.command.unlimited.use"
     ClearInventory:
       Use:
         Required: true
-        Value: "serversystem.command.clearinventory.use"
+        Value: "serversystem.moderation.command.clearinventory.use"
       Other:
         Required: true
-        Value: "serversystem.command.clearinventory.other"
+        Value: "serversystem.moderation.command.clearinventory.other"
     Skull:
       Use:
         Required: true
-        Value: "serversystem.command.skull.use"
+        Value: "serversystem.admin.command.skull.use"
       Other:
         Required: true
-        Value: "serversystem.command.skull.use"
+        Value: "serversystem.admin.command.skull.use"
     Sudo:
       Use:
         Required: true
-        Value: "serversystem.command.sudo.use"
+        Value: "serversystem.admin.command.sudo.use"
       Exempt:
         Required: true
-        Value: "serversystem.command.sudo.exempt"
+        Value: "serversystem.admin.command.sudo.exempt"
     Vanish:
       Use:
         Required: true
-        Value: "serversystem.command.vanish.use"
+        Value: "serversystem.moderation.command.vanish.use"
       Show:
         Required: true
-        Value: "serversystem.command.vanish.show"
+        Value: "serversystem.moderation.command.vanish.show"
     InventorySee:
       Use:
         Required: true
         Value: "serversystem.command.inventorysee.use"
       Modify:
         Required: true
-        Value: "serversystem.command.inventorysee.modify"
+        Value: "serversystem.moderation.inventorysee.modify"
     OfflineInventorySee:
       Use:
         Required: true
-        Value: "serversystem.command.offlineinventorysee.use"
+        Value: "serversystem.admin.command.offlineinventorysee.use"
       Modify:
         Required: true
-        Value: "serversystem.command.offlineinventorysee.modify"
+        Value: "serversystem.admin.command.offlineinventorysee.modify"
     Smelt:
       Use:
         Required: true
@@ -325,11 +306,11 @@ Permissions:
     Stack:
       Use:
         Required: true
-        Value: "serversystem.command.stack.use"
+        Value: "serversystem.admin.command.stack.use"
     Repair:
       Use:
         Required: true
-        Value: "serversystem.command.repair.use"
+        Value: "serversystem.admin.command.repair.use"
     Ping:
       Use:
         Required: false
@@ -340,7 +321,7 @@ Permissions:
     Ip:
       Use:
         Required: true
-        Value: "serversystem.command.ip.use"
+        Value: "serversystem.moderation.command.ip.use"
     Ignore:
       Use:
         Required: false
@@ -349,6 +330,47 @@ Permissions:
       Use:
         Required: false
         Value: "serversystem.command.unignore.use"
+    Speed:
+      Use:
+        Required: true
+        Value: "serversystem.admin.command.speed.use"
+      Other:
+        Required: true
+        Value: "serversystem.admin.command.speed.other"
+    TeamChat:
+      Use:
+        Required: true
+        Value: "serversystem.support.command.teamchat.use"
+    Ban:
+      Use:
+        Required: true
+        Value: "serversystem.moderation.command.ban.use"
+    Unban:
+      Use:
+        Required: true
+        Value: "serversystem.moderation.command.unban.use"
+    Mute:
+      Use:
+        Required: true
+        Value: "serversystem.moderation.command.mute.use"
+    ShadowMute:
+      Use:
+        Required: true
+        Value: "serversystem.moderation.command.shadowmute.use"
+    Unmute:
+      Use:
+        Required: true
+        Value: "serversystem.moderation.command.unmute.use"
+    Warp:
+      Use:
+        Required: false
+        Value: "serversystem.command.warp.use"
+      Set:
+        Required: true
+        Value: "serversystem.admin.command.warp.set"
+      Delete:
+        Required: true
+        Value: "serversystem.admin.command.warp.delete"
   Homes:
     MaxHomes:
       Required: true

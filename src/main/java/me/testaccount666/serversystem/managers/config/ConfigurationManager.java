@@ -15,6 +15,7 @@ public class ConfigurationManager {
     private final Path _pluginFolder;
     private ConfigReader _commandsConfig;
     private ConfigReader _economyConfig;
+    private ConfigReader _moderationConfig;
     private ConfigReader _userDataConfig;
 
     public ConfigurationManager(Plugin plugin) {
@@ -29,6 +30,7 @@ public class ConfigurationManager {
         initializeMappingsConfig();
         initializeDefaultsConfig();
         initializeEconomyConfig();
+        initializeModerationConfig();
         initializeUserDataConfig();
         createUserDataFolder();
     }
@@ -75,6 +77,12 @@ public class ConfigurationManager {
         _economyConfig = new DefaultConfigReader(economyFile, _plugin);
     }
 
+    private void initializeModerationConfig() throws FileNotFoundException {
+        var moderationFile = _pluginFolder.resolve("moderation.yml").toFile();
+        ensureConfigFileExists(moderationFile, "moderation.yml");
+        _moderationConfig = new DefaultConfigReader(moderationFile, _plugin);
+    }
+
     private void createUserDataFolder() {
         var userDataFolder = _pluginFolder.resolve("UserData").toFile();
         if (!userDataFolder.exists()) userDataFolder.mkdirs();
@@ -90,6 +98,10 @@ public class ConfigurationManager {
 
     public ConfigReader getEconomyConfig() {
         return _economyConfig;
+    }
+
+    public ConfigReader getModerationConfig() {
+        return _moderationConfig;
     }
 
     public ConfigReader getUserDataConfig() {

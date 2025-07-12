@@ -58,7 +58,7 @@ public class CommandPay extends AbstractServerSystemCommand {
             bankAccount.withdraw(amount);
             targetUser.getBankAccount().deposit(amount);
 
-            var formattedAmount = ServerSystem.Instance.getEconomyManager().formatMoney(amount);
+            var formattedAmount = ServerSystem.Instance.getEconomyProvider().formatMoney(amount);
 
 
             command("Pay.Success", commandSender).target(targetPlayer.getName())

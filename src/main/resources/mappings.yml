@@ -16,4 +16,6 @@ Mappings:
     death: "Death"
     teleport: "Teleport"
     none: "NONE"
+  Moderation:
+    Permanent: "Never"
 language: "en"

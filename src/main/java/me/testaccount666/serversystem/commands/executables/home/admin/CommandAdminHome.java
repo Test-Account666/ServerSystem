@@ -70,7 +70,7 @@ public class CommandAdminHome extends AbstractServerSystemCommand {
     }
 
     private void handleDeleteHomeCommand(User commandSender, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "AdminDeleteHome.Use")) return;
+        if (!checkBasePermission(commandSender, "AdminHome.Delete")) return;
 
         if (arguments.length <= 1) {
             general("InvalidArguments", commandSender).label(label).build();
@@ -104,7 +104,7 @@ public class CommandAdminHome extends AbstractServerSystemCommand {
     }
 
     private void handleSetHomeCommand(User commandSender, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "AdminSetHome.Use")) return;
+        if (!checkBasePermission(commandSender, "AdminHome.Set")) return;
 
         if (commandSender instanceof ConsoleUser) {
             general("NotPlayer", commandSender).build();
@@ -159,9 +159,9 @@ public class CommandAdminHome extends AbstractServerSystemCommand {
     public boolean hasCommandAccess(Player player, Command command) {
         var commandName = command.getName().substring("admin".length());
 
-        if (commandName.equalsIgnoreCase("sethome")) return PermissionManager.hasCommandPermission(player, "AdminSetHome.Use", false);
+        if (commandName.equalsIgnoreCase("sethome")) return PermissionManager.hasCommandPermission(player, "AdminHome.Set", false);
 
-        if (commandName.equalsIgnoreCase("deletehome")) return PermissionManager.hasCommandPermission(player, "AdminDeleteHome.Use", false);
+        if (commandName.equalsIgnoreCase("deletehome")) return PermissionManager.hasCommandPermission(player, "AdminHome.Delete", false);
 
         return PermissionManager.hasCommandPermission(player, "AdminHome.Use", false);
     }

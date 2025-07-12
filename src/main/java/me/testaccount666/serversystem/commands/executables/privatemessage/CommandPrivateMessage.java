@@ -2,6 +2,7 @@ package me.testaccount666.serversystem.commands.executables.privatemessage;
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
+import me.testaccount666.serversystem.events.UserPrivateMessageEvent;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
@@ -37,7 +38,7 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
     }
 
     private void handleMessageToggleCommand(User commandSender, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "MessageToggle.Use")) return;
+        if (!checkBasePermission(commandSender, "PrivateMessage.Toggle.Use")) return;
         if (handleConsoleWithNoTarget(commandSender, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
@@ -51,7 +52,7 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
 
         var isSelf = targetUser == commandSender;
 
-        if (!isSelf && !checkOtherPermission(commandSender, "MessageToggle.Other", targetPlayer.getName())) return;
+        if (!isSelf && !checkOtherPermission(commandSender, "PrivateMessage.Toggle.Other", targetPlayer.getName())) return;
 
         var acceptsMessages = !targetUser.isAcceptsMessages();
 
@@ -69,7 +70,7 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
     }
 
     private void handleReplyCommand(User commandSender, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "Reply.Use")) return;
+        if (!checkBasePermission(commandSender, "PrivateMessage.Use")) return;
 
         var targerUser = commandSender.getReplyUser();
 
@@ -141,6 +142,10 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
             return;
         }
 
+        var messageEvent = new UserPrivateMessageEvent(commandSender, targetUser);
+        Bukkit.getPluginManager().callEvent(messageEvent);
+        if (messageEvent.isCancelled()) return;
+
         var success = successOptional.get();
         var successOther = successOtherOptional.get();
 
@@ -152,13 +157,19 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
                 .clickEvent(ClickEvent.suggestCommand("/${_privateMessageCommand} ${commandSender.getName().get()} "))
                 .asComponent();
 
-        commandSender.getCommandSender().sendMessage(successComponent);
-        commandSender.setReplyUser(targetUser);
 
-        if (targetUser.isIgnoredPlayer(commandSender.getUuid())) return;
+        messageEvent.getRecipients().forEach(recipient -> {
+            if (recipient == commandSender) {
+                commandSender.getCommandSender().sendMessage(successComponent);
+                commandSender.setReplyUser(targetUser);
+                return;
+            }
 
-        targetUser.getCommandSender().sendMessage(successOtherComponent);
-        targetUser.setReplyUser(commandSender);
+            if (recipient == targetUser && targetUser.isIgnoredPlayer(commandSender.getUuid())) return;
+
+            recipient.getCommandSender().sendMessage(successOtherComponent);
+            recipient.setReplyUser(commandSender);
+        });
     }
 
     private boolean isValidReplyTarget(User targetUser) {
@@ -173,9 +184,10 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
     public boolean hasCommandAccess(Player player, Command command) {
         if (command.getName().equalsIgnoreCase("privatemessage")) return PermissionManager.hasCommandPermission(player, "PrivateMessage.Use", false);
 
-        if (command.getName().equalsIgnoreCase("reply")) return PermissionManager.hasCommandPermission(player, "Reply.Use", false);
+        if (command.getName().equalsIgnoreCase("reply")) return PermissionManager.hasCommandPermission(player, "PrivateMessage.Use", false);
 
-        if (command.getName().equalsIgnoreCase("messagetoggle")) return PermissionManager.hasCommandPermission(player, "MessageToggle.Use", false);
+        if (command.getName().equalsIgnoreCase("messagetoggle"))
+            return PermissionManager.hasCommandPermission(player, "PrivateMessage.Toggle.Use", false);
 
         return false;
 

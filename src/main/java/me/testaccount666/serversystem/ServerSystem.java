@@ -1,18 +1,24 @@
 package me.testaccount666.serversystem;
 
+import me.testaccount666.serversystem.commands.executables.warp.manager.WarpManager;
 import me.testaccount666.serversystem.commands.management.CommandManager;
 import me.testaccount666.serversystem.listener.management.ListenerManager;
 import me.testaccount666.serversystem.managers.config.ConfigurationManager;
-import me.testaccount666.serversystem.managers.database.DatabaseManager;
+import me.testaccount666.serversystem.managers.database.EconomyDatabaseManager;
+import me.testaccount666.serversystem.managers.database.moderation.AbstractModerationDatabaseManager;
+import me.testaccount666.serversystem.managers.database.moderation.MySqlModerationDatabaseManager;
+import me.testaccount666.serversystem.managers.database.moderation.SqliteModerationDatabaseManager;
 import me.testaccount666.serversystem.userdata.CachedUser;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.UserManager;
-import me.testaccount666.serversystem.userdata.money.EconomyManager;
+import me.testaccount666.serversystem.userdata.money.EconomyProvider;
 import me.testaccount666.serversystem.userdata.money.vault.VaultAPI;
 import me.testaccount666.serversystem.utils.Version;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.nio.file.Path;
 import java.util.logging.Level;
 
 public final class ServerSystem extends JavaPlugin {
@@ -20,9 +26,11 @@ public final class ServerSystem extends JavaPlugin {
     private UserManager _userManager;
     private CommandManager _commandManager;
     private ListenerManager _listenerManager;
-    private EconomyManager _economyManager;
+    private EconomyProvider _economyProvider;
     private ConfigurationManager _configManager;
-    private DatabaseManager _databaseManager;
+    private EconomyDatabaseManager _economyDatabaseManager;
+    private WarpManager _warpManager;
+    private AbstractModerationDatabaseManager _moderationDatabaseManager;
 
     public static Version getServerVersion() {
         var version = Bukkit.getVersion();
@@ -57,10 +65,23 @@ public final class ServerSystem extends JavaPlugin {
         _configManager = new ConfigurationManager(this);
         _configManager.loadAllConfigs();
 
-        _databaseManager = new DatabaseManager(_configManager.getEconomyConfig());
+        var moderationType = _configManager.getModerationConfig().getString("Moderation.StorageType.Value");
+        _moderationDatabaseManager = switch (moderationType.toLowerCase()) {
+            case "sqlite" -> new SqliteModerationDatabaseManager(getDataFolder());
+            case "mysql" -> new MySqlModerationDatabaseManager(_configManager.getModerationConfig());
+            default -> throw new IllegalStateException("Unsupported moderation storage: ${moderationType} - Supported values: sqlite, mysql");
+        };
+
+        var warpFile = Path.of(getDataFolder().getPath(), "data", "warps.yml").toFile();
+        var warpConfig = YamlConfiguration.loadConfiguration(warpFile);
+        _warpManager = new WarpManager(warpConfig, warpFile);
+
+        _moderationDatabaseManager.initialize();
+
+        _economyDatabaseManager = new EconomyDatabaseManager(_configManager.getEconomyConfig());
         _commandManager = new CommandManager(_configManager.getCommandsConfig());
         _listenerManager = new ListenerManager(_commandManager);
-        _economyManager = new EconomyManager(_configManager.getEconomyConfig(), _databaseManager);
+        _economyProvider = new EconomyProvider(_configManager.getEconomyConfig(), _economyDatabaseManager);
         _userManager = new UserManager();
 
         if (VaultAPI.isVaultInstalled()) VaultAPI.initialize();
@@ -74,7 +95,9 @@ public final class ServerSystem extends JavaPlugin {
 
         if (_listenerManager != null) _listenerManager.unregisterListeners();
 
-        if (_databaseManager != null) _databaseManager.shutdown();
+        if (_economyDatabaseManager != null) _economyDatabaseManager.shutdown();
+
+        if (_moderationDatabaseManager != null) _moderationDatabaseManager.shutdown();
     }
 
     private void saveAllUsers() {
@@ -95,17 +118,21 @@ public final class ServerSystem extends JavaPlugin {
      *
      * @return The EconomyManager instance that manages all economy-related functionality (Mostly config)
      */
-    public EconomyManager getEconomyManager() {
-        return _economyManager;
+    public EconomyProvider getEconomyProvider() {
+        return _economyProvider;
     }
 
     /**
-     * Gets the DatabaseManager instance for this plugin.
+     * Gets the EconomyDatabaseManager instance for this plugin.
      *
-     * @return The DatabaseManager instance that manages database connections
+     * @return The EconomyDatabaseManager instance that manages economy database connections
      */
-    public DatabaseManager getDatabaseManager() {
-        return _databaseManager;
+    public EconomyDatabaseManager getEconomyDatabaseManager() {
+        return _economyDatabaseManager;
+    }
+
+    public AbstractModerationDatabaseManager getModerationDatabaseManager() {
+        return _moderationDatabaseManager;
     }
 
     /**
@@ -119,5 +146,9 @@ public final class ServerSystem extends JavaPlugin {
 
     public CommandManager getCommandManager() {
         return _commandManager;
+    }
+
+    public WarpManager getWarpManager() {
+        return _warpManager;
     }
 }

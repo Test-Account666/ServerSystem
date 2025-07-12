@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  * Manages database connections for the ServerSystem plugin.
  * Provides a shared MySQL connection instance and keeps it alive.
  */
-public class DatabaseManager {
+public class EconomyDatabaseManager {
     private static final int _KEEP_ALIVE_INTERVAL_SECONDS = 60 * 30;
     private static final String _KEEP_ALIVE_QUERY = "SELECT 1";
 
@@ -32,7 +32,7 @@ public class DatabaseManager {
      *
      * @param configReader The configuration reader to get database settings from
      */
-    public DatabaseManager(ConfigReader configReader) {
+    public EconomyDatabaseManager(ConfigReader configReader) {
         _host = configReader.getString("Economy.MySQL.Host");
         _port = configReader.getInt("Economy.MySQL.Port");
         _database = configReader.getString("Economy.MySQL.Database");

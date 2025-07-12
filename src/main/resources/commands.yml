@@ -232,3 +232,33 @@ Commands:
   ip:
     Enabled: true
     Aliases: "ip"
+  speed:
+    Enabled: true
+    Aliases: "speed"
+    Variants:
+      flyspeed:
+        Enabled: true
+        Aliases: "flyspeed, speedfly"
+      walkspeed:
+        Enabled: true
+        Aliases: "walkspeed, speedwalk"
+  teamchat:
+    Enabled: true
+    Aliases: "teamchat, tc"
+  ban:
+    Enabled: true
+    Aliases: "ban"
+    Variants:
+      unban:
+        Enabled: true
+        Aliases: "unban, pardon"
+  mute:
+    Enabled: true
+    Aliases: "mute"
+    Variants:
+      unmute:
+        Enabled: true
+        Aliases: "unmute"
+      shadowmute:
+        Enabled: true
+        Aliases: "shadowmute"

@@ -1,7 +1,7 @@
 package me.testaccount666.serversystem.userdata.money;
 
 import me.testaccount666.serversystem.managers.config.ConfigReader;
-import me.testaccount666.serversystem.managers.database.DatabaseManager;
+import me.testaccount666.serversystem.managers.database.EconomyDatabaseManager;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -11,7 +11,7 @@ import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.Optional;
 
-public class EconomyManager {
+public class EconomyProvider {
     private final String _currencySingular;
     private final String _currencyPlural;
     private final String _thousandSeparator;
@@ -19,9 +19,9 @@ public class EconomyManager {
     private final String _moneyFormat;
     private final String _defaultBalance;
     private final Type _economyType;
-    private final DatabaseManager _databaseManager;
+    private final EconomyDatabaseManager _databaseManager;
 
-    public EconomyManager(ConfigReader configReader, DatabaseManager databaseManager) {
+    public EconomyProvider(ConfigReader configReader, EconomyDatabaseManager databaseManager) {
         _currencySingular = configReader.getString("Economy.Format.CurrencySymbol.Singular");
         _currencyPlural = configReader.getString("Economy.Format.CurrencySymbol.Plural");
         _thousandSeparator = configReader.getString("Economy.Format.Separators.Thousands");

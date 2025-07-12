@@ -74,7 +74,7 @@ public class CommandEconomy extends AbstractServerSystemCommand {
     }
 
     public void sendSuccess(User commandSender, String label, User targetUser, BigDecimal amount, String key) {
-        var formattedAmount = ServerSystem.Instance.getEconomyManager().formatMoney(amount);
+        var formattedAmount = ServerSystem.Instance.getEconomyProvider().formatMoney(amount);
         UnaryOperator<String> modifier = message -> message.replace("<AMOUNT>", formattedAmount);
 
         command("Economy.${key}.Success", commandSender)

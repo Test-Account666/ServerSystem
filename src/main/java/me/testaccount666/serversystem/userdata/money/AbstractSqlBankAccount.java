@@ -31,7 +31,7 @@ public abstract class AbstractSqlBankAccount extends AbstractBankAccount {
             if (!hasNext) {
                 resultSet.close();
                 statement.close();
-                return new BigDecimal(ServerSystem.Instance.getEconomyManager().getDefaultBalance());
+                return new BigDecimal(ServerSystem.Instance.getEconomyProvider().getDefaultBalance());
             }
 
             var balance = resultSet.getBigDecimal("Balance");

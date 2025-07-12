@@ -95,7 +95,7 @@ public class CommandSpawn extends AbstractServerSystemCommand {
     }
 
     private void handleSetSpawnCommand(User commandSender, String label) {
-        if (!checkBasePermission(commandSender, "SetSpawn.Use")) return;
+        if (!checkBasePermission(commandSender, "Spawn.Set")) return;
 
         if (commandSender instanceof ConsoleUser) {
             general("NotPlayer", commandSender).build();
@@ -147,6 +147,6 @@ public class CommandSpawn extends AbstractServerSystemCommand {
     public boolean hasCommandAccess(Player player, Command command) {
         if (command.getName().equalsIgnoreCase("spawn")) return PermissionManager.hasCommandPermission(player, "Spawn.Use", false);
 
-        return PermissionManager.hasCommandPermission(player, "SetSpawn.Use", false);
+        return PermissionManager.hasCommandPermission(player, "Spawn.Set", false);
     }
 }

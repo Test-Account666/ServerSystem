@@ -25,7 +25,7 @@ public class YamlBankAccount extends AbstractBankAccount {
     @Override
     public BigDecimal getBalance() {
         var balance = _fileConfig.getString("User.BankAccounts.${accountId.toString()}.Balance");
-        if (balance == null) balance = ServerSystem.Instance.getEconomyManager().getDefaultBalance();
+        if (balance == null) balance = ServerSystem.Instance.getEconomyProvider().getDefaultBalance();
 
         return new BigDecimal(balance);
     }
