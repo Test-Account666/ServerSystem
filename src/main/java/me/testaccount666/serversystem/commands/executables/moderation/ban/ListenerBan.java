@@ -1,18 +1,17 @@
-package me.testaccount666.serversystem.commands.executables.ban;
+package me.testaccount666.serversystem.commands.executables.moderation.ban;
 
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.annotations.RequiredCommands;
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor;
-import me.testaccount666.serversystem.moderation.AbstractModeration;
 import me.testaccount666.serversystem.userdata.UserManager;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
-import java.util.Optional;
 import java.util.Set;
 
+import static me.testaccount666.serversystem.commands.executables.moderation.ModerationUtils.findSenderName;
 import static me.testaccount666.serversystem.utils.DurationParser.parseUnbanDate;
 import static me.testaccount666.serversystem.utils.MessageBuilder.command;
 
@@ -45,7 +44,7 @@ public class ListenerBan implements Listener {
         var parsedDuration = banModeration.expireTime();
 
         var unbanDate = parseUnbanDate(parsedDuration);
-        var kickOptional = command("Ban.Kick", UserManager.getConsoleUser()).sender(senderName)
+        var kickOptional = command("Moderation.Ban.Kick", UserManager.getConsoleUser()).sender(senderName)
                 .target(user.getName().get()).prefix(false).send(false)
                 .modifier(message -> message.replace("<DATE>", unbanDate)
                         .replace("<REASON>", banModeration.reason())).build();
@@ -58,17 +57,6 @@ public class ListenerBan implements Listener {
 
         var kickMessage = kickOptional.get();
         event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, kickMessage);
-        Bukkit.getLogger().info("(ListenerBan) Disallowed " + event.getName() + " (" + event.getUniqueId() + ") for " + banModeration.reason());
-    }
-
-    private Optional<String> findSenderName(AbstractModeration banModeration) {
-        var senderOptional = ServerSystem.Instance.getUserManager().getUser(banModeration.senderUuid());
-        if (senderOptional.isEmpty()) return Optional.empty();
-        var sender = senderOptional.get();
-        var senderNameOptional = sender.getOfflineUser().getName();
-        if (senderNameOptional.isEmpty()) return Optional.empty();
-
-        var senderName = senderNameOptional.get();
-        return Optional.of(senderName);
+        Bukkit.getLogger().info("(ListenerBan) Disallowed ${event.getName()} (${event.getUniqueId()}) for ${banModeration.reason()}");
     }
 }

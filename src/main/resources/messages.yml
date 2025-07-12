@@ -224,22 +224,30 @@ Messages:
       SuccessOther: "You set <Color:Highlight><TARGET>'s <Color:Message>speed to <Color:Highlight><SPEED><Color:Message>."
     TeamChat:
       Format: "<Color:Prefix>TeamChat <Color:Separators>» <Color:Highlight><TARGET> <Color:Separators>-> <Color:Message><MESSAGE>"
-    Ban:
-      Success: "You banned <Color:Highlight><TARGET><Color:Message>."
-      PlayerAlreadyBanned: "<Color:Error.Message>Specified player <Color:Error.Highlight><TARGET> <Color:Error.Message>is already banned."
-      Kick: "&8[]--------------------[]\n&cYou have been banned!\n&6Reason&8: &c<REASON>\n&6By&8: &c<SENDER>\n&6Unban Date&8: &c<DATE>\n&8[]--------------------[]"
-    Unban:
-      Success: "You unbanned <Color:Highlight><TARGET><Color:Message>."
-      PlayerNotBanned: "<Color:Error.Message>Specified player <Color:Error.Highlight><TARGET> <Color:Error.Message>is not banned."
-    Mute:
-      Success: "You muted <Color:Highlight><TARGET><Color:Message>."
-      PlayerAlreadyMuted: "<Color:Error.Message>Specified player <Color:Error.Highlight><TARGET> <Color:Error.Message>is already muted."
-      Muted: "<Color:Error.Message>You have been muted by <Color:Error.Highlight><SENDER> <Color:Error.Message>for <Color:Error.Highlight><REASON> <Color:Error.Message>until: <Color:Error.Highlight><DATE><Color:Error.Message>."
-    ShadowMute:
-      Success: "You shadow muted <Color:Highlight><TARGET><Color:Message>."
-    Unmute:
-      Success: "You unmuted <Color:Highlight><TARGET><Color:Message>."
-      PlayerNotMuted: "<Color:Error.Message>Specified player <Color:Error.Highlight><TARGET> <Color:Error.Message>is not muted."
+    Moderation:
+      DefaultReason: "<Color:Error.Message>No reason specified."
+      NotZero: "<Color:Error.Message>Specified duration has to be a positive integer."
+      InvalidDuration: "<Color:Error.Message>Invalid duration specified."
+      Mute:
+        Add:
+          Success: "You muted <Color:Highlight><TARGET><Color:Message>."
+          AlreadyActiveModeration: "<Color:Error.Message>Specified player <Color:Error.Highlight><TARGET> <Color:Error.Message>is already muted."
+        Remove:
+          Success: "You unmuted <Color:Highlight><TARGET><Color:Message>."
+          NoActiveModeration: "<Color:Error.Message>Specified player <Color:Error.Highlight><TARGET> <Color:Error.Message>is not muted."
+      ShadowMute:
+        Add:
+          Success: "You shadow muted <Color:Highlight><TARGET><Color:Message>."
+          AlreadyActiveModeration: "<Color:Error.Message>Specified player <Color:Error.Highlight><TARGET> <Color:Error.Message>is already muted."
+        Muted: "<Color:Error.Message>You have been muted by <Color:Error.Highlight><SENDER> <Color:Error.Message>for <Color:Error.Highlight><REASON> <Color:Error.Message>until: <Color:Error.Highlight><DATE><Color:Error.Message>."
+      Ban:
+        Add:
+          Success: "You banned <Color:Highlight><TARGET><Color:Message>."
+          AlreadyActiveModeration: "<Color:Error.Message>Specified player <Color:Error.Highlight><TARGET> <Color:Error.Message>is already banned."
+        Remove:
+          Success: "You unbanned <Color:Highlight><TARGET><Color:Message>."
+          NoActiveModeration: "<Color:Error.Message>Specified player <Color:Error.Highlight><TARGET> <Color:Error.Message>is not banned."
+        Kick: "&8[]--------------------[]\n&cYou have been banned!\n&6Reason&8: &c<REASON>\n&6By&8: &c<SENDER>\n&6Unban Date&8: &c<DATE>\n&8[]--------------------[]"
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>You don't have permission to do this. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"
@@ -254,7 +262,3 @@ Messages:
     Offline:
       NeverPlayed: "<Color:Error:Message>Specified player <Color:Message:Highlight><TARGET> <Color:Error.Message>has never played."
       NotOffline: "<Color:Error:Message>Specified player <Color:Message:Highlight><TARGET> <Color:Error.Message>is not offline."
-    Moderation:
-      DefaultReason: "<Color:Error.Message>No reason specified."
-      NotZero: "<Color:Error.Message>Specified duration has to be a positive integer."
-      InvalidDuration: "<Color:Error.Message>Invalid duration specified."

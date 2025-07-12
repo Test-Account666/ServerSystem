@@ -1,11 +1,10 @@
-package me.testaccount666.serversystem.commands.executables.mute;
+package me.testaccount666.serversystem.commands.executables.moderation.mute;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.annotations.RequiredCommands;
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor;
 import me.testaccount666.serversystem.events.UserPrivateMessageEvent;
-import me.testaccount666.serversystem.moderation.AbstractModeration;
 import me.testaccount666.serversystem.moderation.MuteModeration;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
@@ -14,9 +13,9 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import java.util.Optional;
 import java.util.Set;
 
+import static me.testaccount666.serversystem.commands.executables.moderation.ModerationUtils.findSenderName;
 import static me.testaccount666.serversystem.utils.DurationParser.parseUnbanDate;
 import static me.testaccount666.serversystem.utils.MessageBuilder.command;
 
@@ -87,16 +86,5 @@ public class ListenerMute implements Listener {
             if (user instanceof ConsoleUser) return false;
             return user != event.getSender();
         });
-    }
-
-    private Optional<String> findSenderName(AbstractModeration muteModeration) {
-        var senderOptional = ServerSystem.Instance.getUserManager().getUser(muteModeration.senderUuid());
-        if (senderOptional.isEmpty()) return Optional.empty();
-        var sender = senderOptional.get();
-        var senderNameOptional = sender.getOfflineUser().getName();
-        if (senderNameOptional.isEmpty()) return Optional.empty();
-
-        var senderName = senderNameOptional.get();
-        return Optional.of(senderName);
     }
 }

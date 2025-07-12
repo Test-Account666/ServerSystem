@@ -341,26 +341,6 @@ Permissions:
       Use:
         Required: true
         Value: "serversystem.support.command.teamchat.use"
-    Ban:
-      Use:
-        Required: true
-        Value: "serversystem.moderation.command.ban.use"
-    Unban:
-      Use:
-        Required: true
-        Value: "serversystem.moderation.command.unban.use"
-    Mute:
-      Use:
-        Required: true
-        Value: "serversystem.moderation.command.mute.use"
-    ShadowMute:
-      Use:
-        Required: true
-        Value: "serversystem.moderation.command.shadowmute.use"
-    Unmute:
-      Use:
-        Required: true
-        Value: "serversystem.moderation.command.unmute.use"
     Warp:
       Use:
         Required: false
@@ -371,6 +351,24 @@ Permissions:
       Delete:
         Required: true
         Value: "serversystem.admin.command.warp.delete"
+    Moderation:
+      Ban:
+        Use:
+          Required: true
+          Value: "serversystem.moderation.ban.use"
+        Remove:
+          Required: true
+          Value: "serversystem.moderation.ban.remove"
+      Mute:
+        Use:
+          Required: true
+          Value: "serversystem.moderation.mute.use"
+        Remove:
+          Required: true
+          Value: "serversystem.moderation.mute.remove"
+        Shadow:
+          Required: true
+          Value: "serversystem.moderation.mute.shadow"
   Homes:
     MaxHomes:
       Required: true
