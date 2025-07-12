@@ -56,7 +56,7 @@ public class PlaceholderManager {
     }
 
     private String applyColorPlaceholder(String message, String placeholder, String colorId) {
-        var colorOptional = MappingsData.MessageColors().getMessageColor(colorId);
+        var colorOptional = MappingsData.messageColors().getMessageColor(colorId);
 
         return colorOptional.map(prefixString -> message.replace(placeholder, prefixString))
                 .orElseGet(() -> {

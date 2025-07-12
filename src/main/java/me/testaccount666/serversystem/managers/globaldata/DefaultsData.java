@@ -1,18 +1,20 @@
 package me.testaccount666.serversystem.managers.globaldata;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import me.testaccount666.serversystem.managers.config.ConfigReader;
 
+@Accessors(fluent = true)
 public class DefaultsData {
+    @Getter
     private static Home _Home;
 
     public static void initialize(ConfigReader config) {
         _Home = new Home(config);
     }
 
-    public static Home Home() {
-        return _Home;
-    }
-
+    @Getter
+    @Accessors(fluent = false)
     public static class Home {
         private final int _defaultMaxHomes;
 
@@ -20,8 +22,5 @@ public class DefaultsData {
             _defaultMaxHomes = config.getInt("DefaultValues.Home.MaxHomes");
         }
 
-        public int getDefaultMaxHomes() {
-            return _defaultMaxHomes;
-        }
     }
 }

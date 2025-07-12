@@ -1,5 +1,6 @@
 package me.testaccount666.serversystem.userdata.home;
 
+import lombok.Getter;
 import org.bukkit.Location;
 
 import java.util.Optional;
@@ -8,6 +9,7 @@ import java.util.regex.Pattern;
 /**
  * Represents a home location for a user.
  */
+@Getter
 public class Home {
     private final static Pattern _HOME_NAME_PATTERN = Pattern.compile("[A-Za-z0-9_]+");
     private final String _name;
@@ -35,16 +37,6 @@ public class Home {
     }
 
     /**
-     * Gets the name of this home.
-     * The name is always stored in lowercase.
-     *
-     * @return The name of this home
-     */
-    public String getName() {
-        return _name;
-    }
-
-    /**
      * Gets the display name of this home.
      * The display name is the name with the first letter capitalized.
      *
@@ -60,14 +52,5 @@ public class Home {
         _displayName = new String(chars);
 
         return _displayName;
-    }
-
-    /**
-     * Gets the location of this home.
-     *
-     * @return The location of this home
-     */
-    public Location getLocation() {
-        return _location;
     }
 }

@@ -1,5 +1,6 @@
 package me.testaccount666.serversystem.managers.config;
 
+import lombok.Getter;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.utils.FileUtils;
 import org.bukkit.Bukkit;
@@ -27,7 +28,9 @@ import java.util.Map;
  */
 public class DefaultConfigReader implements ConfigReader {
     private final Plugin _plugin;
+    @Getter
     private final File _file;
+    @Getter
     private final FileConfiguration _configuration;
     private FileConfiguration _originalCfg = null;
     private DefaultConfigReader _newReader = null;
@@ -201,16 +204,6 @@ public class DefaultConfigReader implements ConfigReader {
             exception.printStackTrace();
             Bukkit.getLogger().severe("An error occurred while backing up, changes only saved internally/temporarily!");
         }
-    }
-
-    @Override
-    public FileConfiguration getConfiguration() {
-        return _configuration;
-    }
-
-    @Override
-    public File getFile() {
-        return _file;
     }
 
     @Override

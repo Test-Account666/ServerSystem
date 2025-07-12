@@ -1,9 +1,12 @@
 package me.testaccount666.serversystem.userdata.money;
 
+import lombok.Getter;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.UUID;
 
+@Getter
 public abstract class AbstractBankAccount {
     protected final UUID owner;
     protected final BigInteger accountId;
@@ -11,14 +14,6 @@ public abstract class AbstractBankAccount {
     public AbstractBankAccount(UUID owner, BigInteger accountId) {
         this.owner = owner;
         this.accountId = accountId;
-    }
-
-    public UUID getOwner() {
-        return owner;
-    }
-
-    public BigInteger getAccountId() {
-        return accountId;
     }
 
     public abstract BigDecimal getBalance();

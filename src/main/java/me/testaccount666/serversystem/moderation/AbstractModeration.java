@@ -1,7 +1,12 @@
 package me.testaccount666.serversystem.moderation;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
+
 import java.util.UUID;
 
+@Accessors(fluent = true)
+@Getter
 public abstract class AbstractModeration {
     private final long _issueTime;
     private final long _expireTime;
@@ -21,25 +26,5 @@ public abstract class AbstractModeration {
         if (_expireTime == -1) return false;
 
         return System.currentTimeMillis() >= _expireTime;
-    }
-
-    public long issueTime() {
-        return _issueTime;
-    }
-
-    public long expireTime() {
-        return _expireTime;
-    }
-
-    public String reason() {
-        return _reason;
-    }
-
-    public UUID senderUuid() {
-        return _senderUuid;
-    }
-
-    public UUID targetUuid() {
-        return _targetUuid;
     }
 }

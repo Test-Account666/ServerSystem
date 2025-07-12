@@ -23,7 +23,6 @@ public class ListenerAwayFromKeyboard implements Listener {
     private final Map<UUID, Long> _lastActionMap = new HashMap<>();
     private final Map<UUID, Location> _chunkLocationMap = new HashMap<>();
     private final Map<UUID, Long> _lastMouseMovement = new HashMap<>();
-    private final Map<UUID, Long> _lastReelMap = new HashMap<>();
 
     public ListenerAwayFromKeyboard() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(ServerSystem.Instance, () -> Bukkit.getOnlinePlayers().forEach(player -> {

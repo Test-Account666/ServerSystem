@@ -1,5 +1,7 @@
 package me.testaccount666.serversystem.userdata;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.executables.back.CommandBack;
 import me.testaccount666.serversystem.managers.database.moderation.MySqlModerationDatabaseManager;
@@ -40,39 +42,69 @@ public class OfflineUser {
     protected final Set<UUID> ignoredPlayers = new HashSet<>();
     @SaveableField(path = "User.LastKnownName")
     protected String name;
+    @Getter
     protected UUID uuid;
     protected OfflinePlayer player;
+    @Getter
     protected AbstractModerationManager banManager;
+    @Getter
     protected AbstractModerationManager muteManager;
+    @Getter
     protected AbstractBankAccount bankAccount;
+    @Getter
     protected HomeManager homeManager;
     protected FileConfiguration userConfig;
+    @Getter
     @SaveableField(path = "User.LastSeen")
     protected long lastSeen;
+    @Getter
     @SaveableField(path = "User.LastKnownIp")
     protected String lastKnownIp;
+    @Getter
+    @Setter
     @SaveableField(path = "User.LogoutPosition", handler = LocationFieldHandler.class)
     protected Location logoutPosition;
+    @Getter
+    @Setter
     @SaveableField(path = "User.VanishData.IsVanish")
     protected boolean isVanish;
+    @Getter
     @SaveableField(path = "User.VanishData.Data", handler = VanishDataFieldHandler.class)
     protected VanishData vanishData;
+    @Getter
+    @Setter
     @SaveableField(path = "User.IsGodMode")
     protected boolean isGodMode;
+    @Getter
+    @Setter
     @SaveableField(path = "User.AcceptsTeleports")
     protected boolean acceptsTeleports;
+    @Getter
+    @Setter
     @SaveableField(path = "User.AcceptsMessages")
     protected boolean acceptsMessages;
+    @Getter
+    @Setter
     @SaveableField(path = "User.SocialSpyEnabled")
     protected boolean socialSpyEnabled;
+    @Getter
+    @Setter
     @SaveableField(path = "User.CommandSpyEnabled")
     protected boolean commandSpyEnabled;
+    @Getter
+    @Setter
     @SaveableField(path = "User.LastDeathLocation", handler = LocationFieldHandler.class)
     protected Location lastDeathLocation;
+    @Getter
+    @Setter
     @SaveableField(path = "User.LastTeleportLocation", handler = LocationFieldHandler.class)
     protected Location lastTeleportLocation;
+    @Getter
+    @Setter
     @SaveableField(path = "User.LastBackType", handler = EnumFieldHandler.class)
     protected CommandBack.BackType lastBackType;
+    @Getter
+    @Setter
     @SaveableField(path = "User.PlayerLanguage")
     protected String playerLanguage;
 
@@ -180,10 +212,6 @@ public class OfflineUser {
         }
     }
 
-    public AbstractBankAccount getBankAccount() {
-        return bankAccount;
-    }
-
     /**
      * Checks if compression is enabled in the configuration.
      *
@@ -248,51 +276,6 @@ public class OfflineUser {
         return Optional.ofNullable(name);
     }
 
-    /**
-     * Gets the UUID of this user.
-     *
-     * @return The UUID of this user
-     */
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public boolean isVanish() {
-        return isVanish;
-    }
-
-    public void setVanish(boolean vanish) {
-        isVanish = vanish;
-    }
-
-    public VanishData getVanishData() {
-        return vanishData;
-    }
-
-    public boolean isAcceptsMessages() {
-        return acceptsMessages;
-    }
-
-    public void setAcceptsMessages(boolean acceptsMessages) {
-        this.acceptsMessages = acceptsMessages;
-    }
-
-    public boolean isAcceptsTeleports() {
-        return acceptsTeleports;
-    }
-
-    public void setAcceptsTeleports(boolean acceptsTeleports) {
-        this.acceptsTeleports = acceptsTeleports;
-    }
-
-    public boolean isGodMode() {
-        return isGodMode;
-    }
-
-    public void setGodMode(boolean godMode) {
-        isGodMode = godMode;
-    }
-
     public Set<UUID> getIgnoredPlayers() {
         return Collections.unmodifiableSet(ignoredPlayers);
     }
@@ -307,81 +290,5 @@ public class OfflineUser {
 
     public void removeIgnoredPlayer(UUID uuid) {
         ignoredPlayers.remove(uuid);
-    }
-
-    public long getLastSeen() {
-        return lastSeen;
-    }
-
-    public String getLastKnownIp() {
-        return lastKnownIp;
-    }
-
-    public Location getLogoutPosition() {
-        return logoutPosition;
-    }
-
-    public void setLogoutPosition(Location logoutPosition) {
-        this.logoutPosition = logoutPosition;
-    }
-
-    public HomeManager getHomeManager() {
-        return homeManager;
-    }
-
-    public String getPlayerLanguage() {
-        return playerLanguage;
-    }
-
-    public void setPlayerLanguage(String playerLanguage) {
-        this.playerLanguage = playerLanguage;
-    }
-
-    public boolean isSocialSpyEnabled() {
-        return socialSpyEnabled;
-    }
-
-    public void setSocialSpyEnabled(boolean socialSpyEnabled) {
-        this.socialSpyEnabled = socialSpyEnabled;
-    }
-
-    public boolean isCommandSpyEnabled() {
-        return commandSpyEnabled;
-    }
-
-    public void setCommandSpyEnabled(boolean commandSpyEnabled) {
-        this.commandSpyEnabled = commandSpyEnabled;
-    }
-
-    public Location getLastDeathLocation() {
-        return lastDeathLocation;
-    }
-
-    public void setLastDeathLocation(Location lastDeathLocation) {
-        this.lastDeathLocation = lastDeathLocation;
-    }
-
-    public Location getLastTeleportLocation() {
-        return lastTeleportLocation;
-    }
-
-    public void setLastTeleportLocation(Location lastTeleportLocation) {
-        this.lastTeleportLocation = lastTeleportLocation;
-    }
-
-    public CommandBack.BackType getLastBackType() {
-        return lastBackType;
-    }
-
-    public void setLastBackType(CommandBack.BackType lastBackType) {
-        this.lastBackType = lastBackType;
-    }
-
-    public AbstractModerationManager getBanManager() {
-        return banManager;
-    }
-
-    public AbstractModerationManager getMuteManager() {
-        return muteManager;
     }
 }

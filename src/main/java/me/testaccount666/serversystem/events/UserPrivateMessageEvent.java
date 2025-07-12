@@ -1,5 +1,7 @@
 package me.testaccount666.serversystem.events;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -11,8 +13,13 @@ import java.util.Set;
 
 public class UserPrivateMessageEvent extends Event implements Cancellable {
     private static final HandlerList _HANDLERS = new HandlerList();
+    @Getter
     private final User _sender;
+    @Getter
     private final Set<User> _recipients = new HashSet<>();
+
+    @Getter
+    @Setter
     private boolean _cancelled = false;
 
     public UserPrivateMessageEvent(User sender, User... recipients) {
@@ -25,26 +32,9 @@ public class UserPrivateMessageEvent extends Event implements Cancellable {
         return _HANDLERS;
     }
 
-    public Set<User> getRecipients() {
-        return _recipients;
-    }
-
     @Override
     public @NotNull HandlerList getHandlers() {
         return _HANDLERS;
     }
 
-    @Override
-    public boolean isCancelled() {
-        return _cancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean cancelled) {
-        _cancelled = cancelled;
-    }
-
-    public User getSender() {
-        return _sender;
-    }
 }

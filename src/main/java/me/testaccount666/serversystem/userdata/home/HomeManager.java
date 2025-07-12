@@ -140,7 +140,7 @@ public class HomeManager {
 
         if (PermissionManager.hasPermission(user.getPlayer(), "Homes.Unlimited", false)) return Optional.of(Integer.MAX_VALUE);
 
-        var defaultValue = DefaultsData.Home().getDefaultMaxHomes();
+        var defaultValue = DefaultsData.home().getDefaultMaxHomes();
         var maxHomes = -1;
 
         var permissionPattern = PermissionManager.getPermission("Homes.MaxHomes");

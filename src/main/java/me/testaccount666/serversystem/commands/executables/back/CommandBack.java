@@ -55,7 +55,7 @@ public class CommandBack extends AbstractServerSystemCommand {
         commandSender.getPlayer().teleport(backLocation);
 
         var finalBackType = backType;
-        var typeNameOptional = MappingsData.BackType().getBackTypeName(finalBackType);
+        var typeNameOptional = MappingsData.backType().getBackTypeName(finalBackType);
         var typeName = typeNameOptional.orElse("ERROR");
 
         command("Back.Success", commandSender)

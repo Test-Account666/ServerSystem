@@ -1,5 +1,6 @@
 package me.testaccount666.serversystem.commands.executables.warp.manager;
 
+import lombok.Getter;
 import org.bukkit.Location;
 
 import java.util.Optional;
@@ -7,7 +8,9 @@ import java.util.regex.Pattern;
 
 public class Warp {
     private final static Pattern _WARP_NAME_PATTERN = Pattern.compile("[A-Za-z0-9_]+");
+    @Getter
     private final String _name;
+    @Getter
     private final Location _location;
     private String _displayName;
 
@@ -32,16 +35,6 @@ public class Warp {
     }
 
     /**
-     * Gets the name of this home.
-     * The name is always stored in lowercase.
-     *
-     * @return The name of this home
-     */
-    public String getName() {
-        return _name;
-    }
-
-    /**
      * Gets the display name of this home.
      * The display name is the name with the first letter capitalized.
      *
@@ -59,12 +52,4 @@ public class Warp {
         return _displayName;
     }
 
-    /**
-     * Gets the location of this home.
-     *
-     * @return The location of this home
-     */
-    public Location getLocation() {
-        return _location;
-    }
 }

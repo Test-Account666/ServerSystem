@@ -10,23 +10,12 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @RequiredCommands(requiredCommands = CommandBack.class)
 public class ListenerBack implements Listener {
-    private CommandBack _commandBack;
 
     public boolean canRegister(Set<ServerSystemCommandExecutor> requiredCommands) {
-        var canRegister = new AtomicBoolean(false);
-
-        requiredCommands.forEach(command -> {
-            if (!(command instanceof CommandBack commandBack)) return;
-
-            _commandBack = commandBack;
-            canRegister.set(true);
-        });
-
-        return canRegister.get();
+        return requiredCommands.stream().anyMatch(CommandBack.class::isInstance);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

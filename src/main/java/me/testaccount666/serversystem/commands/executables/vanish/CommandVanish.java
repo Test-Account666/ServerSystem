@@ -40,31 +40,30 @@ public class CommandVanish extends AbstractServerSystemCommand {
 
 
         switch (command.getName().toLowerCase()) {
-            case "vanish" -> handleVanishCommand(commandSender, label, targetUser, isSelf);
-            case "drop" -> handleDropCommand(commandSender, label, targetUser, isSelf);
-            case "pickup" -> handlePickupCommand(commandSender, label, targetUser, isSelf);
-            case "interact" -> handleInteractCommand(commandSender, label, targetUser, isSelf);
-            case "message" -> handleMessageCommand(commandSender, label, targetUser, isSelf);
+            case "vanish" -> handleVanishCommand(commandSender, targetUser, isSelf);
+            case "drop" -> handleDropCommand(commandSender, targetUser, isSelf);
+            case "pickup" -> handlePickupCommand(commandSender, targetUser, isSelf);
+            case "interact" -> handleInteractCommand(commandSender, targetUser, isSelf);
+            case "message" -> handleMessageCommand(commandSender, targetUser, isSelf);
         }
     }
 
-    private void handleDropCommand(User commandSender, String label, User targetUser, boolean isSelf) {
-        handleToggleCommand(commandSender, label, targetUser, isSelf,
-                "Drop", targetUser.getVanishData()::canDrop,
+    private void handleDropCommand(User commandSender, User targetUser, boolean isSelf) {
+        handleToggleCommand(commandSender, targetUser, isSelf,
+                "Drop", targetUser.getVanishData()::isCanDrop,
                 value -> targetUser.getVanishData().setCanDrop(value)
         );
     }
 
 
-    private void handlePickupCommand(User commandSender, String label, User targetUser, boolean isSelf) {
-        handleToggleCommand(commandSender, label, targetUser, isSelf,
-                "Pickup", targetUser.getVanishData()::canPickup,
+    private void handlePickupCommand(User commandSender, User targetUser, boolean isSelf) {
+        handleToggleCommand(commandSender, targetUser, isSelf,
+                "Pickup", targetUser.getVanishData()::isCanDrop,
                 value -> targetUser.getVanishData().setCanPickup(value)
         );
     }
 
-    private void handleToggleCommand(User commandSender, String label, User targetUser,
-                                     boolean isSelf, String featureName,
+    private void handleToggleCommand(User commandSender, User targetUser, boolean isSelf, String featureName,
                                      BooleanSupplier getCurrentState, Consumer<Boolean> setState) {
         var messagePath = isSelf? "${featureName}.Success" : "${featureName}.SuccessOther";
         var enableFeature = !getCurrentState.getAsBoolean();
@@ -83,21 +82,21 @@ public class CommandVanish extends AbstractServerSystemCommand {
     }
 
 
-    private void handleInteractCommand(User commandSender, String label, User targetUser, boolean isSelf) {
-        handleToggleCommand(commandSender, label, targetUser, isSelf,
-                "Interact", targetUser.getVanishData()::canInteract,
+    private void handleInteractCommand(User commandSender, User targetUser, boolean isSelf) {
+        handleToggleCommand(commandSender, targetUser, isSelf,
+                "Interact", targetUser.getVanishData()::isCanInteract,
                 value -> targetUser.getVanishData().setCanInteract(value)
         );
     }
 
-    private void handleMessageCommand(User commandSender, String label, User targetUser, boolean isSelf) {
-        handleToggleCommand(commandSender, label, targetUser, isSelf,
-                "Message", targetUser.getVanishData()::canMessage,
+    private void handleMessageCommand(User commandSender, User targetUser, boolean isSelf) {
+        handleToggleCommand(commandSender, targetUser, isSelf,
+                "Message", targetUser.getVanishData()::isCanMessage,
                 value -> targetUser.getVanishData().setCanMessage(value)
         );
     }
 
-    private void handleVanishCommand(User commandSender, String label, User targetUser, boolean isSelf) {
+    private void handleVanishCommand(User commandSender, User targetUser, boolean isSelf) {
         var messagePath = isSelf? "Vanish.Success" : "Vanish.SuccessOther";
         var enableVanish = !targetUser.isVanish();
 

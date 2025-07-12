@@ -1,5 +1,6 @@
 package me.testaccount666.serversystem.userdata.money;
 
+import lombok.Getter;
 import me.testaccount666.serversystem.managers.config.ConfigReader;
 import me.testaccount666.serversystem.managers.database.EconomyDatabaseManager;
 import me.testaccount666.serversystem.userdata.OfflineUser;
@@ -12,12 +13,16 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 public class EconomyProvider {
+    @Getter
     private final String _currencySingular;
+    @Getter
     private final String _currencyPlural;
     private final String _thousandSeparator;
     private final String _decimalSeparator;
     private final String _moneyFormat;
+    @Getter
     private final String _defaultBalance;
+    @Getter
     private final Type _economyType;
     private final EconomyDatabaseManager _databaseManager;
 
@@ -77,22 +82,6 @@ public class EconomyProvider {
         return _moneyFormat.replace("<MAJOR>", major).replace("<DECIMAL>", decimal)
                 .replace("<DECIMAL_SEPARATOR>", _decimalSeparator)
                 .replace("<CURRENCY>", currencySymbol);
-    }
-
-    public String getDefaultBalance() {
-        return _defaultBalance;
-    }
-
-    public Type getEconomyType() {
-        return _economyType;
-    }
-
-    public String getCurrencySingular() {
-        return _currencySingular;
-    }
-
-    public String getCurrencyPlural() {
-        return _currencyPlural;
     }
 
     public enum Type {

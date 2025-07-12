@@ -1,7 +1,9 @@
 package me.testaccount666.serversystem.userdata;
 
+import lombok.Getter;
 import org.bukkit.Bukkit;
 
+@Getter
 public class CachedUser {
     private static final long _STALE_TIME_MILLIS = 1000 * 60 * 60; // One hour
 
@@ -20,10 +22,6 @@ public class CachedUser {
 
     public boolean isOfflineUser() {
         return !isOnlineUser();
-    }
-
-    public OfflineUser getOfflineUser() {
-        return _offlineUser;
     }
 
     public boolean isStale() {

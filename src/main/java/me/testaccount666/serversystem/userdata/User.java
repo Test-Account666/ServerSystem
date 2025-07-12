@@ -1,5 +1,7 @@
 package me.testaccount666.serversystem.userdata;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.testaccount666.serversystem.commands.executables.teleportask.TeleportRequest;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,9 +20,15 @@ import java.util.Set;
 public class User extends OfflineUser {
     protected final Set<CachedUser> messageListeners = new HashSet<>();
     protected Player player;
+    @Setter
+    @Getter
     protected TeleportRequest teleportRequest;
+    @Setter
+    @Getter
     protected User replyUser;
+    @Getter
     protected boolean isAfk = false;
+    @Getter
     protected long afkSince;
 
     protected User(File userFile) {
@@ -96,32 +104,12 @@ public class User extends OfflineUser {
         }
     }
 
-    public TeleportRequest getTeleportRequest() {
-        return teleportRequest;
-    }
-
-    public void setTeleportRequest(TeleportRequest teleportRequest) {
-        this.teleportRequest = teleportRequest;
-    }
-
-    public User getReplyUser() {
-        return replyUser;
-    }
-
-    public void setReplyUser(User replyUser) {
-        this.replyUser = replyUser;
-    }
-
     public void addMessageListener(CachedUser cachedUser) {
         messageListeners.add(cachedUser);
     }
 
     public void removeMessageListener(CachedUser cachedUser) {
         messageListeners.remove(cachedUser);
-    }
-
-    public boolean isAfk() {
-        return isAfk;
     }
 
     public void setAfk(boolean afk) {
@@ -132,7 +120,4 @@ public class User extends OfflineUser {
         afkSince = afk? System.currentTimeMillis() : 0;
     }
 
-    public long getAfkSince() {
-        return afkSince;
-    }
 }

@@ -17,7 +17,7 @@ public class DurationParser {
 
     public static String parseUnbanDate(long durationMillis) {
         if (durationMillis == -1) {
-            var permanentOptional = MappingsData.Moderation().getName("permanent");
+            var permanentOptional = MappingsData.moderation().getName("permanent");
             if (permanentOptional.isEmpty()) {
                 Bukkit.getLogger().warning("Permanent name could not be found! This should not happen!");
                 return "Never";

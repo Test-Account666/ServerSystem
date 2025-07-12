@@ -1,5 +1,7 @@
 package me.testaccount666.serversystem.utils;
 
+import lombok.Getter;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -8,6 +10,7 @@ import java.util.regex.Pattern;
  * Represents the various chat colors and formatting options available in Minecraft.
  * This class provides methods to apply colors and formatting to chat messages.
  */
+@Getter
 public enum ChatColor {
     BLACK,
     DARK_BLUE,
@@ -55,6 +58,7 @@ public enum ChatColor {
     /**
      * The underlying Bukkit ChatColor.
      */
+    @Getter
     private final org.bukkit.ChatColor _chatColor;
 
     /**
@@ -154,12 +158,4 @@ public enum ChatColor {
         return _chatColor.toString();
     }
 
-    /**
-     * Gets the underlying Bukkit ChatColor.
-     *
-     * @return The Bukkit ChatColor
-     */
-    public org.bukkit.ChatColor getChatColor() {
-        return _chatColor;
-    }
 }

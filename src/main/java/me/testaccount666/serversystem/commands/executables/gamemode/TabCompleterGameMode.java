@@ -24,7 +24,7 @@ public class TabCompleterGameMode implements ServerSystemTabCompleter {
     private Optional<List<String>> handleGameModeCommand(String[] arguments) {
         if (arguments.length == 1) {
             var possibleCompletions = new ArrayList<>(List.of("0", "1", "2", "3"));
-            possibleCompletions.addAll(MappingsData.GameMode().getGameModeNames());
+            possibleCompletions.addAll(MappingsData.gameMode().getGameModeNames());
 
             var completions = new ArrayList<String>();
 

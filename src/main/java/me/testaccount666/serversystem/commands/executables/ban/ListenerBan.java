@@ -20,20 +20,11 @@ import static me.testaccount666.serversystem.utils.MessageBuilder.command;
 public class ListenerBan implements Listener {
 
     public boolean canRegister(Set<ServerSystemCommandExecutor> requiredCommands) {
-
-        Bukkit.getLogger().info("(ListenerBan) Checking required commands for ban listener...");
-
-        var canRegister = requiredCommands.stream().anyMatch(CommandBan.class::isInstance);
-
-        Bukkit.getLogger().info("(ListenerBan) Required commands for ban listener: " + (canRegister? "found" : "not found"));
-
-        return canRegister;
+        return requiredCommands.stream().anyMatch(CommandBan.class::isInstance);
     }
 
     @EventHandler
     public void onLogin(AsyncPlayerPreLoginEvent event) {
-        Bukkit.getLogger().info("(ListenerBan) Handling login for " + event.getName() + " (" + event.getUniqueId() + ")");
-
         var userOptional = ServerSystem.Instance.getUserManager().getUser(event.getUniqueId());
         if (userOptional.isEmpty()) {
             Bukkit.getLogger().severe("(ListenerBan) User not found! This should not happen!");
@@ -44,10 +35,7 @@ public class ListenerBan implements Listener {
         var banManager = user.getBanManager();
 
         var banModerationOptional = banManager.getActiveModeration();
-        if (banModerationOptional.isEmpty()) {
-            Bukkit.getLogger().info("(ListenerBan) No active ban found for " + user.getName().get());
-            return;
-        }
+        if (banModerationOptional.isEmpty()) return;
         var banModeration = banModerationOptional.get();
 
         var senderName = banModeration.senderUuid().toString();

@@ -92,22 +92,22 @@ public class ListenerVanish implements Listener {
 
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent event) {
-        handleVanishRestriction(event.getPlayer(), event, user -> user.getVanishData().canDrop(), "Vanish.Denied.Drop");
+        handleVanishRestriction(event.getPlayer(), event, user -> user.getVanishData().isCanDrop(), "Vanish.Denied.Drop");
     }
 
     @EventHandler
     public void onChat(AsyncChatEvent event) {
-        handleVanishRestriction(event.getPlayer(), event, user -> user.getVanishData().canMessage(), "Vanish.Denied.Message");
+        handleVanishRestriction(event.getPlayer(), event, user -> user.getVanishData().isCanMessage(), "Vanish.Denied.Message");
     }
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        handleVanishRestriction(event.getPlayer(), event, user -> user.getVanishData().canInteract(), null);
+        handleVanishRestriction(event.getPlayer(), event, user -> user.getVanishData().isCanInteract(), null);
     }
 
     @EventHandler
     public void onItemPickup(PlayerAttemptPickupItemEvent event) {
-        handleVanishRestriction(event.getPlayer(), event, user -> user.getVanishData().canPickup(), null);
+        handleVanishRestriction(event.getPlayer(), event, user -> user.getVanishData().isCanPickup(), null);
     }
 
     @EventHandler

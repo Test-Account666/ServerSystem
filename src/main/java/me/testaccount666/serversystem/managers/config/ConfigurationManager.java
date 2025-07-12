@@ -1,5 +1,6 @@
 package me.testaccount666.serversystem.managers.config;
 
+import lombok.Getter;
 import me.testaccount666.serversystem.managers.MessageManager;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.managers.globaldata.DefaultsData;
@@ -13,9 +14,13 @@ import java.nio.file.Path;
 public class ConfigurationManager {
     private final Plugin _plugin;
     private final Path _pluginFolder;
+    @Getter
     private ConfigReader _commandsConfig;
+    @Getter
     private ConfigReader _economyConfig;
+    @Getter
     private ConfigReader _moderationConfig;
+    @Getter
     private ConfigReader _userDataConfig;
 
     public ConfigurationManager(Plugin plugin) {
@@ -92,19 +97,4 @@ public class ConfigurationManager {
         if (!configFile.exists()) _plugin.saveResource(resourceName, false);
     }
 
-    public ConfigReader getCommandsConfig() {
-        return _commandsConfig;
-    }
-
-    public ConfigReader getEconomyConfig() {
-        return _economyConfig;
-    }
-
-    public ConfigReader getModerationConfig() {
-        return _moderationConfig;
-    }
-
-    public ConfigReader getUserDataConfig() {
-        return _userDataConfig;
-    }
 }

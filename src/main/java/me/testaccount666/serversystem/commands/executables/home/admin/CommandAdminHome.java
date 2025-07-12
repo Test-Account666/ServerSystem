@@ -133,9 +133,7 @@ public class CommandAdminHome extends AbstractServerSystemCommand {
         }
 
         var homeName = arguments[1];
-
         if (homeManager.hasHome(homeName)) {
-
             command("SetHome.AlreadyExists", targetUser).label(label).target(targetUser.getName().get())
                     .modifier(message -> message.replace("<HOME>", homeName)).build();
             return;

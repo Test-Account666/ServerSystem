@@ -1,5 +1,6 @@
 package me.testaccount666.serversystem;
 
+import lombok.Getter;
 import me.testaccount666.serversystem.commands.executables.warp.manager.WarpManager;
 import me.testaccount666.serversystem.commands.management.CommandManager;
 import me.testaccount666.serversystem.listener.management.ListenerManager;
@@ -23,13 +24,21 @@ import java.util.logging.Level;
 
 public final class ServerSystem extends JavaPlugin {
     public static ServerSystem Instance;
+    @Getter
     private UserManager _userManager;
+    @Getter
     private CommandManager _commandManager;
+    @Getter
     private ListenerManager _listenerManager;
+    @Getter
     private EconomyProvider _economyProvider;
+    @Getter
     private ConfigurationManager _configManager;
+    @Getter
     private EconomyDatabaseManager _economyDatabaseManager;
+    @Getter
     private WarpManager _warpManager;
+    @Getter
     private AbstractModerationDatabaseManager _moderationDatabaseManager;
 
     public static Version getServerVersion() {
@@ -102,53 +111,5 @@ public final class ServerSystem extends JavaPlugin {
 
     private void saveAllUsers() {
         _userManager.getCachedUsers().stream().map(CachedUser::getOfflineUser).forEach(OfflineUser::save);
-    }
-
-    /**
-     * Gets the UserManager instance for this plugin.
-     *
-     * @return The UserManager instance that manages all user-related functionality
-     */
-    public UserManager getUserManager() {
-        return _userManager;
-    }
-
-    /**
-     * Gets the EconomyManager instance for this plugin.
-     *
-     * @return The EconomyManager instance that manages all economy-related functionality (Mostly config)
-     */
-    public EconomyProvider getEconomyProvider() {
-        return _economyProvider;
-    }
-
-    /**
-     * Gets the EconomyDatabaseManager instance for this plugin.
-     *
-     * @return The EconomyDatabaseManager instance that manages economy database connections
-     */
-    public EconomyDatabaseManager getEconomyDatabaseManager() {
-        return _economyDatabaseManager;
-    }
-
-    public AbstractModerationDatabaseManager getModerationDatabaseManager() {
-        return _moderationDatabaseManager;
-    }
-
-    /**
-     * Gets the ConfigurationManager instance for this plugin.
-     *
-     * @return The ConfigurationManager instance that manages all configurations
-     */
-    public ConfigurationManager getConfigManager() {
-        return _configManager;
-    }
-
-    public CommandManager getCommandManager() {
-        return _commandManager;
-    }
-
-    public WarpManager getWarpManager() {
-        return _warpManager;
     }
 }

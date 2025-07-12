@@ -63,8 +63,6 @@ public class CommandGameMode extends AbstractServerSystemCommand {
 
         var gameModeOptional = parseGameMode(arguments[0]);
         if (gameModeOptional.isEmpty()) {
-
-
             command("GameMode.InvalidGameMode", commandSender)
                     .modifier(message -> replaceGameModePlaceholder(message, arguments[0])).build();
             return;
@@ -101,7 +99,7 @@ public class CommandGameMode extends AbstractServerSystemCommand {
 
         targetPlayer.setGameMode(gameMode);
 
-        var gameModeName = MappingsData.GameMode().getGameModeName(gameMode).orElse(gameMode.name());
+        var gameModeName = MappingsData.gameMode().getGameModeName(gameMode).orElse(gameMode.name());
         var messageKey = isSelf? "GameMode.Success" : "GameMode.SuccessOther";
 
         command(messageKey, commandSender).target(targetPlayer.getName())
@@ -138,7 +136,7 @@ public class CommandGameMode extends AbstractServerSystemCommand {
     private boolean isGameModeMatch(GameMode gameMode, String input) {
         if (gameMode.name().equalsIgnoreCase(input)) return true;
 
-        return MappingsData.GameMode().getGameModeName(gameMode)
+        return MappingsData.gameMode().getGameModeName(gameMode)
                 .map(name -> name.toLowerCase().startsWith(input.toLowerCase()))
                 .orElse(false);
     }

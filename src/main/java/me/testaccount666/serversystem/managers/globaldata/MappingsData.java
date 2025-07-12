@@ -1,5 +1,7 @@
 package me.testaccount666.serversystem.managers.globaldata;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import me.testaccount666.serversystem.commands.executables.back.CommandBack;
 import me.testaccount666.serversystem.managers.config.ConfigReader;
 import me.testaccount666.serversystem.utils.ChatColor;
@@ -7,10 +9,15 @@ import org.bukkit.Bukkit;
 
 import java.util.*;
 
+@Accessors(fluent = true)
 public class MappingsData {
+    @Getter
     private static GameMode _GameMode;
+    @Getter
     private static MessageColors _MessageColors;
+    @Getter
     private static BackType _BackType;
+    @Getter
     private static Moderation _Moderation;
 
     public static void initialize(ConfigReader config) {
@@ -18,22 +25,6 @@ public class MappingsData {
         _MessageColors = new MessageColors(config);
         _BackType = new BackType(config);
         _Moderation = new Moderation(config);
-    }
-
-    public static GameMode GameMode() {
-        return _GameMode;
-    }
-
-    public static MessageColors MessageColors() {
-        return _MessageColors;
-    }
-
-    public static BackType BackType() {
-        return _BackType;
-    }
-
-    public static Moderation Moderation() {
-        return _Moderation;
     }
 
     public static class BackType {
