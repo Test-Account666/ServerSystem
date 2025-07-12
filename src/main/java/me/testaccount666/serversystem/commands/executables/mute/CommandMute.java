@@ -3,7 +3,7 @@ package me.testaccount666.serversystem.commands.executables.mute;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.managers.PermissionManager;
-import me.testaccount666.serversystem.moderation.MuteModerationBuilder;
+import me.testaccount666.serversystem.moderation.MuteModeration;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -88,9 +88,10 @@ public class CommandMute extends AbstractServerSystemCommand {
         var currentTime = System.currentTimeMillis();
         var expireTime = parsedDuration == -1? -1 : currentTime + parsedDuration;
 
-        var muteModeration = new MuteModerationBuilder().senderUuid(commandSender.getUuid())
-                .targetUuid(targetUser.getUuid()).reason(reason)
-                .expireTime(expireTime).issueTime(currentTime).build();
+        var muteModeration = MuteModeration.builder()
+                .senderUuid(commandSender.getUuid()).targetUuid(targetUser.getUuid())
+                .reason(reason).expireTime(expireTime).issueTime(currentTime)
+                .isShadowMute(false).build();
 
         muteManager.addModeration(muteModeration);
 
@@ -182,9 +183,10 @@ public class CommandMute extends AbstractServerSystemCommand {
         var currentTime = System.currentTimeMillis();
         var expireTime = parsedDuration == -1? -1 : currentTime + parsedDuration;
 
-        var muteModeration = new MuteModerationBuilder().senderUuid(commandSender.getUuid())
-                .targetUuid(targetUser.getUuid()).reason(reason)
-                .expireTime(expireTime).issueTime(currentTime).shadowMute(true).build();
+        var muteModeration = MuteModeration.builder()
+                .senderUuid(commandSender.getUuid()).targetUuid(targetUser.getUuid())
+                .reason(reason).expireTime(expireTime).issueTime(currentTime)
+                .isShadowMute(true).build();
 
         muteManager.addModeration(muteModeration);
 

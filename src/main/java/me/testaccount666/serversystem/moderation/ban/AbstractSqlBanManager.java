@@ -2,7 +2,7 @@ package me.testaccount666.serversystem.moderation.ban;
 
 import me.testaccount666.serversystem.moderation.AbstractModeration;
 import me.testaccount666.serversystem.moderation.AbstractModerationManager;
-import me.testaccount666.serversystem.moderation.BanModerationBuilder;
+import me.testaccount666.serversystem.moderation.BanModeration;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -71,9 +71,13 @@ public abstract class AbstractSqlBanManager extends AbstractModerationManager {
                 var senderUuid = UUID.fromString(resultSet.getString("SenderUUID"));
                 var targetUuid = UUID.fromString(resultSet.getString("TargetUUID"));
 
-                moderations.add(new BanModerationBuilder()
-                        .issueTime(issueTime).expireTime(expireTime)
-                        .reason(reason).senderUuid(senderUuid).targetUuid(targetUuid).build());
+                moderations.add(BanModeration.builder()
+                        .issueTime(issueTime)
+                        .expireTime(expireTime)
+                        .reason(reason)
+                        .senderUuid(senderUuid)
+                        .targetUuid(targetUuid)
+                        .build());
             }
 
             resultSet.close();

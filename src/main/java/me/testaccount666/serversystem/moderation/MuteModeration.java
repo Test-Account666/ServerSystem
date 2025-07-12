@@ -1,10 +1,12 @@
 package me.testaccount666.serversystem.moderation;
 
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
 
 @Getter
+@SuperBuilder
 public class MuteModeration extends AbstractModeration {
     private final boolean _isShadowMute;
 

@@ -2,11 +2,13 @@ package me.testaccount666.serversystem.moderation;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
 
 @Accessors(fluent = true)
 @Getter
+@SuperBuilder
 public abstract class AbstractModeration {
     private final long _issueTime;
     private final long _expireTime;

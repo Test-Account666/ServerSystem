@@ -50,16 +50,16 @@ public class CommandVanish extends AbstractServerSystemCommand {
 
     private void handleDropCommand(User commandSender, User targetUser, boolean isSelf) {
         handleToggleCommand(commandSender, targetUser, isSelf,
-                "Drop", targetUser.getVanishData()::isCanDrop,
-                value -> targetUser.getVanishData().setCanDrop(value)
+                "Drop", targetUser.getVanishData()::canDrop,
+                value -> targetUser.getVanishData().canDrop(value)
         );
     }
 
 
     private void handlePickupCommand(User commandSender, User targetUser, boolean isSelf) {
         handleToggleCommand(commandSender, targetUser, isSelf,
-                "Pickup", targetUser.getVanishData()::isCanDrop,
-                value -> targetUser.getVanishData().setCanPickup(value)
+                "Pickup", targetUser.getVanishData()::canPickup,
+                value -> targetUser.getVanishData().canPickup(value)
         );
     }
 
@@ -84,15 +84,15 @@ public class CommandVanish extends AbstractServerSystemCommand {
 
     private void handleInteractCommand(User commandSender, User targetUser, boolean isSelf) {
         handleToggleCommand(commandSender, targetUser, isSelf,
-                "Interact", targetUser.getVanishData()::isCanInteract,
-                value -> targetUser.getVanishData().setCanInteract(value)
+                "Interact", targetUser.getVanishData()::canInteract,
+                value -> targetUser.getVanishData().canInteract(value)
         );
     }
 
     private void handleMessageCommand(User commandSender, User targetUser, boolean isSelf) {
         handleToggleCommand(commandSender, targetUser, isSelf,
-                "Message", targetUser.getVanishData()::isCanMessage,
-                value -> targetUser.getVanishData().setCanMessage(value)
+                "Message", targetUser.getVanishData()::canMessage,
+                value -> targetUser.getVanishData().canMessage(value)
         );
     }
 

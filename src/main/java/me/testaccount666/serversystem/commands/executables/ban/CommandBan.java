@@ -4,7 +4,7 @@ import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.managers.PermissionManager;
-import me.testaccount666.serversystem.moderation.BanModerationBuilder;
+import me.testaccount666.serversystem.moderation.BanModeration;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -88,9 +88,9 @@ public class CommandBan extends AbstractServerSystemCommand {
         var currentTime = System.currentTimeMillis();
         var expireTime = parsedDuration == -1? -1 : currentTime + parsedDuration;
 
-        var banModeration = new BanModerationBuilder().senderUuid(commandSender.getUuid())
-                .targetUuid(user.getUuid()).reason(reason)
-                .expireTime(expireTime).issueTime(currentTime).build();
+        var banModeration = BanModeration.builder()
+                .senderUuid(commandSender.getUuid()).targetUuid(user.getUuid())
+                .reason(reason).expireTime(expireTime).issueTime(currentTime).build();
 
         banManager.addModeration(banModeration);
 

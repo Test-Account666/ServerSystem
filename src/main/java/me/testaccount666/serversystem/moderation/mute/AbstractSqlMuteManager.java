@@ -3,7 +3,6 @@ package me.testaccount666.serversystem.moderation.mute;
 import me.testaccount666.serversystem.moderation.AbstractModeration;
 import me.testaccount666.serversystem.moderation.AbstractModerationManager;
 import me.testaccount666.serversystem.moderation.MuteModeration;
-import me.testaccount666.serversystem.moderation.MuteModerationBuilder;
 import org.bukkit.Bukkit;
 
 import java.sql.Connection;
@@ -78,10 +77,14 @@ public abstract class AbstractSqlMuteManager extends AbstractModerationManager {
                 var type = resultSet.getString("Type");
                 var isShadowMute = "SHADOW_MUTE".equals(type);
 
-                moderations.add(new MuteModerationBuilder()
-                        .issueTime(issueTime).expireTime(expireTime)
-                        .reason(reason).senderUuid(senderUuid).targetUuid(targetUuid)
-                        .shadowMute(isShadowMute).build());
+                moderations.add(MuteModeration.builder()
+                        .issueTime(issueTime)
+                        .expireTime(expireTime)
+                        .reason(reason)
+                        .senderUuid(senderUuid)
+                        .targetUuid(targetUuid)
+                        .isShadowMute(isShadowMute)
+                        .build());
             }
 
             resultSet.close();
@@ -122,10 +125,14 @@ public abstract class AbstractSqlMuteManager extends AbstractModerationManager {
                 var type = resultSet.getString("Type");
                 var isShadowMute = "SHADOW_MUTE".equals(type);
 
-                moderations.add(new MuteModerationBuilder()
-                        .issueTime(issueTime).expireTime(expireTime)
-                        .reason(reason).senderUuid(senderUuid).targetUuid(ownerUuid)
-                        .shadowMute(isShadowMute).build());
+                moderations.add(MuteModeration.builder()
+                        .issueTime(issueTime)
+                        .expireTime(expireTime)
+                        .reason(reason)
+                        .senderUuid(senderUuid)
+                        .targetUuid(ownerUuid)
+                        .isShadowMute(isShadowMute)
+                        .build());
             }
 
             resultSet.close();
