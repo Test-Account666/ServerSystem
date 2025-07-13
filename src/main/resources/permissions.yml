@@ -351,6 +351,19 @@ Permissions:
       Delete:
         Required: true
         Value: "serversystem.admin.command.warp.delete"
+    Kit:
+      Use:
+        Required: false
+        Value: "serversystem.command.kit.use"
+      Create:
+        Required: true
+        Value: "serversystem.admin.command.kit.create"
+      Delete:
+        Required: true
+        Value: "serversystem.admin.command.kit.delete"
+      Other:
+        Required: true
+        Value: "serversystem.command.kit.other"
     Moderation:
       Ban:
         Use:

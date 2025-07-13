@@ -15,15 +15,15 @@ import org.bukkit.entity.Player;
 import static me.testaccount666.serversystem.utils.MessageBuilder.command;
 import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 
-@ServerSystemCommand(name = "warp", variants = {"setwarp", "deletewarp"})
+@ServerSystemCommand(name = "warp", variants = {"setwarp", "deletewarp"}, tabCompleter = TabCompleterWarp.class)
 public class CommandWarp extends AbstractServerSystemCommand {
 
     @Override
     public boolean hasCommandAccess(Player player, Command command) {
         var permissionPath = switch (command.getName().toLowerCase()) {
-            case "setwarp" -> "SetWarp.Use";
             case "warp" -> "Warp.Use";
-            case "deletewarp" -> "DeleteWarp.Use";
+            case "setwarp" -> "Warp.Set";
+            case "deletewarp" -> "Warp.Delete";
             default -> null;
         };
 
@@ -55,7 +55,8 @@ public class CommandWarp extends AbstractServerSystemCommand {
 
         var warpOptional = warpManager.getWarpByName(arguments[0]);
         if (warpOptional.isEmpty()) {
-            command("Warp.WarpNotFound", commandSender).target(arguments[0]).build();
+            command("Warp.WarpNotFound", commandSender)
+                    .modifier(message -> message.replace("<WARP>", arguments[0])).build();
             return;
         }
         var warp = warpOptional.get();
@@ -70,7 +71,7 @@ public class CommandWarp extends AbstractServerSystemCommand {
     }
 
     private void handleSetWarpCommand(User commandSender, String... arguments) {
-        if (!checkBasePermission(commandSender, "SetWarp.Use")) return;
+        if (!checkBasePermission(commandSender, "Warp.Set")) return;
 
         var warpManager = ServerSystem.Instance.getWarpManager();
         var warpName = arguments[0];
@@ -79,32 +80,32 @@ public class CommandWarp extends AbstractServerSystemCommand {
         var warpOptional = warpManager.getWarpByName(warpName);
 
         if (warpOptional.isPresent()) {
-            command("SetWarp.WarpAlreadyExists", commandSender)
+            command("Warp.Set.WarpAlreadyExists", commandSender)
                     .modifier(message -> message.replace("<WARP>", arguments[0])).build();
             return;
         }
 
         var warp = warpManager.addWarp(warpName, warpLocation);
-        command("SetWarp.Success", commandSender)
+        command("Warp.Set.Success", commandSender)
                 .modifier(message -> message.replace("<WARP>", warp.getDisplayName())).build();
     }
 
     private void handleDeleteWarpCommand(User commandSender, String... arguments) {
-        if (!checkBasePermission(commandSender, "DeleteWarp.Use")) return;
+        if (!checkBasePermission(commandSender, "Warp.Delete")) return;
 
         var warpManager = ServerSystem.Instance.getWarpManager();
         var warpName = arguments[0];
         var warpOptional = warpManager.getWarpByName(warpName);
 
         if (warpOptional.isEmpty()) {
-            command("DeleteWarp.WarpNotFound", commandSender)
+            command("Warp.WarpNotFound", commandSender)
                     .modifier(message -> message.replace("<WARP>", warpName)).build();
             return;
         }
         var warp = warpOptional.get();
 
         warpManager.removeWarp(warp);
-        command("DeleteWarp.Success", commandSender)
+        command("Warp.Delete.Success", commandSender)
                 .modifier(message -> message.replace("<WARP>", warp.getDisplayName())).build();
     }
 

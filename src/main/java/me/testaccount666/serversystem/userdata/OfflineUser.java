@@ -107,6 +107,8 @@ public class OfflineUser {
     @Setter
     @SaveableField(path = "User.PlayerLanguage")
     protected String playerLanguage;
+    @SaveableField(path = "User.KitCooldowns", handler = KitMapFieldHandler.class)
+    protected Map<String, Long> kitCooldowns = new HashMap<>();
 
     protected OfflineUser(File userFile) {
         this.userFile = userFile;
@@ -290,5 +292,21 @@ public class OfflineUser {
 
     public void removeIgnoredPlayer(UUID uuid) {
         ignoredPlayers.remove(uuid);
+    }
+
+    public boolean isOnKitCooldown(String kitName) {
+        var cooldown = kitCooldowns.getOrDefault(kitName, null);
+        if (cooldown == null) return false;
+        return cooldown > System.currentTimeMillis();
+    }
+
+    public long getKitCooldown(String kitName) {
+        var cooldown = kitCooldowns.getOrDefault(kitName, null);
+        if (cooldown == null) return -1;
+        return cooldown;
+    }
+
+    public void setKitCooldown(String kitName, long cooldown) {
+        kitCooldowns.put(kitName, cooldown + System.currentTimeMillis());
     }
 }

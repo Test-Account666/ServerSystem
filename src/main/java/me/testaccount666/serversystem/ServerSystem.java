@@ -1,6 +1,8 @@
 package me.testaccount666.serversystem;
 
 import lombok.Getter;
+import lombok.Setter;
+import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager;
 import me.testaccount666.serversystem.commands.executables.warp.manager.WarpManager;
 import me.testaccount666.serversystem.commands.management.CommandManager;
 import me.testaccount666.serversystem.listener.management.ListenerManager;
@@ -18,6 +20,7 @@ import me.testaccount666.serversystem.utils.Version;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.logging.Level;
@@ -40,6 +43,10 @@ public final class ServerSystem extends JavaPlugin {
     private WarpManager _warpManager;
     @Getter
     private AbstractModerationDatabaseManager _moderationDatabaseManager;
+    @Getter
+    @Setter
+    @Nullable
+    private KitManager _kitManager;
 
     public static Version getServerVersion() {
         var version = Bukkit.getVersion();

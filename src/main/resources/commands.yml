@@ -262,3 +262,23 @@ Commands:
       shadowmute:
         Enabled: true
         Aliases: "shadowmute"
+  warp:
+    Enabled: true
+    Aliases: "warp"
+    Variants:
+      setwarp:
+        Enabled: true
+        Aliases: "setwarp"
+      deletewarp:
+        Enabled: true
+        Aliases: "delwarp"
+  kit:
+    Enabled: true
+    Aliases: "kit"
+    Variants:
+      createkit:
+        Enabled: true
+        Aliases: "createkit"
+      deletekit:
+        Enabled: true
+        Aliases: "deletekit"

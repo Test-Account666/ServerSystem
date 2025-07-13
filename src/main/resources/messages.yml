@@ -248,6 +248,26 @@ Messages:
           Success: "You unbanned <Color:Highlight><TARGET><Color:Message>."
           NoActiveModeration: "<Color:Error.Message>Specified player <Color:Error.Highlight><TARGET> <Color:Error.Message>is not banned."
         Kick: "&8[]--------------------[]\n&cYou have been banned!\n&6Reason&8: &c<REASON>\n&6By&8: &c<SENDER>\n&6Unban Date&8: &c<DATE>\n&8[]--------------------[]"
+    Warp:
+      Set:
+        Success: "The warp <Color:Highlight><WARP> <Color:Message>was set to your current location."
+        WarpAlreadyExists: "<Color:Error.Message>Specified warp <Color:Error.Highlight><WARP> <Color:Error.Message>already exists."
+      Delete:
+        Success: "The warp <Color:Highlight><WARP> <Color:Message>was deleted."
+      WarpNotFound: "<Color:Error.Message>Specified warp <Color:Error.Highlight><WARP> <Color:Error.Message>doesn't exist."
+      Success: "You teleported to <Color:Highlight><WARP><Color:Message>."
+    Kit:
+      Create:
+        KitAlreadyExists: "<Color:Error.Message>The kit <Color:Error.Highlight><KIT> <Color:Error.Message>already exists."
+        InvalidCooldown: "<Color:Error.Message>Invalid cooldown specified."
+        Success: "You created the kit <Color:Highlight><KIT><Color:Message>."
+      Delete:
+        Success: "You deleted the kit <Color:Highlight><KIT><Color:Message>."
+      KitNotFound: "<Color:Error.Message>The kit <Color:Error.Highlight><KIT> <Color:Error.Message>doesn't exist."
+      OnCooldown: "<Color:Error.Message>You are on cooldown for the kit <Color:Error.Highlight><KIT><Color:Error.Message> Cooldown end: <Color:Error.Highlight><DATE><Color:Error.Message>."
+      Success:
+        Self: "You received the kit <Color:Highlight><KIT><Color:Message>."
+        Other: "You gave the kit <Color:Highlight><KIT> <Color:Message>to <Color:Highlight><TARGET><Color:Message>."
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>You don't have permission to do this. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"
