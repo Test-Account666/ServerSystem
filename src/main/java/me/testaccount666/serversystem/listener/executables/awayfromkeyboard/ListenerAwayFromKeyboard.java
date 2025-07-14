@@ -119,6 +119,14 @@ public class ListenerAwayFromKeyboard implements Listener {
 
         currentChunkLocation.setY(chunkLocation.getY());
 
+        var currentWorld = currentChunkLocation.getWorld();
+        var chunkWorld = chunkLocation.getWorld();
+        if (currentWorld != chunkWorld) {
+            _chunkLocationMap.put(player.getUniqueId(), getChunkLocation(player));
+            resetAfkStatus(player);
+            return;
+        }
+
         var distance = currentChunkLocation.distance(chunkLocation);
 
         if (distance < 3 && (Math.abs(currentY - chunkLocation.getY()) < 70)) return;
