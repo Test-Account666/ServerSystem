@@ -2,6 +2,7 @@ package me.testaccount666.serversystem;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.testaccount666.migration.LegacyDataMigrator;
 import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager;
 import me.testaccount666.serversystem.commands.executables.warp.manager.WarpManager;
 import me.testaccount666.serversystem.commands.management.CommandManager;
@@ -24,10 +25,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.logging.Level;
 
 public final class ServerSystem extends JavaPlugin {
+    private final static int _CURRENT_VERSION = 300;
     public static ServerSystem Instance;
     @Getter
     private UserManager _userManager;
@@ -64,6 +68,21 @@ public final class ServerSystem extends JavaPlugin {
     public void onEnable() {
         Instance = this;
 
+        var migrator = new LegacyDataMigrator();
+        if (migrator.isLegacyDataPresent()) {
+            Bukkit.getLogger().log(Level.INFO, "Legacy data detected. Attempting to migrate...");
+            migrator.prepareMigration();
+        }
+
+        var previousVersionFile = new File(getDataFolder(), "previousVersion.yml");
+        var previousVersionConfig = YamlConfiguration.loadConfiguration(previousVersionFile);
+        previousVersionConfig.set("previousVersion", _CURRENT_VERSION);
+        try {
+            previousVersionConfig.save(previousVersionFile);
+        } catch (IOException exception) {
+            throw new RuntimeException("Error updating 'previousVersion'", exception);
+        }
+
         try {
             initialize();
         } catch (Exception e) {
@@ -72,6 +91,8 @@ public final class ServerSystem extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
+
+        migrator.migrateLegacyData();
 
         Bukkit.getScheduler().runTaskLater(this, () -> {
             _commandManager.registerCommands();
