@@ -54,7 +54,6 @@ public class EconomyProvider {
     }
 
     public AbstractBankAccount instantiateBankAccount(OfflineUser offlineUser, BigInteger accountId, FileConfiguration userConfig) {
-        Bukkit.getLogger().severe("Instantiating bank account for user ${offlineUser.getName()} (${offlineUser.getUuid()}, AccountID: ${accountId})");
         if (_economyType == Type.DISABLED) return new DisabledBankAccount(offlineUser.getUuid(), accountId);
         migrateYamlBankAccountIfNeeded(offlineUser, accountId, userConfig);
 
@@ -76,12 +75,7 @@ public class EconomyProvider {
      * @param userConfig  The user's configuration
      */
     private void migrateYamlBankAccountIfNeeded(OfflineUser offlineUser, BigInteger accountId, FileConfiguration userConfig) {
-        Bukkit.getLogger().severe("Checking for YAML bank account data for user ${offlineUser.getName()} (${offlineUser.getUuid()})");
-
-        if (!userConfig.isSet("User.BankAccounts")) {
-            Bukkit.getLogger().severe("No YAML bank accounts found for user ${offlineUser.getName()} (${offlineUser.getUuid()})! Skipping migration...");
-            return;
-        }
+        if (!userConfig.isSet("User.BankAccounts")) return;
 
         var bankAccountsSection = userConfig.getConfigurationSection("User.BankAccounts");
         if (bankAccountsSection == null) {
