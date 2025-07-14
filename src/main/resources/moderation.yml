@@ -9,3 +9,9 @@ Moderation:
     Username: "economy"
     Password: "password"
     UseSSL: false
+    Pool:
+      MaxSize: 10
+      MinIdle: 5
+      MaxLifetime: 30
+      ConnectionTimeout: 30
+      IdleTimeout: 600

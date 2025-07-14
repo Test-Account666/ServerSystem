@@ -7,7 +7,9 @@ import me.testaccount666.serversystem.commands.executables.warp.manager.WarpMana
 import me.testaccount666.serversystem.commands.management.CommandManager;
 import me.testaccount666.serversystem.listener.management.ListenerManager;
 import me.testaccount666.serversystem.managers.config.ConfigurationManager;
-import me.testaccount666.serversystem.managers.database.EconomyDatabaseManager;
+import me.testaccount666.serversystem.managers.database.economy.AbstractEconomyDatabaseManager;
+import me.testaccount666.serversystem.managers.database.economy.MySqlEconomyDatabaseManager;
+import me.testaccount666.serversystem.managers.database.economy.SqliteEconomyDatabaseManager;
 import me.testaccount666.serversystem.managers.database.moderation.AbstractModerationDatabaseManager;
 import me.testaccount666.serversystem.managers.database.moderation.MySqlModerationDatabaseManager;
 import me.testaccount666.serversystem.managers.database.moderation.SqliteModerationDatabaseManager;
@@ -38,7 +40,7 @@ public final class ServerSystem extends JavaPlugin {
     @Getter
     private ConfigurationManager _configManager;
     @Getter
-    private EconomyDatabaseManager _economyDatabaseManager;
+    private AbstractEconomyDatabaseManager _economyDatabaseManager;
     @Getter
     private WarpManager _warpManager;
     @Getter
@@ -94,10 +96,16 @@ public final class ServerSystem extends JavaPlugin {
 
         _moderationDatabaseManager.initialize();
 
-        _economyDatabaseManager = new EconomyDatabaseManager(_configManager.getEconomyConfig());
+        var economyStorageType = _configManager.getEconomyConfig().getString("Economy.StorageType.Value");
+        _economyDatabaseManager = switch (economyStorageType.toLowerCase()) {
+            case "sqlite" -> new SqliteEconomyDatabaseManager(getDataFolder());
+            case "mysql" -> new MySqlEconomyDatabaseManager(_configManager.getEconomyConfig());
+            default -> throw new IllegalStateException("Unsupported economy storage: ${economyStorageType} - Supported values: sqlite, mysql");
+        };
+
         _commandManager = new CommandManager(_configManager.getCommandsConfig());
         _listenerManager = new ListenerManager(_commandManager);
-        _economyProvider = new EconomyProvider(_configManager.getEconomyConfig(), _economyDatabaseManager);
+        _economyProvider = new EconomyProvider(_configManager.getEconomyConfig());
         _userManager = new UserManager();
 
         if (VaultAPI.isVaultInstalled()) VaultAPI.initialize();

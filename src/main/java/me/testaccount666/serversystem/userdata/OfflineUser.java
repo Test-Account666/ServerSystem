@@ -191,24 +191,25 @@ public class OfflineUser {
         bankAccount = ServerSystem.Instance.getEconomyProvider().instantiateBankAccount(this, BigInteger.valueOf(0), userConfig);
 
         var moderationManager = ServerSystem.Instance.getModerationDatabaseManager();
-        if (moderationManager instanceof SqliteModerationDatabaseManager) try {
-            banManager = new SqliteBanManager(uuid, moderationManager.getConnection());
-        } catch (SQLException exception) {
-            throw new RuntimeException("Error loading userdata! (BanManager)", exception);
-        }
-        else if (moderationManager instanceof MySqlModerationDatabaseManager) try {
-            banManager = new MySqlBanManager(uuid, moderationManager.getConnection());
+
+        // Create the appropriate ban manager based on the database type
+        try (var ignored = moderationManager.getConnection()) {
+            banManager = switch (moderationManager) {
+                case SqliteModerationDatabaseManager database -> new SqliteBanManager(uuid);
+                case MySqlModerationDatabaseManager database -> new MySqlBanManager(uuid);
+                default -> null;
+            };
         } catch (SQLException exception) {
             throw new RuntimeException("Error loading userdata! (BanManager)", exception);
         }
 
-        if (moderationManager instanceof SqliteModerationDatabaseManager) try {
-            muteManager = new SqliteMuteManager(uuid, moderationManager.getConnection());
-        } catch (SQLException exception) {
-            throw new RuntimeException("Error loading userdata! (MuteManager)", exception);
-        }
-        else if (moderationManager instanceof MySqlModerationDatabaseManager) try {
-            muteManager = new MySqlMuteManager(uuid, moderationManager.getConnection());
+        // Create the appropriate mute manager based on the database type
+        try (var ignored = moderationManager.getConnection()) {
+            muteManager = switch (moderationManager) {
+                case SqliteModerationDatabaseManager database -> new SqliteMuteManager(uuid);
+                case MySqlModerationDatabaseManager database -> new MySqlMuteManager(uuid);
+                default -> null;
+            };
         } catch (SQLException exception) {
             throw new RuntimeException("Error loading userdata! (MuteManager)", exception);
         }

@@ -10,8 +10,8 @@ Economy:
       Decimals: ","
     MoneyFormat: "<MAJOR><DECIMAL_SEPARATOR><DECIMAL><CURRENCY>"
   StorageType:
-    Value: "YAML"
-    Description: "How money is stored. Currently available: YAML, MySQL"
+    Value: "SQLITE"
+    Description: "How money is stored. Currently available: SQLITE, MySQL"
   MySQL:
     Host: "127.0.0.1"
     Port: 3306
@@ -19,3 +19,9 @@ Economy:
     Username: "economy"
     Password: "password"
     UseSSL: false
+    Pool:
+      MaxSize: 10
+      MinIdle: 5
+      MaxLifetime: 30
+      ConnectionTimeout: 30
+      IdleTimeout: 600

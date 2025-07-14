@@ -9,3 +9,4 @@ softdepend:
 libraries:
   - io.github.classgraph:classgraph:4.8.180
   - net.bytebuddy:byte-buddy:1.17.5
+  - com.zaxxer:HikariCP:6.3.0

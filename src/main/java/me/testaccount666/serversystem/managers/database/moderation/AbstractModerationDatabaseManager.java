@@ -1,17 +1,20 @@
 package me.testaccount666.serversystem.managers.database.moderation;
 
 import me.testaccount666.serversystem.managers.config.ConfigReader;
+import me.testaccount666.serversystem.managers.database.AbstractDatabaseManager;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+/**
+ * Abstract base class for moderation database managers.
+ * Extends AbstractDatabaseManager to provide moderation-specific functionality.
+ */
+public abstract class AbstractModerationDatabaseManager extends AbstractDatabaseManager {
 
-public abstract class AbstractModerationDatabaseManager {
+    /**
+     * Creates a new AbstractModerationDatabaseManager with the specified configuration.
+     *
+     * @param configReader The configuration reader to get database settings from
+     */
     public AbstractModerationDatabaseManager(ConfigReader configReader) {
+        super(configReader, "moderation");
     }
-
-    public abstract Connection getConnection() throws SQLException;
-
-    public abstract void initialize();
-
-    public abstract void shutdown();
 }

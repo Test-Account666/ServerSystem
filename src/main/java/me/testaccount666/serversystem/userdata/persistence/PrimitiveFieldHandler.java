@@ -39,10 +39,10 @@ public class PrimitiveFieldHandler<T> implements FieldHandler<T> {
 
         // Otherwise, try to convert it
         if (_type == Boolean.class || _type == boolean.class) return (T) Boolean.valueOf(config.getBoolean(path));
-        else if (_type == Integer.class || _type == int.class) return (T) Integer.valueOf(config.getInt(path));
-        else if (_type == Long.class || _type == long.class) return (T) Long.valueOf(config.getLong(path));
-        else if (_type == Double.class || _type == double.class) return (T) Double.valueOf(config.getDouble(path));
-        else if (_type == String.class) return (T) config.getString(path);
+        if (_type == Integer.class || _type == int.class) return (T) Integer.valueOf(config.getInt(path));
+        if (_type == Long.class || _type == long.class) return (T) Long.valueOf(config.getLong(path));
+        if (_type == Double.class || _type == double.class) return (T) Double.valueOf(config.getDouble(path));
+        if (_type == String.class) return (T) config.getString(path);
 
         // If we can't convert it, return the default value
         return defaultValue;

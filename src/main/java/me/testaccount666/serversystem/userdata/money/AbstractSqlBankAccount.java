@@ -1,45 +1,35 @@
 package me.testaccount666.serversystem.userdata.money;
 
 import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.managers.database.economy.AbstractEconomyDatabaseManager;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
 
 public abstract class AbstractSqlBankAccount extends AbstractBankAccount {
-    protected final Connection connection;
+    protected final AbstractEconomyDatabaseManager databaseManager;
 
-    public AbstractSqlBankAccount(UUID owner, BigInteger accountId, Connection connection) {
+    public AbstractSqlBankAccount(UUID owner, BigInteger accountId) {
         super(owner, accountId);
-        this.connection = connection;
+        databaseManager = ServerSystem.Instance.getEconomyDatabaseManager();
     }
 
 
     @Override
     public BigDecimal getBalance() {
-        try {
-            var query = "SELECT Balance FROM Economy WHERE Owner = ? AND AccountId = ?";
-            var statement = connection.prepareStatement(query);
+        try (var connection = databaseManager.getConnection();
+             var statement = connection.prepareStatement("SELECT Balance FROM Economy WHERE Owner = ? AND AccountId = ?")) {
+
             statement.setString(1, owner.toString());
             statement.setString(2, accountId.toString());
-            var resultSet = statement.executeQuery();
 
-            var hasNext = resultSet.next();
+            try (var resultSet = statement.executeQuery()) {
+                if (!resultSet.next()) return new BigDecimal(ServerSystem.Instance.getEconomyProvider().getDefaultBalance());
 
-            if (!hasNext) {
-                resultSet.close();
-                statement.close();
-                return new BigDecimal(ServerSystem.Instance.getEconomyProvider().getDefaultBalance());
+                return resultSet.getBigDecimal("Balance");
             }
-
-            var balance = resultSet.getBigDecimal("Balance");
-
-            resultSet.close();
-            statement.close();
-
-            return balance;
         } catch (SQLException exception) {
             throw new RuntimeException("Error looking up balance for '${owner}' ('${accountId}')'", exception);
         }
@@ -49,17 +39,18 @@ public abstract class AbstractSqlBankAccount extends AbstractBankAccount {
     public void setBalance(BigDecimal balance) {
         balance = balance.max(BigDecimal.ZERO);
 
-        try {
-            var query = isInDatabase()? "UPDATE Economy SET Balance = ? WHERE Owner = ? AND AccountId = ?"
-                    : "INSERT INTO Economy (Balance, Owner, AccountId) VALUES (?, ?, ?)";
-            var statement = connection.prepareStatement(query);
-            statement.setBigDecimal(1, balance);
-            statement.setString(2, owner.toString());
-            statement.setString(3, accountId.toString());
+        var query = isInDatabase()?
+                "UPDATE Economy SET Balance = ? WHERE Owner = ? AND AccountId = ?" :
+                "INSERT INTO Economy (Balance, Owner, AccountId) VALUES (?, ?, ?)";
 
-            statement.executeUpdate();
+        try (var connection = databaseManager.getConnection()) {
+            try (var statement = connection.prepareStatement(query)) {
+                statement.setBigDecimal(1, balance);
+                statement.setString(2, owner.toString());
+                statement.setString(3, accountId.toString());
 
-            statement.close();
+                statement.executeUpdate();
+            }
         } catch (SQLException exception) {
             throw new RuntimeException("Error setting balance for '${owner}' ('${accountId}')'", exception);
         }
@@ -67,15 +58,13 @@ public abstract class AbstractSqlBankAccount extends AbstractBankAccount {
 
     @Override
     public void delete() {
-        try {
-            var query = "DELETE FROM Economy WHERE Owner = ? AND AccountId = ?";
-            var statement = connection.prepareStatement(query);
+        try (var connection = databaseManager.getConnection();
+             var statement = connection.prepareStatement("DELETE FROM Economy WHERE Owner = ? AND AccountId = ?")) {
+
             statement.setString(1, owner.toString());
             statement.setString(2, accountId.toString());
 
             statement.executeUpdate();
-
-            statement.close();
         } catch (SQLException exception) {
             throw new RuntimeException("Error resetting balance for '${owner}' ('${accountId}')'", exception);
         }
@@ -83,24 +72,19 @@ public abstract class AbstractSqlBankAccount extends AbstractBankAccount {
 
     @Override
     public void save() {
-
+        // No-op for SQL implementations as changes are saved immediately
     }
 
     private boolean isInDatabase() {
-        try {
-            var query = "SELECT * FROM Economy WHERE Owner = ? AND AccountId = ?";
-            var statement = connection.prepareStatement(query);
+        try (var connection = databaseManager.getConnection();
+             var statement = connection.prepareStatement("SELECT 1 FROM Economy WHERE Owner = ? AND AccountId = ?")) {
+
             statement.setString(1, owner.toString());
             statement.setString(2, accountId.toString());
 
-            var resultSet = statement.executeQuery();
-
-            var hasNext = resultSet.next();
-
-            resultSet.close();
-            statement.close();
-
-            return hasNext;
+            try (var resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
         } catch (SQLException exception) {
             throw new RuntimeException("Error checking if account '${owner}' ('${accountId}') is in database!", exception);
         }

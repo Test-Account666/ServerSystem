@@ -1,15 +1,15 @@
 package me.testaccount666.serversystem.userdata.money;
 
 import lombok.Getter;
+import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.managers.config.ConfigReader;
-import me.testaccount666.serversystem.managers.database.EconomyDatabaseManager;
+import me.testaccount666.serversystem.managers.database.economy.AbstractEconomyDatabaseManager;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.SQLException;
 import java.util.Optional;
 
 public class EconomyProvider {
@@ -24,43 +24,105 @@ public class EconomyProvider {
     private final String _defaultBalance;
     @Getter
     private final Type _economyType;
-    private final EconomyDatabaseManager _databaseManager;
+    private final AbstractEconomyDatabaseManager _databaseManager;
 
-    public EconomyProvider(ConfigReader configReader, EconomyDatabaseManager databaseManager) {
+    public EconomyProvider(ConfigReader configReader) {
         _currencySingular = configReader.getString("Economy.Format.CurrencySymbol.Singular");
         _currencyPlural = configReader.getString("Economy.Format.CurrencySymbol.Plural");
         _thousandSeparator = configReader.getString("Economy.Format.Separators.Thousands");
         _decimalSeparator = configReader.getString("Economy.Format.Separators.Decimals");
         _moneyFormat = configReader.getString("Economy.Format.MoneyFormat");
         _defaultBalance = configReader.getString("Economy.StartingBalance");
-        _databaseManager = databaseManager;
+
+        if (!configReader.getBoolean("Economy.Enabled", true)) {
+            _economyType = Type.DISABLED;
+            _databaseManager = null;
+            return;
+        }
+
         var economyTypeOptional = Type.parseType(configReader.getString("Economy.StorageType.Value").toUpperCase());
+        _databaseManager = ServerSystem.Instance.getEconomyDatabaseManager();
 
         if (economyTypeOptional.isEmpty()) {
-            _economyType = Type.YAML;
-            Bukkit.getLogger().warning("Found invalid economy type in the 'economy.yml'! Using YAML as default!");
+            _economyType = Type.SQLITE;
+            Bukkit.getLogger().warning("Found invalid economy type in the 'economy.yml'! Using SQLITE as default!");
             return;
         }
 
         _economyType = economyTypeOptional.get();
-
-        if (_economyType == Type.MYSQL) _databaseManager.initialize();
+        _databaseManager.initialize();
     }
 
     public AbstractBankAccount instantiateBankAccount(OfflineUser offlineUser, BigInteger accountId, FileConfiguration userConfig) {
+        Bukkit.getLogger().severe("Instantiating bank account for user ${offlineUser.getName()} (${offlineUser.getUuid()}, AccountID: ${accountId})");
+        if (_economyType == Type.DISABLED) return new DisabledBankAccount(offlineUser.getUuid(), accountId);
+        migrateYamlBankAccountIfNeeded(offlineUser, accountId, userConfig);
+
         return switch (_economyType) {
-            case YAML -> new YamlBankAccount(offlineUser, accountId, userConfig);
-            case MYSQL -> {
-                try {
-                    yield new MySqlBankAccount(offlineUser.getUuid(), accountId, _databaseManager.getConnection());
-                } catch (SQLException exception) {
-                    Bukkit.getLogger().severe("Failed to get database connection for bank account: ${offlineUser.getName()} (${offlineUser.getUuid()}, AccountID: ${accountId})");
-                    exception.printStackTrace();
-                    yield new DisabledBankAccount(offlineUser.getUuid(), accountId);
-                }
+            case MYSQL -> new MySqlBankAccount(offlineUser.getUuid(), accountId);
+            case SQLITE -> new SqliteBankAccount(offlineUser.getUuid(), accountId);
+            default -> {
+                Bukkit.getLogger().warning("Found invalid economy type '${_economyType}' in the 'economy.yml'! Using Sqlite as default!");
+                yield new SqliteBankAccount(offlineUser.getUuid(), accountId);
             }
-            default -> new DisabledBankAccount(offlineUser.getUuid(), accountId);
         };
+    }
+
+    /**
+     * Checks if a user has YAML bank account data and migrates it to the new SQLite database if needed.
+     *
+     * @param offlineUser The offline user
+     * @param accountId   The bank account ID being instantiated
+     * @param userConfig  The user's configuration
+     */
+    private void migrateYamlBankAccountIfNeeded(OfflineUser offlineUser, BigInteger accountId, FileConfiguration userConfig) {
+        Bukkit.getLogger().severe("Checking for YAML bank account data for user ${offlineUser.getName()} (${offlineUser.getUuid()})");
+
+        if (!userConfig.isSet("User.BankAccounts")) {
+            Bukkit.getLogger().severe("No YAML bank accounts found for user ${offlineUser.getName()} (${offlineUser.getUuid()})! Skipping migration...");
+            return;
+        }
+
+        var bankAccountsSection = userConfig.getConfigurationSection("User.BankAccounts");
+        if (bankAccountsSection == null) {
+            Bukkit.getLogger().severe("Failed to get YAML bank accounts for user ${offlineUser.getName()} (${offlineUser.getUuid()}): bankAccountsSection is null!");
+            return;
+        }
+
+        var anyMigrated = false;
+
+        for (var key : bankAccountsSection.getKeys(false)) {
+            var balance = bankAccountsSection.getString("${key}.Balance");
+            if (balance == null) {
+                Bukkit.getLogger().severe("Failed to get YAML bank account balance for user ${offlineUser.getName()} (${offlineUser.getUuid()}, AccountID: ${key}): balance is null!");
+                continue;
+            }
+
+            try {
+                var currentAccountId = new BigInteger(key);
+
+                var bankAccount = switch (_economyType) {
+                    case MYSQL -> new MySqlBankAccount(offlineUser.getUuid(), currentAccountId);
+                    case SQLITE -> new SqliteBankAccount(offlineUser.getUuid(), currentAccountId);
+                    default -> throw new IllegalStateException("Unexpected economy type: ${_economyType} - Supported values: mysql, sqlite");
+                };
+
+                bankAccount.setBalance(new BigDecimal(balance));
+
+                if (currentAccountId.equals(accountId)) anyMigrated = true;
+
+                Bukkit.getLogger().info("Migrated YAML bank account data for user ${offlineUser.getName()} (${offlineUser.getUuid()}, AccountID: ${currentAccountId}) to ${_economyType} database. Balance: ${balance}");
+            } catch (NumberFormatException exception) {
+                Bukkit.getLogger().severe("Failed to parse account ID '${key}' or balance '${balance}' for user ${offlineUser.getName()} (${offlineUser.getUuid()}): ${exception.getMessage()}");
+                exception.printStackTrace();
+            }
+        }
+
+        if (!anyMigrated) return;
+        userConfig.set("User.BankAccounts", null);
+        offlineUser.save();
+
+        Bukkit.getLogger().info("Completed migration of all YAML bank accounts for user ${offlineUser.getName()} (${offlineUser.getUuid()})");
     }
 
     public String formatMoney(BigDecimal balance) {
@@ -85,8 +147,8 @@ public class EconomyProvider {
     }
 
     public enum Type {
-        YAML,
         MYSQL,
+        SQLITE,
         DISABLED;
 
         public static Optional<Type> parseType(String value) {

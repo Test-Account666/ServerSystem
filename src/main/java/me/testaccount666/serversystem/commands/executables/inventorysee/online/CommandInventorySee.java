@@ -86,7 +86,6 @@ public class CommandInventorySee extends AbstractServerSystemCommand {
         // main inventory and hotbar (slots 0-39)
         for (var slot = 0; slot < 40; slot++) displayInventory.setItem(slot, owner.getInventory().getItem(slot));
 
-        // off-hand and cursor
         displayInventory.setItem(40, owner.getInventory().getItemInOffHand());
         displayInventory.setItem(41, owner.getOpenInventory().getCursor());
     }
