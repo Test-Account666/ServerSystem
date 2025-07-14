@@ -23,6 +23,7 @@ public class UserJoinListener implements Listener {
 
         Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> {
             var user = cachedUser.getOfflineUser();
+            if (user.getLogoutPosition() == null) return;
 
             event.getPlayer().teleport(user.getLogoutPosition());
         }, 10L);
