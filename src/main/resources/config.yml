@@ -1,0 +1,28 @@
+Chat:
+  PrefixChat:
+    Enabled: true
+  ColorChat:
+    Enabled: true
+Join:
+  Spawn:
+    TeleportOnFirstJoin: true
+    TeleportOnJoin: true
+  Message:
+    Enabled: true
+    SendMessage: false
+    Message: "<Color:Highlight><SENDER> <Color:Message>joined the server."
+  Sound:
+    Enabled: false
+    Sound: "block.note_block.pling"
+Quit:
+  Message:
+    Enabled: true
+    SendMessage: false
+    Message: "<Color:Error.Highlight><SENDER> <Color:Error.Message>left the server."
+  Sound:
+    Enabled: false
+    Sound: "block.note_block.harp"
+UserData:
+  Compression:
+    Enabled: true
+    Description: "Wether to enable gzip compression for UserData files. This can reduce disk space, but may increase CPU usage."

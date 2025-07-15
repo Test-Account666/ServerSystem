@@ -1,5 +1,12 @@
 Permissions:
   Commands:
+    ClearChat:
+      Use:
+        Required: true
+        Value: "serversystem.moderation.command.clearchat.use"
+      Bypass:
+        Required: true
+        Value: "serversystem.moderation.command.clearchat.bypass"
     GameMode:
       Use:
         Required: true

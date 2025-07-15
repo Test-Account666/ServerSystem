@@ -4,13 +4,13 @@ import me.testaccount666.serversystem.ServerSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.ServicePriority;
 
-public class VaultAPI {
+public class EconomyVaultAPI {
 
     public static boolean isVaultInstalled() {
         return Bukkit.getServer().getPluginManager().getPlugin("Vault") != null;
     }
 
     public static void initialize() {
-        Bukkit.getServer().getServicesManager().register(net.milkbowl.vault.economy.Economy.class, new VaultProvider(), ServerSystem.Instance, ServicePriority.High);
+        Bukkit.getServer().getServicesManager().register(net.milkbowl.vault.economy.Economy.class, new VaultEconomyProvider(), ServerSystem.Instance, ServicePriority.High);
     }
 }

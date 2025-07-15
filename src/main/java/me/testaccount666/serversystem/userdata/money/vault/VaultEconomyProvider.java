@@ -7,7 +7,7 @@ import net.milkbowl.vault.economy.EconomyResponse;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class VaultProvider extends AbstractEconomy {
+public class VaultEconomyProvider extends AbstractEconomy {
     @Override
     public boolean isEnabled() {
         return ServerSystem.Instance.isEnabled();

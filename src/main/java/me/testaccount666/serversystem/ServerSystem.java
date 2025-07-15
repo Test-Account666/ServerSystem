@@ -18,7 +18,7 @@ import me.testaccount666.serversystem.userdata.CachedUser;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.UserManager;
 import me.testaccount666.serversystem.userdata.money.EconomyProvider;
-import me.testaccount666.serversystem.userdata.money.vault.VaultAPI;
+import me.testaccount666.serversystem.userdata.money.vault.EconomyVaultAPI;
 import me.testaccount666.serversystem.utils.Version;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -129,7 +129,7 @@ public final class ServerSystem extends JavaPlugin {
         _economyProvider = new EconomyProvider(_configManager.getEconomyConfig());
         _userManager = new UserManager();
 
-        if (VaultAPI.isVaultInstalled()) VaultAPI.initialize();
+        if (EconomyVaultAPI.isVaultInstalled()) EconomyVaultAPI.initialize();
     }
 
     @Override

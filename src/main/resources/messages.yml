@@ -276,6 +276,7 @@ Messages:
     InvalidArguments: "<Color:Error.Message>Invalid arguments. Usage: <Color:Error.Highlight><USAGE>"
     ErrorOccurred: "<Color:Error.Message>An error occured. Please see logs for more information."
     CommandDisabled: "<Color:Error.Message>Command <Color:Error.Highlight>/<LABEL> <Color:Error.Message>has been automatically disabled. Reason: <REASON>"
+    ChatFormat: "<Color:Highlight><PREFIX> <SENDER> <Color:Separators>» <Color:Message><MESSAGE>"
     AwayFromKeyboard:
       NowAfk: "You are now considered AFK."
       NoLongerAfk: "You are no longer considered AFK."

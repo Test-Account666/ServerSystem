@@ -15,13 +15,13 @@ public class ConfigurationManager {
     private final Plugin _plugin;
     private final Path _pluginFolder;
     @Getter
+    ConfigReader _generalConfig;
+    @Getter
     private ConfigReader _commandsConfig;
     @Getter
     private ConfigReader _economyConfig;
     @Getter
     private ConfigReader _moderationConfig;
-    @Getter
-    private ConfigReader _userDataConfig;
 
     public ConfigurationManager(Plugin plugin) {
         _plugin = plugin;
@@ -29,6 +29,7 @@ public class ConfigurationManager {
     }
 
     public void loadAllConfigs() throws FileNotFoundException {
+        initializeGeneralConfig();
         initializeCommandsConfig();
         initializePermissionsConfig();
         initializeMessagesConfig();
@@ -36,14 +37,13 @@ public class ConfigurationManager {
         initializeDefaultsConfig();
         initializeEconomyConfig();
         initializeModerationConfig();
-        initializeUserDataConfig();
         createUserDataFolder();
     }
 
-    private void initializeUserDataConfig() throws FileNotFoundException {
-        var userDataFile = _pluginFolder.resolve("userdata.yml").toFile();
-        ensureConfigFileExists(userDataFile, "userdata.yml");
-        _userDataConfig = new DefaultConfigReader(userDataFile, _plugin);
+    private void initializeGeneralConfig() throws FileNotFoundException {
+        _plugin.saveDefaultConfig();
+        var generalFile = _pluginFolder.resolve("config.yml").toFile();
+        _generalConfig = new DefaultConfigReader(generalFile, _plugin);
     }
 
     private void initializeCommandsConfig() throws FileNotFoundException {
