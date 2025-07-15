@@ -55,7 +55,7 @@ public class CommandFly extends AbstractServerSystemCommand {
         targetPlayer.setAllowFlight(isFlying);
         if (!isOnGround) targetPlayer.setFlying(isFlying);
 
-        command("Fly.Success", targetUser).target(targetPlayer.getName()).build();
+        command(messagePath, targetUser).target(targetPlayer.getName()).build();
 
         if (isSelf) return;
         command("Fly.Success" + (isFlying? "Enabled" : "Disabled"), commandSender).target(targetPlayer.getName()).build();
