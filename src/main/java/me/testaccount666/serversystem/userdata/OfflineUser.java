@@ -34,7 +34,7 @@ import java.util.zip.GZIPOutputStream;
  * even when the player is offline.
  * <p>
  * User data can be optionally compressed using GZIP compression to reduce disk space usage.
- * Compression can be enabled or disabled in the userdata.yml configuration file.
+ * Compression can be enabled or disabled in the config.yml configuration file.
  */
 public class OfflineUser {
     protected final File userFile;
@@ -221,7 +221,7 @@ public class OfflineUser {
      * @return true if compression is enabled, false otherwise
      */
     private boolean isCompressionEnabled() {
-        return ServerSystem.Instance.getConfigManager().getUserDataConfig().getBoolean("Compression.Enabled", true);
+        return ServerSystem.Instance.getConfigManager().getGeneralConfig().getBoolean("UserData.Compression.Enabled", true);
     }
 
     /**
