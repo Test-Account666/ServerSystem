@@ -1,5 +1,6 @@
 package me.testaccount666.serversystem.commands.executables.spawn;
 
+import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.managers.PermissionManager;
@@ -25,16 +26,24 @@ public class CommandSpawn extends AbstractServerSystemCommand {
     protected final FileConfiguration spawnConfiguration;
     protected final boolean teleportOnJoin;
     protected final boolean teleportOnFirstJoin;
-    private final File _spawnFile = Path.of("plugins", "ServerSystem", "spawn.yml").toFile();
+    private final File _spawnFile = Path.of("plugins", "ServerSystem", "data", "spawn.yml").toFile();
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     protected Optional<Location> spawnLocation = Optional.empty();
 
     public CommandSpawn() {
+        var legacySpawnFile = Path.of("plugins", "ServerSystem", "spawn.yml");
+        if (legacySpawnFile.toFile().exists()) {
+            legacySpawnFile.toFile().renameTo(_spawnFile);
+            Bukkit.getLogger().info("Found 'spawn.yml' in wrong directory. It was moved to '${_spawnFile.getAbsolutePath()}'.");
+        }
+
         spawnConfiguration = YamlConfiguration.loadConfiguration(_spawnFile);
 
         saveDefaultConfig();
+        var config = ServerSystem.Instance.getConfigManager().getGeneralConfig();
 
-        teleportOnJoin = spawnConfiguration.getBoolean("Config.TeleportOnJoin");
-        teleportOnFirstJoin = spawnConfiguration.getBoolean("Config.TeleportOnFirstJoin");
+        teleportOnJoin = config.getBoolean("Join.Spawn.TeleportOnJoin");
+        teleportOnFirstJoin = config.getBoolean("Join.Spawn.TeleportOnFirstJoin");
 
         if (!spawnConfiguration.isSet("Spawn")) return;
 
