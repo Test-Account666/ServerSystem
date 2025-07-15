@@ -23,13 +23,6 @@
         <tag>HEAD</tag>
     </scm>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>bytecode.space</id>
-            <url>https://repo.bytecode.space/repository/maven-public/</url>
-        </pluginRepository>
-    </pluginRepositories>
-
     <build>
         <defaultGoal>clean package</defaultGoal>
         <plugins>
