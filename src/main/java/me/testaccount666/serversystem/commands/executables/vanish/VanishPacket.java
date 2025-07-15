@@ -34,7 +34,7 @@ public class VanishPacket {
                 continue;
             }
 
-            if (PermissionManager.hasPermission(all, "Commands.Vanish.Show", false)) {
+            if (PermissionManager.hasCommandPermission(all, "Vanish.Show", false)) {
                 var craftAll = (CraftPlayer) all;
                 craftAll.getHandle().connection.send(infoPacket);
                 continue;

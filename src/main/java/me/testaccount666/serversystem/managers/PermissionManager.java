@@ -23,6 +23,10 @@ public class PermissionManager {
         return hasPermission(commandSender, "Commands.${permissionPath}", sendFailInfo);
     }
 
+    public static boolean hasCommandPermission(User user, String permissionPath, boolean sendFailInfo) {
+        return hasPermission(user.getCommandSender(), "Commands.${permissionPath}", sendFailInfo);
+    }
+
     public static boolean hasCommandPermission(CommandSender commandSender, String permissionPath) {
         return hasPermission(commandSender, "Commands.${permissionPath}");
     }

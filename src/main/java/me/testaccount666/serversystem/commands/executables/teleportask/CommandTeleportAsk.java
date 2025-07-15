@@ -223,7 +223,7 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
         var teleporter = teleportRequest.isTeleportHere()? commandSender : requester;
         var target = teleportRequest.isTeleportHere()? requester : commandSender;
 
-        var canInstantTeleport = PermissionManager.hasPermission(teleporter.getCommandSender(), "Commands.TeleportAsk.InstantTeleport", false);
+        var canInstantTeleport = PermissionManager.hasCommandPermission(teleporter, "TeleportAsk.InstantTeleport", false);
 
         if (canInstantTeleport) {
             executeTeleport(teleporter, target, label);

@@ -60,7 +60,7 @@ public class TabCompleterKit implements ServerSystemTabCompleter {
             case "deletekit" -> "Kit.Delete";
             default -> null;
         };
-        return PermissionManager.hasCommandPermission(commandSender.getCommandSender(), permissionNode, false);
+        return PermissionManager.hasCommandPermission(commandSender, permissionNode, false);
     }
 
     private Optional<List<String>> handleKitNameCompletion(String argument) {

@@ -25,7 +25,7 @@ public class TabCompleterAdminHome implements ServerSystemTabCompleter {
     }
 
     private Optional<List<String>> handleHomeCommand(User commandSender, String... arguments) {
-        if (!PermissionManager.hasPermission(commandSender.getCommandSender(), "Commands.AdminHome.Use", false)) return Optional.empty();
+        if (!PermissionManager.hasCommandPermission(commandSender, "Commands.AdminHome.Use", false)) return Optional.empty();
 
         if (arguments.length <= 1) return Optional.empty();
 
@@ -33,14 +33,14 @@ public class TabCompleterAdminHome implements ServerSystemTabCompleter {
     }
 
     private Optional<List<String>> handleSetHomeCommand(User commandSender, String... arguments) {
-        if (!PermissionManager.hasPermission(commandSender.getCommandSender(), "Commands.AdminSetHome.Use", false)) return Optional.empty();
+        if (!PermissionManager.hasCommandPermission(commandSender, "AdminSetHome.Use", false)) return Optional.empty();
         if (arguments.length <= 1) return Optional.empty();
 
         return Optional.of(List.of());
     }
 
     private Optional<List<String>> handleDeleteHomeCommand(User commandSender, String... arguments) {
-        if (!PermissionManager.hasPermission(commandSender.getCommandSender(), "Commands.AdminDeleteHome.Use", false)) return Optional.empty();
+        if (!PermissionManager.hasCommandPermission(commandSender, "AdminDeleteHome.Use", false)) return Optional.empty();
         if (arguments.length <= 1) return Optional.empty();
 
         return handleHomeCompletion(commandSender, arguments);

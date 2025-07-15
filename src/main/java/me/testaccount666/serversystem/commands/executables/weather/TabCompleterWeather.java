@@ -14,7 +14,7 @@ public class TabCompleterWeather implements ServerSystemTabCompleter {
 
     @Override
     public Optional<List<String>> tabComplete(User commandSender, Command command, String label, String... arguments) {
-        if (!PermissionManager.hasPermission(commandSender.getCommandSender(), "Commands.Weather.Use", false)) return Optional.of(List.of());
+        if (!PermissionManager.hasCommandPermission(commandSender, "Weather.Use", false)) return Optional.of(List.of());
 
         if (command.getName().equalsIgnoreCase("weather")) {
             if (arguments.length <= 1) {

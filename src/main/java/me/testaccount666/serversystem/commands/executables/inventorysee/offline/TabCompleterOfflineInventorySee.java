@@ -14,7 +14,7 @@ public class TabCompleterOfflineInventorySee implements ServerSystemTabCompleter
 
     @Override
     public Optional<List<String>> tabComplete(User commandSender, Command command, String label, String... arguments) {
-        if (!PermissionManager.hasPermission(commandSender.getCommandSender(), "Commands.OfflineInventorySee.Use", false))
+        if (!PermissionManager.hasCommandPermission(commandSender, "OfflineInventorySee.Use", false))
             return Optional.of(List.of());
 
         if (arguments.length <= 1) return getOfflinePlayerNames(arguments);

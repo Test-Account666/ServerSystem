@@ -14,7 +14,7 @@ public class TabCompleterGameMode implements ServerSystemTabCompleter {
 
     @Override
     public Optional<List<String>> tabComplete(User commandSender, Command command, String label, String... arguments) {
-        if (!PermissionManager.hasPermission(commandSender.getCommandSender(), "Commands.GameMode.Use", false)) return Optional.empty();
+        if (!PermissionManager.hasCommandPermission(commandSender, "GameMode.Use", false)) return Optional.empty();
 
         if (command.getName().equalsIgnoreCase("gamemode")) return handleGameModeCommand(arguments);
 

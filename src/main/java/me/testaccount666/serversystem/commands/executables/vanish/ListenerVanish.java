@@ -144,7 +144,7 @@ public class ListenerVanish implements Listener {
     }
 
     private void handleOtherPlayerJoin(Player joiningPlayer) {
-        if (PermissionManager.hasPermission(joiningPlayer, "Commands.Vanish.Show", false)) return;
+        if (PermissionManager.hasCommandPermission(joiningPlayer, "Vanish.Show", false)) return;
 
         ServerSystem.Instance.getUserManager().getCachedUsers().stream()
                 .filter(cachedUser -> !cachedUser.isOfflineUser())

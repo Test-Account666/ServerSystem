@@ -76,6 +76,6 @@ public class CommandOfflineEnderChest extends AbstractServerSystemCommand {
 
     @Override
     public boolean hasCommandAccess(Player player, Command command) {
-        return PermissionManager.hasPermission(player, "OfflineEnderChest.Use", false);
+        return PermissionManager.hasCommandPermission(player, "OfflineEnderChest.Use", false);
     }
 }

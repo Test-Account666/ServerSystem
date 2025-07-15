@@ -12,7 +12,7 @@ public class TabCompleterRepair implements ServerSystemTabCompleter {
 
     @Override
     public Optional<List<String>> tabComplete(User commandSender, Command command, String label, String... arguments) {
-        if (!PermissionManager.hasCommandPermission(commandSender.getCommandSender(), "Repair.Use", false)) return Optional.of(List.of());
+        if (!PermissionManager.hasCommandPermission(commandSender, "Repair.Use", false)) return Optional.of(List.of());
         if (arguments.length != 1) return Optional.of(List.of());
 
         var potentialCompletions = List.of("all", "*", "armor", "hand", "offhand", "inventory");

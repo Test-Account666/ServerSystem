@@ -15,7 +15,7 @@ public class TabCompleterOfflineTeleport implements ServerSystemTabCompleter {
 
     @Override
     public Optional<List<String>> tabComplete(User commandSender, Command command, String label, String... arguments) {
-        var permissionName = switch (command.getName()) {
+        var permissionPath = switch (command.getName()) {
             case "offlineteleport" -> "OfflineTeleport.Use";
             case "offlineteleporthere" -> "OfflineTeleportHere.Use";
             default -> {
@@ -24,8 +24,8 @@ public class TabCompleterOfflineTeleport implements ServerSystemTabCompleter {
             }
         };
 
-        if (permissionName == null) return Optional.of(List.of());
-        if (!PermissionManager.hasPermission(commandSender.getCommandSender(), permissionName, false)) return Optional.of(List.of());
+        if (permissionPath == null) return Optional.of(List.of());
+        if (!PermissionManager.hasCommandPermission(commandSender, permissionPath, false)) return Optional.of(List.of());
         if (arguments.length != 1) return Optional.of(List.of());
 
         return getOfflinePlayerNames(arguments);

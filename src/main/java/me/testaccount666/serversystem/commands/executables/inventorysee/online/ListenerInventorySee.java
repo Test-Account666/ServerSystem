@@ -48,7 +48,7 @@ public class ListenerInventorySee extends AbstractInventorySeeListener implement
         var cachedInventory = _commandInventorySee.inventoryCache.get(owner);
         if (cachedInventory == null || (cachedInventory != topInventory && cachedInventory != bottomInventory)) return;
 
-        if (!PermissionManager.hasPermission(viewerPlayer, "Commands.InventorySee.Modify", false)
+        if (!PermissionManager.hasCommandPermission(viewerPlayer, "InventorySee.Modify", false)
                 || (event.getRawSlot() > 44 && event.getRawSlot() < 54)) event.setCancelled(true);
 
         Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> _commandInventorySee.applyChangesToOwner(owner, cachedInventory), 1L);

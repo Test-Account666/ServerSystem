@@ -12,7 +12,7 @@ public class TabCompleterEconomy implements ServerSystemTabCompleter {
 
     @Override
     public Optional<List<String>> tabComplete(User commandSender, Command command, String label, String... arguments) {
-        if (!PermissionManager.hasPermission(commandSender.getCommandSender(), "Commands.Economy.Use", false)) return Optional.of(List.of());
+        if (!PermissionManager.hasCommandPermission(commandSender, "Economy.Use", false)) return Optional.of(List.of());
 
         if (arguments.length == 1) {
             var potentialCompletions = List.of("set", "take", "give");

@@ -24,7 +24,7 @@ public class TabCompleterWarp implements ServerSystemTabCompleter {
             default -> null;
         };
 
-        if (!PermissionManager.hasCommandPermission(commandSender.getCommandSender(), permissionPath, false)) return Optional.of(List.of());
+        if (!PermissionManager.hasCommandPermission(commandSender, permissionPath, false)) return Optional.of(List.of());
 
         var potentialCompletions = ServerSystem.Instance.getWarpManager().getWarps().stream().map(Warp::getName).toList();
         var completions = potentialCompletions.stream().filter(completion -> completion.toLowerCase().startsWith(arguments[0].toLowerCase())).toList();

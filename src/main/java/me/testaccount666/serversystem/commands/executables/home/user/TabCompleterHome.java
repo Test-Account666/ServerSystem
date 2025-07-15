@@ -29,7 +29,7 @@ public class TabCompleterHome implements ServerSystemTabCompleter {
     }
 
     private Optional<List<String>> handleHomeCommand(User commandSender, String label, String... arguments) {
-        if (!PermissionManager.hasPermission(commandSender.getCommandSender(), "Commands.Home.Use", false)) return Optional.empty();
+        if (!PermissionManager.hasCommandPermission(commandSender, "Home.Use", false)) return Optional.empty();
 
         return handleHomeCompletion(commandSender, arguments);
     }
@@ -39,7 +39,7 @@ public class TabCompleterHome implements ServerSystemTabCompleter {
     }
 
     private Optional<List<String>> handleDeleteHomeCommand(User commandSender, String label, String... arguments) {
-        if (!PermissionManager.hasPermission(commandSender.getCommandSender(), "Commands.DeleteHome.Use", false)) return Optional.empty();
+        if (!PermissionManager.hasCommandPermission(commandSender, "DeleteHome.Use", false)) return Optional.empty();
 
         return handleHomeCompletion(commandSender, arguments);
     }

@@ -15,7 +15,7 @@ public class TabCompleterSeen implements ServerSystemTabCompleter {
 
     @Override
     public Optional<List<String>> tabComplete(User commandSender, Command command, String label, String... arguments) {
-        if (!PermissionManager.hasPermission(commandSender.getCommandSender(), "Commands.Seen.Use", false)) return Optional.empty();
+        if (!PermissionManager.hasCommandPermission(commandSender, "Seen.Use", false)) return Optional.empty();
 
         if (arguments.length == 1) return Optional.of(Arrays.stream(Bukkit.getOfflinePlayers()).map(OfflinePlayer::getName).toList());
         return Optional.empty();

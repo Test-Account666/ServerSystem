@@ -64,7 +64,7 @@ public class CommandSudo extends AbstractServerSystemCommand {
             return;
         }
 
-        if (!(commandSender instanceof ConsoleUser) && PermissionManager.hasPermission(targetPlayer, "Commands.Sudo.Exempt", false)) {
+        if (!(commandSender instanceof ConsoleUser) && PermissionManager.hasCommandPermission(targetPlayer, "Sudo.Exempt", false)) {
             command("Sudo.CannotSudoExempt", commandSender).target(targetPlayer.getName()).build();
             return;
         }

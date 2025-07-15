@@ -22,7 +22,7 @@ public class TabCompleterInventorySee implements ServerSystemTabCompleter {
         Bukkit.getLogger().info("TabCompleterInventorySee: " + command.getName());
         if (command.getName().toLowerCase().startsWith("offline")) return _offlineInventorySee.tabComplete(commandSender, command, label, arguments);
 
-        if (!PermissionManager.hasPermission(commandSender.getCommandSender(), "Commands.InventorySee.Use", false)) {
+        if (!PermissionManager.hasCommandPermission(commandSender, "InventorySee.Use", false)) {
             Bukkit.getLogger().info("TabCompleterInventorySee: No Permission");
             return Optional.of(List.of());
         }

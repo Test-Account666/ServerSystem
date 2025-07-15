@@ -39,7 +39,7 @@ public class TabCompleterModeration implements ServerSystemTabCompleter {
             case "unban" -> "Moderation.Ban.Remove";
             default -> null;
         };
-        return PermissionManager.hasCommandPermission(commandSender.getCommandSender(), permissionNode, false);
+        return PermissionManager.hasCommandPermission(commandSender, permissionNode, false);
     }
 
     private Optional<List<String>> handlePlayerNameCompletion(String argument) {
