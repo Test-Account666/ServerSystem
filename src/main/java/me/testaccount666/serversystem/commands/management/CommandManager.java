@@ -42,6 +42,18 @@ public class CommandManager {
         return Optional.ofNullable(commandMap.get(commandName));
     }
 
+    public Optional<ServerSystemCommandExecutor> getServerSystemCommand(String commandName) {
+        return getCommandMap().values().stream()
+                .filter(PluginCommand.class::isInstance)
+                .map(PluginCommand.class::cast)
+                .filter(pluginCommand -> pluginCommand.getName().equalsIgnoreCase(commandName))
+                .filter(pluginCommand -> pluginCommand.getPlugin() == ServerSystem.Instance)
+                .map(PluginCommand::getExecutor)
+                .filter(ServerSystemCommandExecutor.class::isInstance)
+                .map(ServerSystemCommandExecutor.class::cast)
+                .findFirst();
+    }
+
     private Map<String, Command> getCommandMap() {
         var commandMap = (SimpleCommandMap) Bukkit.getCommandMap();
         return _commandMapAccessor.apply(commandMap);
