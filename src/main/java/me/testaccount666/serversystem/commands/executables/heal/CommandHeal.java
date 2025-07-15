@@ -42,6 +42,7 @@ public class CommandHeal extends AbstractServerSystemCommand {
 
         targetPlayer.setFoodLevel(20);
         targetPlayer.setSaturation(20);
+        targetPlayer.setFireTicks(0);
 
         var messagePath = isSelf? "Feed.Success" : "Feed.SuccessOther";
 
