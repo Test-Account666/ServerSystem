@@ -87,7 +87,7 @@ public class CommandTeleport extends AbstractServerSystemCommand {
         sourcePlayer.teleport(targetPlayer.getLocation());
         command("Teleport.SuccessOther", commandSender)
                 .target(sourcePlayer.getName())
-                .modifier(message -> message.replace("<TARGET2>", targetPlayer.getName()))
+                .postModifier(message -> message.replace("<TARGET2>", targetPlayer.getName()))
                 .build();
     }
 
@@ -152,7 +152,7 @@ public class CommandTeleport extends AbstractServerSystemCommand {
         var messagePath = isSelf? "TeleportPosition.Success" : "TeleportPosition.SuccessOther";
         command(messagePath, commandSender)
                 .target(targetPlayer.getName())
-                .modifier(message -> formatLocationMessage(message, location))
+                .postModifier(message -> formatLocationMessage(message, location))
                 .build();
     }
 

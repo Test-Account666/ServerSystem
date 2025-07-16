@@ -66,7 +66,7 @@ public class CommandRepair extends AbstractServerSystemCommand {
     }
 
     private void sendSuccessMessage(User commandSender, int count) {
-        command("Repair.Success", commandSender).modifier(message -> message.replace("<COUNT>", String.valueOf(count))).build();
+        command("Repair.Success", commandSender).postModifier(message -> message.replace("<COUNT>", String.valueOf(count))).build();
     }
 
     private boolean repairItem(ItemStack item) {

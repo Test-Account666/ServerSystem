@@ -96,7 +96,7 @@ public class CommandTime extends AbstractServerSystemCommand {
         }
 
         command("Time.Success", commandSender).target(world.getName())
-                .modifier(message -> message.replace("<TIME>", arguments[0])
+                .postModifier(message -> message.replace("<TIME>", arguments[0])
                         .replace("<WORLD>", world.getName())).build();
     }
 

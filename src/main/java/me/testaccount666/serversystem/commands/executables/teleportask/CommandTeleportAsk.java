@@ -146,12 +146,12 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
 
 
         var acceptButton = command("TeleportAsk.Buttons.Accept.Name", targetUser)
-                .modifier(message -> MessageManager.applyPlaceholders(message, commandSender, targetPlayer.getName(), label))
+                .postModifier(message -> MessageManager.applyPlaceholders(message, commandSender, targetPlayer.getName(), label))
                 .format(false).send(false)
                 .prefix(false).build();
 
         var denyButton = command("TeleportAsk.Buttons.Deny.Name", targetUser)
-                .modifier(message -> MessageManager.applyPlaceholders(message, commandSender, targetPlayer.getName(), label))
+                .postModifier(message -> MessageManager.applyPlaceholders(message, commandSender, targetPlayer.getName(), label))
                 .format(false).send(false)
                 .prefix(false).build();
 
@@ -162,12 +162,12 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
         }
 
         var acceptButtonTooltip = command("TeleportAsk.Buttons.Accept.Tooltip", targetUser)
-                .modifier(message -> MessageManager.applyPlaceholders(message, commandSender, targetPlayer.getName(), label))
+                .postModifier(message -> MessageManager.applyPlaceholders(message, commandSender, targetPlayer.getName(), label))
                 .format(false).prefix(false)
                 .send(false).build();
 
         var denyButtonTooltip = command("TeleportAsk.Buttons.Deny.Tooltip", targetUser)
-                .modifier(message -> MessageManager.applyPlaceholders(message, commandSender, targetPlayer.getName(), label))
+                .postModifier(message -> MessageManager.applyPlaceholders(message, commandSender, targetPlayer.getName(), label))
                 .format(false).prefix(false)
                 .send(false).build();
 

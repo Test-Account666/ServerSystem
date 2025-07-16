@@ -46,7 +46,7 @@ public class ListenerBan implements Listener {
         var unbanDate = parseUnbanDate(parsedDuration);
         var kickOptional = command("Moderation.Ban.Kick", UserManager.getConsoleUser()).sender(senderName)
                 .target(user.getName().get()).prefix(false).send(false)
-                .modifier(message -> message.replace("<DATE>", unbanDate)
+                .postModifier(message -> message.replace("<DATE>", unbanDate)
                         .replace("<REASON>", banModeration.reason())).build();
 
         if (kickOptional.isEmpty()) {

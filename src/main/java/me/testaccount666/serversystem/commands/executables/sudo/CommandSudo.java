@@ -80,7 +80,7 @@ public class CommandSudo extends AbstractServerSystemCommand {
         targetUser.addMessageListener(cachedSender);
 
         command("Sudo.Success", commandSender).target(targetPlayer.getName())
-                .modifier(message -> message.replace("<COMMAND>", sudoCommand)).build();
+                .postModifier(message -> message.replace("<COMMAND>", sudoCommand)).build();
 
         if (!sudoCommand.startsWith("/")) {
             targetPlayer.chat(sudoCommand);

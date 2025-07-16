@@ -56,7 +56,7 @@ public class CommandWarp extends AbstractServerSystemCommand {
         var warpOptional = warpManager.getWarpByName(arguments[0]);
         if (warpOptional.isEmpty()) {
             command("Warp.WarpNotFound", commandSender)
-                    .modifier(message -> message.replace("<WARP>", arguments[0])).build();
+                    .postModifier(message -> message.replace("<WARP>", arguments[0])).build();
             return;
         }
         var warp = warpOptional.get();
@@ -67,7 +67,7 @@ public class CommandWarp extends AbstractServerSystemCommand {
         playAnimation(player.getLocation());
 
         command("Warp.Success", commandSender)
-                .modifier(message -> message.replace("<WARP>", warp.getDisplayName())).build();
+                .postModifier(message -> message.replace("<WARP>", warp.getDisplayName())).build();
     }
 
     private void handleSetWarpCommand(User commandSender, String... arguments) {
@@ -81,13 +81,13 @@ public class CommandWarp extends AbstractServerSystemCommand {
 
         if (warpOptional.isPresent()) {
             command("Warp.Set.WarpAlreadyExists", commandSender)
-                    .modifier(message -> message.replace("<WARP>", arguments[0])).build();
+                    .postModifier(message -> message.replace("<WARP>", arguments[0])).build();
             return;
         }
 
         var warp = warpManager.addWarp(warpName, warpLocation);
         command("Warp.Set.Success", commandSender)
-                .modifier(message -> message.replace("<WARP>", warp.getDisplayName())).build();
+                .postModifier(message -> message.replace("<WARP>", warp.getDisplayName())).build();
     }
 
     private void handleDeleteWarpCommand(User commandSender, String... arguments) {
@@ -99,14 +99,14 @@ public class CommandWarp extends AbstractServerSystemCommand {
 
         if (warpOptional.isEmpty()) {
             command("Warp.WarpNotFound", commandSender)
-                    .modifier(message -> message.replace("<WARP>", warpName)).build();
+                    .postModifier(message -> message.replace("<WARP>", warpName)).build();
             return;
         }
         var warp = warpOptional.get();
 
         warpManager.removeWarp(warp);
         command("Warp.Delete.Success", commandSender)
-                .modifier(message -> message.replace("<WARP>", warp.getDisplayName())).build();
+                .postModifier(message -> message.replace("<WARP>", warp.getDisplayName())).build();
     }
 
     /**

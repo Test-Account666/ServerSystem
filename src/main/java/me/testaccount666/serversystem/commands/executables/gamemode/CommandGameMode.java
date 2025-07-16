@@ -64,7 +64,7 @@ public class CommandGameMode extends AbstractServerSystemCommand {
         var gameModeOptional = parseGameMode(arguments[0]);
         if (gameModeOptional.isEmpty()) {
             command("GameMode.InvalidGameMode", commandSender)
-                    .modifier(message -> replaceGameModePlaceholder(message, arguments[0])).build();
+                    .postModifier(message -> replaceGameModePlaceholder(message, arguments[0])).build();
             return;
         }
 
@@ -103,13 +103,13 @@ public class CommandGameMode extends AbstractServerSystemCommand {
         var messageKey = isSelf? "GameMode.Success" : "GameMode.SuccessOther";
 
         command(messageKey, commandSender).target(targetPlayer.getName())
-                .modifier(message -> replaceGameModePlaceholder(message, gameModeName)).build();
+                .postModifier(message -> replaceGameModePlaceholder(message, gameModeName)).build();
 
         if (isSelf) return;
 
         command("GameMode.Success", targetUser)
                 .sender(commandSender.getName().get()).target(targetPlayer.getName())
-                .modifier(message -> replaceGameModePlaceholder(message, gameModeName)).build();
+                .postModifier(message -> replaceGameModePlaceholder(message, gameModeName)).build();
     }
 
     private String replaceGameModePlaceholder(String message, String gameModeName) {

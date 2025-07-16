@@ -56,7 +56,7 @@ public class CommandAdminHome extends AbstractServerSystemCommand {
 
         if (homeOptional.isEmpty()) {
             command("Home.DoesNotExist", targetUser).target(targetUser.getName().get())
-                    .modifier(message -> message.replace("<HOME>", arguments[1])).build();
+                    .postModifier(message -> message.replace("<HOME>", arguments[1])).build();
             return;
         }
 
@@ -66,7 +66,7 @@ public class CommandAdminHome extends AbstractServerSystemCommand {
         commandSender.getPlayer().teleport(homeLocation);
 
         command("Home.Success", targetUser).target(targetUser.getName().get())
-                .modifier(message -> message.replace("<HOME>", home.getDisplayName())).build();
+                .postModifier(message -> message.replace("<HOME>", home.getDisplayName())).build();
     }
 
     private void handleDeleteHomeCommand(User commandSender, String label, String... arguments) {
@@ -92,7 +92,7 @@ public class CommandAdminHome extends AbstractServerSystemCommand {
         if (homeOptional.isEmpty()) {
 
             general("Home.DoesNotExist", commandSender).target(targetUser.getName().get())
-                    .modifier(message -> message.replace("<HOME>", arguments[1])).build();
+                    .postModifier(message -> message.replace("<HOME>", arguments[1])).build();
             return;
         }
 
@@ -100,7 +100,7 @@ public class CommandAdminHome extends AbstractServerSystemCommand {
         homeManager.removeHome(home);
 
         general("DeleteHome.Success", commandSender).target(targetUser.getName().get())
-                .modifier(message -> message.replace("<HOME>", home.getDisplayName())).build();
+                .postModifier(message -> message.replace("<HOME>", home.getDisplayName())).build();
     }
 
     private void handleSetHomeCommand(User commandSender, String label, String... arguments) {
@@ -135,7 +135,7 @@ public class CommandAdminHome extends AbstractServerSystemCommand {
         var homeName = arguments[1];
         if (homeManager.hasHome(homeName)) {
             command("SetHome.AlreadyExists", targetUser).label(label).target(targetUser.getName().get())
-                    .modifier(message -> message.replace("<HOME>", homeName)).build();
+                    .postModifier(message -> message.replace("<HOME>", homeName)).build();
             return;
         }
 
@@ -150,7 +150,7 @@ public class CommandAdminHome extends AbstractServerSystemCommand {
         homeManager.addHome(newHome);
 
         command("SetHome.Success", targetUser).label(label).target(targetUser.getName().get())
-                .modifier(message -> message.replace("<HOME>", newHome.getDisplayName())).build();
+                .postModifier(message -> message.replace("<HOME>", newHome.getDisplayName())).build();
     }
 
     @Override

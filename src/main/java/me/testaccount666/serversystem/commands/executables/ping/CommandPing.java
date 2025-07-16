@@ -31,7 +31,7 @@ public class CommandPing extends AbstractServerSystemCommand {
 
         var messagePath = isSelf? "Ping.Success" : "Ping.SuccessOther";
         command(messagePath, commandSender).target(targetPlayer.getName())
-                .modifier(message -> message.replace("<PING>", "${targetPlayer.getPing()}ms")).build();
+                .postModifier(message -> message.replace("<PING>", "${targetPlayer.getPing()}ms")).build();
     }
 
     @Override

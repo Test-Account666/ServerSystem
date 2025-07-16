@@ -53,7 +53,7 @@ public class ListenerPrefixChat implements Listener {
         var finalPrefix = prefix;
         var chatFormatOptional = general("ChatFormat", user)
                 .sender("%1\$s").prefix(false).send(false)
-                .modifier(message -> message.replace("%", "%%")
+                .preModifier(message -> message.replace("%", "%%")
                         .replace("<PREFIX>", finalPrefix)
                         .replace("<SUFFIX>", finalSuffix)
                         .replace("<MESSAGE>", "%2\$s")).build();

@@ -57,7 +57,7 @@ public class CommandKit extends AbstractServerSystemCommand {
         var kitOptional = kitManager.getKit(kitName);
         if (kitOptional.isPresent()) {
             command("Kit.Create.KitAlreadyExists", commandSender)
-                    .modifier(message -> message.replace("<KIT>", kitOptional.get().getDisplayName())).build();
+                    .postModifier(message -> message.replace("<KIT>", kitOptional.get().getDisplayName())).build();
             return;
         }
 
@@ -78,7 +78,7 @@ public class CommandKit extends AbstractServerSystemCommand {
 
         var kit = new Kit(kitName, cooldown, offHandItem, armorContents, contents);
         kitManager.addKit(kit);
-        command("Kit.Create.Success", commandSender).modifier(message -> message.replace("<KIT>", kit.getDisplayName())).build();
+        command("Kit.Create.Success", commandSender).postModifier(message -> message.replace("<KIT>", kit.getDisplayName())).build();
     }
 
     private void handleDeleteKit(User commandSender, String label, String... arguments) {
@@ -86,12 +86,12 @@ public class CommandKit extends AbstractServerSystemCommand {
         var kitManager = ServerSystem.Instance.getKitManager();
         if (!kitManager.kitExists(kitName)) {
             command("Kit.KitNotFound", commandSender)
-                    .modifier(message -> message.replace("<KIT>", arguments[0])).build();
+                    .postModifier(message -> message.replace("<KIT>", arguments[0])).build();
             return;
         }
 
         kitManager.removeKit(kitName);
-        command("Kit.Delete.Success", commandSender).modifier(message -> message.replace("<KIT>", arguments[0])).build();
+        command("Kit.Delete.Success", commandSender).postModifier(message -> message.replace("<KIT>", arguments[0])).build();
     }
 
     private void handleKit(User commandSender, String label, String... arguments) {
@@ -100,7 +100,7 @@ public class CommandKit extends AbstractServerSystemCommand {
         var kitOptional = kitManager.getKit(kitName);
         if (kitOptional.isEmpty()) {
             command("Kit.KitNotFound", commandSender)
-                    .modifier(message -> message.replace("<KIT>", arguments[0])).build();
+                    .postModifier(message -> message.replace("<KIT>", arguments[0])).build();
             return;
         }
         var kit = kitOptional.get();
@@ -120,7 +120,7 @@ public class CommandKit extends AbstractServerSystemCommand {
             var cooldown = commandSender.getKitCooldown(kitName);
 
             command("Kit.OnCooldown", commandSender)
-                    .modifier(message -> message.replace("<KIT>", kit.getDisplayName())
+                    .postModifier(message -> message.replace("<KIT>", kit.getDisplayName())
                             .replace("<DATE>", parseUnbanDate(cooldown))).build();
             return;
         }
@@ -130,7 +130,7 @@ public class CommandKit extends AbstractServerSystemCommand {
 
         var messagePath = "Kit.Success." + (isSelf? "Self" : "Other");
         command(messagePath, commandSender).target(targetPlayer.getName())
-                .modifier(message -> message.replace("<KIT>", kit.getDisplayName())).build();
+                .postModifier(message -> message.replace("<KIT>", kit.getDisplayName())).build();
     }
 
     private String getPermission(Command command) {

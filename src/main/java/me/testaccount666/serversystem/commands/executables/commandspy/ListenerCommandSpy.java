@@ -34,7 +34,7 @@ public class ListenerCommandSpy implements Listener {
 
             var finalCommand = command;
             command("CommandSpy.Format", user).prefix(false).target(sender)
-                    .modifier(message -> message.replace("<COMMAND>", finalCommand)).build();
+                    .postModifier(message -> message.replace("<COMMAND>", finalCommand)).build();
         }
     }
 }

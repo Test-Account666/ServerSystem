@@ -26,7 +26,7 @@ public class CommandBan extends AbstractModerationCommand {
         var player = user.getPlayer();
         var unbanDate = parseUnbanDate(moderation.expireTime());
         var kickOptional = command("Moderation.Ban.Kick", commandSender).target(user.getName().get()).prefix(false)
-                .modifier(message -> message.replace("<DATE>", unbanDate)
+                .postModifier(message -> message.replace("<DATE>", unbanDate)
                         .replace("<REASON>", moderation.reason())).send(false).build();
 
         if (kickOptional.isEmpty()) {

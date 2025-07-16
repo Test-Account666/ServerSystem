@@ -50,7 +50,7 @@ public class CommandSeen extends AbstractServerSystemCommand {
         var formattedDate = parseDate(lastSeen);
 
         command("Seen.SuccessOther", commandSender).target(targetUser.getName().get())
-                .modifier(message -> message.replace("<DATE>", formattedDate)
+                .postModifier(message -> message.replace("<DATE>", formattedDate)
                         .replace("<IP>", targetUser.getLastKnownIp())).build();
     }
 

@@ -62,10 +62,10 @@ public class CommandPay extends AbstractServerSystemCommand {
 
 
             command("Pay.Success", commandSender).target(targetPlayer.getName())
-                    .modifier(message -> message.replace("<AMOUNT>", formattedAmount)).build();
+                    .postModifier(message -> message.replace("<AMOUNT>", formattedAmount)).build();
 
             command("Pay.SuccessOther", targetUser).target(targetPlayer.getName()).sender(commandSender.getName().get())
-                    .modifier(message -> message.replace("<AMOUNT>", formattedAmount)).build();
+                    .postModifier(message -> message.replace("<AMOUNT>", formattedAmount)).build();
         } catch (NumberFormatException ignored) {
             command("Pay.InvalidAmount", commandSender).target(targetPlayer.getName()).build();
         }

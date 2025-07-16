@@ -14,7 +14,8 @@ public class MessageBuilder {
     private boolean _sendMessage = true;
     private boolean _sendPrefix = true;
     private boolean _format = true;
-    private UnaryOperator<String> _messageModifier = null;
+    private UnaryOperator<String> _preMessageModifier = null;
+    private UnaryOperator<String> _postMessageModifier = null;
     private String _senderName;
     private String _targetName;
     private String _label;
@@ -37,8 +38,13 @@ public class MessageBuilder {
         return new MessageBuilder(messagePath, type, receiver);
     }
 
-    public MessageBuilder modifier(UnaryOperator<String> messageModifier) {
-        _messageModifier = messageModifier;
+    public MessageBuilder postModifier(UnaryOperator<String> messageModifier) {
+        _postMessageModifier = messageModifier;
+        return this;
+    }
+
+    public MessageBuilder preModifier(UnaryOperator<String> messageModifier) {
+        _preMessageModifier = messageModifier;
         return this;
     }
 
@@ -93,9 +99,10 @@ public class MessageBuilder {
 
         var message = messageOptional.get();
 
+        if (_preMessageModifier != null) message = _preMessageModifier.apply(message);
         if (_senderName != null) message = message.replace("<SENDER>", _senderName);
         if (_targetName == null) _targetName = _receiver.getName().orElse("Unknown");
-        if (_messageModifier != null) message = _messageModifier.apply(message);
+        if (_postMessageModifier != null) message = _postMessageModifier.apply(message);
 
         var formattedMessage = _format? MessageManager.formatMessage(message, _receiver, _targetName, _label, _sendPrefix) : message;
         if (_sendMessage) _receiver.sendMessage(formattedMessage);

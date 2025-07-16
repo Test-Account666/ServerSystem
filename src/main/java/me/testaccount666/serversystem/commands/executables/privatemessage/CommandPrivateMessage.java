@@ -131,12 +131,12 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
 
         var successOptional = command("PrivateMessage.Success", commandSender)
                 .format(false).target(targetName).prefix(false).send(false)
-                .modifier(msg -> MessageManager.applyPlaceholders(msg, commandSender, targetName, label)
+                .postModifier(msg -> MessageManager.applyPlaceholders(msg, commandSender, targetName, label)
                         .replace("<MESSAGE>", message)).build();
 
         var successOtherOptional = command("PrivateMessage.SuccessOther", targetUser)
                 .sender(commandSender.getName().get()).prefix(false).send(false)
-                .modifier(msg -> MessageManager.applyPlaceholders(msg, targetUser, targetName, label)
+                .postModifier(msg -> MessageManager.applyPlaceholders(msg, targetUser, targetName, label)
                         .replace("<MESSAGE>", message)).build();
 
         if (successOptional.isEmpty() || successOtherOptional.isEmpty()) {

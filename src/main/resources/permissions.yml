@@ -389,6 +389,10 @@ Permissions:
         Shadow:
           Required: true
           Value: "serversystem.moderation.mute.shadow"
+  Chat:
+    ColorChat:
+      Required: true
+      Value: "serversystem.chat.colored"
   Homes:
     MaxHomes:
       Required: true

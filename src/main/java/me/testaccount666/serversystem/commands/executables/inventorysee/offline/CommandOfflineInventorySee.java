@@ -37,7 +37,7 @@ public class CommandOfflineInventorySee extends AbstractServerSystemCommand {
         if (inventoryLoader == null) {
 
             general("CommandDisabled", commandSender).label(label)
-                    .modifier(message -> message.replace("<REASON>", "NBTAPI is not installed, Offline-InventorySee will not work!"));
+                    .postModifier(message -> message.replace("<REASON>", "NBTAPI is not installed, Offline-InventorySee will not work!"));
             return;
         }
 

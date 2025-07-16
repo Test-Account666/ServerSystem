@@ -40,7 +40,7 @@ public class CommandBalance extends AbstractServerSystemCommand {
 
         command(messagePath, commandSender)
                 .target(targetPlayer.getName())
-                .modifier(message -> message.replace("<BALANCE>", formattedBalance)).build();
+                .postModifier(message -> message.replace("<BALANCE>", formattedBalance)).build();
     }
 
     @Override

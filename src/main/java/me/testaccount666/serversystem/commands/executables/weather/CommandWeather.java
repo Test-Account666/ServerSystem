@@ -104,7 +104,7 @@ public class CommandWeather extends AbstractServerSystemCommand {
         }
 
         command("Weather.Success", commandSender).target(world.getName())
-                .modifier(message -> message.replace("<WEATHER>", arguments[0])
+                .postModifier(message -> message.replace("<WEATHER>", arguments[0])
                         .replace("<WORLD>", world.getName()));
     }
 

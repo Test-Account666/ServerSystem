@@ -82,11 +82,11 @@ public class CommandSpeed extends AbstractServerSystemCommand {
 
         var messagePath = isSelf? "Speed.Success" : "Speed.SuccessOther";
         command(messagePath, commandSender).target(targetPlayer.getName())
-                .modifier(message -> message.replace("<SPEED>", arguments[0])).build();
+                .postModifier(message -> message.replace("<SPEED>", arguments[0])).build();
 
         if (isSelf) return;
         command("Speed.Success", targetUser).target(targetPlayer.getName()).sender(commandSender.getName().get())
-                .modifier(message -> message.replace("<SPEED>", arguments[0])).build();
+                .postModifier(message -> message.replace("<SPEED>", arguments[0])).build();
     }
 
     private record SpeedResult(float walkSpeed, float flySpeed) {

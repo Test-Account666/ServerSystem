@@ -59,7 +59,7 @@ public class CommandBack extends AbstractServerSystemCommand {
         var typeName = typeNameOptional.orElse("ERROR");
 
         command("Back.Success", commandSender)
-                .modifier(message -> message.replace("<TYPE>", typeName)).build();
+                .postModifier(message -> message.replace("<TYPE>", typeName)).build();
     }
 
     @Override

@@ -53,7 +53,7 @@ public class CommandHome extends AbstractServerSystemCommand {
 
         if (homeOptional.isEmpty()) {
             command("Home.DoesNotExist", commandSender)
-                    .modifier(message -> message.replace("<HOME>", arguments[0])).build();
+                    .postModifier(message -> message.replace("<HOME>", arguments[0])).build();
             return;
         }
 
@@ -63,7 +63,7 @@ public class CommandHome extends AbstractServerSystemCommand {
         commandSender.getPlayer().teleport(homeLocation);
 
         command("Home.Success", commandSender)
-                .modifier(message -> message.replace("<HOME>", home.getDisplayName())).build();
+                .postModifier(message -> message.replace("<HOME>", home.getDisplayName())).build();
     }
 
     private void handleDeleteHomeCommand(User commandSender, String label, String... arguments) {
@@ -79,7 +79,7 @@ public class CommandHome extends AbstractServerSystemCommand {
 
         if (homeOptional.isEmpty()) {
             command("Home.DoesNotExist", commandSender)
-                    .modifier(message -> message.replace("<HOME>", arguments[0])).build();
+                    .postModifier(message -> message.replace("<HOME>", arguments[0])).build();
             return;
         }
 
@@ -87,7 +87,7 @@ public class CommandHome extends AbstractServerSystemCommand {
         homeManager.removeHome(home);
 
         command("DeleteHome.Success", commandSender)
-                .modifier(message -> message.replace("<HOME>", home.getDisplayName())).build();
+                .postModifier(message -> message.replace("<HOME>", home.getDisplayName())).build();
     }
 
     private void handleSetHomeCommand(User commandSender, String label, String... arguments) {
@@ -113,7 +113,7 @@ public class CommandHome extends AbstractServerSystemCommand {
         if (maxHomes <= currentHomeCount) {
 
             command("SetHome.MaxHomes", commandSender)
-                    .modifier(message -> message.replace("<MAX_HOMES>", String.valueOf(maxHomes))
+                    .postModifier(message -> message.replace("<MAX_HOMES>", String.valueOf(maxHomes))
                             .replace("<CURRENT_HOMES>", String.valueOf(currentHomeCount))).build();
             return;
         }
@@ -122,7 +122,7 @@ public class CommandHome extends AbstractServerSystemCommand {
 
         if (homeManager.hasHome(homeName)) {
             command("SetHome.AlreadyExists", commandSender)
-                    .modifier(message -> message.replace("<HOME>", homeName)).build();
+                    .postModifier(message -> message.replace("<HOME>", homeName)).build();
             return;
         }
 
@@ -137,7 +137,7 @@ public class CommandHome extends AbstractServerSystemCommand {
         homeManager.addHome(newHome);
 
         command("SetHome.Success", commandSender)
-                .modifier(message -> message.replace("<HOME>", newHome.getDisplayName())).build();
+                .postModifier(message -> message.replace("<HOME>", newHome.getDisplayName())).build();
     }
 
     @Override

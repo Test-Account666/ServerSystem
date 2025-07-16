@@ -49,7 +49,7 @@ public class CommandSmelt extends AbstractServerSystemCommand {
         commandSender.getPlayer().getInventory().setItemInMainHand(smeltedItem);
 
         command("Smelt.Success", commandSender).
-                modifier(message -> message.replace("<INPUT>", itemInHand.getType().name())
+                postModifier(message -> message.replace("<INPUT>", itemInHand.getType().name())
                         .replace("<OUTPUT>", smeltedItem.getType().name())).build();
     }
 

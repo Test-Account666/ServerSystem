@@ -24,7 +24,7 @@ public class CommandTeamChat extends AbstractServerSystemCommand {
 
         var message = String.join(" ", arguments).trim();
         var formatOptional = command("TeamChat.Format", commandSender).send(false)
-                .prefix(false).modifier(format -> format.replace("<MESSAGE>", message)).build();
+                .prefix(false).postModifier(format -> format.replace("<MESSAGE>", message)).build();
         if (formatOptional.isEmpty()) return;
         var format = formatOptional.get();
 

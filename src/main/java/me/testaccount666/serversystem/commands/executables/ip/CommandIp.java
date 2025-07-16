@@ -36,6 +36,6 @@ public class CommandIp extends AbstractServerSystemCommand {
         var targetPlayer = targetUser.getPlayer();
 
         command("Ip.Success", commandSender).target(targetPlayer.getName())
-                .modifier(message -> message.replace("<IP>", targetPlayer.getAddress().getAddress().getHostAddress())).build();
+                .postModifier(message -> message.replace("<IP>", targetPlayer.getAddress().getAddress().getHostAddress())).build();
     }
 }

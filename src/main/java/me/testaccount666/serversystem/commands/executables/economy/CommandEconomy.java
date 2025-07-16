@@ -78,11 +78,11 @@ public class CommandEconomy extends AbstractServerSystemCommand {
         UnaryOperator<String> modifier = message -> message.replace("<AMOUNT>", formattedAmount);
 
         command("Economy.${key}.Success", commandSender)
-                .target(targetUser.getName().get()).modifier(modifier).build();
+                .target(targetUser.getName().get()).postModifier(modifier).build();
 
         command("Economy.${key}.SuccessOther", targetUser)
                 .sender(commandSender.getName().get()).target(targetUser.getName().get())
-                .modifier(modifier).build();
+                .postModifier(modifier).build();
     }
 
     @Override

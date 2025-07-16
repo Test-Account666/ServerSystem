@@ -143,7 +143,7 @@ public abstract class AbstractServerSystemCommand implements ServerSystemCommand
      */
     protected void sendNoPermissionMessage(User recipient, String permission, String targetName) {
         general("NoPermission", recipient)
-                .modifier(message -> message.replace("<PERMISSION>", PermissionManager.getPermission(permission)))
+                .postModifier(message -> message.replace("<PERMISSION>", PermissionManager.getPermission(permission)))
                 .target(targetName).build();
     }
 }
