@@ -3,9 +3,11 @@ package me.testaccount666.serversystem.commands.executables.teleportask;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
+import me.testaccount666.serversystem.managers.MessageManager;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.utils.ComponentColor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -144,10 +146,14 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
 
 
         var acceptButton = command("TeleportAsk.Buttons.Accept.Name", targetUser)
-                .send(false).prefix(false).build();
+                .modifier(message -> MessageManager.applyPlaceholders(message, commandSender, targetPlayer.getName(), label))
+                .format(false).send(false)
+                .prefix(false).build();
 
         var denyButton = command("TeleportAsk.Buttons.Deny.Name", targetUser)
-                .send(false).prefix(false).build();
+                .modifier(message -> MessageManager.applyPlaceholders(message, commandSender, targetPlayer.getName(), label))
+                .format(false).send(false)
+                .prefix(false).build();
 
         if (acceptButton.isEmpty() || denyButton.isEmpty()) {
             Bukkit.getLogger().warning("Couldn't find accept or deny button for ${targetUser.getName().get()} in the language file. Please check the language file for errors.");
@@ -156,10 +162,14 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
         }
 
         var acceptButtonTooltip = command("TeleportAsk.Buttons.Accept.Tooltip", targetUser)
-                .prefix(false).send(false).build();
+                .modifier(message -> MessageManager.applyPlaceholders(message, commandSender, targetPlayer.getName(), label))
+                .format(false).prefix(false)
+                .send(false).build();
 
         var denyButtonTooltip = command("TeleportAsk.Buttons.Deny.Tooltip", targetUser)
-                .prefix(false).send(false).build();
+                .modifier(message -> MessageManager.applyPlaceholders(message, commandSender, targetPlayer.getName(), label))
+                .format(false).prefix(false)
+                .send(false).build();
 
         if (acceptButtonTooltip.isEmpty() || denyButtonTooltip.isEmpty()) {
             Bukkit.getLogger().warning("Couldn't find accept or deny button tooltip for ${targetUser.getName().get()} in the language file. Please check the language file for errors.");
@@ -286,8 +296,10 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
      * @return The formatted component
      */
     private Component createMessageComponent(String text, String hoverText, ClickEvent clickAction) {
-        return Component.text(text)
-                .hoverEvent(HoverEvent.showText(Component.text(hoverText)))
+        if (text == null || hoverText == null || clickAction == null) return Component.empty();
+
+        return ComponentColor.translateToComponent(text)
+                .hoverEvent(HoverEvent.showText(ComponentColor.translateToComponent(hoverText)))
                 .clickEvent(clickAction)
                 .asComponent();
     }

@@ -24,7 +24,7 @@ public class CommandBroadcast extends AbstractServerSystemCommand {
             return;
         }
 
-        var broadcast = ChatColor.translateColorCodes(String.join(" ", arguments).trim());
+        var broadcast = ChatColor.translateColor(String.join(" ", arguments).trim());
         var messageFormatOptional = command("Broadcast.Format", commandSender)
                 .target("*").prefix(false).send(false)
                 .modifier(message -> message.replace("<BROADCAST>", broadcast)).build();

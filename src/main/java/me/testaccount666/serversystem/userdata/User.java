@@ -3,6 +3,7 @@ package me.testaccount666.serversystem.userdata;
 import lombok.Getter;
 import lombok.Setter;
 import me.testaccount666.serversystem.commands.executables.teleportask.TeleportRequest;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -101,6 +102,26 @@ public class User extends OfflineUser {
 
             var user = (User) listener.getOfflineUser();
             user.sendMessage(message);
+        }
+    }
+    
+    /**
+     * Uses User#getCommandSender() to send a component message.
+     * Used as a shortcut for sending formatted messages using the Component API.
+     *
+     * @param component The component message to be sent
+     */
+    public void sendMessage(Component component) {
+        getCommandSender().sendMessage(component);
+
+        for (var listener : Collections.unmodifiableSet(messageListeners)) {
+            if (listener.isOfflineUser()) {
+                messageListeners.remove(listener);
+                continue;
+            }
+
+            var user = (User) listener.getOfflineUser();
+            user.sendMessage(component);
         }
     }
 

@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import me.testaccount666.serversystem.commands.executables.back.CommandBack;
 import me.testaccount666.serversystem.managers.config.ConfigReader;
-import me.testaccount666.serversystem.utils.ChatColor;
 import org.bukkit.Bukkit;
 
 import java.util.*;
@@ -77,12 +76,12 @@ public class MappingsData {
         private final Map<String, String> _messageColorMappings = new HashMap<>();
 
         public MessageColors(ConfigReader config) {
-            var prefixColor = ChatColor.translateColorCodes(config.getString("Mappings.MessageColors.prefix"));
-            var separatorColor = ChatColor.translateColorCodes(config.getString("Mappings.MessageColors.separators"));
-            var messageColor = ChatColor.translateColorCodes(config.getString("Mappings.MessageColors.message"));
-            var highlightColor = ChatColor.translateColorCodes(config.getString("Mappings.MessageColors.highlight"));
-            var errorMessageColor = ChatColor.translateColorCodes(config.getString("Mappings.MessageColors.error.message"));
-            var errorHighlightColor = ChatColor.translateColorCodes(config.getString("Mappings.MessageColors.error.highlight"));
+            var prefixColor = config.getString("Mappings.MessageColors.prefix");
+            var separatorColor = config.getString("Mappings.MessageColors.separators");
+            var messageColor = config.getString("Mappings.MessageColors.message");
+            var highlightColor = config.getString("Mappings.MessageColors.highlight");
+            var errorMessageColor = config.getString("Mappings.MessageColors.error.message");
+            var errorHighlightColor = config.getString("Mappings.MessageColors.error.highlight");
 
             _messageColorMappings.put("Prefix", prefixColor);
             _messageColorMappings.put("Separator", separatorColor);
@@ -92,6 +91,12 @@ public class MappingsData {
             _messageColorMappings.put("ErrorHighlight", errorHighlightColor);
         }
 
+        /**
+         * Gets the message color as a legacy String with color codes.
+         *
+         * @param colorId The color identifier
+         * @return An Optional containing the color String, or empty if not found
+         */
         public Optional<String> getMessageColor(String colorId) {
             return Optional.ofNullable(_messageColorMappings.getOrDefault(colorId, null));
         }

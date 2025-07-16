@@ -4,6 +4,8 @@ import me.testaccount666.serversystem.managers.config.ConfigReader;
 import me.testaccount666.serversystem.managers.config.DefaultConfigReader;
 import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.utils.ChatColor;
+import me.testaccount666.serversystem.utils.ComponentColor;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
@@ -35,7 +37,34 @@ public class MessageManager {
             message = prefix + message;
         }
 
-        return ChatColor.translateColorCodes(_PlaceholderManager.applyPlaceholders(message, commandSender, targetName, label != null? label : ""));
+        return ChatColor.translateColor(applyPlaceholders(message, commandSender, targetName, label));
+    }
+
+    public static String applyPlaceholders(String message, User commandSender, @Nullable String targetName, @Nullable String label) {
+        return _PlaceholderManager.applyPlaceholders(message, commandSender, targetName, label != null? label : "");
+    }
+
+    /**
+     * Formats a message with placeholders and color codes, returning a Component.
+     * This method is similar to formatMessage but returns a Component instead of a String.
+     *
+     * @param message       The message to format
+     * @param commandSender The user who sent the command
+     * @param targetName    The name of the target user (optional)
+     * @param label         The command label (optional)
+     * @param addPrefix     Whether to add the prefix to the message
+     * @return The formatted message as a Component
+     */
+    public static Component formatMessageAsComponent(String message, User commandSender, @Nullable String targetName, @Nullable String label, boolean addPrefix) {
+        if (message == null) return Component.empty();
+
+        if (addPrefix) {
+            var prefix = getMessage("General.Prefix").orElse("");
+            message = prefix + message;
+        }
+
+        var processedMessage = _PlaceholderManager.applyPlaceholders(message, commandSender, targetName, label != null? label : "");
+        return ComponentColor.translateToComponent(processedMessage);
     }
 
     public static Optional<String> getMessage(String messagePath) {

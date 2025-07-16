@@ -93,9 +93,9 @@ public class MessageBuilder {
 
         var message = messageOptional.get();
 
-        if (_messageModifier != null) message = _messageModifier.apply(message);
         if (_senderName != null) message = message.replace("<SENDER>", _senderName);
         if (_targetName == null) _targetName = _receiver.getName().orElse("Unknown");
+        if (_messageModifier != null) message = _messageModifier.apply(message);
 
         var formattedMessage = _format? MessageManager.formatMessage(message, _receiver, _targetName, _label, _sendPrefix) : message;
         if (_sendMessage) _receiver.sendMessage(formattedMessage);

@@ -3,10 +3,11 @@ package me.testaccount666.serversystem.commands.executables.privatemessage;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.events.UserPrivateMessageEvent;
+import me.testaccount666.serversystem.managers.MessageManager;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
-import net.kyori.adventure.text.Component;
+import me.testaccount666.serversystem.utils.ComponentColor;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -129,12 +130,14 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
         var message = IntStream.range(1, arguments.length).mapToObj(index -> "${arguments[index]} ").collect(Collectors.joining()).trim();
 
         var successOptional = command("PrivateMessage.Success", commandSender)
-                .target(targetName).prefix(false).send(false)
-                .modifier(msg -> msg.replace("<MESSAGE>", message)).build();
+                .format(false).target(targetName).prefix(false).send(false)
+                .modifier(msg -> MessageManager.applyPlaceholders(msg, commandSender, targetName, label)
+                        .replace("<MESSAGE>", message)).build();
 
         var successOtherOptional = command("PrivateMessage.SuccessOther", targetUser)
                 .sender(commandSender.getName().get()).prefix(false).send(false)
-                .modifier(msg -> msg.replace("<MESSAGE>", message)).build();
+                .modifier(msg -> MessageManager.applyPlaceholders(msg, targetUser, targetName, label)
+                        .replace("<MESSAGE>", message)).build();
 
         if (successOptional.isEmpty() || successOtherOptional.isEmpty()) {
             Bukkit.getLogger().warning("Couldn't find message for path Commands.PrivateMessage.Success or Commands.PrivateMessage.SuccessOther");
@@ -149,25 +152,25 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
         var success = successOptional.get();
         var successOther = successOtherOptional.get();
 
-        var successComponent = Component.text(success)
+        var successComponent = ComponentColor.translateToComponent(success)
                 .clickEvent(ClickEvent.suggestCommand("/${_privateMessageCommand} ${targetName} "))
                 .asComponent();
 
-        var successOtherComponent = Component.text(successOther)
+        var successOtherComponent = ComponentColor.translateToComponent(successOther)
                 .clickEvent(ClickEvent.suggestCommand("/${_privateMessageCommand} ${commandSender.getName().get()} "))
                 .asComponent();
 
 
         messageEvent.getRecipients().forEach(recipient -> {
             if (recipient == commandSender) {
-                commandSender.getCommandSender().sendMessage(successComponent);
+                commandSender.sendMessage(successComponent);
                 commandSender.setReplyUser(targetUser);
                 return;
             }
 
             if (recipient == targetUser && targetUser.isIgnoredPlayer(commandSender.getUuid())) return;
 
-            recipient.getCommandSender().sendMessage(successOtherComponent);
+            recipient.sendMessage(successOtherComponent);
             recipient.setReplyUser(commandSender);
         });
     }

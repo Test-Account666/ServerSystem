@@ -75,7 +75,7 @@ public enum ChatColor {
      * @param text The text to translate
      * @return The translated text with proper Minecraft color codes
      */
-    public static String translateColorCodes(String text) {
+    public static String translateColor(String text) {
         return translateAlternateColorCodes('&', text);
     }
 
