@@ -283,3 +283,41 @@ Messages:
     Offline:
       NeverPlayed: "<Color:Error:Message>Specified player <Color:Message:Highlight><TARGET> <Color:Error.Message>has never played."
       NotOffline: "<Color:Error:Message>Specified player <Color:Message:Highlight><TARGET> <Color:Error.Message>is not offline."
+  ClickableSigns:
+    Give:
+      Configuring: "You are now configuring a give sign. Place the item you want to give in your hand."
+      NoItem: "<Color:Error.Message>You need to have an item in your hand."
+      Created: "Give sign created successfully."
+    Kit:
+      NoKitManager: "<Color:Error.Message>Kit manager is not available."
+      NoKitSpecified: "<Color:Error.Message>No kit specified."
+      KitNotFound: "<Color:Error.Message>The kit <Color:Error.Highlight><KIT> <Color:Error.Message>doesn't exist."
+      KitGiven: "You received the kit <Color:Highlight><KIT><Color:Message>."
+      Created: "Kit sign created successfully."
+    Time:
+      NoTimeSpecified: "<Color:Error.Message>No time specified."
+      InvalidTime: "<Color:Error.Message>Invalid time specified."
+      TimeSet: "Time set to <Color:Highlight><TIME><Color:Message>."
+      Created: "Time sign created successfully."
+    Warp:
+      NoWarpManager: "<Color:Error.Message>Warp manager is not available."
+      NoWarpSpecified: "<Color:Error.Message>No warp specified."
+      WarpNotFound: "<Color:Error.Message>The warp <Color:Error.Highlight><WARP> <Color:Error.Message>doesn't exist."
+      Teleported: "You teleported to <Color:Highlight><WARP><Color:Message>."
+      Created: "Warp sign created successfully."
+    Weather:
+      NoWeatherSpecified: "<Color:Error.Message>No weather specified."
+      WeatherSet: "Weather set to <Color:Highlight><WEATHER><Color:Message>."
+      InvalidWeather: "<Color:Error.Message>Invalid weather specified."
+      Created: "Weather sign created successfully."
+    Cost:
+      InvalidType: "<Color:Error.Message>Invalid cost type. Use 'exp' or 'money'."
+      InvalidAmount: "<Color:Error.Message>Invalid amount specified."
+      NotEnoughExp: "<Color:Error.Message>You don't have enough experience points."
+      NotEnoughMoney: "<Color:Error.Message>You don't have enough money."
+      PaidExp: "You paid <Color:Highlight><AMOUNT> <Color:Message>experience points."
+      PaidMoney: "You paid <Color:Highlight><AMOUNT><Color:Message>."
+      NotClickableSign: "<Color:Error.Message>The sign you are looking at is not a clickable sign."
+      NotLookingAtSign: "<Color:Error.Message>You are not looking at a sign."
+      SetNone: "Cost removed from sign successfully."
+      Set: "Cost set to <Color:Highlight><TYPE> <Color:Message>with amount <Color:Highlight><AMOUNT><Color:Message>."

@@ -43,8 +43,8 @@ public class Kit {
     }
 
     private void handleOffHandItem(PlayerInventory inventory, List<ItemStack> overflowItems) {
-        var currentOffHandItem = inventory.getItemInOffHand();
         if (_offHandItem == null) return;
+        var currentOffHandItem = inventory.getItemInOffHand();
 
         if (!currentOffHandItem.getType().isAir()) {
             overflowItems.add(_offHandItem);
@@ -55,8 +55,9 @@ public class Kit {
     }
 
     private void handleArmorItems(PlayerInventory inventory, List<ItemStack> overflowItems) {
+        if (_armorContents == null) return;
         var slots = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
-        for (var index = 0; index < 4; index++) {
+        for (var index = 0; index < _armorContents.length; index++) {
             var currentItem = inventory.getItem(slots[index]);
             var newArmorItem = _armorContents[index];
 
@@ -72,7 +73,8 @@ public class Kit {
     }
 
     private void handleInventoryItems(Inventory inventory, List<ItemStack> overflowItems) {
-        for (var index = 0; index < 36; index++) {
+        if (_inventoryContents == null) return;
+        for (var index = 0; index < _inventoryContents.length; index++) {
             var currentItem = inventory.getItem(index);
             var newInventoryItem = _inventoryContents[index];
 
@@ -91,7 +93,6 @@ public class Kit {
         if (overflowItems.isEmpty()) return;
 
         for (var item : overflowItems)
-            player.getWorld().dropItemNaturally(player.getLocation(), item,
-                    (entity) -> entity.setOwner(player.getUniqueId()));
+            player.getWorld().dropItem(player.getLocation(), item, (entity) -> entity.setOwner(player.getUniqueId()));
     }
 }

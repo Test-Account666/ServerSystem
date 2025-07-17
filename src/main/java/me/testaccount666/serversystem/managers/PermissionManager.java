@@ -39,6 +39,10 @@ public class PermissionManager {
         return hasPermission(commandSender, permissionPath, true);
     }
 
+    public static boolean hasPermission(User commandSender, String permissionPath, boolean sendFailInfo) {
+        return hasPermission(commandSender.getCommandSender(), permissionPath, sendFailInfo);
+    }
+
     public static boolean hasPermission(CommandSender commandSender, String permissionPath, boolean sendFailInfo) {
         if (!isPermissionRequired(permissionPath)) return true;
 

@@ -282,3 +282,6 @@ Commands:
       deletekit:
         Enabled: true
         Aliases: "deletekit"
+  signcost:
+    Enabled: true
+    Aliases: "signcost"

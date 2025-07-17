@@ -78,6 +78,7 @@ public class CommandKit extends AbstractServerSystemCommand {
 
         var kit = new Kit(kitName, cooldown, offHandItem, armorContents, contents);
         kitManager.addKit(kit);
+        kitManager.saveAllKits();
         command("Kit.Create.Success", commandSender).postModifier(message -> message.replace("<KIT>", kit.getDisplayName())).build();
     }
 

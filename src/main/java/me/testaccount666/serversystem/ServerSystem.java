@@ -3,6 +3,7 @@ package me.testaccount666.serversystem;
 import lombok.Getter;
 import lombok.Setter;
 import me.testaccount666.migration.LegacyDataMigrator;
+import me.testaccount666.serversystem.clickablesigns.SignManager;
 import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager;
 import me.testaccount666.serversystem.commands.executables.warp.manager.WarpManager;
 import me.testaccount666.serversystem.commands.management.CommandManager;
@@ -53,6 +54,8 @@ public final class ServerSystem extends JavaPlugin {
     @Setter
     @Nullable
     private KitManager _kitManager;
+    @Getter
+    private SignManager _signManager;
 
     public static Version getServerVersion() {
         var version = Bukkit.getVersion();
@@ -114,6 +117,9 @@ public final class ServerSystem extends JavaPlugin {
         var warpFile = Path.of(getDataFolder().getPath(), "data", "warps.yml").toFile();
         var warpConfig = YamlConfiguration.loadConfiguration(warpFile);
         _warpManager = new WarpManager(warpConfig, warpFile);
+
+        _signManager = new SignManager();
+        _signManager.loadSignTypes();
 
         _moderationDatabaseManager.initialize();
 

@@ -82,6 +82,7 @@
                     <target>${java.version}</target>
                     <compilerArgs>
                         <arg>-Xplugin:Manifold</arg>
+                        <arg>-Amanifold.strings.simple.disabled=true</arg>
                     </compilerArgs>
                     <annotationProcessorPaths>
                         <path>
@@ -236,7 +237,7 @@
             <version>2.2.224</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- JUnit 5 for testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

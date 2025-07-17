@@ -371,6 +371,10 @@ Permissions:
       Other:
         Required: true
         Value: "serversystem.command.kit.other"
+    SignCost:
+      Use:
+        Required: true
+        Value: "serversystem.admin.command.signcost.use"
     Moderation:
       Ban:
         Use:
@@ -400,3 +404,54 @@ Permissions:
     Unlimited:
       Required: true
       Value: "serversystem.homes.unlimited"
+  ClickableSigns:
+    Give:
+      Use:
+        Required: true
+        Value: "serversystem.clickablesigns.give.use"
+      Create:
+        Required: true
+        Value: "serversystem.admin.clickablesigns.give.create"
+      Destroy:
+        Required: true
+        Value: "serversystem.admin.clickablesigns.give.destroy"
+    Kit:
+      Use:
+        Required: true
+        Value: "serversystem.clickablesigns.kit.use"
+      Create:
+        Required: true
+        Value: "serversystem.admin.clickablesigns.kit.create"
+      Destroy:
+        Required: true
+        Value: "serversystem.admin.clickablesigns.kit.destroy"
+    Time:
+      Use:
+        Required: true
+        Value: "serversystem.clickablesigns.time.use"
+      Create:
+        Required: true
+        Value: "serversystem.admin.clickablesigns.time.create"
+      Destroy:
+        Required: true
+        Value: "serversystem.admin.clickablesigns.time.destroy"
+    Weather:
+      Use:
+        Required: true
+        Value: "serversystem.clickablesigns.weather.use"
+      Create:
+        Required: true
+        Value: "serversystem.admin.clickablesigns.weather.create"
+      Destroy:
+        Required: true
+        Value: "serversystem.admin.clickablesigns.weather.destroy"
+    Warp:
+      Use:
+        Required: true
+        Value: "serversystem.clickablesigns.warp.use"
+      Create:
+        Required: true
+        Value: "serversystem.admin.clickablesigns.warp.create"
+      Destroy:
+        Required: true
+        Value: "serversystem.admin.clickablesigns.warp.destroy"

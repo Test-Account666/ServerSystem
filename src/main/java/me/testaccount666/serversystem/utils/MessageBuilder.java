@@ -34,6 +34,10 @@ public class MessageBuilder {
         return of(Type.COMMAND, messagePath, receiver);
     }
 
+    public static MessageBuilder sign(String messagePath, User receiver) {
+        return of(Type.CLICKABLE_SIGN, messagePath, receiver);
+    }
+
     public static MessageBuilder of(Type type, String messagePath, User receiver) {
         return new MessageBuilder(messagePath, type, receiver);
     }
@@ -82,6 +86,7 @@ public class MessageBuilder {
         var messagePath = switch (_type) {
             case GENERAL -> "General.${_messagePath}";
             case COMMAND -> "Commands.${_messagePath}";
+            case CLICKABLE_SIGN -> "ClickableSigns.${_messagePath}";
         };
 
         var messageOptional = MessageManager.getMessage(messagePath);
@@ -113,5 +118,6 @@ public class MessageBuilder {
     public enum Type {
         GENERAL,
         COMMAND,
+        CLICKABLE_SIGN,
     }
 }

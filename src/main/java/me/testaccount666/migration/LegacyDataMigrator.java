@@ -228,6 +228,8 @@ public class LegacyDataMigrator {
                 log(Level.WARNING, "Failed to migrate kit '${kitName}': ${exception.getMessage()}", exception);
             }
 
+        kitManager.saveAllKits();
+
         log(Level.INFO, "Successfully migrated ${migratedCount} kits from legacy data directory: ${_legacyDataDirectory.getAbsolutePath()}");
     }
 
