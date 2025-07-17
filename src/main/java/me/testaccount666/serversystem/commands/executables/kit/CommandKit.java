@@ -24,15 +24,9 @@ public class CommandKit extends AbstractServerSystemCommand {
     }
 
     @Override
-    public boolean hasCommandAccess(Player player, Command command) {
-        var permissionPath = getPermission(command);
-        return PermissionManager.hasCommandPermission(player, permissionPath, false);
-    }
-
-    @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -122,7 +116,7 @@ public class CommandKit extends AbstractServerSystemCommand {
 
             command("Kit.OnCooldown", commandSender)
                     .postModifier(message -> message.replace("<KIT>", kit.getDisplayName())
-                            .replace("<DATE>", parseUnbanDate(cooldown))).build();
+                            .replace("<DATE>", parseUnbanDate(cooldown, commandSender))).build();
             return;
         }
 
@@ -140,6 +134,23 @@ public class CommandKit extends AbstractServerSystemCommand {
             case "deletekit" -> "Kit.Delete";
             case "kit" -> "Kit.Use";
             default -> null;
+        };
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        var permissionPath = getPermission(command);
+        return PermissionManager.hasCommandPermission(player, permissionPath, false);
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        var commandName = command.getName().toLowerCase();
+        return switch (commandName) {
+            case "createkit" -> "CreateKit";
+            case "deletekit" -> "DeleteKit";
+            case "kit" -> "Kit";
+            default -> throw new IllegalStateException("(CommandKit) Unexpected value: ${commandName}");
         };
     }
 }

@@ -19,18 +19,6 @@ import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 public class CommandWarp extends AbstractServerSystemCommand {
 
     @Override
-    public boolean hasCommandAccess(Player player, Command command) {
-        var permissionPath = switch (command.getName().toLowerCase()) {
-            case "warp" -> "Warp.Use";
-            case "setwarp" -> "Warp.Set";
-            case "deletewarp" -> "Warp.Delete";
-            default -> null;
-        };
-
-        return PermissionManager.hasCommandPermission(player, permissionPath, false);
-    }
-
-    @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (commandSender instanceof ConsoleUser) {
             general("NotPlayer", commandSender).build();
@@ -38,7 +26,7 @@ public class CommandWarp extends AbstractServerSystemCommand {
         }
 
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -117,5 +105,22 @@ public class CommandWarp extends AbstractServerSystemCommand {
     private void playAnimation(Location location) {
         location.getWorld().playSound(location, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
         location.getWorld().spawnParticle(Particle.PORTAL, location, 100, 0.5, 0.5, 0.5, 0.05);
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "Warp";
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        var permissionPath = switch (command.getName().toLowerCase()) {
+            case "warp" -> "Warp.Use";
+            case "setwarp" -> "Warp.Set";
+            case "deletewarp" -> "Warp.Delete";
+            default -> null;
+        };
+
+        return PermissionManager.hasCommandPermission(player, permissionPath, false);
     }
 }

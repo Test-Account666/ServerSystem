@@ -52,6 +52,11 @@ public class CommandUnlimited extends AbstractServerSystemCommand {
     }
 
     @Override
+    public String getSyntaxPath(Command command) {
+        throw new UnsupportedOperationException("Unlimited command doesn't have an available syntax!");
+    }
+
+    @Override
     public boolean hasCommandAccess(Player player, Command command) {
         return PermissionManager.hasCommandPermission(player, "Unlimited.Use", false);
     }

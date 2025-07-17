@@ -1,5 +1,6 @@
 package me.testaccount666.serversystem.userdata;
 
+import me.testaccount666.serversystem.managers.messages.MappingsData;
 import me.testaccount666.serversystem.userdata.money.ConsoleBankAccount;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -23,10 +24,12 @@ public class ConsoleUser extends User {
 
     @Override
     protected void loadBasicData() {
-        name = "Server";
+        var consoleName = MappingsData.console().getName("name");
+        name = consoleName.orElse("Server");
         uuid = ConsoleUser.CONSOLE_UUID;
         bankAccount = new ConsoleBankAccount();
         acceptsMessages = true;
+        playerLanguage = "English";
     }
 
     @Override

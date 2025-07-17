@@ -78,6 +78,11 @@ public class CommandOfflineTeleport extends AbstractServerSystemCommand {
     }
 
     @Override
+    public String getSyntaxPath(Command command) {
+        return "OfflineTeleport";
+    }
+
+    @Override
     public boolean hasCommandAccess(Player player, Command command) {
         if (command.getName().equalsIgnoreCase("offlineteleport"))
             return PermissionManager.hasCommandPermission(player, "OfflineTeleport.Use", false);

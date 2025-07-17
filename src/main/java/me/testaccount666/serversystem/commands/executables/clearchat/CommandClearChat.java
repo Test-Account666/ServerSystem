@@ -27,14 +27,19 @@ public class CommandClearChat extends AbstractServerSystemCommand {
                 }
                 for (var index = 0; index < _CLEAR_LINES; index++) everyone.sendMessage(_EMPTY_LINE);
             }
-
-            var messageOptional = command("ClearChat.Success", commandSender).send(false).build();
-
-            if (messageOptional.isEmpty()) return;
-
-            var message = messageOptional.get();
-            everyone.sendMessage(message);
         });
+
+        var messageOptional = command("ClearChat.Success", commandSender).send(false).build();
+
+        if (messageOptional.isEmpty()) return;
+
+        var message = messageOptional.get();
+        Bukkit.broadcastMessage(message);
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        throw new UnsupportedOperationException("ClearChat command doesn't have an available syntax!");
     }
 
     @Override

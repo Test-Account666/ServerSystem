@@ -3,7 +3,7 @@ package me.testaccount666.serversystem.commands.executables.back;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.managers.PermissionManager;
-import me.testaccount666.serversystem.managers.globaldata.MappingsData;
+import me.testaccount666.serversystem.managers.messages.MappingsData;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
@@ -31,7 +31,7 @@ public class CommandBack extends AbstractServerSystemCommand {
             case "death" -> BackType.DEATH;
             case "teleport", "tp" -> BackType.TELEPORT;
             default -> {
-                general("InvalidArguments", commandSender).label(label).build();
+                general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
                 yield null;
             }
         };
@@ -55,11 +55,16 @@ public class CommandBack extends AbstractServerSystemCommand {
         commandSender.getPlayer().teleport(backLocation);
 
         var finalBackType = backType;
-        var typeNameOptional = MappingsData.backType().getBackTypeName(finalBackType);
+        var typeNameOptional = MappingsData.backType(commandSender).getBackTypeName(finalBackType);
         var typeName = typeNameOptional.orElse("ERROR");
 
         command("Back.Success", commandSender)
                 .postModifier(message -> message.replace("<TYPE>", typeName)).build();
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "Back";
     }
 
     @Override

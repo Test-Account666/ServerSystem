@@ -19,12 +19,12 @@ public class CommandTime extends AbstractServerSystemCommand {
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (command.getName().equalsIgnoreCase("time")) {
-            handleTimeCommand(commandSender, label, arguments);
+            handleTimeCommand(commandSender, command, label, arguments);
             return;
         }
 
         if (commandSender instanceof ConsoleUser && arguments.length == 0) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -40,19 +40,19 @@ public class CommandTime extends AbstractServerSystemCommand {
             return;
         }
 
-        handleTimeCommand(commandSender, label, command.getName(), world.getName());
+        handleTimeCommand(commandSender, command, label, command.getName(), world.getName());
     }
 
-    private void handleTimeCommand(User commandSender, String label, String... arguments) {
+    private void handleTimeCommand(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "Time.Use")) return;
 
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
         if (commandSender instanceof ConsoleUser && arguments.length == 1) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -89,7 +89,7 @@ public class CommandTime extends AbstractServerSystemCommand {
                     world.setTime(time);
                     break;
                 } catch (NumberFormatException ignored) {
-                    general("InvalidArguments", commandSender).label(label).build();
+                    general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
                     return;
                 }
             }
@@ -98,6 +98,19 @@ public class CommandTime extends AbstractServerSystemCommand {
         command("Time.Success", commandSender).target(world.getName())
                 .postModifier(message -> message.replace("<TIME>", arguments[0])
                         .replace("<WORLD>", world.getName())).build();
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        var commandName = command.getName().toLowerCase();
+        return switch (commandName) {
+            case "time" -> "Time";
+            case "day" -> "Day";
+            case "night" -> "Night";
+            case "noon" -> "Noon";
+            case "midnight" -> "Midnight";
+            default -> throw new IllegalStateException("(CommandTime) Unexpected value: ${commandName}");
+        };
     }
 
     @Override

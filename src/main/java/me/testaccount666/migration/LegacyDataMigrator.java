@@ -40,7 +40,7 @@ public class LegacyDataMigrator {
         var userOptional = userManager.getUser(uuid);
 
         if (userOptional.isEmpty()) {
-            Bukkit.getLogger().warning("Could not find user with UUID: ${uuid}");
+            ServerSystem.getLog().warning("Could not find user with UUID: ${uuid}");
             return Optional.empty();
         }
 
@@ -54,7 +54,7 @@ public class LegacyDataMigrator {
      * @param message The message to log
      */
     private void log(Level level, String message) {
-        Bukkit.getLogger().log(level, message);
+        ServerSystem.getLog().log(level, message);
     }
 
     /**
@@ -65,7 +65,7 @@ public class LegacyDataMigrator {
      * @param exception The exception to log
      */
     private void log(Level level, String message, Exception exception) {
-        Bukkit.getLogger().log(level, message, exception);
+        ServerSystem.getLog().log(level, message, exception);
     }
 
     /**

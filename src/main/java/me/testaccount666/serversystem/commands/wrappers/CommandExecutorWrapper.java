@@ -1,8 +1,8 @@
 package me.testaccount666.serversystem.commands.wrappers;
 
 import lombok.Getter;
+import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -22,7 +22,7 @@ public class CommandExecutorWrapper extends AbstractCommandWrapper implements Co
 
         // This should technically never happen...
         if (commandUser.isEmpty()) {
-            Bukkit.getLogger().severe("Error executing command '${command.getName()}'. CommandSender '${commandSender.getName()}' is not a valid user?!");
+            ServerSystem.getLog().severe("Error executing command '${command.getName()}'. CommandSender '${commandSender.getName()}' is not a valid user?!");
             return false;
         }
 

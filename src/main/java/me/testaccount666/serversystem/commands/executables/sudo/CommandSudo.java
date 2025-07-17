@@ -34,7 +34,7 @@ public class CommandSudo extends AbstractServerSystemCommand {
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "Sudo.Use")) return;
-        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
+        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, false, arguments);
         if (targetUserOptional.isEmpty()) {
@@ -53,14 +53,14 @@ public class CommandSudo extends AbstractServerSystemCommand {
         }
 
         if (arguments.length <= 1) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
         var sudoCommand = arguments[1];
 
         if (sudoCommand.isBlank()) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -71,7 +71,7 @@ public class CommandSudo extends AbstractServerSystemCommand {
 
         var cachedSenderOptional = ServerSystem.Instance.getUserManager().getUser(commandSender.getUuid());
         if (cachedSenderOptional.isEmpty()) {
-            Bukkit.getLogger().warning("(CommandSudo) Couldn't find cached command sender?!");
+            ServerSystem.getLog().warning("(CommandSudo) Couldn't find cached command sender?!");
             general("ErrorOccurred", commandSender).label(label).build();
             return;
         }
@@ -151,6 +151,11 @@ public class CommandSudo extends AbstractServerSystemCommand {
         }
 
         return targetPlayer;
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "Sudo";
     }
 
     @Override

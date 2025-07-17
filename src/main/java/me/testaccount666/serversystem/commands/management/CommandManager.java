@@ -42,16 +42,21 @@ public class CommandManager {
         return Optional.ofNullable(commandMap.get(commandName));
     }
 
-    public Optional<ServerSystemCommandExecutor> getServerSystemCommand(String commandName) {
+    public Optional<PluginCommand> getServerSystemCommand(String commandName) {
         return getCommandMap().values().stream()
                 .filter(PluginCommand.class::isInstance)
                 .map(PluginCommand.class::cast)
                 .filter(pluginCommand -> pluginCommand.getName().equalsIgnoreCase(commandName))
                 .filter(pluginCommand -> pluginCommand.getPlugin() == ServerSystem.Instance)
+                .filter(pluginCommand -> pluginCommand.getExecutor() instanceof ServerSystemCommandExecutor)
+                .findFirst();
+    }
+
+    public Optional<ServerSystemCommandExecutor> getServerSystemCommandExecutor(String commandName) {
+        return getServerSystemCommand(commandName)
                 .map(PluginCommand::getExecutor)
                 .filter(ServerSystemCommandExecutor.class::isInstance)
-                .map(ServerSystemCommandExecutor.class::cast)
-                .findFirst();
+                .map(ServerSystemCommandExecutor.class::cast);
     }
 
     private Map<String, Command> getCommandMap() {

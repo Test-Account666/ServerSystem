@@ -7,7 +7,6 @@ import me.testaccount666.serversystem.moderation.AbstractModerationManager;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.utils.DurationParser;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 
 import java.util.stream.Collectors;
@@ -22,12 +21,12 @@ public abstract class AbstractModerationCommand extends AbstractServerSystemComm
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, command)) return;
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
         if (!isRemoveModeration(command) && arguments.length < 2) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -64,7 +63,7 @@ public abstract class AbstractModerationCommand extends AbstractServerSystemComm
         var defaultReason = general("Moderation.DefaultReason", commandSender)
                 .target(targetUser.getName().get()).prefix(false).send(false).build();
         if (defaultReason.isEmpty()) {
-            Bukkit.getLogger().severe("(Command: ${command.getName()}) Default reason is empty! This should not happen!");
+            ServerSystem.getLog().severe("(Command: ${command.getName()}) Default reason is empty! This should not happen!");
             general("ErrorOccurred", commandSender).label(label).build();
             return;
         }

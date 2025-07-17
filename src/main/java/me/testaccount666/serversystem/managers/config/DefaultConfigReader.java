@@ -3,7 +3,6 @@ package me.testaccount666.serversystem.managers.config;
 import lombok.Getter;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.utils.FileUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -97,7 +96,7 @@ public class DefaultConfigReader implements ConfigReader {
      * @param problem The problem description
      */
     private void logConfigFix(String key, String problem) {
-        Bukkit.getLogger().warning("Fixing ${problem} config entry '${key}' in file '${_file.getName()}'");
+        ServerSystem.getLog().warning("Fixing ${problem} config entry '${key}' in file '${_file.getName()}'");
     }
 
     /**
@@ -107,24 +106,22 @@ public class DefaultConfigReader implements ConfigReader {
      * @throws FileNotFoundException If the default configuration file cannot be found
      */
     private void loadDefaultConfig() throws FileNotFoundException {
-        var filename = _file.getName();
+        var filename = _file.getName().toLowerCase();
 
         if (_plugin.getResource(filename) != null) {
             _originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(_plugin.getResource(filename)));
             return;
         }
 
-        // Special handling for messages.yml with language support
-        if (filename.equalsIgnoreCase("messages.yml")) {
-            var language = _configuration.getString("language", "en");
-            var languageFile = "messages_${language}.yml";
+        if (filename.equalsIgnoreCase("messages.yml") || filename.equalsIgnoreCase("mappings.yml")) {
+            var language = _configuration.getString("language", "english");
+            var languageFile = "messages/${language}/${filename}";
 
             if (_plugin.getResource(languageFile) != null)
                 _originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(_plugin.getResource(languageFile)));
             else {
-                // Fallback to English
-                _originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(_plugin.getResource("messages_en.yml")));
-                Bukkit.getLogger().warning("Couldn't find messages file for language '${language}', using English instead");
+                _originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(_plugin.getResource("messages/english/${filename}")));
+                ServerSystem.getLog().warning("Couldn't find messages file for language '${language}', using English instead");
             }
             return;
         }
@@ -186,7 +183,7 @@ public class DefaultConfigReader implements ConfigReader {
      */
     private void createBackupAndSave() {
         var filename = _file.getName();
-        Bukkit.getLogger().warning("One or more errors with your '${filename}' file were found and fixed, a backup was made before saving");
+        ServerSystem.getLog().warning("One or more errors with your '${filename}' file were found and fixed, a backup was made before saving");
 
         try {
             // Create a timestamped backup file
@@ -202,7 +199,7 @@ public class DefaultConfigReader implements ConfigReader {
 
         } catch (IOException exception) {
             exception.printStackTrace();
-            Bukkit.getLogger().severe("An error occurred while backing up, changes only saved internally/temporarily!");
+            ServerSystem.getLog().severe("An error occurred while backing up, changes only saved internally/temporarily!");
         }
     }
 
@@ -320,7 +317,7 @@ public class DefaultConfigReader implements ConfigReader {
         try {
             configReader._configuration.save(configReader._file);
         } catch (IOException exception) {
-            Bukkit.getLogger().severe("Failed to save configuration file '${configReader._file.getName()}'");
+            ServerSystem.getLog().severe("Failed to save configuration file '${configReader._file.getName()}'");
             exception.printStackTrace();
         }
     }
@@ -333,7 +330,7 @@ public class DefaultConfigReader implements ConfigReader {
         try {
             configReader._configuration.load(configReader._file);
         } catch (IOException | InvalidConfigurationException exception) {
-            Bukkit.getLogger().severe("Failed to reload configuration file '${configReader._file.getName()}'");
+            ServerSystem.getLog().severe("Failed to reload configuration file '${configReader._file.getName()}'");
             exception.printStackTrace();
         }
     }
@@ -343,7 +340,7 @@ public class DefaultConfigReader implements ConfigReader {
         try {
             _newReader = new DefaultConfigReader(file, ServerSystem.Instance);
         } catch (Exception exception) {
-            Bukkit.getLogger().severe("Failed to load configuration from file '${file.getName()}'");
+            ServerSystem.getLog().severe("Failed to load configuration from file '${file.getName()}'");
             exception.printStackTrace();
         }
     }
@@ -434,7 +431,7 @@ public class DefaultConfigReader implements ConfigReader {
             _configuration.save(_file);
             _configuration.load(_file);
         } catch (IOException | InvalidConfigurationException exception) {
-            Bukkit.getLogger().severe("Failed to save/reload configuration file '${_file.getName()}'");
+            ServerSystem.getLog().severe("Failed to save/reload configuration file '${_file.getName()}'");
             exception.printStackTrace();
         }
     }

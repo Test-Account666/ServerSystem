@@ -1,8 +1,8 @@
 package me.testaccount666.serversystem.managers.database.economy;
 
 import com.zaxxer.hikari.HikariDataSource;
+import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.managers.database.HikariConfigUtil;
-import org.bukkit.Bukkit;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -33,7 +33,7 @@ public class SqliteEconomyDatabaseManager extends AbstractEconomyDatabaseManager
 
             super.initialize();
         } catch (Exception e) {
-            Bukkit.getLogger().severe("Failed to initialize SQLite economy database: ${e.getMessage()}");
+            ServerSystem.getLog().severe("Failed to initialize SQLite economy database: ${e.getMessage()}");
             e.printStackTrace();
         }
     }
@@ -48,7 +48,7 @@ public class SqliteEconomyDatabaseManager extends AbstractEconomyDatabaseManager
         var config = HikariConfigUtil.configureSqlite(_databaseFile, "economy-sqlite-pool");
         dataSource = new HikariDataSource(config);
 
-        Bukkit.getLogger().info("Successfully initialized SQLite connection pool for economy.");
+        ServerSystem.getLog().info("Successfully initialized SQLite connection pool for economy.");
     }
 
     /**

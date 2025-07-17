@@ -1,10 +1,11 @@
 package me.testaccount666.serversystem.commands.executables.privatemessage;
 
+import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.events.UserPrivateMessageEvent;
-import me.testaccount666.serversystem.managers.MessageManager;
 import me.testaccount666.serversystem.managers.PermissionManager;
+import me.testaccount666.serversystem.managers.messages.MessageManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.utils.ComponentColor;
@@ -26,21 +27,21 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (command.getName().equalsIgnoreCase("messagetoggle")) {
-            handleMessageToggleCommand(commandSender, label, arguments);
+            handleMessageToggleCommand(commandSender, command, label, arguments);
             return;
         }
 
         if (command.getName().equalsIgnoreCase("privatemessage")) {
-            handlePrivateMessageCommand(commandSender, label, arguments);
+            handlePrivateMessageCommand(commandSender, command, label, arguments);
             return;
         }
 
-        handleReplyCommand(commandSender, label, arguments);
+        handleReplyCommand(commandSender, command, label, arguments);
     }
 
-    private void handleMessageToggleCommand(User commandSender, String label, String... arguments) {
+    private void handleMessageToggleCommand(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "PrivateMessage.Toggle.Use")) return;
-        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
+        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
         if (targetUserOptional.isEmpty()) {
@@ -70,8 +71,13 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
                 .sender(commandSender.getName().get()).build();
     }
 
-    private void handleReplyCommand(User commandSender, String label, String... arguments) {
+    private void handleReplyCommand(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "PrivateMessage.Use")) return;
+
+        if (arguments.length == 0) {
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            return;
+        }
 
         var targerUser = commandSender.getReplyUser();
 
@@ -87,12 +93,12 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
         sendPrivateMessage(commandSender, targerUser, label, newArguments);
     }
 
-    private void handlePrivateMessageCommand(User commandSender, String label, String... arguments) {
+    private void handlePrivateMessageCommand(User commandSender, Command command, String label, String... arguments) {
         if (_privateMessageCommand == null) _privateMessageCommand = label;
         if (!checkBasePermission(commandSender, "PrivateMessage.Use")) return;
 
         if (arguments.length <= 1) {
-            general("InvalidArguments", commandSender).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -140,7 +146,7 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
                         .replace("<MESSAGE>", message)).build();
 
         if (successOptional.isEmpty() || successOtherOptional.isEmpty()) {
-            Bukkit.getLogger().warning("Couldn't find message for path Commands.PrivateMessage.Success or Commands.PrivateMessage.SuccessOther");
+            ServerSystem.getLog().warning("Couldn't find message for path Commands.PrivateMessage.Success or Commands.PrivateMessage.SuccessOther");
             general("ErrorOccurred", commandSender).label(label).target(targetName).build();
             return;
         }
@@ -181,6 +187,17 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
         if (targetUser instanceof ConsoleUser) return true;
 
         return targetUser.getPlayer() != null && targetUser.getPlayer().isOnline();
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        var commandName = command.getName().toLowerCase();
+        return switch (commandName) {
+            case "privatemessage" -> "PrivateMessage";
+            case "reply" -> "Reply";
+            case "messagetoggle" -> "MessageToggle";
+            default -> throw new IllegalStateException("(CommandPrivateMessage) Unexpected value: ${commandName}");
+        };
     }
 
     @Override

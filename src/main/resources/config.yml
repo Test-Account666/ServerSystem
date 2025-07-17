@@ -26,3 +26,6 @@ UserData:
   Compression:
     Enabled: true
     Description: "Wether to enable gzip compression for UserData files. This can reduce disk space, but may increase CPU usage."
+MinecraftDiscordChat:
+  Enabled: false
+  WebhookUrl: ""

@@ -393,6 +393,10 @@ Permissions:
         Shadow:
           Required: true
           Value: "serversystem.moderation.mute.shadow"
+    Language:
+      Use:
+        Required: false
+        Value: "serversystem.command.language.use"
   Chat:
     ColorChat:
       Required: true

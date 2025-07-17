@@ -1,9 +1,9 @@
 package me.testaccount666.serversystem.managers;
 
+import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.managers.config.ConfigReader;
 import me.testaccount666.serversystem.managers.config.DefaultConfigReader;
 import me.testaccount666.serversystem.userdata.User;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
@@ -60,7 +60,7 @@ public class PermissionManager {
         var hasPermission = commandSender.hasPermission(permission);
 
         if (!hasPermission && sendFailInfo)
-            Bukkit.getLogger().info("${commandSender.getName()} has failed a permission check! Permission: ${permission}");
+            ServerSystem.getLog().info("${commandSender.getName()} has failed a permission check! Permission: ${permission}");
 
         return hasPermission;
     }
@@ -80,7 +80,7 @@ public class PermissionManager {
 
         var permission = _ConfigReader.getString(permissionPath, null);
 
-        if (permission == null) Bukkit.getLogger().warning("Permission '${permissionPath}' not found! (Denying permission)");
+        if (permission == null) ServerSystem.getLog().warning("Permission '${permissionPath}' not found! (Denying permission)");
 
         return permission;
     }

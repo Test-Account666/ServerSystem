@@ -4,6 +4,7 @@ import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.home.admin.CommandAdminHome;
 import me.testaccount666.serversystem.managers.PermissionManager;
+import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.userdata.home.Home;
 import org.bukkit.command.Command;
@@ -27,6 +28,11 @@ public class CommandHome extends AbstractServerSystemCommand {
             return;
         }
 
+        if (commandSender instanceof ConsoleUser) {
+            general("NotPlayer", commandSender).build();
+            return;
+        }
+
         if (command.getName().equalsIgnoreCase("sethome")) {
             handleSetHomeCommand(commandSender, label, arguments);
             return;
@@ -44,7 +50,8 @@ public class CommandHome extends AbstractServerSystemCommand {
         if (!checkBasePermission(commandSender, "Home.Use")) return;
 
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).label(label).build();
+            //TODO: List homes instead
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(null)).label(label).build();
             return;
         }
 
@@ -70,7 +77,7 @@ public class CommandHome extends AbstractServerSystemCommand {
         if (!checkBasePermission(commandSender, "Home.Delete")) return;
 
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(null)).label(label).build();
             return;
         }
 
@@ -94,7 +101,7 @@ public class CommandHome extends AbstractServerSystemCommand {
         if (!checkBasePermission(commandSender, "Home.Set")) return;
 
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(null)).label(label).build();
             return;
         }
 
@@ -138,6 +145,11 @@ public class CommandHome extends AbstractServerSystemCommand {
 
         command("SetHome.Success", commandSender)
                 .postModifier(message -> message.replace("<HOME>", newHome.getDisplayName())).build();
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "Home";
     }
 
     @Override

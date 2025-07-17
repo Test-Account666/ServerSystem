@@ -3,8 +3,8 @@ package me.testaccount666.serversystem.commands.executables.teleportask;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
-import me.testaccount666.serversystem.managers.MessageManager;
 import me.testaccount666.serversystem.managers.PermissionManager;
+import me.testaccount666.serversystem.managers.messages.MessageManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.utils.ComponentColor;
@@ -35,7 +35,7 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
             case "teleportaccept" -> handleTeleportAccept(commandSender, label);
             case "teleportdeny" -> handleTeleportDeny(commandSender, label);
             case "teleporthereask" -> handleTeleportHereAsk(commandSender, label, arguments);
-            case "teleporttoggle" -> handleTeleportToggle(commandSender, label, arguments);
+            case "teleporttoggle" -> handleTeleportToggle(commandSender, command, label, arguments);
         }
     }
 
@@ -91,7 +91,7 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
         }
 
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(null)).label(label).build();
             return true;
         }
 
@@ -156,7 +156,7 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
                 .prefix(false).build();
 
         if (acceptButton.isEmpty() || denyButton.isEmpty()) {
-            Bukkit.getLogger().warning("Couldn't find accept or deny button for ${targetUser.getName().get()} in the language file. Please check the language file for errors.");
+            ServerSystem.getLog().warning("Couldn't find accept or deny button for ${targetUser.getName().get()} in the language file. Please check the language file for errors.");
             general("ErrorOccurred", targetUser).label(label).build();
             return;
         }
@@ -172,7 +172,7 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
                 .send(false).build();
 
         if (acceptButtonTooltip.isEmpty() || denyButtonTooltip.isEmpty()) {
-            Bukkit.getLogger().warning("Couldn't find accept or deny button tooltip for ${targetUser.getName().get()} in the language file. Please check the language file for errors.");
+            ServerSystem.getLog().warning("Couldn't find accept or deny button tooltip for ${targetUser.getName().get()} in the language file. Please check the language file for errors.");
             general("ErrorOccurred", targetUser).label(label).build();
             return;
         }
@@ -315,9 +315,9 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
         location.getWorld().spawnParticle(Particle.PORTAL, location, 100, 0.5, 0.5, 0.5, 0.05);
     }
 
-    private void handleTeleportToggle(User commandSender, String label, String... arguments) {
+    private void handleTeleportToggle(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "TeleportToggle.Use")) return;
-        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
+        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
 
@@ -346,6 +346,12 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
 
         command("TeleportToggle.Success" + (acceptsTeleports? "Enabled" : "Disabled"), targetUser)
                 .sender(commandSender.getName().get()).build();
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        if (command != null && command.getName().equalsIgnoreCase("teleporttoggle")) return "TeleportToggle";
+        return "TeleportAsk";
     }
 
     @Override

@@ -4,7 +4,6 @@ import me.testaccount666.serversystem.commands.executables.inventorysee.offline.
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabCompleter;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.User;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 
 import java.util.List;
@@ -19,20 +18,11 @@ public class TabCompleterInventorySee implements ServerSystemTabCompleter {
 
     @Override
     public Optional<List<String>> tabComplete(User commandSender, Command command, String label, String... arguments) {
-        Bukkit.getLogger().info("TabCompleterInventorySee: " + command.getName());
         if (command.getName().toLowerCase().startsWith("offline")) return _offlineInventorySee.tabComplete(commandSender, command, label, arguments);
 
-        if (!PermissionManager.hasCommandPermission(commandSender, "InventorySee.Use", false)) {
-            Bukkit.getLogger().info("TabCompleterInventorySee: No Permission");
-            return Optional.of(List.of());
-        }
+        if (!PermissionManager.hasCommandPermission(commandSender, "InventorySee.Use", false)) return Optional.of(List.of());
 
-        if (arguments.length <= 1) {
-            Bukkit.getLogger().info("TabCompleterInventorySee: Player");
-            return Optional.empty();
-        }
-
-        Bukkit.getLogger().info("Wrong arguments");
+        if (arguments.length <= 1) return Optional.empty();
 
         return Optional.of(List.of());
     }

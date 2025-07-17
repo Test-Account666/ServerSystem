@@ -79,7 +79,7 @@ public class ListenerManager {
 
             return ((BiFunction<Listener, Set, Boolean>) methodAccessor).apply(listener, instances);
         } catch (RuntimeException | NoSuchMethodError exception) {
-            Bukkit.getLogger().severe("Listener ${listener.getClass().getName()} requires the method 'canRegister(Set<ServerSystemCommandExecutor>, Boolean)' to be implemented! This should not happen!");
+            ServerSystem.getLog().severe("Listener ${listener.getClass().getName()} requires the method 'canRegister(Set<ServerSystemCommandExecutor>, Boolean)' to be implemented! This should not happen!");
             exception.printStackTrace();
             return false;
         }

@@ -1,8 +1,8 @@
 package me.testaccount666.serversystem.managers.database;
 
 import com.zaxxer.hikari.HikariDataSource;
+import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.managers.config.ConfigReader;
-import org.bukkit.Bukkit;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -35,7 +35,7 @@ public abstract class AbstractDatabaseManager {
             initializeConnection();
             createTablesIfNotExist();
         } catch (SQLException e) {
-            Bukkit.getLogger().severe("Failed to initialize " + databaseType + " database connection: ${e.getMessage()}");
+            ServerSystem.getLog().severe("Failed to initialize " + databaseType + " database connection: ${e.getMessage()}");
             e.printStackTrace();
         }
     }
@@ -72,10 +72,10 @@ public abstract class AbstractDatabaseManager {
         try {
             if (dataSource != null && !dataSource.isClosed()) {
                 dataSource.close();
-                Bukkit.getLogger().info(databaseType + " database connection pool closed.");
+                ServerSystem.getLog().info(databaseType + " database connection pool closed.");
             }
         } catch (Exception exception) {
-            Bukkit.getLogger().warning("Error closing " + databaseType + " database connection pool:");
+            ServerSystem.getLog().warning("Error closing " + databaseType + " database connection pool:");
             exception.printStackTrace();
         }
     }

@@ -5,7 +5,6 @@ import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.managers.config.ConfigReader;
 import me.testaccount666.serversystem.managers.database.economy.AbstractEconomyDatabaseManager;
 import me.testaccount666.serversystem.userdata.OfflineUser;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.math.BigDecimal;
@@ -45,7 +44,7 @@ public class EconomyProvider {
 
         if (economyTypeOptional.isEmpty()) {
             _economyType = Type.SQLITE;
-            Bukkit.getLogger().warning("Found invalid economy type in the 'economy.yml'! Using SQLITE as default!");
+            ServerSystem.getLog().warning("Found invalid economy type in the 'economy.yml'! Using SQLITE as default!");
             return;
         }
 
@@ -61,7 +60,7 @@ public class EconomyProvider {
             case MYSQL -> new MySqlBankAccount(offlineUser.getUuid(), accountId);
             case SQLITE -> new SqliteBankAccount(offlineUser.getUuid(), accountId);
             default -> {
-                Bukkit.getLogger().warning("Found invalid economy type '${_economyType}' in the 'economy.yml'! Using Sqlite as default!");
+                ServerSystem.getLog().warning("Found invalid economy type '${_economyType}' in the 'economy.yml'! Using Sqlite as default!");
                 yield new SqliteBankAccount(offlineUser.getUuid(), accountId);
             }
         };
@@ -79,7 +78,7 @@ public class EconomyProvider {
 
         var bankAccountsSection = userConfig.getConfigurationSection("User.BankAccounts");
         if (bankAccountsSection == null) {
-            Bukkit.getLogger().severe("Failed to get YAML bank accounts for user ${offlineUser.getName()} (${offlineUser.getUuid()}): bankAccountsSection is null!");
+            ServerSystem.getLog().severe("Failed to get YAML bank accounts for user ${offlineUser.getName()} (${offlineUser.getUuid()}): bankAccountsSection is null!");
             return;
         }
 
@@ -88,7 +87,7 @@ public class EconomyProvider {
         for (var key : bankAccountsSection.getKeys(false)) {
             var balance = bankAccountsSection.getString("${key}.Balance");
             if (balance == null) {
-                Bukkit.getLogger().severe("Failed to get YAML bank account balance for user ${offlineUser.getName()} (${offlineUser.getUuid()}, AccountID: ${key}): balance is null!");
+                ServerSystem.getLog().severe("Failed to get YAML bank account balance for user ${offlineUser.getName()} (${offlineUser.getUuid()}, AccountID: ${key}): balance is null!");
                 continue;
             }
 
@@ -105,9 +104,9 @@ public class EconomyProvider {
 
                 if (currentAccountId.equals(accountId)) anyMigrated = true;
 
-                Bukkit.getLogger().info("Migrated YAML bank account data for user ${offlineUser.getName()} (${offlineUser.getUuid()}, AccountID: ${currentAccountId}) to ${_economyType} database. Balance: ${balance}");
+                ServerSystem.getLog().info("Migrated YAML bank account data for user ${offlineUser.getName()} (${offlineUser.getUuid()}, AccountID: ${currentAccountId}) to ${_economyType} database. Balance: ${balance}");
             } catch (NumberFormatException exception) {
-                Bukkit.getLogger().severe("Failed to parse account ID '${key}' or balance '${balance}' for user ${offlineUser.getName()} (${offlineUser.getUuid()}): ${exception.getMessage()}");
+                ServerSystem.getLog().severe("Failed to parse account ID '${key}' or balance '${balance}' for user ${offlineUser.getName()} (${offlineUser.getUuid()}): ${exception.getMessage()}");
                 exception.printStackTrace();
             }
         }
@@ -116,7 +115,7 @@ public class EconomyProvider {
         userConfig.set("User.BankAccounts", null);
         offlineUser.save();
 
-        Bukkit.getLogger().info("Completed migration of all YAML bank accounts for user ${offlineUser.getName()} (${offlineUser.getUuid()})");
+        ServerSystem.getLog().info("Completed migration of all YAML bank accounts for user ${offlineUser.getName()} (${offlineUser.getUuid()})");
     }
 
     public String formatMoney(BigDecimal balance) {

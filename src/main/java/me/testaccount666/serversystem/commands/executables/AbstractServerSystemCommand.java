@@ -13,6 +13,7 @@ import java.util.Optional;
 import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 
 public abstract class AbstractServerSystemCommand implements ServerSystemCommandExecutor {
+    public abstract String getSyntaxPath(Command command);
 
     public abstract boolean hasCommandAccess(Player player, Command command);
 
@@ -85,8 +86,8 @@ public abstract class AbstractServerSystemCommand implements ServerSystemCommand
      * @param arguments     The arguments passed to the command
      * @return true if the command was executed by console without a target, false otherwise
      */
-    protected boolean handleConsoleWithNoTarget(User commandSender, String... arguments) {
-        return handleConsoleWithNoTarget(commandSender, 0, arguments);
+    protected boolean handleConsoleWithNoTarget(User commandSender, String syntaxPath, String label, String... arguments) {
+        return handleConsoleWithNoTarget(commandSender, syntaxPath, label, 0, arguments);
     }
 
     /**
@@ -98,9 +99,9 @@ public abstract class AbstractServerSystemCommand implements ServerSystemCommand
      * @param arguments      The arguments passed to the command
      * @return true if the command was executed by console without a target, false otherwise
      */
-    protected boolean handleConsoleWithNoTarget(User commandSender, int expectedLength, String... arguments) {
+    protected boolean handleConsoleWithNoTarget(User commandSender, String syntaxPath, String label, int expectedLength, String... arguments) {
         if (arguments.length <= expectedLength && commandSender instanceof ConsoleUser) {
-            general("NotPlayer", commandSender).build();
+            general("InvalidArguments", commandSender).syntaxPath(syntaxPath).label(label).build();
             return true;
         }
         return false;

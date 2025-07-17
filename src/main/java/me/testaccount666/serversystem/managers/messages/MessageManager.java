@@ -1,39 +1,37 @@
-package me.testaccount666.serversystem.managers;
+package me.testaccount666.serversystem.managers.messages;
 
+import lombok.Getter;
+import lombok.SneakyThrows;
+import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.managers.PlaceholderManager;
 import me.testaccount666.serversystem.managers.config.ConfigReader;
-import me.testaccount666.serversystem.managers.config.DefaultConfigReader;
 import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.utils.ChatColor;
 import me.testaccount666.serversystem.utils.ComponentColor;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.file.Path;
 import java.util.Optional;
 
-//TODO: Completely forgot, this needs user-specific language support!
 public class MessageManager {
-    private static final File _MESSAGES_FILE = Path.of("plugins", "ServerSystem", "messages.yml").toFile();
-    private static ConfigReader _ConfigReader;
+    @Getter
+    private static LanguageLoader _LanguageLoader;
     private static PlaceholderManager _PlaceholderManager;
 
     private MessageManager() {
     }
 
-    public static void initialize(Plugin plugin) throws FileNotFoundException {
-        _ConfigReader = new DefaultConfigReader(_MESSAGES_FILE, plugin);
+    public static void initialize() throws FileNotFoundException {
         _PlaceholderManager = new PlaceholderManager();
+        _LanguageLoader = new LanguageLoader();
     }
 
     public static String formatMessage(String message, User commandSender, @Nullable String targetName, @Nullable String label, boolean addPrefix) {
         if (message == null) return "";
 
         if (addPrefix) {
-            var prefix = getMessage("General.Prefix").orElse("");
+            var prefix = getMessage(commandSender, "General.Prefix").orElse("");
             message = prefix + message;
         }
 
@@ -59,7 +57,7 @@ public class MessageManager {
         if (message == null) return Component.empty();
 
         if (addPrefix) {
-            var prefix = getMessage("General.Prefix").orElse("");
+            var prefix = getMessage(commandSender, "General.Prefix").orElse("");
             message = prefix + message;
         }
 
@@ -67,18 +65,49 @@ public class MessageManager {
         return ComponentColor.translateToComponent(processedMessage);
     }
 
-    public static Optional<String> getMessage(String messagePath) {
-        if (_ConfigReader == null) throw new IllegalStateException("MessageManager was not yet initialized. Call initialize first.");
-
+    /**
+     * Gets a message from the messages file for the specified user's language.
+     *
+     * @param user        The user to get the message for
+     * @param messagePath The path to the message in the messages file
+     * @return An Optional containing the message, or empty if not found
+     */
+    @SneakyThrows
+    public static Optional<String> getMessage(User user, String messagePath) {
+        if (_PlaceholderManager == null) throw new IllegalStateException("MessageManager was not yet initialized. Call initialize first.");
         messagePath = "Messages.${messagePath}";
 
-        var message = _ConfigReader.getString(messagePath, null);
+        var language = user != null? user.getPlayerLanguage() : "english";
+
+
+        ConfigReader reader;
+        try {
+            reader = getConfigReader(language);
+        } catch (FileNotFoundException exception) {
+            ServerSystem.getLog().warning("Failed to load messages for language '${language}': ${exception.getMessage()}");
+            reader = getConfigReader("english");
+        }
+
+        var message = reader.getString(messagePath, null);
 
         if (message == null) {
-            Bukkit.getLogger().warning("Message '${messagePath}' not found!");
+            ServerSystem.getLog().warning("Message '${messagePath}' not found for language ${language}!");
             return Optional.empty();
         }
 
         return Optional.of(message);
+    }
+
+    /**
+     * Gets the ConfigReader for the specified language.
+     *
+     * @param language The language to get the ConfigReader for
+     * @return The ConfigReader for the specified language
+     * @throws FileNotFoundException If the messages file couldn't be found
+     */
+    private static ConfigReader getConfigReader(String language) throws FileNotFoundException {
+        var readerOptional = _LanguageLoader.getMessageReader(language);
+        //noinspection OptionalGetWithoutIsPresent
+        return readerOptional.orElseGet(() -> _LanguageLoader.getMessageReader("english").get());
     }
 }

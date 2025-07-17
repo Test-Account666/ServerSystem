@@ -2,7 +2,6 @@ package me.testaccount666.serversystem.commands.executables.god;
 
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.userdata.User;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -56,7 +55,7 @@ public class ListenerGod implements Listener {
         var userOptional = ServerSystem.Instance.getUserManager().getUser(player);
 
         if (userOptional.isEmpty()) {
-            Bukkit.getLogger().warning("(ListenerGod) User '${player.getName()}' is not cached! This should not happen!");
+            ServerSystem.getLog().warning("(ListenerGod) User '${player.getName()}' is not cached! This should not happen!");
             return;
         }
 

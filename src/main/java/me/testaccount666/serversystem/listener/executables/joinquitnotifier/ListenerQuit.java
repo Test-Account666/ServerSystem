@@ -1,7 +1,7 @@
 package me.testaccount666.serversystem.listener.executables.joinquitnotifier;
 
 import me.testaccount666.serversystem.ServerSystem;
-import me.testaccount666.serversystem.managers.MessageManager;
+import me.testaccount666.serversystem.managers.messages.MessageManager;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -41,14 +41,14 @@ public class ListenerQuit implements Listener {
         var soundKey = isMinecraft? NamespacedKey.minecraft(soundString) : NamespacedKey.fromString(soundString);
         if (soundKey == null) {
             _playSound = false;
-            Bukkit.getLogger().warning("Failed to parse sound '${soundString}' for quit message!");
+            ServerSystem.getLog().warning("Failed to parse sound '${soundString}' for quit message!");
             return;
         }
 
         _sound = Registry.SOUND_EVENT.get(soundKey);
         if (_sound == null) {
             _playSound = false;
-            Bukkit.getLogger().warning("Failed to find sound '${soundString}' for quit message!");
+            ServerSystem.getLog().warning("Failed to find sound '${soundString}' for quit message!");
         }
     }
 
@@ -74,12 +74,12 @@ public class ListenerQuit implements Listener {
         var player = event.getPlayer();
         var userOptional = ServerSystem.Instance.getUserManager().getUser(player);
         if (userOptional.isEmpty()) {
-            Bukkit.getLogger().warning("Couldn't cache User '${player.getName()}'! This should not happen!");
+            ServerSystem.getLog().warning("Couldn't cache User '${player.getName()}'! This should not happen!");
             return;
         }
         var cachedUser = userOptional.get();
         if (cachedUser.isOfflineUser()) {
-            Bukkit.getLogger().warning("User '${player.getName()}' is cached as Offline User! This should not happen!");
+            ServerSystem.getLog().warning("User '${player.getName()}' is cached as Offline User! This should not happen!");
             return;
         }
         var user = (User) cachedUser.getOfflineUser();

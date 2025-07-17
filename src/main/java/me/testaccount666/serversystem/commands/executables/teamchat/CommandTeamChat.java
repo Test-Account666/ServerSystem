@@ -9,18 +9,18 @@ import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
 import static me.testaccount666.serversystem.utils.MessageBuilder.command;
+import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 
 @ServerSystemCommand(name = "teamchat")
 public class CommandTeamChat extends AbstractServerSystemCommand {
 
     @Override
-    public boolean hasCommandAccess(Player player, Command command) {
-        return PermissionManager.hasCommandPermission(player, "TeamChat.Use", false);
-    }
-
-    @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "TeamChat.Use")) return;
+        if (arguments.length == 0) {
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            return;
+        }
 
         var message = String.join(" ", arguments).trim();
         var formatOptional = command("TeamChat.Format", commandSender).send(false)
@@ -33,5 +33,15 @@ public class CommandTeamChat extends AbstractServerSystemCommand {
 
             everyone.sendMessage(format);
         });
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "TeamChat";
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        return PermissionManager.hasCommandPermission(player, "TeamChat.Use", false);
     }
 }

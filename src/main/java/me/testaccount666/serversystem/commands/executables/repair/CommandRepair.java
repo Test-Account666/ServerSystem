@@ -17,11 +17,6 @@ import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 public class CommandRepair extends AbstractServerSystemCommand {
 
     @Override
-    public boolean hasCommandAccess(Player player, Command command) {
-        return PermissionManager.hasCommandPermission(player, "Repair.Use", false);
-    }
-
-    @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "Repair.Use")) return;
         if (commandSender instanceof ConsoleUser) {
@@ -59,9 +54,7 @@ public class CommandRepair extends AbstractServerSystemCommand {
                 var repaired = repairInventory(player.getInventory().getContents());
                 sendSuccessMessage(commandSender, repaired);
             }
-            default -> {
-                general("InvalidArguments", commandSender).label(label).build();
-            }
+            default -> general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
         }
     }
 
@@ -85,5 +78,15 @@ public class CommandRepair extends AbstractServerSystemCommand {
         var repairedCount = 0;
         for (var item : items) if (repairItem(item)) repairedCount++;
         return repairedCount;
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "Repair";
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        return PermissionManager.hasCommandPermission(player, "Repair.Use", false);
     }
 }

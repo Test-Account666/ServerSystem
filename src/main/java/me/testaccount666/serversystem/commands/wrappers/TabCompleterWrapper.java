@@ -1,7 +1,7 @@
 package me.testaccount666.serversystem.commands.wrappers;
 
+import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabCompleter;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -23,7 +23,7 @@ public class TabCompleterWrapper extends AbstractCommandWrapper implements TabCo
 
         // This should technically never happen...
         if (commandUser.isEmpty()) {
-            Bukkit.getLogger().severe("Error tab completing command '${command.getName()}'. CommandSender '${commandSender.getName()}' is not a valid user?!");
+            ServerSystem.getLog().severe("Error tab completing command '${command.getName()}'. CommandSender '${commandSender.getName()}' is not a valid user?!");
             return List.of();
         }
 

@@ -20,7 +20,7 @@ public class CommandBroadcast extends AbstractServerSystemCommand {
         if (!checkBasePermission(commandSender, "Broadcast.Use")) return;
 
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -36,6 +36,11 @@ public class CommandBroadcast extends AbstractServerSystemCommand {
         var messageFormat = messageFormatOptional.get();
 
         Bukkit.broadcastMessage(messageFormat);
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "Broadcast";
     }
 
     @Override

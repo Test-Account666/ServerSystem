@@ -20,11 +20,6 @@ import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 public class CommandSmelt extends AbstractServerSystemCommand {
 
     @Override
-    public boolean hasCommandAccess(Player player, Command command) {
-        return PermissionManager.hasCommandPermission(player, "Smelt.Use", false);
-    }
-
-    @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "Smelt.Use")) return;
         if (commandSender instanceof ConsoleUser) {
@@ -65,5 +60,15 @@ public class CommandSmelt extends AbstractServerSystemCommand {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        throw new UnsupportedOperationException("Smelt command doesn't have an available syntax!");
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        return PermissionManager.hasCommandPermission(player, "Smelt.Use", false);
     }
 }

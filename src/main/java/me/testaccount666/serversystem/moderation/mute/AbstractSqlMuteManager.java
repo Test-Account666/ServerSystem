@@ -5,7 +5,6 @@ import me.testaccount666.serversystem.managers.database.moderation.AbstractModer
 import me.testaccount666.serversystem.moderation.AbstractModeration;
 import me.testaccount666.serversystem.moderation.AbstractModerationManager;
 import me.testaccount666.serversystem.moderation.MuteModeration;
-import org.bukkit.Bukkit;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ public abstract class AbstractSqlMuteManager extends AbstractModerationManager {
         try (var connection = databaseManager.getConnection();
              var statement = connection.prepareStatement("INSERT INTO Moderation (TargetUUID, SenderUUID, IssueTime, ExpireTime, Reason, Type) VALUES (?, ?, ?, ?, ?, ?)")) {
 
-            Bukkit.getLogger().info("Adding mute moderation for target '${moderation.targetUuid()}'");
+            ServerSystem.getLog().info("Adding mute moderation for target '${moderation.targetUuid()}'");
             statement.setString(1, moderation.targetUuid().toString());
             statement.setString(2, moderation.senderUuid().toString());
             statement.setLong(3, moderation.issueTime());

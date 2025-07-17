@@ -55,6 +55,12 @@ public class CommandEnderChest extends AbstractServerSystemCommand {
     }
 
     @Override
+    public String getSyntaxPath(Command command) {
+        if (command.getName().toLowerCase().startsWith("offline")) return offlineEnderChest.getSyntaxPath(command);
+        return "EnderChest";
+    }
+
+    @Override
     public boolean hasCommandAccess(Player player, Command command) {
         return PermissionManager.hasCommandPermission(player, "EnderChest.Use", false);
     }

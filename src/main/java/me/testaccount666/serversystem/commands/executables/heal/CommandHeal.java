@@ -17,16 +17,16 @@ public class CommandHeal extends AbstractServerSystemCommand {
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (command.getName().equalsIgnoreCase("heal")) {
-            handleHealCommand(commandSender, label, arguments);
+            handleHealCommand(commandSender, command, label, arguments);
             return;
         }
 
-        handleFeedCommand(commandSender, label, arguments);
+        handleFeedCommand(commandSender, command, label, arguments);
     }
 
-    private void handleFeedCommand(User commandSender, String label, String... arguments) {
+    private void handleFeedCommand(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "Feed.Use")) return;
-        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
+        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
         if (targetUserOptional.isEmpty()) {
@@ -53,9 +53,9 @@ public class CommandHeal extends AbstractServerSystemCommand {
                 .sender(commandSender.getName().get()).target(targetPlayer.getName()).build();
     }
 
-    private void handleHealCommand(User commandSender, String label, String... arguments) {
+    private void handleHealCommand(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "Heal.Use")) return;
-        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
+        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
         if (targetUserOptional.isEmpty()) {
@@ -80,6 +80,16 @@ public class CommandHeal extends AbstractServerSystemCommand {
         if (isSelf) return;
         command("Heal.Success", targetUser)
                 .sender(commandSender.getName().get()).target(targetPlayer.getName()).build();
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        var commandName = command.getName().toLowerCase();
+        return switch (commandName) {
+            case "heal" -> "Heal";
+            case "feed" -> "Feed";
+            default -> throw new IllegalStateException("(CommandHeal) Unexpected value: ${commandName}");
+        };
     }
 
     @Override

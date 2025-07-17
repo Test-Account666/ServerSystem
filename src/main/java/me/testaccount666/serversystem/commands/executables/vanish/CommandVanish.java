@@ -26,7 +26,7 @@ public class CommandVanish extends AbstractServerSystemCommand {
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "Vanish.Use")) return;
-        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
+        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
         if (targetUserOptional.isEmpty()) {
@@ -114,6 +114,11 @@ public class CommandVanish extends AbstractServerSystemCommand {
         if (isSelf) return;
 
         command("Vanish.Success" + (enableVanish? "Enabled" : "Disabled"), targetUser).sender(commandSender.getName().get()).build();
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "Vanish";
     }
 
     @Override

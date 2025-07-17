@@ -62,9 +62,9 @@ Commands:
       stonecutter:
         Enabled: true
         Aliases: "stonecutter"
-      disposal:
-        Enabled: true
-        Aliases: "trash, trashcan"
+  disposal:
+    Enabled: true
+    Aliases: "disposal, trash, trashcan"
   heal:
     Enabled: true
     Aliases: "heal"
@@ -282,6 +282,19 @@ Commands:
       deletekit:
         Enabled: true
         Aliases: "deletekit"
+  ignore:
+    Enabled: true
+    Aliases: "ignore"
+    Variants:
+      unignore:
+        Enabled: true
+        Aliases: "unignore"
   signcost:
     Enabled: true
     Aliases: "signcost"
+  language:
+    Enabled: true
+    Aliases: "language"
+  skull:
+    Enabled: true
+    Aliases: "skull"

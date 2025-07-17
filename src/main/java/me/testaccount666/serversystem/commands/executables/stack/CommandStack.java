@@ -15,11 +15,6 @@ import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 public class CommandStack extends AbstractServerSystemCommand {
 
     @Override
-    public boolean hasCommandAccess(Player player, Command command) {
-        return PermissionManager.hasCommandPermission(player, "Stack.Use", false);
-    }
-
-    @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "Stack.Use")) return;
         if (commandSender instanceof ConsoleUser) {
@@ -35,5 +30,15 @@ public class CommandStack extends AbstractServerSystemCommand {
 
         itemInHand.setAmount(itemInHand.getMaxStackSize());
         command("Stack.Success", commandSender).build();
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        throw new UnsupportedOperationException("Stack command doesn't have an available syntax!");
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        return PermissionManager.hasCommandPermission(player, "Stack.Use", false);
     }
 }

@@ -1,5 +1,6 @@
 package me.testaccount666.serversystem.commands.executables.moderation.ban;
 
+import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.moderation.AbstractModerationCommand;
 import me.testaccount666.serversystem.commands.executables.moderation.TabCompleterModeration;
@@ -9,7 +10,6 @@ import me.testaccount666.serversystem.moderation.AbstractModerationManager;
 import me.testaccount666.serversystem.moderation.BanModeration;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.User;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
@@ -24,13 +24,13 @@ public class CommandBan extends AbstractModerationCommand {
         if (!(targetUser instanceof User user)) return;
 
         var player = user.getPlayer();
-        var unbanDate = parseUnbanDate(moderation.expireTime());
+        var unbanDate = parseUnbanDate(moderation.expireTime(), targetUser);
         var kickOptional = command("Moderation.Ban.Kick", commandSender).target(user.getName().get()).prefix(false)
                 .postModifier(message -> message.replace("<DATE>", unbanDate)
                         .replace("<REASON>", moderation.reason())).send(false).build();
 
         if (kickOptional.isEmpty()) {
-            Bukkit.getLogger().severe("(CommandBan) Kick message is empty! This should not happen!");
+            ServerSystem.getLog().severe("(CommandBan) Kick message is empty! This should not happen!");
             general("ErrorOccurred", commandSender).build();
             return;
         }
@@ -62,6 +62,16 @@ public class CommandBan extends AbstractModerationCommand {
     @Override
     protected String type(Command command) {
         return "Ban";
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        var commandName = command.getName().toLowerCase();
+        return switch (commandName) {
+            case "ban" -> "Ban";
+            case "unban" -> "Unban";
+            default -> throw new IllegalArgumentException("(CommandBan) Unknown command name: ${commandName}");
+        };
     }
 
     @Override

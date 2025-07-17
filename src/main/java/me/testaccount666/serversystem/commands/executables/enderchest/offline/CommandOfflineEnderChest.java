@@ -17,13 +17,13 @@ public class CommandOfflineEnderChest extends AbstractServerSystemCommand {
 
     public CommandOfflineEnderChest() {
         if (!Bukkit.getPluginManager().isPluginEnabled("NBTAPI")) {
-            Bukkit.getLogger().warning("NBTAPI is not installed, Offline-EnderChest will not work!");
+            ServerSystem.getLog().warning("NBTAPI is not installed, Offline-EnderChest will not work!");
             enderChestLoader = null;
             return;
         }
 
         if (!NBT.preloadApi()) {
-            Bukkit.getLogger().severe("Failed to load NBT-API!");
+            ServerSystem.getLog().severe("Failed to load NBT-API!");
             enderChestLoader = null;
             return;
         }
@@ -39,7 +39,7 @@ public class CommandOfflineEnderChest extends AbstractServerSystemCommand {
         }
 
         if (arguments.length < 1) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -72,6 +72,11 @@ public class CommandOfflineEnderChest extends AbstractServerSystemCommand {
 
         var inventory = inventoryOptional.get();
         commandSender.getPlayer().openInventory(inventory);
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "OfflineEnderChest";
     }
 
     @Override

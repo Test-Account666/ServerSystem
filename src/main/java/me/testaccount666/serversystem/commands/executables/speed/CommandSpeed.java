@@ -4,7 +4,6 @@ import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.User;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
@@ -26,17 +25,12 @@ public class CommandSpeed extends AbstractServerSystemCommand {
     }
 
     @Override
-    public boolean hasCommandAccess(Player player, Command command) {
-        return PermissionManager.hasCommandPermission(player, "Speed.Use", false);
-    }
-
-    @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "Speed.Use")) return;
-        if (handleConsoleWithNoTarget(commandSender, 1, arguments)) return;
+        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, 1, arguments)) return;
 
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -75,8 +69,6 @@ public class CommandSpeed extends AbstractServerSystemCommand {
             default -> throw new IllegalStateException("Unexpected value: ${speedType}");
         };
 
-        Bukkit.getLogger().info("Speed: ${speed}");
-
         if (speedType.equalsIgnoreCase("Fly")) targetPlayer.setFlySpeed(speed);
         else targetPlayer.setWalkSpeed(speed);
 
@@ -89,6 +81,17 @@ public class CommandSpeed extends AbstractServerSystemCommand {
                 .postModifier(message -> message.replace("<SPEED>", arguments[0])).build();
     }
 
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "Speed";
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        return PermissionManager.hasCommandPermission(player, "Speed.Use", false);
+    }
+
     private record SpeedResult(float walkSpeed, float flySpeed) {
+
     }
 }

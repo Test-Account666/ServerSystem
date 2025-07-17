@@ -4,7 +4,6 @@ import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.annotations.RequiredCommands;
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor;
 import me.testaccount666.serversystem.userdata.UserManager;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -26,7 +25,7 @@ public class ListenerBan implements Listener {
     public void onLogin(AsyncPlayerPreLoginEvent event) {
         var userOptional = ServerSystem.Instance.getUserManager().getUser(event.getUniqueId());
         if (userOptional.isEmpty()) {
-            Bukkit.getLogger().severe("(ListenerBan) User not found! This should not happen!");
+            ServerSystem.getLog().severe("(ListenerBan) User not found! This should not happen!");
             return;
         }
         var cachedUser = userOptional.get();
@@ -43,20 +42,20 @@ public class ListenerBan implements Listener {
 
         var parsedDuration = banModeration.expireTime();
 
-        var unbanDate = parseUnbanDate(parsedDuration);
+        var unbanDate = parseUnbanDate(parsedDuration, user);
         var kickOptional = command("Moderation.Ban.Kick", UserManager.getConsoleUser()).sender(senderName)
                 .target(user.getName().get()).prefix(false).send(false)
                 .postModifier(message -> message.replace("<DATE>", unbanDate)
                         .replace("<REASON>", banModeration.reason())).build();
 
         if (kickOptional.isEmpty()) {
-            Bukkit.getLogger().severe("(CommandBan) Kick message is empty! This should not happen!");
+            ServerSystem.getLog().severe("(CommandBan) Kick message is empty! This should not happen!");
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, "Error occurred!");
             return;
         }
 
         var kickMessage = kickOptional.get();
         event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, kickMessage);
-        Bukkit.getLogger().info("(ListenerBan) Disallowed ${event.getName()} (${event.getUniqueId()}) for ${banModeration.reason()}");
+        ServerSystem.getLog().info("(ListenerBan) Disallowed ${event.getName()} (${event.getUniqueId()}) for ${banModeration.reason()}");
     }
 }

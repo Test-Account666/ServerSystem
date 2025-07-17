@@ -1,8 +1,8 @@
 package me.testaccount666.serversystem.utils;
 
-import me.testaccount666.serversystem.managers.MessageManager;
+import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.managers.messages.MessageManager;
 import me.testaccount666.serversystem.userdata.User;
-import org.bukkit.Bukkit;
 
 import java.util.Optional;
 import java.util.function.UnaryOperator;
@@ -19,6 +19,7 @@ public class MessageBuilder {
     private String _senderName;
     private String _targetName;
     private String _label;
+    private String _syntaxPath;
 
     private MessageBuilder(String messagePath, Type type, User receiver) {
         _messagePath = messagePath;
@@ -32,6 +33,10 @@ public class MessageBuilder {
 
     public static MessageBuilder command(String messagePath, User receiver) {
         return of(Type.COMMAND, messagePath, receiver);
+    }
+
+    public static MessageBuilder syntax(String messagePath, User receiver) {
+        return of(Type.SYNTAX, messagePath, receiver);
     }
 
     public static MessageBuilder sign(String messagePath, User receiver) {
@@ -82,18 +87,24 @@ public class MessageBuilder {
         return this;
     }
 
+    public MessageBuilder syntaxPath(String syntaxPath) {
+        _syntaxPath = syntaxPath;
+        return this;
+    }
+
     public Optional<String> build() {
         var messagePath = switch (_type) {
             case GENERAL -> "General.${_messagePath}";
             case COMMAND -> "Commands.${_messagePath}";
+            case SYNTAX -> "Syntax.${_messagePath}";
             case CLICKABLE_SIGN -> "ClickableSigns.${_messagePath}";
         };
 
-        var messageOptional = MessageManager.getMessage(messagePath);
+        var messageOptional = MessageManager.getMessage(_receiver, messagePath);
         if (messageOptional.isEmpty()) {
             if (_messagePath.equalsIgnoreCase("ErrorOccurred")) {
-                Bukkit.getLogger().severe("'ErrorOccurred' message could not be found, this is a critical error!");
-                Bukkit.getLogger().severe("Please report this error to the server administrator!");
+                ServerSystem.getLog().severe("'ErrorOccurred' message could not be found, this is a critical error!");
+                ServerSystem.getLog().severe("Please report this error to the server administrator!");
                 _receiver.sendMessage("Something went seriously wrong! Please contact an administrator of this server!");
                 return Optional.empty();
             }
@@ -107,6 +118,14 @@ public class MessageBuilder {
         if (_preMessageModifier != null) message = _preMessageModifier.apply(message);
         if (_senderName != null) message = message.replace("<SENDER>", _senderName);
         if (_targetName == null) _targetName = _receiver.getName().orElse("Unknown");
+
+        if (_syntaxPath != null) {
+            var syntaxOptional = syntax(_syntaxPath, _receiver).sender(_senderName).prefix(false)
+                    .target(_targetName).label(_label).send(false).build();
+            if (syntaxOptional.isPresent()) message = message.replace("<USAGE>", syntaxOptional.get());
+            else message = message.replace("<USAGE>", "!!ERROR!!");
+        }
+
         if (_postMessageModifier != null) message = _postMessageModifier.apply(message);
 
         var formattedMessage = _format? MessageManager.formatMessage(message, _receiver, _targetName, _label, _sendPrefix) : message;
@@ -119,5 +138,6 @@ public class MessageBuilder {
         GENERAL,
         COMMAND,
         CLICKABLE_SIGN,
+        SYNTAX,
     }
 }

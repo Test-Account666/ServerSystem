@@ -17,7 +17,7 @@ public class CommandBalance extends AbstractServerSystemCommand {
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "Balance.Use")) return;
-        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
+        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
 
@@ -41,6 +41,11 @@ public class CommandBalance extends AbstractServerSystemCommand {
         command(messagePath, commandSender)
                 .target(targetPlayer.getName())
                 .postModifier(message -> message.replace("<BALANCE>", formattedBalance)).build();
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "Balance";
     }
 
     @Override

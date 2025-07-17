@@ -17,7 +17,7 @@ public class CommandClearInventory extends AbstractServerSystemCommand {
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "ClearInventory.Use")) return;
-        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
+        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
         if (targetUserOptional.isEmpty()) {
@@ -47,6 +47,11 @@ public class CommandClearInventory extends AbstractServerSystemCommand {
 
         command("ClearInventory.Success", targetUser)
                 .sender(commandSender.getName().get()).target(targetPlayer.getName()).build();
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "ClearInventory";
     }
 
     @Override

@@ -14,15 +14,10 @@ import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 public class CommandIp extends AbstractServerSystemCommand {
 
     @Override
-    public boolean hasCommandAccess(Player player, Command command) {
-        return PermissionManager.hasCommandPermission(player, "Ip.Use", false);
-    }
-
-    @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "Ip.Use")) return;
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -37,5 +32,15 @@ public class CommandIp extends AbstractServerSystemCommand {
 
         command("Ip.Success", commandSender).target(targetPlayer.getName())
                 .postModifier(message -> message.replace("<IP>", targetPlayer.getAddress().getAddress().getHostAddress())).build();
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "Ip";
+    }
+
+    @Override
+    public boolean hasCommandAccess(Player player, Command command) {
+        return PermissionManager.hasCommandPermission(player, "Ip.Use", false);
     }
 }

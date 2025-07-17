@@ -1,8 +1,9 @@
 package me.testaccount666.serversystem.utils;
 
 
-import me.testaccount666.serversystem.managers.globaldata.MappingsData;
-import org.bukkit.Bukkit;
+import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.managers.messages.MappingsData;
+import me.testaccount666.serversystem.userdata.OfflineUser;
 
 import java.text.SimpleDateFormat;
 import java.util.regex.Pattern;
@@ -15,11 +16,11 @@ public class DurationParser {
     private static final long _SECONDS_IN_MONTH = 2419200;
     private static final long _SECONDS_IN_YEAR = 31536000;
 
-    public static String parseUnbanDate(long durationMillis) {
+    public static String parseUnbanDate(long durationMillis, OfflineUser user) {
         if (durationMillis == -1) {
-            var permanentOptional = MappingsData.moderation().getName("permanent");
+            var permanentOptional = MappingsData.moderation(user).getName("permanent");
             if (permanentOptional.isEmpty()) {
-                Bukkit.getLogger().warning("Permanent name could not be found! This should not happen!");
+                ServerSystem.getLog().warning("Permanent name could not be found! This should not happen!");
                 return "Never";
             }
 

@@ -34,7 +34,7 @@ public class CommandSpawn extends AbstractServerSystemCommand {
         var legacySpawnFile = Path.of("plugins", "ServerSystem", "spawn.yml");
         if (legacySpawnFile.toFile().exists()) {
             legacySpawnFile.toFile().renameTo(_spawnFile);
-            Bukkit.getLogger().info("Found 'spawn.yml' in wrong directory. It was moved to '${_spawnFile.getAbsolutePath()}'.");
+            ServerSystem.getLog().info("Found 'spawn.yml' in wrong directory. It was moved to '${_spawnFile.getAbsolutePath()}'.");
         }
 
         spawnConfiguration = YamlConfiguration.loadConfiguration(_spawnFile);
@@ -74,7 +74,7 @@ public class CommandSpawn extends AbstractServerSystemCommand {
 
     protected void handleSpawnCommand(User commandSender, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "Spawn.Use")) return;
-        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
+        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(null), label, arguments)) return;
 
         if (spawnLocation.isEmpty()) {
             command("Spawn.NoSpawnSet", commandSender).build();
@@ -150,6 +150,11 @@ public class CommandSpawn extends AbstractServerSystemCommand {
         } catch (IOException exception) {
             throw new RuntimeException("Error while trying to spawn 'spawn.yml'", exception);
         }
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "Spawn";
     }
 
     @Override

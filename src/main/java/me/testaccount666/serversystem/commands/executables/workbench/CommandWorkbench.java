@@ -50,6 +50,11 @@ public class CommandWorkbench extends AbstractServerSystemCommand {
     }
 
     @Override
+    public String getSyntaxPath(Command command) {
+        throw new UnsupportedOperationException("Workbench command doesn't have an available syntax!");
+    }
+
+    @Override
     public boolean hasCommandAccess(Player player, Command command) {
         var permissionMap = Map.of(
                 "workbench", "Workbench.Use",

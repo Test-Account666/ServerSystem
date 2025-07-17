@@ -1,6 +1,7 @@
 package me.testaccount666.serversystem.commands.executables.inventorysee.offline;
 
 import de.tr7zw.nbtapi.NBT;
+import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.executables.inventorysee.online.CommandInventorySee;
 import me.testaccount666.serversystem.commands.executables.inventorysee.utils.InventorySeeUtils;
 import me.testaccount666.serversystem.utils.BiDirectionalHashMap;
@@ -30,7 +31,7 @@ public class InventoryLoader {
         var playerDataFile = Path.of(Bukkit.getWorlds().getFirst().getWorldFolder().getPath(), "playerdata", "${playerUUID}.dat").toFile();
 
         if (!playerDataFile.exists()) {
-            Bukkit.getLogger().warning("Player data file not found for ${offlinePlayer.getName()} (${offlinePlayer.getUniqueId()})");
+            ServerSystem.getLog().warning("Player data file not found for ${offlinePlayer.getName()} (${offlinePlayer.getUniqueId()})");
             return Optional.empty();
         }
 
@@ -70,7 +71,7 @@ public class InventoryLoader {
             return Optional.of(inventory);
         } catch (IOException e) {
             e.printStackTrace();
-            Bukkit.getLogger().severe("Failed to load inventory for ${offlinePlayer.getName()}");
+            ServerSystem.getLog().severe("Failed to load inventory for ${offlinePlayer.getName()}");
             return Optional.empty();
         }
     }
@@ -80,7 +81,7 @@ public class InventoryLoader {
         var playerDataFile = Path.of(Bukkit.getWorlds().getFirst().getWorldFolder().getPath(), "playerdata", "${playerUUID}.dat").toFile();
 
         if (!playerDataFile.exists()) {
-            Bukkit.getLogger().warning("Player data file not found for ${offlinePlayer.getName()} (${offlinePlayer.getUniqueId()})");
+            ServerSystem.getLog().warning("Player data file not found for ${offlinePlayer.getName()} (${offlinePlayer.getUniqueId()})");
             return;
         }
 
@@ -117,10 +118,10 @@ public class InventoryLoader {
 
             fileHandle.save();
 
-            Bukkit.getLogger().info("Saved inventory for ${offlinePlayer.getName()} (${offlinePlayer.getUniqueId()})");
+            ServerSystem.getLog().info("Saved inventory for ${offlinePlayer.getName()} (${offlinePlayer.getUniqueId()})");
         } catch (IOException e) {
             e.printStackTrace();
-            Bukkit.getLogger().severe("Failed to save inventory for ${offlinePlayer.getName()}");
+            ServerSystem.getLog().severe("Failed to save inventory for ${offlinePlayer.getName()}");
         }
     }
 

@@ -1,10 +1,10 @@
 package me.testaccount666.serversystem.managers.config;
 
 import lombok.Getter;
-import me.testaccount666.serversystem.managers.MessageManager;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.managers.globaldata.DefaultsData;
-import me.testaccount666.serversystem.managers.globaldata.MappingsData;
+import me.testaccount666.serversystem.managers.messages.MappingsData;
+import me.testaccount666.serversystem.managers.messages.MessageManager;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -32,12 +32,16 @@ public class ConfigurationManager {
         initializeGeneralConfig();
         initializeCommandsConfig();
         initializePermissionsConfig();
-        initializeMessagesConfig();
-        initializeMappingsConfig();
+        initializeMappingsData();
         initializeDefaultsConfig();
+        initializeMessagesConfig();
         initializeEconomyConfig();
         initializeModerationConfig();
         createUserDataFolder();
+    }
+
+    private void initializeMappingsData() {
+        new MappingsData();
     }
 
     private void initializeGeneralConfig() throws FileNotFoundException {
@@ -59,15 +63,7 @@ public class ConfigurationManager {
     }
 
     private void initializeMessagesConfig() throws FileNotFoundException {
-        var messagesFile = _pluginFolder.resolve("messages.yml").toFile();
-        ensureConfigFileExists(messagesFile, "messages.yml");
-        MessageManager.initialize(_plugin);
-    }
-
-    private void initializeMappingsConfig() throws FileNotFoundException {
-        var mappingsFile = _pluginFolder.resolve("mappings.yml").toFile();
-        ensureConfigFileExists(mappingsFile, "mappings.yml");
-        MappingsData.initialize(new DefaultConfigReader(mappingsFile, _plugin));
+        MessageManager.initialize();
     }
 
     private void initializeDefaultsConfig() throws FileNotFoundException {

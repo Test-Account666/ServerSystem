@@ -1,6 +1,7 @@
 package me.testaccount666.serversystem.commands.executables.enderchest.offline;
 
 import de.tr7zw.nbtapi.NBT;
+import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.utils.BiDirectionalHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -23,7 +24,7 @@ public class EnderChestLoader {
         var playerDataFile = Path.of(Bukkit.getWorlds().getFirst().getWorldFolder().getPath(), "playerdata", "${playerUUID}.dat").toFile();
 
         if (!playerDataFile.exists()) {
-            Bukkit.getLogger().warning("Player data file not found for ${offlinePlayer.getName()} (${offlinePlayer.getUniqueId()})");
+            ServerSystem.getLog().warning("Player data file not found for ${offlinePlayer.getName()} (${offlinePlayer.getUniqueId()})");
             return Optional.empty();
         }
 
@@ -48,7 +49,7 @@ public class EnderChestLoader {
             return Optional.of(inventory);
         } catch (IOException e) {
             e.printStackTrace();
-            Bukkit.getLogger().severe("Failed to load ender chest for ${offlinePlayer.getName()}");
+            ServerSystem.getLog().severe("Failed to load ender chest for ${offlinePlayer.getName()}");
             return Optional.empty();
         }
     }
@@ -58,7 +59,7 @@ public class EnderChestLoader {
         var playerDataFile = Path.of(Bukkit.getWorlds().getFirst().getWorldFolder().getPath(), "playerdata", "${playerUUID}.dat").toFile();
 
         if (!playerDataFile.exists()) {
-            Bukkit.getLogger().warning("Player data file not found for ${offlinePlayer.getName()} (${offlinePlayer.getUniqueId()})");
+            ServerSystem.getLog().warning("Player data file not found for ${offlinePlayer.getName()} (${offlinePlayer.getUniqueId()})");
             return;
         }
 
@@ -79,10 +80,10 @@ public class EnderChestLoader {
 
             fileHandle.save();
 
-            Bukkit.getLogger().info("Saved ender chest for ${offlinePlayer.getName()} (${offlinePlayer.getUniqueId()})");
+            ServerSystem.getLog().info("Saved ender chest for ${offlinePlayer.getName()} (${offlinePlayer.getUniqueId()})");
         } catch (IOException e) {
             e.printStackTrace();
-            Bukkit.getLogger().severe("Failed to save ender chest for ${offlinePlayer.getName()}");
+            ServerSystem.getLog().severe("Failed to save ender chest for ${offlinePlayer.getName()}");
         }
     }
 }

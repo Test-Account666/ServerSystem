@@ -30,12 +30,12 @@ public class CommandTeleport extends AbstractServerSystemCommand {
     public void execute(User commandSender, Command command, String label, String... arguments) {
         var commandName = command.getName().toLowerCase();
         switch (commandName) {
-            case "teleportposition" -> executeTeleportPosition(commandSender, arguments);
-            case "teleporthere" -> executeTeleportHere(commandSender, arguments);
+            case "teleportposition" -> executeTeleportPosition(commandSender, command, label, arguments);
+            case "teleporthere" -> executeTeleportHere(commandSender, command, label, arguments);
             case "teleportall" -> executeTeleportAll(commandSender);
             default -> {
-                if (arguments.length == 2) executeTeleportOther(commandSender, arguments);
-                else if (arguments.length > 2) executeTeleportPosition(commandSender, arguments);
+                if (arguments.length == 2) executeTeleportOther(commandSender, command, label, arguments);
+                else if (arguments.length > 2) executeTeleportPosition(commandSender, command, label, arguments);
                 else executeTeleport(commandSender, arguments);
             }
         }
@@ -49,8 +49,13 @@ public class CommandTeleport extends AbstractServerSystemCommand {
         command("TeleportAll.Success", commandSender).target("*").build();
     }
 
-    private void executeTeleportHere(User commandSender, String[] arguments) {
+    private void executeTeleportHere(User commandSender, Command command, String label, String[] arguments) {
         if (!validateSenderAndPermission(commandSender, "TeleportHere.Use")) return;
+
+        if (arguments.length == 0) {
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            return;
+        }
 
         getTargetUserAndTeleport(commandSender, arguments,
                 targetPlayer -> targetPlayer.teleport(commandSender.getPlayer().getLocation()),
@@ -65,9 +70,9 @@ public class CommandTeleport extends AbstractServerSystemCommand {
                 "Teleport.Success");
     }
 
-    private void executeTeleportOther(User commandSender, String[] arguments) {
+    private void executeTeleportOther(User commandSender, Command command, String label, String[] arguments) {
         if (!validatePermissions(commandSender, "Teleport.Use", "Teleport.Other")) return;
-        if (handleConsoleWithNoTarget(commandSender, 1, arguments)) return;
+        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, 1, arguments)) return;
 
         var sourceUserOpt = getTargetUser(commandSender, arguments);
         var targetUserOpt = getTargetUser(commandSender, 1, false, arguments);
@@ -91,15 +96,15 @@ public class CommandTeleport extends AbstractServerSystemCommand {
                 .build();
     }
 
-    private void executeTeleportPosition(User commandSender, String[] arguments) {
+    private void executeTeleportPosition(User commandSender, Command command, String label, String[] arguments) {
         if (!validatePermissions(commandSender, "TeleportPosition.Use")) return;
         if (arguments.length < 3) {
-            general("InvalidArguments", commandSender).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
         var isSelf = arguments.length == 3;
-        if (handleConsoleWithNoTarget(commandSender, 3, arguments)) return;
+        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, 3, arguments)) return;
 
         var targetUserOpt = isSelf? Optional.of(commandSender) : getTargetUser(commandSender, arguments);
         if (targetUserOpt.isEmpty()) {
@@ -238,6 +243,17 @@ public class CommandTeleport extends AbstractServerSystemCommand {
         return axis.getX() * location.getX()
                 + axis.getY() * location.getY()
                 + axis.getZ() * location.getZ();
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        var commandName = command.getName().toLowerCase();
+        return switch (commandName) {
+            case "teleportposition" -> "TeleportPosition";
+            case "teleporthere" -> "TeleportHere";
+            case "teleportall" -> "TeleportAll";
+            default -> "Teleport";
+        };
     }
 
     @Override

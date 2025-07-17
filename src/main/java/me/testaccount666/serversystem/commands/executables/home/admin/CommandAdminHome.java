@@ -18,19 +18,19 @@ public class CommandAdminHome extends AbstractServerSystemCommand {
         var commandName = command.getName().substring("admin".length());
 
         if (commandName.equalsIgnoreCase("sethome")) {
-            handleSetHomeCommand(commandSender, label, arguments);
+            handleSetHomeCommand(commandSender, command, label, arguments);
             return;
         }
 
         if (commandName.equalsIgnoreCase("deletehome")) {
-            handleDeleteHomeCommand(commandSender, label, arguments);
+            handleDeleteHomeCommand(commandSender, command, label, arguments);
             return;
         }
 
-        handleHomeCommand(commandSender, label, arguments);
+        handleHomeCommand(commandSender, command, label, arguments);
     }
 
-    private void handleHomeCommand(User commandSender, String label, String... arguments) {
+    private void handleHomeCommand(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "AdminHome.Use")) return;
 
         if (commandSender instanceof ConsoleUser) {
@@ -39,7 +39,7 @@ public class CommandAdminHome extends AbstractServerSystemCommand {
         }
 
         if (arguments.length <= 1) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -69,11 +69,11 @@ public class CommandAdminHome extends AbstractServerSystemCommand {
                 .postModifier(message -> message.replace("<HOME>", home.getDisplayName())).build();
     }
 
-    private void handleDeleteHomeCommand(User commandSender, String label, String... arguments) {
+    private void handleDeleteHomeCommand(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "AdminHome.Delete")) return;
 
         if (arguments.length <= 1) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -103,7 +103,7 @@ public class CommandAdminHome extends AbstractServerSystemCommand {
                 .postModifier(message -> message.replace("<HOME>", home.getDisplayName())).build();
     }
 
-    private void handleSetHomeCommand(User commandSender, String label, String... arguments) {
+    private void handleSetHomeCommand(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "AdminHome.Set")) return;
 
         if (commandSender instanceof ConsoleUser) {
@@ -112,7 +112,7 @@ public class CommandAdminHome extends AbstractServerSystemCommand {
         }
 
         if (arguments.length <= 1) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -151,6 +151,11 @@ public class CommandAdminHome extends AbstractServerSystemCommand {
 
         command("SetHome.Success", targetUser).label(label).target(targetUser.getName().get())
                 .postModifier(message -> message.replace("<HOME>", newHome.getDisplayName())).build();
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "AdminHome";
     }
 
     @Override

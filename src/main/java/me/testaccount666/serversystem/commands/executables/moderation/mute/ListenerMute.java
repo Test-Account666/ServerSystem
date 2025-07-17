@@ -67,7 +67,7 @@ public class ListenerMute implements Listener {
 
         command("Mute.Muted", user).sender(senderName).target(user.getName().get())
                 .postModifier(message -> message.replace("<REASON>", muteModeration.reason())
-                        .replace("<DATE>", parseUnbanDate(muteModeration.expireTime()))).build();
+                        .replace("<DATE>", parseUnbanDate(muteModeration.expireTime(), user))).build();
     }
 
     private void handleShadowMute(AsyncChatEvent event, MuteModeration muteModeration) {

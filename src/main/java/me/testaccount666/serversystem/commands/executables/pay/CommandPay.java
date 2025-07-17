@@ -20,10 +20,10 @@ public class CommandPay extends AbstractServerSystemCommand {
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "Pay.Use")) return;
-        if (handleConsoleWithNoTarget(commandSender, 1, arguments)) return;
+        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, 1, arguments)) return;
 
         if (arguments.length < 2) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -69,6 +69,11 @@ public class CommandPay extends AbstractServerSystemCommand {
         } catch (NumberFormatException ignored) {
             command("Pay.InvalidAmount", commandSender).target(targetPlayer.getName()).build();
         }
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "Pay";
     }
 
     @Override

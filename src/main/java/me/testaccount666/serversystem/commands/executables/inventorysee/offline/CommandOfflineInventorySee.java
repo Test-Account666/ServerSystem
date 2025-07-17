@@ -18,13 +18,13 @@ public class CommandOfflineInventorySee extends AbstractServerSystemCommand {
 
     public CommandOfflineInventorySee(CommandInventorySee commandInventorySee) {
         if (!Bukkit.getPluginManager().isPluginEnabled("NBTAPI")) {
-            Bukkit.getLogger().warning("NBTAPI is not installed, Offline-InventorySee will not work!");
+            ServerSystem.getLog().warning("NBTAPI is not installed, Offline-InventorySee will not work!");
             inventoryLoader = null;
             return;
         }
 
         if (!NBT.preloadApi()) {
-            Bukkit.getLogger().severe("Failed to load NBT-API!");
+            ServerSystem.getLog().severe("Failed to load NBT-API!");
             inventoryLoader = null;
             return;
         }
@@ -55,7 +55,7 @@ public class CommandOfflineInventorySee extends AbstractServerSystemCommand {
         }
 
         if (arguments.length < 1) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(null)).label(label).build();
             return;
         }
 
@@ -82,6 +82,11 @@ public class CommandOfflineInventorySee extends AbstractServerSystemCommand {
 
         var inventory = inventoryOptional.get();
         commandSender.getPlayer().openInventory(inventory);
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "OfflineInventorySee";
     }
 
     @Override

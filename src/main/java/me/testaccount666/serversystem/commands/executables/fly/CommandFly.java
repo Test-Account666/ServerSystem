@@ -30,7 +30,7 @@ public class CommandFly extends AbstractServerSystemCommand {
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "Fly.Use")) return;
-        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
+        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
 
@@ -59,6 +59,11 @@ public class CommandFly extends AbstractServerSystemCommand {
 
         if (isSelf) return;
         command("Fly.Success" + (isFlying? "Enabled" : "Disabled"), commandSender).target(targetPlayer.getName()).build();
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "Fly";
     }
 
     @Override

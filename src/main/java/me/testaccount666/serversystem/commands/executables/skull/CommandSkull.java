@@ -80,6 +80,11 @@ public class CommandSkull extends AbstractServerSystemCommand {
     }
 
     @Override
+    public String getSyntaxPath(Command command) {
+        return "Skull";
+    }
+
+    @Override
     public boolean hasCommandAccess(Player player, Command command) {
         return PermissionManager.hasCommandPermission(player, "Skull.Use", false);
     }

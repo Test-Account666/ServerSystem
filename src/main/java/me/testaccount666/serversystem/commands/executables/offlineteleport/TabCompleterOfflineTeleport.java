@@ -1,9 +1,9 @@
 package me.testaccount666.serversystem.commands.executables.offlineteleport;
 
+import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabCompleter;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.User;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class TabCompleterOfflineTeleport implements ServerSystemTabCompleter {
             case "offlineteleport" -> "OfflineTeleport.Use";
             case "offlineteleporthere" -> "OfflineTeleportHere.Use";
             default -> {
-                Bukkit.getLogger().warning("Unknown OfflineTeleport command: ${command.getName()}");
+                ServerSystem.getLog().warning("Unknown OfflineTeleport command: ${command.getName()}");
                 yield null;
             }
         };

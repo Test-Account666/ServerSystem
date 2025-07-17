@@ -70,7 +70,7 @@ public class CommandIgnore extends AbstractServerSystemCommand {
             return Optional.empty();
         }
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(null)).label(label).build();
             return Optional.empty();
         }
 
@@ -89,6 +89,11 @@ public class CommandIgnore extends AbstractServerSystemCommand {
         }
 
         return Optional.of(targetUser);
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "Ignore";
     }
 
     @Override

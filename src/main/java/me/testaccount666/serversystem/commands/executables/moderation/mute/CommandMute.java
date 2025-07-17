@@ -48,6 +48,16 @@ public class CommandMute extends AbstractModerationCommand {
     }
 
     @Override
+    public String getSyntaxPath(Command command) {
+        var commandName = command.getName().toLowerCase();
+        return switch (commandName) {
+            case "mute", "shadowmute" -> "Mute";
+            case "unmute" -> "Unmute";
+            default -> throw new IllegalArgumentException("(CommandMute) Unknown command name: ${commandName}");
+        };
+    }
+
+    @Override
     public boolean hasCommandAccess(Player player, Command command) {
         var permissionPath = switch (command.getName().toLowerCase()) {
             case "mute" -> "Moderation.Mute.Use";

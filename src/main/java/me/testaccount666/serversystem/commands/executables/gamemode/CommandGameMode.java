@@ -3,7 +3,7 @@ package me.testaccount666.serversystem.commands.executables.gamemode;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.managers.PermissionManager;
-import me.testaccount666.serversystem.managers.globaldata.MappingsData;
+import me.testaccount666.serversystem.managers.messages.MappingsData;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
@@ -36,28 +36,28 @@ public class CommandGameMode extends AbstractServerSystemCommand {
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (command.getName().equalsIgnoreCase("gms")) {
-            handleGameModeCommand(commandSender, GameMode.SURVIVAL, arguments);
+            handleGameModeCommand(commandSender, command, label, GameMode.SURVIVAL, arguments);
             return;
         }
 
         if (command.getName().equalsIgnoreCase("gmc")) {
-            handleGameModeCommand(commandSender, GameMode.CREATIVE, arguments);
+            handleGameModeCommand(commandSender, command, label, GameMode.CREATIVE, arguments);
             return;
         }
 
         if (command.getName().equalsIgnoreCase("gma")) {
-            handleGameModeCommand(commandSender, GameMode.ADVENTURE, arguments);
+            handleGameModeCommand(commandSender, command, label, GameMode.ADVENTURE, arguments);
             return;
         }
 
         if (command.getName().equalsIgnoreCase("gmsp")) {
-            handleGameModeCommand(commandSender, GameMode.SPECTATOR, arguments);
+            handleGameModeCommand(commandSender, command, label, GameMode.SPECTATOR, arguments);
             return;
         }
 
         // Handle /gamemode <Mode> <Target> command
         if (arguments.length < 1) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -70,10 +70,10 @@ public class CommandGameMode extends AbstractServerSystemCommand {
 
         var newArguments = arguments.length > 1? new String[]{arguments[1]} : new String[0];
 
-        handleGameModeCommand(commandSender, gameModeOptional.get(), newArguments);
+        handleGameModeCommand(commandSender, command, label, gameModeOptional.get(), newArguments);
     }
 
-    public void handleGameModeCommand(User commandSender, GameMode gameMode, String[] arguments) {
+    public void handleGameModeCommand(User commandSender, Command command, String label, GameMode gameMode, String[] arguments) {
         if (!checkBasePermission(commandSender, "GameMode.Use")) return;
 
         var gameModePermission = switch (gameMode) {
@@ -84,7 +84,7 @@ public class CommandGameMode extends AbstractServerSystemCommand {
         };
 
         if (!checkBasePermission(commandSender, gameModePermission)) return;
-        if (handleConsoleWithNoTarget(commandSender, arguments)) return;
+        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments)) return;
 
         var targetUserOptional = getTargetUser(commandSender, arguments);
 
@@ -99,17 +99,18 @@ public class CommandGameMode extends AbstractServerSystemCommand {
 
         targetPlayer.setGameMode(gameMode);
 
-        var gameModeName = MappingsData.gameMode().getGameModeName(gameMode).orElse(gameMode.name());
+        var gameModeNameSender = MappingsData.gameMode(commandSender).getGameModeName(gameMode).orElse(gameMode.name());
         var messageKey = isSelf? "GameMode.Success" : "GameMode.SuccessOther";
 
         command(messageKey, commandSender).target(targetPlayer.getName())
-                .postModifier(message -> replaceGameModePlaceholder(message, gameModeName)).build();
+                .postModifier(message -> replaceGameModePlaceholder(message, gameModeNameSender)).build();
 
         if (isSelf) return;
+        var gameModeNameTarget = MappingsData.gameMode(targetUser).getGameModeName(gameMode).orElse(gameMode.name());
 
         command("GameMode.Success", targetUser)
                 .sender(commandSender.getName().get()).target(targetPlayer.getName())
-                .postModifier(message -> replaceGameModePlaceholder(message, gameModeName)).build();
+                .postModifier(message -> replaceGameModePlaceholder(message, gameModeNameTarget)).build();
     }
 
     private String replaceGameModePlaceholder(String message, String gameModeName) {
@@ -139,6 +140,18 @@ public class CommandGameMode extends AbstractServerSystemCommand {
         return MappingsData.gameMode().getGameModeName(gameMode)
                 .map(name -> name.toLowerCase().startsWith(input.toLowerCase()))
                 .orElse(false);
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        var commandName = command.getName().toLowerCase();
+        return switch (commandName) {
+            case "gms" -> "GMS";
+            case "gmc" -> "GMC";
+            case "gma" -> "GMA";
+            case "gmsp" -> "GMSP";
+            default -> "GameMode";
+        };
     }
 
     @Override

@@ -1,9 +1,9 @@
 package me.testaccount666.serversystem.managers.database.economy;
 
 import com.zaxxer.hikari.HikariDataSource;
+import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.managers.config.ConfigReader;
 import me.testaccount666.serversystem.managers.database.HikariConfigUtil;
-import org.bukkit.Bukkit;
 
 import java.sql.SQLException;
 
@@ -31,7 +31,7 @@ public class MySqlEconomyDatabaseManager extends AbstractEconomyDatabaseManager 
 
         var config = HikariConfigUtil.configureMySql(configReader, "Economy.MySQL", "economy-hikari-pool");
         dataSource = new HikariDataSource(config);
-        Bukkit.getLogger().info("Successfully initialized MySQL connection pool for economy.");
+        ServerSystem.getLog().info("Successfully initialized MySQL connection pool for economy.");
     }
 
     /**

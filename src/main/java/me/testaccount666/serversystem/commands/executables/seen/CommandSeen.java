@@ -5,7 +5,6 @@ import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.User;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
@@ -24,14 +23,14 @@ public class CommandSeen extends AbstractServerSystemCommand {
         if (!checkBasePermission(commandSender, "Seen.Use")) return;
 
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
         var cachedUserOptional = ServerSystem.Instance.getUserManager().getUser(arguments[0]);
 
         if (cachedUserOptional.isEmpty()) {
-            Bukkit.getLogger().warning("(CommandSeen) User '${arguments[0]}' is not cached! This should not happen!");
+            ServerSystem.getLog().warning("(CommandSeen) User '${arguments[0]}' is not cached! This should not happen!");
             general("ErrorOccurred", commandSender).label(label).build();
             return;
         }
@@ -59,6 +58,11 @@ public class CommandSeen extends AbstractServerSystemCommand {
         return Instant.ofEpochMilli(dateMillis)
                 .atZone(ZoneId.systemDefault())
                 .format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "Seen";
     }
 
     @Override

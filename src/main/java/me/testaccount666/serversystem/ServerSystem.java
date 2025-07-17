@@ -30,10 +30,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class ServerSystem extends JavaPlugin {
     private final static int _CURRENT_VERSION = 300;
     public static ServerSystem Instance;
+    @Getter
+    private static Logger _Log;
     @Getter
     private UserManager _userManager;
     @Getter
@@ -62,7 +65,7 @@ public final class ServerSystem extends JavaPlugin {
 
         version = version.substring(version.indexOf("MC: ") + 4, version.indexOf(")"));
 
-        Bukkit.getLogger().log(Level.FINE, "Server version: ${version}");
+        ServerSystem.getLog().log(Level.FINE, "Server version: ${version}");
 
         return new Version(version);
     }
@@ -70,10 +73,11 @@ public final class ServerSystem extends JavaPlugin {
     @Override
     public void onEnable() {
         Instance = this;
+        _Log = getLogger();
 
         var migrator = new LegacyDataMigrator();
         if (migrator.isLegacyDataPresent()) {
-            Bukkit.getLogger().log(Level.INFO, "Legacy data detected. Attempting to migrate...");
+            ServerSystem.getLog().log(Level.INFO, "Legacy data detected. Attempting to migrate...");
             migrator.prepareMigration();
         }
 

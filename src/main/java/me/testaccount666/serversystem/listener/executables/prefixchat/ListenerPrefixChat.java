@@ -39,12 +39,12 @@ public class ListenerPrefixChat implements Listener {
 
         var userOptional = ServerSystem.Instance.getUserManager().getUser(player);
         if (userOptional.isEmpty()) {
-            Bukkit.getLogger().warning("Couldn't cache User '${player.getName()}'! This should not happen!");
+            ServerSystem.getLog().warning("Couldn't cache User '${player.getName()}'! This should not happen!");
             return;
         }
         var cachedUser = userOptional.get();
         if (cachedUser.isOfflineUser()) {
-            Bukkit.getLogger().warning("User '${player.getName()}' is cached as Offline User! This should not happen!");
+            ServerSystem.getLog().warning("User '${player.getName()}' is cached as Offline User! This should not happen!");
             return;
         }
         var user = (User) cachedUser.getOfflineUser();

@@ -22,7 +22,7 @@ public class CommandEconomy extends AbstractServerSystemCommand {
         if (!checkBasePermission(commandSender, "Economy.Use")) return;
 
         if (arguments.length <= 2) {
-            general("InvalidArguments", commandSender).target(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -48,7 +48,7 @@ public class CommandEconomy extends AbstractServerSystemCommand {
             case "set" -> handleSetEconomy(commandSender, label, targetUser, amount);
             case "give", "add" -> handleGiveEconomy(commandSender, label, targetUser, amount);
             case "take", "remove" -> handleTakeEconomy(commandSender, label, targetUser, amount);
-            default -> general("InvalidArguments", commandSender).target(label).build();
+            default -> general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
         }
     }
 
@@ -83,6 +83,11 @@ public class CommandEconomy extends AbstractServerSystemCommand {
         command("Economy.${key}.SuccessOther", targetUser)
                 .sender(commandSender.getName().get()).target(targetUser.getName().get())
                 .postModifier(modifier).build();
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "Economy";
     }
 
     @Override

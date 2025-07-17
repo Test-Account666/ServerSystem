@@ -21,12 +21,12 @@ public class CommandWeather extends AbstractServerSystemCommand {
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (command.getName().equalsIgnoreCase("weather")) {
-            handleWeatherCommand(commandSender, label, arguments);
+            handleWeatherCommand(commandSender, command, label, arguments);
             return;
         }
 
         if (commandSender instanceof ConsoleUser && arguments.length == 0) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -42,19 +42,19 @@ public class CommandWeather extends AbstractServerSystemCommand {
             return;
         }
 
-        handleWeatherCommand(commandSender, label, command.getName(), world.getName());
+        handleWeatherCommand(commandSender, command, label, command.getName(), world.getName());
     }
 
-    private void handleWeatherCommand(User commandSender, String label, String... arguments) {
+    private void handleWeatherCommand(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "Weather.Use")) return;
 
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
         if (commandSender instanceof ConsoleUser && arguments.length == 1) {
-            general("InvalidArguments", commandSender).label(label).build();
+            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -98,7 +98,7 @@ public class CommandWeather extends AbstractServerSystemCommand {
                 world.setWeatherDuration(weatherDuration);
                 break;
             default: {
-                general("InvalidArguments", commandSender).label(label).build();
+                general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
                 return;
             }
         }
@@ -106,6 +106,18 @@ public class CommandWeather extends AbstractServerSystemCommand {
         command("Weather.Success", commandSender).target(world.getName())
                 .postModifier(message -> message.replace("<WEATHER>", arguments[0])
                         .replace("<WORLD>", world.getName()));
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        var commandName = command.getName().toLowerCase();
+        return switch (commandName) {
+            case "weather" -> "Weather";
+            case "sun" -> "Sun";
+            case "storm" -> "Storm";
+            case "rain" -> "Rain";
+            default -> throw new IllegalStateException("(CommandWeather) Unexpected value: ${commandName}");
+        };
     }
 
     @Override

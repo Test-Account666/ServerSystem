@@ -14,7 +14,7 @@ public class UserQuitListener implements Listener {
         var cachedUserOptional = ServerSystem.Instance.getUserManager().getUser(event.getPlayer().getUniqueId());
 
         if (cachedUserOptional.isEmpty()) {
-            Bukkit.getLogger().warning("(UserQuitListener) User '${event.getPlayer().getName()}' is not cached! This should not happen!");
+            ServerSystem.getLog().warning("(UserQuitListener) User '${event.getPlayer().getName()}' is not cached! This should not happen!");
             return;
         }
 
@@ -22,7 +22,7 @@ public class UserQuitListener implements Listener {
         var offlineUser = user.getOfflineUser();
 
         //TODO: Should we really still save in this case?
-        if (user.isOfflineUser()) Bukkit.getLogger().warning("User '${event.getPlayer().getName()}' is not an online user! This should not happen!");
+        if (user.isOfflineUser()) ServerSystem.getLog().warning("User '${event.getPlayer().getName()}' is not an online user! This should not happen!");
 
         offlineUser.setLogoutPosition(event.getPlayer().getLocation());
 

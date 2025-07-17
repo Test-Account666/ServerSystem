@@ -43,12 +43,12 @@ public class ListenerOfflineEnderChest implements Listener {
 
         var inventoryOptional = _enderChestLoader.inventoryMap.getValue(viewedPlayer.getUniqueId());
         if (inventoryOptional.isEmpty()) {
-            Bukkit.getLogger().info("OfflineEnderChest: No offline inventory found for player ${viewedPlayer.getName()}");
+            ServerSystem.getLog().info("OfflineEnderChest: No offline inventory found for player ${viewedPlayer.getName()}");
             return;
         }
         var inventory = inventoryOptional.get();
 
-        Bukkit.getLogger().info("OfflineEnderChest: Offline inventory was found for player ${viewedPlayer.getName()}");
+        ServerSystem.getLog().info("OfflineEnderChest: Offline inventory was found for player ${viewedPlayer.getName()}");
 
         var viewers = new ArrayList<>(inventory.getViewers());
         inventory.close();

@@ -48,7 +48,7 @@ public class CommandInventorySee extends AbstractServerSystemCommand {
         }
 
         if (arguments.length < 1) {
-            general("InvalidArguments", sender).label(label).build();
+            general("InvalidArguments", sender).syntaxPath(getSyntaxPath(null)).label(label).build();
             return;
         }
 
@@ -117,6 +117,11 @@ public class CommandInventorySee extends AbstractServerSystemCommand {
                     .setVelocity(owner.getLocation().getDirection().multiply(0.35));
             item.setAmount(0);
         }
+    }
+
+    @Override
+    public String getSyntaxPath(Command command) {
+        return "InventorySee";
     }
 
     @Override

@@ -109,6 +109,10 @@ public class OfflineUser {
     protected String playerLanguage;
     @SaveableField(path = "User.KitCooldowns", handler = KitMapFieldHandler.class)
     protected Map<String, Long> kitCooldowns = new HashMap<>();
+    @Getter
+    @Setter
+    @SaveableField(path = "Language.UsesDefault")
+    protected boolean usesDefaultLanguage;
 
     protected OfflineUser(File userFile) {
         this.userFile = userFile;
@@ -179,11 +183,15 @@ public class OfflineUser {
         acceptsMessages = true;
         socialSpyEnabled = false;
         commandSpyEnabled = false;
-        playerLanguage = System.getProperty("user.language");
+        usesDefaultLanguage = true;
+        playerLanguage = "english";
         lastBackType = CommandBack.BackType.NONE;
 
         // PersistenceManager loads all annotated fields
         PersistenceManager.loadFields(this, userConfig);
+        // Quick fix that blocks potentially wanted behavior, but eh...
+        if (playerLanguage.equalsIgnoreCase(System.getProperty("user.language"))) playerLanguage = "english";
+        playerLanguage = playerLanguage.toLowerCase();
 
         if (name == null) name = getPlayer().getName();
 

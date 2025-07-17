@@ -1,9 +1,9 @@
 package me.testaccount666.serversystem.managers;
 
-import me.testaccount666.serversystem.managers.globaldata.MappingsData;
+import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.managers.messages.MappingsData;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
-import org.bukkit.Bukkit;
 
 import javax.annotation.Nullable;
 
@@ -32,18 +32,18 @@ public class PlaceholderManager {
      */
     public String applyPlaceholders(String message, User commandSender, @Nullable String targetName, String label) {
         if (commandSender.getName().isEmpty()) {
-            Bukkit.getLogger().warning("CommandSender (${commandSender.getUuid()}) has no name! This should not happen!");
+            ServerSystem.getLog().warning("CommandSender (${commandSender.getUuid()}) has no name! This should not happen!");
             return message;
         }
 
         if (targetName == null) targetName = commandSender.getName().get();
 
-        message = applyColorPlaceholder(message, "<Color:Prefix>", "Prefix");
-        message = applyColorPlaceholder(message, "<Color:Separators>", "Separator");
-        message = applyColorPlaceholder(message, "<Color:Message>", "Message");
-        message = applyColorPlaceholder(message, "<Color:Highlight>", "Highlight");
-        message = applyColorPlaceholder(message, "<Color:Error.Message>", "ErrorMessage");
-        message = applyColorPlaceholder(message, "<Color:Error.Highlight>", "ErrorHighlight");
+        message = applyColorPlaceholder(commandSender, message, "<Color:Prefix>", "Prefix");
+        message = applyColorPlaceholder(commandSender, message, "<Color:Separators>", "Separator");
+        message = applyColorPlaceholder(commandSender, message, "<Color:Message>", "Message");
+        message = applyColorPlaceholder(commandSender, message, "<Color:Highlight>", "Highlight");
+        message = applyColorPlaceholder(commandSender, message, "<Color:Error.Message>", "ErrorMessage");
+        message = applyColorPlaceholder(commandSender, message, "<Color:Error.Highlight>", "ErrorHighlight");
 
         message = message.replace("<SENDER>", commandSender.getName().get())
                 .replace("<TARGET>", targetName)
@@ -55,12 +55,12 @@ public class PlaceholderManager {
         return message;
     }
 
-    private String applyColorPlaceholder(String message, String placeholder, String colorId) {
-        var colorOptional = MappingsData.messageColors().getMessageColor(colorId);
+    private String applyColorPlaceholder(User user, String message, String placeholder, String colorId) {
+        var colorOptional = MappingsData.messageColors(user).getMessageColor(colorId);
 
         return colorOptional.map(prefixString -> message.replace(placeholder, prefixString))
                 .orElseGet(() -> {
-                    Bukkit.getLogger().warning("${colorId} color could not be found! This should not happen!");
+                    ServerSystem.getLog().warning("${colorId} color could not be found! This should not happen!");
                     return message;
                 });
     }
