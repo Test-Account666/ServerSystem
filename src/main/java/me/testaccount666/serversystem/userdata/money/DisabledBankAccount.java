@@ -2,6 +2,7 @@ package me.testaccount666.serversystem.userdata.money;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Map;
 import java.util.UUID;
 
 public class DisabledBankAccount extends AbstractBankAccount {
@@ -28,5 +29,10 @@ public class DisabledBankAccount extends AbstractBankAccount {
     @Override
     public void save() {
 
+    }
+
+    @Override
+    public Map<UUID, BigDecimal> getTopTen() {
+        return Map.of();
     }
 }

@@ -37,6 +37,10 @@ Commands:
   balance:
     Enabled: true
     Aliases: "money, balance"
+    Variants:
+      baltop:
+        Enabled: true
+        Aliases: "balancetop, baltop"
   pay:
     Enabled: true
     Aliases: "pay"

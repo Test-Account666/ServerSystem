@@ -270,6 +270,10 @@ Messages:
         Other: "Du hast das Kit <Color:Highlight><KIT> <Color:Message>an <Color:Highlight><TARGET><Color:Message> gegeben."
     Language:
       Changed: "Du hast deine Sprache zu <Color:Highlight><LANGUAGE><Color:Message> geändert."
+    Baltop:
+      NoData: "<Color:Error.Message>Es wurden keine Baltop Daten gefunden."
+      Header: "&8-=-=-=-= &6Baltop &8=-=-=-=-"
+      Entry: "&6<POSITION> <Color:Highlight><TARGET> <Color:Separators>» &6<BALANCE>"
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>Du hast keine Berechtigung dafür. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"

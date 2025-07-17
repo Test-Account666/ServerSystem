@@ -80,6 +80,10 @@ Permissions:
       Other:
         Required: true
         Value: "serversystem.command.balance.other"
+    Baltop:
+      Use:
+        Required: false
+        Value: "serversystem.command.baltop.use"
     Pay:
       Use:
         Required: false

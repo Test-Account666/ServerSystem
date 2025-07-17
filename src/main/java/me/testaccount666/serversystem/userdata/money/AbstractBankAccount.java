@@ -4,6 +4,7 @@ import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Map;
 import java.util.UUID;
 
 @Getter
@@ -40,4 +41,6 @@ public abstract class AbstractBankAccount {
     public boolean hasEnoughMoney(BigDecimal amount) {
         return getBalance().compareTo(amount) >= 0;
     }
+
+    public abstract Map<UUID, BigDecimal> getTopTen();
 }

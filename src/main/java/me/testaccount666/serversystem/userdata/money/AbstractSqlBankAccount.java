@@ -6,6 +6,7 @@ import me.testaccount666.serversystem.managers.database.economy.AbstractEconomyD
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.UUID;
 
 public abstract class AbstractSqlBankAccount extends AbstractBankAccount {
@@ -87,6 +88,27 @@ public abstract class AbstractSqlBankAccount extends AbstractBankAccount {
             }
         } catch (SQLException exception) {
             throw new RuntimeException("Error checking if account '${owner}' ('${accountId}') is in database!", exception);
+        }
+    }
+
+    @Override
+    public Map<UUID, BigDecimal> getTopTen() {
+        try (var connection = databaseManager.getConnection();
+             var statement = connection.prepareStatement("SELECT Owner, Balance FROM Economy ORDER BY Balance DESC LIMIT 10")) {
+
+            try (var resultSet = statement.executeQuery()) {
+                var topTen = new java.util.LinkedHashMap<UUID, BigDecimal>();
+                
+                while (resultSet.next()) {
+                    var ownerUuid = UUID.fromString(resultSet.getString("Owner"));
+                    var balance = resultSet.getBigDecimal("Balance");
+                    topTen.put(ownerUuid, balance);
+                }
+                
+                return topTen;
+            }
+        } catch (SQLException exception) {
+            throw new RuntimeException("Error retrieving top ten balances", exception);
         }
     }
 }
