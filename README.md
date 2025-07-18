@@ -203,9 +203,9 @@ ServerSystem groups permissions into the following main categories:
 - `serversystem.support.*` - Support/helper permissions
 - `serversystem.command.*` - Basic command permissions
 
-Most permissions suitable for everyday usage by players are deactivated by default.<br>
-This means that you do not have to assign permissions to have players use e.g. /home<br>
-All permissions can be activated or deactivated inside the `permissions.yml` file.<br>
+Most permissions suitable for everyday player usage are already given by default.<br>
+This means that players can use these commands out of the box (e.g. `/home`)<br>
+You can set any permission to (not) be required inside the `permissions.yml` file.<br>
 
 ### Permission Levels
 
