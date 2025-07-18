@@ -29,3 +29,10 @@ UserData:
 MinecraftDiscordChat:
   Enabled: false
   WebhookUrl: ""
+AwayFromKeyboard:
+  Enabled: false
+  Description: "Kinda aggressive, needs to be adjusted in future updates"
+DeveloperJoin:
+  NotifyDeveloper:
+    Enabled: true
+    Description: "Notifies me, if you're running ServerSystem :)"

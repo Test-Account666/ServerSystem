@@ -20,11 +20,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class ListenerAwayFromKeyboard implements Listener {
+    private final boolean _enabled;
     private final Map<UUID, Long> _lastActionMap = new HashMap<>();
     private final Map<UUID, Location> _chunkLocationMap = new HashMap<>();
     private final Map<UUID, Long> _lastMouseMovement = new HashMap<>();
 
     public ListenerAwayFromKeyboard() {
+        _enabled = ServerSystem.Instance.getConfigManager().getGeneralConfig().getBoolean("AwayFromKeyboard.Enabled");
+
         Bukkit.getScheduler().scheduleSyncRepeatingTask(ServerSystem.Instance, () -> Bukkit.getOnlinePlayers().forEach(player -> {
             var lastAction = _lastActionMap.getOrDefault(player.getUniqueId(), System.currentTimeMillis());
             var currentTime = System.currentTimeMillis();
@@ -52,6 +55,7 @@ public class ListenerAwayFromKeyboard implements Listener {
 
     @EventHandler
     public void onPlayerFish(PlayerFishEvent event) {
+        if (!_enabled) return;
         if (event.getState() == PlayerFishEvent.State.FISHING) return;
 
         _lastActionMap.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
@@ -59,6 +63,7 @@ public class ListenerAwayFromKeyboard implements Listener {
 
     @EventHandler
     public void onPlayerBreakBlock(BlockBreakEvent event) {
+        if (!_enabled) return;
         if (isMouseInactive(event.getPlayer())) {
             event.setCancelled(true);
             return;
@@ -71,6 +76,7 @@ public class ListenerAwayFromKeyboard implements Listener {
 
     @EventHandler
     public void onPlayerDamageEntity(EntityDamageByEntityEvent event) {
+        if (!_enabled) return;
         if (!(event.getDamager() instanceof Player player)) return;
 
         if (isMouseInactive(player)) {
@@ -83,6 +89,7 @@ public class ListenerAwayFromKeyboard implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        if (!_enabled) return;
         var player = event.getPlayer();
 
         _chunkLocationMap.put(player.getUniqueId(), getChunkLocation(player));
@@ -90,6 +97,7 @@ public class ListenerAwayFromKeyboard implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
+        if (!_enabled) return;
         handleChunkChange(event.getPlayer());
         handleMouseMovement(event.getPlayer(), event.getFrom(), event.getTo());
     }
@@ -137,6 +145,7 @@ public class ListenerAwayFromKeyboard implements Listener {
 
     @EventHandler
     public void onPlayerContainerOpen(InventoryOpenEvent event) {
+        if (!_enabled) return;
         if (!(event.getPlayer() instanceof Player player)) return;
 
         resetAfkStatus(player);
@@ -144,11 +153,13 @@ public class ListenerAwayFromKeyboard implements Listener {
 
     @EventHandler
     public void onPlayerChat(AsyncChatEvent event) {
+        if (!_enabled) return;
         resetAfkStatus(event.getPlayer());
     }
 
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+        if (!_enabled) return;
         resetAfkStatus(event.getPlayer());
     }
 
