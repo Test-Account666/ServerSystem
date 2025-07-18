@@ -298,7 +298,7 @@ public void printHelloWorld() {
 }
 ```
 
-The naming conventions are enforced by CheckStyle and use C#-ish conventions.
+The variable naming conventions are enforced by CheckStyle and use C#-ish conventions.
 
 You may need to install the mentioned IDE-Plugins to work with this project properly.
 
