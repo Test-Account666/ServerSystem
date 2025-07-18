@@ -20,6 +20,7 @@ public class LanguageLoader {
         var plugin = ServerSystem.Instance;
         ensureExists(plugin, "english");
         ensureExists(plugin, "german");
+        ensureExists(plugin, "slovene");
     }
 
     private void ensureExists(Plugin plugin, String language) {

@@ -20,7 +20,8 @@ This plugin also aims to be much more customizable and (mostly) be a drop-in sol
 - **Teleportation System**: TPA requests, back command, spawn management
 - **Communication**: Private messaging, team chat, broadcast system
 - **Clickable Signs**: Interactive signs for various functions
-- **Multi-language Support**: Per-User language support, defaulting to player's locale (English and German only)
+- **Multi-language Support**: Per-User language support, defaulting to player's locale (English, German and Slovene
+  only)
 
 ## Requirements
 

@@ -24,6 +24,7 @@ public class ListenerClientLanguageChecker implements Listener {
 
         if (locale.startsWith("en_")) language = "English";
         if (locale.startsWith("de_")) language = "German";
+        if (locale.startsWith("sl_")) language = "Slovene";
 
         user.setPlayerLanguage(language.toLowerCase());
     }
