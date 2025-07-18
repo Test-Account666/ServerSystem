@@ -7,12 +7,20 @@ import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
+
+import java.util.Set;
 
 import static me.testaccount666.serversystem.utils.MessageBuilder.command;
 import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 
 @ServerSystemCommand(name = "heal", variants = "feed")
 public class CommandHeal extends AbstractServerSystemCommand {
+    private final Set<PotionEffectType> _badEffectsSet = Set.of(PotionEffectType.INSTANT_DAMAGE, PotionEffectType.INFESTED,
+            PotionEffectType.SLOWNESS, PotionEffectType.BAD_OMEN, PotionEffectType.DARKNESS, PotionEffectType.GLOWING,
+            PotionEffectType.UNLUCK, PotionEffectType.BLINDNESS, PotionEffectType.HUNGER, PotionEffectType.MINING_FATIGUE,
+            PotionEffectType.NAUSEA, PotionEffectType.OOZING, PotionEffectType.POISON, PotionEffectType.WITHER,
+            PotionEffectType.WEAKNESS, PotionEffectType.LEVITATION);
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
@@ -42,7 +50,6 @@ public class CommandHeal extends AbstractServerSystemCommand {
 
         targetPlayer.setFoodLevel(20);
         targetPlayer.setSaturation(20);
-        targetPlayer.setFireTicks(0);
 
         var messagePath = isSelf? "Feed.Success" : "Feed.SuccessOther";
 
@@ -69,9 +76,11 @@ public class CommandHeal extends AbstractServerSystemCommand {
 
         if (!isSelf && !checkOtherPermission(commandSender, "Heal.Other", targetPlayer.getName())) return;
 
-        targetPlayer.setHealth(targetPlayer.getAttribute(Attribute.MAX_HEALTH).getBaseValue());
+        targetPlayer.setHealth(targetPlayer.getAttribute(Attribute.MAX_HEALTH).getValue());
         targetPlayer.setFoodLevel(20);
         targetPlayer.setSaturation(20);
+        targetPlayer.setFireTicks(0);
+        _badEffectsSet.forEach(targetPlayer::removePotionEffect);
 
         var messagePath = isSelf? "Heal.Success" : "Heal.SuccessOther";
 
