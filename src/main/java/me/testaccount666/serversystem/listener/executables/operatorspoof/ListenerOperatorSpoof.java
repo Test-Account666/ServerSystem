@@ -11,7 +11,6 @@ import me.testaccount666.serversystem.userdata.User;
 import net.minecraft.network.protocol.game.ServerboundChangeGameModePacket;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -29,7 +28,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @RequiredCommands(requiredCommands = CommandGameMode.class)
 public class ListenerOperatorSpoof implements Listener {
     private CommandGameMode _executorGameMode;
-    private PluginCommand _commandGameMode;
 
     public ListenerOperatorSpoof() {
         Bukkit.getOnlinePlayers().forEach(this::inject);
@@ -135,17 +133,8 @@ public class ListenerOperatorSpoof implements Listener {
             var gameMode = GameMode.valueOf(mode.getName().toUpperCase());
             var user = (User) _cachedUser.getOfflineUser();
 
-            if (_commandGameMode == null) {
-                var command = ServerSystem.Instance.getCommandManager().getServerSystemCommand("gamemode");
-                if (command.isEmpty()) {
-                    ServerSystem.getLog().warning("Couldn't find command 'gamemode'!");
-                    return;
-                }
-                _commandGameMode = command.get();
-            }
-
             // Go back to main thread
-            Bukkit.getScheduler().runTask(ServerSystem.Instance, () -> _executorGameMode.handleGameModeCommand(user, _commandGameMode, "gamemode", gameMode, new String[0]));
+            Bukkit.getScheduler().runTask(ServerSystem.Instance, () -> _executorGameMode.handleGameModeCommand(user, null, "gamemode", gameMode, new String[0]));
         }
     }
 }

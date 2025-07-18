@@ -65,7 +65,7 @@ public final class ServerSystem extends JavaPlugin {
 
         version = version.substring(version.indexOf("MC: ") + 4, version.indexOf(")"));
 
-        ServerSystem.getLog().log(Level.FINE, "Server version: ${version}");
+        getLog().log(Level.FINE, "Server version: ${version}");
 
         return new Version(version);
     }
@@ -77,7 +77,7 @@ public final class ServerSystem extends JavaPlugin {
 
         var migrator = new LegacyDataMigrator();
         if (migrator.isLegacyDataPresent()) {
-            ServerSystem.getLog().log(Level.INFO, "Legacy data detected. Attempting to migrate...");
+            getLog().log(Level.INFO, "Legacy data detected. Attempting to migrate...");
             migrator.prepareMigration();
         }
 
@@ -93,7 +93,7 @@ public final class ServerSystem extends JavaPlugin {
         try {
             initialize();
         } catch (Exception e) {
-            getLogger().severe("Failed to initialize the plugin: ${e.getMessage()}");
+            getLog().severe("Failed to initialize the plugin: ${e.getMessage()}");
             e.printStackTrace();
             Bukkit.getPluginManager().disablePlugin(this);
             return;

@@ -152,6 +152,7 @@ Messages:
       SuccessOther: "Du hast <Color:Highlight><TARGET>s <Color:Message>Inventar geleert."
     Sudo:
       Success: "Du hast einen Befehl für <Color:Highlight><TARGET><Color:Highlight> ausgeführt."
+      CannotSudoExempt: "<Color:Error.Message>Du kannst <Color:Error.Highlight><TARGET> <Color:Error.Message>nicht sudon."
     OfflineTeleport:
       Success: "Du hast dich zu <Color:Highlight><TARGET>s <Color:Message>Abmeldeposition teleportiert."
     OfflineTeleportHere:

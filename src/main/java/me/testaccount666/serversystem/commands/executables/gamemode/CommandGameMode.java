@@ -131,19 +131,12 @@ public class CommandGameMode extends AbstractServerSystemCommand {
             // Not a number, try to match by name
         }
 
-        return Arrays.stream(GameMode.values()).filter(gameMode -> isGameModeMatch(gameMode, input)).findFirst();
-    }
-
-    private boolean isGameModeMatch(GameMode gameMode, String input) {
-        if (gameMode.name().equalsIgnoreCase(input)) return true;
-
-        return MappingsData.gameMode().getGameModeName(gameMode)
-                .map(name -> name.toLowerCase().startsWith(input.toLowerCase()))
-                .orElse(false);
+        return Arrays.stream(GameMode.values()).filter(gameMode -> gameMode.name().toLowerCase().startsWith(input.toLowerCase())).findFirst();
     }
 
     @Override
     public String getSyntaxPath(Command command) {
+        if (command == null) return "GameMode";
         var commandName = command.getName().toLowerCase();
         return switch (commandName) {
             case "gms" -> "GMS";

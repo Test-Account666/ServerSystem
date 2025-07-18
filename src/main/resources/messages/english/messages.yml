@@ -152,6 +152,7 @@ Messages:
       SuccessOther: "You cleared <Color:Highlight><TARGET>'s <Color:Message>inventory."
     Sudo:
       Success: "You executed a command for <Color:Highlight><TARGET><Color:Highlight>."
+      CannotSudoExempt: "<Color:Error.Message>You cannot sudo <Color:Error.Highlight><TARGET><Color:Error.Message>."
     OfflineTeleport:
       Success: "You teleported yourself to <Color:Highlight><TARGET>'s <Color:Message>logout location."
     OfflineTeleportHere:

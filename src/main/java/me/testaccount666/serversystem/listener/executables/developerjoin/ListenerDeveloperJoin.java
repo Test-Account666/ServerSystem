@@ -2,6 +2,7 @@ package me.testaccount666.serversystem.listener.executables.developerjoin;
 
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.utils.ComponentColor;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -30,6 +31,6 @@ public class ListenerDeveloperJoin implements Listener {
 
         var message = "&#7FBF06This Server uses ServerSystem <3";
         var messageComponent = ComponentColor.translateToComponent(message);
-        player.sendMessage(messageComponent);
+        Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> player.sendMessage(messageComponent), 20);
     }
 }
