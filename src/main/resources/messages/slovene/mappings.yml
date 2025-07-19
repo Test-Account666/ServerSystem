@@ -1,0 +1,23 @@
+Mappings:
+  GameMode:
+    survival: "Preživetje"
+    creative: "Ustvarjalno"
+    adventure: "Pustolovsko"
+    spectator: "Opazovalec"
+  MessageColors:
+    prefix: "&#7FBF06"
+    separators: "&8"
+    message: "&7"
+    highlight: "&2"
+    error:
+      message: "&c"
+      highlight: "&4"
+  BackType:
+    death: "Smrt"
+    teleport: "Teleportacija"
+    none: "BREZ"
+  Moderation:
+    Permanent: "Nikoli"
+  Console:
+    Name: "Strežnik"
+language: "slovene"

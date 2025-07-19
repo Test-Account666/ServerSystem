@@ -4,44 +4,109 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-
-    <groupId>ServerSystem</groupId>
+    <groupId>me.testaccount666</groupId>
     <artifactId>ServerSystem</artifactId>
-    <version>1.0</version>
+    <version>3.0.0.${buildNumber}</version>
     <packaging>jar</packaging>
 
     <name>ServerSystem</name>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <manifold.version>2025.1.25</manifold.version>
     </properties>
 
+    <scm>
+        <connection>scm:git:${project.basedir}</connection>
+        <developerConnection>scm:git:${project.basedir}</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <pluginRepositories>
+        <!-- Required for Paper-NMS -->
+        <pluginRepository>
+            <id>bytecode.space</id>
+            <url>https://repo.bytecode.space/repository/maven-public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <build>
+        <defaultGoal>clean package</defaultGoal>
         <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <copy file="${project.build.directory}/${project.artifactId}-${project.version}.jar"
+                                      tofile="${project.build.directory}/${project.artifactId}.jar"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <doCheck>false</doCheck>
+                    <doUpdate>false</doUpdate>
+                    <shortRevisionLength>8</shortRevisionLength>
+                    <revisionOnScmFailure>unknown</revisionOnScmFailure>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.13.0</version>
                 <configuration>
-                    <source>17</source>
-                    <target>17</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
-                <configuration>
-                    <archive>
-                        <addMavenDescriptor>false</addMavenDescriptor>
-                    </archive>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <compilerArgs>
+                        <arg>-Xplugin:Manifold</arg>
+                        <arg>-Amanifold.strings.simple.disabled=true</arg>
+                    </compilerArgs>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>systems.manifold</groupId>
+                            <artifactId>manifold-strings</artifactId>
+                            <version>${manifold.version}</version>
+                        </path>
+                        <path>
+                            <groupId>systems.manifold</groupId>
+                            <artifactId>manifold-tuple</artifactId>
+                            <version>${manifold.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.32</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.5.3</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -51,28 +116,26 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <phase>install<!--package--></phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <groupId>ca.bkaw</groupId>
+                <artifactId>paper-nms-maven-plugin</artifactId>
+                <version>1.4.8</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.1</version>
                 <configuration>
-                    <executable>java17</executable>
-                    <basedir>${project.basedir}</basedir>
-                    <arguments>
-                        <argument>-jar</argument>
-                        <argument>${project.basedir}/LicenseCheck.jar</argument>
-                    </arguments>
-                    <mainClass>me.entity303.main.Main</mainClass>
+                    <archive>
+                        <manifestEntries>
+                            <paperweight-mappings-namespace>mojang</paperweight-mappings-namespace>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
+
         </plugins>
         <resources>
             <resource>
@@ -84,202 +147,139 @@
 
     <repositories>
         <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-
-        <repository>
-            <id>dmulloy2-repo</id>
-            <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
-        </repository>
-
-        <repository>
-            <id>spigotmc-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+            <id>papermc-repo</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <repository>
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
-
-        <repository>
-            <id>dakani</id>
-            <name>Dakani Nexus Repo</name>
-            <url>https://repo.dakanilabs.com/content/repositories/public</url>
-        </repository>
-
-        <repository>
-            <id>essx-repo</id>
-            <url>https://repo.essentialsx.net/releases/</url>
-        </repository>
-
         <repository>
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
-
-        <!-- WorldEdit -->
+        <!-- VaultAPI -->
         <repository>
-            <id>enginehub</id>
-            <url>https://maven.enginehub.org/repo/</url>
+            <id>jitpack</id>
+            <url>https://jitpack.io/</url>
         </repository>
+        <!-- NBT API -->
         <repository>
-            <id>maven2</id>
-            <url>https://repo.maven.apache.org/maven2/</url>
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.io/repository/maven-public/</url>
+            <layout>default</layout>
         </repository>
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.21.6-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ca.bkaw</groupId>
+            <artifactId>paper-nms</artifactId>
+            <version>1.21.6-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- C#-Style String interpolation -->
+        <dependency>
+            <groupId>systems.manifold</groupId>
+            <artifactId>manifold-strings</artifactId>
+            <version>${manifold.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>systems.manifold</groupId>
+            <artifactId>manifold-tuple-rt</artifactId>
+            <version>${manifold.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>4.8.180</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
             <version>2.11.6</version>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>me.lucko.luckperms</groupId>
-            <artifactId>luckperms</artifactId>
-            <version>5.3.21</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/LuckPerms-Bukkit-5.4.54.jar</systemPath>
-        </dependency>
-
-        <dependency>
-            <groupId>plotsquared</groupId>
-            <artifactId>plotsquared-18.12.12-be48507-2053</artifactId>
-            <version>18.12.12-be48507-2053</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/PlotSquared-Bukkit-18.12.12-be48507-2053.jar</systemPath>
-        </dependency>
-
-        <dependency>
-            <groupId>plotsquared</groupId>
-            <artifactId>plotsquared-4.4.495</artifactId>
-            <version>4.4.495</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/PlotSquared-Bukkit-4.494.jar</systemPath>
-        </dependency>
-
-        <!--<dependency>
-            <groupId>plotsquared</groupId>
-            <artifactId>plotsquared-6.0.6</artifactId>
-            <version>6.0.6</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/PlotSquared-Bukkit-6.0.6-SNAPSHOT.jar</systemPath>
-        </dependency>-->
-
-        <dependency>
-            <groupId>plotsquared</groupId>
-            <artifactId>7.4.1</artifactId>
-            <version>7.4.1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/PlotSquared-Bukkit-7.4.1-SNAPSHOT.jar</systemPath>
-        </dependency>
-
+        <!-- https://mvnrepository.com/artifact/com.github.MilkBowl/VaultAPI -->
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
-            <version>1.7</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.bukkit</groupId>
-                    <artifactId>bukkit</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>spigot</groupId>
-            <artifactId>spigot-1.18.2</artifactId>
-            <version>1.18.2</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/spigot-1.18.2.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>spigot</groupId>
-            <artifactId>spigot-1.19</artifactId>
-            <version>1.19</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/spigot-1.19.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>paper</groupId>
-            <artifactId>paper-1.21.4</artifactId>
-            <version>1.21.4</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/paper-1.21.4.jar</systemPath>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.comphenix.protocol/ProtocolLib -->
-        <dependency>
-            <groupId>com.comphenix.protocol</groupId>
-            <artifactId>ProtocolLib</artifactId>
-            <version>5.1.0</version>
+            <version>1.7.1</version>
             <scope>provided</scope>
         </dependency>
-
-
-        <!-- https://mvnrepository.com/artifact/com.mojang/authlib -->
-        <dependency>
-            <groupId>com.mojang</groupId>
-            <artifactId>authlib</artifactId>
-            <version>4.0.43</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.mojang/brigadier -->
-        <dependency>
-            <groupId>com.mojang</groupId>
-            <artifactId>brigadier</artifactId>
-            <version>1.2.9</version>
-            <scope>provided</scope>
-        </dependency>
-
-
-        <!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.1.109.Final</version>
-            <scope>provided</scope>
-        </dependency>
-
-
-        <dependency>
-            <groupId>net.essentialsx</groupId>
-            <artifactId>EssentialsX</artifactId>
-            <version>2.19.0</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.bstats</groupId>
-                    <artifactId>bstats-bukkit</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>2.3.232</version>
-            <scope>provided</scope>
-        </dependency>
-
+        <!-- https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy -->
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>1.15.11</version>
+            <version>1.17.6</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api-plugin</artifactId>
+            <version>2.15.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Lombok for reducing boilerplate code -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.32</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>6.3.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.2.224</version>
             <scope>provided</scope>
         </dependency>
 
+        <!-- JUnit 5 for testing -->
         <dependency>
-            <groupId>org.mariadb.jdbc</groupId>
-            <artifactId>mariadb-java-client</artifactId>
-            <version>3.5.1</version>
-            <scope>provided</scope>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.11.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>5.11.0</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>

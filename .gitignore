@@ -116,3 +116,5 @@ buildNumber.properties
 # Common working directory
 run/
 qodana.yaml
+*guidelines.md
+/.paper-nms/mappings_1.21.6.tiny

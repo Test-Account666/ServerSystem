@@ -1,343 +1,304 @@
 Commands:
-  socialspy:
-    enabled: true
-    aliases: "socialspy"
-  msgtoggle:
-    enabled: true
-    aliases: "msgtoggle"
-  mute:
-    enabled: true
-    aliases: "mute"
-  unmute:
-    enabled: true
-    aliases: "unmute"
-  ban:
-    enabled: true
-    aliases: "ban"
-  unban:
-    enabled: true
-    aliases: "unban, pardon"
-  broadcast:
-    enabled: true
-    aliases: "broadcast, bc"
-  fly:
-    enabled: true
-    aliases: "fly"
-  msg:
-    enabled: true
-    aliases: "msg, tell, whisper, message"
   gamemode:
-    enabled: true
-    aliases: "gamemode, gm"
-  setspawn:
-    enabled: true
-    aliases: "setspawn"
-  spawn:
-    enabled: true
-    aliases: "spawn"
-  gmc:
-    enabled: true
-    aliases: "gmc"
-  gms:
-    enabled: true
-    aliases: "gms"
-  gma:
-    enabled: true
-    aliases: "gma"
-  gmsp:
-    enabled: true
-    aliases: "gmsp"
-  feed:
-    enabled: true
-    aliases: "feed"
-  time:
-    enabled: true
-    aliases: "time"
-  heal:
-    enabled: true
-    aliases: "heal"
-  sethome:
-    enabled: true
-    aliases: "sethome"
-  home:
-    enabled: true
-    aliases: "home"
-  delhome:
-    enabled: true
-    aliases: "delhome"
-  invsee:
-    enabled: true
-    aliases: "invsee"
-  setwarp:
-    enabled: true
-    aliases: "setwarp"
-  delwarp:
-    enabled: true
-    aliases: "delwarp"
-  warp:
-    enabled: true
-    aliases: "warp"
-  warps:
-    enabled: true
-    aliases: "warps"
-  reply:
-    enabled: true
-    aliases: "reply, r"
+    Enabled: true
+    Aliases: "gamemode, gm"
+    Variants:
+      gms:
+        Enabled: true
+        Aliases: "gms"
+      gmc:
+        Enabled: true
+        Aliases: "gmc"
+      gma:
+        Enabled: true
+        Aliases: "gma"
+      gmsp:
+        Enabled: true
+        Aliases: "gmsp"
   god:
-    enabled: true
-    aliases: "god, invincible"
-  skull:
-    enabled: true
-    aliases: "skull, head"
-  hat:
-    enabled: true
-    aliases: "hat, helmet"
-  weather:
-    enabled: true
-    aliases: "weather"
-  day:
-    enabled: true
-    aliases: "day"
-  night:
-    enabled: true
-    aliases: "night"
-  restart:
-    enabled: true
-    aliases: "restart"
-  enderchest:
-    enabled: true
-    aliases: "enderchest, ec"
-  teleporthere:
-    enabled: true
-    aliases: "teleporthere, tphere"
+    Enabled: true
+    Aliases: "god"
+  fly:
+    Enabled: true
+    Aliases: "fly"
   teleport:
-    enabled: true
-    aliases: "teleport, tp"
-  clearenderchest:
-    enabled: true
-    aliases: "clearenderchest, clearec, clearenderc"
-  checkgamemode:
-    enabled: true
-    aliases: "checkgamemode, cgm, cgamemode, checkgm, cgmode, cgamem, checkgamem, checkgamem"
-  noon:
-    enabled: true
-    aliases: "noon"
+    Enabled: true
+    Aliases: "teleport, tp"
+    Variants:
+      teleportposition:
+        Enabled: true
+        Aliases: "tppos"
+      teleporthere:
+        Enabled: true
+        Aliases: "tphere"
+      teleportall:
+        Enabled: true
+        Aliases: "tpall"
+  balance:
+    Enabled: true
+    Aliases: "money, balance"
+    Variants:
+      baltop:
+        Enabled: true
+        Aliases: "balancetop, baltop"
   pay:
-    enabled: true
-    aliases: "pay"
-  commandspy:
-    enabled: true
-    aliases: "commandspy, cmdspy"
-  clearchat:
-    enabled: true
-    aliases: "clearchat, cc"
-  ping:
-    enabled: true
-    aliases: "ping"
-  burn:
-    enabled: true
-    aliases: "burn"
-  ip:
-    enabled: true
-    aliases: "ip, playerip"
-  kick:
-    enabled: true
-    aliases: "kick"
-  money:
-    enabled: true
-    aliases: "money, balance, bal"
-  teleportrequest:
-    enabled: true
-    aliases: "teleportrequest, tpa"
-  teleportrequesthere:
-    enabled: true
-    aliases: "teleportrequesthere, tpahere"
-  teleportdeny:
-    enabled: true
-    aliases: "teleportdeny, tpdeny"
-  teleportaccept:
-    enabled: true
-    aliases: "teleportaccept, tpaccept"
+    Enabled: true
+    Aliases: "pay"
   workbench:
-    enabled: true
-    aliases: "workbench, wb, crafting, craft, table"
-  repair:
-    enabled: true
-    aliases: "repair"
-  disenchant:
-    enabled: true
-    aliases: "disenchant"
-  suicide:
-    enabled: true
-    aliases: "suicide"
-  extinguish:
-    enabled: true
-    aliases: "extinguish, ext"
-  lag:
-    enabled: true
-    aliases: "lag, mem, memory, tps"
-  sudo:
-    enabled: true
-    aliases: "sudo"
-  smelt:
-    enabled: true
-    aliases: "smelt"
-  teleportall:
-    enabled: true
-    aliases: "teleportall, tpall"
-  back:
-    enabled: true
-    aliases: "back"
-  teleporttoggle:
-    enabled: true
-    aliases: "teleporttoggle, tptoggle"
-  clearinventory:
-    enabled: true
-    aliases: "clearinventory, clear"
-  stack:
-    enabled: true
-    aliases: "stack"
-  forceteleport:
-    enabled: true
-    aliases: "forceteleport, tpo"
-  forceteleporthere:
-    enabled: true
-    aliases: "forceteleporthere, tpohere"
-  sun:
-    enabled: true
-    aliases: "sun"
-  rain:
-    enabled: true
-    aliases: "rain, storm"
+    Enabled: true
+    Aliases: "workbench, craft, wb"
+    Variants:
+      anvil:
+        Enabled: true
+        Aliases: "anvil"
+      smithing:
+        Enabled: true
+        Aliases: "smithing"
+      loom:
+        Enabled: true
+        Aliases: "loom"
+      grindstone:
+        Enabled: true
+        Aliases: "grindstone"
+      cartography:
+        Enabled: true
+        Aliases: "cartography"
+      stonecutter:
+        Enabled: true
+        Aliases: "stonecutter"
   disposal:
-    enabled: true
-    aliases: "disposal, trash, trashcan"
-  editsign:
-    enabled: true
-    aliases: "editsign"
-  kickall:
-    enabled: true
-    aliases: "kickall"
-  teamchat:
-    enabled: true
-    aliases: "teamchat, tc"
-  vanish:
-    enabled: true
-    aliases: "vanish, v"
-  sign:
-    enabled: true
-    aliases: "sign"
-  unsign:
-    enabled: true
-    aliases: "unsign"
-  economy:
-    enabled: true
-    aliases: "economy, eco"
-  serversystem:
-    enabled: true
-    aliases: "serversystem"
-  speed:
-    enabled: true
-    aliases: "speed"
-  teleportposition:
-    enabled: true
-    aliases: "teleportposition, tppos"
-  drop:
-    enabled: true
-    aliases: "drop"
-  pickup:
-    enabled: true
-    aliases: "pickup"
-  chat:
-    enabled: true
-    aliases: "chat"
-  interact:
-    enabled: true
-    aliases: "interact"
-  createkit:
-    enabled: true
-    aliases: "createkit"
-  deletekit:
-    enabled: true
-    aliases: "deletekit, delkit"
-  kit:
-    enabled: true
-    aliases: "kit"
-  convertfromessentials:
-    enabled: true
-    aliases: "convertfromessentials"
-  converttoessentials:
-    enabled: true
-    aliases: "converttoessentials"
-  maintenance:
-    enabled: true
-    aliases: "maintenance"
-  rules:
-    enabled: true
-    aliases: "rules"
-  rename:
-    enabled: true
-    aliases: "rename"
-  recipe:
-    enabled: true
-    aliases: "recipe"
-  checkhealth:
-    enabled: true
-    aliases: "checkhealth"
-  lightning:
-    enabled: true
-    aliases: "lightning"
-  anvil:
-    enabled: true
-    aliases: "anvil"
-  loom:
-    enabled: true
-    aliases: "loom"
-  cartographytable:
-    enabled: true
-    aliases: "cartographytable, cartography"
-  grindstone:
-    enabled: true
-    aliases: "grindstone"
-  stonecutter:
-    enabled: true
-    aliases: "stonecutter"
-  smithingtable:
-    enabled: true
-    aliases: "smithingtable, smithing"
-  getposition:
-    enabled: true
-    aliases: "getposition, getpos, pos, position, coords"
-  break:
-    enabled: true
-    aliases: "break"
-  offlineteleport:
-    enabled: true
-    aliases: "offlineteleport, otp, offlinetp, oteleport"
-  offlineteleporthere:
-    enabled: true
-    aliases: "offlineteleporthere, otphere, offlinetphere, oteleporthere"
-  offlineinvsee:
-    enabled: true
-    aliases: "offlineinvsee, oinvsee"
-  offlineenderchest:
-    enabled: true
-    aliases: "offlineenderchest, oec, offlineec"
-  baltop:
-    enabled: true
-    aliases: "baltop, top, balancetop"
-  unlimited:
-    enabled: true
-    aliases: "unlimited"
+    Enabled: true
+    Aliases: "disposal, trash, trashcan"
+  heal:
+    Enabled: true
+    Aliases: "heal"
+    Variants:
+      feed:
+        Enabled: true
+        Aliases: "feed"
   seen:
-    enabled: true
-    aliases: "unlimited"
-  freeze:
-    enabled: true
-    aliases: "freeze, unfreeze"
-  afk:
-    enabled: true
-    aliases: "afk"
-  managehomes:
-    enabled: true
-    aliases: "managehomes, adminhomes"
+    Enabled: true
+    Aliases: "seen"
+  broadcast:
+    Enabled: true
+    Aliases: "broadcast, bc"
+  commandspy:
+    Enabled: true
+    Aliases: "commandspy"
+  clearchat:
+    Enabled: true
+    Aliases: "clearchat, cc"
+  spawn:
+    Enabled: true
+    Aliases: "spawn"
+    Variants:
+      setspawn:
+        Enabled: true
+        Aliases: "setspawn"
+  home:
+    Enabled: true
+    Aliases: "home"
+    Variants:
+      sethome:
+        Enabled: true
+        Aliases: "sethome"
+      deletehome:
+        Enabled: true
+        Aliases: "delhome"
+      adminhome:
+        Enabled: true
+        Aliases: "adminhome"
+      adminsethome:
+        Enabled: true
+        Aliases: "adminsethome"
+      admindeletehome:
+        Enabled: true
+        Aliases: "admindelhome"
+  economy:
+    Enabled: true
+    Aliases: "economy, eco"
+  time:
+    Enabled: true
+    Aliases: "time"
+    Variants:
+      day:
+        Enabled: true
+        Aliases: "day"
+      night:
+        Enabled: true
+        Aliases: "night"
+      noon:
+        Enabled: true
+        Aliases: "noon"
+      midnight:
+        Enabled: true
+        Aliases: "midnight"
+  teleportask:
+    Enabled: true
+    Aliases: "tpa"
+    Variants:
+      teleporthereask:
+        Enabled: true
+        Aliases: "tpahere"
+      teleportaccept:
+        Enabled: true
+        Aliases: "tpaccept"
+      teleportdeny:
+        Enabled: true
+        Aliases: "tpdeny"
+      teleporttoggle:
+        Enabled: true
+        Aliases: "tptoggle"
+  back:
+    Enabled: true
+    Aliases: "back"
+  privatemessage:
+    Enabled: true
+    Aliases: "msg, tell, whisper"
+    Variants:
+      reply:
+        Enabled: true
+        Aliases: "reply, r"
+      messagetoggle:
+        Enabled: true
+        Aliases: "msgtoggle"
+  unlimited:
+    Enabled: true
+    Aliases: "unlimited"
+  weather:
+    Enabled: true
+    Aliases: "weather"
+    Variants:
+      sun:
+        Enabled: true
+        Aliases: "sun"
+      rain:
+        Enabled: true
+        Aliases: "rain"
+      storm:
+        Enabled: true
+        Aliases: "storm"
+  clearinventory:
+    Enabled: true
+    Aliases: "clearinventory, clear, ci"
+  sudo:
+    Enabled: true
+    Aliases: "sudo"
+  offlineteleport:
+    Enabled: true
+    Aliases: "otp, offlinetp"
+    Variants:
+      offlineteleporthere:
+        Enabled: true
+        Aliases: "otphere, offlinetphere"
+  vanish:
+    Enabled: true
+    Aliases: "v, vanish"
+    Variants:
+      drop:
+        Enabled: true
+        Aliases: "drop"
+      pickup:
+        Enabled: true
+        Aliases: "pickup"
+      interact:
+        Enabled: true
+        Aliases: "interact"
+      message:
+        Enabled: true
+        Aliases: "message"
+  inventorysee:
+    Enabled: true
+    Aliases: "invsee"
+    Variants:
+      offlineinventorysee:
+        Enabled: true
+        Aliases: "offlineinvsee, oinvsee"
+  enderchest:
+    Enabled: true
+    Aliases: "enderchest, ec"
+    Variants:
+      offlineenderchest:
+        Enabled: true
+        Aliases: "offlineenderchest, oenderchest, oec"
+  smelt:
+    Enabled: true
+    Aliases: "smelt"
+  stack:
+    Enabled: true
+    Aliases: "stack"
+  repair:
+    Enabled: true
+    Aliases: "repair"
+  ping:
+    Enabled: true
+    Aliases: "ping"
+  ip:
+    Enabled: true
+    Aliases: "ip"
+  speed:
+    Enabled: true
+    Aliases: "speed"
+    Variants:
+      flyspeed:
+        Enabled: true
+        Aliases: "flyspeed, speedfly"
+      walkspeed:
+        Enabled: true
+        Aliases: "walkspeed, speedwalk"
+  teamchat:
+    Enabled: true
+    Aliases: "teamchat, tc"
+  ban:
+    Enabled: true
+    Aliases: "ban"
+    Variants:
+      unban:
+        Enabled: true
+        Aliases: "unban, pardon"
+  mute:
+    Enabled: true
+    Aliases: "mute"
+    Variants:
+      unmute:
+        Enabled: true
+        Aliases: "unmute"
+      shadowmute:
+        Enabled: true
+        Aliases: "shadowmute"
+  warp:
+    Enabled: true
+    Aliases: "warp"
+    Variants:
+      setwarp:
+        Enabled: true
+        Aliases: "setwarp"
+      deletewarp:
+        Enabled: true
+        Aliases: "delwarp"
+  kit:
+    Enabled: true
+    Aliases: "kit"
+    Variants:
+      createkit:
+        Enabled: true
+        Aliases: "createkit"
+      deletekit:
+        Enabled: true
+        Aliases: "deletekit"
+  ignore:
+    Enabled: true
+    Aliases: "ignore"
+    Variants:
+      unignore:
+        Enabled: true
+        Aliases: "unignore"
+  signcost:
+    Enabled: true
+    Aliases: "signcost"
+  language:
+    Enabled: true
+    Aliases: "language"
+  skull:
+    Enabled: true
+    Aliases: "skull"

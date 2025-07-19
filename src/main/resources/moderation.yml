@@ -1,0 +1,17 @@
+Moderation:
+  StorageType:
+    Value: "SQLite"
+    Description: "How bans/mutes are stored. Currently available: SQLite, MySQL"
+  MySQL:
+    Host: "127.0.0.1"
+    Port: 3306
+    Database: "serversystem"
+    Username: "economy"
+    Password: "password"
+    UseSSL: false
+    Pool:
+      MaxSize: 10
+      MinIdle: 5
+      MaxLifetime: 30
+      ConnectionTimeout: 30
+      IdleTimeout: 600

@@ -1,19 +1,13 @@
 name: ServerSystem
-version: 2.4.4
-main: me.entity303.serversystem.main.ServerSystem
-api-version: 1.13
-authors: [ Entity303 ]
-load: POSTWORLD
-loadbefore:
-  - AntiPluginLookUp
-  - Vault
+version: '${project.version}'
+main: me.testaccount666.serversystem.ServerSystem
+api-version: '1.21'
+authors: [ TestAccount666 ]
 softdepend:
-  - Essentials
-  - PlotSquared
   - Vault
-  - PlaceholderAPI
-  - ProtocolLib
+  - NBTAPI
 libraries:
-  - net.bytebuddy:byte-buddy:1.15.11
-  - com.h2database:h2:2.3.232
-  - org.mariadb.jdbc:mariadb-java-client:3.5.1
+  - io.github.classgraph:classgraph:4.8.180
+  - net.bytebuddy:byte-buddy:1.17.5
+  - com.zaxxer:HikariCP:6.3.0
+  - com.h2database:h2:2.2.224

@@ -1,0 +1,392 @@
+Messages:
+  Commands:
+    GameMode:
+      Success: "Način igre ti je bil spremenjen v <Color:Highlight><GAMEMODE><Color:Message>."
+      SuccessOther: "Igralcu <Color:Highlight><TARGET> <Color:Message>si spremenil način igre v <Color:Highlight><GAMEMODE><Color:Message>."
+      InvalidGameMode: "<Color:Error.Message>Naveden je neveljaven način igre."
+    God:
+      Success:
+        Enabled: "Sedaj si nesmrten."
+        Disabled: "Nisi več nesmrten."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>je sedaj nesmrten."
+        Disabled: "<TARGET> ni več nesmrten."
+    Fly:
+      Success:
+        Enabled: "Sedaj lahko letiš."
+        Disabled: "Ne moreš več leteti."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>lahko sedaj leti."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>ne more več leteti."
+    Teleport:
+      Success: "Teleportiral si se k <Color:Highlight><TARGET><Color:Message>."
+      SuccessOther: "Teleportiral si <Color:Highlight><TARGET> <Color:Message>k <Color:Highlight><TARGET2><Color:Message>."
+    TeleportPosition:
+      Success: "Teleportiral si se na <Color:Highlight>X:<X> Y:<Y> Z:<Z> Svet:<WORLD><Color:Message>."
+      SuccessOther: "Teleportiral si <Color:Highlight><TARGET> <Color:Message>na <Color:Highlight>X:<X> Y:<Y> Z:<Z> Svet:<WORLD><Color:Message>."
+      InvalidLocation: "<Color:Error.Message>Navedena je neveljavna lokacija."
+      OutsideBorder: "<Color:Error.Message>Navedena lokacija je izven meje sveta."
+    TeleportHere:
+      Success: "Teleportiral si <Color:Highlight><TARGET> <Color:Message>k sebi."
+    TeleportAll:
+      Success: "Teleportiral si <Color:Highlight>vse <Color:Message>k sebi."
+    Balance:
+      Success: "Tvoje stanje na računu je <Color:Highlight><BALANCE><Color:Message>."
+      SuccessOther: "Stanje na računu igralca <Color:Highlight><TARGET> <Color:Message>je <Color:Highlight><BALANCE><Color:Message>."
+    Pay:
+      Success: "Poslal si <Color:Highlight><AMOUNT> <Color:Message>igralcu <Color:Highlight><TARGET><Color:Message>."
+      SuccessOther: "Prejel si <Color:Highlight><AMOUNT> <Color:Message>od <Color:Highlight><SENDER><Color:Message>."
+      CannotPaySelf: "<Color:Error.Message>Ne moreš plačati samemu sebi."
+      NotEnoughMoney: "<Color:Error.Message>Nimaš dovolj denarja."
+      InvalidAmount: "<Color:Error.Message>Naveden je neveljaven znesek."
+    Broadcast:
+      Format: "<Color:Prefix>Strežnik <Color:Separators>» <Color:Message><BROADCAST>"
+    Disposal:
+      Success: "Odprl si smetnjak za <Color:Highlight><TARGET><Color:Message>."
+    Heal:
+      Success: "Bil si pozdravljen."
+      SuccessOther: "Pozdravil si <Color:Highlight><TARGET><Color:Message>."
+    Feed:
+      Success: "Bil si nahranjen."
+      SuccessOther: "Nahranil si <Color:Highlight><TARGET><Color:Message>."
+    Seen:
+      Success: "Uporabnik <Color:Highlight><TARGET> <Color:Message>je bil nazadnje viden <Color:Highlight><DATE> <Color:Message>z IP-jem <Color:Highlight><IP><Color:Message>."
+    CommandSpy:
+      Success:
+        Enabled: "CommandSpy je bil omogočen."
+        Disabled: "CommandSpy je bil onemogočen."
+      SuccessOther:
+        Enabled: "CommandSpy je bil omogočen za <Color:Highlight><TARGET><Color:Message>."
+        Disabled: "CommandSpy je bil onemogočen za <Color:Highlight><TARGET><Color:Message>."
+      Format: "<Color:Prefix>CommandSpy <Color:Separators>» <Color:Highlight><TARGET> <Color:Message>-> <Color:Highlight><COMMAND>"
+    ClearChat:
+      Success: "Klepet je počistil <Color:Highlight><TARGET><Color:Message>."
+    Spawn:
+      Success: "Bil si teleportiran na spawn."
+      SuccessOther: "Teleportiral si <Color:Highlight><TARGET> <Color:Message>na spawn."
+      NoSpawnSet: "<Color:Error.Message>Spawn ni nastavljen."
+    SetSpawn:
+      Success: "Spawn si nastavil na svojo trenutno lokacijo."
+    Home:
+      Success: "Teleportiral si se v dom <Color:Highlight><HOME><Color:Message>."
+      DoesNotExist: "<Color:Error.Message>Navedeni dom <Color:Error.Highlight><HOME> <Color:Error.Message>ne obstaja."
+    DeleteHome:
+      Success: "Izbrisal si dom <Color:Highlight><HOME><Color:Message>."
+      DoesNotExist: "<Color:Error.Message>Navedeni dom <Color:Error.Highlight><HOME> <Color:Error.Message>ne obstaja."
+    SetHome:
+      Success: "Ustvaril si dom <Color:Highlight><HOME><Color:Message>."
+      AlreadyExists: "<Color:Error.Message>Navedeni dom <Color:Error.Highlight><HOME> <Color:Error.Message>že obstaja."
+      MaxHomes: "<Color:Error.Message>Dosegel si omejitev domov: <Color:Error.Highlight><CURRENT_HOMES><Color:Error.Message>/<Color:Error.Highlight><MAX_HOMES><Color:Error.Message>."
+      InvalidName: "<Color:Error.Message>Navedeno ime ni alfanumerično."
+    Economy:
+      Give:
+        Success: "Dodal si <Color:Highlight><AMOUNT> <Color:Message>k stanju na računu igralca <Color:Highlight><TARGET><Color:Message>."
+        SuccessOther: "<Color:Highlight><SENDER> <Color:Message>je dodal <Color:Highlight><AMOUNT> <Color:Message>k tvojemu stanju na računu."
+      Take:
+        Success: "Odstranil si <Color:Highlight><AMOUNT> <Color:Message>iz stanja na računu igralca <Color:Highlight><TARGET><Color:Message>."
+        SuccessOther: "<Color:Highlight><TARGET> <Color:Message>je odstranil <Color:Highlight><AMOUNT> <Color:Message>iz tvojega stanja na računu."
+      Set:
+        Success: "Nastavil si stanje na računu igralca <Color:Highlight><TARGET> <Color:Message>na <Color:Highlight><AMOUNT><Color:Message>."
+        SuccessOther: "<Color:Highlight><TARGET> <Color:Message>je nastavil tvoje stanje na računu na <Color:Highlight><AMOUNT><Color:Message>."
+      InvalidAmount: "<Color:Error.Message>Naveden je neveljaven znesek."
+    Time:
+      Success: "Nastavil si čas v svetu <Color:Highlight><WORLD> <Color:Message>na <Color:Highlight><TIME><Color:Message>."
+      WorldNotFound: "<Color:Error.Message>Naveden je neveljaven svet."
+    Weather:
+      Success: "Nastavil si vreme v svetu <Color:Highlight><WORLD> <Color:Message>na <Color:Highlight><WEATHER><Color:Message>."
+      WorldNotFound: "<Color:Error.Message>Naveden je neveljaven svet."
+    TeleportAsk:
+      Success: "Zaprosil si za teleportacijo k <Color:Highlight><TARGET><Color:Message>."
+      SuccessOther: "<Color:Highlight><SENDER> <Color:Message>je zaprosil za teleportacijo k tebi, imaš 2 minuti za sprejem."
+      Buttons:
+        Accept:
+          Name: "<Color:Highlight>Sprejmi"
+          Tooltip: "<Color:Highlight>Sprejmi"
+        Deny:
+          Name: "<Color:Error.Highlight>Zavrni"
+          Tooltip: "<Color:Error.Highlight>Zavrni"
+      CannotTeleportSelf: "<Color:Error.Message>Ne moreš se teleportirati k samemu sebi."
+      NoTeleport: "<Color:Error.Highlight><TARGET> <Color:Error.Message>ne sprejema prošenj za teleportacijo."
+      Moved: "<Color:Error.Message>Tvoja teleportacija je bila preklicana, ker si se premaknil."
+      TeleportFinished: "Bil si teleportiran k <Color:Highlight><TARGET><Color:Message>."
+      StartingTeleporting: "Začenjam teleportacijo, prosim, stoj pri miru..."
+    TeleportHereAsk:
+      Success: "Zaprosil si <Color:Highlight><TARGET> <Color:Message>, da se teleportira k tebi."
+      SuccessOther: "<Color:Highlight><SENDER> <Color:Message>te je prosil, da se teleportiraš k njemu, imaš 2 minuti za sprejem."
+    TeleportDeny:
+      Success: "Zavrnil si prošnjo za teleportacijo."
+      SuccessOther: "<Color:Error.Highlight><TARGET> <Color:Error.Message>je zavrnil tvojo prošnjo za teleportacijo."
+    TeleportAccept:
+      NoRequest: "<Color:Error.Message>Nimaš nobene prošnje za teleportacijo."
+      SuccessOther: "<Color:Highlight><TARGET> <Color:Message>je sprejel tvojo prošnjo za teleportacijo."
+    Back:
+      Success: "Bil si teleportiran na svojo zadnjo lokacijo tipa <TYPE>."
+    PrivateMessage:
+      CannotSendToSelf: "<Color:Error.Message>Ne moreš poslati sporočila samemu sebi."
+      NoMessages: "<Color:Error.Highlight><TARGET> <Color:Error.Message>ne sprejema sporočil."
+      Success: "&6MSG <Color:Separators>» <Color:Highlight>Ti <Color:Message>za <Color:Highlight><TARGET><Color:Separators>: <Color:Message><MESSAGE>"
+      SuccessOther: "&6MSG <Color:Separators>» <Color:Highlight><SENDER><Color:Separators>: <Color:Message><MESSAGE>"
+    Reply:
+      NoReply: "<Color:Error.Message>Nimaš nikogar, ki bi mu lahko odgovoril."
+    TeleportToggle:
+      Success:
+        Enabled: "Sedaj sprejemaš prošnje za teleportacijo."
+        Disabled: "Ne sprejemaš več prošenj za teleportacijo."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>sedaj sprejema prošnje za teleportacijo."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>ne sprejema več prošenj za teleportacijo."
+    MessageToggle:
+      Success:
+        Enabled: "Sedaj sprejemaš zasebna sporočila."
+        Disabled: "Ne sprejemaš več zasebnih sporočil."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>sedaj sprejema zasebna sporočila."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>ne sprejema več zasebnih sporočil."
+    Unlimited:
+      Success:
+        Enabled: "Predmet v tvoji roki je sedaj neomejen."
+        Disabled: "Predmet v tvoji roki ni več neomejen."
+      NoItemInHand: "<Color:Error:Message>V roki ne držiš nobenega predmeta."
+    ClearInventory:
+      Success: "Tvoj inventar je bil počiščen."
+      SuccessOther: "Počistil si inventar igralca <Color:Highlight><TARGET><Color:Message>."
+    Sudo:
+      Success: "Izvedel si ukaz za <Color:Highlight><TARGET><Color:Highlight>."
+      CannotSudoExempt: "<Color:Error.Message>Ne moreš uporabiti ukaza sudo na <Color:Error.Highlight><TARGET><Color:Error.Message>."
+    OfflineTeleport:
+      Success: "Teleportiral si se na lokacijo odjave igralca <Color:Highlight><TARGET><Color:Message>."
+    OfflineTeleportHere:
+      Success: "Nastavil si lokacijo odjave igralca <Color:Highlight><TARGET> <Color:Message>na svojo trenutno lokacijo."
+    Vanish:
+      Success:
+        Enabled: "Sedaj si v nevidnosti."
+        Disabled: "Nisi več v nevidnosti."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>je sedaj v nevidnosti."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>ni več v nevidnosti."
+      Denied:
+        Drop: "<Color:Error.Highlight>Trenutno ne moreš odvreči predmetov v nevidnosti."
+        Message: "<Color:Error.Highlight>Trenutno ne moreš pošiljati sporočil v nevidnosti."
+    Drop:
+      Success:
+        Enabled: "Sedaj lahko odvržeš predmete v nevidnosti."
+        Disabled: "Ne moreš več odvreči predmetov v nevidnosti."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>lahko sedaj odvrže predmete v nevidnosti."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>ne more več odvreči predmetov v nevidnosti."
+    Pickup:
+      Success:
+        Enabled: "Sedaj lahko pobiraš predmete v nevidnosti."
+        Disabled: "Ne moreš več pobirati predmetov v nevidnosti."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>lahko sedaj pobira predmete v nevidnosti."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>ne more več pobirati predmetov v nevidnosti."
+    Interact:
+      Success:
+        Enabled: "Sedaj lahko interagiraš v nevidnosti."
+        Disabled: "Ne moreš več interagirati v nevidnosti."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>lahko sedaj interagira v nevidnosti."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>ne more več interagirati v nevidnosti."
+    Message:
+      Success:
+        Enabled: "Sedaj lahko pošiljaš sporočila v nevidnosti."
+        Disabled: "Ne moreš več pošiljati sporočil v nevidnosti."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>lahko sedaj pošilja sporočila v nevidnosti."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>ne more več pošiljati sporočil v nevidnosti."
+    InventorySee:
+      CannotSeeSelf: "<Color:Error.Message>Ne moreš odpreti lastnega inventarja."
+    Smelt:
+      NoItemInHand: "<Color:Error.Message>V roki ne držiš nobenega predmeta."
+      NoSmeltedItem: "<Color:Error.Message>Tega predmeta ni mogoče pretopiti."
+      Success: "Predmet v tvoji roki je bil pretopljen."
+    Stack:
+      NoItemInHand: "<Color:Error.Message>V roki ne držiš nobenega predmeta."
+      Success: "Napolnil si sklad v svoji roki."
+    Repair:
+      NotRepairable: "<Color:Error.Message>Navedenega predmeta ni mogoče popraviti."
+      Success: "Popravil si <Color:Highlight><COUNT> <Color:Message>predmetov."
+    Ping:
+      Success: "Tvoj ping je <Color:Highlight><PING><Color:Message>."
+      Other: "Ping igralca <Color:Highlight><TARGET> <Color:Message>je <Color:Highlight><PING><Color:Message>."
+    Ip:
+      Success: "IP igralca <Color:Highlight><TARGET> <Color:Message>je <Color:Highlight><IP><Color:Message>."
+    Ignore:
+      Success: "Sedaj ignoriraš <Color:Highlight><TARGET><Color:Message>."
+      AlreadyIgnored: "Že ignoriraš <Color:Highlight><TARGET><Color:Message>."
+      Self: "<Color:Error.Message>Ne moreš ignorirati samega sebe."
+    Unignore:
+      Success: "Ne ignoriraš več <Color:Highlight><TARGET><Color:Message>."
+      NotIgnored: "Ne ignoriraš <Color:Highlight><TARGET><Color:Message>."
+      Self: "<Color:Error.Message>Ne moreš ignorirati samega sebe."
+    Speed:
+      Success: "Tvoja hitrost je bila nastavljena na <Color:Highlight><SPEED><Color:Message>."
+      SuccessOther: "Nastavil si hitrost igralca <Color:Highlight><TARGET> <Color:Message>na <Color:Highlight><SPEED><Color:Message>."
+    TeamChat:
+      Format: "<Color:Prefix>EkipniKlepet <Color:Separators>» <Color:Highlight><TARGET> <Color:Separators>-> <Color:Message><MESSAGE>"
+    Moderation:
+      DefaultReason: "<Color:Error.Message>Razlog ni naveden."
+      NotZero: "<Color:Error.Message>Navedeno trajanje mora biti pozitivno celo število."
+      InvalidDuration: "<Color:Error.Message>Navedeno je neveljavno trajanje."
+      Mute:
+        Add:
+          Success: "Utišal si <Color:Highlight><TARGET><Color:Message>."
+          AlreadyActiveModeration: "<Color:Error.Message>Navedeni igralec <Color:Error.Highlight><TARGET> <Color:Error.Message>je že utišan."
+        Remove:
+          Success: "Odmolčal si <Color:Highlight><TARGET><Color:Message>."
+          NoActiveModeration: "<Color:Error.Message>Navedeni igralec <Color:Error.Highlight><TARGET> <Color:Error.Message>ni utišan."
+      ShadowMute:
+        Add:
+          Success: "Skrito si utišal <Color:Highlight><TARGET><Color:Message>."
+          AlreadyActiveModeration: "<Color:Error.Message>Navedeni igralec <Color:Error.Highlight><TARGET> <Color:Error.Message>je že utišan."
+        Muted: "<Color:Error.Message>Utišal te je <Color:Error.Highlight><SENDER> <Color:Error.Message>zaradi <Color:Error.Highlight><REASON> <Color:Error.Message>do: <Color:Error.Highlight><DATE><Color:Error.Message>."
+      Ban:
+        Add:
+          Success: "Izgnal si <Color:Highlight><TARGET><Color:Message>."
+          AlreadyActiveModeration: "<Color:Error.Message>Navedeni igralec <Color:Error.Highlight><TARGET> <Color:Error.Message>ima že prepoved dostopa."
+        Remove:
+          Success: "Odstranil si prepoved dostopa za <Color:Highlight><TARGET><Color:Message>."
+          NoActiveModeration: "<Color:Error.Message>Navedeni igralec <Color:Error.Highlight><TARGET> <Color:Error.Message>nima prepovedi dostopa."
+        Kick: "&8[]--------------------[]\n&cPrepovedan ti je bil dostop!\n&6Razlog&8: &c<REASON>\n&6Izgnal&8: &c<SENDER>\n&6Datum odprave prepovedi&8: &c<DATE>\n&8[]--------------------[]"
+    Warp:
+      Set:
+        Success: "Warp <Color:Highlight><WARP> <Color:Message>je bil nastavljen na tvojo trenutno lokacijo."
+        WarpAlreadyExists: "<Color:Error.Message>Navedeni warp <Color:Error.Highlight><WARP> <Color:Error.Message>že obstaja."
+      Delete:
+        Success: "Warp <Color:Highlight><WARP> <Color:Message>je bil izbrisan."
+      WarpNotFound: "<Color:Error.Message>Navedeni warp <Color:Error.Highlight><WARP> <Color:Error.Message>ne obstaja."
+      Success: "Teleportiral si se na <Color:Highlight><WARP><Color:Message>."
+    Kit:
+      Create:
+        KitAlreadyExists: "<Color:Error.Message>Komplet <Color:Error.Highlight><KIT> <Color:Error.Message>že obstaja."
+        InvalidCooldown: "<Color:Error.Message>Naveden je neveljaven časovni zamik."
+        Success: "Ustvaril si komplet <Color:Highlight><KIT><Color:Message>."
+      Delete:
+        Success: "Izbrisal si komplet <Color:Highlight><KIT><Color:Message>."
+      KitNotFound: "<Color:Error.Message>Komplet <Color:Error.Highlight><KIT> <Color:Error.Message>ne obstaja."
+      OnCooldown: "<Color:Error.Message>Komplet <Color:Error.Highlight><KIT> <Color:Error.Message>lahko ponovno uporabiš čez: <Color:Error.Highlight><DATE><Color:Error.Message>."
+      Success:
+        Self: "Prejel si komplet <Color:Highlight><KIT><Color:Message>."
+        Other: "Dal si komplet <Color:Highlight><KIT> <Color:Message>igralcu <Color:Highlight><TARGET><Color:Message>."
+    Language:
+      Changed: "Spremenil si svoj jezik v <Color:Highlight><LANGUAGE><Color:Message>."
+    Baltop:
+      NoData: "<Color:Error.Message>Ni podatkov o stanju na računih."
+      Header: "&8-=-=-=-= &6Najbogatejši &8=-=-=-=-"
+      Entry: "&6<POSITION>. <Color:Highlight><TARGET> <Color:Separators>» &6<BALANCE>"
+  General:
+    Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
+    NoPermission: "<Color:Error.Message>Nimaš dovoljenja za to dejanje. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"
+    PlayerNotFound: "<Color:Error.Message>Igralec <Color:Error.Highlight><TARGET> <Color:Error.Message>ni bil najden."
+    NotPlayer: "<Color:Error.Message>Za uporabo tega ukaza moraš biti igralec."
+    InvalidArguments: "<Color:Error.Message>Neveljavni argumenti. Uporaba: <Color:Error.Highlight><USAGE>"
+    ErrorOccurred: "<Color:Error.Message>Prišlo je do napake. Prosimo, preglejte dnevnike za več informacij."
+    CommandDisabled: "<Color:Error.Message>Ukaz <Color:Error.Highlight>/<LABEL> <Color:Error.Message>je bil samodejno onemogočen. Razlog: <REASON>"
+    ChatFormat: "<Color:Highlight><PREFIX> <SENDER> <Color:Separators>» <Color:Message><MESSAGE>"
+    AwayFromKeyboard:
+      NowAfk: "Sedaj si AFK."
+      NoLongerAfk: "Nisi več AFK."
+    Offline:
+      NeverPlayed: "<Color:Error:Message>Navedeni igralec <Color:Message:Highlight><TARGET> <Color:Error.Message>še nikoli ni igral."
+      NotOffline: "<Color:Error:Message>Navedeni igralec <Color:Message:Highlight><TARGET> <Color:Error.Message>ni brez povezave."
+  ClickableSigns:
+    Give:
+      Configuring: "Sedaj konfiguriraš 'give' tablo. Postavi predmet, ki ga želiš podariti, v svojo roko."
+      NoItem: "<Color:Error.Message>V roki moraš imeti predmet."
+      Created: "'Give' tabla uspešno ustvarjena."
+    Kit:
+      NoKitManager: "<Color:Error.Message>Upravitelj kompletov ni na voljo."
+      NoKitSpecified: "<Color:Error.Message>Komplet ni določen."
+      KitNotFound: "<Color:Error.Message>Komplet <Color:Error.Highlight><KIT> <Color:Error.Message>ne obstaja."
+      KitGiven: "Prejel si komplet <Color:Highlight><KIT><Color:Message>."
+      Created: "'Kit' tabla uspešno ustvarjena."
+    Time:
+      NoTimeSpecified: "<Color:Error.Message>Čas ni določen."
+      InvalidTime: "<Color:Error.Message>Naveden je neveljaven čas."
+      TimeSet: "Čas je nastavljen na <Color:Highlight><TIME><Color:Message>."
+      Created: "'Time' tabla uspešno ustvarjena."
+    Warp:
+      NoWarpManager: "<Color:Error.Message>Upravitelj warpov ni na voljo."
+      NoWarpSpecified: "<Color:Error.Message>Warp ni določen."
+      WarpNotFound: "<Color:Error.Message>Warp <Color:Error.Highlight><WARP> <Color:Error.Message>ne obstaja."
+      Teleported: "Teleportiral si se na <Color:Highlight><WARP><Color:Message>."
+      Created: "'Warp' tabla uspešno ustvarjena."
+    Weather:
+      NoWeatherSpecified: "<Color:Error.Message>Vreme ni določeno."
+      WeatherSet: "Vreme nastavljeno na <Color:Highlight><WEATHER><Color:Message>."
+      InvalidWeather: "<Color:Error.Message>Navedeno je neveljavno vreme."
+      Created: "'Weather' tabla uspešno ustvarjena."
+    Cost:
+      InvalidType: "<Color:Error.Message>Neveljaven tip stroška. Uporabi 'exp' ali 'economy'."
+      InvalidAmount: "<Color:Error.Message>Naveden je neveljaven znesek."
+      NotEnoughExp: "<Color:Error.Message>Nimaš dovolj izkušenjskih točk."
+      NotEnoughMoney: "<Color:Error.Message>Nimaš dovolj denarja."
+      PaidExp: "Plačal si <Color:Highlight><AMOUNT> <Color:Message>izkušenjskih točk."
+      PaidMoney: "Plačal si <Color:Highlight><AMOUNT><Color:Message>."
+      NotClickableSign: "<Color:Error.Message>Tabla, ki jo gledaš, ni klikabilna."
+      NotLookingAtSign: "<Color:Error.Message>Ne gledaš v tablo."
+      SetNone: "Strošek uspešno odstranjen s table."
+      Set: "Strošek nastavljen na <Color:Highlight><TYPE> <Color:Message> z zneskom <Color:Highlight><AMOUNT><Color:Message>."
+  Syntax:
+    Balance: "/<LABEL> (player)"
+    Ban: "/<LABEL> [player] [duration] (reason...)"
+    Broadcast: "/<LABEL> [message...]"
+    ClearInventory: "/<LABEL> (player)"
+    Economy: "/<LABEL> [add|remove|set] [player] [amount]"
+    EnderChest: "/<LABEL> (player)"
+    OfflineEnderChest: "/<LABEL> [player]"
+    Fly: "/<LABEL> (player)"
+    GameMode: "/<LABEL> [gamemode] (player)"
+    GMS: "/<LABEL> (player)"
+    GMC: "/<LABEL> (player)"
+    GMA: "/<LABEL> (player)"
+    GMSP: "/<LABEL> (player)"
+    God: "/<LABEL> (player)"
+    Heal: "/<LABEL> (player)"
+    AdminHome: "/<LABEL> [player] [home]"
+    Home: "/<LABEL> (home)"
+    Ignore: "/<LABEL> [player]"
+    InventorySee: "/<LABEL> [player]"
+    OfflineInventorySee: "/<LABEL> [player]"
+    Ip: "/<LABEL> [player]"
+    Kit: "/<LABEL> [kit] (player)"
+    CreateKit: "/<LABEL> [kit] (cooldown)"
+    DeleteKit: "/<LABEL> [kit]"
+    Language: "/<LABEL> [language]"
+    Mute: "/<LABEL> [player] [duration] (reason...)"
+    OfflineTeleport: "/<LABEL> [player]"
+    Pay: "/<LABEL> [player] [amount]"
+    Ping: "/<LABEL> (player)"
+    PrivateMessage: "/<LABEL> [player] [message...]"
+    MessageToggle: "/<LABEL> (player)"
+    Reply: "/<LABEL> [message...]"
+    Repair: "/<LABEL> (all|hand|offhand|armor|inventory)"
+    Seen: "/<LABEL> [player]"
+    SignCost: "/<LABEL> [none|exp|economy] (amount)"
+    Skull: "/<LABEL> (player)"
+    Spawn: "/<LABEL> (player)"
+    Speed: "/<LABEL> [speed] (player)"
+    Sudo: "/<LABEL> [player] [command] (args...)"
+    TeamChat: "/<LABEL> [message...]"
+    Teleport: "/<LABEL> [player] (player)"
+    TeleportPosition: "/<LABEL> (player) [X] [Y] [Z] [World]"
+    TeleportAsk: "/<LABEL> [player]"
+    TeleportToggle: "/<LABEL> (player)"
+    Time: "/<LABEL> [time] (world)"
+    Day: "/<LABEL> (world)"
+    Night: "/<LABEL> (world)"
+    Noon: "/<LABEL> (world)"
+    Midnight: "/<LABEL> (world)"
+    Unban: "/<LABEL> [player]"
+    Unmute: "/<LABEL> [player]"
+    Vanish: "/<LABEL> (player)"
+    Warp: "/<LABEL> [warp]"
+    Weather: "/<LABEL> [weather] (world)"
+    Rain: "/<LABEL> (world)"
+    Storm: "/<LABEL> (world)"
+    Sun: "/<LABEL> (world)"
+    Back: "/<LABEL> (teleport|death)"
+    CommandSpy: "/<LABEL> (player)"
+    Disposal: "/<LABEL> (player)"
+language: "slovene"

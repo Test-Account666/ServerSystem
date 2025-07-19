@@ -1,0 +1,392 @@
+Messages:
+  Commands:
+    GameMode:
+      Success: "Dein Spielmodus wurde zu <Color:Highlight><GAMEMODE><Color:Message> geändert."
+      SuccessOther: "Du hast <Color:Highlight><TARGET>s <Color:Message>Spielmodus zu <Color:Highlight><GAMEMODE><Color:Message> geändert."
+      InvalidGameMode: "<Color:Error.Message>Ungültiger Spielmodus angegeben."
+    God:
+      Success:
+        Enabled: "Du bist jetzt unsterblich."
+        Disabled: "Du bist nicht mehr unsterblich."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>ist jetzt unsterblich."
+        Disabled: "<TARGET> ist nicht mehr unsterblich."
+    Fly:
+      Success:
+        Enabled: "Du kannst jetzt fliegen."
+        Disabled: "Du kannst nicht mehr fliegen."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>kann jetzt fliegen."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>kann nicht mehr fliegen."
+    Teleport:
+      Success: "Du hast dich zu <Color:Highlight><TARGET><Color:Message> teleportiert."
+      SuccessOther: "Du hast <Color:Highlight><TARGET> <Color:Message>zu <Color:Highlight><TARGET2><Color:Message> teleportiert."
+    TeleportPosition:
+      Success: "Du hast dich zu <Color:Highlight>X:<X> Y:<Y> Z:<Z> Welt:<WORLD><Color:Message> teleportiert."
+      SuccessOther: "Du hast <Color:Highlight><TARGET> <Color:Message>zu <Color:Highlight>X:<X> Y:<Y> Z:<Z> Welt:<WORLD><Color:Message> teleportiert."
+      InvalidLocation: "<Color:Error.Message>Ungültige Position angegeben."
+      OutsideBorder: "<Color:Error.Message>Die angegebene Position liegt außerhalb der Weltgrenze."
+    TeleportHere:
+      Success: "Du hast <Color:Highlight><TARGET> <Color:Message>zu dir teleportiert."
+    TeleportAll:
+      Success: "Du hast <Color:Highlight>alle <Color:Message>zu dir teleportiert."
+    Balance:
+      Success: "Dein Kontostand beträgt <Color:Highlight><BALANCE><Color:Message>."
+      SuccessOther: "<Color:Highlight><TARGET>s <Color:Message>Kontostand beträgt <Color:Highlight><BALANCE><Color:Message>."
+    Pay:
+      Success: "Du hast <Color:Highlight><AMOUNT> <Color:Message>an <Color:Highlight><TARGET><Color:Message> gesendet."
+      SuccessOther: "Du hast <Color:Highlight><AMOUNT> <Color:Message>von <Color:Highlight><SENDER><Color:Message> erhalten."
+      CannotPaySelf: "<Color:Error.Message>Du kannst dir nicht selbst Geld senden."
+      NotEnoughMoney: "<Color:Error.Message>Du hast nicht genug Geld."
+      InvalidAmount: "<Color:Error.Message>Ungültiger Betrag angegeben."
+    Broadcast:
+      Format: "<Color:Prefix>Server <Color:Separators>» <Color:Message><BROADCAST>"
+    Disposal:
+      Success: "Du hast einen Mülleimer für <Color:Highlight><TARGET><Color:Message> geöffnet."
+    Heal:
+      Success: "Du wurdest geheilt."
+      SuccessOther: "Du hast <Color:Highlight><TARGET><Color:Message> geheilt."
+    Feed:
+      Success: "Du wurdest gesättigt."
+      SuccessOther: "Du hast <Color:Highlight><TARGET><Color:Message> gesättigt."
+    Seen:
+      Success: "Benutzer <Color:Highlight><TARGET> <Color:Message>wurde zuletzt am <Color:Highlight><DATE> <Color:Message>mit der IP <Color:Highlight><IP><Color:Message> gesehen."
+    CommandSpy:
+      Success:
+        Enabled: "CommandSpy wurde aktiviert."
+        Disabled: "CommandSpy wurde deaktiviert."
+      SuccessOther:
+        Enabled: "CommandSpy wurde für <Color:Highlight><TARGET><Color:Message> aktiviert."
+        Disabled: "CommandSpy wurde für <Color:Highlight><TARGET><Color:Message> deaktiviert."
+      Format: "<Color:Prefix>CommandSpy <Color:Separators>» <Color:Highlight><TARGET> <Color:Message>-> <Color:Highlight><COMMAND>"
+    ClearChat:
+      Success: "Der Chat wurde von <Color:Highlight><TARGET><Color:Message> geleert."
+    Spawn:
+      Success: "Du wurdest zum Spawn teleportiert."
+      SuccessOther: "Du hast <Color:Highlight><TARGET> <Color:Message>zum Spawn teleportiert."
+      NoSpawnSet: "<Color:Error.Message>Kein Spawn wurde gesetzt."
+    SetSpawn:
+      Success: "Du hast den Spawn auf deine aktuelle Position gesetzt."
+    Home:
+      Success: "Du wurdest zum Zuhause <Color:Highlight><HOME><Color:Message> teleportiert."
+      DoesNotExist: "<Color:Error.Message>Das angegebene Zuhause <Color:Error.Highlight><HOME> <Color:Error.Message>existiert nicht."
+    DeleteHome:
+      Success: "Du hast das Zuhause <Color:Highlight><HOME><Color:Message> gelöscht."
+      DoesNotExist: "<Color:Error.Message>Das angegebene Zuhause <Color:Error.Highlight><HOME> <Color:Error.Message>existiert nicht."
+    SetHome:
+      Success: "Du hast das Zuhause <Color:Highlight><HOME><Color:Message> erstellt."
+      AlreadyExists: "<Color:Error.Message>Das angegebene Zuhause <Color:Error.Highlight><HOME> <Color:Error.Message>existiert bereits."
+      MaxHomes: "<Color:Error.Message>Du hast bereits dein Zuhause-Limit erreicht: <Color:Error.Highlight><CURRENT_HOMES><Color:Error.Message>/<Color:Error.Highlight><MAX_HOMES><Color:Error.Message>."
+      InvalidName: "<Color:Error.Message>Der angegebene Name ist nicht alphanumerisch."
+    Economy:
+      Give:
+        Success: "Du hast <Color:Highlight><AMOUNT> <Color:Message>zu <Color:Highlight><TARGET>s <Color:Message>Kontostand hinzugefügt."
+        SuccessOther: "<Color:Highlight><SENDER> <Color:Message>hat <Color:Highlight><AMOUNT> <Color:Message>zu deinem Kontostand hinzugefügt."
+      Take:
+        Success: "Du hast <Color:Highlight><AMOUNT> <Color:Message>von <Color:Highlight><TARGET>s <Color:Message>Kontostand entfernt."
+        SuccessOther: "<Color:Highlight><TARGET> <Color:Message>hat <Color:Highlight><AMOUNT> <Color:Message>von deinem Kontostand entfernt."
+      Set:
+        Success: "Du hast <Color:Highlight><TARGET>s <Color:Message>Kontostand auf <Color:Highlight><AMOUNT><Color:Message> gesetzt."
+        SuccessOther: "<Color:Highlight><TARGET> <Color:Message>hat deinen Kontostand auf <Color:Highlight><AMOUNT><Color:Message> gesetzt."
+      InvalidAmount: "<Color:Error.Message>Ungültiger Betrag angegeben."
+    Time:
+      Success: "Du hast die Zeit in <Color:Highlight><WORLD> <Color:Message>auf <Color:Highlight><TIME><Color:Message> gesetzt."
+      WorldNotFound: "<Color:Error.Message>Ungültige Welt angegeben."
+    Weather:
+      Success: "Du hast das Wetter in <Color:Highlight><WORLD> <Color:Message>auf <Color:Highlight><WEATHER><Color:Message> gesetzt."
+      WorldNotFound: "<Color:Error.Message>Ungültige Welt angegeben."
+    TeleportAsk:
+      Success: "Du hast gefragt, ob du dich zu <Color:Highlight><TARGET><Color:Message> teleportieren kannst."
+      SuccessOther: "<Color:Highlight><SENDER> <Color:Message>hat gefragt, ob er sich zu dir teleportieren kann. Du hast 2 Minuten zum Akzeptieren."
+      Buttons:
+        Accept:
+          Name: "<Color:Highlight>Akzeptieren"
+          Tooltip: "<Color:Highlight>Akzeptieren"
+        Deny:
+          Name: "<Color:Error.Highlight>Ablehnen"
+          Tooltip: "<Color:Error.Highlight>Ablehnen"
+      CannotTeleportSelf: "<Color:Error.Message>Du kannst dich nicht zu dir selbst teleportieren."
+      NoTeleport: "<Color:Error.Highlight><TARGET> <Color:Error.Message>akzeptiert keine Teleportanfragen."
+      Moved: "<Color:Error.Message>Deine Teleportation wurde abgebrochen, da du dich bewegt hast."
+      TeleportFinished: "Du wurdest zu <Color:Highlight><TARGET><Color:Message> teleportiert."
+      StartingTeleporting: "Teleportation wird gestartet, bitte stehen bleiben..."
+    TeleportHereAsk:
+      Success: "Du hast <Color:Highlight><TARGET> <Color:Message>gefragt, sich zu dir zu teleportieren."
+      SuccessOther: "<Color:Highlight><SENDER> <Color:Message>hat dich gefragt, dich zu ihm zu teleportieren. Du hast 2 Minuten zum Akzeptieren."
+    TeleportDeny:
+      Success: "Du hast die Teleportanfrage abgelehnt."
+      SuccessOther: "<Color:Error.Highlight><TARGET> <Color:Error.Message>hat deine Teleportanfrage abgelehnt."
+    TeleportAccept:
+      NoRequest: "<Color:Error.Message>Du hast keine Teleportanfrage."
+      SuccessOther: "<Color:Highlight><TARGET> <Color:Message>hat deine Teleportanfrage akzeptiert."
+    Back:
+      Success: "Du wurdest zu deiner letzten <TYPE>-Position teleportiert."
+    PrivateMessage:
+      CannotSendToSelf: "<Color:Error.Message>Du kannst dir nicht selbst eine Nachricht senden."
+      NoMessages: "<Color:Error.Highlight><TARGET> <Color:Error.Message>akzeptiert keine Nachrichten."
+      Success: "&6MSG <Color:Separators>» <Color:Highlight>Du <Color:Message>an <Color:Highlight><TARGET><Color:Separators>: <Color:Message><MESSAGE>"
+      SuccessOther: "&6MSG <Color:Separators>» <Color:Highlight><SENDER><Color:Separators>: <Color:Message><MESSAGE>"
+    Reply:
+      NoReply: "<Color:Error.Message>Du hast niemanden, dem du antworten kannst."
+    TeleportToggle:
+      Success:
+        Enabled: "Du akzeptierst jetzt Teleportanfragen."
+        Disabled: "Du akzeptierst keine Teleportanfragen mehr."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>akzeptiert jetzt Teleportanfragen."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>akzeptiert keine Teleportanfragen mehr."
+    MessageToggle:
+      Success:
+        Enabled: "Du akzeptierst jetzt private Nachrichten."
+        Disabled: "Du akzeptierst keine privaten Nachrichten mehr."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>akzeptiert jetzt private Nachrichten."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>akzeptiert keine privaten Nachrichten mehr."
+    Unlimited:
+      Success:
+        Enabled: "Der Gegenstand in deiner Hand ist jetzt unbegrenzt."
+        Disabled: "Der Gegenstand in deiner Hand ist nicht mehr unbegrenzt."
+      NoItemInHand: "<Color:Error:Message>Du hältst keinen Gegenstand in der Hand."
+    ClearInventory:
+      Success: "Dein Inventar wurde geleert."
+      SuccessOther: "Du hast <Color:Highlight><TARGET>s <Color:Message>Inventar geleert."
+    Sudo:
+      Success: "Du hast einen Befehl für <Color:Highlight><TARGET><Color:Highlight> ausgeführt."
+      CannotSudoExempt: "<Color:Error.Message>Du kannst <Color:Error.Highlight><TARGET> <Color:Error.Message>nicht sudon."
+    OfflineTeleport:
+      Success: "Du hast dich zu <Color:Highlight><TARGET>s <Color:Message>Abmeldeposition teleportiert."
+    OfflineTeleportHere:
+      Success: "Du hast <Color:Highlight><TARGET>s <Color:Message>Abmeldeposition auf deine aktuelle Position gesetzt."
+    Vanish:
+      Success:
+        Enabled: "Du bist jetzt unsichtbar."
+        Disabled: "Du bist nicht mehr unsichtbar."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>ist jetzt unsichtbar."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>ist nicht mehr unsichtbar."
+      Denied:
+        Drop: "<Color:Error.Highlight>Du kannst derzeit keine Gegenstände im Unsichtbarkeitsmodus fallen lassen."
+        Message: "<Color:Error.Highlight>Du kannst derzeit keine Nachrichten im Unsichtbarkeitsmodus senden."
+    Drop:
+      Success:
+        Enabled: "Du kannst jetzt Gegenstände im Unsichtbarkeitsmodus fallen lassen."
+        Disabled: "Du kannst keine Gegenstände mehr im Unsichtbarkeitsmodus fallen lassen."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>kann jetzt Gegenstände im Unsichtbarkeitsmodus fallen lassen."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>kann keine Gegenstände mehr im Unsichtbarkeitsmodus fallen lassen."
+    Pickup:
+      Success:
+        Enabled: "Du kannst jetzt Gegenstände im Unsichtbarkeitsmodus aufheben."
+        Disabled: "Du kannst keine Gegenstände mehr im Unsichtbarkeitsmodus aufheben."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>kann jetzt Gegenstände im Unsichtbarkeitsmodus aufheben."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>kann keine Gegenstände mehr im Unsichtbarkeitsmodus aufheben."
+    Interact:
+      Success:
+        Enabled: "Du kannst jetzt im Unsichtbarkeitsmodus interagieren."
+        Disabled: "Du kannst nicht mehr im Unsichtbarkeitsmodus interagieren."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>kann jetzt im Unsichtbarkeitsmodus interagieren."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>kann nicht mehr im Unsichtbarkeitsmodus interagieren."
+    Message:
+      Success:
+        Enabled: "Du kannst jetzt Nachrichten im Unsichtbarkeitsmodus senden."
+        Disabled: "Du kannst keine Nachrichten mehr im Unsichtbarkeitsmodus senden."
+      SuccessOther:
+        Enabled: "<Color:Highlight><TARGET> <Color:Message>kann jetzt Nachrichten im Unsichtbarkeitsmodus senden."
+        Disabled: "<Color:Highlight><TARGET> <Color:Message>kann keine Nachrichten mehr im Unsichtbarkeitsmodus senden."
+    InventorySee:
+      CannotSeeSelf: "<Color:Error.Message>Du kannst dein eigenes Inventar nicht öffnen."
+    Smelt:
+      NoItemInHand: "<Color:Error.Message>Du hältst keinen Gegenstand in der Hand."
+      NoSmeltedItem: "<Color:Error.Message>Dieser Gegenstand kann nicht geschmolzen werden."
+      Success: "Der Gegenstand in deiner Hand wurde geschmolzen."
+    Stack:
+      NoItemInHand: "<Color:Error.Message>Du hältst keinen Gegenstand in der Hand."
+      Success: "Du hast den Stapel in deiner Hand aufgefüllt."
+    Repair:
+      NotRepairable: "<Color:Error.Message>Der angegebene Gegenstand kann nicht repariert werden."
+      Success: "Du hast <Color:Highlight><COUNT> <Color:Message>Gegenstände repariert."
+    Ping:
+      Success: "Dein Ping beträgt <Color:Highlight><PING><Color:Message>."
+      Other: "<Color:Highlight><TARGET>s <Color:Message>Ping beträgt <Color:Highlight><PING><Color:Message>."
+    Ip:
+      Success: "<Color:Highlight><TARGET>s <Color:Message>IP ist <Color:Highlight><IP><Color:Message>."
+    Ignore:
+      Success: "Du ignorierst jetzt <Color:Highlight><TARGET><Color:Message>."
+      AlreadyIgnored: "Du ignorierst <Color:Highlight><TARGET><Color:Message> bereits."
+      Self: "<Color:Error.Message>Du kannst dich nicht selbst ignorieren."
+    Unignore:
+      Success: "Du ignorierst <Color:Highlight><TARGET><Color:Message> nicht mehr."
+      NotIgnored: "Du ignorierst <Color:Highlight><TARGET><Color:Message> nicht."
+      Self: "<Color:Error.Message>Du kannst dich nicht selbst ignorieren."
+    Speed:
+      Success: "Deine Geschwindigkeit wurde auf <Color:Highlight><SPEED><Color:Message> gesetzt."
+      SuccessOther: "Du hast <Color:Highlight><TARGET>s <Color:Message>Geschwindigkeit auf <Color:Highlight><SPEED><Color:Message> gesetzt."
+    TeamChat:
+      Format: "<Color:Prefix>TeamChat <Color:Separators>» <Color:Highlight><TARGET> <Color:Separators>-> <Color:Message><MESSAGE>"
+    Moderation:
+      DefaultReason: "<Color:Error.Message>Kein Grund angegeben."
+      NotZero: "<Color:Error.Message>Die angegebene Dauer muss eine positive Ganzzahl sein."
+      InvalidDuration: "<Color:Error.Message>Ungültige Dauer angegeben."
+      Mute:
+        Add:
+          Success: "Du hast <Color:Highlight><TARGET><Color:Message> stummgeschaltet."
+          AlreadyActiveModeration: "<Color:Error.Message>Der angegebene Spieler <Color:Error.Highlight><TARGET> <Color:Error.Message>ist bereits stummgeschaltet."
+        Remove:
+          Success: "Du hast <Color:Highlight><TARGET><Color:Message> entstummt."
+          NoActiveModeration: "<Color:Error.Message>Der angegebene Spieler <Color:Error.Highlight><TARGET> <Color:Error.Message>ist nicht stummgeschaltet."
+      ShadowMute:
+        Add:
+          Success: "Du hast <Color:Highlight><TARGET><Color:Message> heimlich stummgeschaltet."
+          AlreadyActiveModeration: "<Color:Error.Message>Der angegebene Spieler <Color:Error.Highlight><TARGET> <Color:Error.Message>ist bereits stummgeschaltet."
+        Muted: "<Color:Error.Message>Du wurdest von <Color:Error.Highlight><SENDER> <Color:Error.Message>für <Color:Error.Highlight><REASON> <Color:Error.Message>bis: <Color:Error.Highlight><DATE><Color:Error.Message> stummgeschaltet."
+      Ban:
+        Add:
+          Success: "Du hast <Color:Highlight><TARGET><Color:Message> gebannt."
+          AlreadyActiveModeration: "<Color:Error.Message>Der angegebene Spieler <Color:Error.Highlight><TARGET> <Color:Error.Message>ist bereits gebannt."
+        Remove:
+          Success: "Du hast <Color:Highlight><TARGET><Color:Message> entbannt."
+          NoActiveModeration: "<Color:Error.Message>Der angegebene Spieler <Color:Error.Highlight><TARGET> <Color:Error.Message>ist nicht gebannt."
+        Kick: "&8[]--------------------[]\n&cDu wurdest gebannt!\n&6Grund&8: &c<REASON>\n&6Von&8: &c<SENDER>\n&6Entbann-Datum&8: &c<DATE>\n&8[]--------------------[]"
+    Warp:
+      Set:
+        Success: "Der Warp <Color:Highlight><WARP> <Color:Message>wurde auf deine aktuelle Position gesetzt."
+        WarpAlreadyExists: "<Color:Error.Message>Der angegebene Warp <Color:Error.Highlight><WARP> <Color:Error.Message>existiert bereits."
+      Delete:
+        Success: "Der Warp <Color:Highlight><WARP> <Color:Message>wurde gelöscht."
+      WarpNotFound: "<Color:Error.Message>Der angegebene Warp <Color:Error.Highlight><WARP> <Color:Error.Message>existiert nicht."
+      Success: "Du wurdest zu <Color:Highlight><WARP><Color:Message> teleportiert."
+    Kit:
+      Create:
+        KitAlreadyExists: "<Color:Error.Message>Das Kit <Color:Error.Highlight><KIT> <Color:Error.Message>existiert bereits."
+        InvalidCooldown: "<Color:Error.Message>Ungültige Abklingzeit angegeben."
+        Success: "Du hast das Kit <Color:Highlight><KIT><Color:Message> erstellt."
+      Delete:
+        Success: "Du hast das Kit <Color:Highlight><KIT><Color:Message> gelöscht."
+      KitNotFound: "<Color:Error.Message>Das Kit <Color:Error.Highlight><KIT> <Color:Error.Message>existiert nicht."
+      OnCooldown: "<Color:Error.Message>Du hast eine Abklingzeit für das Kit <Color:Error.Highlight><KIT><Color:Error.Message>. Abklingzeit endet: <Color:Error.Highlight><DATE><Color:Error.Message>."
+      Success:
+        Self: "Du hast das Kit <Color:Highlight><KIT><Color:Message> erhalten."
+        Other: "Du hast das Kit <Color:Highlight><KIT> <Color:Message>an <Color:Highlight><TARGET><Color:Message> gegeben."
+    Language:
+      Changed: "Du hast deine Sprache zu <Color:Highlight><LANGUAGE><Color:Message> geändert."
+    Baltop:
+      NoData: "<Color:Error.Message>Es wurden keine Baltop Daten gefunden."
+      Header: "&8-=-=-=-= &6Baltop &8=-=-=-=-"
+      Entry: "&6<POSITION> <Color:Highlight><TARGET> <Color:Separators>» &6<BALANCE>"
+  General:
+    Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
+    NoPermission: "<Color:Error.Message>Du hast keine Berechtigung dafür. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"
+    PlayerNotFound: "<Color:Error.Message>Spieler <Color:Error.Highlight><TARGET> <Color:Error.Message>nicht gefunden."
+    NotPlayer: "<Color:Error.Message>Du musst ein Spieler sein, um diesen Befehl zu verwenden."
+    InvalidArguments: "<Color:Error.Message>Ungültige Argumente. Verwendung: <Color:Error.Highlight><USAGE>"
+    ErrorOccurred: "<Color:Error.Message>Ein Fehler ist aufgetreten. Bitte siehe die Logs für weitere Informationen."
+    CommandDisabled: "<Color:Error.Message>Befehl <Color:Error.Highlight>/<LABEL> <Color:Error.Message>wurde automatisch deaktiviert. Grund: <REASON>"
+    ChatFormat: "<Color:Highlight><PREFIX> <SENDER> <Color:Separators>» <Color:Message><MESSAGE>"
+    AwayFromKeyboard:
+      NowAfk: "Du giltst jetzt als AFK."
+      NoLongerAfk: "Du giltst nicht mehr als AFK."
+    Offline:
+      NeverPlayed: "<Color:Error:Message>Der angegebene Spieler <Color:Message:Highlight><TARGET> <Color:Error.Message>hat noch nie gespielt."
+      NotOffline: "<Color:Error:Message>Der angegebene Spieler <Color:Message:Highlight><TARGET> <Color:Error.Message>ist nicht offline."
+  ClickableSigns:
+    Give:
+      Configuring: "Du konfigurierst jetzt ein Geben-Schild. Platziere den Gegenstand, den du geben möchtest, in deine Hand."
+      NoItem: "<Color:Error.Message>Du musst einen Gegenstand in deiner Hand haben."
+      Created: "Geben-Schild erfolgreich erstellt."
+    Kit:
+      NoKitManager: "<Color:Error.Message>Kit-Manager ist nicht verfügbar."
+      NoKitSpecified: "<Color:Error.Message>Kein Kit angegeben."
+      KitNotFound: "<Color:Error.Message>Das Kit <Color:Error.Highlight><KIT> <Color:Error.Message>existiert nicht."
+      KitGiven: "Du hast das Kit <Color:Highlight><KIT><Color:Message> erhalten."
+      Created: "Kit-Schild erfolgreich erstellt."
+    Time:
+      NoTimeSpecified: "<Color:Error.Message>Keine Zeit angegeben."
+      InvalidTime: "<Color:Error.Message>Ungültige Zeit angegeben."
+      TimeSet: "Zeit auf <Color:Highlight><TIME><Color:Message> gesetzt."
+      Created: "Zeit-Schild erfolgreich erstellt."
+    Warp:
+      NoWarpManager: "<Color:Error.Message>Warp-Manager ist nicht verfügbar."
+      NoWarpSpecified: "<Color:Error.Message>Kein Warp angegeben."
+      WarpNotFound: "<Color:Error.Message>Der Warp <Color:Error.Highlight><WARP> <Color:Error.Message>existiert nicht."
+      Teleported: "Du wurdest zu <Color:Highlight><WARP><Color:Message> teleportiert."
+      Created: "Warp-Schild erfolgreich erstellt."
+    Weather:
+      NoWeatherSpecified: "<Color:Error.Message>Kein Wetter angegeben."
+      WeatherSet: "Wetter auf <Color:Highlight><WEATHER><Color:Message> gesetzt."
+      InvalidWeather: "<Color:Error.Message>Ungültiges Wetter angegeben."
+      Created: "Wetter-Schild erfolgreich erstellt."
+    Cost:
+      InvalidType: "<Color:Error.Message>Ungültiger Kostentyp. Verwende 'exp' oder 'economy'."
+      InvalidAmount: "<Color:Error.Message>Ungültiger Betrag angegeben."
+      NotEnoughExp: "<Color:Error.Message>Du hast nicht genug Erfahrungspunkte."
+      NotEnoughMoney: "<Color:Error.Message>Du hast nicht genug Geld."
+      PaidExp: "Du hast <Color:Highlight><AMOUNT> <Color:Message>Erfahrungspunkte bezahlt."
+      PaidMoney: "Du hast <Color:Highlight><AMOUNT><Color:Message> bezahlt."
+      NotClickableSign: "<Color:Error.Message>Das Schild, das du ansiehst, ist kein klickbares Schild."
+      NotLookingAtSign: "<Color:Error.Message>Du siehst kein Schild an."
+      SetNone: "Kosten erfolgreich vom Schild entfernt."
+      Set: "Kosten auf <Color:Highlight><TYPE> <Color:Message>mit Betrag <Color:Highlight><AMOUNT><Color:Message> gesetzt."
+  Syntax:
+    Balance: "/<LABEL> (Spieler)"
+    Ban: "/<LABEL> [Spieler] [Zeit] (Grund...)"
+    Broadcast: "/<LABEL> [Nachricht...]"
+    ClearInventory: "/<LABEL> (Spieler)"
+    Economy: "/<LABEL> [add|remove|set] [Spieler] [Betrag]"
+    EnderChest: "/<LABEL> (Spieler)"
+    OfflineEnderChest: "/<LABEL> [Spieler]"
+    Fly: "/<LABEL> (Spieler)"
+    GameMode: "/<LABEL> [Spielmodus] (Spieler)"
+    GMS: "/<LABEL> (Spieler)"
+    GMC: "/<LABEL> (Spieler)"
+    GMA: "/<LABEL> (Spieler)"
+    GMSP: "/<LABEL> (Spieler)"
+    God: "/<LABEL> (Spieler)"
+    Heal: "/<LABEL> (Spieler)"
+    AdminHome: "/<LABEL> [Spieler] [Zuhause]"
+    Home: "/<LABEL> (Zuhause)"
+    Ignore: "/<LABEL> [Spieler]"
+    InventorySee: "/<LABEL> [Spieler]"
+    OfflineInventorySee: "/<LABEL> [Spieler]"
+    Ip: "/<LABEL> [Spieler]"
+    Kit: "/<LABEL> [Kit] (Spieler)"
+    CreateKit: "/<LABEL> [Kit] (Abklingzeit)"
+    DeleteKit: "/<LABEL> [Kit]"
+    Language: "/<LABEL> [Sprache]"
+    Mute: "/<LABEL> [Spieler] [Dauer] (Grund...)"
+    OfflineTeleport: "/<LABEL> [Spieler]"
+    Pay: "/<LABEL> [Spieler] [Betrag]"
+    Ping: "/<LABEL> (Spieler)"
+    PrivateMessage: "/<LABEL> [Spieler] [Nachricht...]"
+    MessageToggle: "/<LABEL> (Spieler)"
+    Reply: "/<LABEL> [Nachricht...]"
+    Repair: "/<LABEL> (all|hand|offhand|armor|inventory)"
+    Seen: "/<LABEL> [Spieler]"
+    SignCost: "/<LABEL> [none|exp|economy] (Betrag)"
+    Skull: "/<LABEL> (Spieler)"
+    Spawn: "/<LABEL> (Spieler)"
+    Speed: "/<LABEL> [Geschwindigkeit] (Spieler)"
+    Sudo: "/<LABEL> [Spieler] [Befehl] (Argumente...)"
+    TeamChat: "/<LABEL> [Nachricht...]"
+    Teleport: "/<LABEL> [Spieler] (Spieler)"
+    TeleportPosition: "/<LABEL> (Spieler) [X] [Y] [Z] [Welt]"
+    TeleportAsk: "/<LABEL> [Spieler]"
+    TeleportToggle: "/<LABEL> (Spieler)"
+    Time: "/<LABEL> [Zeit] (Welt)"
+    Day: "/<LABEL> (Welt)"
+    Night: "/<LABEL> (Welt)"
+    Noon: "/<LABEL> (Welt)"
+    Midnight: "/<LABEL> (Welt)"
+    Unban: "/<LABEL> [Spieler]"
+    Unmute: "/<LABEL> [Spieler]"
+    Vanish: "/<LABEL> (Spieler)"
+    Warp: "/<LABEL> [Warp]"
+    Weather: "/<LABEL> [Wetter] (Welt)"
+    Rain: "/<LABEL> (Welt)"
+    Storm: "/<LABEL> (Welt)"
+    Sun: "/<LABEL> (Welt)"
+    Back: "/<LABEL> (teleport|death)"
+    CommandSpy: "/<LABEL> (Spieler)"
+    Disposal: "/<LABEL> (Spieler)"
+language: "german"

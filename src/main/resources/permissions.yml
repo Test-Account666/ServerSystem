@@ -1,287 +1,465 @@
 Permissions:
-  unlimited: "server.unlimited"
-  socialspy: "server.socialspy"
-  msgtoggle: "server.msgtoggle"
-  clearchat: "server.clearchat"
-  back:
-    teleport: "server.back.teleport"
-    death: "server.back.death"
-  broadcast: "server.broadcast"
-  delhome:
-    required: false
-    permission: "server.delhome"
-  sethome:
-    general:
-      required: false
-      permission: "server.sethome.general"
-    bypassmax: "server.sethome.bypassmax"
-    maxhomes:
-      '1': "server.sethome.1"
-      '2': "server.sethome.2"
-      '3': "server.sethome.3"
-      '4': "server.sethome.4"
-      '5': "server.sethome.5"
-      '6': "server.sethome.6"
-      '7': "server.sethome.7"
-      '8': "server.sethome.8"
-      '9': "server.sethome.9"
-      '10': "server.sethome.10"
-      '11': "server.sethome.11"
-      '12': "server.sethome.12"
-      '13': "server.sethome.13"
-      '14': "server.sethome.14"
-      '15': "server.sethome.15"
-      '16': "server.sethome.16"
-      '17': "server.sethome.17"
-      '18': "server.sethome.18"
-      '19': "server.sethome.19"
-      '20': "server.sethome.20"
-  home:
-    required: false
-    permission: "server.home.general"
-    bypassdelay: "server.home.bypassdelay"
-  vanish:
-    see: "server.vanish.see"
-    self: "server.vanish.self"
-    others: "server.vanish.others"
-  tpa:
-    required: false
-    permission: "server.tpa"
-  tpahere:
-    required: false
-    permission: "server.tpahere"
-  tpaccept:
-    required: false
-    permission: "server.tpaccept.general"
-    bypassdelay: "server.tpaccept.bypassdelay"
-  tpdeny:
-    required: false
-    permission: "server.tpdeny"
-  tptoggle:
-    self: "server.tptoggle.self"
-    others: "server.tptoggle.others"
-  checkgamemode: "server.checkgamemode"
-  clearenderchest:
-    self:
-      required: false
-      permission: "server.clearenderchest.self"
-    others: "server.clearenderchest.others"
-  clearinventory:
-    self:
-      required: true
-      permission: "server.clearinventory.self"
-    others: "server.clearinventory.others"
-  commandspy: "server.commandspy"
-  time: "server.time"
-  day: "server.time"
-  night: "server.time"
-  noon: "server.time"
-  disenchant: "server.disenchant"
-  disposal:
-    required: false
-    permission: "server.disposal"
-  extinguish:
-    self: "server.extinguish.self"
-    others: "server.extinguish.others"
-  feed:
-    self: "server.feed.self"
-    others: "server.feed.others"
-  gamemode:
-    self:
-      survival: "server.gamemode.survival.self"
-      creative: "server.gamemode.creative.self"
-      adventure: "server.gamemode.adventure.self"
-      spectator: "server.gamemode.spectator.self"
-    others:
-      survival: "server.gamemode.survival.others"
-      creative: "server.gamemode.creative.others"
-      adventure: "server.gamemode.adventure.others"
-      spectator: "server.gamemode.spectator.others"
-  hat:
-    required: true
-    permission: "server.hat"
-  heal:
-    self: "server.heal.self"
-    others: "server.heal.others"
-  ip: "server.ip"
-  ping:
-    self:
-      required: false
-      permission: "server.ping.self"
-    others: "server.ping.others"
-  weather: "server.weather"
-  sun: "server.weather"
-  rain: "server.weather"
-  repair: "server.repair"
-  restart: "server.restart"
-  editschild:
-    players: "server.schild"
-    #Only for PlotSquared!
-    admin: "server.schild.admin"
-  sign: "server.sign"
-  smelt: "server.smelt"
-  stack: "server.stack"
-  sudo:
-    use: "server.sudo.use"
-    exempt: "server.sudo.exempt"
-  suicide:
-    required: false
-    permission: "server.suicide"
-  teamchat:
-    send: "server.teamchat.send"
-    recieve: "server.teamchat.receive"
-  unsign: "server.unsign"
-  signs:
-    warp: "server.signs.warp"
-    disposal: "server.signs.disposal"
-    color: "server.signs.colorsigns"
-  serversystem:
-    use: "server.serversystem.use"
-    reload: "server.serversystem.reload"
-    version: "server.serversystem.version"
-    update: "server.serversystem.update"
-  speed:
-    general: "server.speed.general"
-    self: "server.speed.self"
-    others: "server.speed.others"
-  tppos:
-    self: "server.tppos.self"
-    others: "server.tppos.others"
-  colorchat: "server.chat.color"
-  setspawn: "server.setspawn"
-  spawn:
-    required: false
-    permission: "server.spawn.general"
-    bypassdelay: "server.spawn.bypassdelay"
-  warp:
-    required: false
-    permission: "server.warp.general"
-    bypassdelay: "server.warp.bypassdelay"
-    others: "server.warp.others"
-  setwarp: "server.setwarp"
-  delwarp: "server.delwarp"
-  kickall: "server.kickall"
-  kick:
-    use: "server.kick.use"
-    exempt: "server.kick.exempt"
-  ban:
-    use:
-      general: "server.ban.use"
-      permanent: "server.ban.permanent"
-      temporary: "server.ban.temporary"
-    exempt: "server.ban.exempt"
-  unban: "server.unban"
-  kit:
-    self: "server.kit.<KIT>.self"
-    others: "server.kit.<KIT>.others"
-    bypassdelay: "server.kit.bypass.delay"
-  deletekit: "server.deletekit"
-  createkit: "server.createkit"
-  economy:
-    general: "server.economy.use"
-    set: "server.economy.set"
-    give: "server.economy.give"
-    revoke: "server.economy.revoke"
-  invsee:
-    use: "server.invsee.use"
-    exempt: "server.invsee.exempt"
-  enderchest:
-    self: "server.enderchest.self"
-    others: "server.enderchest.others"
-    exempt: "server.enderchest.exempt"
-  tp:
-    self: "server.tp.self"
-    others: "server.tp.others"
-  tphere: "server.tphere"
-  tpo:
-    self: "server.tpo.self"
-    others: "server.tpo.others"
-  tpohere: "server.tpohere"
-  tpall:
-    self: "server.tpall.self"
-    others: "server.tpall.others"
-  workbench: "server.workbench"
-  fly:
-    self: "server.fly.self"
-    others: "server.fly.others"
-    bypassdamage: "server.fly.bypassdamage"
-  msg:
-    required: false
-    permission: "server.msg"
-  convertfromessentials: "server.convertfromessentials"
-  converttoessentials: "server.converttoessentials"
-  skull:
-    self: "server.skull.self"
-    others: "server.skull.others"
-  mute:
-    use: "server.mute.use"
-    temporary: "server.mute.temporary"
-    permanent: "server.mute.permanent"
-    exempt: "server.mute.exempt"
-    shadow:
-      permanent: "server.mute.permanent.shadow"
-      temporary: "server.mute.temporary.shadow"
-  unmute: "server.unmute"
-  joinfullserver:
-    premium: "server.joinfullserver.premium"
-    admin: "server.joinfullserver.admin"
-  burn: "server.burn"
-  god:
-    self: "server.god.self"
-    others: "server.god.others"
-  money:
-    self:
-      required: false
-      permission: "server.money.self"
-    others: "server.money.others"
-  pay:
-    required: false
-    permission: "server.pay"
-  reply:
-    required: false
-    permission: "server.reply"
-  lag: "server.lag"
-  baltop:
-    required: false
-    permission: "server.baltop"
-  noafk: "server.noafk"
-  maintenance:
-    toggle: "server.maintenance.toggle"
-    join: "server.maintenance.join"
-  recipe:
-    required: false
-    permission: "server.recipe"
-  warps:
-    required: false
-    permission: "server.warps"
-  checkhealth: "server.checkhealth"
-  lightning: "server.lightning"
-  worldchange:
-    bypassreset:
-      gamemode: "server.bypassreset.gamemode"
-      god: "server.bypassreset.god"
-      fly: "server.bypassreset.fly"
-  rename: "server.rename"
-  updatenotify: "server.updatenotify"
-  anvil: "server.anvil"
-  loom: "server.loom"
-  cartography: "server.cartography"
-  grindstone: "server.grindstone"
-  stonecutter: "server.stonecutter"
-  smithingtable: "server.smithingtable"
-  getpos:
-    self: "server.getpos.self"
-    others: "server.getpos.others"
-  break:
-    use: "server.break.use"
-    bedrock: "server.break.bedrock"
-    barrier: "server.break.barrier"
-    commandblock: "server.break.commandblock"
-    structureblock: "server.break.structureblock"
-  offlineteleport: "server.offlineteleport"
-  offlineteleporthere: "server.offlineteleporthere"
-  offlineinvsee: "server.offlineinvsee"
-  offlineenderchest: "server.offlineenderchest"
-  seen: "server.seen"
-  freeze: "server.freeze"
-  managehomes: "server.managehomes"
+  Commands:
+    ClearChat:
+      Use:
+        Required: true
+        Value: "serversystem.moderation.command.clearchat.use"
+      Bypass:
+        Required: true
+        Value: "serversystem.moderation.command.clearchat.bypass"
+    GameMode:
+      Use:
+        Required: true
+        Value: "serversystem.admin.command.gamemode.use"
+      Other:
+        Required: true
+        Value: "serversystem.admin.command.gamemode.other"
+      Survival:
+        Required: true
+        Value: "serversystem.admin.command.gamemode.survival"
+      Creative:
+        Required: true
+        Value: "serversystem.admin.command.gamemode.creative"
+      Adventure:
+        Required: true
+        Value: "serversystem.admin.command.gamemode.adventure"
+      Spectator:
+        Required: true
+        Value: "serversystem.admin.command.gamemode.spectator"
+    God:
+      Use:
+        Required: true
+        Value: "serversystem.support.command.god.use"
+      Other:
+        Required: true
+        Value: "serversystem.support.command.god.other"
+    Fly:
+      Use:
+        Required: true
+        Value: "serversystem.support.command.fly.use"
+      Other:
+        Required: true
+        Value: "serversystem.support.command.fly.other"
+    Teleport:
+      Use:
+        Required: true
+        Value: "serversystem.support.command.teleport.use"
+      Other:
+        Required: true
+        Value: "serversystem.support.command.teleport.other"
+    TeleportPosition:
+      Use:
+        Required: true
+        Value: "serversystem.support.command.teleportposition.use"
+      Other:
+        Required: true
+        Value: "serversystem.support.command.teleportposition.other"
+    TeleportHere:
+      Use:
+        Required: true
+        Value: "serversystem.support.command.teleporthere.use"
+    OfflineTeleport:
+      Use:
+        Required: true
+        Value: "serversystem.moderation.command.offlineteleport.use"
+    OfflineTeleportHere:
+      Use:
+        Required: true
+        Value: "serversystem.moderation.command.offlineteleporthere.use"
+    TeleportAll:
+      Use:
+        Required: true
+        Value: "serversystem.admin.command.teleportall.use"
+      World:
+        Required: true
+        Value: "serversystem.admin.command.teleportposition.world"
+    Balance:
+      Use:
+        Required: false
+        Value: "serversystem.command.balance.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.balance.other"
+    Baltop:
+      Use:
+        Required: false
+        Value: "serversystem.command.baltop.use"
+    Pay:
+      Use:
+        Required: false
+        Value: "serversystem.command.pay.use"
+    Workbench:
+      Use:
+        Required: true
+        Value: "serversystem.command.workbench.use"
+    Anvil:
+      Use:
+        Required: true
+        Value: "serversystem.command.anvil.use"
+    Smithing:
+      Use:
+        Required: true
+        Value: "serversystem.command.smithing.use"
+    Loom:
+      Use:
+        Required: true
+        Value: "serversystem.command.loom.use"
+    Grindstone:
+      Use:
+        Required: true
+        Value: "serversystem.command.grindstone.use"
+    Cartography:
+      Use:
+        Required: true
+        Value: "serversystem.command.cartography.use"
+    Stonecutter:
+      Use:
+        Required: true
+        Value: "serversystem.command.stonecutter.use"
+    Broadcast:
+      Use:
+        Required: true
+        Value: "serversystem.moderation.command.broadcast.use"
+    EnderChest:
+      Use:
+        Required: true
+        Value: "serversystem.command.enderchest.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.enderchest.other"
+    OfflineEnderChest:
+      Use:
+        Required: true
+        Value: "serversystem.admin.command.offlineenderchest.use"
+      Other:
+        Required: true
+        Value: "serversystem.admin.command.offlineenderchest.other"
+    Disposal:
+      Use:
+        Required: false
+        Value: "serversystem.command.disposal.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.disposal.other"
+    Heal:
+      Use:
+        Required: true
+        Value: "serversystem.support.command.heal.use"
+      Other:
+        Required: true
+        Value: "serversystem.support.command.heal.other"
+    Feed:
+      Use:
+        Required: true
+        Value: "serversystem.support.command.feed.use"
+      Other:
+        Required: true
+        Value: "serversystem.support.command.feed.other"
+    Seen:
+      Use:
+        Required: true
+        Value: "serversystem.support.command.seen.use"
+    CommandSpy:
+      Use:
+        Required: true
+        Value: "serversystem.moderation.command.commandspy.use"
+      Other:
+        Required: true
+        Value: "serversystem.moderation.command.commandspy.other"
+    Spawn:
+      Use:
+        Required: false
+        Value: "serversystem.command.spawn.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.spawn.other"
+      Set:
+        Required: true
+        Value: "serversystem.admin.command.spawn.set"
+    Home:
+      Use:
+        Required: false
+        Value: "serversystem.command.home.use"
+      Set:
+        Required: false
+        Value: "serversystem.command.home.set"
+      Delete:
+        Required: false
+        Value: "serversystem.command.home.delete"
+    AdminHome:
+      Use:
+        Required: true
+        Value: "serversystem.moderation.command.home.use"
+      Set:
+        Required: true
+        Value: "serversystem.moderation.command.home.set"
+      Delete:
+        Required: true
+        Value: "serversystem.moderation.command.home.delete"
+    Economy:
+      Use:
+        Required: true
+        Value: "serversystem.admin.command.economy.use"
+      Set:
+        Required: true
+        Value: "serversystem.admin.command.economy.set"
+      Take:
+        Required: true
+        Value: "serversystem.admin.command.economy.take"
+      Give:
+        Required: true
+        Value: "serversystem.admin.command.economy.give"
+    Time:
+      Use:
+        Required: true
+        Value: "serversystem.admin.command.time.use"
+      World:
+        Required: true
+        Value: "serversystem.admin.command.time.world"
+    Weather:
+      Use:
+        Required: true
+        Value: "serversystem.admin.command.weather.use"
+      World:
+        Required: true
+        Value: "serversystem.admin.command.weather.world"
+    TeleportAsk:
+      Use:
+        Required: false
+        Value: "serversystem.command.teleportask.use"
+      InstantTeleport:
+        Required: true
+        Value: "serversystem.command.teleportask.instant"
+    TeleportHereAsk:
+      Use:
+        Required: false
+        Value: "serversystem.command.teleporthereask.use"
+    TeleportAccept:
+      Use:
+        Required: false
+        Value: "serversystem.command.teleportaccept.use"
+    TeleportDeny:
+      Use:
+        Required: false
+        Value: "serversystem.command.teleportdeny.use"
+    TeleportToggle:
+      Use:
+        Required: false
+        Value: "serversystem.command.teleporttoggle.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.teleporttoggle.other"
+    Back:
+      Use:
+        Required: true
+        Value: "serversystem.command.back.use"
+    PrivateMessage:
+      Use:
+        Required: false
+        Value: "serversystem.command.privatemessage.use"
+      Toggle:
+        Use:
+          Required: false
+          Value: "serversystem.command.messagetoggle.use"
+        Other:
+          Required: true
+          Value: "serversystem.command.messagetoggle.other"
+    Unlimited:
+      Use:
+        Required: true
+        Value: "serversystem.admin.command.unlimited.use"
+    ClearInventory:
+      Use:
+        Required: true
+        Value: "serversystem.moderation.command.clearinventory.use"
+      Other:
+        Required: true
+        Value: "serversystem.moderation.command.clearinventory.other"
+    Skull:
+      Use:
+        Required: true
+        Value: "serversystem.admin.command.skull.use"
+      Other:
+        Required: true
+        Value: "serversystem.admin.command.skull.use"
+    Sudo:
+      Use:
+        Required: true
+        Value: "serversystem.admin.command.sudo.use"
+      Exempt:
+        Required: true
+        Value: "serversystem.admin.command.sudo.exempt"
+    Vanish:
+      Use:
+        Required: true
+        Value: "serversystem.moderation.command.vanish.use"
+      Show:
+        Required: true
+        Value: "serversystem.moderation.command.vanish.show"
+    InventorySee:
+      Use:
+        Required: true
+        Value: "serversystem.command.inventorysee.use"
+      Modify:
+        Required: true
+        Value: "serversystem.moderation.inventorysee.modify"
+    OfflineInventorySee:
+      Use:
+        Required: true
+        Value: "serversystem.admin.command.offlineinventorysee.use"
+      Modify:
+        Required: true
+        Value: "serversystem.admin.command.offlineinventorysee.modify"
+    Smelt:
+      Use:
+        Required: true
+        Value: "serversystem.command.smelt.use"
+    Stack:
+      Use:
+        Required: true
+        Value: "serversystem.admin.command.stack.use"
+    Repair:
+      Use:
+        Required: true
+        Value: "serversystem.admin.command.repair.use"
+    Ping:
+      Use:
+        Required: false
+        Value: "serversystem.command.ping.use"
+      Other:
+        Required: true
+        Value: "serversystem.command.ping.other"
+    Ip:
+      Use:
+        Required: true
+        Value: "serversystem.moderation.command.ip.use"
+    Ignore:
+      Use:
+        Required: false
+        Value: "serversystem.command.ignore.use"
+    Unignore:
+      Use:
+        Required: false
+        Value: "serversystem.command.unignore.use"
+    Speed:
+      Use:
+        Required: true
+        Value: "serversystem.admin.command.speed.use"
+      Other:
+        Required: true
+        Value: "serversystem.admin.command.speed.other"
+    TeamChat:
+      Use:
+        Required: true
+        Value: "serversystem.support.command.teamchat.use"
+    Warp:
+      Use:
+        Required: false
+        Value: "serversystem.command.warp.use"
+      Set:
+        Required: true
+        Value: "serversystem.admin.command.warp.set"
+      Delete:
+        Required: true
+        Value: "serversystem.admin.command.warp.delete"
+    Kit:
+      Use:
+        Required: false
+        Value: "serversystem.command.kit.use"
+      Create:
+        Required: true
+        Value: "serversystem.admin.command.kit.create"
+      Delete:
+        Required: true
+        Value: "serversystem.admin.command.kit.delete"
+      Other:
+        Required: true
+        Value: "serversystem.command.kit.other"
+    SignCost:
+      Use:
+        Required: true
+        Value: "serversystem.admin.command.signcost.use"
+    Moderation:
+      Ban:
+        Use:
+          Required: true
+          Value: "serversystem.moderation.ban.use"
+        Remove:
+          Required: true
+          Value: "serversystem.moderation.ban.remove"
+      Mute:
+        Use:
+          Required: true
+          Value: "serversystem.moderation.mute.use"
+        Remove:
+          Required: true
+          Value: "serversystem.moderation.mute.remove"
+        Shadow:
+          Required: true
+          Value: "serversystem.moderation.mute.shadow"
+    Language:
+      Use:
+        Required: false
+        Value: "serversystem.command.language.use"
+  Chat:
+    ColorChat:
+      Required: true
+      Value: "serversystem.chat.colored"
+  Homes:
+    MaxHomes:
+      Required: true
+      Value: "serversystem.homes."
+    Unlimited:
+      Required: true
+      Value: "serversystem.homes.unlimited"
+  ClickableSigns:
+    Give:
+      Use:
+        Required: true
+        Value: "serversystem.clickablesigns.give.use"
+      Create:
+        Required: true
+        Value: "serversystem.admin.clickablesigns.give.create"
+      Destroy:
+        Required: true
+        Value: "serversystem.admin.clickablesigns.give.destroy"
+    Kit:
+      Use:
+        Required: true
+        Value: "serversystem.clickablesigns.kit.use"
+      Create:
+        Required: true
+        Value: "serversystem.admin.clickablesigns.kit.create"
+      Destroy:
+        Required: true
+        Value: "serversystem.admin.clickablesigns.kit.destroy"
+    Time:
+      Use:
+        Required: true
+        Value: "serversystem.clickablesigns.time.use"
+      Create:
+        Required: true
+        Value: "serversystem.admin.clickablesigns.time.create"
+      Destroy:
+        Required: true
+        Value: "serversystem.admin.clickablesigns.time.destroy"
+    Weather:
+      Use:
+        Required: true
+        Value: "serversystem.clickablesigns.weather.use"
+      Create:
+        Required: true
+        Value: "serversystem.admin.clickablesigns.weather.create"
+      Destroy:
+        Required: true
+        Value: "serversystem.admin.clickablesigns.weather.destroy"
+    Warp:
+      Use:
+        Required: true
+        Value: "serversystem.clickablesigns.warp.use"
+      Create:
+        Required: true
+        Value: "serversystem.admin.clickablesigns.warp.create"
+      Destroy:
+        Required: true
+        Value: "serversystem.admin.clickablesigns.warp.destroy"
