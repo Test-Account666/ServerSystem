@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Set;
+import java.util.logging.Level;
 
 import static me.testaccount666.serversystem.utils.MessageBuilder.*;
 
@@ -100,9 +101,9 @@ public class CommandSignCost extends AbstractServerSystemCommand {
 
         try {
             config.save(signFile);
-        } catch (IOException e) {
+        } catch (IOException exception) {
             general("ErrorOccurred", commandSender).build();
-            e.printStackTrace();
+            ServerSystem.getLog().log(Level.SEVERE, "Error occurred while saving sign cost config '${signFile.getAbsolutePath()}'", exception);
             return;
         }
 

@@ -1,10 +1,12 @@
 package me.testaccount666.serversystem.clickablesigns.cost;
 
+import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.math.BigDecimal;
 
+import static java.util.logging.Level.SEVERE;
 import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 import static me.testaccount666.serversystem.utils.MessageBuilder.sign;
 
@@ -56,7 +58,7 @@ public class CostHandler {
                 bankAccount.deposit(BigDecimal.valueOf(costAmount));
                 bankAccount.save();
             } catch (Exception exception) {
-                exception.printStackTrace();
+                ServerSystem.getLog().log(SEVERE, "Failed to refund cost for '${user.getName()}', failed to save bank account", exception);
                 general("ErrorOccurred", user).build();
             }
         }
@@ -101,7 +103,7 @@ public class CostHandler {
                 sign("Cost.PaidMoney", user)
                         .postModifier(message -> message.replace("<COST>", String.valueOf(costAmount))).build();
                 return true;
-            } catch (Exception e) {
+            } catch (Exception exception) {
                 return false;
             }
         }
@@ -119,7 +121,7 @@ public class CostHandler {
         var costTypeStr = config.getString("Cost.Type", "NONE");
         try {
             return CostType.valueOf(costTypeStr.toUpperCase());
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException exception) {
             return CostType.NONE;
         }
     }

@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class InventoryLoader {
     public final BiDirectionalHashMap<UUID, Inventory> inventoryMap = new BiDirectionalHashMap<>();
@@ -69,9 +70,8 @@ public class InventoryLoader {
 
             inventoryMap.put(playerUUID, inventory);
             return Optional.of(inventory);
-        } catch (IOException e) {
-            e.printStackTrace();
-            ServerSystem.getLog().severe("Failed to load inventory for ${offlinePlayer.getName()}");
+        } catch (IOException exception) {
+            ServerSystem.getLog().log(Level.SEVERE, "Failed to load inventory for ${offlinePlayer.getName()} (${offlinePlayer.getUniqueId()})", exception);
             return Optional.empty();
         }
     }
@@ -119,9 +119,8 @@ public class InventoryLoader {
             fileHandle.save();
 
             ServerSystem.getLog().info("Saved inventory for ${offlinePlayer.getName()} (${offlinePlayer.getUniqueId()})");
-        } catch (IOException e) {
-            e.printStackTrace();
-            ServerSystem.getLog().severe("Failed to save inventory for ${offlinePlayer.getName()}");
+        } catch (IOException exception) {
+            ServerSystem.getLog().log(Level.SEVERE, "Failed to save inventory for ${offlinePlayer.getName()} (${offlinePlayer.getUniqueId()})", exception);
         }
     }
 

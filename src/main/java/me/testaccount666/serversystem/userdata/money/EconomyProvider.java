@@ -10,6 +10,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Optional;
+import java.util.logging.Level;
 
 public class EconomyProvider {
     @Getter
@@ -106,8 +107,7 @@ public class EconomyProvider {
 
                 ServerSystem.getLog().info("Migrated YAML bank account data for user ${offlineUser.getName()} (${offlineUser.getUuid()}, AccountID: ${currentAccountId}) to ${_economyType} database. Balance: ${balance}");
             } catch (NumberFormatException exception) {
-                ServerSystem.getLog().severe("Failed to parse account ID '${key}' or balance '${balance}' for user ${offlineUser.getName()} (${offlineUser.getUuid()}): ${exception.getMessage()}");
-                exception.printStackTrace();
+                ServerSystem.getLog().log(Level.SEVERE, "Failed to migrate YAML bank account data for user ${offlineUser.getName()} (${offlineUser.getUuid()}, AccountID: ${key}): ${exception.getMessage()}", exception);
             }
         }
 

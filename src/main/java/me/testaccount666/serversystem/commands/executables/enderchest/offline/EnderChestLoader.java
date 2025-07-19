@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class EnderChestLoader {
     public final BiDirectionalHashMap<UUID, Inventory> inventoryMap = new BiDirectionalHashMap<>();
@@ -47,9 +48,8 @@ public class EnderChestLoader {
 
             inventoryMap.put(playerUUID, inventory);
             return Optional.of(inventory);
-        } catch (IOException e) {
-            e.printStackTrace();
-            ServerSystem.getLog().severe("Failed to load ender chest for ${offlinePlayer.getName()}");
+        } catch (IOException exception) {
+            ServerSystem.getLog().log(Level.SEVERE, "Failed to load ender chest for ${offlinePlayer.getName()} (${offlinePlayer.getUniqueId()})", exception);
             return Optional.empty();
         }
     }
@@ -81,9 +81,8 @@ public class EnderChestLoader {
             fileHandle.save();
 
             ServerSystem.getLog().info("Saved ender chest for ${offlinePlayer.getName()} (${offlinePlayer.getUniqueId()})");
-        } catch (IOException e) {
-            e.printStackTrace();
-            ServerSystem.getLog().severe("Failed to save ender chest for ${offlinePlayer.getName()}");
+        } catch (IOException exception) {
+            ServerSystem.getLog().log(Level.SEVERE, "Failed to save ender chest for ${offlinePlayer.getName()} (${offlinePlayer.getUniqueId()})", exception);
         }
     }
 }

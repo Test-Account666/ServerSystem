@@ -10,6 +10,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 import static me.testaccount666.serversystem.utils.MessageBuilder.sign;
@@ -86,7 +87,7 @@ public abstract class AbstractSignConfigurator implements SignConfigurator {
             config.save(signFile);
         } catch (IOException exception) {
             user.sendMessage(exception.getMessage());
-            exception.printStackTrace();
+            ServerSystem.getLog().log(Level.SEVERE, "Failed to save sign configuration ${signFile.getAbsolutePath()}", exception);
             return;
         }
 

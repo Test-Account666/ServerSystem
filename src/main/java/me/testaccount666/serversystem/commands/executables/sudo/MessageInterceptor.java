@@ -1,5 +1,6 @@
 package me.testaccount666.serversystem.commands.executables.sudo;
 
+import me.testaccount666.serversystem.ServerSystem;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.Morph;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
@@ -8,6 +9,7 @@ import org.bukkit.command.CommandSender;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.logging.Level;
 import java.util.stream.Stream;
 
 public class MessageInterceptor {
@@ -49,7 +51,7 @@ public class MessageInterceptor {
         try {
             method.invoke(_commandSender, arguments);
         } catch (IllegalAccessException | InvocationTargetException exception) {
-            exception.printStackTrace();
+            ServerSystem.getLog().log(Level.WARNING, "(MessageInterceptor) Couldn't invoke sendMessage method!", exception);
         }
     }
 }

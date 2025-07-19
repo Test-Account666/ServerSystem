@@ -140,7 +140,7 @@ public class OfflineUser {
             if (fis.read(signature) != 2) return false;
             // Check for GZIP magic number (0x1F8B)
             return (signature[0] == (byte) 0x1F && signature[1] == (byte) 0x8B);
-        } catch (IOException e) {
+        } catch (IOException exception) {
             return false;
         }
     }
@@ -161,7 +161,7 @@ public class OfflineUser {
              var inputReader = new InputStreamReader(gzipInputStream)) {
 
             return YamlConfiguration.loadConfiguration(inputReader);
-        } catch (IOException e) {
+        } catch (IOException exception) {
             // If decompression fails, try loading normally as fallback
             return YamlConfiguration.loadConfiguration(file);
         }

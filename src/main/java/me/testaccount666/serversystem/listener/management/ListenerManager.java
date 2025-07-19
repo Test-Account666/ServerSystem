@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.logging.Level;
 
 public class ListenerManager {
     private final CommandManager _commandManager;
@@ -79,8 +80,7 @@ public class ListenerManager {
 
             return ((BiFunction<Listener, Set, Boolean>) methodAccessor).apply(listener, instances);
         } catch (RuntimeException | NoSuchMethodError exception) {
-            ServerSystem.getLog().severe("Listener ${listener.getClass().getName()} requires the method 'canRegister(Set<ServerSystemCommandExecutor>, Boolean)' to be implemented! This should not happen!");
-            exception.printStackTrace();
+            ServerSystem.getLog().log(Level.SEVERE, "Listener '${listener.getClass().getName()}' requires a 'canRegister' method!", exception);
             return false;
         }
     }

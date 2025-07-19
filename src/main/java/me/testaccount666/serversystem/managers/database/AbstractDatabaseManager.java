@@ -6,6 +6,7 @@ import me.testaccount666.serversystem.managers.config.ConfigReader;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.logging.Level;
 
 /**
  * Abstract base class for all database managers.
@@ -34,9 +35,8 @@ public abstract class AbstractDatabaseManager {
         try {
             initializeConnection();
             createTablesIfNotExist();
-        } catch (SQLException e) {
-            ServerSystem.getLog().severe("Failed to initialize " + databaseType + " database connection: ${e.getMessage()}");
-            e.printStackTrace();
+        } catch (SQLException exception) {
+            ServerSystem.getLog().log(Level.SEVERE, "Failed to initialize ${databaseType} database", exception);
         }
     }
 
@@ -72,11 +72,10 @@ public abstract class AbstractDatabaseManager {
         try {
             if (dataSource != null && !dataSource.isClosed()) {
                 dataSource.close();
-                ServerSystem.getLog().info(databaseType + " database connection pool closed.");
+                ServerSystem.getLog().info("${databaseType} database connection pool closed.");
             }
         } catch (Exception exception) {
-            ServerSystem.getLog().warning("Error closing " + databaseType + " database connection pool:");
-            exception.printStackTrace();
+            ServerSystem.getLog().log(Level.SEVERE, "Error closing ${databaseType} database connection pool", exception);
         }
     }
 }

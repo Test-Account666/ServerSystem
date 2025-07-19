@@ -19,6 +19,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 import static me.testaccount666.serversystem.utils.MessageBuilder.sign;
@@ -90,7 +91,7 @@ public class ConfiguratorGiveSign extends AbstractSignConfigurator implements Li
             config.save(signFile);
         } catch (IOException exception) {
             user.sendMessage(exception.getMessage());
-            exception.printStackTrace();
+            ServerSystem.getLog().log(Level.SEVERE, "Failed to save sign configuration ${signFile.getAbsolutePath()}", exception);
             return;
         }
 

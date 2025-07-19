@@ -6,7 +6,6 @@ import lombok.SneakyThrows;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.utils.ChatColor;
 import me.testaccount666.serversystem.utils.ComponentColor;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -14,6 +13,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.logging.Level;
 
 public class ListenerMinecraftDiscordChat implements Listener {
     private final boolean _enabled;
@@ -48,8 +48,7 @@ public class ListenerMinecraftDiscordChat implements Listener {
 
             httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                     .exceptionally(exception -> {
-                        Bukkit.getLogger().warning("Failed to send Minecraft Discord Chat message! (${event.getPlayer().getName()})");
-                        exception.printStackTrace();
+                        ServerSystem.getLog().log(Level.SEVERE, "Couldn't send Minecraft Discord Chat message to Webhook '${_webHookUri}'", exception);
                         return null;
                     });
         }

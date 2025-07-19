@@ -23,6 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.Level;
 
 import static me.testaccount666.serversystem.utils.MessageBuilder.command;
 import static me.testaccount666.serversystem.utils.MessageBuilder.general;
@@ -128,7 +129,7 @@ public class CommandSudo extends AbstractServerSystemCommand {
                 _GetHandleMethod = targetPlayer.getClass().getDeclaredMethod("getHandle");
                 _GetHandleMethod.setAccessible(true);
             } catch (NoSuchMethodException exception) {
-                exception.printStackTrace();
+                ServerSystem.getLog().log(Level.WARNING, "(CommandSudo) Couldn't find getHandle method!", exception);
                 return null;
             }
 
@@ -145,7 +146,7 @@ public class CommandSudo extends AbstractServerSystemCommand {
                 permField.set(targetPlayer, permissibleBase);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | ClassNotFoundException |
                      NoSuchFieldException exception) {
-                exception.printStackTrace();
+                ServerSystem.getLog().log(Level.WARNING, "(CommandSudo) Couldn't hook player!", exception);
                 return null;
             }
         }

@@ -22,12 +22,12 @@ public final class MethodAccessor {
             return instance -> {
                 try {
                     method.invoke(instance);
-                } catch (ReflectiveOperationException e) {
-                    throw new RuntimeException("Failed to invoke method ${targetClass.getName()}.${methodName}", e);
+                } catch (ReflectiveOperationException exception) {
+                    throw new RuntimeException("Failed to invoke method ${targetClass.getName()}.${methodName}", exception);
                 }
             };
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Failed to create void method accessor for ${targetClass.getName()}.${methodName}", e);
+        } catch (NoSuchMethodException exception) {
+            throw new RuntimeException("Failed to create void method accessor for ${targetClass.getName()}.${methodName}", exception);
         }
     }
 
@@ -43,12 +43,12 @@ public final class MethodAccessor {
             return (instance, param) -> {
                 try {
                     method.invoke(instance, param);
-                } catch (ReflectiveOperationException e) {
-                    throw new RuntimeException("Failed to invoke method ${targetClass.getName()}.${methodName}", e);
+                } catch (ReflectiveOperationException exception) {
+                    throw new RuntimeException("Failed to invoke method ${targetClass.getName()}.${methodName}", exception);
                 }
             };
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Failed to create void method accessor for ${targetClass.getName()}.${methodName}", e);
+        } catch (NoSuchMethodException exception) {
+            throw new RuntimeException("Failed to create void method accessor for ${targetClass.getName()}.${methodName}", exception);
         }
     }
 
@@ -64,12 +64,12 @@ public final class MethodAccessor {
             return (instance, params) -> {
                 try {
                     method.invoke(instance, params);
-                } catch (ReflectiveOperationException e) {
-                    throw new RuntimeException("Failed to invoke method ${targetClass.getName()}.${methodName}", e);
+                } catch (ReflectiveOperationException exception) {
+                    throw new RuntimeException("Failed to invoke method ${targetClass.getName()}.${methodName}", exception);
                 }
             };
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Failed to create void method accessor for ${targetClass.getName()}.${methodName}", e);
+        } catch (NoSuchMethodException exception) {
+            throw new RuntimeException("Failed to create void method accessor for ${targetClass.getName()}.${methodName}", exception);
         }
     }
 
@@ -86,12 +86,12 @@ public final class MethodAccessor {
                     @SuppressWarnings("unchecked")
                     var result = (R) method.invoke(instance);
                     return result;
-                } catch (ReflectiveOperationException e) {
-                    throw new RuntimeException("Failed to invoke method ${targetClass.getName()}.${methodName}", e);
+                } catch (ReflectiveOperationException exception) {
+                    throw new RuntimeException("Failed to invoke method ${targetClass.getName()}.${methodName}", exception);
                 }
             };
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Failed to create method accessor for ${targetClass.getName()}.${methodName}", e);
+        } catch (NoSuchMethodException exception) {
+            throw new RuntimeException("Failed to create method accessor for ${targetClass.getName()}.${methodName}", exception);
         }
     }
 
@@ -113,12 +113,12 @@ public final class MethodAccessor {
                     @SuppressWarnings("unchecked")
                     var result = (R) method.invoke(instance, param);
                     return result;
-                } catch (ReflectiveOperationException e) {
-                    throw new RuntimeException("Failed to invoke method ${targetClass.getName()}.${methodName}", e);
+                } catch (ReflectiveOperationException exception) {
+                    throw new RuntimeException("Failed to invoke method ${targetClass.getName()}.${methodName}", exception);
                 }
             };
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Failed to create method accessor for ${targetClass.getName()}.${methodName}", e);
+        } catch (NoSuchMethodException exception) {
+            throw new RuntimeException("Failed to create method accessor for ${targetClass.getName()}.${methodName}", exception);
         }
     }
 
@@ -140,12 +140,12 @@ public final class MethodAccessor {
                     @SuppressWarnings("unchecked")
                     var result = (R) method.invoke(instance, params);
                     return result;
-                } catch (ReflectiveOperationException e) {
-                    throw new RuntimeException("Failed to invoke method ${targetClass.getName()}.${methodName}", e);
+                } catch (ReflectiveOperationException exception) {
+                    throw new RuntimeException("Failed to invoke method ${targetClass.getName()}.${methodName}", exception);
                 }
             };
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Failed to create method accessor for ${targetClass.getName()}.${methodName}", e);
+        } catch (NoSuchMethodException exception) {
+            throw new RuntimeException("Failed to create method accessor for ${targetClass.getName()}.${methodName}", exception);
         }
     }
 }

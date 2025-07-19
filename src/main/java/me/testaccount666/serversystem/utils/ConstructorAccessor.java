@@ -22,12 +22,12 @@ public final class ConstructorAccessor {
             return unused -> {
                 try {
                     return constructor.newInstance();
-                } catch (ReflectiveOperationException e) {
-                    throw new RuntimeException("Failed to create instance of ${targetClass.getName()}", e);
+                } catch (ReflectiveOperationException exception) {
+                    throw new RuntimeException("Failed to create instance of ${targetClass.getName()}", exception);
                 }
             };
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Failed to create constructor accessor for ${targetClass.getName()}", e);
+        } catch (NoSuchMethodException exception) {
+            throw new RuntimeException("Failed to create constructor accessor for ${targetClass.getName()}", exception);
         }
     }
 
@@ -39,12 +39,12 @@ public final class ConstructorAccessor {
             return param -> {
                 try {
                     return constructor.newInstance(param);
-                } catch (ReflectiveOperationException e) {
-                    throw new RuntimeException("Failed to create instance of ${targetClass.getName()}", e);
+                } catch (ReflectiveOperationException exception) {
+                    throw new RuntimeException("Failed to create instance of ${targetClass.getName()}", exception);
                 }
             };
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Failed to create constructor accessor for ${targetClass.getName()}", e);
+        } catch (NoSuchMethodException exception) {
+            throw new RuntimeException("Failed to create constructor accessor for ${targetClass.getName()}", exception);
         }
     }
 
@@ -60,12 +60,12 @@ public final class ConstructorAccessor {
             return (param1, param2) -> {
                 try {
                     return constructor.newInstance(param1, param2);
-                } catch (ReflectiveOperationException e) {
-                    throw new RuntimeException("Failed to create instance of ${targetClass.getName()}", e);
+                } catch (ReflectiveOperationException exception) {
+                    throw new RuntimeException("Failed to create instance of ${targetClass.getName()}", exception);
                 }
             };
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Failed to create constructor accessor for ${targetClass.getName()}", e);
+        } catch (NoSuchMethodException exception) {
+            throw new RuntimeException("Failed to create constructor accessor for ${targetClass.getName()}", exception);
         }
     }
 }

@@ -281,8 +281,8 @@ public class LegacyDataMigrator {
                 warpManager.addWarp(warp.get());
                 migratedCount++;
 
-            } catch (Exception e) {
-                log(Level.WARNING, "Failed to migrate warp '${warpName}': ${e.getMessage()}", e);
+            } catch (Exception exception) {
+                log(Level.WARNING, "Failed to migrate warp '${warpName}'", exception);
             }
 
         log(Level.INFO, "Successfully migrated ${migratedCount} warps");

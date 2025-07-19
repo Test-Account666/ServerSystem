@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.logging.Level;
 
 import static me.testaccount666.serversystem.utils.MessageBuilder.command;
 import static me.testaccount666.serversystem.utils.MessageBuilder.general;
@@ -123,8 +124,8 @@ public class CommandSpawn extends AbstractServerSystemCommand {
         try {
             spawnConfiguration.save(_spawnFile);
         } catch (IOException exception) {
-            exception.printStackTrace();
             general("ErrorOccurred", commandSender).label(label).build();
+            ServerSystem.getLog().log(Level.SEVERE, "Error while saving 'spawn.yml'", exception);
             return;
         }
 

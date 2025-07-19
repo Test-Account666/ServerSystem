@@ -120,8 +120,8 @@ public final class ComponentColor {
         try {
             var color = TextColor.fromHexString(hexCode);
             return Component.text(text).color(color);
-        } catch (IllegalArgumentException e) {
-            _LOGGER.log(Level.WARNING, "Invalid hex color code: " + hexCode, e);
+        } catch (IllegalArgumentException exception) {
+            _LOGGER.log(Level.WARNING, "Invalid hex color code: ${hexCode}", exception);
             return Component.text(text);
         }
     }

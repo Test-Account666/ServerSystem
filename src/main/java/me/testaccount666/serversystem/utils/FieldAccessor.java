@@ -23,12 +23,12 @@ public final class FieldAccessor {
                     @SuppressWarnings("unchecked")
                     var value = (R) field.get(instance);
                     return value;
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException("Failed to get field value for ${targetClass.getName()}.${fieldName}", e);
+                } catch (IllegalAccessException exception) {
+                    throw new RuntimeException("Failed to get field value for ${targetClass.getName()}.${fieldName}", exception);
                 }
             };
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException("Failed to create field accessor for ${targetClass.getName()}.${fieldName}", e);
+        } catch (NoSuchFieldException exception) {
+            throw new RuntimeException("Failed to create field accessor for ${targetClass.getName()}.${fieldName}", exception);
         }
     }
 
@@ -44,7 +44,7 @@ public final class FieldAccessor {
         var currentClass = clazz;
         while (currentClass != null) try {
             return currentClass.getDeclaredField(fieldName);
-        } catch (NoSuchFieldException e) {
+        } catch (NoSuchFieldException exception) {
             // Field not found in this class, try the superclass
             currentClass = currentClass.getSuperclass();
         }
@@ -64,12 +64,12 @@ public final class FieldAccessor {
                     @SuppressWarnings("unchecked")
                     var value = (R) field.get(instance);
                     return value;
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException("Failed to get field value for ${targetClass.getName()}.${fieldName}", e);
+                } catch (IllegalAccessException exception) {
+                    throw new RuntimeException("Failed to get field value for ${targetClass.getName()}.${fieldName}", exception);
                 }
             };
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException("Failed to create field accessor for ${targetClass.getName()}.${fieldName}", e);
+        } catch (NoSuchFieldException exception) {
+            throw new RuntimeException("Failed to create field accessor for ${targetClass.getName()}.${fieldName}", exception);
         }
     }
 
@@ -104,12 +104,12 @@ public final class FieldAccessor {
                 try {
                     field.set(instance, value);
                     return value;
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException("Failed to set field value for ${targetClass.getName()}.${fieldName}", e);
+                } catch (IllegalAccessException exception) {
+                    throw new RuntimeException("Failed to set field value for ${targetClass.getName()}.${fieldName}", exception);
                 }
             };
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException("Failed to create field accessor for ${targetClass.getName()}.${fieldName}", e);
+        } catch (NoSuchFieldException exception) {
+            throw new RuntimeException("Failed to create field accessor for ${targetClass.getName()}.${fieldName}", exception);
         }
     }
 }

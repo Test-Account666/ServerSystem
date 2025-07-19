@@ -7,6 +7,7 @@ import me.testaccount666.serversystem.managers.database.HikariConfigUtil;
 import java.io.File;
 import java.nio.file.Path;
 import java.sql.SQLException;
+import java.util.logging.Level;
 
 /**
  * Manages SQLite database connections for economy-related functionality.
@@ -32,9 +33,8 @@ public class SqliteEconomyDatabaseManager extends AbstractEconomyDatabaseManager
             if (!_databaseFile.getParentFile().exists()) _databaseFile.getParentFile().mkdirs();
 
             super.initialize();
-        } catch (Exception e) {
-            ServerSystem.getLog().severe("Failed to initialize SQLite economy database: ${e.getMessage()}");
-            e.printStackTrace();
+        } catch (Exception exception) {
+            ServerSystem.getLog().log(Level.SEVERE, "Failed to initialize SQLite economy database", exception);
         }
     }
 

@@ -13,6 +13,7 @@ import net.kyori.adventure.text.Component;
 import javax.annotation.Nullable;
 import java.io.FileNotFoundException;
 import java.util.Optional;
+import java.util.logging.Level;
 
 public class MessageManager {
     @Getter
@@ -84,7 +85,7 @@ public class MessageManager {
         try {
             reader = getConfigReader(language);
         } catch (FileNotFoundException exception) {
-            ServerSystem.getLog().warning("Failed to load messages for language '${language}': ${exception.getMessage()}");
+            ServerSystem.getLog().log(Level.WARNING, "Failed to load messages for language '${language}': ${exception.getMessage()}", exception);
             reader = getConfigReader("english");
         }
 

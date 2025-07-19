@@ -92,9 +92,8 @@ public final class ServerSystem extends JavaPlugin {
 
         try {
             initialize();
-        } catch (Exception e) {
-            getLog().severe("Failed to initialize the plugin: ${e.getMessage()}");
-            e.printStackTrace();
+        } catch (Exception exception) {
+            getLog().log(Level.SEVERE, "Failed to initialize the plugin", exception);
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }

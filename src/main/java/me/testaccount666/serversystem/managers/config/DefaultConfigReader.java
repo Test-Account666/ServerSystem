@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * Default implementation of ConfigReader interface that handles loading, validation,
@@ -198,8 +199,7 @@ public class DefaultConfigReader implements ConfigReader {
             reload();
 
         } catch (IOException exception) {
-            exception.printStackTrace();
-            ServerSystem.getLog().severe("An error occurred while backing up, changes only saved internally/temporarily!");
+            ServerSystem.getLog().log(Level.SEVERE, "Failed to create backup for '${filename}', changes are not saved!", exception);
         }
     }
 
@@ -317,8 +317,7 @@ public class DefaultConfigReader implements ConfigReader {
         try {
             configReader._configuration.save(configReader._file);
         } catch (IOException exception) {
-            ServerSystem.getLog().severe("Failed to save configuration file '${configReader._file.getName()}'");
-            exception.printStackTrace();
+            ServerSystem.getLog().log(Level.SEVERE, "Failed to save configuration file '${configReader._file.getName()}'", exception);
         }
     }
 
@@ -330,8 +329,7 @@ public class DefaultConfigReader implements ConfigReader {
         try {
             configReader._configuration.load(configReader._file);
         } catch (IOException | InvalidConfigurationException exception) {
-            ServerSystem.getLog().severe("Failed to reload configuration file '${configReader._file.getName()}'");
-            exception.printStackTrace();
+            ServerSystem.getLog().log(Level.SEVERE, "Failed to reload configuration file '${configReader._file.getName()}'", exception);
         }
     }
 
@@ -340,8 +338,7 @@ public class DefaultConfigReader implements ConfigReader {
         try {
             _newReader = new DefaultConfigReader(file, ServerSystem.Instance);
         } catch (Exception exception) {
-            ServerSystem.getLog().severe("Failed to load configuration from file '${file.getName()}'");
-            exception.printStackTrace();
+            ServerSystem.getLog().log(Level.SEVERE, "Failed to load configuration file '${file.getName()}'", exception);
         }
     }
 
@@ -431,8 +428,7 @@ public class DefaultConfigReader implements ConfigReader {
             _configuration.save(_file);
             _configuration.load(_file);
         } catch (IOException | InvalidConfigurationException exception) {
-            ServerSystem.getLog().severe("Failed to save/reload configuration file '${_file.getName()}'");
-            exception.printStackTrace();
+            ServerSystem.getLog().log(Level.SEVERE, "Failed to save and reload configuration file '${_file.getName()}'", exception);
         }
     }
 }
