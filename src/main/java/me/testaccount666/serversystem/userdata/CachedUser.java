@@ -5,7 +5,7 @@ import org.bukkit.Bukkit;
 
 @Getter
 public class CachedUser {
-    private static final long _STALE_TIME_MILLIS = 1000 * 60 * 60; // One hour
+    private static final long _STALE_TIME_MILLIS = 1000L * 60L * 60L; // One hour
 
     private OfflineUser _offlineUser;
     private long _lastAccessTime;
