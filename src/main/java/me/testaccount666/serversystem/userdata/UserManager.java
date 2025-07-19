@@ -50,6 +50,8 @@ public class UserManager {
      * @return An Optional containing the cached user or empty if the user doesn't exist
      */
     public Optional<CachedUser> getUser(Player player) {
+        if (player.hasMetadata("NPC")) return Optional.of(new CachedUser(new NpcUser()));
+
         return getUser(player.getUniqueId(), true);
     }
 
