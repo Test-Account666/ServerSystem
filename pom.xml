@@ -90,6 +90,13 @@
                             <artifactId>manifold-strings</artifactId>
                             <version>${manifold.version}</version>
                         </path>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>systems.manifold</groupId>
+                                <artifactId>manifold-tuple</artifactId>
+                                <version>${manifold.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
@@ -185,6 +192,11 @@
             <artifactId>manifold-strings</artifactId>
             <version>${manifold.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>systems.manifold</groupId>
+            <artifactId>manifold-tuple-rt</artifactId>
+            <version>${manifold.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.classgraph</groupId>
