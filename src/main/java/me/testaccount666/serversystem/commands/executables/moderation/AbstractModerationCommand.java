@@ -60,7 +60,7 @@ public abstract class AbstractModerationCommand extends AbstractServerSystemComm
         var currentTime = System.currentTimeMillis();
         var expireTime = duration == -1? -1 : currentTime + duration;
 
-        var defaultReason = general("Moderation.DefaultReason", commandSender)
+        var defaultReason = command("Moderation.DefaultReason", commandSender)
                 .target(targetUser.getName().get()).prefix(false).send(false).build();
         if (defaultReason.isEmpty()) {
             ServerSystem.getLog().severe("(Command: ${command.getName()}) Default reason is empty! This should not happen!");
