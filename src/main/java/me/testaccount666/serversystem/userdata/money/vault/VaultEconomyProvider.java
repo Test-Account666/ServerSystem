@@ -30,7 +30,7 @@ public class VaultEconomyProvider extends AbstractEconomy {
 
     @Override
     public String format(double amount) {
-        return ServerSystem.Instance.getEconomyProvider().formatMoney(new BigDecimal(amount));
+        return ServerSystem.Instance.getEconomyProvider().formatMoney(BigDecimal.valueOf(amount));
     }
 
     @Override
@@ -80,7 +80,7 @@ public class VaultEconomyProvider extends AbstractEconomy {
         var offlineUser = user.getOfflineUser();
         var bankAccount = offlineUser.getBankAccount();
 
-        return bankAccount.hasEnoughMoney(new BigDecimal(amount));
+        return bankAccount.hasEnoughMoney(BigDecimal.valueOf(amount));
     }
 
     @Override
@@ -97,7 +97,7 @@ public class VaultEconomyProvider extends AbstractEconomy {
         var offlineUser = user.getOfflineUser();
         var bankAccount = offlineUser.getBankAccount();
 
-        bankAccount.withdraw(new BigDecimal(amount));
+        bankAccount.withdraw(BigDecimal.valueOf(amount));
 
         var newBalance = bankAccount.getBalance();
 
@@ -118,7 +118,7 @@ public class VaultEconomyProvider extends AbstractEconomy {
         var offlineUser = user.getOfflineUser();
         var bankAccount = offlineUser.getBankAccount();
 
-        bankAccount.deposit(new BigDecimal(amount));
+        bankAccount.deposit(BigDecimal.valueOf(amount));
 
         var newBalance = bankAccount.getBalance();
 
