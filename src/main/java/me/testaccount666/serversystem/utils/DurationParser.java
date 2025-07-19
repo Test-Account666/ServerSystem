@@ -35,7 +35,7 @@ public class DurationParser {
     public static long parseDuration(String duration) {
         if (duration.equalsIgnoreCase("permanent")) return -1;
 
-        var regex = Pattern.compile("(\\d+)(y|mo|w|d|h|m|s)");
+        var regex = Pattern.compile("(\\d++)(mo|y|w|d|h|m|s)");
         var matcher = regex.matcher(duration);
 
         var totalSeconds = 0L;
