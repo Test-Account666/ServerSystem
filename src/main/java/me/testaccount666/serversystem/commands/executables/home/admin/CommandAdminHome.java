@@ -90,7 +90,6 @@ public class CommandAdminHome extends AbstractServerSystemCommand {
         var homeOptional = homeManager.getHomeByName(arguments[1]);
 
         if (homeOptional.isEmpty()) {
-
             general("Home.DoesNotExist", commandSender).target(targetUser.getName().get())
                     .postModifier(message -> message.replace("<HOME>", arguments[1])).build();
             return;
