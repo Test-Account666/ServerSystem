@@ -15,6 +15,8 @@ import me.testaccount666.serversystem.managers.database.economy.SqliteEconomyDat
 import me.testaccount666.serversystem.managers.database.moderation.AbstractModerationDatabaseManager;
 import me.testaccount666.serversystem.managers.database.moderation.MySqlModerationDatabaseManager;
 import me.testaccount666.serversystem.managers.database.moderation.SqliteModerationDatabaseManager;
+import me.testaccount666.serversystem.placeholderapi.PlaceholderApiSupport;
+import me.testaccount666.serversystem.placeholderapi.PlaceholderManager;
 import me.testaccount666.serversystem.userdata.CachedUser;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.UserManager;
@@ -43,6 +45,8 @@ public final class ServerSystem extends JavaPlugin {
     private CommandManager _commandManager;
     @Getter
     private ListenerManager _listenerManager;
+    @Getter
+    private PlaceholderManager _placeholderManager;
     @Getter
     private EconomyProvider _economyProvider;
     @Getter
@@ -103,6 +107,7 @@ public final class ServerSystem extends JavaPlugin {
         Bukkit.getScheduler().runTaskLater(this, () -> {
             _commandManager.registerCommands();
             _listenerManager.registerListeners();
+            _placeholderManager.registerPlaceholders();
         }, 1);
     }
 
@@ -135,10 +140,12 @@ public final class ServerSystem extends JavaPlugin {
 
         _commandManager = new CommandManager(_configManager.getCommandsConfig());
         _listenerManager = new ListenerManager(_commandManager);
+        _placeholderManager = new PlaceholderManager();
         _economyProvider = new EconomyProvider(_configManager.getEconomyConfig());
         _userManager = new UserManager();
 
         if (EconomyVaultAPI.isVaultInstalled()) EconomyVaultAPI.initialize();
+        PlaceholderApiSupport.registerPlaceholders();
     }
 
     @Override
@@ -148,6 +155,8 @@ public final class ServerSystem extends JavaPlugin {
         if (_commandManager != null) _commandManager.unregisterCommands();
 
         if (_listenerManager != null) _listenerManager.unregisterListeners();
+
+        PlaceholderApiSupport.unregisterPlaceholders();
 
         if (_economyDatabaseManager != null) _economyDatabaseManager.shutdown();
 

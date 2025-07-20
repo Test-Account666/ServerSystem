@@ -6,7 +6,7 @@
 
     <groupId>me.testaccount666</groupId>
     <artifactId>ServerSystem</artifactId>
-    <version>3.0.0.${buildNumber}</version>
+    <version>3.1.0.${buildNumber}</version>
     <packaging>jar</packaging>
 
     <name>ServerSystem</name>
