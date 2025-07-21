@@ -94,15 +94,17 @@ public final class ServerSystem extends JavaPlugin {
             throw new RuntimeException("Error updating 'previousVersion'", exception);
         }
 
-        try {
-            initialize();
-        } catch (Exception exception) {
-            getLog().log(Level.SEVERE, "Failed to initialize the plugin", exception);
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }
+        Bukkit.getScheduler().runTask(this, () -> {
+            try {
+                initialize();
+            } catch (Exception exception) {
+                getLog().log(Level.SEVERE, "Failed to initialize the plugin", exception);
+                Bukkit.getPluginManager().disablePlugin(this);
+                return;
+            }
 
-        migrator.migrateLegacyData();
+            migrator.migrateLegacyData();
+        });
 
         Bukkit.getScheduler().runTaskLater(this, () -> {
             _commandManager.registerCommands();
