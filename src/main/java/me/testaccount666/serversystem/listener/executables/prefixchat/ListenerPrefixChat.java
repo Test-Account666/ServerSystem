@@ -2,7 +2,6 @@ package me.testaccount666.serversystem.listener.executables.prefixchat;
 
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.userdata.User;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -14,7 +13,9 @@ public class ListenerPrefixChat implements Listener {
     private final boolean _enabled;
 
     public ListenerPrefixChat() {
-        if (!ChatVaultAPI.isVaultInstalled()) {
+        var enabled = ServerSystem.Instance.getConfigManager().getGeneralConfig().getBoolean("Chat.PrefixChat.Enabled");
+
+        if (!ChatVaultAPI.isVaultInstalled() || !enabled) {
             _chatVaultAPI = null;
             _enabled = false;
             return;
