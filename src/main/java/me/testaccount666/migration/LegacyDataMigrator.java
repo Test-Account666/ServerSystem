@@ -304,9 +304,13 @@ public class LegacyDataMigrator {
 
         for (var homesFile : legacyHomesFiles) {
             if (!homesFile.isFile()) continue;
-            var uuid = UUID.fromString(homesFile.getName().replace(".yml", ""));
-            var legacyHomesConfig = YamlConfiguration.loadConfiguration(homesFile);
-            count += migrateHome(uuid, legacyHomesConfig);
+            try {
+                var uuid = UUID.fromString(homesFile.getName().replace(".yml", ""));
+                var legacyHomesConfig = YamlConfiguration.loadConfiguration(homesFile);
+                count += migrateHome(uuid, legacyHomesConfig);
+            } catch (IllegalArgumentException exception) {
+                log(Level.WARNING, "Failed to migrate homes for ${homesFile.getName()}", exception);
+            }
         }
 
         log(Level.INFO, "Successfully migrated ${count} homes from legacy data directory: ${_legacyDataDirectory.getAbsolutePath()}");
