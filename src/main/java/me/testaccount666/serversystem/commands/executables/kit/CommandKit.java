@@ -10,8 +10,8 @@ import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
+import static me.testaccount666.serversystem.utils.DurationParser.parseDate;
 import static me.testaccount666.serversystem.utils.DurationParser.parseDuration;
-import static me.testaccount666.serversystem.utils.DurationParser.parseUnbanDate;
 import static me.testaccount666.serversystem.utils.MessageBuilder.command;
 import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 
@@ -111,7 +111,7 @@ public class CommandKit extends AbstractServerSystemCommand {
 
             command("Kit.OnCooldown", commandSender)
                     .postModifier(message -> message.replace("<KIT>", kit.getDisplayName())
-                            .replace("<DATE>", parseUnbanDate(cooldown, commandSender))).build();
+                            .replace("<DATE>", parseDate(cooldown, commandSender))).build();
             return;
         }
 

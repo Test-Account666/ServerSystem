@@ -13,7 +13,7 @@ import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
-import static me.testaccount666.serversystem.utils.DurationParser.parseUnbanDate;
+import static me.testaccount666.serversystem.utils.DurationParser.parseDate;
 import static me.testaccount666.serversystem.utils.MessageBuilder.command;
 import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 
@@ -24,7 +24,7 @@ public class CommandBan extends AbstractModerationCommand {
         if (!(targetUser instanceof User user)) return;
 
         var player = user.getPlayer();
-        var unbanDate = parseUnbanDate(moderation.expireTime(), targetUser);
+        var unbanDate = parseDate(moderation.expireTime(), targetUser);
         var kickOptional = command("Moderation.Ban.Kick", commandSender).target(user.getName().get()).prefix(false)
                 .postModifier(message -> message.replace("<DATE>", unbanDate)
                         .replace("<REASON>", moderation.reason())).send(false).build();

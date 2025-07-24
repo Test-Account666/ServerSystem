@@ -16,7 +16,7 @@ public class DurationParser {
     private static final long _SECONDS_IN_MONTH = 2419200;
     private static final long _SECONDS_IN_YEAR = 31536000;
 
-    public static String parseUnbanDate(long durationMillis, OfflineUser user) {
+    public static String parseDate(long durationMillis, OfflineUser user) {
         if (durationMillis == -1) {
             var permanentOptional = MappingsData.moderation(user).getName("permanent");
             if (permanentOptional.isEmpty()) {
