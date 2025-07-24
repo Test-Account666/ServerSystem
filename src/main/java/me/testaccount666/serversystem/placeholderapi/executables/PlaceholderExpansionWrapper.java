@@ -2,7 +2,6 @@ package me.testaccount666.serversystem.placeholderapi.executables;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.testaccount666.serversystem.ServerSystem;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,8 +37,6 @@ public class PlaceholderExpansionWrapper extends PlaceholderExpansion {
 
         var split = params.split("_");
         var identifier = split[0].toLowerCase();
-
-        Bukkit.getLogger().severe("Got identifier '${identifier}' for player '${player}'");
 
         var placeholderManager = ServerSystem.Instance.getPlaceholderManager();
         var placeholderOptional = placeholderManager.getPlaceholder(identifier);
