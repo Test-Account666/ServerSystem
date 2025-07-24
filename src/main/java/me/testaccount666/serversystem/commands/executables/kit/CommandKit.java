@@ -4,7 +4,6 @@ import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.kit.manager.Kit;
-import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
@@ -18,10 +17,6 @@ import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 
 @ServerSystemCommand(name = "kit", variants = {"createkit", "deletekit"}, tabCompleter = TabCompleterKit.class)
 public class CommandKit extends AbstractServerSystemCommand {
-
-    public CommandKit() {
-        ServerSystem.Instance.setKitManager(new KitManager());
-    }
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {

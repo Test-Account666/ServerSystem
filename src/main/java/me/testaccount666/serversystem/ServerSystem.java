@@ -1,7 +1,6 @@
 package me.testaccount666.serversystem;
 
 import lombok.Getter;
-import lombok.Setter;
 import me.testaccount666.migration.LegacyDataMigrator;
 import me.testaccount666.serversystem.clickablesigns.SignManager;
 import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager;
@@ -58,7 +57,6 @@ public final class ServerSystem extends JavaPlugin {
     @Getter
     private AbstractModerationDatabaseManager _moderationDatabaseManager;
     @Getter
-    @Setter
     @Nullable
     private KitManager _kitManager;
     @Getter
@@ -94,23 +92,21 @@ public final class ServerSystem extends JavaPlugin {
             throw new RuntimeException("Error updating 'previousVersion'", exception);
         }
 
-        Bukkit.getScheduler().runTask(this, () -> {
-            try {
-                initialize();
-            } catch (Exception exception) {
-                getLog().log(Level.SEVERE, "Failed to initialize the plugin", exception);
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
-            }
+        try {
+            initialize();
+        } catch (Exception exception) {
+            getLog().log(Level.SEVERE, "Failed to initialize the plugin", exception);
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
 
-            migrator.migrateLegacyData();
-        });
+        Bukkit.getScheduler().runTaskLater(this, migrator::migrateLegacyData, 1L);
 
         Bukkit.getScheduler().runTaskLater(this, () -> {
             _commandManager.registerCommands();
             _listenerManager.registerListeners();
             _placeholderManager.registerPlaceholders();
-        }, 1);
+        }, 2);
     }
 
     private void initialize() throws Exception {
@@ -124,12 +120,8 @@ public final class ServerSystem extends JavaPlugin {
             default -> throw new IllegalStateException("Unsupported moderation storage: ${moderationType} - Supported values: sqlite, mysql");
         };
 
-        var warpFile = Path.of(getDataFolder().getPath(), "data", "warps.yml").toFile();
-        var warpConfig = YamlConfiguration.loadConfiguration(warpFile);
-        _warpManager = new WarpManager(warpConfig, warpFile);
-
-        _signManager = new SignManager();
-        _signManager.loadSignTypes();
+        if (EconomyVaultAPI.isVaultInstalled()) EconomyVaultAPI.initialize();
+        PlaceholderApiSupport.registerPlaceholders();
 
         _moderationDatabaseManager.initialize();
 
@@ -146,8 +138,16 @@ public final class ServerSystem extends JavaPlugin {
         _economyProvider = new EconomyProvider(_configManager.getEconomyConfig());
         _userManager = new UserManager();
 
-        if (EconomyVaultAPI.isVaultInstalled()) EconomyVaultAPI.initialize();
-        PlaceholderApiSupport.registerPlaceholders();
+        _kitManager = new KitManager();
+
+        Bukkit.getScheduler().runTask(this, () -> {
+            var warpFile = Path.of(getDataFolder().getPath(), "data", "warps.yml").toFile();
+            var warpConfig = YamlConfiguration.loadConfiguration(warpFile);
+            _warpManager = new WarpManager(warpConfig, warpFile);
+
+            _signManager = new SignManager();
+            _signManager.loadSignTypes();
+        });
     }
 
     @Override
