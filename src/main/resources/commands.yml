@@ -302,3 +302,10 @@ Commands:
   skull:
     Enabled: true
     Aliases: "skull"
+  sign:
+    Enabled: true
+    Aliases: "sign"
+    Variants:
+      unsign:
+        Enabled: true
+        Aliases: "unsign"

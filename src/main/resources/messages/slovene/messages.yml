@@ -275,6 +275,15 @@ Messages:
       NoData: "<Color:Error.Message>Ni podatkov o stanju na računih."
       Header: "&8-=-=-=-= &6Najbogatejši &8=-=-=-=-"
       Entry: "&6<POSITION>. <Color:Highlight><TARGET> <Color:Separators>» &6<BALANCE>"
+    Sign:
+      NoItemInHand: "<Color:Error.Message>Ne držiš nobenega predmeta."
+      NoItemMeta: "<Color:Error.Message>Predmeta v roki ni mogoče podpisati."
+      AlreadySigned: "<Color:Error.Message>Predmet v roki je že podpisan."
+      Format: "<Color:Highlight><MESSAGE>\nPodpisal: <SENDER>\nDne: <DATE>"
+      Success: "Uspešno ste podpisali predmet v roki."
+    Unsign:
+      NotSigned: "<Color:Error.Message>Predmet v roki ni podpisan."
+      Success: "Uspešno ste odstranili podpis s predmeta v roki."
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>Nimaš dovoljenja za to dejanje. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"
@@ -389,4 +398,5 @@ Messages:
     Back: "/<LABEL> (teleport|death)"
     CommandSpy: "/<LABEL> (player)"
     Disposal: "/<LABEL> (player)"
+    Sign: "/<LABEL> [message...]"
 language: "slovene"

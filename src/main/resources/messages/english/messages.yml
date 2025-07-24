@@ -271,6 +271,15 @@ Messages:
         Other: "You gave the kit <Color:Highlight><KIT> <Color:Message>to <Color:Highlight><TARGET><Color:Message>."
     Language:
       Changed: "You changed your language to <Color:Highlight><LANGUAGE><Color:Message>."
+    Sign:
+      NoItemInHand: "<Color:Error.Message>You're not holding an item."
+      NoItemMeta: "<Color:Error.Message>The item in your hand cannot be signed."
+      AlreadySigned: "<Color:Error.Message>The item in your hand is already signed."
+      Format: "<Color:Highlight><MESSAGE>\nSigned by: <SENDER>\nOn: <DATE>"
+      Success: "You have successfully signed the item in your hand."
+    Unsign:
+      NotSigned: "<Color:Error.Message>The item in your hand is not signed."
+      Success: "You have successfully unsigned the item in your hand."
     Baltop:
       NoData: "<Color:Error.Message>No baltop data was found."
       Header: "&8-=-=-=-= &6Baltop &8=-=-=-=-"
@@ -389,4 +398,5 @@ Messages:
     Back: "/<LABEL> (teleport|death)"
     CommandSpy: "/<LABEL> (player)"
     Disposal: "/<LABEL> (player)"
+    Sign: "/<LABEL> [message...]"
 language: "english"

@@ -401,6 +401,14 @@ Permissions:
       Use:
         Required: false
         Value: "serversystem.command.language.use"
+    Sign:
+      Use:
+        Required: true
+        Value: "serversystem.command.sign.use"
+    Unsign:
+      Use:
+        Required: true
+        Value: "serversystem.command.unsign.use"
   Chat:
     ColorChat:
       Required: true
