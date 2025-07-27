@@ -185,7 +185,7 @@ class MainUpdateCheckerTest {
         var exception = assertThrows(IllegalStateException.class, () ->
                 updateChecker.parseLatestVersion(responseBody));
 
-        assertEquals("No version found in response body", "Test: ${testName}: " + exception.getMessage());
+        assertEquals("No version found in response body", exception.getMessage(), "Test: ${testName}");
     }
 
     @Test
