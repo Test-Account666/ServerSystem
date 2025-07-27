@@ -58,6 +58,9 @@ The plugin generates several configuration files:
 
 ### Administrative Commands
 
+<details>
+<summary>Administrative Commands</summary>
+
 | Command                        | Aliases           | Description                       | Permission                                      |
 |--------------------------------|-------------------|-----------------------------------|-------------------------------------------------|
 | `/gamemode [mode] (player)`    | `/gm`             | Change gamemode                   | `serversystem.admin.command.gamemode.use`       |
@@ -81,7 +84,12 @@ The plugin generates several configuration files:
 | `/walkspeed [1-10] (player)`   | `/speedwalk`      | Set walk speed                    | `serversystem.admin.command.speed.use`          |
 | `/lightning (player) (visual)` | `/thor`, `/smite` | Strike lightning at target        | `serversystem.admin.command.lightning.use`      |
 
+</details>
+
 ### Teleportation Commands
+
+<details>
+<summary>Teleportation Commands</summary>
 
 | Command                               | Aliases    | Description                           | Permission                                                |
 |---------------------------------------|------------|---------------------------------------|-----------------------------------------------------------|
@@ -98,7 +106,12 @@ The plugin generates several configuration files:
 | `/offlinetp [player]`                 | `/otp`     | Teleport to offline player's location | `serversystem.moderation.command.offlineteleport.use`     |
 | `/offlinetphere [player]`             | `/otphere` | Teleport offline player to you        | `serversystem.moderation.command.offlineteleporthere.use` |
 
+</details>
+
 ### Economy Commands
+
+<details>
+<summary>Economy Commands</summary>
 
 | Command                                      | Aliases   | Description           | Permission                               |
 |----------------------------------------------|-----------|-----------------------|------------------------------------------|
@@ -107,7 +120,12 @@ The plugin generates several configuration files:
 | `/pay [player] [amount]`                     | -         | Send money to player  | `serversystem.command.pay.use`           |
 | `/economy [set/give/take] [player] [amount]` | `/eco`    | Manage player economy | `serversystem.admin.command.economy.use` |
 
+</details>
+
 ### Moderation Commands
+
+<details>
+<summary>Moderation Commands</summary>
 
 | Command                          | Aliases         | Description                 | Permission                                           |
 |----------------------------------|-----------------|-----------------------------|------------------------------------------------------|
@@ -124,7 +142,12 @@ The plugin generates several configuration files:
 | `/ip [player]`                   | -               | View player's IP address    | `serversystem.moderation.command.ip.use`             |
 | `/socialspy (player)`            | -               | Toggle social spy mode      | `serversystem.moderation.command.socialspy.use`      |
 
+</details>
+
 ### Utility Commands
+
+<details>
+<summary>Utility Commands</summary>
 
 | Command                       | Aliases                | Description                       | Permission                                           |
 |-------------------------------|------------------------|-----------------------------------|------------------------------------------------------|
@@ -155,7 +178,12 @@ The plugin generates several configuration files:
 | `/sign [message]`             | -                      | Sign item in hand with message    | `serversystem.command.sign.use`                      |
 | `/unsign`                     | -                      | Remove signature from item        | `serversystem.command.unsign.use`                    |
 
+</details>
+
 ### Home & Warp Commands
+
+<details>
+<summary>Home & Warp Commands</summary>
 
 | Command                         | Aliases | Description               | Permission                                    |
 |---------------------------------|---------|---------------------------|-----------------------------------------------|
@@ -171,7 +199,12 @@ The plugin generates several configuration files:
 | `/setwarp [name]`               | -       | Create warp               | `serversystem.admin.command.warp.set`         |
 | `/delwarp [name]`               | -       | Delete warp               | `serversystem.admin.command.warp.delete`      |
 
+</details>
+
 ### Communication Commands
+
+<details>
+<summary>Communication Commands</summary>
 
 | Command                   | Aliases             | Description              | Permission                                  |
 |---------------------------|---------------------|--------------------------|---------------------------------------------|
@@ -182,7 +215,12 @@ The plugin generates several configuration files:
 | `/ignore [player]`        | -                   | Ignore player messages   | `serversystem.command.ignore.use`           |
 | `/unignore [player]`      | -                   | Unignore player messages | `serversystem.command.unignore.use`         |
 
+</details>
+
 ### Kit Commands
+
+<details>
+<summary>Kit Commands</summary>
 
 | Command                | Aliases | Description               | Permission                              |
 |------------------------|---------|---------------------------|-----------------------------------------|
@@ -190,7 +228,12 @@ The plugin generates several configuration files:
 | `/createkit [name]`    | -       | Create kit from inventory | `serversystem.admin.command.kit.create` |
 | `/deletekit [name]`    | -       | Delete kit                | `serversystem.admin.command.kit.delete` |
 
+</details>
+
 ### Miscellaneous Commands
+
+<details>
+<summary>Miscellaneous Commands</summary>
 
 | Command              | Aliases | Description                        | Permission                                   |
 |----------------------|---------|------------------------------------|----------------------------------------------|
@@ -200,6 +243,8 @@ The plugin generates several configuration files:
 | `/pickup (player)`   | -       | Toggle item pickup in vanish       | `serversystem.moderation.command.vanish.use` |
 | `/interact (player)` | -       | Toggle block interaction in vanish | `serversystem.moderation.command.vanish.use` |
 | `/message (player)`  | -       | Toggle messaging ability in vanish | `serversystem.moderation.command.vanish.use` |
+
+</details>
 
 ## Permissions
 
