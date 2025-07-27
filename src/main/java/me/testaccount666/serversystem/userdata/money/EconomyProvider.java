@@ -3,7 +3,6 @@ package me.testaccount666.serversystem.userdata.money;
 import lombok.Getter;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.managers.config.ConfigReader;
-import me.testaccount666.serversystem.managers.database.economy.AbstractEconomyDatabaseManager;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -24,7 +23,6 @@ public class EconomyProvider {
     private final String _defaultBalance;
     @Getter
     private final Type _economyType;
-    private final AbstractEconomyDatabaseManager _databaseManager;
 
     public EconomyProvider(ConfigReader configReader) {
         _currencySingular = configReader.getString("Economy.Format.CurrencySymbol.Singular");
@@ -36,12 +34,11 @@ public class EconomyProvider {
 
         if (!configReader.getBoolean("Economy.Enabled", true)) {
             _economyType = Type.DISABLED;
-            _databaseManager = null;
             return;
         }
 
         var economyTypeOptional = Type.parseType(configReader.getString("Economy.StorageType.Value").toUpperCase());
-        _databaseManager = ServerSystem.Instance.getEconomyDatabaseManager();
+        var databaseManager = ServerSystem.Instance.getEconomyDatabaseManager();
 
         if (economyTypeOptional.isEmpty()) {
             _economyType = Type.SQLITE;
@@ -50,7 +47,7 @@ public class EconomyProvider {
         }
 
         _economyType = economyTypeOptional.get();
-        _databaseManager.initialize();
+        databaseManager.initialize();
     }
 
     public AbstractBankAccount instantiateBankAccount(OfflineUser offlineUser, BigInteger accountId, FileConfiguration userConfig) {
