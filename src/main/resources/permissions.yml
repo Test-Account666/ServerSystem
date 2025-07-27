@@ -54,6 +54,9 @@ Permissions:
       Other:
         Required: true
         Value: "serversystem.support.command.teleportposition.other"
+      World:
+        Required: true
+        Value: "serversystem.support.command.teleportposition.world"
     TeleportHere:
       Use:
         Required: true
