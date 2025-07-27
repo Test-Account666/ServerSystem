@@ -11,6 +11,11 @@ Messages:
       SuccessOther:
         Enabled: "<Color:Highlight><TARGET> <Color:Message>je sedaj nesmrten."
         Disabled: "<TARGET> ni več nesmrten."
+    Hat:
+      NoHat: "<Color:Error.Message>Nimaš ničesar v roki ali na glavi."
+      RemovedHat: "Snel si svoj klobuk."
+      AlreadyHasHat: "<Color:Error.Message>Na glavi že imaš klobuk."
+      AppliedHat: "Nadel si si klobuk."
     Fly:
       Success:
         Enabled: "Sedaj lahko letiš."

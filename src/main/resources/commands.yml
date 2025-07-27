@@ -76,6 +76,9 @@ Commands:
       feed:
         Enabled: true
         Aliases: "feed"
+  hat:
+    Enabled: true
+    Aliases: "hat"
   seen:
     Enabled: true
     Aliases: "seen"

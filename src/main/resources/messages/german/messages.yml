@@ -11,6 +11,11 @@ Messages:
       SuccessOther:
         Enabled: "<Color:Highlight><TARGET> <Color:Message>ist jetzt unsterblich."
         Disabled: "<TARGET> ist nicht mehr unsterblich."
+    Hat:
+      NoHat: "<Color:Error.Message>Du hast nichts in der Hand oder auf dem Kopf."
+      RemovedHat: "Du hast deinen Hut abgenommen."
+      AlreadyHasHat: "<Color:Error.Message>Du hast bereits einen Hut auf dem Kopf."
+      AppliedHat: "Du hast deinen Hut aufgesetzt."
     Fly:
       Success:
         Enabled: "Du kannst jetzt fliegen."

@@ -108,6 +108,10 @@ Permissions:
       Use:
         Required: true
         Value: "serversystem.command.grindstone.use"
+    Hat:
+      Use:
+        Required: true
+        Value: "serversystem.command.hat.use"
     Cartography:
       Use:
         Required: true
