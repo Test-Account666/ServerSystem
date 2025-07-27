@@ -103,7 +103,17 @@ public class CommandTeleport extends AbstractServerSystemCommand {
             return;
         }
 
-        var isSelf = arguments.length == 3;
+        var isSelf = true;
+        var startIndex = 0;
+
+        if (arguments.length > 3) {
+            var potentialTargetUser = getTargetUser(commandSender, arguments);
+            if (potentialTargetUser.isPresent()) {
+                isSelf = false;
+                startIndex = 1;
+            }
+        }
+
         if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, 3, arguments)) return;
 
         var targetUserOpt = isSelf? Optional.of(commandSender) : getTargetUser(commandSender, arguments);
@@ -119,11 +129,11 @@ public class CommandTeleport extends AbstractServerSystemCommand {
 
         var executionLocation = commandSender instanceof ConsoleUser? targetPlayer.getLocation() : commandSender.getPlayer().getLocation();
 
-        var locationOpt = extractLocation(
+        var locationOpt = extractLocationWithRotation(
                 executionLocation,
                 targetPlayer,
                 arguments,
-                isSelf? 0 : 1
+                startIndex
         );
 
         if (locationOpt.isEmpty()) {
@@ -132,8 +142,6 @@ public class CommandTeleport extends AbstractServerSystemCommand {
         }
 
         var location = locationOpt.get();
-        location.setYaw(targetPlayer.getLocation().getYaw());
-        location.setPitch(targetPlayer.getLocation().getPitch());
 
         if (!isValidTeleportLocation(location, commandSender, targetPlayer)) return;
 
@@ -147,10 +155,8 @@ public class CommandTeleport extends AbstractServerSystemCommand {
             return false;
         }
 
-        if (location.getWorld() != targetPlayer.getWorld() &&
-                !checkBasePermission(commandSender, "TeleportPosition.World")) return false;
-
-        return true;
+        return location.getWorld() == targetPlayer.getWorld() ||
+                checkBasePermission(commandSender, "TeleportPosition.World");
     }
 
     private void sendTeleportPositionSuccess(User commandSender, Player targetPlayer, Location location, boolean isSelf) {
@@ -201,15 +207,10 @@ public class CommandTeleport extends AbstractServerSystemCommand {
         return format.format(location).replace(",", ".");
     }
 
-    public Optional<Location> extractLocation(Location executeLocation, Entity target, String[] arguments, int startIndex) {
-        var endIndex = startIndex + 3;
+    public Optional<Location> extractLocationWithRotation(Location executeLocation, Entity target, String[] arguments, int startIndex) {
+        var coordinateEndIndex = startIndex + 3;
 
-        if (arguments.length < endIndex) return Optional.empty();
-
-        var world = target.getWorld();
-
-        if (arguments.length > endIndex) world = target.getServer().getWorld(arguments[endIndex]);
-        if (world == null) return Optional.empty();
+        if (arguments.length < coordinateEndIndex) return Optional.empty();
 
         var x = calculateRelativePosition(_X_AXIS, arguments[startIndex], executeLocation, target.getLocation());
         var y = calculateRelativePosition(_Y_AXIS, arguments[startIndex + 1], executeLocation, target.getLocation());
@@ -217,7 +218,37 @@ public class CommandTeleport extends AbstractServerSystemCommand {
 
         if (x.isEmpty() || y.isEmpty() || z.isEmpty()) return Optional.empty();
 
-        return Optional.of(new Location(world, x.get(), y.get(), z.get()));
+        var yaw = target.getLocation().getYaw();
+        var pitch = target.getLocation().getPitch();
+
+        var currentIndex = coordinateEndIndex;
+
+        if (arguments.length > currentIndex) {
+            var yawOpt = calculateRelativeRotation(arguments[currentIndex], executeLocation, target.getLocation(), true);
+            if (yawOpt.isPresent()) {
+                yaw = yawOpt.get();
+                currentIndex++;
+            }
+            // If parsing fails, it might be a world name, so we skip yaw parsing
+        }
+
+        if (arguments.length > currentIndex) {
+            var pitchOpt = calculateRelativeRotation(arguments[currentIndex], executeLocation, target.getLocation(), false);
+            if (pitchOpt.isPresent()) {
+                pitch = pitchOpt.get();
+                currentIndex++;
+            }
+            // If parsing fails, it might be a world name, so we skip pitch parsing
+        }
+
+        var world = target.getWorld();
+        if (arguments.length > currentIndex) {
+            var worldName = arguments[currentIndex];
+            var targetWorld = target.getServer().getWorld(worldName);
+            if (targetWorld != null) world = targetWorld;
+        }
+
+        return Optional.of(new Location(world, x.get(), y.get(), z.get(), yaw, pitch));
     }
 
     private Optional<Double> calculateRelativePosition(Vector axis, String input, Location senderLocation, Location targetLocation) {
@@ -232,6 +263,26 @@ public class CommandTeleport extends AbstractServerSystemCommand {
         } catch (NumberFormatException ignored) {
             return Optional.empty();
         }
+    }
+
+    private Optional<Float> calculateRelativeRotation(String input, Location senderLocation, Location targetLocation, boolean isYaw) {
+        try {
+            if (input.equals("~")) return Optional.of(isYaw? targetLocation.getYaw() : targetLocation.getPitch());
+            if (input.equals("@")) return Optional.of(isYaw? senderLocation.getYaw() : senderLocation.getPitch());
+
+            if (input.startsWith("~")) return Optional.of(parseRotationOffset(input, targetLocation, isYaw, 1));
+            if (input.startsWith("@")) return Optional.of(parseRotationOffset(input, senderLocation, isYaw, 1));
+
+            return Optional.of(Float.parseFloat(input));
+        } catch (NumberFormatException ignored) {
+            return Optional.empty();
+        }
+    }
+
+    private float parseRotationOffset(String input, Location location, boolean isYaw, int offsetStartIndex) {
+        var offset = Float.parseFloat(input.substring(offsetStartIndex));
+        var currentValue = isYaw? location.getYaw() : location.getPitch();
+        return currentValue + offset;
     }
 
     private double parseOffset(String input, Location location, Vector axis, int offsetStartIndex) {
