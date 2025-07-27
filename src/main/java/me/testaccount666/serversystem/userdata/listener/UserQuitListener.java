@@ -1,7 +1,6 @@
 package me.testaccount666.serversystem.userdata.listener;
 
 import me.testaccount666.serversystem.ServerSystem;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -22,7 +21,8 @@ public class UserQuitListener implements Listener {
         var offlineUser = user.getOfflineUser();
 
         //TODO: Should we really still save in this case?
-        if (user.isOfflineUser()) ServerSystem.getLog().warning("User '${event.getPlayer().getName()}' is not an online user! This should not happen!");
+        if (user.isOfflineUser())
+            ServerSystem.getLog().warning("User '${event.getPlayer().getName()}' is not an online user! This should not happen!");
 
         offlineUser.setLogoutPosition(event.getPlayer().getLocation());
 
