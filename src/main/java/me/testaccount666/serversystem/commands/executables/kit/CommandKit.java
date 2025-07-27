@@ -4,24 +4,19 @@ import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.kit.manager.Kit;
-import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
+import static me.testaccount666.serversystem.utils.DurationParser.parseDate;
 import static me.testaccount666.serversystem.utils.DurationParser.parseDuration;
-import static me.testaccount666.serversystem.utils.DurationParser.parseUnbanDate;
 import static me.testaccount666.serversystem.utils.MessageBuilder.command;
 import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 
 @ServerSystemCommand(name = "kit", variants = {"createkit", "deletekit"}, tabCompleter = TabCompleterKit.class)
 public class CommandKit extends AbstractServerSystemCommand {
-
-    public CommandKit() {
-        ServerSystem.Instance.setKitManager(new KitManager());
-    }
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
@@ -116,7 +111,7 @@ public class CommandKit extends AbstractServerSystemCommand {
 
             command("Kit.OnCooldown", commandSender)
                     .postModifier(message -> message.replace("<KIT>", kit.getDisplayName())
-                            .replace("<DATE>", parseUnbanDate(cooldown, commandSender))).build();
+                            .replace("<DATE>", parseDate(cooldown, commandSender))).build();
             return;
         }
 

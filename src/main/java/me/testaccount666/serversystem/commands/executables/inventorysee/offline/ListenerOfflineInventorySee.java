@@ -28,12 +28,12 @@ public class ListenerOfflineInventorySee extends AbstractInventorySeeListener im
 
     @Override
     protected boolean additionalRegistrationChecks() {
-        return _commandInventorySee._offlineInventorySee.inventoryLoader != null;
+        return _commandInventorySee.offlineInventorySee.inventoryLoader != null;
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerLoginEvent event) { // Sorry paper, but I think PlayerJoinEvent is too late.
-        var inventoryLoader = _commandInventorySee._offlineInventorySee.inventoryLoader;
+        var inventoryLoader = _commandInventorySee.offlineInventorySee.inventoryLoader;
         var player = event.getPlayer();
         var uuid = player.getUniqueId();
 
@@ -54,7 +54,7 @@ public class ListenerOfflineInventorySee extends AbstractInventorySeeListener im
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        var inventoryLoader = _commandInventorySee._offlineInventorySee.inventoryLoader;
+        var inventoryLoader = _commandInventorySee.offlineInventorySee.inventoryLoader;
         var inventory = event.getInventory();
 
         @SuppressWarnings("DataFlowIssue") // Warning can be safely ignored, because inventoryLoader cannot be null, if this listener is registered.
@@ -70,7 +70,7 @@ public class ListenerOfflineInventorySee extends AbstractInventorySeeListener im
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        var inventoryLoader = _commandInventorySee._offlineInventorySee.inventoryLoader;
+        var inventoryLoader = _commandInventorySee.offlineInventorySee.inventoryLoader;
         var inventory = event.getInventory();
 
         @SuppressWarnings("DataFlowIssue") // Warning can be safely ignored, because inventoryLoader cannot be null, if this listener is registered.

@@ -54,6 +54,9 @@ Permissions:
       Other:
         Required: true
         Value: "serversystem.support.command.teleportposition.other"
+      World:
+        Required: true
+        Value: "serversystem.support.command.teleportposition.world"
     TeleportHere:
       Use:
         Required: true
@@ -108,6 +111,10 @@ Permissions:
       Use:
         Required: true
         Value: "serversystem.command.grindstone.use"
+    Hat:
+      Use:
+        Required: true
+        Value: "serversystem.command.hat.use"
     Cartography:
       Use:
         Required: true
@@ -264,6 +271,13 @@ Permissions:
         Other:
           Required: true
           Value: "serversystem.command.messagetoggle.other"
+    SocialSpy:
+      Use:
+        Required: true
+        Value: "serversystem.moderation.command.socialspy.use"
+      Other:
+        Required: true
+        Value: "serversystem.moderation.command.socialspy.other"
     Unlimited:
       Use:
         Required: true
@@ -322,6 +336,10 @@ Permissions:
       Use:
         Required: true
         Value: "serversystem.admin.command.repair.use"
+    Rename:
+      Use:
+        Required: true
+        Value: "serversystem.command.rename.use"
     Ping:
       Use:
         Required: false
@@ -401,6 +419,18 @@ Permissions:
       Use:
         Required: false
         Value: "serversystem.command.language.use"
+    Sign:
+      Use:
+        Required: true
+        Value: "serversystem.command.sign.use"
+    Unsign:
+      Use:
+        Required: true
+        Value: "serversystem.command.unsign.use"
+    Lightning:
+      Use:
+        Required: true
+        Value: "serversystem.admin.command.lightning.use"
   Chat:
     ColorChat:
       Required: true

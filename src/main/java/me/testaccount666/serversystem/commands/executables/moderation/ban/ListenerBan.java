@@ -11,7 +11,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import java.util.Set;
 
 import static me.testaccount666.serversystem.commands.executables.moderation.ModerationUtils.findSenderName;
-import static me.testaccount666.serversystem.utils.DurationParser.parseUnbanDate;
+import static me.testaccount666.serversystem.utils.DurationParser.parseDate;
 import static me.testaccount666.serversystem.utils.MessageBuilder.command;
 
 @RequiredCommands(requiredCommands = CommandBan.class)
@@ -42,7 +42,7 @@ public class ListenerBan implements Listener {
 
         var parsedDuration = banModeration.expireTime();
 
-        var unbanDate = parseUnbanDate(parsedDuration, user);
+        var unbanDate = parseDate(parsedDuration, user);
         var kickOptional = command("Moderation.Ban.Kick", UserManager.getConsoleUser()).sender(senderName)
                 .target(user.getName().get()).prefix(false).send(false)
                 .postModifier(message -> message.replace("<DATE>", unbanDate)

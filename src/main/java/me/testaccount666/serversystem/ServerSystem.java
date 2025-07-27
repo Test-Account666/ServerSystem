@@ -1,13 +1,14 @@
 package me.testaccount666.serversystem;
 
 import lombok.Getter;
-import lombok.Setter;
+import lombok.SneakyThrows;
 import me.testaccount666.migration.LegacyDataMigrator;
 import me.testaccount666.serversystem.clickablesigns.SignManager;
 import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager;
 import me.testaccount666.serversystem.commands.executables.warp.manager.WarpManager;
 import me.testaccount666.serversystem.commands.management.CommandManager;
 import me.testaccount666.serversystem.listener.management.ListenerManager;
+import me.testaccount666.serversystem.managers.config.ConfigReader;
 import me.testaccount666.serversystem.managers.config.ConfigurationManager;
 import me.testaccount666.serversystem.managers.database.economy.AbstractEconomyDatabaseManager;
 import me.testaccount666.serversystem.managers.database.economy.MySqlEconomyDatabaseManager;
@@ -15,6 +16,10 @@ import me.testaccount666.serversystem.managers.database.economy.SqliteEconomyDat
 import me.testaccount666.serversystem.managers.database.moderation.AbstractModerationDatabaseManager;
 import me.testaccount666.serversystem.managers.database.moderation.MySqlModerationDatabaseManager;
 import me.testaccount666.serversystem.managers.database.moderation.SqliteModerationDatabaseManager;
+import me.testaccount666.serversystem.placeholderapi.PlaceholderApiSupport;
+import me.testaccount666.serversystem.placeholderapi.PlaceholderManager;
+import me.testaccount666.serversystem.updates.AbstractUpdateChecker;
+import me.testaccount666.serversystem.updates.UpdateCheckerType;
 import me.testaccount666.serversystem.userdata.CachedUser;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.UserManager;
@@ -29,11 +34,15 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
+//TODO: This class seems to be getting quite big again, I don't like it
 public final class ServerSystem extends JavaPlugin {
-    private final static int _CURRENT_VERSION = 300;
+    public static final Version CURRENT_VERSION = new Version("3.1.0");
     public static ServerSystem Instance;
     @Getter
     private static Logger _Log;
@@ -43,6 +52,8 @@ public final class ServerSystem extends JavaPlugin {
     private CommandManager _commandManager;
     @Getter
     private ListenerManager _listenerManager;
+    @Getter
+    private PlaceholderManager _placeholderManager;
     @Getter
     private EconomyProvider _economyProvider;
     @Getter
@@ -54,11 +65,12 @@ public final class ServerSystem extends JavaPlugin {
     @Getter
     private AbstractModerationDatabaseManager _moderationDatabaseManager;
     @Getter
-    @Setter
     @Nullable
     private KitManager _kitManager;
     @Getter
     private SignManager _signManager;
+    @Getter
+    private AbstractUpdateChecker _updateChecker;
 
     public static Version getServerVersion() {
         var version = Bukkit.getVersion();
@@ -70,6 +82,7 @@ public final class ServerSystem extends JavaPlugin {
         return new Version(version);
     }
 
+    @SneakyThrows
     @Override
     public void onEnable() {
         Instance = this;
@@ -83,7 +96,7 @@ public final class ServerSystem extends JavaPlugin {
 
         var previousVersionFile = new File(getDataFolder(), "previousVersion.yml");
         var previousVersionConfig = YamlConfiguration.loadConfiguration(previousVersionFile);
-        previousVersionConfig.set("previousVersion", _CURRENT_VERSION);
+        previousVersionConfig.set("previousVersion", CURRENT_VERSION.toString());
         try {
             previousVersionConfig.save(previousVersionFile);
         } catch (IOException exception) {
@@ -98,12 +111,15 @@ public final class ServerSystem extends JavaPlugin {
             return;
         }
 
-        migrator.migrateLegacyData();
+        startUpdateChecker();
+
+        Bukkit.getScheduler().runTaskLater(this, migrator::migrateLegacyData, 1L);
 
         Bukkit.getScheduler().runTaskLater(this, () -> {
             _commandManager.registerCommands();
             _listenerManager.registerListeners();
-        }, 1);
+            _placeholderManager.registerPlaceholders();
+        }, 2);
     }
 
     private void initialize() throws Exception {
@@ -117,12 +133,8 @@ public final class ServerSystem extends JavaPlugin {
             default -> throw new IllegalStateException("Unsupported moderation storage: ${moderationType} - Supported values: sqlite, mysql");
         };
 
-        var warpFile = Path.of(getDataFolder().getPath(), "data", "warps.yml").toFile();
-        var warpConfig = YamlConfiguration.loadConfiguration(warpFile);
-        _warpManager = new WarpManager(warpConfig, warpFile);
-
-        _signManager = new SignManager();
-        _signManager.loadSignTypes();
+        if (EconomyVaultAPI.isVaultInstalled()) EconomyVaultAPI.initialize();
+        PlaceholderApiSupport.registerPlaceholders();
 
         _moderationDatabaseManager.initialize();
 
@@ -135,10 +147,20 @@ public final class ServerSystem extends JavaPlugin {
 
         _commandManager = new CommandManager(_configManager.getCommandsConfig());
         _listenerManager = new ListenerManager(_commandManager);
+        _placeholderManager = new PlaceholderManager();
         _economyProvider = new EconomyProvider(_configManager.getEconomyConfig());
         _userManager = new UserManager();
 
-        if (EconomyVaultAPI.isVaultInstalled()) EconomyVaultAPI.initialize();
+        _kitManager = new KitManager();
+
+        Bukkit.getScheduler().runTask(this, () -> {
+            var warpFile = Path.of(getDataFolder().getPath(), "data", "warps.yml").toFile();
+            var warpConfig = YamlConfiguration.loadConfiguration(warpFile);
+            _warpManager = new WarpManager(warpConfig, warpFile);
+
+            _signManager = new SignManager();
+            _signManager.loadSignTypes();
+        });
     }
 
     @Override
@@ -149,6 +171,8 @@ public final class ServerSystem extends JavaPlugin {
 
         if (_listenerManager != null) _listenerManager.unregisterListeners();
 
+        PlaceholderApiSupport.unregisterPlaceholders();
+
         if (_economyDatabaseManager != null) _economyDatabaseManager.shutdown();
 
         if (_moderationDatabaseManager != null) _moderationDatabaseManager.shutdown();
@@ -156,5 +180,87 @@ public final class ServerSystem extends JavaPlugin {
 
     private void saveAllUsers() {
         _userManager.getCachedUsers().stream().map(CachedUser::getOfflineUser).forEach(OfflineUser::save);
+    }
+
+    private void startUpdateChecker() {
+        var generalConfig = _configManager.getGeneralConfig();
+        var updateCheckerType = resolveUpdateCheckerType(generalConfig);
+
+        if (updateCheckerType.isEmpty()) {
+            handleInvalidUpdateCheckerType(generalConfig);
+            return;
+        }
+
+        initializeUpdateChecker(updateCheckerType.get(), generalConfig);
+        scheduleUpdateChecks(generalConfig);
+    }
+
+    private Optional<UpdateCheckerType> resolveUpdateCheckerType(ConfigReader generalConfig) {
+        var typeString = generalConfig.getString("UpdateChecker.Type.Value");
+        if (typeString == null || typeString.isBlank()) typeString = "DISABLED";
+        return UpdateCheckerType.of(typeString);
+    }
+
+    private void handleInvalidUpdateCheckerType(ConfigReader generalConfig) {
+        var typeString = generalConfig.getString("UpdateChecker.Type.Value");
+        var availableTypes = formatAvailableUpdateCheckerTypes();
+
+        getLog().warning("Updater type '${typeString}' not found. Available options: ${availableTypes}");
+        _updateChecker = UpdateCheckerType.DISABLED.getFactory().get();
+    }
+
+    private String formatAvailableUpdateCheckerTypes() {
+        return Arrays.stream(UpdateCheckerType.values())
+                .map(Enum::name)
+                .collect(Collectors.joining(", "));
+    }
+
+    private void initializeUpdateChecker(UpdateCheckerType type, ConfigReader generalConfig) {
+        var autoUpdate = determineAutoUpdateSetting(generalConfig);
+
+        _updateChecker = type.getFactory().get();
+        _updateChecker.setAutoUpdate(autoUpdate);
+    }
+
+    private boolean determineAutoUpdateSetting(ConfigReader generalConfig) {
+        var autoUpdate = generalConfig.getBoolean("UpdateChecker.AutoUpdate");
+        if (Boolean.parseBoolean(System.getProperty("serversystem.disable-auto-download", "false"))) autoUpdate = false;
+        return autoUpdate;
+    }
+
+    private void scheduleUpdateChecks(ConfigReader generalConfig) {
+        var checkForUpdates = generalConfig.getBoolean("UpdateChecker.CheckForUpdates");
+
+        if (!checkForUpdates) return;
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::performUpdateCheck, 20L, 20L * 60 * 60);
+    }
+
+    private void performUpdateCheck() {
+        _updateChecker.hasUpdate()
+                .exceptionally(this::handleUpdateCheckError)
+                .thenAccept(this::handleUpdateCheckResult);
+    }
+
+    private Boolean handleUpdateCheckError(Throwable throwable) {
+        getLog().log(Level.WARNING, "Error checking for updates", throwable);
+        return false;
+    }
+
+    private void handleUpdateCheckResult(boolean hasUpdate) {
+        if (!hasUpdate) return;
+
+        _updateChecker.downloadUpdate()
+                .exceptionally(this::handleUpdateDownloadError)
+                .thenAccept(this::handleUpdateDownloadResult);
+    }
+
+    private Boolean handleUpdateDownloadError(Throwable throwable) {
+        getLog().log(Level.WARNING, "Error downloading update", throwable);
+        return false;
+    }
+
+    private void handleUpdateDownloadResult(boolean success) {
+        if (success) return;
+        getLog().warning("Update-Download failed!");
     }
 }

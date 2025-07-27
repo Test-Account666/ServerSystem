@@ -16,7 +16,7 @@ import org.bukkit.event.Listener;
 import java.util.Set;
 
 import static me.testaccount666.serversystem.commands.executables.moderation.ModerationUtils.findSenderName;
-import static me.testaccount666.serversystem.utils.DurationParser.parseUnbanDate;
+import static me.testaccount666.serversystem.utils.DurationParser.parseDate;
 import static me.testaccount666.serversystem.utils.MessageBuilder.command;
 
 @RequiredCommands(requiredCommands = CommandMute.class)
@@ -67,7 +67,7 @@ public class ListenerMute implements Listener {
 
         command("Mute.Muted", user).sender(senderName).target(user.getName().get())
                 .postModifier(message -> message.replace("<REASON>", muteModeration.reason())
-                        .replace("<DATE>", parseUnbanDate(muteModeration.expireTime(), user))).build();
+                        .replace("<DATE>", parseDate(muteModeration.expireTime(), user))).build();
     }
 
     private void handleShadowMute(AsyncChatEvent event, MuteModeration muteModeration) {

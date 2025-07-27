@@ -11,6 +11,11 @@ Messages:
       SuccessOther:
         Enabled: "<Color:Highlight><TARGET> <Color:Message>ist jetzt unsterblich."
         Disabled: "<TARGET> ist nicht mehr unsterblich."
+    Hat:
+      NoHat: "<Color:Error.Message>Du hast nichts in der Hand oder auf dem Kopf."
+      RemovedHat: "Du hast deinen Hut abgenommen."
+      AlreadyHasHat: "<Color:Error.Message>Du hast bereits einen Hut auf dem Kopf."
+      AppliedHat: "Du hast deinen Hut aufgesetzt."
     Fly:
       Success:
         Enabled: "Du kannst jetzt fliegen."
@@ -142,6 +147,14 @@ Messages:
       SuccessOther:
         Enabled: "<Color:Highlight><TARGET> <Color:Message>akzeptiert jetzt private Nachrichten."
         Disabled: "<Color:Highlight><TARGET> <Color:Message>akzeptiert keine privaten Nachrichten mehr."
+    SocialSpy:
+      Success:
+        Enabled: "SocialSpy wurde aktiviert."
+        Disabled: "SocialSpy wurde deaktiviert."
+      SuccessOther:
+        Enabled: "SocialSpy wurde für <Color:Highlight><TARGET><Color:Message> aktiviert."
+        Disabled: "SocialSpy wurde für <Color:Highlight><TARGET><Color:Message> deaktiviert."
+      Format: "<Color:Prefix>SocialSpy <Color:Separators>» <Color:Highlight><SENDER> <Color:Message>an <Color:Highlight><TARGET><Color:Separators>: <Color:Message><MESSAGE>"
     Unlimited:
       Success:
         Enabled: "Der Gegenstand in deiner Hand ist jetzt unbegrenzt."
@@ -269,12 +282,28 @@ Messages:
       Success:
         Self: "Du hast das Kit <Color:Highlight><KIT><Color:Message> erhalten."
         Other: "Du hast das Kit <Color:Highlight><KIT> <Color:Message>an <Color:Highlight><TARGET><Color:Message> gegeben."
+    Lightning:
+      NoTarget: "<Color:Error.Message>Kein gültiges Ziel gefunden."
+      Success: "Blitz schlug an deiner Zielposition ein."
+      TargetSuccess: "Blitz schlug an <Color:Highlight><TARGET>s <Color:Message>Position ein."
     Language:
       Changed: "Du hast deine Sprache zu <Color:Highlight><LANGUAGE><Color:Message> geändert."
+    Sign:
+      NoItemInHand: "<Color:Error.Message>Du hältst keinen Gegenstand in der Hand."
+      NoItemMeta: "<Color:Error.Message>Der Gegenstand in deiner Hand kann nicht signiert werden."
+      AlreadySigned: "<Color:Error.Message>Der Gegenstand in deiner Hand ist bereits signiert."
+      Format: "<Color:Highlight><MESSAGE>\nSigniert von: <SENDER>\nAm: <DATE>"
+      Success: "Du hast den Gegenstand in deiner Hand erfolgreich signiert."
+    Unsign:
+      NotSigned: "<Color:Error.Message>Der Gegenstand in deiner Hand ist nicht signiert."
+      Success: "Du hast die Signatur des Gegenstands in deiner Hand erfolgreich entfernt."
     Baltop:
       NoData: "<Color:Error.Message>Es wurden keine Baltop Daten gefunden."
       Header: "&8-=-=-=-= &6Baltop &8=-=-=-=-"
       Entry: "&6<POSITION> <Color:Highlight><TARGET> <Color:Separators>» &6<BALANCE>"
+    Rename:
+      NoItemInHand: "<Color:Error.Message>Du hältst keinen Gegenstand in der Hand."
+      Success: "Du hast den Gegenstand in deiner Hand erfolgreich umbenannt."
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>Du hast keine Berechtigung dafür. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"
@@ -354,13 +383,16 @@ Messages:
     CreateKit: "/<LABEL> [Kit] (Abklingzeit)"
     DeleteKit: "/<LABEL> [Kit]"
     Language: "/<LABEL> [Sprache]"
+    Lightning: "/<LABEL> (Spieler) (visual)"
     Mute: "/<LABEL> [Spieler] [Dauer] (Grund...)"
     OfflineTeleport: "/<LABEL> [Spieler]"
     Pay: "/<LABEL> [Spieler] [Betrag]"
     Ping: "/<LABEL> (Spieler)"
     PrivateMessage: "/<LABEL> [Spieler] [Nachricht...]"
     MessageToggle: "/<LABEL> (Spieler)"
+    SocialSpy: "/<LABEL> (Spieler)"
     Reply: "/<LABEL> [Nachricht...]"
+    Rename: "/<LABEL> [Name...]"
     Repair: "/<LABEL> (all|hand|offhand|armor|inventory)"
     Seen: "/<LABEL> [Spieler]"
     SignCost: "/<LABEL> [none|exp|economy] (Betrag)"
@@ -370,7 +402,7 @@ Messages:
     Sudo: "/<LABEL> [Spieler] [Befehl] (Argumente...)"
     TeamChat: "/<LABEL> [Nachricht...]"
     Teleport: "/<LABEL> [Spieler] (Spieler)"
-    TeleportPosition: "/<LABEL> (Spieler) [X] [Y] [Z] [Welt]"
+    TeleportPosition: "/<LABEL> (Spieler) [X] [Y] [Z] [Yaw] [Pitch] [Welt]"
     TeleportAsk: "/<LABEL> [Spieler]"
     TeleportToggle: "/<LABEL> (Spieler)"
     Time: "/<LABEL> [Zeit] (Welt)"
@@ -389,4 +421,5 @@ Messages:
     Back: "/<LABEL> (teleport|death)"
     CommandSpy: "/<LABEL> (Spieler)"
     Disposal: "/<LABEL> (Spieler)"
+    Sign: "/<LABEL> [Nachricht...]"
 language: "german"

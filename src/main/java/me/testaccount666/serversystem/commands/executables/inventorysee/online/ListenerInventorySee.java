@@ -102,6 +102,6 @@ public class ListenerInventorySee extends AbstractInventorySeeListener implement
         _commandInventorySee.inventoryCache.remove(player);
 
         InventorySeeUtils.handleInventoryViewers(inventory, player, 10L,
-                (user, playerName) -> _commandInventorySee._offlineInventorySee.processOfflineInventorySee(user, "", playerName));
+                (user, playerName) -> _commandInventorySee.offlineInventorySee.processOfflineInventorySee(user, "", playerName));
     }
 }

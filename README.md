@@ -58,27 +58,28 @@ The plugin generates several configuration files:
 
 ### Administrative Commands
 
-| Command                      | Aliases      | Description                       | Permission                                      |
-|------------------------------|--------------|-----------------------------------|-------------------------------------------------|
-| `/gamemode [mode] (player)`  | `/gm`        | Change gamemode                   | `serversystem.admin.command.gamemode.use`       |
-| `/gms (player)`              | -            | Set survival mode                 | `serversystem.admin.command.gamemode.survival`  |
-| `/gmc (player)`              | -            | Set creative mode                 | `serversystem.admin.command.gamemode.creative`  |
-| `/gma (player)`              | -            | Set adventure mode                | `serversystem.admin.command.gamemode.adventure` |
-| `/gmsp (player)`             | -            | Set spectator mode                | `serversystem.admin.command.gamemode.spectator` |
-| `/time [time] (world)`       | -            | Set world time                    | `serversystem.admin.command.time.use`           |
-| `/day (world)`               | -            | Set time to day                   | `serversystem.admin.command.time.use`           |
-| `/night (world)`             | -            | Set time to night                 | `serversystem.admin.command.time.use`           |
-| `/noon (world)`              | -            | Set time to noon                  | `serversystem.admin.command.time.use`           |
-| `/midnight (world)`          | -            | Set time to midnight              | `serversystem.admin.command.time.use`           |
-| `/weather [type] (world)`    | -            | Change weather                    | `serversystem.admin.command.weather.use`        |
-| `/sun (world)`               | -            | Set sunny weather                 | `serversystem.admin.command.weather.use`        |
-| `/rain (world)`              | -            | Set rainy weather                 | `serversystem.admin.command.weather.use`        |
-| `/storm (world)`             | -            | Set stormy weather                | `serversystem.admin.command.weather.use`        |
-| `/sudo [player] [command]`   | -            | Execute command as another player | `serversystem.admin.command.sudo.use`           |
-| `/unlimited (player)`        | -            | Toggle unlimited items            | `serversystem.admin.command.unlimited.use`      |
-| `/speed [1-10] (player)`     | -            | Set player speed                  | `serversystem.admin.command.speed.use`          |
-| `/flyspeed [1-10] (player)`  | `/speedfly`  | Set fly speed                     | `serversystem.admin.command.speed.use`          |
-| `/walkspeed [1-10] (player)` | `/speedwalk` | Set walk speed                    | `serversystem.admin.command.speed.use`          |
+| Command                        | Aliases           | Description                       | Permission                                      |
+|--------------------------------|-------------------|-----------------------------------|-------------------------------------------------|
+| `/gamemode [mode] (player)`    | `/gm`             | Change gamemode                   | `serversystem.admin.command.gamemode.use`       |
+| `/gms (player)`                | -                 | Set survival mode                 | `serversystem.admin.command.gamemode.survival`  |
+| `/gmc (player)`                | -                 | Set creative mode                 | `serversystem.admin.command.gamemode.creative`  |
+| `/gma (player)`                | -                 | Set adventure mode                | `serversystem.admin.command.gamemode.adventure` |
+| `/gmsp (player)`               | -                 | Set spectator mode                | `serversystem.admin.command.gamemode.spectator` |
+| `/time [time] (world)`         | -                 | Set world time                    | `serversystem.admin.command.time.use`           |
+| `/day (world)`                 | -                 | Set time to day                   | `serversystem.admin.command.time.use`           |
+| `/night (world)`               | -                 | Set time to night                 | `serversystem.admin.command.time.use`           |
+| `/noon (world)`                | -                 | Set time to noon                  | `serversystem.admin.command.time.use`           |
+| `/midnight (world)`            | -                 | Set time to midnight              | `serversystem.admin.command.time.use`           |
+| `/weather [type] (world)`      | -                 | Change weather                    | `serversystem.admin.command.weather.use`        |
+| `/sun (world)`                 | -                 | Set sunny weather                 | `serversystem.admin.command.weather.use`        |
+| `/rain (world)`                | -                 | Set rainy weather                 | `serversystem.admin.command.weather.use`        |
+| `/storm (world)`               | -                 | Set stormy weather                | `serversystem.admin.command.weather.use`        |
+| `/sudo [player] [command]`     | -                 | Execute command as another player | `serversystem.admin.command.sudo.use`           |
+| `/unlimited (player)`          | -                 | Toggle unlimited items            | `serversystem.admin.command.unlimited.use`      |
+| `/speed [1-10] (player)`       | -                 | Set player speed                  | `serversystem.admin.command.speed.use`          |
+| `/flyspeed [1-10] (player)`    | `/speedfly`       | Set fly speed                     | `serversystem.admin.command.speed.use`          |
+| `/walkspeed [1-10] (player)`   | `/speedwalk`      | Set walk speed                    | `serversystem.admin.command.speed.use`          |
+| `/lightning (player) (visual)` | `/thor`, `/smite` | Strike lightning at target        | `serversystem.admin.command.lightning.use`      |
 
 ### Teleportation Commands
 
@@ -121,6 +122,7 @@ The plugin generates several configuration files:
 | `/broadcast [message]`           | `/bc`           | Broadcast message to server | `serversystem.moderation.command.broadcast.use`      |
 | `/clearinventory (player)`       | `/clear`, `/ci` | Clear player inventory      | `serversystem.moderation.command.clearinventory.use` |
 | `/ip [player]`                   | -               | View player's IP address    | `serversystem.moderation.command.ip.use`             |
+| `/socialspy (player)`            | -               | Toggle social spy mode      | `serversystem.moderation.command.socialspy.use`      |
 
 ### Utility Commands
 
@@ -148,6 +150,10 @@ The plugin generates several configuration files:
 | `/fly (player)`               | -                      | Toggle flight                     | `serversystem.support.command.fly.use`               |
 | `/heal (player)`              | -                      | Heal player                       | `serversystem.support.command.heal.use`              |
 | `/feed (player)`              | -                      | Feed player                       | `serversystem.support.command.feed.use`              |
+| `/hat`                        | -                      | Wear item in hand as hat          | `serversystem.command.hat.use`                       |
+| `/rename [name]`              | -                      | Rename item in hand               | `serversystem.command.rename.use`                    |
+| `/sign [message]`             | -                      | Sign item in hand with message    | `serversystem.command.sign.use`                      |
+| `/unsign`                     | -                      | Remove signature from item        | `serversystem.command.unsign.use`                    |
 
 ### Home & Warp Commands
 
@@ -240,6 +246,21 @@ While Pre-Rewrite (2.x.x) ServerSystem supported migrating
 from or to Essentials, 3.x.x, as of 18. July 2025, does not.<br>
 The reason for this is simple. I just didn't get to it before I deemed the plugin Release-Ready.
 
+## PlaceholderAPI
+
+This plugin has support for PlaceholderAPI. You can use it's placeholders in
+ServerSystem's messages or use the ones ServerSystem adds:
+
+- `%serversystem_onlineplayers%` -> Shows the online player count, excluding vanished players,
+  if the target cannot see vanished players
+- `%serversystem_balance%` (`%serversystem_balance_<playername>%`) -> Shows the formatted balance for a player
+- `%serversystem_unformattedbalance%` (`%serversystem_unformattedbalance_<playername>%`) -> Shows the *unformatted*
+  balance for a player
+- `%serversystem_baltop_name_<number>%` -> Shows the name of place <number> in baltop (1 - 10 only!)
+- `%serversystem_baltop_balance_<number>%` -> Shows the formatted balance of place <number> in baltop (1 - 10 only!)
+- `%serversystem_baltop_unformattedsbalance_<number>%` -> Shows the *unformatted*
+  balance of place <number> in baltop (1 - 10 only!)
+
 ## Building
 
 ### Prerequisites
@@ -310,6 +331,13 @@ For bug reports, please visit the [issue-tracker](https://github.com/Test-Accoun
 For feature or support requests, please visit
 the [discussions](https://github.com/Test-Account666/ServerSystem/discussions).<br>
 I also have a [discord server](https://discord.gg/GxEFhVY6ff) for general plugin and minecraft support<br>
+
+## Auto Updates
+
+As a user, you can disable Auto-Updates via the `config.yml`.
+
+If you are a server hoster or just want to use JVM Flags, you can do the same like this:
+`java -Dserversystem.disable-auto-download=true -jar server.jar`
 
 ## License
 

@@ -11,6 +11,11 @@ Messages:
       SuccessOther:
         Enabled: "<Color:Highlight><TARGET> <Color:Message>je sedaj nesmrten."
         Disabled: "<TARGET> ni več nesmrten."
+    Hat:
+      NoHat: "<Color:Error.Message>Nimaš ničesar v roki ali na glavi."
+      RemovedHat: "Snel si svoj klobuk."
+      AlreadyHasHat: "<Color:Error.Message>Na glavi že imaš klobuk."
+      AppliedHat: "Nadel si si klobuk."
     Fly:
       Success:
         Enabled: "Sedaj lahko letiš."
@@ -142,6 +147,14 @@ Messages:
       SuccessOther:
         Enabled: "<Color:Highlight><TARGET> <Color:Message>sedaj sprejema zasebna sporočila."
         Disabled: "<Color:Highlight><TARGET> <Color:Message>ne sprejema več zasebnih sporočil."
+    SocialSpy:
+      Success:
+        Enabled: "SocialSpy je bil omogočen."
+        Disabled: "SocialSpy je bil onemogočen."
+      SuccessOther:
+        Enabled: "SocialSpy je bil omogočen za <Color:Highlight><TARGET><Color:Message>."
+        Disabled: "SocialSpy je bil onemogočen za <Color:Highlight><TARGET><Color:Message>."
+      Format: "<Color:Prefix>SocialSpy <Color:Separators>» <Color:Highlight><SENDER> <Color:Message>za <Color:Highlight><TARGET><Color:Separators>: <Color:Message><MESSAGE>"
     Unlimited:
       Success:
         Enabled: "Predmet v tvoji roki je sedaj neomejen."
@@ -269,12 +282,28 @@ Messages:
       Success:
         Self: "Prejel si komplet <Color:Highlight><KIT><Color:Message>."
         Other: "Dal si komplet <Color:Highlight><KIT> <Color:Message>igralcu <Color:Highlight><TARGET><Color:Message>."
+    Lightning:
+      NoTarget: "<Color:Error.Message>Ciljna lokacija ni najdena."
+      Success: "Strela je udarila na tvojo ciljno lokacijo."
+      TargetSuccess: "Strela je udarila na <Color:Highlight><TARGET>ovo <Color:Message>lokacijo."
     Language:
       Changed: "Spremenil si svoj jezik v <Color:Highlight><LANGUAGE><Color:Message>."
     Baltop:
       NoData: "<Color:Error.Message>Ni podatkov o stanju na računih."
       Header: "&8-=-=-=-= &6Najbogatejši &8=-=-=-=-"
       Entry: "&6<POSITION>. <Color:Highlight><TARGET> <Color:Separators>» &6<BALANCE>"
+    Rename:
+      NoItemInHand: "<Color:Error.Message>Ne držiš nobenega predmeta."
+      Success: "Uspešno si preimenoval predmet v roki."
+    Sign:
+      NoItemInHand: "<Color:Error.Message>Ne držiš nobenega predmeta."
+      NoItemMeta: "<Color:Error.Message>Predmeta v roki ni mogoče podpisati."
+      AlreadySigned: "<Color:Error.Message>Predmet v roki je že podpisan."
+      Format: "<Color:Highlight><MESSAGE>\nPodpisal: <SENDER>\nDne: <DATE>"
+      Success: "Uspešno ste podpisali predmet v roki."
+    Unsign:
+      NotSigned: "<Color:Error.Message>Predmet v roki ni podpisan."
+      Success: "Uspešno ste odstranili podpis s predmeta v roki."
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>Nimaš dovoljenja za to dejanje. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"
@@ -354,13 +383,16 @@ Messages:
     CreateKit: "/<LABEL> [kit] (cooldown)"
     DeleteKit: "/<LABEL> [kit]"
     Language: "/<LABEL> [language]"
+    Lightning: "/<LABEL> (player) (visual)"
     Mute: "/<LABEL> [player] [duration] (reason...)"
     OfflineTeleport: "/<LABEL> [player]"
     Pay: "/<LABEL> [player] [amount]"
     Ping: "/<LABEL> (player)"
     PrivateMessage: "/<LABEL> [player] [message...]"
     MessageToggle: "/<LABEL> (player)"
+    SocialSpy: "/<LABEL> (player)"
     Reply: "/<LABEL> [message...]"
+    Rename: "/<LABEL> [name...]"
     Repair: "/<LABEL> (all|hand|offhand|armor|inventory)"
     Seen: "/<LABEL> [player]"
     SignCost: "/<LABEL> [none|exp|economy] (amount)"
@@ -370,7 +402,7 @@ Messages:
     Sudo: "/<LABEL> [player] [command] (args...)"
     TeamChat: "/<LABEL> [message...]"
     Teleport: "/<LABEL> [player] (player)"
-    TeleportPosition: "/<LABEL> (player) [X] [Y] [Z] [World]"
+    TeleportPosition: "/<LABEL> (player) [X] [Y] [Z] [Yaw] [Pitch] [World]"
     TeleportAsk: "/<LABEL> [player]"
     TeleportToggle: "/<LABEL> (player)"
     Time: "/<LABEL> [time] (world)"
@@ -389,4 +421,5 @@ Messages:
     Back: "/<LABEL> (teleport|death)"
     CommandSpy: "/<LABEL> (player)"
     Disposal: "/<LABEL> (player)"
+    Sign: "/<LABEL> [message...]"
 language: "slovene"

@@ -143,6 +143,15 @@ public class ListenerVanish implements Listener {
         event.message(null);
     }
 
+    @EventHandler
+    public void onGameModeChange(PlayerGameModeChangeEvent event) {
+        Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> {
+            var user = getVanishedUser(event.getPlayer());
+            if (user == null) return;
+            _commandVanish.vanishPacket.sendVanishPacket(user);
+        }, 1L);
+    }
+
     private void handleOtherPlayerJoin(Player joiningPlayer) {
         if (PermissionManager.hasCommandPermission(joiningPlayer, "Vanish.Show", false)) return;
 

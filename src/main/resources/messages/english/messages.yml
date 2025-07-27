@@ -11,6 +11,11 @@ Messages:
       SuccessOther:
         Enabled: "<Color:Highlight><TARGET> <Color:Message>is now immortal."
         Disabled: "<TARGET> is no longer immortal."
+    Hat:
+      NoHat: "<Color:Error.Message>You don't have anything in your hand or on your head."
+      RemovedHat: "You removed your hat."
+      AlreadyHasHat: "<Color:Error.Message>You already have a hat on your head."
+      AppliedHat: "You put on your hat."
     Fly:
       Success:
         Enabled: "You can now fly."
@@ -142,6 +147,14 @@ Messages:
       SuccessOther:
         Enabled: "<Color:Highlight><TARGET> <Color:Message>now accepts private messages."
         Disabled: "<Color:Highlight><TARGET> <Color:Message>no longer accepts private messages."
+    SocialSpy:
+      Success:
+        Enabled: "SocialSpy has been enabled."
+        Disabled: "SocialSpy has been disabled."
+      SuccessOther:
+        Enabled: "SocialSpy has been enabled for <Color:Highlight><TARGET><Color:Message>."
+        Disabled: "SocialSpy has been disabled for <Color:Highlight><TARGET><Color:Message>."
+      Format: "<Color:Prefix>SocialSpy <Color:Separators>» <Color:Highlight><SENDER> <Color:Message>to <Color:Highlight><TARGET><Color:Separators>: <Color:Message><MESSAGE>"
     Unlimited:
       Success:
         Enabled: "The item in your hand is now unlimited."
@@ -269,12 +282,28 @@ Messages:
       Success:
         Self: "You received the kit <Color:Highlight><KIT><Color:Message>."
         Other: "You gave the kit <Color:Highlight><KIT> <Color:Message>to <Color:Highlight><TARGET><Color:Message>."
+    Lightning:
+      NoTarget: "<Color:Error.Message>No valid target found."
+      Success: "Lightning struck at your target location."
+      TargetSuccess: "Lightning struck at <Color:Highlight><TARGET>'s <Color:Message>location."
     Language:
       Changed: "You changed your language to <Color:Highlight><LANGUAGE><Color:Message>."
+    Sign:
+      NoItemInHand: "<Color:Error.Message>You're not holding an item."
+      NoItemMeta: "<Color:Error.Message>The item in your hand cannot be signed."
+      AlreadySigned: "<Color:Error.Message>The item in your hand is already signed."
+      Format: "<Color:Highlight><MESSAGE>\nSigned by: <SENDER>\nOn: <DATE>"
+      Success: "You have successfully signed the item in your hand."
+    Unsign:
+      NotSigned: "<Color:Error.Message>The item in your hand is not signed."
+      Success: "You have successfully unsigned the item in your hand."
     Baltop:
       NoData: "<Color:Error.Message>No baltop data was found."
       Header: "&8-=-=-=-= &6Baltop &8=-=-=-=-"
       Entry: "&6<POSITION>. <Color:Highlight><TARGET> <Color:Separators>» &6<BALANCE>"
+    Rename:
+      NoItemInHand: "<Color:Error.Message>You're not holding an item."
+      Success: "You have successfully renamed the item in your hand."
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>You don't have permission to do this. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"
@@ -354,13 +383,16 @@ Messages:
     CreateKit: "/<LABEL> [kit] (cooldown)"
     DeleteKit: "/<LABEL> [kit]"
     Language: "/<LABEL> [language]"
+    Lightning: "/<LABEL> (player) (visual)"
     Mute: "/<LABEL> [player] [duration] (reason...)"
     OfflineTeleport: "/<LABEL> [player]"
     Pay: "/<LABEL> [player] [amount]"
     Ping: "/<LABEL> (player)"
     PrivateMessage: "/<LABEL> [player] [message...]"
     MessageToggle: "/<LABEL> (player)"
+    SocialSpy: "/<LABEL> (player)"
     Reply: "/<LABEL> [message...]"
+    Rename: "/<LABEL> [name...]"
     Repair: "/<LABEL> (all|hand|offhand|armor|inventory)"
     Seen: "/<LABEL> [player]"
     SignCost: "/<LABEL> [none|exp|economy] (amount)"
@@ -370,7 +402,7 @@ Messages:
     Sudo: "/<LABEL> [player] [command] (args...)"
     TeamChat: "/<LABEL> [message...]"
     Teleport: "/<LABEL> [player] (player)"
-    TeleportPosition: "/<LABEL> (player) [X] [Y] [Z] [World]"
+    TeleportPosition: "/<LABEL> (player) [X] [Y] [Z] [Yaw] [Pitch] [World]"
     TeleportAsk: "/<LABEL> [player]"
     TeleportToggle: "/<LABEL> (player)"
     Time: "/<LABEL> [time] (world)"
@@ -389,4 +421,5 @@ Messages:
     Back: "/<LABEL> (teleport|death)"
     CommandSpy: "/<LABEL> (player)"
     Disposal: "/<LABEL> (player)"
+    Sign: "/<LABEL> [message...]"
 language: "english"

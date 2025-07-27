@@ -6,7 +6,7 @@
 
     <groupId>me.testaccount666</groupId>
     <artifactId>ServerSystem</artifactId>
-    <version>3.0.0.${buildNumber}</version>
+    <version>3.1.0.${buildNumber}</version>
     <packaging>jar</packaging>
 
     <name>ServerSystem</name>
@@ -170,13 +170,13 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.21.6-R0.1-SNAPSHOT</version>
+            <version>1.21.8-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>ca.bkaw</groupId>
             <artifactId>paper-nms</artifactId>
-            <version>1.21.6-SNAPSHOT</version>
+            <version>1.21.8-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- C#-Style String interpolation -->

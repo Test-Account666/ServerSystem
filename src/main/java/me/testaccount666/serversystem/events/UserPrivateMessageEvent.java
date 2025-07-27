@@ -17,13 +17,16 @@ public class UserPrivateMessageEvent extends Event implements Cancellable {
     private final User _sender;
     @Getter
     private final Set<User> _recipients = new HashSet<>();
+    @Getter
+    private final String _message;
 
     @Getter
     @Setter
     private boolean _cancelled = false;
 
-    public UserPrivateMessageEvent(User sender, User... recipients) {
+    public UserPrivateMessageEvent(User sender, String message, User... recipients) {
         _sender = sender;
+        _message = message;
         _recipients.addAll(Set.of(recipients));
         _recipients.add(sender);
     }

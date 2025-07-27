@@ -36,3 +36,8 @@ DeveloperJoin:
   NotifyDeveloper:
     Enabled: true
     Description: "Notifies me, if you're running ServerSystem :)"
+UpdateChecker:
+  AutoUpdate: true
+  Type:
+    Value: MAIN
+    Description: "Where the plugin checks for updates. Currently available: Disabled, Hangar, Main (Main = My own server)"

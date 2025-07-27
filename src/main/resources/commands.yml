@@ -76,6 +76,9 @@ Commands:
       feed:
         Enabled: true
         Aliases: "feed"
+  hat:
+    Enabled: true
+    Aliases: "hat"
   seen:
     Enabled: true
     Aliases: "seen"
@@ -162,6 +165,9 @@ Commands:
       messagetoggle:
         Enabled: true
         Aliases: "msgtoggle"
+      socialspy:
+        Enabled: true
+        Aliases: "socialspy"
   unlimited:
     Enabled: true
     Aliases: "unlimited"
@@ -230,6 +236,9 @@ Commands:
   repair:
     Enabled: true
     Aliases: "repair"
+  rename:
+    Enabled: true
+    Aliases: "rename"
   ping:
     Enabled: true
     Aliases: "ping"
@@ -302,3 +311,13 @@ Commands:
   skull:
     Enabled: true
     Aliases: "skull"
+  sign:
+    Enabled: true
+    Aliases: "sign"
+    Variants:
+      unsign:
+        Enabled: true
+        Aliases: "unsign"
+  lightning:
+    Enabled: true
+    Aliases: "lightning, thor, smite"
