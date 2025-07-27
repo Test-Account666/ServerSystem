@@ -8,6 +8,7 @@ import me.testaccount666.serversystem.commands.executables.kit.manager.KitManage
 import me.testaccount666.serversystem.commands.executables.warp.manager.WarpManager;
 import me.testaccount666.serversystem.commands.management.CommandManager;
 import me.testaccount666.serversystem.listener.management.ListenerManager;
+import me.testaccount666.serversystem.managers.config.ConfigReader;
 import me.testaccount666.serversystem.managers.config.ConfigurationManager;
 import me.testaccount666.serversystem.managers.database.economy.AbstractEconomyDatabaseManager;
 import me.testaccount666.serversystem.managers.database.economy.MySqlEconomyDatabaseManager;
@@ -34,10 +35,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+//TODO: This class seems to be getting quite big again, I don't like it
 public final class ServerSystem extends JavaPlugin {
     public static final Version CURRENT_VERSION = new Version("3.1.0");
     public static ServerSystem Instance;
@@ -181,43 +184,83 @@ public final class ServerSystem extends JavaPlugin {
 
     private void startUpdateChecker() {
         var generalConfig = _configManager.getGeneralConfig();
+        var updateCheckerType = resolveUpdateCheckerType(generalConfig);
 
-        var typeString = generalConfig.getString("UpdateChecker.Type.Value");
-        if (typeString == null || typeString.isBlank()) typeString = "DISABLED";
-        var type = UpdateCheckerType.of(typeString);
-
-        if (type.isEmpty()) {
-            var availableTypes = Arrays.stream(UpdateCheckerType.values()).map(Enum::name).collect(Collectors.joining(", "));
-            if (availableTypes.startsWith(", ")) availableTypes = availableTypes.substring(2);
-            if (availableTypes.endsWith(", ")) availableTypes = availableTypes.substring(0, availableTypes.length() - 2);
-
-            getLog().warning("Updater type '${typeString}' not found. Available options: ${availableTypes}");
-            _updateChecker = UpdateCheckerType.DISABLED.getFactory().get();
+        if (updateCheckerType.isEmpty()) {
+            handleInvalidUpdateCheckerType(generalConfig);
             return;
         }
 
+        initializeUpdateChecker(updateCheckerType.get(), generalConfig);
+        scheduleUpdateChecks(generalConfig);
+    }
+
+    private Optional<UpdateCheckerType> resolveUpdateCheckerType(ConfigReader generalConfig) {
+        var typeString = generalConfig.getString("UpdateChecker.Type.Value");
+        if (typeString == null || typeString.isBlank()) typeString = "DISABLED";
+        return UpdateCheckerType.of(typeString);
+    }
+
+    private void handleInvalidUpdateCheckerType(ConfigReader generalConfig) {
+        var typeString = generalConfig.getString("UpdateChecker.Type.Value");
+        var availableTypes = formatAvailableUpdateCheckerTypes();
+
+        getLog().warning("Updater type '${typeString}' not found. Available options: ${availableTypes}");
+        _updateChecker = UpdateCheckerType.DISABLED.getFactory().get();
+    }
+
+    private String formatAvailableUpdateCheckerTypes() {
+        return Arrays.stream(UpdateCheckerType.values())
+                .map(Enum::name)
+                .collect(Collectors.joining(", "));
+    }
+
+    private void initializeUpdateChecker(UpdateCheckerType type, ConfigReader generalConfig) {
+        var autoUpdate = determineAutoUpdateSetting(generalConfig);
+
+        _updateChecker = type.getFactory().get();
+        _updateChecker.setAutoUpdate(autoUpdate);
+    }
+
+    private boolean determineAutoUpdateSetting(ConfigReader generalConfig) {
         var autoUpdate = generalConfig.getBoolean("UpdateChecker.AutoUpdate");
         if (Boolean.parseBoolean(System.getProperty("serversystem.disable-auto-download", "false"))) autoUpdate = false;
+        return autoUpdate;
+    }
 
-        _updateChecker = type.get().getFactory().get();
-        _updateChecker.setAutoUpdate(autoUpdate);
-
+    private void scheduleUpdateChecks(ConfigReader generalConfig) {
         var checkForUpdates = generalConfig.getBoolean("UpdateChecker.CheckForUpdates");
 
-        if (checkForUpdates) Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
-            _updateChecker.hasUpdate().exceptionally(throwable -> {
-                getLog().log(Level.WARNING, "Error checking for updates", throwable);
-                return false;
-            }).thenAccept(hasUpdate -> {
-                if (!hasUpdate) return;
-                _updateChecker.downloadUpdate().exceptionally(throwable -> {
-                    getLog().log(Level.WARNING, "Error downloading update", throwable);
-                    return false;
-                }).thenAccept(success -> {
-                    if (success) return;
-                    getLog().warning("Update-Download failed!");
-                });
-            });
-        }, 20L, 20L * 60 * 60); // Every 1 hour
+        if (!checkForUpdates) return;
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::performUpdateCheck, 20L, 20L * 60 * 60);
+    }
+
+    private void performUpdateCheck() {
+        _updateChecker.hasUpdate()
+                .exceptionally(this::handleUpdateCheckError)
+                .thenAccept(this::handleUpdateCheckResult);
+    }
+
+    private Boolean handleUpdateCheckError(Throwable throwable) {
+        getLog().log(Level.WARNING, "Error checking for updates", throwable);
+        return false;
+    }
+
+    private void handleUpdateCheckResult(Boolean hasUpdate) {
+        if (!hasUpdate) return;
+
+        _updateChecker.downloadUpdate()
+                .exceptionally(this::handleUpdateDownloadError)
+                .thenAccept(this::handleUpdateDownloadResult);
+    }
+
+    private Boolean handleUpdateDownloadError(Throwable throwable) {
+        getLog().log(Level.WARNING, "Error downloading update", throwable);
+        return false;
+    }
+
+    private void handleUpdateDownloadResult(Boolean success) {
+        if (success) return;
+        getLog().warning("Update-Download failed!");
     }
 }
