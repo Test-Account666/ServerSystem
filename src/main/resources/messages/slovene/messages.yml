@@ -274,6 +274,10 @@ Messages:
       Success:
         Self: "Prejel si komplet <Color:Highlight><KIT><Color:Message>."
         Other: "Dal si komplet <Color:Highlight><KIT> <Color:Message>igralcu <Color:Highlight><TARGET><Color:Message>."
+    Lightning:
+      NoTarget: "<Color:Error.Message>Ciljna lokacija ni najdena."
+      Success: "Strela je udarila na tvojo ciljno lokacijo."
+      TargetSuccess: "Strela je udarila na <Color:Highlight><TARGET>ovo <Color:Message>lokacijo."
     Language:
       Changed: "Spremenil si svoj jezik v <Color:Highlight><LANGUAGE><Color:Message>."
     Baltop:
@@ -368,6 +372,7 @@ Messages:
     CreateKit: "/<LABEL> [kit] (cooldown)"
     DeleteKit: "/<LABEL> [kit]"
     Language: "/<LABEL> [language]"
+    Lightning: "/<LABEL> (player) (visual)"
     Mute: "/<LABEL> [player] [duration] (reason...)"
     OfflineTeleport: "/<LABEL> [player]"
     Pay: "/<LABEL> [player] [amount]"

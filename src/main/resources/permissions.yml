@@ -413,6 +413,10 @@ Permissions:
       Use:
         Required: true
         Value: "serversystem.command.unsign.use"
+    Lightning:
+      Use:
+        Required: true
+        Value: "serversystem.admin.command.lightning.use"
   Chat:
     ColorChat:
       Required: true

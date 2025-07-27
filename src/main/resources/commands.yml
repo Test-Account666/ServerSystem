@@ -312,3 +312,6 @@ Commands:
       unsign:
         Enabled: true
         Aliases: "unsign"
+  lightning:
+    Enabled: true
+    Aliases: "lightning, thor, smite"

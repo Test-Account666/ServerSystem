@@ -274,6 +274,10 @@ Messages:
       Success:
         Self: "Du hast das Kit <Color:Highlight><KIT><Color:Message> erhalten."
         Other: "Du hast das Kit <Color:Highlight><KIT> <Color:Message>an <Color:Highlight><TARGET><Color:Message> gegeben."
+    Lightning:
+      NoTarget: "<Color:Error.Message>Kein gültiges Ziel gefunden."
+      Success: "Blitz schlug an deiner Zielposition ein."
+      TargetSuccess: "Blitz schlug an <Color:Highlight><TARGET>s <Color:Message>Position ein."
     Language:
       Changed: "Du hast deine Sprache zu <Color:Highlight><LANGUAGE><Color:Message> geändert."
     Sign:
@@ -368,6 +372,7 @@ Messages:
     CreateKit: "/<LABEL> [Kit] (Abklingzeit)"
     DeleteKit: "/<LABEL> [Kit]"
     Language: "/<LABEL> [Sprache]"
+    Lightning: "/<LABEL> (Spieler) (visual)"
     Mute: "/<LABEL> [Spieler] [Dauer] (Grund...)"
     OfflineTeleport: "/<LABEL> [Spieler]"
     Pay: "/<LABEL> [Spieler] [Betrag]"

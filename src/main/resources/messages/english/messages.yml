@@ -274,6 +274,10 @@ Messages:
       Success:
         Self: "You received the kit <Color:Highlight><KIT><Color:Message>."
         Other: "You gave the kit <Color:Highlight><KIT> <Color:Message>to <Color:Highlight><TARGET><Color:Message>."
+    Lightning:
+      NoTarget: "<Color:Error.Message>No valid target found."
+      Success: "Lightning struck at your target location."
+      TargetSuccess: "Lightning struck at <Color:Highlight><TARGET>'s <Color:Message>location."
     Language:
       Changed: "You changed your language to <Color:Highlight><LANGUAGE><Color:Message>."
     Sign:
@@ -368,6 +372,7 @@ Messages:
     CreateKit: "/<LABEL> [kit] (cooldown)"
     DeleteKit: "/<LABEL> [kit]"
     Language: "/<LABEL> [language]"
+    Lightning: "/<LABEL> (player) (visual)"
     Mute: "/<LABEL> [player] [duration] (reason...)"
     OfflineTeleport: "/<LABEL> [player]"
     Pay: "/<LABEL> [player] [amount]"
