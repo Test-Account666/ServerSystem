@@ -6,9 +6,13 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -33,6 +37,101 @@ class CommandTeleportTest {
 
     private CommandTeleport commandTeleport;
 
+    // Data provider for valid location parsing tests
+    static Stream<Arguments> validLocationTestCases() {
+        return Stream.of(
+                // Basic coordinates - should use player's current yaw/pitch
+                Arguments.of("shouldParseBasicCoordinates",
+                        new String[]{"100", "64", "200"},
+                        100.0, 64.0, 200.0, 90.0f, 45.0f, null, false),
+
+                // Coordinates with yaw - should use provided yaw, player's pitch
+                Arguments.of("shouldParseCoordinatesWithYaw",
+                        new String[]{"100", "64", "200", "180"},
+                        100.0, 64.0, 200.0, 180.0f, 45.0f, null, false),
+
+                // Coordinates with yaw and pitch - should use provided values
+                Arguments.of("shouldParseCoordinatesWithYawAndPitch",
+                        new String[]{"100", "64", "200", "180", "-30"},
+                        100.0, 64.0, 200.0, 180.0f, -30.0f, null, false),
+
+                // Coordinates with yaw, pitch and world - should use provided values and world
+                Arguments.of("shouldParseCoordinatesWithYawPitchAndWorld",
+                        new String[]{"100", "64", "200", "180", "-30", "nether"},
+                        100.0, 64.0, 200.0, 180.0f, -30.0f, "nether", true),
+
+                // Invalid yaw should fall back to player's yaw
+                Arguments.of("shouldHandleInvalidYawGracefully",
+                        new String[]{"100", "64", "200", "invalid_yaw"},
+                        100.0, 64.0, 200.0, 90.0f, 45.0f, null, false),
+
+                // Relative yaw with tilde - should use player's yaw
+                Arguments.of("shouldHandleRelativeYawWithTilde",
+                        new String[]{"100", "64", "200", "~"},
+                        100.0, 64.0, 200.0, 90.0f, 45.0f, null, false),
+
+                // Relative yaw with @ - should use execute location's yaw
+                Arguments.of("shouldHandleRelativeYawWithAt",
+                        new String[]{"100", "64", "200", "@"},
+                        100.0, 64.0, 200.0, 180.0f, 45.0f, null, false),
+
+                // Relative yaw with tilde offset - should add offset to player's yaw
+                Arguments.of("shouldHandleRelativeYawWithTildeOffset",
+                        new String[]{"100", "64", "200", "~45"},
+                        100.0, 64.0, 200.0, 135.0f, 45.0f, null, false),
+
+                // Relative yaw with @ offset - should add offset to execute location's yaw
+                Arguments.of("shouldHandleRelativeYawWithAtOffset",
+                        new String[]{"100", "64", "200", "@-90"},
+                        100.0, 64.0, 200.0, 90.0f, 45.0f, null, false),
+
+                // Relative pitch with tilde - should use player's pitch
+                Arguments.of("shouldHandleRelativePitchWithTilde",
+                        new String[]{"100", "64", "200", "0", "~"},
+                        100.0, 64.0, 200.0, 0.0f, 45.0f, null, false),
+
+                // Relative pitch with @ - should use execute location's pitch
+                Arguments.of("shouldHandleRelativePitchWithAt",
+                        new String[]{"100", "64", "200", "0", "@"},
+                        100.0, 64.0, 200.0, 0.0f, -15.0f, null, false),
+
+                // Relative pitch with tilde offset - should add offset to player's pitch
+                Arguments.of("shouldHandleRelativePitchWithTildeOffset",
+                        new String[]{"100", "64", "200", "0", "~-30"},
+                        100.0, 64.0, 200.0, 0.0f, 15.0f, null, false),
+
+                // Relative pitch with @ offset - should add offset to execute location's pitch
+                Arguments.of("shouldHandleRelativePitchWithAtOffset",
+                        new String[]{"100", "64", "200", "0", "@30"},
+                        100.0, 64.0, 200.0, 0.0f, 15.0f, null, false),
+
+                // Both relative yaw and pitch
+                Arguments.of("shouldHandleBothRelativeYawAndPitch",
+                        new String[]{"100", "64", "200", "~90", "@15"},
+                        100.0, 64.0, 200.0, 180.0f, 0.0f, null, false)
+        );
+    }
+
+    // Data provider for relative coordinate tests
+    static Stream<Arguments> relativeCoordinateTestCases() {
+        return Stream.of(
+                Arguments.of("shouldHandleRelativeCoordinates",
+                        new String[]{"~", "~5", "~-10"},
+                        10.0, 75.0, 0.0) // Player's current position (10, 70, 10) with offsets (0, +5, -10)
+        );
+    }
+
+    // Data provider for error cases
+    static Stream<Arguments> errorTestCases() {
+        return Stream.of(
+                Arguments.of("shouldReturnEmptyForInsufficientArguments",
+                        new String[]{"100", "64"}), // Missing Z coordinate
+
+                Arguments.of("shouldReturnEmptyForInvalidCoordinates",
+                        new String[]{"invalid", "64", "200"}) // Invalid X coordinate
+        );
+    }
+
     @SneakyThrows
     @BeforeEach
     void setUp() {
@@ -55,217 +154,50 @@ class CommandTeleportTest {
         }
     }
 
-    @Test
-    void extractLocationWithRotation_shouldParseBasicCoordinates() {
-        var arguments = new String[]{"100", "64", "200"};
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("validLocationTestCases")
+    void extractLocationWithRotation_validCases(String testName, String[] arguments,
+                                                double expectedX, double expectedY, double expectedZ,
+                                                float expectedYaw, float expectedPitch,
+                                                String worldName, boolean shouldMockWorld) {
+        // Setup world mock if needed
+        World targetWorld = null;
+        if (shouldMockWorld && worldName != null) {
+            targetWorld = mock(World.class);
+            when(mockServer.getWorld(worldName)).thenReturn(targetWorld);
+        }
 
         var result = commandTeleport.extractLocationWithRotation(mockExecuteLocation, mockPlayer, arguments, 0);
 
-        assertTrue(result.isPresent(), "Location should be present");
+        assertTrue(result.isPresent(), "Location should be present for " + testName);
         var location = result.get();
-        assertEquals(100.0, location.getX(), 0.001);
-        assertEquals(64.0, location.getY(), 0.001);
-        assertEquals(200.0, location.getZ(), 0.001);
-        assertEquals(90.0f, location.getYaw(), 0.001); // Should use player's current yaw
-        assertEquals(45.0f, location.getPitch(), 0.001); // Should use player's current pitch
+        assertEquals(expectedX, location.getX(), 0.001, "X coordinate mismatch for " + testName);
+        assertEquals(expectedY, location.getY(), 0.001, "Y coordinate mismatch for " + testName);
+        assertEquals(expectedZ, location.getZ(), 0.001, "Z coordinate mismatch for " + testName);
+        assertEquals(expectedYaw, location.getYaw(), 0.001, "Yaw mismatch for " + testName);
+        assertEquals(expectedPitch, location.getPitch(), 0.001, "Pitch mismatch for " + testName);
+
+        if (targetWorld != null) assertEquals(targetWorld, location.getWorld(), "World mismatch for " + testName);
     }
 
-    @Test
-    void extractLocationWithRotation_shouldParseCoordinatesWithYaw() {
-        var arguments = new String[]{"100", "64", "200", "180"};
-
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("relativeCoordinateTestCases")
+    void extractLocationWithRotation_relativeCoordinates(String testName, String[] arguments,
+                                                         double expectedX, double expectedY, double expectedZ) {
         var result = commandTeleport.extractLocationWithRotation(mockExecuteLocation, mockPlayer, arguments, 0);
 
-        assertTrue(result.isPresent(), "Location should be present");
+        assertTrue(result.isPresent(), "Location should be present for " + testName);
         var location = result.get();
-        assertEquals(100.0, location.getX(), 0.001);
-        assertEquals(64.0, location.getY(), 0.001);
-        assertEquals(200.0, location.getZ(), 0.001);
-        assertEquals(180.0f, location.getYaw(), 0.001); // Should use provided yaw
-        assertEquals(45.0f, location.getPitch(), 0.001); // Should use player's current pitch
+        assertEquals(expectedX, location.getX(), 0.001, "X coordinate mismatch for " + testName);
+        assertEquals(expectedY, location.getY(), 0.001, "Y coordinate mismatch for " + testName);
+        assertEquals(expectedZ, location.getZ(), 0.001, "Z coordinate mismatch for " + testName);
     }
 
-    @Test
-    void extractLocationWithRotation_shouldParseCoordinatesWithYawAndPitch() {
-        var arguments = new String[]{"100", "64", "200", "180", "-30"};
-
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("errorTestCases")
+    void extractLocationWithRotation_errorCases(String testName, String[] arguments) {
         var result = commandTeleport.extractLocationWithRotation(mockExecuteLocation, mockPlayer, arguments, 0);
 
-        assertTrue(result.isPresent(), "Location should be present");
-        var location = result.get();
-        assertEquals(100.0, location.getX(), 0.001);
-        assertEquals(64.0, location.getY(), 0.001);
-        assertEquals(200.0, location.getZ(), 0.001);
-        assertEquals(180.0f, location.getYaw(), 0.001); // Should use provided yaw
-        assertEquals(-30.0f, location.getPitch(), 0.001); // Should use provided pitch
-    }
-
-    @Test
-    void extractLocationWithRotation_shouldParseCoordinatesWithYawPitchAndWorld() {
-        var targetWorld = mock(World.class);
-        when(mockServer.getWorld("nether")).thenReturn(targetWorld);
-
-        var arguments = new String[]{"100", "64", "200", "180", "-30", "nether"};
-
-        var result = commandTeleport.extractLocationWithRotation(mockExecuteLocation, mockPlayer, arguments, 0);
-
-        assertTrue(result.isPresent(), "Location should be present");
-        var location = result.get();
-        assertEquals(100.0, location.getX(), 0.001);
-        assertEquals(64.0, location.getY(), 0.001);
-        assertEquals(200.0, location.getZ(), 0.001);
-        assertEquals(180.0f, location.getYaw(), 0.001);
-        assertEquals(-30.0f, location.getPitch(), 0.001);
-        assertEquals(targetWorld, location.getWorld());
-    }
-
-    @Test
-    void extractLocationWithRotation_shouldHandleRelativeCoordinates() {
-        var arguments = new String[]{"~", "~5", "~-10"};
-
-        var result = commandTeleport.extractLocationWithRotation(mockExecuteLocation, mockPlayer, arguments, 0);
-
-        assertTrue(result.isPresent(), "Location should be present");
-        var location = result.get();
-        assertEquals(10.0, location.getX(), 0.001); // Player's current X
-        assertEquals(75.0, location.getY(), 0.001); // Player's current Y + 5
-        assertEquals(0.0, location.getZ(), 0.001); // Player's current Z - 10
-    }
-
-    @Test
-    void extractLocationWithRotation_shouldReturnEmptyForInsufficientArguments() {
-        var arguments = new String[]{"100", "64"}; // Missing Z coordinate
-
-        var result = commandTeleport.extractLocationWithRotation(mockExecuteLocation, mockPlayer, arguments, 0);
-
-        assertFalse(result.isPresent(), "Location should not be present with insufficient arguments");
-    }
-
-    @Test
-    void extractLocationWithRotation_shouldReturnEmptyForInvalidCoordinates() {
-        var arguments = new String[]{"invalid", "64", "200"};
-
-        var result = commandTeleport.extractLocationWithRotation(mockExecuteLocation, mockPlayer, arguments, 0);
-
-        assertFalse(result.isPresent(), "Location should not be present with invalid coordinates");
-    }
-
-    @Test
-    void extractLocationWithRotation_shouldHandleInvalidYawGracefully() {
-        var arguments = new String[]{"100", "64", "200", "invalid_yaw"};
-
-        var result = commandTeleport.extractLocationWithRotation(mockExecuteLocation, mockPlayer, arguments, 0);
-
-        assertTrue(result.isPresent(), "Location should be present even with invalid yaw");
-        var location = result.get();
-        assertEquals(90.0f, location.getYaw(), 0.001); // Should fall back to player's current yaw
-    }
-
-    @Test
-    void extractLocationWithRotation_shouldHandleRelativeYawWithTilde() {
-        var arguments = new String[]{"100", "64", "200", "~"};
-
-        var result = commandTeleport.extractLocationWithRotation(mockExecuteLocation, mockPlayer, arguments, 0);
-
-        assertTrue(result.isPresent(), "Location should be present");
-        var location = result.get();
-        assertEquals(90.0f, location.getYaw(), 0.001); // Should use target's (player's) current yaw
-        assertEquals(45.0f, location.getPitch(), 0.001); // Should use target's current pitch
-    }
-
-    @Test
-    void extractLocationWithRotation_shouldHandleRelativeYawWithAt() {
-        var arguments = new String[]{"100", "64", "200", "@"};
-
-        var result = commandTeleport.extractLocationWithRotation(mockExecuteLocation, mockPlayer, arguments, 0);
-
-        assertTrue(result.isPresent(), "Location should be present");
-        var location = result.get();
-        assertEquals(180.0f, location.getYaw(), 0.001); // Should use sender's (execute location) yaw
-        assertEquals(45.0f, location.getPitch(), 0.001); // Should use target's current pitch
-    }
-
-    @Test
-    void extractLocationWithRotation_shouldHandleRelativeYawWithTildeOffset() {
-        var arguments = new String[]{"100", "64", "200", "~45"};
-
-        var result = commandTeleport.extractLocationWithRotation(mockExecuteLocation, mockPlayer, arguments, 0);
-
-        assertTrue(result.isPresent(), "Location should be present");
-        var location = result.get();
-        assertEquals(135.0f, location.getYaw(), 0.001); // Target's yaw (90) + offset (45)
-        assertEquals(45.0f, location.getPitch(), 0.001); // Should use target's current pitch
-    }
-
-    @Test
-    void extractLocationWithRotation_shouldHandleRelativeYawWithAtOffset() {
-        var arguments = new String[]{"100", "64", "200", "@-90"};
-
-        var result = commandTeleport.extractLocationWithRotation(mockExecuteLocation, mockPlayer, arguments, 0);
-
-        assertTrue(result.isPresent(), "Location should be present");
-        var location = result.get();
-        assertEquals(90.0f, location.getYaw(), 0.001); // Sender's yaw (180) + offset (-90)
-        assertEquals(45.0f, location.getPitch(), 0.001); // Should use target's current pitch
-    }
-
-    @Test
-    void extractLocationWithRotation_shouldHandleRelativePitchWithTilde() {
-        var arguments = new String[]{"100", "64", "200", "0", "~"};
-
-        var result = commandTeleport.extractLocationWithRotation(mockExecuteLocation, mockPlayer, arguments, 0);
-
-        assertTrue(result.isPresent(), "Location should be present");
-        var location = result.get();
-        assertEquals(0.0f, location.getYaw(), 0.001); // Should use provided absolute yaw
-        assertEquals(45.0f, location.getPitch(), 0.001); // Should use target's current pitch
-    }
-
-    @Test
-    void extractLocationWithRotation_shouldHandleRelativePitchWithAt() {
-        var arguments = new String[]{"100", "64", "200", "0", "@"};
-
-        var result = commandTeleport.extractLocationWithRotation(mockExecuteLocation, mockPlayer, arguments, 0);
-
-        assertTrue(result.isPresent(), "Location should be present");
-        var location = result.get();
-        assertEquals(0.0f, location.getYaw(), 0.001); // Should use provided absolute yaw
-        assertEquals(-15.0f, location.getPitch(), 0.001); // Should use sender's pitch
-    }
-
-    @Test
-    void extractLocationWithRotation_shouldHandleRelativePitchWithTildeOffset() {
-        var arguments = new String[]{"100", "64", "200", "0", "~-30"};
-
-        var result = commandTeleport.extractLocationWithRotation(mockExecuteLocation, mockPlayer, arguments, 0);
-
-        assertTrue(result.isPresent(), "Location should be present");
-        var location = result.get();
-        assertEquals(0.0f, location.getYaw(), 0.001); // Should use provided absolute yaw
-        assertEquals(15.0f, location.getPitch(), 0.001); // Target's pitch (45) + offset (-30)
-    }
-
-    @Test
-    void extractLocationWithRotation_shouldHandleRelativePitchWithAtOffset() {
-        var arguments = new String[]{"100", "64", "200", "0", "@30"};
-
-        var result = commandTeleport.extractLocationWithRotation(mockExecuteLocation, mockPlayer, arguments, 0);
-
-        assertTrue(result.isPresent(), "Location should be present");
-        var location = result.get();
-        assertEquals(0.0f, location.getYaw(), 0.001); // Should use provided absolute yaw
-        assertEquals(15.0f, location.getPitch(), 0.001); // Sender's pitch (-15) + offset (30)
-    }
-
-    @Test
-    void extractLocationWithRotation_shouldHandleBothRelativeYawAndPitch() {
-        var arguments = new String[]{"100", "64", "200", "~90", "@15"};
-
-        var result = commandTeleport.extractLocationWithRotation(mockExecuteLocation, mockPlayer, arguments, 0);
-
-        assertTrue(result.isPresent(), "Location should be present");
-        var location = result.get();
-        assertEquals(180.0f, location.getYaw(), 0.001); // Target's yaw (90) + offset (90)
-        assertEquals(0.0f, location.getPitch(), 0.001); // Sender's pitch (-15) + offset (15)
+        assertFalse(result.isPresent(), "Location should not be present for " + testName);
     }
 }

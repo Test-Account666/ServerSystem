@@ -1,46 +1,47 @@
 package me.testaccount666.serversystem.utils;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ChatColorTest {
 
-    @Test
-    void translateColor_shouldTranslateAmpersandCodes() {
-        var input = "&aHello &bWorld";
-        var result = ChatColor.translateColor(input);
-
-        assertTrue(result.contains("§a"));
-        assertTrue(result.contains("§b"));
-        assertFalse(result.contains("&a"));
-        assertFalse(result.contains("&b"));
+    @ParameterizedTest
+    @CsvSource({
+        "'&aHello &bWorld', '§a', '§b', '&a', '&b'",
+        "'%aHello %bWorld', '§a', '§b', '%a', '%b'"
+    })
+    void translateColorCodes_shouldTranslateBasicCodes(String input, String expectedColor1, String expectedColor2, String originalCode1, String originalCode2) {
+        var result = input.startsWith("%") ? 
+            ChatColor.translateAlternateColorCodes('%', input) : 
+            ChatColor.translateColor(input);
+        
+        assertTrue(result.contains(expectedColor1));
+        assertTrue(result.contains(expectedColor2));
+        assertFalse(result.contains(originalCode1));
+        assertFalse(result.contains(originalCode2));
     }
 
-    @Test
-    void translateColor_shouldHandleNullAndEmpty() {
-        assertEquals("", ChatColor.translateColor(null));
-        assertEquals("", ChatColor.translateColor(""));
-        assertEquals("plain text", ChatColor.translateColor("plain text"));
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"plain text"})
+    void translateColor_shouldHandleNullEmptyAndPlainText(String input) {
+        var expected = input == null || input.isEmpty()? "" : input;
+        assertEquals(expected, ChatColor.translateColor(input));
     }
 
-    @Test
-    void translateAlternateColorCodes_shouldHandleNullAndEmpty() {
-        assertEquals("", ChatColor.translateAlternateColorCodes('&', null));
-        assertEquals("", ChatColor.translateAlternateColorCodes('&', ""));
-        assertEquals("plain text", ChatColor.translateAlternateColorCodes('&', "plain text"));
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"plain text"})
+    void translateAlternateColorCodes_shouldHandleNullEmptyAndPlainText(String input) {
+        var expected = input == null || input.isEmpty()? "" : input;
+        assertEquals(expected, ChatColor.translateAlternateColorCodes('&', input));
     }
 
-    @Test
-    void translateAlternateColorCodes_shouldTranslateCustomColorChar() {
-        var input = "%aHello %bWorld";
-        var result = ChatColor.translateAlternateColorCodes('%', input);
-
-        assertTrue(result.contains("§a"));
-        assertTrue(result.contains("§b"));
-        assertFalse(result.contains("%a"));
-        assertFalse(result.contains("%b"));
-    }
 
     @Test
     void translateAlternateColorCodes_shouldProcessHexColors() {
@@ -85,11 +86,12 @@ class ChatColorTest {
         assertTrue(result.contains("§x"));
     }
 
-    @Test
-    void replaceHexColor_shouldHandleNullAndEmpty() {
-        assertEquals("", ChatColor.replaceHexColor('&', null));
-        assertEquals("", ChatColor.replaceHexColor('&', ""));
-        assertEquals("plain text", ChatColor.replaceHexColor('&', "plain text"));
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"plain text"})
+    void replaceHexColor_shouldHandleNullEmptyAndPlainText(String input) {
+        var expected = input == null || input.isEmpty()? "" : input;
+        assertEquals(expected, ChatColor.replaceHexColor('&', input));
     }
 
     @Test
@@ -130,16 +132,16 @@ class ChatColorTest {
         assertTrue(result.contains("Red text"));
     }
 
-    @Test
-    void convertHexToMinecraft_shouldHandleNullAndInvalid() {
-        assertEquals("", ChatColor.convertHexToMinecraft(null));
-        assertEquals("", ChatColor.convertHexToMinecraft(""));
-        assertEquals("", ChatColor.convertHexToMinecraft("FF00")); // Too short
-        assertEquals("", ChatColor.convertHexToMinecraft("FF0000AA")); // Too long
-
-        // Invalid characters are processed as-is (no validation)
-        var invalidResult = ChatColor.convertHexToMinecraft("GGGGGG");
-        assertEquals("§x§g§g§g§g§g§g", invalidResult);
+    @ParameterizedTest
+    @CsvSource({
+        ", ''",
+        "'', ''",
+        "'FF00', ''",
+        "'FF0000AA', ''",
+        "'GGGGGG', '§x§g§g§g§g§g§g'"
+    })
+    void convertHexToMinecraft_shouldHandleNullAndInvalid(String input, String expected) {
+        assertEquals(expected, ChatColor.convertHexToMinecraft(input));
     }
 
     @Test
@@ -170,49 +172,18 @@ class ChatColorTest {
         assertFalse(upperResult.contains("§F"));
     }
 
-    @Test
-    void stripColor_shouldHandleNull() {
-        assertEquals("", ChatColor.stripColor(null));
-    }
-
-    @Test
-    void stripColor_shouldRemoveColorCodes() {
-        var input = "§aHello §bWorld §cTest";
-        var result = ChatColor.stripColor(input);
-
-        assertEquals("Hello World Test", result);
-        assertFalse(result.contains("§"));
-    }
-
-    @Test
-    void stripColor_shouldRemoveFormattingCodes() {
-        var input = "§lBold §nUnderline §oItalic §rReset";
-        var result = ChatColor.stripColor(input);
-
-        assertEquals("Bold Underline Italic Reset", result);
-        assertFalse(result.contains("§"));
-    }
-
-    @Test
-    void stripColor_shouldHandlePlainText() {
-        var input = "Plain text without colors";
-        var result = ChatColor.stripColor(input);
-
-        assertEquals(input, result);
-    }
-
-    @Test
-    void stripColor_shouldHandleEmptyString() {
-        assertEquals("", ChatColor.stripColor(""));
-    }
-
-    @Test
-    void stripColor_shouldHandleMixedContent() {
-        var input = "§aColored §btext §rwith §lformatting and plain text";
-        var result = ChatColor.stripColor(input);
-
-        assertEquals("Colored text with formatting and plain text", result);
-        assertFalse(result.contains("§"));
+    @ParameterizedTest
+    @CsvSource({
+            ", ''",
+            "'', ''",
+            "'Plain text without colors', 'Plain text without colors'",
+            "'§aHello §bWorld §cTest', 'Hello World Test'",
+            "'§lBold §nUnderline §oItalic §rReset', 'Bold Underline Italic Reset'",
+            "'§aColored §btext §rwith §lformatting and plain text', 'Colored text with formatting and plain text'"
+    })
+    void stripColor_shouldHandleVariousInputs(String input, String expected) {
+        assertEquals(expected, ChatColor.stripColor(input));
+        if (input != null && !input.isEmpty() && expected != null && !expected.isEmpty()) assertFalse(ChatColor.stripColor(input).contains("§"));
     }
 
     @Test

@@ -246,7 +246,7 @@ public final class ServerSystem extends JavaPlugin {
         return false;
     }
 
-    private void handleUpdateCheckResult(Boolean hasUpdate) {
+    private void handleUpdateCheckResult(boolean hasUpdate) {
         if (!hasUpdate) return;
 
         _updateChecker.downloadUpdate()
@@ -259,7 +259,7 @@ public final class ServerSystem extends JavaPlugin {
         return false;
     }
 
-    private void handleUpdateDownloadResult(Boolean success) {
+    private void handleUpdateDownloadResult(boolean success) {
         if (success) return;
         getLog().warning("Update-Download failed!");
     }
