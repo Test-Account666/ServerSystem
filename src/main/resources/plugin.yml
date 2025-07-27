@@ -4,9 +4,10 @@ main: me.testaccount666.serversystem.ServerSystem
 api-version: '1.21'
 authors: [ TestAccount666 ]
 softdepend:
-  - Vault
   - NBTAPI
   - PlaceholderAPI
+loadbefore:
+  - Vault
 libraries:
   - io.github.classgraph:classgraph:4.8.180
   - net.bytebuddy:byte-buddy:1.17.5
