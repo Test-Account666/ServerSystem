@@ -225,20 +225,21 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
             case "privatemessage" -> "PrivateMessage";
             case "reply" -> "Reply";
             case "messagetoggle" -> "MessageToggle";
+            case "socialspy" -> "SocialSpy";
             default -> throw new IllegalStateException("(CommandPrivateMessage) Unexpected value: ${commandName}");
         };
     }
 
     @Override
     public boolean hasCommandAccess(Player player, Command command) {
-        if (command.getName().equalsIgnoreCase("privatemessage")) return PermissionManager.hasCommandPermission(player, "PrivateMessage.Use", false);
+        var permissionPath = switch (command.getName().toLowerCase()) {
+            case "privatemessage" -> "PrivateMessage.Use";
+            case "reply" -> "PrivateMessage.Use";
+            case "messagetoggle" -> "PrivateMessage.Toggle.Use";
+            case "socialspy" -> "SocialSpy.Use";
+            default -> throw new IllegalStateException("(CommandPrivateMessage) Unexpected value: ${command.getName().toLowerCase()}");
+        };
 
-        if (command.getName().equalsIgnoreCase("reply")) return PermissionManager.hasCommandPermission(player, "PrivateMessage.Use", false);
-
-        if (command.getName().equalsIgnoreCase("messagetoggle"))
-            return PermissionManager.hasCommandPermission(player, "PrivateMessage.Toggle.Use", false);
-
-        return false;
-
+        return PermissionManager.hasCommandPermission(player, permissionPath, false);
     }
 }

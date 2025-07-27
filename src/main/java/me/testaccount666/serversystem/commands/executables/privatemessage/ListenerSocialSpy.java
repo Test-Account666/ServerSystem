@@ -27,13 +27,15 @@ public class ListenerSocialSpy implements Listener {
             var user = (User) cachedUser.getOfflineUser();
             if (!user.isSocialSpyEnabled()) return;
 
-            var target = event.getRecipients().stream().findFirst();
+            var target = event.getRecipients().stream()
+                    .filter(recipient -> !recipient.equals(event.getSender()))
+                    .findFirst();
             if (target.isEmpty()) return;
 
             var senderName = event.getSender().getName().get();
             var targetName = target.get().getName().get();
 
-            command("SocialSpy.Format", user).sender(senderName).target(targetName)
+            command("SocialSpy.Format", user).sender(senderName).target(targetName).prefix(false)
                     .postModifier(message -> message.replace("<MESSAGE>", event.getMessage())).build();
         });
     }

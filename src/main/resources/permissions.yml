@@ -271,13 +271,13 @@ Permissions:
         Other:
           Required: true
           Value: "serversystem.command.messagetoggle.other"
-      SocialSpy:
-        Use:
-          Required: true
-          Value: "serversystem.moderation.command.socialspy.use"
-        Other:
-          Required: true
-          Value: "serversystem.moderation.command.socialspy.other"
+    SocialSpy:
+      Use:
+        Required: true
+        Value: "serversystem.moderation.command.socialspy.use"
+      Other:
+        Required: true
+        Value: "serversystem.moderation.command.socialspy.other"
     Unlimited:
       Use:
         Required: true
