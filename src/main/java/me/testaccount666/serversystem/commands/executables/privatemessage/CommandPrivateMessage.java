@@ -20,23 +20,52 @@ import java.util.stream.IntStream;
 import static me.testaccount666.serversystem.utils.MessageBuilder.command;
 import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 
-@ServerSystemCommand(name = "privatemessage", variants = {"reply", "messagetoggle"})
+@ServerSystemCommand(name = "privatemessage", variants = {"reply", "messagetoggle", "socialspy"})
 public class CommandPrivateMessage extends AbstractServerSystemCommand {
     private String _privateMessageCommand = null;
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        if (command.getName().equalsIgnoreCase("messagetoggle")) {
-            handleMessageToggleCommand(commandSender, command, label, arguments);
+        var commandName = command.getName().toLowerCase();
+
+        switch (commandName) {
+            case "socialspy" -> handleSocialSpyCommand(commandSender, command, label, arguments);
+            case "messagetoggle" -> handleMessageToggleCommand(commandSender, command, label, arguments);
+            case "privatemessage" -> handlePrivateMessageCommand(commandSender, command, label, arguments);
+            default -> handleReplyCommand(commandSender, command, label, arguments);
+        }
+    }
+
+    private void handleSocialSpyCommand(User commandSender, Command command, String label, String... arguments) {
+        if (!checkBasePermission(commandSender, "SocialSpy.Use")) return;
+        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments)) return;
+
+        var targetUserOptional = getTargetUser(commandSender, arguments);
+        if (targetUserOptional.isEmpty()) {
+            general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;
         }
 
-        if (command.getName().equalsIgnoreCase("privatemessage")) {
-            handlePrivateMessageCommand(commandSender, command, label, arguments);
-            return;
-        }
+        var targetUser = targetUserOptional.get();
+        var targetPlayer = targetUser.getPlayer();
 
-        handleReplyCommand(commandSender, command, label, arguments);
+        var isSelf = targetUser == commandSender;
+
+        if (!isSelf && !checkOtherPermission(commandSender, "SocialSpy.Other", targetPlayer.getName())) return;
+
+        var isEnabled = !targetUser.isSocialSpyEnabled();
+
+        var messagePath = isSelf? "SocialSpy.Success" : "SocialSpy.SuccessOther";
+
+        messagePath += isEnabled? ".Enabled" : ".Disabled";
+
+        targetUser.setSocialSpyEnabled(isEnabled);
+        targetUser.save();
+
+        command(messagePath, commandSender).target(targetPlayer.getName()).build();
+
+        if (isSelf) return;
+        command("SocialSpy.Success" + (isEnabled? "Enabled" : "Disabled"), targetUser).build();
     }
 
     private void handleMessageToggleCommand(User commandSender, Command command, String label, String... arguments) {
@@ -151,7 +180,7 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
             return;
         }
 
-        var messageEvent = new UserPrivateMessageEvent(commandSender, targetUser);
+        var messageEvent = new UserPrivateMessageEvent(commandSender, message, targetUser);
         Bukkit.getPluginManager().callEvent(messageEvent);
         if (messageEvent.isCancelled()) return;
 

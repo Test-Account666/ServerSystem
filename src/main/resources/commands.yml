@@ -165,6 +165,9 @@ Commands:
       messagetoggle:
         Enabled: true
         Aliases: "msgtoggle"
+      socialspy:
+        Enabled: true
+        Aliases: "socialspy"
   unlimited:
     Enabled: true
     Aliases: "unlimited"

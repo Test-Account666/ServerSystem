@@ -147,6 +147,14 @@ Messages:
       SuccessOther:
         Enabled: "<Color:Highlight><TARGET> <Color:Message>akzeptiert jetzt private Nachrichten."
         Disabled: "<Color:Highlight><TARGET> <Color:Message>akzeptiert keine privaten Nachrichten mehr."
+    SocialSpy:
+      Success:
+        Enabled: "SocialSpy wurde aktiviert."
+        Disabled: "SocialSpy wurde deaktiviert."
+      SuccessOther:
+        Enabled: "SocialSpy wurde für <Color:Highlight><TARGET><Color:Message> aktiviert."
+        Disabled: "SocialSpy wurde für <Color:Highlight><TARGET><Color:Message> deaktiviert."
+      Format: "<Color:Prefix>SocialSpy <Color:Separators>» <Color:Highlight><SENDER> <Color:Message>an <Color:Highlight><TARGET><Color:Separators>: <Color:Message><MESSAGE>"
     Unlimited:
       Success:
         Enabled: "Der Gegenstand in deiner Hand ist jetzt unbegrenzt."
@@ -382,6 +390,7 @@ Messages:
     Ping: "/<LABEL> (Spieler)"
     PrivateMessage: "/<LABEL> [Spieler] [Nachricht...]"
     MessageToggle: "/<LABEL> (Spieler)"
+    SocialSpy: "/<LABEL> (Spieler)"
     Reply: "/<LABEL> [Nachricht...]"
     Rename: "/<LABEL> [Name...]"
     Repair: "/<LABEL> (all|hand|offhand|armor|inventory)"

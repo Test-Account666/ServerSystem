@@ -147,6 +147,14 @@ Messages:
       SuccessOther:
         Enabled: "<Color:Highlight><TARGET> <Color:Message>sedaj sprejema zasebna sporočila."
         Disabled: "<Color:Highlight><TARGET> <Color:Message>ne sprejema več zasebnih sporočil."
+    SocialSpy:
+      Success:
+        Enabled: "SocialSpy je bil omogočen."
+        Disabled: "SocialSpy je bil onemogočen."
+      SuccessOther:
+        Enabled: "SocialSpy je bil omogočen za <Color:Highlight><TARGET><Color:Message>."
+        Disabled: "SocialSpy je bil onemogočen za <Color:Highlight><TARGET><Color:Message>."
+      Format: "<Color:Prefix>SocialSpy <Color:Separators>» <Color:Highlight><SENDER> <Color:Message>za <Color:Highlight><TARGET><Color:Separators>: <Color:Message><MESSAGE>"
     Unlimited:
       Success:
         Enabled: "Predmet v tvoji roki je sedaj neomejen."
@@ -382,6 +390,7 @@ Messages:
     Ping: "/<LABEL> (player)"
     PrivateMessage: "/<LABEL> [player] [message...]"
     MessageToggle: "/<LABEL> (player)"
+    SocialSpy: "/<LABEL> (player)"
     Reply: "/<LABEL> [message...]"
     Rename: "/<LABEL> [name...]"
     Repair: "/<LABEL> (all|hand|offhand|armor|inventory)"
