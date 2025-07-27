@@ -65,7 +65,7 @@ public class CommandPrivateMessage extends AbstractServerSystemCommand {
         command(messagePath, commandSender).target(targetPlayer.getName()).build();
 
         if (isSelf) return;
-        command("SocialSpy.Success" + (isEnabled? "Enabled" : "Disabled"), targetUser).build();
+        command("SocialSpy.Success." + (isEnabled? "Enabled" : "Disabled"), targetUser).build();
     }
 
     private void handleMessageToggleCommand(User commandSender, Command command, String label, String... arguments) {
