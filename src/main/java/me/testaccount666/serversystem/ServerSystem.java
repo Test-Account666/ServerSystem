@@ -39,7 +39,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public final class ServerSystem extends JavaPlugin {
-    public final static Version CURRENT_VERSION = new Version("3.1.0");
+    public static final Version CURRENT_VERSION = new Version("3.1.0");
     public static ServerSystem Instance;
     @Getter
     private static Logger _Log;
