@@ -1,6 +1,7 @@
 package me.testaccount666.serversystem;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 import me.testaccount666.migration.LegacyDataMigrator;
 import me.testaccount666.serversystem.clickablesigns.SignManager;
 import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager;
@@ -16,6 +17,8 @@ import me.testaccount666.serversystem.managers.database.moderation.MySqlModerati
 import me.testaccount666.serversystem.managers.database.moderation.SqliteModerationDatabaseManager;
 import me.testaccount666.serversystem.placeholderapi.PlaceholderApiSupport;
 import me.testaccount666.serversystem.placeholderapi.PlaceholderManager;
+import me.testaccount666.serversystem.updates.AbstractUpdateChecker;
+import me.testaccount666.serversystem.updates.UpdateCheckerType;
 import me.testaccount666.serversystem.userdata.CachedUser;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.UserManager;
@@ -30,11 +33,13 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public final class ServerSystem extends JavaPlugin {
-    private final static int _CURRENT_VERSION = 300;
+    public final static Version CURRENT_VERSION = new Version("3.1.0");
     public static ServerSystem Instance;
     @Getter
     private static Logger _Log;
@@ -61,6 +66,8 @@ public final class ServerSystem extends JavaPlugin {
     private KitManager _kitManager;
     @Getter
     private SignManager _signManager;
+    @Getter
+    private AbstractUpdateChecker _updateChecker;
 
     public static Version getServerVersion() {
         var version = Bukkit.getVersion();
@@ -72,6 +79,7 @@ public final class ServerSystem extends JavaPlugin {
         return new Version(version);
     }
 
+    @SneakyThrows
     @Override
     public void onEnable() {
         Instance = this;
@@ -85,7 +93,7 @@ public final class ServerSystem extends JavaPlugin {
 
         var previousVersionFile = new File(getDataFolder(), "previousVersion.yml");
         var previousVersionConfig = YamlConfiguration.loadConfiguration(previousVersionFile);
-        previousVersionConfig.set("previousVersion", _CURRENT_VERSION);
+        previousVersionConfig.set("previousVersion", CURRENT_VERSION.toString());
         try {
             previousVersionConfig.save(previousVersionFile);
         } catch (IOException exception) {
@@ -99,6 +107,8 @@ public final class ServerSystem extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
+
+        startUpdateChecker();
 
         Bukkit.getScheduler().runTaskLater(this, migrator::migrateLegacyData, 1L);
 
@@ -167,5 +177,47 @@ public final class ServerSystem extends JavaPlugin {
 
     private void saveAllUsers() {
         _userManager.getCachedUsers().stream().map(CachedUser::getOfflineUser).forEach(OfflineUser::save);
+    }
+
+    private void startUpdateChecker() {
+        var generalConfig = _configManager.getGeneralConfig();
+
+        var typeString = generalConfig.getString("UpdateChecker.Type.Value");
+        if (typeString == null || typeString.isBlank()) typeString = "DISABLED";
+        var type = UpdateCheckerType.of(typeString);
+
+        if (type.isEmpty()) {
+            var availableTypes = Arrays.stream(UpdateCheckerType.values()).map(Enum::name).collect(Collectors.joining(", "));
+            if (availableTypes.startsWith(", ")) availableTypes = availableTypes.substring(2);
+            if (availableTypes.endsWith(", ")) availableTypes = availableTypes.substring(0, availableTypes.length() - 2);
+
+            getLog().warning("Updater type '${typeString}' not found. Available options: ${availableTypes}");
+            _updateChecker = UpdateCheckerType.DISABLED.getFactory().get();
+            return;
+        }
+
+        var autoUpdate = generalConfig.getBoolean("UpdateChecker.AutoUpdate");
+        if (Boolean.parseBoolean(System.getProperty("serversystem.disable-auto-download", "false"))) autoUpdate = false;
+
+        _updateChecker = type.get().getFactory().get();
+        _updateChecker.setAutoUpdate(autoUpdate);
+
+        var checkForUpdates = generalConfig.getBoolean("UpdateChecker.CheckForUpdates");
+
+        if (checkForUpdates) Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+            _updateChecker.hasUpdate().exceptionally(throwable -> {
+                getLog().log(Level.WARNING, "Error checking for updates", throwable);
+                return false;
+            }).thenAccept(hasUpdate -> {
+                if (!hasUpdate) return;
+                _updateChecker.downloadUpdate().exceptionally(throwable -> {
+                    getLog().log(Level.WARNING, "Error downloading update", throwable);
+                    return false;
+                }).thenAccept(success -> {
+                    if (success) return;
+                    getLog().warning("Update-Download failed!");
+                });
+            });
+        }, 20L, 20L * 60 * 60); // Every 1 hour
     }
 }
