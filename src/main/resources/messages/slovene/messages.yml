@@ -402,7 +402,7 @@ Messages:
     Sudo: "/<LABEL> [player] [command] (args...)"
     TeamChat: "/<LABEL> [message...]"
     Teleport: "/<LABEL> [player] (player)"
-    TeleportPosition: "/<LABEL> (player) [X] [Y] [Z] [World]"
+    TeleportPosition: "/<LABEL> (player) [X] [Y] [Z] [Yaw] [Pitch] [World]"
     TeleportAsk: "/<LABEL> [player]"
     TeleportToggle: "/<LABEL> (player)"
     Time: "/<LABEL> [time] (world)"
