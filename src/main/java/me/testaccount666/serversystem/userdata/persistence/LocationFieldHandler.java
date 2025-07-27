@@ -17,6 +17,8 @@ public class LocationFieldHandler implements FieldHandler<Location> {
             return;
         }
 
+        if (!location.isWorldLoaded()) return;
+
         config.set("${path}.World", location.getWorld().getName());
         config.set("${path}.X", location.getX());
         config.set("${path}.Y", location.getY());
