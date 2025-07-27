@@ -13,10 +13,6 @@ import java.util.Optional;
 import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 
 public abstract class AbstractServerSystemCommand implements ServerSystemCommandExecutor {
-    public abstract String getSyntaxPath(Command command);
-
-    public abstract boolean hasCommandAccess(Player player, Command command);
-
     /**
      * Gets the target user for a command.
      * If arguments are provided, tries to find a player with the name specified in the first argument.
@@ -147,4 +143,8 @@ public abstract class AbstractServerSystemCommand implements ServerSystemCommand
                 .postModifier(message -> message.replace("<PERMISSION>", PermissionManager.getPermission(permission)))
                 .target(targetName).build();
     }
+
+    public abstract String getSyntaxPath(Command command);
+
+    public abstract boolean hasCommandAccess(Player player, Command command);
 }
