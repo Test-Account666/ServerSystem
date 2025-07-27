@@ -22,16 +22,16 @@ import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 @ServerSystemCommand(name = "inventorysee", variants = "offlineinventorysee", tabCompleter = TabCompleterInventorySee.class)
 public class CommandInventorySee extends AbstractServerSystemCommand {
     public final Map<Player, Inventory> inventoryCache = new HashMap<>();
-    public final CommandOfflineInventorySee _offlineInventorySee;
+    public final CommandOfflineInventorySee offlineInventorySee;
 
     public CommandInventorySee() {
-        _offlineInventorySee = new CommandOfflineInventorySee(this);
+        offlineInventorySee = new CommandOfflineInventorySee(this);
     }
 
     @Override
     public void execute(User sender, Command command, String label, String... arguments) {
         if (command.getName().toLowerCase().startsWith("offline")) {
-            _offlineInventorySee.execute(sender, command, label, arguments);
+            offlineInventorySee.execute(sender, command, label, arguments);
             return;
         }
 
@@ -126,7 +126,7 @@ public class CommandInventorySee extends AbstractServerSystemCommand {
 
     @Override
     public boolean hasCommandAccess(Player player, Command command) {
-        if (command.getName().toLowerCase().startsWith("offline")) return _offlineInventorySee.hasCommandAccess(player, command);
+        if (command.getName().toLowerCase().startsWith("offline")) return offlineInventorySee.hasCommandAccess(player, command);
 
         return PermissionManager.hasCommandPermission(player, "InventorySee.Use", false);
     }

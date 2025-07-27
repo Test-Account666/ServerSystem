@@ -2,7 +2,6 @@ package me.testaccount666.serversystem.commands.executables.inventorysee.offline
 
 import de.tr7zw.nbtapi.NBT;
 import me.testaccount666.serversystem.ServerSystem;
-import me.testaccount666.serversystem.commands.executables.inventorysee.online.CommandInventorySee;
 import me.testaccount666.serversystem.commands.executables.inventorysee.utils.InventorySeeUtils;
 import me.testaccount666.serversystem.utils.BiDirectionalHashMap;
 import org.bukkit.Bukkit;
@@ -17,11 +16,6 @@ import java.util.logging.Level;
 
 public class InventoryLoader {
     public final BiDirectionalHashMap<UUID, Inventory> inventoryMap = new BiDirectionalHashMap<>();
-    private final CommandInventorySee _commandInventorySee;
-
-    public InventoryLoader(CommandInventorySee commandInventorySee) {
-        _commandInventorySee = commandInventorySee;
-    }
 
     public Optional<Inventory> loadOfflineInventory(OfflinePlayer offlinePlayer) {
         if (!offlinePlayer.hasPlayedBefore()) return Optional.empty();

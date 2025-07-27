@@ -29,7 +29,7 @@ public class CommandOfflineInventorySee extends AbstractServerSystemCommand {
             return;
         }
 
-        inventoryLoader = new InventoryLoader(commandInventorySee);
+        inventoryLoader = new InventoryLoader();
     }
 
     @Override
