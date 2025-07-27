@@ -233,6 +233,9 @@ Commands:
   repair:
     Enabled: true
     Aliases: "repair"
+  rename:
+    Enabled: true
+    Aliases: "rename"
   ping:
     Enabled: true
     Aliases: "ping"

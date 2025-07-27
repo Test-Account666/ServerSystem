@@ -326,6 +326,10 @@ Permissions:
       Use:
         Required: true
         Value: "serversystem.admin.command.repair.use"
+    Rename:
+      Use:
+        Required: true
+        Value: "serversystem.command.rename.use"
     Ping:
       Use:
         Required: false

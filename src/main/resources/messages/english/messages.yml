@@ -293,6 +293,9 @@ Messages:
       NoData: "<Color:Error.Message>No baltop data was found."
       Header: "&8-=-=-=-= &6Baltop &8=-=-=-=-"
       Entry: "&6<POSITION>. <Color:Highlight><TARGET> <Color:Separators>» &6<BALANCE>"
+    Rename:
+      NoItemInHand: "<Color:Error.Message>You're not holding an item."
+      Success: "You have successfully renamed the item in your hand."
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>You don't have permission to do this. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"
@@ -380,6 +383,7 @@ Messages:
     PrivateMessage: "/<LABEL> [player] [message...]"
     MessageToggle: "/<LABEL> (player)"
     Reply: "/<LABEL> [message...]"
+    Rename: "/<LABEL> [name...]"
     Repair: "/<LABEL> (all|hand|offhand|armor|inventory)"
     Seen: "/<LABEL> [player]"
     SignCost: "/<LABEL> [none|exp|economy] (amount)"

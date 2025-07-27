@@ -284,6 +284,9 @@ Messages:
       NoData: "<Color:Error.Message>Ni podatkov o stanju na računih."
       Header: "&8-=-=-=-= &6Najbogatejši &8=-=-=-=-"
       Entry: "&6<POSITION>. <Color:Highlight><TARGET> <Color:Separators>» &6<BALANCE>"
+    Rename:
+      NoItemInHand: "<Color:Error.Message>Ne držiš nobenega predmeta."
+      Success: "Uspešno si preimenoval predmet v roki."
     Sign:
       NoItemInHand: "<Color:Error.Message>Ne držiš nobenega predmeta."
       NoItemMeta: "<Color:Error.Message>Predmeta v roki ni mogoče podpisati."
@@ -380,6 +383,7 @@ Messages:
     PrivateMessage: "/<LABEL> [player] [message...]"
     MessageToggle: "/<LABEL> (player)"
     Reply: "/<LABEL> [message...]"
+    Rename: "/<LABEL> [name...]"
     Repair: "/<LABEL> (all|hand|offhand|armor|inventory)"
     Seen: "/<LABEL> [player]"
     SignCost: "/<LABEL> [none|exp|economy] (amount)"
