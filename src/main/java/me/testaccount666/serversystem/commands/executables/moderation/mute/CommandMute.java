@@ -44,7 +44,7 @@ public class CommandMute extends AbstractModerationCommand {
     @Override
     protected String type(Command command) {
         if (command.getName().equalsIgnoreCase("shadowmute")) return "ShadowMute";
-        else return "Mute";
+        return "Mute";
     }
 
     @Override
