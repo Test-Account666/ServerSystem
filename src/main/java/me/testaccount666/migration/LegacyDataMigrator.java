@@ -9,6 +9,7 @@ import me.testaccount666.serversystem.moderation.MuteModeration;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.home.Home;
+import me.testaccount666.serversystem.utils.Version;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -150,8 +151,20 @@ public class LegacyDataMigrator {
         if (!previousVersionFile.exists()) return true;
 
         var previousVersionConfig = YamlConfiguration.loadConfiguration(previousVersionFile);
-        var previousVersion = previousVersionConfig.getInt("previousVersion", 0);
-        return previousVersion < 300;
+        var previousVersion = previousVersionConfig.getString("previousVersion", "");
+        if (!previousVersion.contains(".")) try {
+            var verInt = Integer.parseInt(previousVersion);
+            if (verInt < 300) return true;
+            var split = previousVersion.split("");
+            previousVersion = String.join(".", split).trim();
+            if (previousVersion.startsWith(".")) previousVersion = previousVersion.substring(1);
+            if (previousVersion.endsWith(".")) previousVersion = previousVersion.substring(0, previousVersion.length() - 1);
+            if (previousVersion.isEmpty()) return true;
+        } catch (NumberFormatException exception) {
+            return true;
+        }
+
+        return new Version(previousVersion).compareTo(new Version("3.0.0")) < 0;
     }
 
     /**
