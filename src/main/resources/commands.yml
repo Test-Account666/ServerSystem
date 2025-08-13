@@ -321,3 +321,6 @@ Commands:
   lightning:
     Enabled: true
     Aliases: "lightning, thor, smite"
+  suicide:
+    Enabled: true
+    Aliases: "suicide"

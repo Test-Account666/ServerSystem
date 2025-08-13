@@ -431,6 +431,10 @@ Permissions:
       Use:
         Required: true
         Value: "serversystem.admin.command.lightning.use"
+    Suicide:
+      Use:
+        Required: true
+        Value: "serversystem.command.suicide.use"
   Chat:
     ColorChat:
       Required: true
