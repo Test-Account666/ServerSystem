@@ -118,3 +118,7 @@ run/
 qodana.yaml
 *guidelines.md
 /.paper-nms/mappings_1.21.6.tiny
+/.paper-nms/mappings_1.21.8.tiny
+/Changes
+/Changes.md
+/SpigotMC.bbcode
