@@ -2,6 +2,8 @@ package me.testaccount666.serversystem.placeholderapi.executables;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.placeholderapi.PlaceholderManager;
+import me.testaccount666.serversystem.userdata.UserManager;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +40,8 @@ public class PlaceholderExpansionWrapper extends PlaceholderExpansion {
         var split = params.split("_");
         var identifier = split[0].toLowerCase();
 
-        var placeholderManager = ServerSystem.Instance.getPlaceholderManager();
+        var registry = ServerSystem.Instance.getRegistry();
+        var placeholderManager = registry.getService(PlaceholderManager.class);
         var placeholderOptional = placeholderManager.getPlaceholder(identifier);
         if (placeholderOptional.isEmpty()) {
             ServerSystem.getLog().warning("An unknown placeholder was requested! '${params}'");
@@ -56,7 +59,8 @@ public class PlaceholderExpansionWrapper extends PlaceholderExpansion {
 
         if (player == null) return placeholder.execute(null, identifier, arguments);
 
-        var userOptional = ServerSystem.Instance.getUserManager().getUser(player.getUniqueId());
+        var userManager = registry.getService(UserManager.class);
+        var userOptional = userManager.getUser(player.getUniqueId());
         if (userOptional.isEmpty()) return null;
         var cachedUser = userOptional.get();
         var offlineUser = cachedUser.getOfflineUser();

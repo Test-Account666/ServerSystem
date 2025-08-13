@@ -1,5 +1,6 @@
 package me.testaccount666.serversystem.commands.executables.teleportask;
 
+import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,8 +54,8 @@ class CommandTeleportAskTest {
     @Test
     void teleportRequest_shouldCreateCorrectly() {
         // Test TeleportRequest creation and basic functionality
-        var mockSender = mock(me.testaccount666.serversystem.userdata.User.class);
-        var mockTarget = mock(me.testaccount666.serversystem.userdata.User.class);
+        var mockSender = mock(User.class);
+        var mockTarget = mock(User.class);
         var timeout = System.currentTimeMillis() + 120000; // 2 minutes
         var request = new TeleportRequest(mockSender, mockTarget, timeout, false);
 
@@ -73,8 +74,8 @@ class CommandTeleportAskTest {
 
     @Test
     void teleportRequest_shouldDetectExpiration() {
-        var mockSender = mock(me.testaccount666.serversystem.userdata.User.class);
-        var mockTarget = mock(me.testaccount666.serversystem.userdata.User.class);
+        var mockSender = mock(User.class);
+        var mockTarget = mock(User.class);
         var pastTimeout = System.currentTimeMillis() - 1000; // 1 second ago
         var request = new TeleportRequest(mockSender, mockTarget, pastTimeout, false);
 

@@ -25,7 +25,7 @@ public class ListenerCommandSpy implements Listener {
     private void sendCommandSpy(String sender, String command) {
         if (!command.startsWith("/")) command = "/${command}";
 
-        for (var cachedUser : ServerSystem.Instance.getUserManager().getCachedUsers()) {
+        for (var cachedUser : ServerSystem.Instance.getRegistry().getService(UserManager.class).getCachedUsers()) {
             if (!cachedUser.isOnlineUser()) continue;
 
             var user = (User) cachedUser.getOfflineUser();

@@ -3,6 +3,7 @@ package me.testaccount666.serversystem.commands.executables.warp;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
+import me.testaccount666.serversystem.commands.executables.warp.manager.WarpManager;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
@@ -39,7 +40,8 @@ public class CommandWarp extends AbstractServerSystemCommand {
 
     private void handleWarpCommand(User commandSender, String... arguments) {
         if (!checkBasePermission(commandSender, "Warp.Use")) return;
-        var warpManager = ServerSystem.Instance.getWarpManager();
+        var registry = ServerSystem.Instance.getRegistry();
+        var warpManager = registry.getService(WarpManager.class);
 
         var warpOptional = warpManager.getWarpByName(arguments[0]);
         if (warpOptional.isEmpty()) {
@@ -61,7 +63,8 @@ public class CommandWarp extends AbstractServerSystemCommand {
     private void handleSetWarpCommand(User commandSender, String... arguments) {
         if (!checkBasePermission(commandSender, "Warp.Set")) return;
 
-        var warpManager = ServerSystem.Instance.getWarpManager();
+        var registry = ServerSystem.Instance.getRegistry();
+        var warpManager = registry.getService(WarpManager.class);
         var warpName = arguments[0];
         var warpLocation = commandSender.getPlayer().getLocation();
 
@@ -81,7 +84,8 @@ public class CommandWarp extends AbstractServerSystemCommand {
     private void handleDeleteWarpCommand(User commandSender, String... arguments) {
         if (!checkBasePermission(commandSender, "Warp.Delete")) return;
 
-        var warpManager = ServerSystem.Instance.getWarpManager();
+        var registry = ServerSystem.Instance.getRegistry();
+        var warpManager = registry.getService(WarpManager.class);
         var warpName = arguments[0];
         var warpOptional = warpManager.getWarpByName(warpName);
 

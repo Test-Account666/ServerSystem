@@ -2,6 +2,7 @@ package me.testaccount666.serversystem.clickablesigns.executables.warp;
 
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.clickablesigns.AbstractSignClickAction;
+import me.testaccount666.serversystem.commands.executables.warp.manager.WarpManager;
 import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.utils.ChatColor;
 import org.bukkit.block.Sign;
@@ -18,7 +19,7 @@ public class ActionWarpSign extends AbstractSignClickAction {
 
     @Override
     protected boolean executeAction(User user, Sign sign, FileConfiguration config) {
-        var warpManager = ServerSystem.Instance.getWarpManager();
+        var warpManager = ServerSystem.Instance.getRegistry().getService(WarpManager.class);
         if (warpManager == null) {
             sign("Warp.NoWarpManager", user).build();
             return false;

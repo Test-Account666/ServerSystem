@@ -90,7 +90,8 @@ public abstract class AbstractUpdateChecker {
 
             var downloadUrl = getDownloadUrl();
 
-            try (var client = HttpClient.newHttpClient()) {
+            try (var client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS)
+                    .connectTimeout(Duration.ofMinutes(1)).build()) {
                 var request = HttpRequest.newBuilder()
                         .timeout(Duration.ofMinutes(1))
                         .uri(URI.create(downloadUrl)).GET().build();

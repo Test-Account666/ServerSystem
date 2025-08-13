@@ -7,6 +7,7 @@ import me.testaccount666.serversystem.annotations.RequiredCommands;
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.userdata.UserManager;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -155,7 +156,7 @@ public class ListenerVanish implements Listener {
     private void handleOtherPlayerJoin(Player joiningPlayer) {
         if (PermissionManager.hasCommandPermission(joiningPlayer, "Vanish.Show", false)) return;
 
-        ServerSystem.Instance.getUserManager().getCachedUsers().stream()
+        ServerSystem.Instance.getRegistry().getService(UserManager.class).getCachedUsers().stream()
                 .filter(cachedUser -> !cachedUser.isOfflineUser())
                 .map(cachedUser -> (User) cachedUser.getOfflineUser())
                 .filter(User::isVanish)
@@ -192,7 +193,7 @@ public class ListenerVanish implements Listener {
 
     private User getVanishedUser(Player player) {
         if (player == null) return null;
-        return ServerSystem.Instance.getUserManager().getUser(player)
+        return ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player)
                 .filter(cachedUser -> !cachedUser.isOfflineUser())
                 .map(cachedUser -> (User) cachedUser.getOfflineUser())
                 .filter(User::isVanish)

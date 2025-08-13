@@ -1,6 +1,7 @@
 package me.testaccount666.serversystem.commands.executables.economy;
 
 import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.userdata.money.EconomyProvider;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.managers.PermissionManager;
@@ -74,7 +75,7 @@ public class CommandEconomy extends AbstractServerSystemCommand {
     }
 
     public void sendSuccess(User commandSender, String label, User targetUser, BigDecimal amount, String key) {
-        var formattedAmount = ServerSystem.Instance.getEconomyProvider().formatMoney(amount);
+        var formattedAmount = ServerSystem.Instance.getRegistry().getService(EconomyProvider.class).formatMoney(amount);
         UnaryOperator<String> modifier = message -> message.replace("<AMOUNT>", formattedAmount);
 
         command("Economy.${key}.Success", commandSender)

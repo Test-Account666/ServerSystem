@@ -4,6 +4,7 @@ import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.kit.manager.Kit;
+import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
@@ -42,7 +43,7 @@ public class CommandKit extends AbstractServerSystemCommand {
 
     private void handleCreateKit(User commandSender, String label, String... arguments) {
         var kitName = arguments[0].toLowerCase();
-        var kitManager = ServerSystem.Instance.getKitManager();
+        var kitManager = ServerSystem.Instance.getRegistry().getService(KitManager.class);
         var kitOptional = kitManager.getKit(kitName);
         if (kitOptional.isPresent()) {
             command("Kit.Create.KitAlreadyExists", commandSender)
@@ -73,7 +74,7 @@ public class CommandKit extends AbstractServerSystemCommand {
 
     private void handleDeleteKit(User commandSender, String label, String... arguments) {
         var kitName = arguments[0].toLowerCase();
-        var kitManager = ServerSystem.Instance.getKitManager();
+        var kitManager = ServerSystem.Instance.getRegistry().getService(KitManager.class);
         if (!kitManager.kitExists(kitName)) {
             command("Kit.KitNotFound", commandSender)
                     .postModifier(message -> message.replace("<KIT>", arguments[0])).build();
@@ -86,7 +87,7 @@ public class CommandKit extends AbstractServerSystemCommand {
 
     private void handleKit(User commandSender, String label, String... arguments) {
         var kitName = arguments[0].toLowerCase();
-        var kitManager = ServerSystem.Instance.getKitManager();
+        var kitManager = ServerSystem.Instance.getRegistry().getService(KitManager.class);
         var kitOptional = kitManager.getKit(kitName);
         if (kitOptional.isEmpty()) {
             command("Kit.KitNotFound", commandSender)

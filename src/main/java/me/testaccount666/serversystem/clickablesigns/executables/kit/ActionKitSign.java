@@ -2,6 +2,7 @@ package me.testaccount666.serversystem.clickablesigns.executables.kit;
 
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.clickablesigns.AbstractSignClickAction;
+import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager;
 import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.utils.ChatColor;
 import org.bukkit.block.Sign;
@@ -18,7 +19,7 @@ public class ActionKitSign extends AbstractSignClickAction {
 
     @Override
     protected boolean executeAction(User user, Sign sign, FileConfiguration config) {
-        var kitManager = ServerSystem.Instance.getKitManager();
+        var kitManager = ServerSystem.Instance.getRegistry().getService(KitManager.class);
         if (kitManager == null) {
             sign("Kit.NoKitManager", user).build();
             return false;

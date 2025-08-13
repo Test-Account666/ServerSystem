@@ -4,6 +4,7 @@ import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.managers.PermissionManager;
+import me.testaccount666.serversystem.managers.config.ConfigurationManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
 import org.bukkit.Bukkit;
@@ -41,7 +42,8 @@ public class CommandSpawn extends AbstractServerSystemCommand {
         spawnConfiguration = YamlConfiguration.loadConfiguration(_spawnFile);
 
         saveDefaultConfig();
-        var config = ServerSystem.Instance.getConfigManager().getGeneralConfig();
+        var configManager = ServerSystem.Instance.getRegistry().getService(ConfigurationManager.class);
+        var config = configManager.getGeneralConfig();
 
         teleportOnJoin = config.getBoolean("Join.Spawn.TeleportOnJoin");
         teleportOnFirstJoin = config.getBoolean("Join.Spawn.TeleportOnFirstJoin");

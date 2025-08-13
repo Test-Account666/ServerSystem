@@ -22,7 +22,7 @@ public class Warp {
      * @throws IllegalArgumentException if the home name is not alphanumeric
      */
     Warp(String name, Location location) {
-        if (!_WARP_NAME_PATTERN.matcher(name).matches()) throw new IllegalArgumentException("Home name must be alphanumeric");
+        if (!_WARP_NAME_PATTERN.matcher(name).matches()) throw new IllegalArgumentException("Warp name must be alphanumeric");
 
         _name = name.toLowerCase();
         _location = location;

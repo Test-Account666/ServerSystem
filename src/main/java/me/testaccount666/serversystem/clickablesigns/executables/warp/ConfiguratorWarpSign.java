@@ -3,6 +3,7 @@ package me.testaccount666.serversystem.clickablesigns.executables.warp;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.clickablesigns.AbstractSignConfigurator;
 import me.testaccount666.serversystem.clickablesigns.SignType;
+import me.testaccount666.serversystem.commands.executables.warp.manager.WarpManager;
 import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.utils.ChatColor;
 import me.testaccount666.serversystem.utils.ComponentColor;
@@ -27,7 +28,7 @@ public class ConfiguratorWarpSign extends AbstractSignConfigurator {
 
     @Override
     protected boolean validateConfiguration(User user, Sign sign, YamlConfiguration config) {
-        var warpManager = ServerSystem.Instance.getWarpManager();
+        var warpManager = ServerSystem.Instance.getRegistry().getService(WarpManager.class);
         if (warpManager == null) {
             sign("Warp.NoWarpManager", user).build();
             return false;

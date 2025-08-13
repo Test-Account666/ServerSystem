@@ -1,6 +1,7 @@
 package me.testaccount666.serversystem.moderation.ban;
 
 import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.ServiceRegistry;
 import me.testaccount666.serversystem.managers.database.moderation.AbstractModerationDatabaseManager;
 import me.testaccount666.serversystem.moderation.AbstractModerationManager;
 import me.testaccount666.serversystem.moderation.BanModeration;
@@ -45,7 +46,9 @@ class AbstractSqlBanManagerTest {
         when(mockStatement.executeQuery()).thenReturn(mockResultSet);
 
         ServerSystem.Instance = mockServerSystem;
-        when(mockServerSystem.getModerationDatabaseManager()).thenReturn(mockDatabaseManager);
+        var mockRegistry = mock(ServiceRegistry.class);
+        when(mockServerSystem.getRegistry()).thenReturn(mockRegistry);
+        when(mockRegistry.getService(AbstractModerationDatabaseManager.class)).thenReturn(mockDatabaseManager);
 
         banManager = new TestSqlBanManager(ownerUuid);
     }

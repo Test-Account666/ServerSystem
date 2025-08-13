@@ -2,6 +2,7 @@ package me.testaccount666.serversystem.managers.config;
 
 import lombok.Getter;
 import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.managers.messages.MessageManager;
 import me.testaccount666.serversystem.utils.FileUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -115,7 +116,7 @@ public class DefaultConfigReader implements ConfigReader {
         }
 
         if (filename.equalsIgnoreCase("messages.yml") || filename.equalsIgnoreCase("mappings.yml")) {
-            var language = _configuration.getString("language", "english");
+            var language = _configuration.getString("language", MessageManager.FALLBACK_LANGUAGE);
             var languageFile = "messages/${language}/${filename}";
 
             if (_plugin.getResource(languageFile) != null)

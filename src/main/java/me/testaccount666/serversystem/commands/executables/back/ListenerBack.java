@@ -3,6 +3,7 @@ package me.testaccount666.serversystem.commands.executables.back;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.annotations.RequiredCommands;
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor;
+import me.testaccount666.serversystem.userdata.UserManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -20,7 +21,7 @@ public class ListenerBack implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-        var userOptional = ServerSystem.Instance.getUserManager().getUser(event.getPlayer());
+        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(event.getPlayer());
         if (userOptional.isEmpty()) return;
 
         var cachedUser = userOptional.get();
@@ -33,7 +34,7 @@ public class ListenerBack implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent event) {
-        var userOptional = ServerSystem.Instance.getUserManager().getUser(event.getEntity());
+        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(event.getEntity());
         if (userOptional.isEmpty()) return;
 
         var cachedUser = userOptional.get();

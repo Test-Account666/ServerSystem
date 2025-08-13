@@ -1,6 +1,7 @@
 package me.testaccount666.serversystem.userdata.listener;
 
 import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.userdata.UserManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -10,7 +11,7 @@ public class UserQuitListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onUserQuit(PlayerQuitEvent event) {
-        var cachedUserOptional = ServerSystem.Instance.getUserManager().getUser(event.getPlayer().getUniqueId());
+        var cachedUserOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(event.getPlayer().getUniqueId());
 
         if (cachedUserOptional.isEmpty()) {
             ServerSystem.getLog().warning("(UserQuitListener) User '${event.getPlayer().getName()}' is not cached! This should not happen!");

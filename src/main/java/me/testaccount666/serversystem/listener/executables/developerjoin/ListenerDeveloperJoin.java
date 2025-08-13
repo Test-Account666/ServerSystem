@@ -1,6 +1,7 @@
 package me.testaccount666.serversystem.listener.executables.developerjoin;
 
 import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.managers.config.ConfigurationManager;
 import me.testaccount666.serversystem.utils.ComponentColor;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -18,7 +19,8 @@ public class ListenerDeveloperJoin implements Listener {
     private final boolean _enabled;
 
     public ListenerDeveloperJoin() {
-        _enabled = ServerSystem.Instance.getConfigManager().getGeneralConfig().getBoolean("DeveloperJoin.NotifyDeveloper.Enabled");
+        var configManager = ServerSystem.Instance.getRegistry().getService(ConfigurationManager.class);
+        _enabled = configManager.getGeneralConfig().getBoolean("DeveloperJoin.NotifyDeveloper.Enabled");
     }
 
     @EventHandler

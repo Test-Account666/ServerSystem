@@ -1,6 +1,7 @@
 package me.testaccount666.serversystem.commands.executables.kit;
 
 import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager;
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabCompleter;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.User;
@@ -64,7 +65,7 @@ public class TabCompleterKit implements ServerSystemTabCompleter {
     }
 
     private Optional<List<String>> handleKitNameCompletion(String argument) {
-        var kitManager = ServerSystem.Instance.getKitManager();
+        var kitManager = ServerSystem.Instance.getRegistry().getService(KitManager.class);
         if (kitManager == null) return Optional.of(List.of());
 
         var possibleCompletions = kitManager.getAllKitNames();

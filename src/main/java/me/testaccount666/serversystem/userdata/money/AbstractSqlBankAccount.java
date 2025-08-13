@@ -6,6 +6,7 @@ import me.testaccount666.serversystem.managers.database.economy.AbstractEconomyD
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -14,7 +15,7 @@ public abstract class AbstractSqlBankAccount extends AbstractBankAccount {
 
     public AbstractSqlBankAccount(UUID owner, BigInteger accountId) {
         super(owner, accountId);
-        databaseManager = ServerSystem.Instance.getEconomyDatabaseManager();
+        databaseManager = ServerSystem.Instance.getRegistry().getService(AbstractEconomyDatabaseManager.class);
     }
 
 
@@ -27,7 +28,8 @@ public abstract class AbstractSqlBankAccount extends AbstractBankAccount {
             statement.setString(2, accountId.toString());
 
             try (var resultSet = statement.executeQuery()) {
-                if (!resultSet.next()) return new BigDecimal(ServerSystem.Instance.getEconomyProvider().getDefaultBalance());
+                if (!resultSet.next())
+                    return new BigDecimal(ServerSystem.Instance.getRegistry().getService(EconomyProvider.class).getDefaultBalance());
 
                 return resultSet.getBigDecimal("Balance");
             }
@@ -97,14 +99,14 @@ public abstract class AbstractSqlBankAccount extends AbstractBankAccount {
              var statement = connection.prepareStatement("SELECT Owner, Balance FROM Economy ORDER BY Balance DESC LIMIT 10")) {
 
             try (var resultSet = statement.executeQuery()) {
-                var topTen = new java.util.LinkedHashMap<UUID, BigDecimal>();
-                
+                var topTen = new LinkedHashMap<UUID, BigDecimal>();
+
                 while (resultSet.next()) {
                     var ownerUuid = UUID.fromString(resultSet.getString("Owner"));
                     var balance = resultSet.getBigDecimal("Balance");
                     topTen.put(ownerUuid, balance);
                 }
-                
+
                 return topTen;
             }
         } catch (SQLException exception) {

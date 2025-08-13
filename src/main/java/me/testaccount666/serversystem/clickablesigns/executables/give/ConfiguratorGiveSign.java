@@ -2,6 +2,7 @@ package me.testaccount666.serversystem.clickablesigns.executables.give;
 
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.clickablesigns.AbstractSignConfigurator;
+import me.testaccount666.serversystem.clickablesigns.SignManager;
 import me.testaccount666.serversystem.clickablesigns.SignType;
 import me.testaccount666.serversystem.clickablesigns.cost.CostType;
 import me.testaccount666.serversystem.clickablesigns.util.SignUtils;
@@ -95,7 +96,7 @@ public class ConfiguratorGiveSign extends AbstractSignConfigurator implements Li
             return;
         }
 
-        ServerSystem.Instance.getSignManager().addSignType(sign.getLocation(), getSignType());
+        ServerSystem.Instance.getRegistry().getService(SignManager.class).addSignType(sign.getLocation(), getSignType());
         _CONFIGURATORS.removeByValue(sign);
 
         var front = sign.getSide(Side.FRONT);

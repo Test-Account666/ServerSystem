@@ -2,12 +2,15 @@ package me.testaccount666.migration;
 
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.executables.kit.manager.Kit;
+import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager;
 import me.testaccount666.serversystem.commands.executables.warp.manager.Warp;
+import me.testaccount666.serversystem.commands.executables.warp.manager.WarpManager;
 import me.testaccount666.serversystem.moderation.AbstractModeration;
 import me.testaccount666.serversystem.moderation.BanModeration;
 import me.testaccount666.serversystem.moderation.MuteModeration;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.OfflineUser;
+import me.testaccount666.serversystem.userdata.UserManager;
 import me.testaccount666.serversystem.userdata.home.Home;
 import me.testaccount666.serversystem.utils.Version;
 import org.bukkit.Bukkit;
@@ -37,7 +40,7 @@ public class LegacyDataMigrator {
      * @return Optional containing the offline user if found, empty otherwise
      */
     private Optional<OfflineUser> getOfflineUser(UUID uuid) {
-        var userManager = ServerSystem.Instance.getUserManager();
+        var userManager = ServerSystem.Instance.getRegistry().getService(UserManager.class);
         var userOptional = userManager.getUser(uuid);
 
         if (userOptional.isEmpty()) {
@@ -206,7 +209,7 @@ public class LegacyDataMigrator {
         var migratedCount = 0;
 
         var defaultItem = new ItemStack(Material.AIR);
-        var kitManager = ServerSystem.Instance.getKitManager();
+        var kitManager = ServerSystem.Instance.getRegistry().getService(KitManager.class);
         if (kitManager == null) {
             log(Level.WARNING, "Kit manager is null, skipping kits migration");
             return;
@@ -261,7 +264,7 @@ public class LegacyDataMigrator {
             return;
         }
 
-        var warpManager = ServerSystem.Instance.getWarpManager();
+        var warpManager = ServerSystem.Instance.getRegistry().getService(WarpManager.class);
         var warpSection = legacyWarpsConfig.getConfigurationSection("Warps");
         var warpNames = warpSection.getKeys(false);
         var migratedCount = 0;

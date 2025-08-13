@@ -1,8 +1,10 @@
 package me.testaccount666.serversystem.managers.messages;
 
 import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.ServiceRegistry;
 import me.testaccount666.serversystem.managers.PlaceholderManager;
 import me.testaccount666.serversystem.managers.config.ConfigReader;
+import me.testaccount666.serversystem.managers.config.ConfigurationManager;
 import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.utils.ChatColor;
 import me.testaccount666.serversystem.utils.ComponentColor;
@@ -46,14 +48,32 @@ class MessageManagerTest {
 
     @Test
     void initialize_shouldSetupDependencies() throws FileNotFoundException {
+        var mockServerSystem = mock(ServerSystem.class);
+        var mockConfigManager = mock(ConfigurationManager.class);
+        var mockGeneralConfig = mock(ConfigReader.class);
+
+        when(mockConfigManager.getGeneralConfig()).thenReturn(mockGeneralConfig);
+        when(mockGeneralConfig.getString("Language.DefaultLanguage", "english")).thenReturn("english");
+
         try (var placeholderManagerMock = Mockito.mockConstruction(PlaceholderManager.class);
-             var languageLoaderMock = Mockito.mockConstruction(LanguageLoader.class)) {
+             var languageLoaderMock = Mockito.mockConstruction(LanguageLoader.class);
+             var serverSystemMock = Mockito.mockStatic(ServerSystem.class)) {
+
+            serverSystemMock.when(ServerSystem::getLog).thenReturn(mockLogger);
+
+            ServerSystem.Instance = mockServerSystem;
+            var mockRegistry = mock(ServiceRegistry.class);
+            when(mockServerSystem.getRegistry()).thenReturn(mockRegistry);
+            when(mockRegistry.getService(ConfigurationManager.class)).thenReturn(mockConfigManager);
 
             MessageManager.initialize();
 
             assertNotNull(MessageManager.getLanguageLoader());
             assertEquals(1, placeholderManagerMock.constructed().size());
             assertEquals(1, languageLoaderMock.constructed().size());
+            assertEquals("english", MessageManager.getDefaultLanguage());
+        } finally {
+            ServerSystem.Instance = null;
         }
     }
 
@@ -224,6 +244,9 @@ class MessageManagerTest {
         assertThrows(NoSuchElementException.class, () -> MessageManager.getMessage(mockUser, "test.path"));
 
         verify(mockLanguageLoader).getMessageReader("nonexistent");
+        // With the new fallback mechanism, english is called twice:
+        // 1. As default language fallback (since _DefaultLanguage is "english")
+        // 2. As ultimate fallback
         verify(mockLanguageLoader).getMessageReader("english");
     }
 

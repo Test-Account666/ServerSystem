@@ -4,6 +4,7 @@ import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.placeholderapi.Placeholder;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.UserManager;
+import me.testaccount666.serversystem.userdata.money.EconomyProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Nullable;
@@ -99,7 +100,7 @@ public class BaltopPlaceholder implements Placeholder {
 
         if (!format) return String.format("%.2f", balance.doubleValue());
 
-        return ServerSystem.Instance.getEconomyProvider().formatMoney(balance);
+        return ServerSystem.Instance.getRegistry().getService(EconomyProvider.class).formatMoney(balance);
     }
 
     @Override
@@ -108,7 +109,7 @@ public class BaltopPlaceholder implements Placeholder {
     }
 
     private Optional<OfflineUser> getOfflineUser(OfflinePlayer player) {
-        var userOptional = ServerSystem.Instance.getUserManager().getUser(player.getUniqueId());
+        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player.getUniqueId());
         if (userOptional.isEmpty()) return Optional.empty();
         var cachedUser = userOptional.get();
         return Optional.of(cachedUser.getOfflineUser());

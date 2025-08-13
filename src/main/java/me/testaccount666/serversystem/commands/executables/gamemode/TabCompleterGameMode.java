@@ -2,11 +2,12 @@ package me.testaccount666.serversystem.commands.executables.gamemode;
 
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabCompleter;
 import me.testaccount666.serversystem.managers.PermissionManager;
-import me.testaccount666.serversystem.managers.messages.MappingsData;
 import me.testaccount666.serversystem.userdata.User;
+import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +25,7 @@ public class TabCompleterGameMode implements ServerSystemTabCompleter {
     private Optional<List<String>> handleGameModeCommand(String[] arguments) {
         if (arguments.length == 1) {
             var possibleCompletions = new ArrayList<>(List.of("0", "1", "2", "3"));
-            possibleCompletions.addAll(MappingsData.gameMode().getGameModeNames());
+            possibleCompletions.addAll(Arrays.stream(GameMode.values()).map(GameMode::name).map(String::toLowerCase).toList());
 
             var completions = new ArrayList<String>();
 

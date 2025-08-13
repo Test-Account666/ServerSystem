@@ -23,7 +23,7 @@ public class ListenerBan implements Listener {
 
     @EventHandler
     public void onLogin(AsyncPlayerPreLoginEvent event) {
-        var userOptional = ServerSystem.Instance.getUserManager().getUser(event.getUniqueId());
+        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(event.getUniqueId());
         if (userOptional.isEmpty()) {
             ServerSystem.getLog().severe("(ListenerBan) User not found! This should not happen!");
             return;

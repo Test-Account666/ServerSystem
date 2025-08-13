@@ -5,6 +5,7 @@ import me.testaccount666.serversystem.annotations.RequiredCommands;
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor;
 import me.testaccount666.serversystem.events.UserPrivateMessageEvent;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.userdata.UserManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -22,7 +23,7 @@ public class ListenerSocialSpy implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPrivateMessage(UserPrivateMessageEvent event) {
-        ServerSystem.Instance.getUserManager().getCachedUsers().forEach(cachedUser -> {
+        ServerSystem.Instance.getRegistry().getService(UserManager.class).getCachedUsers().forEach(cachedUser -> {
             if (!cachedUser.isOnlineUser()) return;
             var user = (User) cachedUser.getOfflineUser();
             if (!user.isSocialSpyEnabled()) return;

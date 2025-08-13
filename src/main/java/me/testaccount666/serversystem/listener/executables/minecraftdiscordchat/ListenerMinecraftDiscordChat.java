@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.SneakyThrows;
 import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.managers.config.ConfigurationManager;
 import me.testaccount666.serversystem.utils.ChatColor;
 import me.testaccount666.serversystem.utils.ComponentColor;
 import org.bukkit.event.EventHandler;
@@ -21,7 +22,8 @@ public class ListenerMinecraftDiscordChat implements Listener {
 
     @SneakyThrows
     public ListenerMinecraftDiscordChat() {
-        var generalConfig = ServerSystem.Instance.getConfigManager().getGeneralConfig();
+        var configManager = ServerSystem.Instance.getRegistry().getService(ConfigurationManager.class);
+        var generalConfig = configManager.getGeneralConfig();
         _enabled = generalConfig.getBoolean("MinecraftDiscordChat.Enabled");
         _webHookUri = new URI(generalConfig.getString("MinecraftDiscordChat.WebhookUrl"));
     }

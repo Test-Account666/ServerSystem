@@ -3,6 +3,7 @@ package me.testaccount666.serversystem.clickablesigns.listener;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.clickablesigns.SignType;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.userdata.UserManager;
 import me.testaccount666.serversystem.utils.ComponentColor;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Sign;
@@ -29,7 +30,9 @@ public class ListenerSignCreation implements Listener {
 
 
         var player = event.getPlayer();
-        var userOptional = ServerSystem.Instance.getUserManager().getUser(player);
+        var registry = ServerSystem.Instance.getRegistry();
+        var userManager = registry.getService(UserManager.class);
+        var userOptional = userManager.getUser(player);
         if (userOptional.isEmpty()) return;
         var cachedUser = userOptional.get();
         if (cachedUser.isOfflineUser()) return;

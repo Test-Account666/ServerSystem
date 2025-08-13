@@ -17,7 +17,7 @@ public abstract class AbstractSqlBanManager extends AbstractModerationManager {
 
     public AbstractSqlBanManager(UUID ownerUuid) {
         super(ownerUuid);
-        databaseManager = ServerSystem.Instance.getModerationDatabaseManager();
+        databaseManager = ServerSystem.Instance.getRegistry().getService(AbstractModerationDatabaseManager.class);
     }
 
     @Override

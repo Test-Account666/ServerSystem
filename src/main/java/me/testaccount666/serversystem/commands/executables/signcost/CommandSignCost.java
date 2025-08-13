@@ -1,6 +1,7 @@
 package me.testaccount666.serversystem.commands.executables.signcost;
 
 import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.userdata.money.EconomyProvider;
 import me.testaccount666.serversystem.clickablesigns.cost.CostType;
 import me.testaccount666.serversystem.clickablesigns.util.SignUtils;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
@@ -116,7 +117,7 @@ public class CommandSignCost extends AbstractServerSystemCommand {
 
         String costLine;
         if (costType == CostType.EXP) costLine = "${(int)amount} EXP";
-        else costLine = ServerSystem.Instance.getEconomyProvider().formatMoney(BigDecimal.valueOf(amount));
+        else costLine = ServerSystem.Instance.getRegistry().getService(EconomyProvider.class).formatMoney(BigDecimal.valueOf(amount));
 
         sign.getSide(Side.FRONT).line(3, ComponentColor.translateToComponent("&6${costLine}"));
         sign.getSide(Side.BACK).line(3, ComponentColor.translateToComponent("&6${costLine}"));

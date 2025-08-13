@@ -2,6 +2,7 @@ package me.testaccount666.serversystem.commands.executables.inventorysee.utils;
 
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.userdata.UserManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -75,7 +76,9 @@ public class InventorySeeUtils {
 
         Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> viewers.forEach(viewer -> {
             if (!(viewer instanceof Player commandSenderPlayer)) return;
-            var cachedUserOptional = ServerSystem.Instance.getUserManager().getUser(commandSenderPlayer);
+            var registry = ServerSystem.Instance.getRegistry();
+            var userManager = registry.getService(UserManager.class);
+            var cachedUserOptional = userManager.getUser(commandSenderPlayer);
             if (cachedUserOptional.isEmpty()) return;
             var cachedUser = cachedUserOptional.get();
 
