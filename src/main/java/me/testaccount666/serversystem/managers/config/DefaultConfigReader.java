@@ -214,22 +214,12 @@ public class DefaultConfigReader implements ConfigReader {
     }
 
     @Override
-    public Object getObject(String path) {
-        return getObject(path, null);
-    }
-
-    @Override
     public boolean getBoolean(String path, boolean def) {
         var configReader = this;
         if (_newReader != null) configReader = _newReader;
 
         configReader.ensureConfigHasValue(path);
         return configReader._configuration.getBoolean(path, def);
-    }
-
-    @Override
-    public boolean getBoolean(String path) {
-        return getBoolean(path, false);
     }
 
     @Override
@@ -242,22 +232,12 @@ public class DefaultConfigReader implements ConfigReader {
     }
 
     @Override
-    public String getString(String path) {
-        return getString(path, null);
-    }
-
-    @Override
     public int getInt(String path, int def) {
         var configReader = this;
         if (_newReader != null) configReader = _newReader;
 
         configReader.ensureConfigHasValue(path);
         return configReader._configuration.getInt(path, def);
-    }
-
-    @Override
-    public int getInt(String path) {
-        return getInt(path, 0);
     }
 
     @Override
@@ -270,22 +250,12 @@ public class DefaultConfigReader implements ConfigReader {
     }
 
     @Override
-    public long getLong(String path) {
-        return getLong(path, 0L);
-    }
-
-    @Override
     public double getDouble(String path, double def) {
         var configReader = this;
         if (_newReader != null) configReader = _newReader;
 
         configReader.ensureConfigHasValue(path);
         return configReader._configuration.getDouble(path, def);
-    }
-
-    @Override
-    public double getDouble(String path) {
-        return getDouble(path, 0.0D);
     }
 
     @Override
