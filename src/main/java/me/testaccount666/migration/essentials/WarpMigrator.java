@@ -1,17 +1,17 @@
 package me.testaccount666.migration.essentials;
 
-import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.commands.WarpNotFoundException;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.executables.warp.manager.WarpManager;
 
 import java.util.logging.Level;
 
-public class WarpMigrator {
+public class WarpMigrator extends AbstractMigrator {
 
+    @Override
     public int migrateFrom() {
         var warpManager = ServerSystem.Instance.getRegistry().getService(WarpManager.class);
-        var essentials = Essentials.getPlugin(Essentials.class);
+        var essentials = essentials();
 
         var count = 0;
         for (var warpName : essentials.getWarps().getList())
@@ -27,9 +27,10 @@ public class WarpMigrator {
         return count;
     }
 
+    @Override
     public int migrateTo() {
         var warpManager = ServerSystem.Instance.getRegistry().getService(WarpManager.class);
-        var essentials = Essentials.getPlugin(Essentials.class);
+        var essentials = essentials();
 
         var count = 0;
         for (var warp : warpManager.getWarps())

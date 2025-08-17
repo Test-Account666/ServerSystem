@@ -1,25 +1,19 @@
 package me.testaccount666.migration.essentials;
 
-import com.earth2me.essentials.Essentials;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.userdata.OfflineUser;
-import me.testaccount666.serversystem.userdata.UserManager;
-import org.bukkit.Bukkit;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Level;
 
-import static me.testaccount666.migration.essentials.EssentialsMigrator.ensureUserDataExists;
 
-public class HomeMigrator {
+public class HomeMigrator extends AbstractMigrator {
 
-    public Map<UUID, Integer> migrateFrom() {
-        var count = new HashMap<UUID, Integer>();
+    @Override
+    public int migrateFrom() {
+        var count = 0;
 
-        var userManager = ServerSystem.Instance.getRegistry().getService(UserManager.class);
-        var essentials = Essentials.getPlugin(Essentials.class);
+        var userManager = userManager();
+        var essentials = essentials();
         var uuids = essentials.getUsers().getAllUserUUIDs();
 
         for (var uuid : uuids) {
@@ -29,9 +23,7 @@ public class HomeMigrator {
                 continue;
             }
 
-            var user = userOptional.get().getOfflineUser();
-
-            count.put(user.getUuid(), migrateFrom(user));
+            count += migrateFrom(userOptional.get().getOfflineUser());
         }
 
         return count;
@@ -41,7 +33,7 @@ public class HomeMigrator {
         var count = 0;
 
         var homeManager = user.getHomeManager();
-        var essentials = Essentials.getPlugin(Essentials.class);
+        var essentials = essentials();
 
         var essentialsUser = essentials.getUser(user.getUuid());
         for (var homeName : essentialsUser.getHomes())
@@ -56,15 +48,18 @@ public class HomeMigrator {
                 ServerSystem.getLog().log(Level.WARNING, "Couldn't migrate home '${homeName}' for user '${user.getUuid()}' (${userName})", exception);
             }
 
+        user.save();
+
         return count;
     }
 
-    public Map<UUID, Integer> migrateTo() {
-        var count = new HashMap<UUID, Integer>();
+    @Override
+    public int migrateTo() {
+        var count = 0;
 
-        var userManager = ServerSystem.Instance.getRegistry().getService(UserManager.class);
+        var userManager = userManager();
 
-        for (var player : Bukkit.getOfflinePlayers()) {
+        for (var player : offlinePlayers()) {
             var uuid = player.getUniqueId();
 
             var userOptional = userManager.getUser(uuid);
@@ -73,7 +68,7 @@ public class HomeMigrator {
                 continue;
             }
 
-            count.put(uuid, migrateTo(userOptional.get().getOfflineUser()));
+            count += migrateTo(userOptional.get().getOfflineUser());
         }
 
         return count;
@@ -83,7 +78,7 @@ public class HomeMigrator {
         var count = 0;
 
         var homeManager = user.getHomeManager();
-        var essentials = Essentials.getPlugin(Essentials.class);
+        var essentials = essentials();
 
         ensureUserDataExists(user.getUuid());
         var essentialsUser = essentials.getUser(user.getUuid());
