@@ -295,6 +295,9 @@ Messages:
     Rename:
       NoItemInHand: "<Color:Error.Message>Ne držiš nobenega predmeta."
       Success: "Uspešno si preimenoval predmet v roki."
+    Skull:
+      Fetching: "Pridobivanje teksture iz Mineskin, prosimo počakajte..."
+      Success: "Igralčeva glava je bila prejeta."
     Sign:
       NoItemInHand: "<Color:Error.Message>Ne držiš nobenega predmeta."
       NoItemMeta: "<Color:Error.Message>Predmeta v roki ni mogoče podpisati."

@@ -1,10 +1,12 @@
 package me.testaccount666.serversystem.commands.executables.skull;
 
+import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -14,6 +16,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.UUID;
 
+import static me.testaccount666.serversystem.utils.MessageBuilder.command;
 import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 
 @ServerSystemCommand(name = "skull")
@@ -42,19 +45,21 @@ public class CommandSkull extends AbstractServerSystemCommand {
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        if (!checkBasePermission(commandSender, "Skull.Use")) return;
-        if (commandSender instanceof ConsoleUser) {
-            general("NotPlayer", commandSender).build();
-            return;
-        }
+        Bukkit.getScheduler().runTaskAsynchronously(ServerSystem.Instance, () -> {
+            if (!checkBasePermission(commandSender, "Skull.Use")) return;
+            if (commandSender instanceof ConsoleUser) {
+                general("NotPlayer", commandSender).build();
+                return;
+            }
 
-        if (arguments.length == 0) {
-            executeSelfSkull(commandSender);
-            return;
-        }
+            if (arguments.length == 0) {
+                executeSelfSkull(commandSender);
+                return;
+            }
 
-        if (!checkOtherPermission(commandSender, "Skull.Other", arguments[0])) return;
-        executeOtherSkull(commandSender, arguments);
+            if (!checkOtherPermission(commandSender, "Skull.Other", arguments[0])) return;
+            executeOtherSkull(commandSender, arguments);
+        });
     }
 
     private void executeSelfSkull(User commandSender) {
@@ -65,16 +70,25 @@ public class CommandSkull extends AbstractServerSystemCommand {
     private void executeOtherSkull(User commandSender, String... arguments) {
         var argument = arguments[0];
 
-        var skull = createSkullFromInput(argument);
+        var skull = createSkullFromInput(commandSender, argument);
+        if (skull == null) {
+            general("ErrorOccurred", commandSender).build();
+            return;
+        }
+
         commandSender.getPlayer().getInventory().addItem(skull);
+        command("Skull.Success", commandSender).build();
     }
 
-    private ItemStack createSkullFromInput(String input) {
+    private ItemStack createSkullFromInput(User commandSender, String input) {
         var uuid = ParseUuid(input);
         if (uuid != null) return _skullCreator.getSkull(uuid);
 
         var parsedUrl = ParseUrl(input);
-        if (parsedUrl != null) return _skullCreator.getSkullByTexture(parsedUrl);
+        if (parsedUrl != null) {
+            command("Skull.Fetching", commandSender).build();
+            return _skullCreator.getSkullByTexture(parsedUrl);
+        }
 
         return _skullCreator.getSkull(input);
     }

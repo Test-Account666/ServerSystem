@@ -304,6 +304,9 @@ Messages:
     Rename:
       NoItemInHand: "<Color:Error.Message>Du hältst keinen Gegenstand in der Hand."
       Success: "Du hast den Gegenstand in deiner Hand erfolgreich umbenannt."
+    Skull:
+      Fetching: "Textur wird von Mineskin abgerufen, bitte warten..."
+      Success: "Du hast dir einen Spielerkopf gegeben."
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>Du hast keine Berechtigung dafür. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"
