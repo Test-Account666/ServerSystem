@@ -50,7 +50,6 @@ public interface ConfigReader {
 
     ItemStack getItemStack(String path, ItemStack def);
 
-    ItemStack getItemStack(String path);
     default ItemStack getItemStack(String path) {
         return getItemStack(path, null);
     }
