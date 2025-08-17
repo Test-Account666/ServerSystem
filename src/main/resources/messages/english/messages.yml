@@ -261,7 +261,13 @@ Messages:
         Remove:
           Success: "You unbanned <Color:Highlight><TARGET><Color:Message>."
           NoActiveModeration: "<Color:Error.Message>Specified player <Color:Error.Highlight><TARGET> <Color:Error.Message>is not banned."
-        Kick: "&8[]--------------------[]\n&cYou have been banned!\n&6Reason&8: &c<REASON>\n&6By&8: &c<SENDER>\n&6Unban Date&8: &c<DATE>\n&8[]--------------------[]"
+        Kick:
+          - "&8[]--------------------[]"
+          - "&cYou have been banned!"
+          - "&6Reason&8: &c<REASON>"
+          - "&6By&8: &c<SENDER>"
+          - "&6Unban Date&8: &c<DATE>"
+          - "&8[]--------------------[]"
     Warp:
       Set:
         Success: "The warp <Color:Highlight><WARP> <Color:Message>was set to your current location."
@@ -292,7 +298,10 @@ Messages:
       NoItemInHand: "<Color:Error.Message>You're not holding an item."
       NoItemMeta: "<Color:Error.Message>The item in your hand cannot be signed."
       AlreadySigned: "<Color:Error.Message>The item in your hand is already signed."
-      Format: "<Color:Highlight><MESSAGE>\nSigned by: <SENDER>\nOn: <DATE>"
+      Format:
+        - "<Color:Highlight><MESSAGE>"
+        - "<Color:Highlight>Signed by: <SENDER>"
+        - "<Color:Highlight>On: <DATE>"
       Success: "You have successfully signed the item in your hand."
     Unsign:
       NotSigned: "<Color:Error.Message>The item in your hand is not signed."

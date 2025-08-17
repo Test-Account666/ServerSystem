@@ -2,6 +2,7 @@ package me.testaccount666.serversystem.managers.messages;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.managers.PlaceholderManager;
 import me.testaccount666.serversystem.managers.config.ConfigReader;
@@ -16,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.util.Optional;
 import java.util.logging.Level;
 
+@UtilityClass
 public class MessageManager {
     public static final String FALLBACK_LANGUAGE = "english";
     @Getter
@@ -23,9 +25,6 @@ public class MessageManager {
     private static PlaceholderManager _PlaceholderManager;
     @Getter
     private static String _DefaultLanguage;
-
-    private MessageManager() {
-    }
 
     public static void initialize() throws FileNotFoundException {
         _PlaceholderManager = new PlaceholderManager();

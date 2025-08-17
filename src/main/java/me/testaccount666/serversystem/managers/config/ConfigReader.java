@@ -5,6 +5,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
+import java.util.List;
 
 public interface ConfigReader {
 
@@ -52,6 +53,12 @@ public interface ConfigReader {
 
     default ItemStack getItemStack(String path) {
         return getItemStack(path, null);
+    }
+
+    List<String> getStringList(String path, List<String> def);
+
+    default List<String> getStringList(String path) {
+        return getStringList(path, List.of());
     }
 
     void set(String path, Object object);

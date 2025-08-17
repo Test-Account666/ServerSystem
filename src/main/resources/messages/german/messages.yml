@@ -261,7 +261,13 @@ Messages:
         Remove:
           Success: "Du hast <Color:Highlight><TARGET><Color:Message> entbannt."
           NoActiveModeration: "<Color:Error.Message>Der angegebene Spieler <Color:Error.Highlight><TARGET> <Color:Error.Message>ist nicht gebannt."
-        Kick: "&8[]--------------------[]\n&cDu wurdest gebannt!\n&6Grund&8: &c<REASON>\n&6Von&8: &c<SENDER>\n&6Entbann-Datum&8: &c<DATE>\n&8[]--------------------[]"
+        Kick:
+          - "&8[]--------------------[]"
+          - "&cDu wurdest gebannt!"
+          - "&6Grund&8: &c<REASON>"
+          - "&6Von&8: &c<SENDER>"
+          - "&6Entbann-Datum&8: &c<DATE>"
+          - "&8[]--------------------[]"
     Warp:
       Set:
         Success: "Der Warp <Color:Highlight><WARP> <Color:Message>wurde auf deine aktuelle Position gesetzt."
@@ -292,7 +298,10 @@ Messages:
       NoItemInHand: "<Color:Error.Message>Du hältst keinen Gegenstand in der Hand."
       NoItemMeta: "<Color:Error.Message>Der Gegenstand in deiner Hand kann nicht signiert werden."
       AlreadySigned: "<Color:Error.Message>Der Gegenstand in deiner Hand ist bereits signiert."
-      Format: "<Color:Highlight><MESSAGE>\nSigniert von: <SENDER>\nAm: <DATE>"
+      Format:
+        - "<Color:Highlight><MESSAGE>"
+        - "<Color:Highlight>Signiert von: <SENDER>"
+        - "<Color:Highlight>Am: <DATE>"
       Success: "Du hast den Gegenstand in deiner Hand erfolgreich signiert."
     Unsign:
       NotSigned: "<Color:Error.Message>Der Gegenstand in deiner Hand ist nicht signiert."

@@ -261,7 +261,13 @@ Messages:
         Remove:
           Success: "Odstranil si prepoved dostopa za <Color:Highlight><TARGET><Color:Message>."
           NoActiveModeration: "<Color:Error.Message>Navedeni igralec <Color:Error.Highlight><TARGET> <Color:Error.Message>nima prepovedi dostopa."
-        Kick: "&8[]--------------------[]\n&cPrepovedan ti je bil dostop!\n&6Razlog&8: &c<REASON>\n&6Izgnal&8: &c<SENDER>\n&6Datum odprave prepovedi&8: &c<DATE>\n&8[]--------------------[]"
+        Kick:
+          - "&8[]--------------------[]"
+          - "&cPrepovedan ti je bil dostop!"
+          - "&6Razlog&8: &c<REASON>"
+          - "&6Izgnal&8: &c<SENDER>"
+          - "&6Datum odprave prepovedi&8: &c<DATE>"
+          - "&8[]--------------------[]"
     Warp:
       Set:
         Success: "Warp <Color:Highlight><WARP> <Color:Message>je bil nastavljen na tvojo trenutno lokacijo."
@@ -302,7 +308,10 @@ Messages:
       NoItemInHand: "<Color:Error.Message>Ne držiš nobenega predmeta."
       NoItemMeta: "<Color:Error.Message>Predmeta v roki ni mogoče podpisati."
       AlreadySigned: "<Color:Error.Message>Predmet v roki je že podpisan."
-      Format: "<Color:Highlight><MESSAGE>\nPodpisal: <SENDER>\nDne: <DATE>"
+      Format:
+        - "<Color:Highlight><MESSAGE>"
+        - "<Color:Highlight>Podpisal: <SENDER>"
+        - "<Color:Highlight>Dne: <DATE>"
       Success: "Uspešno ste podpisali predmet v roki."
     Unsign:
       NotSigned: "<Color:Error.Message>Predmet v roki ni podpisan."

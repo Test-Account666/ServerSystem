@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
@@ -169,6 +170,18 @@ public class DefaultConfigReader implements ConfigReader {
 
             if (userType.isAssignableFrom(defaultType)) continue;
 
+            // Treat String and List<String> as compatible; do not override user's value
+            var userIsStringList = (userValue instanceof List);
+            var defaultIsStringList = (defaultValue instanceof List);
+            if ((userIsStringList && defaultType == String.class) || (defaultIsStringList && userType == String.class)) {
+                // Further ensure the list (if present) contains strings or is empty
+                List<?> list;
+                if (userIsStringList) list = (List<?>) userValue;
+                else list = (List<?>) defaultValue;
+
+                if (list.isEmpty() || list.stream().allMatch(line -> line == null || line instanceof String)) continue;
+            }
+
             var warningMessage = typeWarnings.get(defaultType);
             if (warningMessage != null) {
                 logConfigFix(key, warningMessage);
@@ -228,6 +241,15 @@ public class DefaultConfigReader implements ConfigReader {
         if (_newReader != null) configReader = _newReader;
 
         configReader.ensureConfigHasValue(path);
+
+        // Allow `List<String>` to be consumed as a String by joining with line breaks
+        if (configReader._configuration.isList(path)) {
+            var list = configReader._configuration.getStringList(path);
+            if (list.isEmpty()) return def;
+
+            return String.join("\n", list);
+        }
+
         return configReader._configuration.getString(path, def);
     }
 
@@ -268,8 +290,20 @@ public class DefaultConfigReader implements ConfigReader {
     }
 
     @Override
-    public ItemStack getItemStack(String path) {
-        return getItemStack(path, null);
+    public List<String> getStringList(String path, List<String> def) {
+        var configReader = this;
+        if (_newReader != null) configReader = _newReader;
+
+        configReader.ensureConfigHasValue(path);
+        if (!configReader._configuration.isSet(path)) return def;
+
+        // Allow String to be consumed as List<String>
+        if (configReader._configuration.isString(path)) {
+            var value = configReader._configuration.getString(path);
+            return value == null? def : List.of(value);
+        }
+
+        return configReader._configuration.getStringList(path);
     }
 
     @Override
