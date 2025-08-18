@@ -131,6 +131,7 @@ The plugin generates several configuration files:
 |----------------------------------|-----------------|-----------------------------|------------------------------------------------------|
 | `/ban [player] (reason)`         | -               | Ban a player                | `serversystem.moderation.ban.use`                    |
 | `/unban [player]`                | `/pardon`       | Unban a player              | `serversystem.moderation.ban.remove`                 |
+| `/kick (player)`                 | -               | Kick a player               | `serversystem.moderation.kick.use`                   |
 | `/mute [player] (time) (reason)` | -               | Mute a player               | `serversystem.moderation.mute.use`                   |
 | `/unmute [player]`               | -               | Unmute a player             | `serversystem.moderation.mute.remove`                |
 | `/shadowmute [player]`           | -               | Shadow mute a player        | `serversystem.moderation.mute.shadow`                |
@@ -177,6 +178,7 @@ The plugin generates several configuration files:
 | `/rename [name]`              | -                      | Rename item in hand               | `serversystem.command.rename.use`                    |
 | `/sign [message]`             | -                      | Sign item in hand with message    | `serversystem.command.sign.use`                      |
 | `/unsign`                     | -                      | Remove signature from item        | `serversystem.command.unsign.use`                    |
+| `/suicide`                    | -                      | Kills command executor            | `serversystem.command.suicide.use`                   |
 
 </details>
 
