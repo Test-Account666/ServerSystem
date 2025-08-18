@@ -1,4 +1,4 @@
-package me.testaccount666.serversystem.listener.executables.prefixchat;
+package me.testaccount666.serversystem.listener.executables.chat.prefixchat;
 
 import lombok.Getter;
 import org.bukkit.Bukkit;

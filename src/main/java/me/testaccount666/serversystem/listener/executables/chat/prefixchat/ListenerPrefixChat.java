@@ -1,4 +1,4 @@
-package me.testaccount666.serversystem.listener.executables.prefixchat;
+package me.testaccount666.serversystem.listener.executables.chat.prefixchat;
 
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.managers.config.ConfigurationManager;

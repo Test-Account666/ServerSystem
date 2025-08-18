@@ -1,4 +1,4 @@
-package me.testaccount666.serversystem.listener.executables.colorchat;
+package me.testaccount666.serversystem.listener.executables.chat;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
 import me.testaccount666.serversystem.ServerSystem;
