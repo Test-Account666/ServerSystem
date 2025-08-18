@@ -29,13 +29,13 @@ import java.util.logging.Level;
  * and operations on YAML configuration files.
  */
 public class DefaultConfigReader implements ConfigReader {
-    private final Plugin _plugin;
+    protected final Plugin _plugin;
     @Getter
-    private final File _file;
+    protected final File _file;
     @Getter
-    private final FileConfiguration _configuration;
-    private FileConfiguration _originalCfg = null;
-    private DefaultConfigReader _newReader = null;
+    protected final FileConfiguration _configuration;
+    protected FileConfiguration _originalCfg = null;
+    protected DefaultConfigReader _newReader = null;
 
     /**
      * Creates a new DefaultConfigReader for the specified file and plugin.
@@ -108,8 +108,8 @@ public class DefaultConfigReader implements ConfigReader {
      *
      * @throws FileNotFoundException If the default configuration file cannot be found
      */
-    private void loadDefaultConfig() throws FileNotFoundException {
-        var filename = _file.getName().toLowerCase();
+    protected void loadDefaultConfig() throws FileNotFoundException {
+        var filename = _file.getName();
 
         if (_plugin.getResource(filename) != null) {
             _originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(_plugin.getResource(filename)));

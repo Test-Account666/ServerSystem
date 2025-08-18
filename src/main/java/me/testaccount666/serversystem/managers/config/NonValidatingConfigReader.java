@@ -5,6 +5,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.logging.Level;
 
 public class NonValidatingConfigReader extends DefaultConfigReader {
     /**
@@ -25,5 +26,19 @@ public class NonValidatingConfigReader extends DefaultConfigReader {
     @Override
     protected boolean validateAndFixConfig() {
         return true;
+    }
+
+    @Override
+    protected void loadDefaultConfig() {
+        // Nothing to do
+    }
+
+    @Override
+    public void load(File file) {
+        try {
+            _newReader = new NonValidatingConfigReader(file, ServerSystem.Instance);
+        } catch (Exception exception) {
+            ServerSystem.getLog().log(Level.SEVERE, "Failed to load configuration file '${file.getName()}'", exception);
+        }
     }
 }
