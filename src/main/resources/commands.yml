@@ -265,6 +265,9 @@ Commands:
       unban:
         Enabled: true
         Aliases: "unban, pardon"
+  kick:
+    Enabled: true
+    Aliases: "kick"
   mute:
     Enabled: true
     Aliases: "mute"

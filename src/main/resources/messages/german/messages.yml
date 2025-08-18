@@ -268,6 +268,14 @@ Messages:
           - "&6Von&8: &c<SENDER>"
           - "&6Entbann-Datum&8: &c<DATE>"
           - "&8[]--------------------[]"
+      Kick:
+        Success: "Du hast <Color:Highlight><TARGET> <Color:Message>gekickt."
+        Kick:
+          - "&8[]--------------------[]"
+          - "&cDu wurdest gekickt!"
+          - "&6Grund&8: &c<REASON>"
+          - "&6Von&8: &c<SENDER>"
+          - "&8[]--------------------[]"
     Warp:
       Set:
         Success: "Der Warp <Color:Highlight><WARP> <Color:Message>wurde auf deine aktuelle Position gesetzt."

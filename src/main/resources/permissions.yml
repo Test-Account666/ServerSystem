@@ -415,6 +415,10 @@ Permissions:
         Shadow:
           Required: true
           Value: "serversystem.moderation.mute.shadow"
+      Kick:
+        Use:
+          Required: true
+          Value: "serversystem.moderation.kick.use"
     Language:
       Use:
         Required: false
