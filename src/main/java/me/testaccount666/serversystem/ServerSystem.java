@@ -8,6 +8,7 @@ import me.testaccount666.serversystem.clickablesigns.SignManager;
 import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager;
 import me.testaccount666.serversystem.commands.executables.warp.manager.WarpManager;
 import me.testaccount666.serversystem.commands.management.CommandManager;
+import me.testaccount666.serversystem.commands.management.CommandReplacer;
 import me.testaccount666.serversystem.listener.management.ListenerManager;
 import me.testaccount666.serversystem.managers.config.ConfigurationManager;
 import me.testaccount666.serversystem.managers.database.economy.AbstractEconomyDatabaseManager;
@@ -100,6 +101,7 @@ public final class ServerSystem extends JavaPlugin {
             registry.getServiceOptional(CommandManager.class).ifPresent(CommandManager::registerCommands);
             registry.getServiceOptional(ListenerManager.class).ifPresent(ListenerManager::registerListeners);
             registry.getServiceOptional(PlaceholderManager.class).ifPresent(PlaceholderManager::registerPlaceholders);
+            registry.getServiceOptional(CommandReplacer.class).ifPresent(CommandReplacer::replaceCommands);
 
             //var essentialsMigrator = new EssentialsMigrator();
             //if (essentialsMigrator.isEssentialsInstalled()) essentialsMigrator.migrateTo();
@@ -143,6 +145,8 @@ public final class ServerSystem extends JavaPlugin {
         registry.registerService(UserManager.class, new UserManager());
 
         registry.registerService(KitManager.class, new KitManager());
+
+        registry.registerService(CommandReplacer.class, new CommandReplacer());
 
         Bukkit.getScheduler().runTask(this, () -> {
             var warpFile = Path.of(getDataFolder().getPath(), "data", "warps.yml").toFile();

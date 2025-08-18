@@ -59,7 +59,7 @@ public class CommandManager {
                 .map(ServerSystemCommandExecutor.class::cast);
     }
 
-    private Map<String, Command> getCommandMap() {
+    Map<String, Command> getCommandMap() {
         var commandMap = (SimpleCommandMap) Bukkit.getCommandMap();
         return _commandMapAccessor.apply(commandMap);
     }
@@ -187,7 +187,7 @@ public class CommandManager {
         }
     }
 
-    private void syncCommands() {
+    synchronized void syncCommands() {
         //noinspection unchecked,rawtypes
         ((Consumer) _syncCommandsAccessor).accept(Bukkit.getServer());
 

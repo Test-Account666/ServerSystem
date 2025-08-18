@@ -22,6 +22,8 @@ public class ConfigurationManager {
     private ConfigReader _economyConfig;
     @Getter
     private ConfigReader _moderationConfig;
+    @Getter
+    private ConfigReader _commandReplaceConfig;
 
     public ConfigurationManager(Plugin plugin) {
         _plugin = plugin;
@@ -37,6 +39,7 @@ public class ConfigurationManager {
         initializeMessagesConfig();
         initializeEconomyConfig();
         initializeModerationConfig();
+        initializeCommandReplaceConfig();
         createUserDataFolder();
     }
 
@@ -82,6 +85,12 @@ public class ConfigurationManager {
         var moderationFile = _pluginFolder.resolve("moderation.yml").toFile();
         ensureConfigFileExists(moderationFile, "moderation.yml");
         _moderationConfig = new DefaultConfigReader(moderationFile, _plugin);
+    }
+
+    private void initializeCommandReplaceConfig() throws FileNotFoundException {
+        var replacedCommandsFile = _pluginFolder.resolve("replacedCommands.yml").toFile();
+        ensureConfigFileExists(replacedCommandsFile, "replacedCommands.yml");
+        _commandReplaceConfig = new NonValidatingConfigReader(replacedCommandsFile, _plugin);
     }
 
     private void createUserDataFolder() {
