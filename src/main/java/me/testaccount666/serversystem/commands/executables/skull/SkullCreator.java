@@ -84,7 +84,8 @@ public class SkullCreator {
     }
 
     private synchronized Optional<String> getCachedResponse(URL textureURL) throws IOException {
-        var pluginDir = Path.of("plugins", "ServerSystem");
+        var pluginDir = Path.of("plugins", "ServerSystem", "data");
+        if (!Files.exists(pluginDir)) Files.createDirectories(pluginDir);
 
         // Yes, inconsistent with User Data, but a zip archive allows us to read individual entries more easily
         var cacheZip = pluginDir.resolve("MineSkinCache.zip");
@@ -159,7 +160,8 @@ public class SkullCreator {
 
 
     private synchronized void saveResponse(URL textureURL, String response) throws IOException {
-        var pluginDir = Path.of("plugins", "ServerSystem");
+        var pluginDir = Path.of("plugins", "ServerSystem", "data");
+        if (!Files.exists(pluginDir)) Files.createDirectories(pluginDir);
 
         // Yes, inconsistent with User Data, but a zip archive allows us to read individual entries more easily
         var cacheZip = pluginDir.resolve("MineSkinCache.zip");
