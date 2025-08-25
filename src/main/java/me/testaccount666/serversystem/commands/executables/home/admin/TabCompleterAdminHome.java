@@ -26,7 +26,7 @@ public class TabCompleterAdminHome implements ServerSystemTabCompleter {
     }
 
     private Optional<List<String>> handleHomeCommand(User commandSender, String... arguments) {
-        if (!PermissionManager.hasCommandPermission(commandSender, "Commands.AdminHome.Use", false)) return Optional.empty();
+        if (!PermissionManager.hasCommandPermission(commandSender, "AdminHome.Use", false)) return Optional.empty();
 
         if (arguments.length <= 1) return Optional.empty();
 
