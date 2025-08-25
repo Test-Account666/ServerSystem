@@ -442,4 +442,5 @@ Messages:
     CommandSpy: "/<LABEL> (Spieler)"
     Disposal: "/<LABEL> (Spieler)"
     Sign: "/<LABEL> [Nachricht...]"
+    Kick: "/<LABEL> [Spieler] (Grund...)"
 language: "german"
