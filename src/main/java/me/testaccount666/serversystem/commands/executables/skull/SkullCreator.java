@@ -20,6 +20,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class SkullCreator {
+    private static final Path _DATA_DIRECTORY = Path.of("plugins", "ServerSystem", "data");
+    // Yes, inconsistent with User Data, but a zip archive allows us to read individual entries more easily
+    private static final Path _CACHE_FILE = _DATA_DIRECTORY.resolve("MineSkinCache.zip");
 
     private static HttpURLConnection createConnection() throws URISyntaxException, IOException {
         var apiURL = new URI("https://api.mineskin.org/v2/generate").toURL();
@@ -84,19 +87,15 @@ public class SkullCreator {
     }
 
     private synchronized Optional<String> getCachedResponse(URL textureURL) throws IOException {
-        var pluginDir = Path.of("plugins", "ServerSystem", "data");
-        if (!Files.exists(pluginDir)) Files.createDirectories(pluginDir);
-
-        // Yes, inconsistent with User Data, but a zip archive allows us to read individual entries more easily
-        var cacheZip = pluginDir.resolve("MineSkinCache.zip");
+        if (!Files.exists(_DATA_DIRECTORY)) Files.createDirectories(_DATA_DIRECTORY);
 
         var base64 = Base64.getUrlEncoder().withoutPadding()
                 .encodeToString(textureURL.toString().getBytes(StandardCharsets.UTF_8));
         var entryName = "${base64}.json";
 
-        if (!Files.exists(cacheZip)) return Optional.empty();
+        if (!Files.exists(_CACHE_FILE)) return Optional.empty();
 
-        var zipUri = URI.create("jar:${cacheZip.toUri()}");
+        var zipUri = URI.create("jar:${_CACHE_FILE.toUri()}");
         try (var zipFileSystem = getFileSystem(zipUri, Map.of())) {
             var entry = zipFileSystem.getPath("/" + entryName);
             if (!Files.exists(entry)) return Optional.empty();
@@ -160,21 +159,17 @@ public class SkullCreator {
 
 
     private synchronized void saveResponse(URL textureURL, String response) throws IOException {
-        var pluginDir = Path.of("plugins", "ServerSystem", "data");
-        if (!Files.exists(pluginDir)) Files.createDirectories(pluginDir);
-
-        // Yes, inconsistent with User Data, but a zip archive allows us to read individual entries more easily
-        var cacheZip = pluginDir.resolve("MineSkinCache.zip");
+        if (!Files.exists(_DATA_DIRECTORY)) Files.createDirectories(_DATA_DIRECTORY);
 
         var base64 = Base64.getUrlEncoder().withoutPadding()
                 .encodeToString(textureURL.toString().getBytes(StandardCharsets.UTF_8));
         var entryName = "${base64}.json";
 
         var environment = new HashMap<String, Object>();
-        if (!Files.exists(cacheZip)) environment.put("create", true);
+        if (!Files.exists(_CACHE_FILE)) environment.put("create", true);
 
         environment.put("compressionLevel", 3);
-        var zipUri = URI.create("jar:${cacheZip.toUri()}");
+        var zipUri = URI.create("jar:${_CACHE_FILE.toUri()}");
         try (var zipFileSystem = getFileSystem(zipUri, environment)) {
             var entry = zipFileSystem.getPath("/" + entryName);
             Files.writeString(entry, response, StandardCharsets.UTF_8);
