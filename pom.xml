@@ -15,7 +15,7 @@
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <manifold.version>2025.1.26</manifold.version>
-        <cleanVersion>3.1.1</cleanVersion>
+        <cleanVersion>3.2.0</cleanVersion>
     </properties>
 
     <scm>
