@@ -47,7 +47,17 @@ public class CommandKick extends AbstractServerSystemCommand {
                 .mapToObj(index -> arguments[index] + " ")
                 .collect(Collectors.joining()).trim();
 
-        targetUser.getPlayer().kickPlayer(reason);
+        var finalReason = reason;
+        var kickOptional = command("Moderation.Kick.Kick", commandSender).target(targetUser.getName().get()).prefix(false)
+                .postModifier(message -> message.replace("<REASON>", finalReason)).send(false).build();
+
+        if (kickOptional.isEmpty()) {
+            ServerSystem.getLog().severe("(CommandBan) Kick message is empty! This should not happen!");
+            general("ErrorOccurred", commandSender).build();
+            return;
+        }
+
+        targetUser.getPlayer().kickPlayer(kickOptional.get());
 
         command("Moderation.Kick.Success", commandSender)
                 .target(targetUser.getName().get()).build();
