@@ -439,6 +439,19 @@ Permissions:
       Use:
         Required: true
         Value: "serversystem.command.suicide.use"
+    ServerSystem:
+      Use:
+        Required: true
+        Value: "serversystem.admin.command.serversystem.use"
+      Reload:
+        Required: true
+        Value: "serversystem.admin.command.serversystem.reload"
+      Migrate:
+        Required: true
+        Value: "serversystem.admin.command.serversystem.migrate"
+      Version:
+        Required: true
+        Value: "serversystem.admin.command.serversystem.version"
   Chat:
     ColorChat:
       Required: true

@@ -324,6 +324,15 @@ Messages:
     Unsign:
       NotSigned: "<Color:Error.Message>Predmet v roki ni podpisan."
       Success: "Uspešno ste odstranili podpis s predmeta v roki."
+    ServerSystem:
+      Version:
+        Checking: "Preverjanje najnovejše različice, prosimo počakajte..."
+        Success:
+          - "<Color:MessageTrenutna različica: <Color:Highlight><CURRENT_VERSION>"
+          - "<Color:Message>Najnovejša različica: <Color:Highlight><LATEST_VERSION>"
+          - "<Color:Message>Različica strežnika: <Color:Highlight><SERVER_VERSION>"
+      Reload:
+        Success: "ServerSystem je bil ponovno naložen."
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>Nimaš dovoljenja za to dejanje. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"
@@ -443,4 +452,5 @@ Messages:
     Disposal: "/<LABEL> (player)"
     Sign: "/<LABEL> [message...]"
     Kick: "/<LABEL> [player] (reason...)"
+    ServerSystem: "/<LABEL> (version|reload|migrate [from <plugin>] [to <plugin>])"
 language: "slovene"

@@ -327,3 +327,6 @@ Commands:
   suicide:
     Enabled: true
     Aliases: "suicide"
+  serversystem:
+    Enabled: true
+    Aliases: "serversystem"

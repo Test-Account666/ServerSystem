@@ -37,15 +37,8 @@ public abstract class AbstractUpdateChecker {
         var future = new CompletableFuture<Boolean>();
 
         Bukkit.getScheduler().runTaskAsynchronously(ServerSystem.Instance, () -> {
-            try (var client = HttpClient.newHttpClient()) {
-                var request = HttpRequest.newBuilder()
-                        .timeout(Duration.ofMinutes(1))
-                        .uri(updateURI).GET().build();
-
-                var response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                var body = response.body();
-
-                var parsedLatestVersion = parseLatestVersion(body);
+            try {
+                var parsedLatestVersion = getLatestVersion().join();
 
                 if (parsedLatestVersion.compareTo(ServerSystem.CURRENT_VERSION) > 0) {
                     isUpdateAvailable = true;
@@ -60,12 +53,33 @@ public abstract class AbstractUpdateChecker {
                 future.complete(isUpdateAvailable);
 
             } catch (Exception exception) {
-                ServerSystem.getLog().log(Level.WARNING, "Failed to check for updates!", exception);
                 future.completeExceptionally(exception);
             }
         });
 
         return future;
+    }
+
+    public CompletableFuture<Version> getLatestVersion() {
+        var future = new CompletableFuture<Version>();
+        try (var client = HttpClient.newHttpClient()) {
+            var request = HttpRequest.newBuilder()
+                    .timeout(Duration.ofMinutes(1))
+                    .uri(updateURI).GET().build();
+
+            var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            var body = response.body();
+
+            var parsedLatestVersion = parseLatestVersion(body);
+            future.complete(parsedLatestVersion);
+
+            return future;
+        } catch (Exception exception) {
+            ServerSystem.getLog().log(Level.WARNING, "Failed to check for updates!", exception);
+            future.completeExceptionally(exception);
+
+            return future;
+        }
     }
 
     /**

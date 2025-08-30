@@ -324,6 +324,15 @@ Messages:
     Skull:
       Fetching: "Fetching texture from Mineskin, please wait..."
       Success: "You gave yourself a player head."
+    ServerSystem:
+      Version:
+        Checking: "Checking latest version, please wait..."
+        Success:
+          - "<Color:Message>Current version: <Color:Highlight><CURRENT_VERSION>"
+          - "<Color:Message>Latest version: <Color:Highlight><LATEST_VERSION>"
+          - "<Color:Message>Server version: <Color:Highlight><SERVER_VERSION>"
+      Reload:
+        Success: "ServerSystem was reloaded."
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>You don't have permission to do this. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"
@@ -443,4 +452,5 @@ Messages:
     Disposal: "/<LABEL> (player)"
     Sign: "/<LABEL> [message...]"
     Kick: "/<LABEL> [player] (reason...)"
+    ServerSystem: "/<LABEL> (version|reload|migrate [from <plugin>] [to <plugin>])"
 language: "english"

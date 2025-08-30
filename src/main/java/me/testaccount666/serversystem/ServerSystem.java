@@ -3,7 +3,8 @@ package me.testaccount666.serversystem;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import me.testaccount666.migration.LegacyDataMigrator;
-import me.testaccount666.migration.essentials.EssentialsMigrator;
+import me.testaccount666.migration.plugins.MigratorRegistry;
+import me.testaccount666.migration.plugins.essentials.EssentialsMigrator;
 import me.testaccount666.serversystem.clickablesigns.SignManager;
 import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager;
 import me.testaccount666.serversystem.commands.executables.warp.manager.WarpManager;
@@ -24,7 +25,6 @@ import me.testaccount666.serversystem.userdata.CachedUser;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.UserManager;
 import me.testaccount666.serversystem.userdata.money.EconomyProvider;
-import me.testaccount666.serversystem.userdata.money.vault.EconomyVaultAPI;
 import me.testaccount666.serversystem.utils.Version;
 import me.testaccount666.serversystem.utils.VersionInfo;
 import org.bukkit.Bukkit;
@@ -102,9 +102,6 @@ public final class ServerSystem extends JavaPlugin {
             registry.getServiceOptional(ListenerManager.class).ifPresent(ListenerManager::registerListeners);
             registry.getServiceOptional(PlaceholderManager.class).ifPresent(PlaceholderManager::registerPlaceholders);
             registry.getServiceOptional(CommandReplacer.class).ifPresent(CommandReplacer::replaceCommands);
-
-            //var essentialsMigrator = new EssentialsMigrator();
-            //if (essentialsMigrator.isEssentialsInstalled()) essentialsMigrator.migrateTo();
         }, 2);
     }
 
@@ -122,8 +119,7 @@ public final class ServerSystem extends JavaPlugin {
         };
         registry.registerService(AbstractModerationDatabaseManager.class, moderationDbManager);
 
-        var essentialsMigrator = registry.getService(EssentialsMigrator.class);
-        if (!essentialsMigrator.isEssentialsInstalled() && EconomyVaultAPI.isVaultInstalled()) EconomyVaultAPI.initialize();
+        registry.registerService(MigratorRegistry.class, new MigratorRegistry()).registerMigrators();
 
         PlaceholderApiSupport.registerPlaceholders();
 
