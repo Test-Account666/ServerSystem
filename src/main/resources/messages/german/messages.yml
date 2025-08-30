@@ -333,6 +333,10 @@ Messages:
           - "<Color:Message>Server Version: <Color:Highlight><SERVER_VERSION>"
       Reload:
         Success: "ServerSystem wurde neu geladen."
+      Migrate:
+        Success:
+          From: "Daten von <Color:Highlight><MIGRATOR> <Color:Message>zu <Color:Highlight>ServerSystem <Color:Message>migriert. Bitte siehe die Logs für weitere Informationen."
+          To: "Daten von <Color:Highlight>ServerSystem <Color:Message>zu <Color:Highlight><MIGRATOR> <Color:Message>migriert. Bitte siehe die Logs für weitere Informationen."
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>Du hast keine Berechtigung dafür. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"

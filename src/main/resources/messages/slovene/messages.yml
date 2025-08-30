@@ -333,6 +333,10 @@ Messages:
           - "<Color:Message>Različica strežnika: <Color:Highlight><SERVER_VERSION>"
       Reload:
         Success: "ServerSystem je bil ponovno naložen."
+      Migrate:
+        Success:
+          From: "Podatki so bili uspešno migrirani iz <Color:Highlight><MIGRATOR> <Color:Message>v <Color:Highlight>ServerSystem. <Color:Message>Podrobnosti najdete v dnevnikih."
+          To: "Podatki so bili uspešno migrirani iz <Color:Highlight>ServerSystem <Color:Message>v <Color:Highlight><MIGRATOR>. <Color:Message>Podrobnosti najdete v dnevnikih."
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>Nimaš dovoljenja za to dejanje. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"

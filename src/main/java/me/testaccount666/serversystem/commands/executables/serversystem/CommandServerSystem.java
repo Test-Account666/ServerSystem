@@ -113,8 +113,14 @@ public class CommandServerSystem extends AbstractServerSystemCommand {
 
         var migrationType = arguments[0].toLowerCase();
         switch (migrationType) {
-            case "to" -> migrator.get().migrateTo();
-            case "from" -> migrator.get().migrateFrom();
+            case "to" -> {
+                migrator.get().migrateTo();
+                migrationType = "To";
+            }
+            case "from" -> {
+                migrator.get().migrateFrom();
+                migrationType = "From";
+            }
             default -> {
                 general("InvalidArguments", commandSender).label(label)
                         .syntaxPath(getSyntaxPath(null)).build();
@@ -122,7 +128,7 @@ public class CommandServerSystem extends AbstractServerSystemCommand {
             }
         }
 
-        command("ServerSystem.Migrate.Success", commandSender)
+        command("ServerSystem.Migrate.Success.${migrationType}", commandSender)
                 .postModifier(message -> message.replace("<MIGRATOR>", migratorName)).build();
     }
 }
