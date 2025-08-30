@@ -1,4 +1,4 @@
-package me.testaccount666.migration.essentials;
+package me.testaccount666.migration.plugins.essentials;
 
 import me.testaccount666.serversystem.ServerSystem;
 import net.ess3.api.MaxMoneyException;

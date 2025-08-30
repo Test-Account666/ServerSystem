@@ -1,4 +1,4 @@
-package me.testaccount666.migration.essentials;
+package me.testaccount666.migration.plugins.essentials;
 
 import com.earth2me.essentials.Essentials;
 import lombok.SneakyThrows;

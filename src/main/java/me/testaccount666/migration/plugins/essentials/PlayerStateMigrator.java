@@ -1,4 +1,4 @@
-package me.testaccount666.migration.essentials;
+package me.testaccount666.migration.plugins.essentials;
 
 import me.testaccount666.serversystem.ServerSystem;
 
@@ -55,7 +55,8 @@ public class PlayerStateMigrator extends AbstractMigrator {
                 continue;
             }
 
-            var user = userOptional.get().getOfflineUser();
+            var cachedUser = userOptional.get();
+            var user = cachedUser.getOfflineUser();
 
             ensureUserDataExists(uuid);
             var essentialsUser = essentials.getUser(uuid);
@@ -66,7 +67,8 @@ public class PlayerStateMigrator extends AbstractMigrator {
             essentialsUser.setTeleportEnabled(user.isAcceptsTeleports());
 
             essentialsUser.setGodModeEnabled(user.isGodMode());
-            essentialsUser.setVanished(user.isVanish());
+            // Vanish state cannot be easily migrated to, if the user is offline
+            if (cachedUser.isOnlineUser()) essentialsUser.setVanished(user.isVanish());
 
             essentialsUser.setLogoutLocation(user.getLogoutPosition());
 
