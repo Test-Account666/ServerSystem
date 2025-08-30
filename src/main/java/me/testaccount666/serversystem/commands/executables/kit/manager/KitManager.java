@@ -70,7 +70,7 @@ public class KitManager {
         _kits.remove(name);
 
         var kitFile = getKitFile(name);
-        if (kitFile.exists()) if (!kitFile.delete()) ServerSystem.Instance.getLogger().warning("Failed to delete kit file: ${kitFile.getPath()}");
+        if (kitFile.exists()) if (!kitFile.delete()) ServerSystem.getLog().warning("Failed to delete kit file: ${kitFile.getPath()}");
     }
 
     /**
@@ -100,7 +100,7 @@ public class KitManager {
             kitConfig.save(kitFile);
             return true;
         } catch (IOException exception) {
-            ServerSystem.Instance.getLogger().log(Level.SEVERE, "Failed to save kit '${kit.getName()}'", exception);
+            ServerSystem.getLog().log(Level.SEVERE, "Failed to save kit '${kit.getName()}'", exception);
             return false;
         }
     }
