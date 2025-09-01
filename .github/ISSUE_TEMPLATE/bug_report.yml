@@ -1,0 +1,105 @@
+name: Bug report
+description: Create a report to help us improve
+title: "[BUG] "
+labels: [bug]
+assignees:
+  - Test-Account666
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out a bug report! Please complete all required sections.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+      placeholder: "The plugin crashes when..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: To Reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your problem.
+
+  - type: input
+    id: java-version
+    attributes:
+      label: Java Version
+      placeholder: e.g. Java 21
+    validations:
+      required: true
+
+  - type: input
+    id: server-software
+    attributes:
+      label: Server Software
+      placeholder: e.g. Paper
+    validations:
+      required: true
+
+  - type: input
+    id: server-version
+    attributes:
+      label: Server Version
+      placeholder: e.g. 1.21.8
+    validations:
+      required: true
+
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin Version
+      placeholder: e.g. 3.2.0.f7863824
+    validations:
+      required: true
+
+  - type: input
+    id: server-log
+    attributes:
+      label: Server Log
+      description: Include a link to your server log
+      placeholder: https://mclo.gs/...
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have checked existing issues to avoid duplicates
+          required: true
+        - label: I have provided as much detail as I can
+          required: true
+        - label: I understand incomplete reports may be harder to resolve
+          required: true
