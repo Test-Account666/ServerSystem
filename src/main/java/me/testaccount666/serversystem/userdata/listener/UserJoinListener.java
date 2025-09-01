@@ -1,6 +1,7 @@
 package me.testaccount666.serversystem.userdata.listener;
 
 import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.userdata.UserManager;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -11,7 +12,7 @@ public class UserJoinListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onUserJoin(PlayerJoinEvent event) {
-        var cachedUserOptional = ServerSystem.Instance.getUserManager().getUser(event.getPlayer().getUniqueId());
+        var cachedUserOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(event.getPlayer().getUniqueId());
 
         if (cachedUserOptional.isEmpty()) throw new RuntimeException("Couldn't cache User '${event.getPlayer().getName()}'! This should not happen!");
 

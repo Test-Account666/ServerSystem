@@ -1,7 +1,9 @@
-package me.testaccount666.serversystem.listener.executables.prefixchat;
+package me.testaccount666.serversystem.listener.executables.chat.prefixchat;
 
 import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.managers.config.ConfigurationManager;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.userdata.UserManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -13,7 +15,8 @@ public class ListenerPrefixChat implements Listener {
     private final boolean _enabled;
 
     public ListenerPrefixChat() {
-        var enabled = ServerSystem.Instance.getConfigManager().getGeneralConfig().getBoolean("Chat.PrefixChat.Enabled");
+        var configManager = ServerSystem.Instance.getRegistry().getService(ConfigurationManager.class);
+        var enabled = configManager.getGeneralConfig().getBoolean("Chat.PrefixChat.Enabled");
 
         if (!ChatVaultAPI.isVaultInstalled() || !enabled) {
             _chatVaultAPI = null;
@@ -38,7 +41,7 @@ public class ListenerPrefixChat implements Listener {
         prefix = prefix.replace("%", "%%");
         suffix = suffix.replace("%", "%%");
 
-        var userOptional = ServerSystem.Instance.getUserManager().getUser(player);
+        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player);
         if (userOptional.isEmpty()) {
             ServerSystem.getLog().warning("Couldn't cache User '${player.getName()}'! This should not happen!");
             return;

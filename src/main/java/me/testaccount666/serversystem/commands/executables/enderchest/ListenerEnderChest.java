@@ -5,6 +5,7 @@ import me.testaccount666.serversystem.annotations.RequiredCommands;
 import me.testaccount666.serversystem.commands.executables.enderchest.offline.CommandOfflineEnderChest;
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.userdata.UserManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -45,7 +46,7 @@ public class ListenerEnderChest implements Listener {
         Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> viewers.forEach(viewer -> {
             if (!(viewer instanceof Player player)) return;
 
-            var optionalUser = ServerSystem.Instance.getUserManager().getUser(player);
+            var optionalUser = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player);
             if (optionalUser.isEmpty()) return;
 
             var cachedUser = optionalUser.get();

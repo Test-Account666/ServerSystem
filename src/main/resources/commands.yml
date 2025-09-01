@@ -265,6 +265,9 @@ Commands:
       unban:
         Enabled: true
         Aliases: "unban, pardon"
+  kick:
+    Enabled: true
+    Aliases: "kick"
   mute:
     Enabled: true
     Aliases: "mute"
@@ -321,3 +324,9 @@ Commands:
   lightning:
     Enabled: true
     Aliases: "lightning, thor, smite"
+  suicide:
+    Enabled: true
+    Aliases: "suicide"
+  serversystem:
+    Enabled: true
+    Aliases: "serversystem"

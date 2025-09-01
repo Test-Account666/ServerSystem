@@ -40,10 +40,13 @@ public class MappingsData {
             return data;
         }
 
-        readerOptional = MessageManager.getLanguageLoader().getMappingReader("english");
+        var defaultLanguage = MessageManager.getDefaultLanguage();
+
+        readerOptional = MessageManager.getLanguageLoader().getMappingReader(defaultLanguage);
         data = factory.apply(readerOptional.get());
         cache.put(language, data);
         return data;
+
     }
 
     /**
@@ -51,8 +54,10 @@ public class MappingsData {
      *
      * @return The GameMode mapping data
      */
+    @Deprecated(forRemoval = true, since = "3.3.0")
     public static GameMode gameMode() {
-        return getOrLoadMappingData("english", _Instance._gameModeByLanguage, GameMode::new);
+        var defaultLanguage = MessageManager.getDefaultLanguage();
+        return getOrLoadMappingData(defaultLanguage, _Instance._gameModeByLanguage, GameMode::new);
     }
 
     /**
@@ -60,8 +65,10 @@ public class MappingsData {
      *
      * @return The MessageColors mapping data
      */
+    @Deprecated(forRemoval = true, since = "3.3.0")
     public static MessageColors messageColors() {
-        return getOrLoadMappingData("english", _Instance._messageColorsByLanguage, MessageColors::new);
+        var defaultLanguage = MessageManager.getDefaultLanguage();
+        return getOrLoadMappingData(defaultLanguage, _Instance._messageColorsByLanguage, MessageColors::new);
     }
 
     /**
@@ -69,8 +76,10 @@ public class MappingsData {
      *
      * @return The BackType mapping data
      */
+    @Deprecated(forRemoval = true, since = "3.3.0")
     public static BackType backType() {
-        return getOrLoadMappingData("english", _Instance._backTypeByLanguage, BackType::new);
+        var defaultLanguage = MessageManager.getDefaultLanguage();
+        return getOrLoadMappingData(defaultLanguage, _Instance._backTypeByLanguage, BackType::new);
     }
 
     /**
@@ -78,8 +87,10 @@ public class MappingsData {
      *
      * @return The Moderation mapping data
      */
+    @Deprecated(forRemoval = true, since = "3.3.0")
     public static Moderation moderation() {
-        return getOrLoadMappingData("english", _Instance._moderationByLanguage, Moderation::new);
+        var defaultLanguage = MessageManager.getDefaultLanguage();
+        return getOrLoadMappingData(defaultLanguage, _Instance._moderationByLanguage, Moderation::new);
     }
 
     /**
@@ -87,8 +98,10 @@ public class MappingsData {
      *
      * @return The Console mapping data
      */
+    @Deprecated(forRemoval = true, since = "3.3.0")
     public static Console console() {
-        return getOrLoadMappingData("english", _Instance._consoleByLanguage, Console::new);
+        var defaultLanguage = MessageManager.getDefaultLanguage();
+        return getOrLoadMappingData(defaultLanguage, _Instance._consoleByLanguage, Console::new);
     }
 
     /**

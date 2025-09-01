@@ -4,6 +4,7 @@ import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.annotations.RequiredCommands;
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.userdata.UserManager;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -39,7 +40,7 @@ public class ListenerSpawn implements Listener {
 
         // Delay by a second, because teleporting instantly sometimes doesn't work
         Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> {
-            var userOptional = ServerSystem.Instance.getUserManager().getUser(player);
+            var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player);
             if (userOptional.isEmpty()) return;
 
             var cachedUser = userOptional.get();

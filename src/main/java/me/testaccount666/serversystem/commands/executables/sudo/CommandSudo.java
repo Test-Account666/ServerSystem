@@ -4,6 +4,8 @@ import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.managers.PermissionManager;
+import me.testaccount666.serversystem.userdata.UserManager;
+import me.testaccount666.serversystem.commands.management.CommandManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
 import net.bytebuddy.ByteBuddy;
@@ -70,7 +72,7 @@ public class CommandSudo extends AbstractServerSystemCommand {
             return;
         }
 
-        var cachedSenderOptional = ServerSystem.Instance.getUserManager().getUser(commandSender.getUuid());
+        var cachedSenderOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(commandSender.getUuid());
         if (cachedSenderOptional.isEmpty()) {
             ServerSystem.getLog().warning("(CommandSudo) Couldn't find cached command sender?!");
             general("ErrorOccurred", commandSender).label(label).build();
@@ -98,7 +100,8 @@ public class CommandSudo extends AbstractServerSystemCommand {
         var sudoArguments = new String[arguments.length - 2];
         System.arraycopy(arguments, 2, sudoArguments, 0, sudoArguments.length);
 
-        var commandOptional = ServerSystem.Instance.getCommandManager().getCommand(sudoCommand.substring(1));
+        var commandManager = ServerSystem.Instance.getRegistry().getService(CommandManager.class);
+        var commandOptional = commandManager.getCommand(sudoCommand.substring(1));
         if (commandOptional.isEmpty()) {
             var tempArgumentList = new ArrayList<String>();
             tempArgumentList.add(sudoCommand);

@@ -261,7 +261,21 @@ Messages:
         Remove:
           Success: "Odstranil si prepoved dostopa za <Color:Highlight><TARGET><Color:Message>."
           NoActiveModeration: "<Color:Error.Message>Navedeni igralec <Color:Error.Highlight><TARGET> <Color:Error.Message>nima prepovedi dostopa."
-        Kick: "&8[]--------------------[]\n&cPrepovedan ti je bil dostop!\n&6Razlog&8: &c<REASON>\n&6Izgnal&8: &c<SENDER>\n&6Datum odprave prepovedi&8: &c<DATE>\n&8[]--------------------[]"
+        Kick:
+          - "&8[]--------------------[]"
+          - "&cPrepovedan ti je bil dostop!"
+          - "&6Razlog&8: &c<REASON>"
+          - "&6Izgnal&8: &c<SENDER>"
+          - "&6Datum odprave prepovedi&8: &c<DATE>"
+          - "&8[]--------------------[]"
+      Kick:
+        Success: "Brcnil si <Color:Highlight><TARGET><Color:Message>."
+        Kick:
+          - "&8[]--------------------[]"
+          - "&cBil si brcnjen!"
+          - "&6Razlog&8: &c<REASON>"
+          - "&6Od&8: &c<SENDER>"
+          - "&8[]--------------------[]"
     Warp:
       Set:
         Success: "Warp <Color:Highlight><WARP> <Color:Message>je bil nastavljen na tvojo trenutno lokacijo."
@@ -295,15 +309,34 @@ Messages:
     Rename:
       NoItemInHand: "<Color:Error.Message>Ne držiš nobenega predmeta."
       Success: "Uspešno si preimenoval predmet v roki."
+    Skull:
+      Fetching: "Pridobivanje teksture iz Mineskin, prosimo počakajte..."
+      Success: "Igralčeva glava je bila prejeta."
     Sign:
       NoItemInHand: "<Color:Error.Message>Ne držiš nobenega predmeta."
       NoItemMeta: "<Color:Error.Message>Predmeta v roki ni mogoče podpisati."
       AlreadySigned: "<Color:Error.Message>Predmet v roki je že podpisan."
-      Format: "<Color:Highlight><MESSAGE>\nPodpisal: <SENDER>\nDne: <DATE>"
+      Format:
+        - "<Color:Highlight><MESSAGE>"
+        - "<Color:Highlight>Podpisal: <SENDER>"
+        - "<Color:Highlight>Dne: <DATE>"
       Success: "Uspešno ste podpisali predmet v roki."
     Unsign:
       NotSigned: "<Color:Error.Message>Predmet v roki ni podpisan."
       Success: "Uspešno ste odstranili podpis s predmeta v roki."
+    ServerSystem:
+      Version:
+        Checking: "Preverjanje najnovejše različice, prosimo počakajte..."
+        Success:
+          - "<Color:MessageTrenutna različica: <Color:Highlight><CURRENT_VERSION>"
+          - "<Color:Message>Najnovejša različica: <Color:Highlight><LATEST_VERSION>"
+          - "<Color:Message>Različica strežnika: <Color:Highlight><SERVER_VERSION>"
+      Reload:
+        Success: "ServerSystem je bil ponovno naložen."
+      Migrate:
+        Success:
+          From: "Podatki so bili uspešno migrirani iz <Color:Highlight><MIGRATOR> <Color:Message>v <Color:Highlight>ServerSystem. <Color:Message>Podrobnosti najdete v zapiskih."
+          To: "Podatki so bili uspešno migrirani iz <Color:Highlight>ServerSystem <Color:Message>v <Color:Highlight><MIGRATOR>. <Color:Message>Podrobnosti najdete v zapiskih."
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>Nimaš dovoljenja za to dejanje. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"
@@ -422,4 +455,6 @@ Messages:
     CommandSpy: "/<LABEL> (player)"
     Disposal: "/<LABEL> (player)"
     Sign: "/<LABEL> [message...]"
+    Kick: "/<LABEL> [player] (reason...)"
+    ServerSystem: "/<LABEL> (version|reload|migrate [from <plugin>] [to <plugin>])"
 language: "slovene"

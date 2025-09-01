@@ -6,6 +6,7 @@ import me.testaccount666.serversystem.commands.executables.AbstractServerSystemC
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.userdata.UserManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
@@ -49,7 +50,7 @@ public class CommandOfflineEnderChest extends AbstractServerSystemCommand {
     public void executeEnderChestCommand(User commandSender, String... arguments) {
         if (!checkBasePermission(commandSender, "OfflineEnderChest.Use")) return;
 
-        var cachedUserOptional = ServerSystem.Instance.getUserManager().getUser(arguments[0]);
+        var cachedUserOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(arguments[0]);
         if (cachedUserOptional.isEmpty()) {
             general("Offline.NeverPlayed", commandSender).target(arguments[0]).build();
             return;

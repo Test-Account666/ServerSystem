@@ -6,6 +6,7 @@ import me.testaccount666.serversystem.moderation.AbstractModeration;
 import me.testaccount666.serversystem.moderation.AbstractModerationManager;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.userdata.UserManager;
 import me.testaccount666.serversystem.utils.DurationParser;
 import org.bukkit.command.Command;
 
@@ -30,7 +31,7 @@ public abstract class AbstractModerationCommand extends AbstractServerSystemComm
             return;
         }
 
-        var targetOptional = ServerSystem.Instance.getUserManager().getUser(arguments[0]);
+        var targetOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(arguments[0]);
         if (targetOptional.isEmpty()) {
             general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;

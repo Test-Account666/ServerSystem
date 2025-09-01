@@ -8,6 +8,7 @@ import me.testaccount666.serversystem.events.UserPrivateMessageEvent;
 import me.testaccount666.serversystem.moderation.MuteModeration;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.userdata.UserManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -28,7 +29,7 @@ public class ListenerMute implements Listener {
 
     @EventHandler
     public void onPlayerChat(AsyncChatEvent event) {
-        var userOptional = ServerSystem.Instance.getUserManager().getUser(event.getPlayer());
+        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(event.getPlayer());
         if (userOptional.isEmpty()) return;
         var cachedUser = userOptional.get();
         if (cachedUser.isOfflineUser()) return;

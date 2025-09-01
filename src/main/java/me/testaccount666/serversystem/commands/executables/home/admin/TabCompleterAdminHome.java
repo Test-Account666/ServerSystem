@@ -5,6 +5,7 @@ import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabComplet
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.userdata.UserManager;
 import me.testaccount666.serversystem.userdata.home.Home;
 import org.bukkit.command.Command;
 
@@ -25,7 +26,7 @@ public class TabCompleterAdminHome implements ServerSystemTabCompleter {
     }
 
     private Optional<List<String>> handleHomeCommand(User commandSender, String... arguments) {
-        if (!PermissionManager.hasCommandPermission(commandSender, "Commands.AdminHome.Use", false)) return Optional.empty();
+        if (!PermissionManager.hasCommandPermission(commandSender, "AdminHome.Use", false)) return Optional.empty();
 
         if (arguments.length <= 1) return Optional.empty();
 
@@ -49,7 +50,7 @@ public class TabCompleterAdminHome implements ServerSystemTabCompleter {
     private Optional<List<String>> handleHomeCompletion(OfflineUser commandSender, String... arguments) {
         if (arguments.length != 2) return Optional.of(List.of());
 
-        var targetUserOptional = ServerSystem.Instance.getUserManager().getUser(arguments[0]);
+        var targetUserOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(arguments[0]);
         if (targetUserOptional.isEmpty()) return Optional.of(List.of());
 
         var targetCachedUser = targetUserOptional.get();

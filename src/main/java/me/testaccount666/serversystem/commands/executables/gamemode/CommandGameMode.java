@@ -61,7 +61,7 @@ public class CommandGameMode extends AbstractServerSystemCommand {
             return;
         }
 
-        var gameModeOptional = parseGameMode(arguments[0]);
+        var gameModeOptional = parseGameMode(commandSender, arguments[0]);
         if (gameModeOptional.isEmpty()) {
             command("GameMode.InvalidGameMode", commandSender)
                     .postModifier(message -> replaceGameModePlaceholder(message, arguments[0])).build();
@@ -117,7 +117,9 @@ public class CommandGameMode extends AbstractServerSystemCommand {
         return message.replace("<GAMEMODE>", gameModeName);
     }
 
-    private Optional<GameMode> parseGameMode(String input) {
+    private Optional<GameMode> parseGameMode(User user, String input) {
+        input = input.toLowerCase();
+
         try {
             var value = Integer.parseInt(input);
             return switch (value) {
@@ -131,7 +133,8 @@ public class CommandGameMode extends AbstractServerSystemCommand {
             // Not a number, try to match by name
         }
 
-        return Arrays.stream(GameMode.values()).filter(gameMode -> gameMode.name().toLowerCase().startsWith(input.toLowerCase())).findFirst();
+        var finalInput = input;
+        return Arrays.stream(GameMode.values()).filter(gameMode -> gameMode.name().toLowerCase().startsWith(finalInput)).findFirst();
     }
 
     @Override

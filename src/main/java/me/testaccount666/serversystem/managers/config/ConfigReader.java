@@ -5,6 +5,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
+import java.util.List;
 
 public interface ConfigReader {
 
@@ -14,31 +15,51 @@ public interface ConfigReader {
 
     Object getObject(String path, Object def);
 
-    Object getObject(String path);
+    default Object getObject(String path) {
+        return getObject(path, null);
+    }
 
     boolean getBoolean(String path, boolean def);
 
-    boolean getBoolean(String path);
+    default boolean getBoolean(String path) {
+        return getBoolean(path, false);
+    }
 
     String getString(String path, String def);
 
-    String getString(String path);
+    default String getString(String path) {
+        return getString(path, null);
+    }
 
     int getInt(String path, int def);
 
-    int getInt(String path);
+    default int getInt(String path) {
+        return getInt(path, 0);
+    }
 
     long getLong(String path, long def);
 
-    long getLong(String path);
+    default long getLong(String path) {
+        return getLong(path, 0);
+    }
 
     double getDouble(String path, double def);
 
-    double getDouble(String path);
+    default double getDouble(String path) {
+        return getDouble(path, 0);
+    }
 
     ItemStack getItemStack(String path, ItemStack def);
 
-    ItemStack getItemStack(String path);
+    default ItemStack getItemStack(String path) {
+        return getItemStack(path, null);
+    }
+
+    List<String> getStringList(String path, List<String> def);
+
+    default List<String> getStringList(String path) {
+        return getStringList(path, List.of());
+    }
 
     void set(String path, Object object);
 

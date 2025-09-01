@@ -2,6 +2,7 @@ package me.testaccount666.serversystem.commands.executables.god;
 
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.userdata.UserManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -52,7 +53,7 @@ public class ListenerGod implements Listener {
      * @param player The player affected by the event
      */
     private void handleCancellableEvent(Cancellable event, Player player) {
-        var userOptional = ServerSystem.Instance.getUserManager().getUser(player);
+        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player);
 
         if (userOptional.isEmpty()) {
             ServerSystem.getLog().warning("(ListenerGod) User '${player.getName()}' is not cached! This should not happen!");

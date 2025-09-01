@@ -2,9 +2,11 @@ package me.testaccount666.serversystem.managers.messages;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.managers.PlaceholderManager;
 import me.testaccount666.serversystem.managers.config.ConfigReader;
+import me.testaccount666.serversystem.managers.config.ConfigurationManager;
 import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.utils.ChatColor;
 import me.testaccount666.serversystem.utils.ComponentColor;
@@ -15,17 +17,27 @@ import java.io.FileNotFoundException;
 import java.util.Optional;
 import java.util.logging.Level;
 
+@UtilityClass
 public class MessageManager {
+    public static final String FALLBACK_LANGUAGE = "english";
     @Getter
     private static LanguageLoader _LanguageLoader;
     private static PlaceholderManager _PlaceholderManager;
-
-    private MessageManager() {
-    }
+    @Getter
+    private static String _DefaultLanguage;
 
     public static void initialize() throws FileNotFoundException {
         _PlaceholderManager = new PlaceholderManager();
         _LanguageLoader = new LanguageLoader();
+        _DefaultLanguage = ServerSystem.Instance.getRegistry().getService(ConfigurationManager.class).getGeneralConfig().getString("Language.DefaultLanguage", FALLBACK_LANGUAGE);
+
+        var messageOptional = getLanguageLoader().getMessageReader(_DefaultLanguage);
+        var mappingsOptional = getLanguageLoader().getMappingReader(_DefaultLanguage);
+
+        if (messageOptional.isPresent() && mappingsOptional.isPresent()) return;
+        ServerSystem.getLog().warning("Could not load default language '${_DefaultLanguage}'! Falling back to '${FALLBACK_LANGUAGE}'...");
+        ServerSystem.getLog().warning("Make sure you have a 'messages.yml' AND 'mappings.yml' file in your language folder!");
+        _DefaultLanguage = FALLBACK_LANGUAGE;
     }
 
     public static String formatMessage(String message, User commandSender, @Nullable String targetName, @Nullable String label, boolean addPrefix) {
@@ -78,7 +90,7 @@ public class MessageManager {
         if (_PlaceholderManager == null) throw new IllegalStateException("MessageManager was not yet initialized. Call initialize first.");
         messagePath = "Messages.${messagePath}";
 
-        var language = user != null? user.getPlayerLanguage() : "english";
+        var language = user != null? user.getPlayerLanguage() : _DefaultLanguage;
 
 
         ConfigReader reader;
@@ -86,7 +98,7 @@ public class MessageManager {
             reader = getConfigReader(language);
         } catch (FileNotFoundException exception) {
             ServerSystem.getLog().log(Level.WARNING, "Failed to load messages for language '${language}': ${exception.getMessage()}", exception);
-            reader = getConfigReader("english");
+            reader = getConfigReader(_DefaultLanguage);
         }
 
         var message = reader.getString(messagePath, null);
@@ -108,7 +120,6 @@ public class MessageManager {
      */
     private static ConfigReader getConfigReader(String language) throws FileNotFoundException {
         var readerOptional = _LanguageLoader.getMessageReader(language);
-        //noinspection OptionalGetWithoutIsPresent
-        return readerOptional.orElseGet(() -> _LanguageLoader.getMessageReader("english").get());
+        return readerOptional.orElseGet(() -> _LanguageLoader.getMessageReader(_DefaultLanguage).get());
     }
 }

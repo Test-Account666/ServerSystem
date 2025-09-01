@@ -1,6 +1,7 @@
 package me.testaccount666.serversystem.commands.executables.balance;
 
 import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.userdata.money.EconomyProvider;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.managers.PermissionManager;
@@ -47,7 +48,7 @@ public class CommandBalance extends AbstractServerSystemCommand {
         for (var entry : topTen.entrySet()) {
             var playerUuid = entry.getKey();
             var balance = entry.getValue();
-            var formattedBalance = ServerSystem.Instance.getEconomyProvider().formatMoney(balance);
+            var formattedBalance = ServerSystem.Instance.getRegistry().getService(EconomyProvider.class).formatMoney(balance);
             var playerName = Bukkit.getOfflinePlayer(playerUuid).getName();
             playerName = playerName != null? playerName : "Unknown";
 
@@ -80,7 +81,7 @@ public class CommandBalance extends AbstractServerSystemCommand {
         if (!isSelf && !checkOtherPermission(commandSender, "Balance.Other", targetPlayer.getName())) return;
 
         var balance = targetUser.getBankAccount().getBalance();
-        var formattedBalance = ServerSystem.Instance.getEconomyProvider().formatMoney(balance);
+        var formattedBalance = ServerSystem.Instance.getRegistry().getService(EconomyProvider.class).formatMoney(balance);
 
         var messagePath = isSelf? "Balance.Success" : "Balance.SuccessOther";
 

@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 public class UserManager {
     public static final Path USER_DATA_PATH = Path.of("plugins", "ServerSystem", "UserData");
     private static final ConsoleUser _CONSOLE_USER = new ConsoleUser();
+    private static final NpcUser _NPC_USER = new NpcUser();
     private final Map<String, CachedUser> _userMap = new ConcurrentHashMap<>();
     private final Map<UUID, CachedUser> _userUuidMap = new ConcurrentHashMap<>();
 
@@ -50,7 +51,7 @@ public class UserManager {
      * @return An Optional containing the cached user or empty if the user doesn't exist
      */
     public Optional<CachedUser> getUser(Player player) {
-        if (player.hasMetadata("NPC")) return Optional.of(new CachedUser(new NpcUser()));
+        if (player.hasMetadata("NPC")) return Optional.of(new CachedUser(_NPC_USER));
 
         return getUser(player.getUniqueId(), true);
     }

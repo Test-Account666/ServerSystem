@@ -8,6 +8,7 @@ import me.testaccount666.serversystem.commands.executables.gamemode.CommandGameM
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor;
 import me.testaccount666.serversystem.userdata.CachedUser;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.userdata.UserManager;
 import net.minecraft.network.protocol.game.ServerboundChangeGameModePacket;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -108,7 +109,7 @@ public class ListenerOperatorSpoof implements Listener {
         public GameModePacketListener(Player player) {
             _player = player;
 
-            var cachedUserOptional = ServerSystem.Instance.getUserManager().getUser(player);
+            var cachedUserOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player);
             if (cachedUserOptional.isEmpty()) throw new RuntimeException("Couldn't cache User '${player.getName()}'! This should not happen!");
             _cachedUser = cachedUserOptional.get();
         }

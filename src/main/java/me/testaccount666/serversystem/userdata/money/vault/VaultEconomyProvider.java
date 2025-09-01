@@ -1,6 +1,8 @@
 package me.testaccount666.serversystem.userdata.money.vault;
 
 import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.userdata.UserManager;
+import me.testaccount666.serversystem.userdata.money.EconomyProvider;
 import net.milkbowl.vault.economy.AbstractEconomy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
@@ -30,22 +32,30 @@ public class VaultEconomyProvider extends AbstractEconomy {
 
     @Override
     public String format(double amount) {
-        return ServerSystem.Instance.getEconomyProvider().formatMoney(BigDecimal.valueOf(amount));
+        var registry = ServerSystem.Instance.getRegistry();
+        var economyProvider = registry.getService(EconomyProvider.class);
+        return economyProvider.formatMoney(BigDecimal.valueOf(amount));
     }
 
     @Override
     public String currencyNamePlural() {
-        return ServerSystem.Instance.getEconomyProvider().getCurrencyPlural();
+        var registry = ServerSystem.Instance.getRegistry();
+        var economyProvider = registry.getService(EconomyProvider.class);
+        return economyProvider.getCurrencyPlural();
     }
 
     @Override
     public String currencyNameSingular() {
-        return ServerSystem.Instance.getEconomyProvider().getCurrencySingular();
+        var registry = ServerSystem.Instance.getRegistry();
+        var economyProvider = registry.getService(EconomyProvider.class);
+        return economyProvider.getCurrencySingular();
     }
 
     @Override
     public boolean hasAccount(String name) {
-        var userOptional = ServerSystem.Instance.getUserManager().getUser(name);
+        var registry = ServerSystem.Instance.getRegistry();
+        var userManager = registry.getService(UserManager.class);
+        var userOptional = userManager.getUser(name);
         return userOptional.isPresent();
     }
 
@@ -56,7 +66,9 @@ public class VaultEconomyProvider extends AbstractEconomy {
 
     @Override
     public double getBalance(String name) {
-        var userOptional = ServerSystem.Instance.getUserManager().getUser(name);
+        var registry = ServerSystem.Instance.getRegistry();
+        var userManager = registry.getService(UserManager.class);
+        var userOptional = userManager.getUser(name);
         if (userOptional.isEmpty()) return 0;
 
         var user = userOptional.get();
@@ -73,7 +85,9 @@ public class VaultEconomyProvider extends AbstractEconomy {
 
     @Override
     public boolean has(String name, double amount) {
-        var userOptional = ServerSystem.Instance.getUserManager().getUser(name);
+        var registry = ServerSystem.Instance.getRegistry();
+        var userManager = registry.getService(UserManager.class);
+        var userOptional = userManager.getUser(name);
         if (userOptional.isEmpty()) return false;
 
         var user = userOptional.get();
@@ -90,7 +104,9 @@ public class VaultEconomyProvider extends AbstractEconomy {
 
     @Override
     public EconomyResponse withdrawPlayer(String name, double amount) {
-        var userOptional = ServerSystem.Instance.getUserManager().getUser(name);
+        var registry = ServerSystem.Instance.getRegistry();
+        var userManager = registry.getService(UserManager.class);
+        var userOptional = userManager.getUser(name);
         if (userOptional.isEmpty()) return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "User not found!");
 
         var user = userOptional.get();
@@ -111,7 +127,9 @@ public class VaultEconomyProvider extends AbstractEconomy {
 
     @Override
     public EconomyResponse depositPlayer(String name, double amount) {
-        var userOptional = ServerSystem.Instance.getUserManager().getUser(name);
+        var registry = ServerSystem.Instance.getRegistry();
+        var userManager = registry.getService(UserManager.class);
+        var userOptional = userManager.getUser(name);
         if (userOptional.isEmpty()) return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "User not found!");
 
         var user = userOptional.get();

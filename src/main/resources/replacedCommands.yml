@@ -1,0 +1,20 @@
+ReplacedCommands:
+  Enabled: false
+  Description: >
+    This config file allows you to replace one command with another.
+    For example, if you have plugin xy and plugin yx registering the command `/god`
+    and want to use plugin yx, but plugin xy takes priority, you can just configure a command replace.
+    Notice: This does may work properly with commands registered by Essentials!
+  Examples:
+    Info: "The identifier can be anything. It's just for readability/error reporting."
+    someIdentifierForYou:
+      From:
+        Info: "The 'From' command is the one you want to execute"
+        Command: "god"
+        Plugin: "WorldGuard"
+      To:
+        Info: >
+          The 'To' command is going to replaced with the 'From' command
+          Note that we don't need a 'Plugin' entry here as ServerSystem will replace the first command it finds
+        Command: "god"
+  Replace:

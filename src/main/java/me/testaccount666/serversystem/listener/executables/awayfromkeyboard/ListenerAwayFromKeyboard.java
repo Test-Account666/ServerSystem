@@ -2,7 +2,9 @@ package me.testaccount666.serversystem.listener.executables.awayfromkeyboard;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
 import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.managers.config.ConfigurationManager;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.userdata.UserManager;
 import me.testaccount666.serversystem.utils.MessageBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -26,7 +28,8 @@ public class ListenerAwayFromKeyboard implements Listener {
     private final Map<UUID, Long> _lastMouseMovement = new HashMap<>();
 
     public ListenerAwayFromKeyboard() {
-        _enabled = ServerSystem.Instance.getConfigManager().getGeneralConfig().getBoolean("AwayFromKeyboard.Enabled");
+        var configManager = ServerSystem.Instance.getRegistry().getService(ConfigurationManager.class);
+        _enabled = configManager.getGeneralConfig().getBoolean("AwayFromKeyboard.Enabled");
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(ServerSystem.Instance, () -> Bukkit.getOnlinePlayers().forEach(player -> {
             var lastAction = _lastActionMap.getOrDefault(player.getUniqueId(), System.currentTimeMillis());
@@ -164,7 +167,7 @@ public class ListenerAwayFromKeyboard implements Listener {
     }
 
     private Optional<User> getUser(Player player) {
-        var userOptional = ServerSystem.Instance.getUserManager().getUser(player);
+        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player);
         if (userOptional.isEmpty()) return Optional.empty();
         var cachedUser = userOptional.get();
 

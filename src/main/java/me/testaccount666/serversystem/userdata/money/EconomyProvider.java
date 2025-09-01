@@ -3,6 +3,7 @@ package me.testaccount666.serversystem.userdata.money;
 import lombok.Getter;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.managers.config.ConfigReader;
+import me.testaccount666.serversystem.managers.database.economy.AbstractEconomyDatabaseManager;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -38,7 +39,7 @@ public class EconomyProvider {
         }
 
         var economyTypeOptional = Type.parseType(configReader.getString("Economy.StorageType.Value").toUpperCase());
-        var databaseManager = ServerSystem.Instance.getEconomyDatabaseManager();
+        var databaseManager = ServerSystem.Instance.getRegistry().getService(AbstractEconomyDatabaseManager.class);
 
         if (economyTypeOptional.isEmpty()) {
             _economyType = Type.SQLITE;

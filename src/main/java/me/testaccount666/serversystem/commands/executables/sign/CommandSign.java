@@ -16,6 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static me.testaccount666.serversystem.utils.DurationParser.parseDate;
 import static me.testaccount666.serversystem.utils.MessageBuilder.command;
@@ -63,7 +64,7 @@ public class CommandSign extends AbstractServerSystemCommand {
             var strippedLine = ChatColor.stripColor(ComponentColor.componentToString(loreComponent));
             var strippedLore = ChatColor.stripColor(dataContainer.get(signKey, PersistentDataType.STRING));
 
-            return strippedLine.equalsIgnoreCase(strippedLore);
+            return Arrays.stream(strippedLore.split("\n")).anyMatch(strippedLine::equalsIgnoreCase);
         });
         itemMeta.lore(lore);
 
@@ -103,11 +104,14 @@ public class CommandSign extends AbstractServerSystemCommand {
 
         dataContainer.set(signKey, PersistentDataType.STRING, loreMessage.get());
 
-        var loreComponent = ComponentColor.translateToComponent(loreMessage.get());
-        lore.add(loreComponent);
-        itemMeta.lore(lore);
+        for (var line : loreMessage.get().split("\n")) {
+            var lineComponent = ComponentColor.translateToComponent(line);
+            lore.add(lineComponent);
+        }
 
+        itemMeta.lore(lore);
         itemInHand.setItemMeta(itemMeta);
+
         command("Sign.Success", commandSender).build();
     }
 

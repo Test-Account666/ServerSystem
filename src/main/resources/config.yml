@@ -1,3 +1,6 @@
+Language:
+  UseClientLanguage: false
+  DefaultLanguage: "english"
 Chat:
   PrefixChat:
     Enabled: true

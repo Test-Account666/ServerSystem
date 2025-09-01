@@ -4,8 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.executables.back.CommandBack;
+import me.testaccount666.serversystem.managers.config.ConfigurationManager;
+import me.testaccount666.serversystem.managers.database.moderation.AbstractModerationDatabaseManager;
 import me.testaccount666.serversystem.managers.database.moderation.MySqlModerationDatabaseManager;
 import me.testaccount666.serversystem.managers.database.moderation.SqliteModerationDatabaseManager;
+import me.testaccount666.serversystem.managers.messages.MessageManager;
 import me.testaccount666.serversystem.moderation.AbstractModerationManager;
 import me.testaccount666.serversystem.moderation.ban.MySqlBanManager;
 import me.testaccount666.serversystem.moderation.ban.SqliteBanManager;
@@ -13,6 +16,7 @@ import me.testaccount666.serversystem.moderation.mute.MySqlMuteManager;
 import me.testaccount666.serversystem.moderation.mute.SqliteMuteManager;
 import me.testaccount666.serversystem.userdata.home.HomeManager;
 import me.testaccount666.serversystem.userdata.money.AbstractBankAccount;
+import me.testaccount666.serversystem.userdata.money.EconomyProvider;
 import me.testaccount666.serversystem.userdata.persistence.*;
 import me.testaccount666.serversystem.userdata.vanish.VanishData;
 import org.bukkit.Bukkit;
@@ -184,21 +188,21 @@ public class OfflineUser {
         socialSpyEnabled = false;
         commandSpyEnabled = false;
         usesDefaultLanguage = true;
-        playerLanguage = "english";
+        playerLanguage = MessageManager.getDefaultLanguage();
         lastBackType = CommandBack.BackType.NONE;
 
         // PersistenceManager loads all annotated fields
         PersistenceManager.loadFields(this, userConfig);
         // Quick fix that blocks potentially wanted behavior, but eh...
-        if (playerLanguage.equalsIgnoreCase(System.getProperty("user.language"))) playerLanguage = "english";
+        if (playerLanguage.equalsIgnoreCase(System.getProperty("user.language"))) playerLanguage = MessageManager.getDefaultLanguage();
         playerLanguage = playerLanguage.toLowerCase();
 
         if (name == null) name = getPlayer().getName();
 
         homeManager = new HomeManager(this, userConfig);
-        bankAccount = ServerSystem.Instance.getEconomyProvider().instantiateBankAccount(this, BigInteger.valueOf(0), userConfig);
+        bankAccount = ServerSystem.Instance.getRegistry().getService(EconomyProvider.class).instantiateBankAccount(this, BigInteger.valueOf(0), userConfig);
 
-        var moderationManager = ServerSystem.Instance.getModerationDatabaseManager();
+        var moderationManager = ServerSystem.Instance.getRegistry().getService(AbstractModerationDatabaseManager.class);
 
         // Create the appropriate ban manager based on the database type
         try (var ignored = moderationManager.getConnection()) {
@@ -229,7 +233,7 @@ public class OfflineUser {
      * @return true if compression is enabled, false otherwise
      */
     private boolean isCompressionEnabled() {
-        return ServerSystem.Instance.getConfigManager().getGeneralConfig().getBoolean("UserData.Compression.Enabled", true);
+        return ServerSystem.Instance.getRegistry().getService(ConfigurationManager.class).getGeneralConfig().getBoolean("UserData.Compression.Enabled", true);
     }
 
     /**

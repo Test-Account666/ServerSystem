@@ -34,7 +34,7 @@ public class CommandSendListener implements Listener {
             if (commandExecutor.hasCommandAccess(event.getPlayer(), pluginCommand)) continue;
 
             sentCommands.remove();
-            ServerSystem.Instance.getLogger().log(Level.FINE, "Filtered command '${command}' from suggestions for player ${event.getPlayer().getName()}");
+            ServerSystem.getLog().log(Level.FINE, "Filtered command '${command}' from suggestions for player ${event.getPlayer().getName()}");
         }
     }
 }

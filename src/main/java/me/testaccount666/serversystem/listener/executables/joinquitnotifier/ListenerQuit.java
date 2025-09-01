@@ -1,8 +1,10 @@
 package me.testaccount666.serversystem.listener.executables.joinquitnotifier;
 
 import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.managers.config.ConfigurationManager;
 import me.testaccount666.serversystem.managers.messages.MessageManager;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.userdata.UserManager;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
@@ -19,7 +21,8 @@ public class ListenerQuit implements Listener {
     private Sound _sound;
 
     public ListenerQuit() {
-        var config = ServerSystem.Instance.getConfigManager().getGeneralConfig();
+        var configManager = ServerSystem.Instance.getRegistry().getService(ConfigurationManager.class);
+        var config = configManager.getGeneralConfig();
         _modifyMessage = config.getBoolean("Quit.Message.Enabled");
         _sendMessage = config.getBoolean("Quit.Message.SendMessage");
         _message = config.getString("Quit.Message.Message", "");
@@ -72,7 +75,7 @@ public class ListenerQuit implements Listener {
             return;
         }
         var player = event.getPlayer();
-        var userOptional = ServerSystem.Instance.getUserManager().getUser(player);
+        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player);
         if (userOptional.isEmpty()) {
             ServerSystem.getLog().warning("Couldn't cache User '${player.getName()}'! This should not happen!");
             return;

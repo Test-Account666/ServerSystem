@@ -2,6 +2,7 @@ package me.testaccount666.serversystem.managers.config;
 
 import lombok.Getter;
 import me.testaccount666.serversystem.ServerSystem;
+import me.testaccount666.serversystem.managers.messages.MessageManager;
 import me.testaccount666.serversystem.utils.FileUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -18,6 +19,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
@@ -27,13 +29,13 @@ import java.util.logging.Level;
  * and operations on YAML configuration files.
  */
 public class DefaultConfigReader implements ConfigReader {
-    private final Plugin _plugin;
+    protected final Plugin _plugin;
     @Getter
-    private final File _file;
+    protected final File _file;
     @Getter
-    private final FileConfiguration _configuration;
-    private FileConfiguration _originalCfg = null;
-    private DefaultConfigReader _newReader = null;
+    protected final FileConfiguration _configuration;
+    protected FileConfiguration _originalCfg = null;
+    protected DefaultConfigReader _newReader = null;
 
     /**
      * Creates a new DefaultConfigReader for the specified file and plugin.
@@ -106,8 +108,8 @@ public class DefaultConfigReader implements ConfigReader {
      *
      * @throws FileNotFoundException If the default configuration file cannot be found
      */
-    private void loadDefaultConfig() throws FileNotFoundException {
-        var filename = _file.getName().toLowerCase();
+    protected void loadDefaultConfig() throws FileNotFoundException {
+        var filename = _file.getName();
 
         if (_plugin.getResource(filename) != null) {
             _originalCfg = YamlConfiguration.loadConfiguration(new InputStreamReader(_plugin.getResource(filename)));
@@ -115,7 +117,7 @@ public class DefaultConfigReader implements ConfigReader {
         }
 
         if (filename.equalsIgnoreCase("messages.yml") || filename.equalsIgnoreCase("mappings.yml")) {
-            var language = _configuration.getString("language", "english");
+            var language = _configuration.getString("language", MessageManager.FALLBACK_LANGUAGE);
             var languageFile = "messages/${language}/${filename}";
 
             if (_plugin.getResource(languageFile) != null)
@@ -168,6 +170,18 @@ public class DefaultConfigReader implements ConfigReader {
 
             if (userType.isAssignableFrom(defaultType)) continue;
 
+            // Treat String and List<String> as compatible; do not override user's value
+            var userIsStringList = (userValue instanceof List);
+            var defaultIsStringList = (defaultValue instanceof List);
+            if ((userIsStringList && defaultType == String.class) || (defaultIsStringList && userType == String.class)) {
+                // Further ensure the list (if present) contains strings or is empty
+                List<?> list;
+                if (userIsStringList) list = (List<?>) userValue;
+                else list = (List<?>) defaultValue;
+
+                if (list.isEmpty() || list.stream().allMatch(line -> line == null || line instanceof String)) continue;
+            }
+
             var warningMessage = typeWarnings.get(defaultType);
             if (warningMessage != null) {
                 logConfigFix(key, warningMessage);
@@ -213,11 +227,6 @@ public class DefaultConfigReader implements ConfigReader {
     }
 
     @Override
-    public Object getObject(String path) {
-        return getObject(path, null);
-    }
-
-    @Override
     public boolean getBoolean(String path, boolean def) {
         var configReader = this;
         if (_newReader != null) configReader = _newReader;
@@ -227,22 +236,21 @@ public class DefaultConfigReader implements ConfigReader {
     }
 
     @Override
-    public boolean getBoolean(String path) {
-        return getBoolean(path, false);
-    }
-
-    @Override
     public String getString(String path, String def) {
         var configReader = this;
         if (_newReader != null) configReader = _newReader;
 
         configReader.ensureConfigHasValue(path);
-        return configReader._configuration.getString(path, def);
-    }
 
-    @Override
-    public String getString(String path) {
-        return getString(path, null);
+        // Allow `List<String>` to be consumed as a String by joining with line breaks
+        if (configReader._configuration.isList(path)) {
+            var list = configReader._configuration.getStringList(path);
+            if (list.isEmpty()) return def;
+
+            return String.join("\n", list);
+        }
+
+        return configReader._configuration.getString(path, def);
     }
 
     @Override
@@ -255,22 +263,12 @@ public class DefaultConfigReader implements ConfigReader {
     }
 
     @Override
-    public int getInt(String path) {
-        return getInt(path, 0);
-    }
-
-    @Override
     public long getLong(String path, long def) {
         var configReader = this;
         if (_newReader != null) configReader = _newReader;
 
         configReader.ensureConfigHasValue(path);
         return configReader._configuration.getLong(path, def);
-    }
-
-    @Override
-    public long getLong(String path) {
-        return getLong(path, 0L);
     }
 
     @Override
@@ -283,11 +281,6 @@ public class DefaultConfigReader implements ConfigReader {
     }
 
     @Override
-    public double getDouble(String path) {
-        return getDouble(path, 0.0D);
-    }
-
-    @Override
     public ItemStack getItemStack(String path, ItemStack def) {
         var configReader = this;
         if (_newReader != null) configReader = _newReader;
@@ -297,8 +290,20 @@ public class DefaultConfigReader implements ConfigReader {
     }
 
     @Override
-    public ItemStack getItemStack(String path) {
-        return getItemStack(path, null);
+    public List<String> getStringList(String path, List<String> def) {
+        var configReader = this;
+        if (_newReader != null) configReader = _newReader;
+
+        configReader.ensureConfigHasValue(path);
+        if (!configReader._configuration.isSet(path)) return def;
+
+        // Allow String to be consumed as List<String>
+        if (configReader._configuration.isString(path)) {
+            var value = configReader._configuration.getString(path);
+            return value == null? def : List.of(value);
+        }
+
+        return configReader._configuration.getStringList(path);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package me.testaccount666.serversystem.userdata;
 
+import me.testaccount666.serversystem.managers.messages.MessageManager;
 import me.testaccount666.serversystem.userdata.money.DisabledBankAccount;
 
 import java.math.BigInteger;
@@ -18,6 +19,6 @@ public class NpcUser extends User {
         name = "NPC";
         uuid = NpcUser.NPC_UUID;
         bankAccount = new DisabledBankAccount(NPC_UUID, BigInteger.valueOf(0));
-        playerLanguage = "English";
+        playerLanguage = MessageManager.getDefaultLanguage();
     }
 }

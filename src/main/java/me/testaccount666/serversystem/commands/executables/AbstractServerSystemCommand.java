@@ -5,6 +5,7 @@ import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExe
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.userdata.UserManager;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
@@ -68,7 +69,7 @@ public abstract class AbstractServerSystemCommand implements ServerSystemCommand
      */
     protected Optional<User> getTargetUser(User commandSender, int index, boolean returnSender, String... arguments) {
         if (arguments.length > index) {
-            var userOptional = ServerSystem.Instance.getUserManager().getUser(arguments[index], true);
+            var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(arguments[index], true);
             return userOptional.map(user -> (User) user.getOfflineUser());
         }
         return returnSender? Optional.of(commandSender) : Optional.empty();

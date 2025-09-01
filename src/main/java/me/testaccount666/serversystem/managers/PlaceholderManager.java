@@ -2,7 +2,6 @@ package me.testaccount666.serversystem.managers;
 
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.managers.messages.MappingsData;
-import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
 
 import javax.annotation.Nullable;
@@ -49,8 +48,8 @@ public class PlaceholderManager {
                 .replace("<TARGET>", targetName)
                 .replace("<LABEL>", label);
 
-        if (_placeholders && !(commandSender instanceof ConsoleUser))
-            message = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(commandSender.getPlayer(), message);
+        // ConsoleUser#getPlayer returns null btw
+        if (_placeholders) message = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(commandSender.getPlayer(), message);
 
         return message;
     }
