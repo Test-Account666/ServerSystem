@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import me.testaccount666.migration.LegacyDataMigrator;
 import me.testaccount666.migration.plugins.MigratorRegistry;
-import me.testaccount666.migration.plugins.essentials.EssentialsMigrator;
 import me.testaccount666.serversystem.clickablesigns.SignManager;
 import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager;
 import me.testaccount666.serversystem.commands.executables.warp.manager.WarpManager;
@@ -25,6 +24,7 @@ import me.testaccount666.serversystem.userdata.CachedUser;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.UserManager;
 import me.testaccount666.serversystem.userdata.money.EconomyProvider;
+import me.testaccount666.serversystem.userdata.money.vault.EconomyVaultAPI;
 import me.testaccount666.serversystem.utils.Version;
 import me.testaccount666.serversystem.utils.VersionInfo;
 import org.bukkit.Bukkit;
@@ -80,8 +80,6 @@ public final class ServerSystem extends JavaPlugin {
             throw new RuntimeException("Error updating 'previousVersion'", exception);
         }
 
-        getRegistry().registerService(EssentialsMigrator.class, new EssentialsMigrator());
-
         try {
             initialize();
         } catch (Exception exception) {
@@ -119,7 +117,8 @@ public final class ServerSystem extends JavaPlugin {
         };
         registry.registerService(AbstractModerationDatabaseManager.class, moderationDbManager);
 
-        registry.registerService(MigratorRegistry.class, new MigratorRegistry()).registerMigrators();
+        var migratorRegistry = new MigratorRegistry();
+        registry.registerService(MigratorRegistry.class, migratorRegistry).registerMigrators();
 
         PlaceholderApiSupport.registerPlaceholders();
 
@@ -143,6 +142,14 @@ public final class ServerSystem extends JavaPlugin {
         registry.registerService(KitManager.class, new KitManager());
 
         registry.registerService(CommandReplacer.class, new CommandReplacer());
+
+
+        var migratorCount = migratorRegistry.getMigrators().size();
+
+        if (migratorCount == 0) if (configManager.getEconomyConfig().getBoolean("Economy.HookIntoVault"))
+            if (EconomyVaultAPI.isVaultInstalled()) EconomyVaultAPI.initialize();
+
+        if (migratorCount > 0) getLog().info("Not hooking into Vault since we found data migrators!");
 
         Bukkit.getScheduler().runTask(this, () -> {
             var warpFile = Path.of(getDataFolder().getPath(), "data", "warps.yml").toFile();

@@ -1,4 +1,5 @@
 Economy:
+  HookIntoVault: true
   Enabled: true
   StartingBalance: "1000"
   Format:
