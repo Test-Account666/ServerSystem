@@ -34,3 +34,9 @@ Include a link to your server log here [e.g. https://mclo.gs/]
 
 **Additional context**
 Add any other context about the problem here.
+
+
+**Checklist**
+- [ ] I have checked existing issues to avoid duplicates
+- [ ] I have provided as much detail as I can
+- [ ] I understand incomplete reports may be harder to resolve
