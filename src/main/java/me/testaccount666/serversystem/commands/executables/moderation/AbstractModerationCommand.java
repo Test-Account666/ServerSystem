@@ -85,6 +85,7 @@ public abstract class AbstractModerationCommand extends AbstractServerSystemComm
 
         moderationManager.removeModeration(activeModeration.get());
         command("Moderation.${type(command)}.Remove.Success", commandSender).target(targetUser.getName().get()).build();
+        handlePostRemoveModeration(command, commandSender, targetUser);
     }
 
     private void handleCreateModeration(Command command, User commandSender, OfflineUser targetUser, long expireTime, String reason) {
@@ -99,6 +100,8 @@ public abstract class AbstractModerationCommand extends AbstractServerSystemComm
         command("Moderation.${type(command)}.Add.Success", commandSender).target(targetUser.getName().get()).build();
         handlePostModeration(command, commandSender, targetUser, moderation);
     }
+
+    protected abstract void handlePostRemoveModeration(Command command, User commandSender, OfflineUser targetUser);
 
     protected abstract void handlePostModeration(Command command, User commandSender, OfflineUser targetUser, AbstractModeration moderation);
 

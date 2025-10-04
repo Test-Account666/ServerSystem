@@ -1,5 +1,6 @@
 package me.testaccount666.serversystem.commands.executables.moderation.ban;
 
+import io.papermc.paper.ban.BanListType;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.moderation.AbstractModerationCommand;
@@ -10,8 +11,11 @@ import me.testaccount666.serversystem.moderation.AbstractModerationManager;
 import me.testaccount666.serversystem.moderation.BanModeration;
 import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.User;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
+
+import java.time.Instant;
 
 import static me.testaccount666.serversystem.utils.DurationParser.parseDate;
 import static me.testaccount666.serversystem.utils.MessageBuilder.command;
@@ -25,16 +29,28 @@ public class CommandBan extends AbstractModerationCommand {
 
         var player = user.getPlayer();
         var unbanDate = parseDate(moderation.expireTime(), targetUser);
-        var kickOptional = command("Moderation.Ban.Kick", commandSender).target(user.getName().get()).prefix(false)
+        var kickOptional = command("Moderation.Ban.Kick", user)
+                .sender(commandSender.getName().get()).send(false)
+                .target(user.getName().get()).prefix(false)
                 .postModifier(message -> message.replace("<DATE>", unbanDate)
-                        .replace("<REASON>", moderation.reason())).send(false).build();
+                        .replace("<REASON>", moderation.reason())).build();
 
         if (kickOptional.isEmpty()) {
             ServerSystem.getLog().severe("(CommandBan) Kick message is empty! This should not happen!");
             general("ErrorOccurred", commandSender).build();
             return;
         }
-        player.kickPlayer(kickOptional.get());
+
+        var expireTime = moderation.expireTime();
+        if (expireTime == 0) expireTime = Instant.now().toEpochMilli() + 1;
+        var unbanTime = expireTime > 0? Instant.ofEpochMilli(expireTime) : null;
+
+        player.ban(kickOptional.get(), unbanTime, moderation.senderUuid().toString(), true);
+    }
+
+    @Override
+    protected void handlePostRemoveModeration(Command command, User commandSender, OfflineUser targetUser) {
+        Bukkit.getServer().getBanList(BanListType.PROFILE).pardon(targetUser.getPlayer().getPlayerProfile());
     }
 
     @Override
