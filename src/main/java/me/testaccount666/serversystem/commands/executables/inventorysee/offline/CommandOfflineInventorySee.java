@@ -75,8 +75,14 @@ public class CommandOfflineInventorySee extends AbstractServerSystemCommand {
         var targetUser = cachedUser.getOfflineUser();
         var targetPlayer = targetUser.getPlayer();
 
+        if (!targetPlayer.hasPlayedBefore()) {
+            general("Offline.NeverPlayed", commandSender).target(arguments[0]).build();
+            return;
+        }
+
         var inventoryOptional = inventoryLoader.loadOfflineInventory(targetPlayer);
         if (inventoryOptional.isEmpty()) {
+            ServerSystem.getLog().warning("(OfflineInventorySee) Failed to load inventory of '${arguments[0]}'!");
             general("ErrorOccurred", commandSender).label(label).target(arguments[0]).build();
             return;
         }
