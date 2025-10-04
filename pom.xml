@@ -16,7 +16,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <manifold.version>2025.1.27</manifold.version>
         <lombok.version>1.18.42</lombok.version>
-        <cleanVersion>3.2.1</cleanVersion>
+        <cleanVersion>3.3.0</cleanVersion>
         <maven.build.timestamp.format>yyyy-MM-dd--HH-mm</maven.build.timestamp.format>
     </properties>
 
