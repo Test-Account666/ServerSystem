@@ -21,4 +21,9 @@ public class NpcUser extends User {
         bankAccount = new DisabledBankAccount(NPC_UUID, BigInteger.valueOf(0));
         playerLanguage = MessageManager.getDefaultLanguage();
     }
+
+    @Override
+    public void save() {
+        // We don't want to save NPC users
+    }
 }
