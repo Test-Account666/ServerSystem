@@ -87,10 +87,22 @@ public class MessageManager {
      */
     @SneakyThrows
     public static Optional<String> getMessage(User user, String messagePath) {
+        var language = user != null? user.getPlayerLanguage() : _DefaultLanguage;
+
+        return getMessage(user, messagePath, language);
+    }
+
+    /**
+     * Gets a message from the messages file for the specified user's language.
+     *
+     * @param user        The user to get the message for
+     * @param messagePath The path to the message in the messages file
+     * @return An Optional containing the message, or empty if not found
+     */
+    @SneakyThrows
+    public static Optional<String> getMessage(User user, String messagePath, String language) {
         if (_PlaceholderManager == null) throw new IllegalStateException("MessageManager was not yet initialized. Call initialize first.");
         messagePath = "Messages.${messagePath}";
-
-        var language = user != null? user.getPlayerLanguage() : _DefaultLanguage;
 
 
         ConfigReader reader;
