@@ -36,7 +36,7 @@ public class CommandTeleport extends AbstractServerSystemCommand {
             default -> {
                 if (arguments.length == 2) executeTeleportOther(commandSender, command, label, arguments);
                 else if (arguments.length > 2) executeTeleportPosition(commandSender, command, label, arguments);
-                else executeTeleport(commandSender, arguments);
+                else executeTeleport(commandSender, command, label, arguments);
             }
         }
     }
@@ -53,7 +53,7 @@ public class CommandTeleport extends AbstractServerSystemCommand {
         if (!validateSenderAndPermission(commandSender, "TeleportHere.Use")) return;
 
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -62,8 +62,13 @@ public class CommandTeleport extends AbstractServerSystemCommand {
                 "TeleportHere.Success");
     }
 
-    private void executeTeleport(User commandSender, String[] arguments) {
+    private void executeTeleport(User commandSender, Command command, String label, String[] arguments) {
         if (!validateSenderAndPermission(commandSender, "Teleport.Use")) return;
+
+        if (arguments.length == 0) {
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
+            return;
+        }
 
         getTargetUserAndTeleport(commandSender, arguments,
                 targetPlayer -> commandSender.getPlayer().teleport(targetPlayer.getLocation()),
@@ -99,7 +104,7 @@ public class CommandTeleport extends AbstractServerSystemCommand {
     private void executeTeleportPosition(User commandSender, Command command, String label, String[] arguments) {
         if (!validatePermissions(commandSender, "TeleportPosition.Use")) return;
         if (arguments.length < 3) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 
