@@ -18,7 +18,7 @@ public class CommandTeamChat extends AbstractServerSystemCommand {
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "TeamChat.Use")) return;
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 

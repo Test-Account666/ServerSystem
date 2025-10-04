@@ -282,6 +282,9 @@ class FileUtilsTest {
         var exception = assertThrows(FileSystemException.class,
                 () -> FileUtils.copyDirectory(sourceDir.toFile(), destFile.toFile()));
 
-        assertTrue(exception.getMessage().contains("Not a directory"));
+        System.out.println("Got message: " + exception.getMessage());
+
+        // Why did my computer suddenly decide to translate this?
+        assertTrue(exception.getMessage().contains("Not a directory") || exception.getMessage().contains("Ist kein Verzeichnis"));
     }
 }

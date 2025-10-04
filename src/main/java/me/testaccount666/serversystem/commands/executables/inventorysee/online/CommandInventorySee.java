@@ -48,7 +48,7 @@ public class CommandInventorySee extends AbstractServerSystemCommand {
         }
 
         if (arguments.length < 1) {
-            general("InvalidArguments", sender).syntaxPath(getSyntaxPath(null)).label(label).build();
+            general("InvalidArguments", sender).syntax(getSyntaxPath(null)).label(label).build();
             return;
         }
 

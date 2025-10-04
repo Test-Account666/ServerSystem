@@ -51,7 +51,7 @@ public class CommandHome extends AbstractServerSystemCommand {
 
         if (arguments.length == 0) {
             //TODO: List homes instead
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(null)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(null)).label(label).build();
             return;
         }
 
@@ -77,7 +77,7 @@ public class CommandHome extends AbstractServerSystemCommand {
         if (!checkBasePermission(commandSender, "Home.Delete")) return;
 
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(null)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(null)).label(label).build();
             return;
         }
 
@@ -101,7 +101,7 @@ public class CommandHome extends AbstractServerSystemCommand {
         if (!checkBasePermission(commandSender, "Home.Set")) return;
 
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(null)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(null)).label(label).build();
             return;
         }
 

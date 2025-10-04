@@ -26,7 +26,7 @@ public class CommandWeather extends AbstractServerSystemCommand {
         }
 
         if (commandSender instanceof ConsoleUser && arguments.length == 0) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -49,12 +49,12 @@ public class CommandWeather extends AbstractServerSystemCommand {
         if (!checkBasePermission(commandSender, "Weather.Use")) return;
 
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 
         if (commandSender instanceof ConsoleUser && arguments.length == 1) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -98,7 +98,7 @@ public class CommandWeather extends AbstractServerSystemCommand {
                 world.setWeatherDuration(weatherDuration);
                 break;
             default: {
-                general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+                general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
                 return;
             }
         }

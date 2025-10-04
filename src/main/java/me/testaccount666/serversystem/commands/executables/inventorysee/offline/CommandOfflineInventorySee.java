@@ -56,7 +56,7 @@ public class CommandOfflineInventorySee extends AbstractServerSystemCommand {
         }
 
         if (arguments.length < 1) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(null)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(null)).label(label).build();
             return;
         }
 

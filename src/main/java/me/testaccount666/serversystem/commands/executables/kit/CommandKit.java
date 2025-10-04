@@ -22,7 +22,7 @@ public class CommandKit extends AbstractServerSystemCommand {
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 

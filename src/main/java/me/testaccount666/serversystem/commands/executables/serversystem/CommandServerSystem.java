@@ -30,7 +30,7 @@ public class CommandServerSystem extends AbstractServerSystemCommand {
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, "ServerSystem.Use")) return;
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -42,7 +42,7 @@ public class CommandServerSystem extends AbstractServerSystemCommand {
             case "version" -> version(commandSender, label);
             case "reload" -> reload(commandSender);
             case "migrate" -> migrate(commandSender, label, newArguments);
-            default -> general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            default -> general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
         }
     }
 
@@ -97,7 +97,7 @@ public class CommandServerSystem extends AbstractServerSystemCommand {
 
         if (arguments.length <= 1) {
             general("InvalidArguments", commandSender).label(label)
-                    .syntaxPath(getSyntaxPath(null)).build();
+                    .syntax(getSyntaxPath(null)).build();
             return;
         }
 
@@ -123,7 +123,7 @@ public class CommandServerSystem extends AbstractServerSystemCommand {
             }
             default -> {
                 general("InvalidArguments", commandSender).label(label)
-                        .syntaxPath(getSyntaxPath(null)).build();
+                        .syntax(getSyntaxPath(null)).build();
                 return;
             }
         }
