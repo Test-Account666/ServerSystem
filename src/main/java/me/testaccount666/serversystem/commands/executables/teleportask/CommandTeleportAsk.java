@@ -91,7 +91,7 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
         }
 
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(null)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(null)).label(label).build();
             return true;
         }
 

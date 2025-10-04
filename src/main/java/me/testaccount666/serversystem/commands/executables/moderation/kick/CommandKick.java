@@ -22,7 +22,7 @@ public class CommandKick extends AbstractServerSystemCommand {
         if (!checkBasePermission(commandSender, "Moderation.Kick.Use")) return;
 
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 

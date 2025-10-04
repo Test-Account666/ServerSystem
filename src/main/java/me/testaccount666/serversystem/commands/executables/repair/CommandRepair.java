@@ -54,7 +54,7 @@ public class CommandRepair extends AbstractServerSystemCommand {
                 var repaired = repairInventory(player.getInventory().getContents());
                 sendSuccessMessage(commandSender, repaired);
             }
-            default -> general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            default -> general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
         }
     }
 

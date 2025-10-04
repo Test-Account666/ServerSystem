@@ -23,7 +23,7 @@ public class CommandEconomy extends AbstractServerSystemCommand {
         if (!checkBasePermission(commandSender, "Economy.Use")) return;
 
         if (arguments.length <= 2) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -49,7 +49,7 @@ public class CommandEconomy extends AbstractServerSystemCommand {
             case "set" -> handleSetEconomy(commandSender, label, targetUser, amount);
             case "give", "add" -> handleGiveEconomy(commandSender, label, targetUser, amount);
             case "take", "remove" -> handleTakeEconomy(commandSender, label, targetUser, amount);
-            default -> general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            default -> general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
         }
     }
 

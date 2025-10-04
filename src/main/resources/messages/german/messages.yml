@@ -159,13 +159,14 @@ Messages:
       Success:
         Enabled: "Der Gegenstand in deiner Hand ist jetzt unbegrenzt."
         Disabled: "Der Gegenstand in deiner Hand ist nicht mehr unbegrenzt."
-      NoItemInHand: "<Color:Error:Message>Du hältst keinen Gegenstand in der Hand."
+      NoItemInHand: "<Color:Error.Message>Du hältst keinen Gegenstand in der Hand."
     ClearInventory:
       Success: "Dein Inventar wurde geleert."
       SuccessOther: "Du hast <Color:Highlight><TARGET>s <Color:Message>Inventar geleert."
     Sudo:
       Success: "Du hast einen Befehl für <Color:Highlight><TARGET><Color:Highlight> ausgeführt."
       CannotSudoExempt: "<Color:Error.Message>Du kannst <Color:Error.Highlight><TARGET> <Color:Error.Message>nicht sudon."
+      CannotSudoSelf: "<Color:Error.Message>Du kannst dich selbst nicht sudon."
     OfflineTeleport:
       Success: "Du hast dich zu <Color:Highlight><TARGET>s <Color:Message>Abmeldeposition teleportiert."
     OfflineTeleportHere:
@@ -249,11 +250,11 @@ Messages:
         Remove:
           Success: "Du hast <Color:Highlight><TARGET><Color:Message> entstummt."
           NoActiveModeration: "<Color:Error.Message>Der angegebene Spieler <Color:Error.Highlight><TARGET> <Color:Error.Message>ist nicht stummgeschaltet."
+        Muted: "<Color:Error.Message>Du wurdest von <Color:Error.Highlight><SENDER> <Color:Error.Message>für <Color:Error.Highlight><REASON> <Color:Error.Message>bis: <Color:Error.Highlight><DATE><Color:Error.Message> stummgeschaltet."
       ShadowMute:
         Add:
           Success: "Du hast <Color:Highlight><TARGET><Color:Message> heimlich stummgeschaltet."
           AlreadyActiveModeration: "<Color:Error.Message>Der angegebene Spieler <Color:Error.Highlight><TARGET> <Color:Error.Message>ist bereits stummgeschaltet."
-        Muted: "<Color:Error.Message>Du wurdest von <Color:Error.Highlight><SENDER> <Color:Error.Message>für <Color:Error.Highlight><REASON> <Color:Error.Message>bis: <Color:Error.Highlight><DATE><Color:Error.Message> stummgeschaltet."
       Ban:
         Add:
           Success: "Du hast <Color:Highlight><TARGET><Color:Message> gebannt."
@@ -350,8 +351,8 @@ Messages:
       NowAfk: "Du giltst jetzt als AFK."
       NoLongerAfk: "Du giltst nicht mehr als AFK."
     Offline:
-      NeverPlayed: "<Color:Error:Message>Der angegebene Spieler <Color:Message:Highlight><TARGET> <Color:Error.Message>hat noch nie gespielt."
-      NotOffline: "<Color:Error:Message>Der angegebene Spieler <Color:Message:Highlight><TARGET> <Color:Error.Message>ist nicht offline."
+      NeverPlayed: "<Color:Error.Message>Der angegebene Spieler <Color:Error.Highlight><TARGET> <Color:Error.Message>hat noch nie gespielt."
+      NotOffline: "<Color:Error.Message>Der angegebene Spieler <Color:Error.Highlight><TARGET> <Color:Error.Message>ist nicht offline."
   ClickableSigns:
     Give:
       Configuring: "Du konfigurierst jetzt ein Geben-Schild. Platziere den Gegenstand, den du geben möchtest, in deine Hand."

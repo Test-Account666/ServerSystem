@@ -35,6 +35,6 @@ public class CommandSuicide extends AbstractServerSystemCommand {
 
     @Override
     public boolean hasCommandAccess(Player player, Command command) {
-        return PermissionManager.hasCommandPermission(player, "Suicide.Use");
+        return PermissionManager.hasCommandPermission(player, "Suicide.Use", false);
     }
 }

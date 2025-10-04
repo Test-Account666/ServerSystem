@@ -30,7 +30,7 @@ public class CommandSpeed extends AbstractServerSystemCommand {
         if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, 1, arguments)) return;
 
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 

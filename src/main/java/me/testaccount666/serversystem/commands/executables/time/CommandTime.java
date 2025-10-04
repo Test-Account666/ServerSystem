@@ -24,7 +24,7 @@ public class CommandTime extends AbstractServerSystemCommand {
         }
 
         if (commandSender instanceof ConsoleUser && arguments.length == 0) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -47,12 +47,12 @@ public class CommandTime extends AbstractServerSystemCommand {
         if (!checkBasePermission(commandSender, "Time.Use")) return;
 
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 
         if (commandSender instanceof ConsoleUser && arguments.length == 1) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -89,7 +89,7 @@ public class CommandTime extends AbstractServerSystemCommand {
                     world.setTime(time);
                     break;
                 } catch (NumberFormatException ignored) {
-                    general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+                    general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
                     return;
                 }
             }

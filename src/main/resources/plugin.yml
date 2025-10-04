@@ -9,7 +9,7 @@ softdepend:
 loadbefore:
   - Vault
 libraries:
-  - io.github.classgraph:classgraph:4.8.180
-  - net.bytebuddy:byte-buddy:1.17.5
-  - com.zaxxer:HikariCP:6.3.0
-  - com.h2database:h2:2.2.224
+  - io.github.classgraph:classgraph:4.8.181
+  - net.bytebuddy:byte-buddy:1.17.7
+  - com.zaxxer:HikariCP:7.0.2
+  - com.h2database:h2:2.4.240

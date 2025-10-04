@@ -24,7 +24,7 @@ public class CommandSeen extends AbstractServerSystemCommand {
         if (!checkBasePermission(commandSender, "Seen.Use")) return;
 
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -49,7 +49,7 @@ public class CommandSeen extends AbstractServerSystemCommand {
 
         var formattedDate = parseDate(lastSeen);
 
-        command("Seen.SuccessOther", commandSender).target(targetUser.getName().get())
+        command("Seen.Success", commandSender).target(targetUser.getName().get())
                 .postModifier(message -> message.replace("<DATE>", formattedDate)
                         .replace("<IP>", targetUser.getLastKnownIp())).build();
     }

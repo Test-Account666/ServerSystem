@@ -1,8 +1,15 @@
 package me.testaccount666.serversystem.commands.executables.moderation;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
+import io.papermc.paper.ban.BanListType;
+import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabCompleter;
 import me.testaccount666.serversystem.managers.PermissionManager;
+import me.testaccount666.serversystem.userdata.CachedUser;
+import me.testaccount666.serversystem.userdata.OfflineUser;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.userdata.UserManager;
+import org.bukkit.BanEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -24,7 +31,7 @@ public class TabCompleterModeration implements ServerSystemTabCompleter {
         if (!hasPermission(commandSender, commandName)) return Optional.of(Collections.emptyList());
 
         return switch (arguments.length) {
-            case 1 -> handlePlayerNameCompletion(arguments[0]);
+            case 1 -> handlePlayerNameCompletion(commandName, arguments[0]);
             case 2 -> handleTimeCompletion(arguments[1], commandName);
             default -> Optional.empty();
         };
@@ -42,19 +49,33 @@ public class TabCompleterModeration implements ServerSystemTabCompleter {
         return PermissionManager.hasCommandPermission(commandSender, permissionNode, false);
     }
 
-    private Optional<List<String>> handlePlayerNameCompletion(String argument) {
-        var possibleCompletions = Arrays.stream(Bukkit.getOfflinePlayers())
-                .map(OfflinePlayer::getName)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+    private Optional<List<String>> handlePlayerNameCompletion(String commandName, String argument) {
+        var possibleCompletions = getPlayerNames(commandName);
 
         if (argument.isEmpty()) return Optional.of(possibleCompletions);
 
         var filteredCompletions = possibleCompletions.stream()
                 .filter(name -> name.toLowerCase().startsWith(argument.toLowerCase()))
-                .collect(Collectors.toList());
+                .toList();
 
         return Optional.of(filteredCompletions);
+    }
+
+    private List<String> getPlayerNames(String commandName) {
+        if (commandName.equalsIgnoreCase("unban")) return Bukkit.getServer().getBanList(BanListType.PROFILE).getEntries().stream()
+                .map(BanEntry::getBanTarget)
+                .map(PlayerProfile.class::cast)
+                .map(PlayerProfile::getName).filter(Objects::nonNull).toList();
+
+        if (commandName.equalsIgnoreCase("unmute")) return ServerSystem.Instance.getRegistry().getService(UserManager.class)
+                .getCachedUsers().stream()
+                .map(CachedUser::getOfflineUser)
+                .filter(user -> user.getMuteManager().hasActiveModeration()).map(OfflineUser::getName)
+                .filter(Optional::isPresent).map(Optional::get).toList();
+
+        return Arrays.stream(Bukkit.getOfflinePlayers())
+                .map(OfflinePlayer::getName)
+                .filter(Objects::nonNull).toList();
     }
 
     private Optional<List<String>> handleTimeCompletion(String argument, String commandName) {

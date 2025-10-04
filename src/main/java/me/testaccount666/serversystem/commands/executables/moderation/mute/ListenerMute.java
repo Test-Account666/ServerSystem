@@ -66,7 +66,7 @@ public class ListenerMute implements Listener {
         var senderNameOptional = findSenderName(muteModeration);
         if (senderNameOptional.isPresent()) senderName = senderNameOptional.get();
 
-        command("Mute.Muted", user).sender(senderName).target(user.getName().get())
+        command("Moderation.Mute.Muted", user).sender(senderName).target(user.getName().get())
                 .postModifier(message -> message.replace("<REASON>", muteModeration.reason())
                         .replace("<DATE>", parseDate(muteModeration.expireTime(), user))).build();
     }

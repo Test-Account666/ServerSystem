@@ -86,7 +86,7 @@ public class CommandSign extends AbstractServerSystemCommand {
 
         var message = String.join(" ", arguments).trim();
         if (message.isEmpty()) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 

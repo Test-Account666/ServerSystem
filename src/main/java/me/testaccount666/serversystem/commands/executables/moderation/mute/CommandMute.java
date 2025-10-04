@@ -69,6 +69,11 @@ public class CommandMute extends AbstractModerationCommand {
     }
 
     @Override
+    protected void handlePostRemoveModeration(Command command, User commandSender, OfflineUser targetUser) {
+        // Nothing to do
+    }
+
+    @Override
     protected void handlePostModeration(Command command, User commandSender, OfflineUser targetUser, AbstractModeration moderation) {
         // Nothing to do
     }

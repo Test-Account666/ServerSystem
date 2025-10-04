@@ -159,13 +159,14 @@ Messages:
       Success:
         Enabled: "The item in your hand is now unlimited."
         Disabled: "The item in your hand is no longer unlimited."
-      NoItemInHand: "<Color:Error:Message>You're not holding an item."
+      NoItemInHand: "<Color:Error.Message>You're not holding an item."
     ClearInventory:
       Success: "You inventory has been cleared."
       SuccessOther: "You cleared <Color:Highlight><TARGET>'s <Color:Message>inventory."
     Sudo:
       Success: "You executed a command for <Color:Highlight><TARGET><Color:Highlight>."
       CannotSudoExempt: "<Color:Error.Message>You cannot sudo <Color:Error.Highlight><TARGET><Color:Error.Message>."
+      CannotSudoSelf: "<Color:Error.Message>You cannot sudo yourself."
     OfflineTeleport:
       Success: "You teleported yourself to <Color:Highlight><TARGET>'s <Color:Message>logout location."
     OfflineTeleportHere:
@@ -249,11 +250,11 @@ Messages:
         Remove:
           Success: "You unmuted <Color:Highlight><TARGET><Color:Message>."
           NoActiveModeration: "<Color:Error.Message>Specified player <Color:Error.Highlight><TARGET> <Color:Error.Message>is not muted."
+        Muted: "<Color:Error.Message>You have been muted by <Color:Error.Highlight><SENDER> <Color:Error.Message>for <Color:Error.Highlight><REASON> <Color:Error.Message>until: <Color:Error.Highlight><DATE><Color:Error.Message>."
       ShadowMute:
         Add:
           Success: "You shadow muted <Color:Highlight><TARGET><Color:Message>."
           AlreadyActiveModeration: "<Color:Error.Message>Specified player <Color:Error.Highlight><TARGET> <Color:Error.Message>is already muted."
-        Muted: "<Color:Error.Message>You have been muted by <Color:Error.Highlight><SENDER> <Color:Error.Message>for <Color:Error.Highlight><REASON> <Color:Error.Message>until: <Color:Error.Highlight><DATE><Color:Error.Message>."
       Ban:
         Add:
           Success: "You banned <Color:Highlight><TARGET><Color:Message>."
@@ -350,8 +351,8 @@ Messages:
       NowAfk: "You are now considered AFK."
       NoLongerAfk: "You are no longer considered AFK."
     Offline:
-      NeverPlayed: "<Color:Error:Message>Specified player <Color:Message:Highlight><TARGET> <Color:Error.Message>has never played."
-      NotOffline: "<Color:Error:Message>Specified player <Color:Message:Highlight><TARGET> <Color:Error.Message>is not offline."
+      NeverPlayed: "<Color:Error.Message>Specified player <Color:Error.Highlight><TARGET> <Color:Error.Message>has never played."
+      NotOffline: "<Color:Error.Message>Specified player <Color:Error.Highlight><TARGET> <Color:Error.Message>is not offline."
   ClickableSigns:
     Give:
       Configuring: "You are now configuring a give sign. Place the item you want to give in your hand."

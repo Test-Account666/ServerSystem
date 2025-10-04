@@ -98,7 +98,7 @@ public abstract class AbstractServerSystemCommand implements ServerSystemCommand
      */
     protected boolean handleConsoleWithNoTarget(User commandSender, String syntaxPath, String label, int expectedLength, String... arguments) {
         if (arguments.length <= expectedLength && commandSender instanceof ConsoleUser) {
-            general("InvalidArguments", commandSender).syntaxPath(syntaxPath).label(label).build();
+            general("InvalidArguments", commandSender).syntax(syntaxPath).label(label).build();
             return true;
         }
         return false;

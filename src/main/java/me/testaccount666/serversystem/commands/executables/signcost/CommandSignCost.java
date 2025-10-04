@@ -39,7 +39,7 @@ public class CommandSignCost extends AbstractServerSystemCommand {
         }
 
         if (arguments.length < 1) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -62,7 +62,7 @@ public class CommandSignCost extends AbstractServerSystemCommand {
         var amount = 0.0D;
         if (costType != CostType.NONE) {
             if (arguments.length < 2) {
-                general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+                general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
                 return;
             }
 

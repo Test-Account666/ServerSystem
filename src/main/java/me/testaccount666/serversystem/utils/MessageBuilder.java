@@ -1,5 +1,9 @@
 package me.testaccount666.serversystem.utils;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.managers.messages.MessageManager;
 import me.testaccount666.serversystem.userdata.User;
@@ -7,25 +11,32 @@ import me.testaccount666.serversystem.userdata.User;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@Accessors(fluent = true, chain = true)
 public class MessageBuilder {
     private final String _messagePath;
     private final Type _type;
     private final User _receiver;
-    private boolean _sendMessage = true;
-    private boolean _sendPrefix = true;
+    @Setter
+    private boolean _send = true;
+    @Setter
+    private boolean _prefix = true;
+    @Setter
     private boolean _format = true;
-    private UnaryOperator<String> _preMessageModifier = null;
-    private UnaryOperator<String> _postMessageModifier = null;
-    private String _senderName;
-    private String _targetName;
+    @Setter
+    private UnaryOperator<String> _preModifier = null;
+    @Setter
+    private UnaryOperator<String> _postModifier = null;
+    @Setter
+    private String _sender;
+    @Setter
+    private String _target;
+    @Setter
     private String _label;
-    private String _syntaxPath;
-
-    private MessageBuilder(String messagePath, Type type, User receiver) {
-        _messagePath = messagePath;
-        _type = type;
-        _receiver = receiver;
-    }
+    @Setter
+    private String _syntax;
+    @Setter
+    private String _language;
 
     public static MessageBuilder general(String messagePath, User receiver) {
         return of(Type.GENERAL, messagePath, receiver);
@@ -47,51 +58,6 @@ public class MessageBuilder {
         return new MessageBuilder(messagePath, type, receiver);
     }
 
-    public MessageBuilder postModifier(UnaryOperator<String> messageModifier) {
-        _postMessageModifier = messageModifier;
-        return this;
-    }
-
-    public MessageBuilder preModifier(UnaryOperator<String> messageModifier) {
-        _preMessageModifier = messageModifier;
-        return this;
-    }
-
-    public MessageBuilder send(boolean sendMessage) {
-        _sendMessage = sendMessage;
-        return this;
-    }
-
-    public MessageBuilder prefix(boolean sendPrefix) {
-        _sendPrefix = sendPrefix;
-        return this;
-    }
-
-    public MessageBuilder target(String targetName) {
-        _targetName = targetName;
-        return this;
-    }
-
-    public MessageBuilder sender(String senderName) {
-        _senderName = senderName;
-        return this;
-    }
-
-    public MessageBuilder label(String label) {
-        _label = label;
-        return this;
-    }
-
-    public MessageBuilder format(boolean format) {
-        _format = format;
-        return this;
-    }
-
-    public MessageBuilder syntaxPath(String syntaxPath) {
-        _syntaxPath = syntaxPath;
-        return this;
-    }
-
     public Optional<String> build() {
         var messagePath = switch (_type) {
             case GENERAL -> "General.${_messagePath}";
@@ -100,7 +66,8 @@ public class MessageBuilder {
             case CLICKABLE_SIGN -> "ClickableSigns.${_messagePath}";
         };
 
-        var messageOptional = MessageManager.getMessage(_receiver, messagePath);
+        var messageOptional = _language != null? MessageManager.getMessage(_receiver, messagePath, _language)
+                : MessageManager.getMessage(_receiver, messagePath);
         if (messageOptional.isEmpty()) {
             if (_messagePath.equalsIgnoreCase("ErrorOccurred")) {
                 ServerSystem.getLog().severe("'ErrorOccurred' message could not be found, this is a critical error!");
@@ -115,21 +82,21 @@ public class MessageBuilder {
 
         var message = messageOptional.get();
 
-        if (_preMessageModifier != null) message = _preMessageModifier.apply(message);
-        if (_senderName != null) message = message.replace("<SENDER>", _senderName);
-        if (_targetName == null) _targetName = _receiver.getName().orElse("Unknown");
+        if (_preModifier != null) message = _preModifier.apply(message);
+        if (_sender != null) message = message.replace("<SENDER>", _sender);
+        if (_target == null) _target = _receiver.getName().orElse("Unknown");
 
-        if (_syntaxPath != null) {
-            var syntaxOptional = syntax(_syntaxPath, _receiver).sender(_senderName).prefix(false)
-                    .target(_targetName).label(_label).send(false).build();
+        if (_syntax != null) {
+            var syntaxOptional = syntax(_syntax, _receiver).sender(_sender).prefix(false)
+                    .target(_target).label(_label).send(false).build();
             if (syntaxOptional.isPresent()) message = message.replace("<USAGE>", syntaxOptional.get());
             else message = message.replace("<USAGE>", "!!ERROR!!");
         }
 
-        if (_postMessageModifier != null) message = _postMessageModifier.apply(message);
+        if (_postModifier != null) message = _postModifier.apply(message);
 
-        var formattedMessage = _format? MessageManager.formatMessage(message, _receiver, _targetName, _label, _sendPrefix) : message;
-        if (_sendMessage) _receiver.sendMessage(formattedMessage);
+        var formattedMessage = _format? MessageManager.formatMessage(message, _receiver, _target, _label, _prefix) : message;
+        if (_send) _receiver.sendMessage(formattedMessage);
 
         return Optional.of(formattedMessage);
     }

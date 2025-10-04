@@ -25,9 +25,12 @@ import org.bukkit.event.server.PluginDisableEvent;
 
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 
 @RequiredCommands(requiredCommands = CommandGameMode.class)
 public class ListenerOperatorSpoof implements Listener {
+    private boolean _caughtException = false;
+    private boolean _injectionPossible = true;
     private CommandGameMode _executorGameMode;
 
     public ListenerOperatorSpoof() {
@@ -71,6 +74,16 @@ public class ListenerOperatorSpoof implements Listener {
     }
 
     private void inject(Player player) {
+        if (!_injectionPossible) return;
+
+        try {
+            Class.forName("net.minecraft.network.protocol.game.ServerboundChangeGameModePacket");
+        } catch (Throwable ignored) {
+            // If we don't have this class, we don't need the injection anyways, probably an older Minecraft version.
+            _injectionPossible = false;
+            return;
+        }
+
         var craftPlayer = (CraftPlayer) player;
         var playerConnection = craftPlayer.getHandle().connection.connection;
         var pipeline = playerConnection.channel.pipeline();
@@ -116,26 +129,37 @@ public class ListenerOperatorSpoof implements Listener {
 
         @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-            if (_cachedUser.isOfflineUser()) {
+            try {
+                if (_cachedUser.isOfflineUser()) {
+                    super.channelRead(ctx, msg);
+                    return;
+                }
+
+                if (!(msg instanceof ServerboundChangeGameModePacket(var mode))) {
+                    super.channelRead(ctx, msg);
+                    return;
+                }
+
+                if (_player.isOp()) {
+                    super.channelRead(ctx, msg);
+                    return;
+                }
+
+                var gameMode = GameMode.valueOf(mode.getName().toUpperCase());
+                var user = (User) _cachedUser.getOfflineUser();
+
+                // Go back to main thread
+                Bukkit.getScheduler().runTask(ServerSystem.Instance, () -> _executorGameMode.handleGameModeCommand(user, null, "gamemode", gameMode, new String[0]));
+            } catch (Throwable throwable) {
+                // We don't want to cause issues in case ServerSystem causes an exception
+                if (!_caughtException) {
+                    ServerSystem.getLog().log(Level.WARNING, "Caught exception in channel pipeline," +
+                            " report this to the developer of ServerSystem!\nThis will only display once", throwable);
+                    _caughtException = true;
+                }
+
                 super.channelRead(ctx, msg);
-                return;
             }
-
-            if (!(msg instanceof ServerboundChangeGameModePacket(var mode))) {
-                super.channelRead(ctx, msg);
-                return;
-            }
-
-            if (_player.isOp()) {
-                super.channelRead(ctx, msg);
-                return;
-            }
-
-            var gameMode = GameMode.valueOf(mode.getName().toUpperCase());
-            var user = (User) _cachedUser.getOfflineUser();
-
-            // Go back to main thread
-            Bukkit.getScheduler().runTask(ServerSystem.Instance, () -> _executorGameMode.handleGameModeCommand(user, null, "gamemode", gameMode, new String[0]));
         }
     }
 }

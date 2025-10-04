@@ -23,7 +23,7 @@ public class CommandRename extends AbstractServerSystemCommand {
             return;
         }
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
         var player = commandSender.getPlayer();

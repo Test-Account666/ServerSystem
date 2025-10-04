@@ -3,11 +3,11 @@ package me.testaccount666.serversystem.commands.executables.sudo;
 import me.testaccount666.serversystem.ServerSystem;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
-import me.testaccount666.serversystem.managers.PermissionManager;
-import me.testaccount666.serversystem.userdata.UserManager;
 import me.testaccount666.serversystem.commands.management.CommandManager;
+import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.ConsoleUser;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.userdata.UserManager;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.ModifierReviewable;
 import net.bytebuddy.implementation.MethodCall;
@@ -39,6 +39,11 @@ public class CommandSudo extends AbstractServerSystemCommand {
         if (!checkBasePermission(commandSender, "Sudo.Use")) return;
         if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments)) return;
 
+        if (arguments.length == 0) {
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
+            return;
+        }
+
         var targetUserOptional = getTargetUser(commandSender, false, arguments);
         if (targetUserOptional.isEmpty()) {
             general("PlayerNotFound", commandSender).target(arguments[0]).build();
@@ -56,14 +61,14 @@ public class CommandSudo extends AbstractServerSystemCommand {
         }
 
         if (arguments.length <= 1) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 
         var sudoCommand = arguments[1];
 
         if (sudoCommand.isBlank()) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 

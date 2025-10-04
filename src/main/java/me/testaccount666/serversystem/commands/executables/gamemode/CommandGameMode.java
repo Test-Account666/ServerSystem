@@ -57,7 +57,7 @@ public class CommandGameMode extends AbstractServerSystemCommand {
 
         // Handle /gamemode <Mode> <Target> command
         if (arguments.length < 1) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 

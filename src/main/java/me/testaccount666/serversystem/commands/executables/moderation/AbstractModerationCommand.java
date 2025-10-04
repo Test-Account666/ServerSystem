@@ -22,12 +22,12 @@ public abstract class AbstractModerationCommand extends AbstractServerSystemComm
     public void execute(User commandSender, Command command, String label, String... arguments) {
         if (!checkBasePermission(commandSender, command)) return;
         if (arguments.length == 0) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 
         if (!isRemoveModeration(command) && arguments.length < 2) {
-            general("InvalidArguments", commandSender).syntaxPath(getSyntaxPath(command)).label(label).build();
+            general("InvalidArguments", commandSender).syntax(getSyntaxPath(command)).label(label).build();
             return;
         }
 
@@ -85,6 +85,7 @@ public abstract class AbstractModerationCommand extends AbstractServerSystemComm
 
         moderationManager.removeModeration(activeModeration.get());
         command("Moderation.${type(command)}.Remove.Success", commandSender).target(targetUser.getName().get()).build();
+        handlePostRemoveModeration(command, commandSender, targetUser);
     }
 
     private void handleCreateModeration(Command command, User commandSender, OfflineUser targetUser, long expireTime, String reason) {
@@ -99,6 +100,8 @@ public abstract class AbstractModerationCommand extends AbstractServerSystemComm
         command("Moderation.${type(command)}.Add.Success", commandSender).target(targetUser.getName().get()).build();
         handlePostModeration(command, commandSender, targetUser, moderation);
     }
+
+    protected abstract void handlePostRemoveModeration(Command command, User commandSender, OfflineUser targetUser);
 
     protected abstract void handlePostModeration(Command command, User commandSender, OfflineUser targetUser, AbstractModeration moderation);
 
