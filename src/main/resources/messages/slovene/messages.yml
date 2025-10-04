@@ -159,13 +159,14 @@ Messages:
       Success:
         Enabled: "Predmet v tvoji roki je sedaj neomejen."
         Disabled: "Predmet v tvoji roki ni več neomejen."
-      NoItemInHand: "<Color:Error:Message>V roki ne držiš nobenega predmeta."
+      NoItemInHand: "<Color:Error.Message>V roki ne držiš nobenega predmeta."
     ClearInventory:
       Success: "Tvoj inventar je bil počiščen."
       SuccessOther: "Počistil si inventar igralca <Color:Highlight><TARGET><Color:Message>."
     Sudo:
       Success: "Izvedel si ukaz za <Color:Highlight><TARGET><Color:Highlight>."
       CannotSudoExempt: "<Color:Error.Message>Ne moreš uporabiti ukaza sudo na <Color:Error.Highlight><TARGET><Color:Error.Message>."
+      CannotSudoSelf: "<Color:Error.Message>Ne morete uporabiti sudo zase."
     OfflineTeleport:
       Success: "Teleportiral si se na lokacijo odjave igralca <Color:Highlight><TARGET><Color:Message>."
     OfflineTeleportHere:
@@ -249,11 +250,11 @@ Messages:
         Remove:
           Success: "Odmolčal si <Color:Highlight><TARGET><Color:Message>."
           NoActiveModeration: "<Color:Error.Message>Navedeni igralec <Color:Error.Highlight><TARGET> <Color:Error.Message>ni utišan."
+        Muted: "<Color:Error.Message>Utišal te je <Color:Error.Highlight><SENDER> <Color:Error.Message>zaradi <Color:Error.Highlight><REASON> <Color:Error.Message>do: <Color:Error.Highlight><DATE><Color:Error.Message>."
       ShadowMute:
         Add:
           Success: "Skrito si utišal <Color:Highlight><TARGET><Color:Message>."
           AlreadyActiveModeration: "<Color:Error.Message>Navedeni igralec <Color:Error.Highlight><TARGET> <Color:Error.Message>je že utišan."
-        Muted: "<Color:Error.Message>Utišal te je <Color:Error.Highlight><SENDER> <Color:Error.Message>zaradi <Color:Error.Highlight><REASON> <Color:Error.Message>do: <Color:Error.Highlight><DATE><Color:Error.Message>."
       Ban:
         Add:
           Success: "Izgnal si <Color:Highlight><TARGET><Color:Message>."
@@ -350,8 +351,8 @@ Messages:
       NowAfk: "Sedaj si AFK."
       NoLongerAfk: "Nisi več AFK."
     Offline:
-      NeverPlayed: "<Color:Error:Message>Navedeni igralec <Color:Message:Highlight><TARGET> <Color:Error.Message>še nikoli ni igral."
-      NotOffline: "<Color:Error:Message>Navedeni igralec <Color:Message:Highlight><TARGET> <Color:Error.Message>ni brez povezave."
+      NeverPlayed: "<Color:Error.Message>Navedeni igralec <Color:Error.Highlight><TARGET> <Color:Error.Message>še nikoli ni igral."
+      NotOffline: "<Color:Error.Message>Navedeni igralec <Color:Error.Highlight><TARGET> <Color:Error.Message>ni brez povezave."
   ClickableSigns:
     Give:
       Configuring: "Sedaj konfiguriraš 'give' tablo. Postavi predmet, ki ga želiš podariti, v svojo roko."
