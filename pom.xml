@@ -6,7 +6,7 @@
 
     <groupId>me.testaccount666</groupId>
     <artifactId>ServerSystem</artifactId>
-    <version>${cleanVersion}.${buildNumber}</version>
+    <version>${cleanVersion}.${git.commit.id.describe}</version>
     <packaging>jar</packaging>
 
     <name>ServerSystem</name>
@@ -14,8 +14,10 @@
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <manifold.version>2025.1.26</manifold.version>
+        <manifold.version>2025.1.27</manifold.version>
+        <lombok.version>1.18.42</lombok.version>
         <cleanVersion>3.2.1</cleanVersion>
+        <maven.build.timestamp.format>yyyy-MM-dd--HH-mm</maven.build.timestamp.format>
     </properties>
 
     <scm>
@@ -55,29 +57,37 @@
             </plugin>
 
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>3.2.1</version>
+                <groupId>io.github.git-commit-id</groupId>
+                <artifactId>git-commit-id-maven-plugin</artifactId>
+                <version>9.0.2</version>
                 <executions>
                     <execution>
-                        <phase>validate</phase>
+                        <id>get-the-git-infos</id>
                         <goals>
-                            <goal>create</goal>
+                            <goal>revision</goal>
                         </goals>
+                        <phase>initialize</phase>
                     </execution>
                 </executions>
                 <configuration>
-                    <doCheck>false</doCheck>
-                    <doUpdate>false</doUpdate>
-                    <shortRevisionLength>8</shortRevisionLength>
-                    <revisionOnScmFailure>unknown</revisionOnScmFailure>
+                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties
+                    </generateGitPropertiesFilename>
+                    <commitIdGenerationMode>full</commitIdGenerationMode>
+                    <abbrevLength>8</abbrevLength>
+                    <gitDescribe>
+                        <dirty>-${build.timestamp}</dirty>
+                        <abbrev>8</abbrev>
+                        <tags>true</tags>
+                        <match>!*</match>
+                    </gitDescribe>
                 </configuration>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>3.14.1</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -94,7 +104,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.32</version>
+                            <version>${lombok.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
@@ -109,7 +119,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.4.1</version>
+                <version>3.4.2</version>
                 <configuration>
                     <archive>
                         <manifestEntries>
@@ -265,62 +275,62 @@
         <dependency>
             <groupId>io.github.classgraph</groupId>
             <artifactId>classgraph</artifactId>
-            <version>4.8.180</version>
+            <version>4.8.181</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy -->
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>1.17.6</version>
+            <version>1.17.7</version>
             <scope>provided</scope>
         </dependency>
         <!-- Lombok for reducing boilerplate code -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.38</version>
+            <version>${lombok.version}</version>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>6.3.0</version>
+            <version>7.0.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>2.2.224</version>
+            <version>2.4.240</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>6.0.0-M2</version>
+            <version>6.0.0-RC3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>6.0.0-M2</version>
+            <version>6.0.0-RC3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>6.0.0-M2</version>
+            <version>6.0.0-RC3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.18.0</version>
+            <version>5.20.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>5.18.0</version>
+            <version>5.20.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
