@@ -17,7 +17,7 @@ public abstract class AbstractSqlMuteManager extends AbstractModerationManager {
 
     public AbstractSqlMuteManager(UUID ownerUuid) {
         super(ownerUuid);
-        databaseManager = ServerSystem.Instance.getRegistry().getService(AbstractModerationDatabaseManager.class);
+        databaseManager = ServerSystem.getInstance().getRegistry().getService(AbstractModerationDatabaseManager.class);
     }
 
     @Override

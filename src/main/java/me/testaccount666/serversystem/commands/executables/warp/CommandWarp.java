@@ -40,7 +40,7 @@ public class CommandWarp extends AbstractServerSystemCommand {
 
     private void handleWarpCommand(User commandSender, String... arguments) {
         if (!checkBasePermission(commandSender, "Warp.Use")) return;
-        var registry = ServerSystem.Instance.getRegistry();
+        var registry = ServerSystem.getInstance().getRegistry();
         var warpManager = registry.getService(WarpManager.class);
 
         var warpOptional = warpManager.getWarpByName(arguments[0]);
@@ -63,7 +63,7 @@ public class CommandWarp extends AbstractServerSystemCommand {
     private void handleSetWarpCommand(User commandSender, String... arguments) {
         if (!checkBasePermission(commandSender, "Warp.Set")) return;
 
-        var registry = ServerSystem.Instance.getRegistry();
+        var registry = ServerSystem.getInstance().getRegistry();
         var warpManager = registry.getService(WarpManager.class);
         var warpName = arguments[0];
         var warpLocation = commandSender.getPlayer().getLocation();
@@ -84,7 +84,7 @@ public class CommandWarp extends AbstractServerSystemCommand {
     private void handleDeleteWarpCommand(User commandSender, String... arguments) {
         if (!checkBasePermission(commandSender, "Warp.Delete")) return;
 
-        var registry = ServerSystem.Instance.getRegistry();
+        var registry = ServerSystem.getInstance().getRegistry();
         var warpManager = registry.getService(WarpManager.class);
         var warpName = arguments[0];
         var warpOptional = warpManager.getWarpByName(warpName);

@@ -28,7 +28,7 @@ public class ConfiguratorWarpSign extends AbstractSignConfigurator {
 
     @Override
     protected boolean validateConfiguration(User user, Sign sign, YamlConfiguration config) {
-        var warpManager = ServerSystem.Instance.getRegistry().getService(WarpManager.class);
+        var warpManager = ServerSystem.getInstance().getRegistry().getService(WarpManager.class);
         if (warpManager == null) {
             sign("Warp.NoWarpManager", user).build();
             return false;

@@ -67,7 +67,7 @@ public class TabCompleterModeration implements ServerSystemTabCompleter {
                 .map(PlayerProfile.class::cast)
                 .map(PlayerProfile::getName).filter(Objects::nonNull).toList();
 
-        if (commandName.equalsIgnoreCase("unmute")) return ServerSystem.Instance.getRegistry().getService(UserManager.class)
+        if (commandName.equalsIgnoreCase("unmute")) return ServerSystem.getInstance().getRegistry().getService(UserManager.class)
                 .getCachedUsers().stream()
                 .map(CachedUser::getOfflineUser)
                 .filter(user -> user.getMuteManager().hasActiveModeration()).map(OfflineUser::getName)

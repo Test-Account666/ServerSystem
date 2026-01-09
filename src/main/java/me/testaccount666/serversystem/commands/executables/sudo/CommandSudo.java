@@ -77,7 +77,7 @@ public class CommandSudo extends AbstractServerSystemCommand {
             return;
         }
 
-        var cachedSenderOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(commandSender.getUuid());
+        var cachedSenderOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(commandSender.getUuid());
         if (cachedSenderOptional.isEmpty()) {
             ServerSystem.getLog().warning("(CommandSudo) Couldn't find cached command sender?!");
             general("ErrorOccurred", commandSender).label(label).build();
@@ -105,7 +105,7 @@ public class CommandSudo extends AbstractServerSystemCommand {
         var sudoArguments = new String[arguments.length - 2];
         System.arraycopy(arguments, 2, sudoArguments, 0, sudoArguments.length);
 
-        var commandManager = ServerSystem.Instance.getRegistry().getService(CommandManager.class);
+        var commandManager = ServerSystem.getInstance().getRegistry().getService(CommandManager.class);
         var commandOptional = commandManager.getCommand(sudoCommand.substring(1));
         if (commandOptional.isEmpty()) {
             var tempArgumentList = new ArrayList<String>();

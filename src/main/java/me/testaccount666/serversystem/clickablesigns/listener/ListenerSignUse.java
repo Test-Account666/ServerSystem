@@ -18,7 +18,7 @@ public class ListenerSignUse implements Listener {
         if (clickedBlock == null) return;
         if (!(clickedBlock.getState() instanceof Sign sign)) return;
 
-        var registry = ServerSystem.Instance.getRegistry();
+        var registry = ServerSystem.getInstance().getRegistry();
         var signManager = registry.getService(SignManager.class);
         var location = clickedBlock.getLocation();
         var signOptional = signManager.getSignType(location);

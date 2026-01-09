@@ -17,7 +17,7 @@ public abstract class AbstractMigrator {
     }
 
     protected UserManager userManager() {
-        return ServerSystem.Instance.getRegistry().getService(UserManager.class);
+        return ServerSystem.getInstance().getRegistry().getService(UserManager.class);
     }
 
     protected OfflinePlayer[] offlinePlayers() {

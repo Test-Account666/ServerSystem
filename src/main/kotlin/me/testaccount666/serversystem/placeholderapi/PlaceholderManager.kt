@@ -1,36 +1,33 @@
-package me.testaccount666.serversystem.placeholderapi;
+package me.testaccount666.serversystem.placeholderapi
 
-import io.github.classgraph.ClassGraph;
-import me.testaccount666.serversystem.ServerSystem;
+import io.github.classgraph.ClassGraph
+import me.testaccount666.serversystem.ServerSystem.Companion.log
+import java.util.*
+import java.util.logging.Level
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.logging.Level;
+class PlaceholderManager {
+    private val _registeredPlaceholders: MutableMap<String, Placeholder> = HashMap()
 
-public class PlaceholderManager {
-    private final Map<String, Placeholder> _registeredPlaceholders = new HashMap<>();
-
-    public void registerPlaceholders() {
-        try (var scanResult = new ClassGraph()
-                .enableAllInfo()
-                .acceptPackages("me.testaccount666.serversystem.placeholderapi.executables")
-                .scan()) {
-            var placeholderClasses = scanResult.getClassesImplementing(Placeholder.class);
-
-            for (var placeholderClass : placeholderClasses)
-                try {
-                    var placeholder = (Placeholder) placeholderClass.loadClass().getDeclaredConstructor().newInstance();
-                    placeholder.getIdentifiers().forEach(identifier -> _registeredPlaceholders.put(identifier.toLowerCase(), placeholder));
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException exception) {
-                    ServerSystem.getLog().log(Level.SEVERE, "Error registering placeholder '${placeholderClass.getName()}'", exception);
+    fun registerPlaceholders() {
+        ClassGraph()
+            .enableAllInfo()
+            .acceptPackages("me.testaccount666.serversystem.placeholderapi.executables")
+            .scan().use { scanResult ->
+                val placeholderClasses = scanResult.getClassesImplementing(Placeholder::class.java)
+                for (placeholderClass in placeholderClasses) try {
+                    val placeholder = placeholderClass.loadClass().getDeclaredConstructor().newInstance() as Placeholder
+                    placeholder.identifiers.forEach { identifier: String ->
+                        _registeredPlaceholders[identifier.lowercase(Locale.getDefault())] = placeholder
+                    }
+                } catch (exception: Exception) {
+                    log.log(Level.SEVERE, "Error registering placeholder '${placeholderClass.getName()}'", exception)
                 }
-        }
+            }
     }
 
-    public Optional<Placeholder> getPlaceholder(String identifier) {
-        identifier = identifier.toLowerCase();
-        return Optional.ofNullable(_registeredPlaceholders.get(identifier));
+    fun getPlaceholder(identifier: String): Optional<Placeholder> {
+        var identifier = identifier
+        identifier = identifier.lowercase(Locale.getDefault())
+        return Optional.ofNullable(_registeredPlaceholders[identifier])
     }
 }

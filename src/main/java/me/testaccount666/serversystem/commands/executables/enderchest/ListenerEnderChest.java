@@ -43,10 +43,10 @@ public class ListenerEnderChest implements Listener {
         var viewers = new ArrayList<>(inventory.getViewers());
         inventory.close();
 
-        Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> viewers.forEach(viewer -> {
+        Bukkit.getScheduler().runTaskLater(ServerSystem.getInstance(), () -> viewers.forEach(viewer -> {
             if (!(viewer instanceof Player player)) return;
 
-            var optionalUser = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player);
+            var optionalUser = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(player);
             if (optionalUser.isEmpty()) return;
 
             var cachedUser = optionalUser.get();

@@ -42,11 +42,11 @@ public class CommandSpawn extends AbstractServerSystemCommand {
         spawnConfiguration = YamlConfiguration.loadConfiguration(_spawnFile);
 
         saveDefaultConfig();
-        var configManager = ServerSystem.Instance.getRegistry().getService(ConfigurationManager.class);
+        var configManager = ServerSystem.getInstance().getRegistry().getService(ConfigurationManager.class);
         var config = configManager.getGeneralConfig();
 
-        teleportOnJoin = config.getBoolean("Join.Spawn.TeleportOnJoin");
-        teleportOnFirstJoin = config.getBoolean("Join.Spawn.TeleportOnFirstJoin");
+        teleportOnJoin = config.getBoolean("Join.Spawn.TeleportOnJoin", false);
+        teleportOnFirstJoin = config.getBoolean("Join.Spawn.TeleportOnFirstJoin", false);
 
         if (!spawnConfiguration.isSet("Spawn")) return;
 

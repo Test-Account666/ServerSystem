@@ -96,7 +96,7 @@ public class ConfiguratorGiveSign extends AbstractSignConfigurator implements Li
             return;
         }
 
-        ServerSystem.Instance.getRegistry().getService(SignManager.class).addSignType(sign.getLocation(), getSignType());
+        ServerSystem.getInstance().getRegistry().getService(SignManager.class).addSignType(sign.getLocation(), getSignType());
         _CONFIGURATORS.removeByValue(sign);
 
         var front = sign.getSide(Side.FRONT);

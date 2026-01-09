@@ -91,7 +91,7 @@ public abstract class AbstractSignConfigurator implements SignConfigurator {
             return;
         }
 
-        ServerSystem.Instance.getRegistry().getService(SignManager.class).addSignType(sign.getLocation(), getSignType());
+        ServerSystem.getInstance().getRegistry().getService(SignManager.class).addSignType(sign.getLocation(), getSignType());
         sign(getSuccessMessageKey(), user).build();
     }
 }

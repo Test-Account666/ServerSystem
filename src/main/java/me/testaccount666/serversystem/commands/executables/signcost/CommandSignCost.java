@@ -117,7 +117,7 @@ public class CommandSignCost extends AbstractServerSystemCommand {
 
         String costLine;
         if (costType == CostType.EXP) costLine = "${(int)amount} EXP";
-        else costLine = ServerSystem.Instance.getRegistry().getService(EconomyProvider.class).formatMoney(BigDecimal.valueOf(amount));
+        else costLine = ServerSystem.getInstance().getRegistry().getService(EconomyProvider.class).formatMoney(BigDecimal.valueOf(amount));
 
         sign.getSide(Side.FRONT).line(3, ComponentColor.translateToComponent("&6${costLine}"));
         sign.getSide(Side.BACK).line(3, ComponentColor.translateToComponent("&6${costLine}"));

@@ -146,7 +146,7 @@ public class ListenerVanish implements Listener {
 
     @EventHandler
     public void onGameModeChange(PlayerGameModeChangeEvent event) {
-        Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> {
+        Bukkit.getScheduler().runTaskLater(ServerSystem.getInstance(), () -> {
             var user = getVanishedUser(event.getPlayer());
             if (user == null) return;
             _commandVanish.vanishPacket.sendVanishPacket(user);
@@ -156,7 +156,7 @@ public class ListenerVanish implements Listener {
     private void handleOtherPlayerJoin(Player joiningPlayer) {
         if (PermissionManager.hasCommandPermission(joiningPlayer, "Vanish.Show", false)) return;
 
-        ServerSystem.Instance.getRegistry().getService(UserManager.class).getCachedUsers().stream()
+        ServerSystem.getInstance().getRegistry().getService(UserManager.class).getCachedUsers().stream()
                 .filter(cachedUser -> !cachedUser.isOfflineUser())
                 .map(cachedUser -> (User) cachedUser.getOfflineUser())
                 .filter(User::isVanish)
@@ -166,7 +166,7 @@ public class ListenerVanish implements Listener {
     private void handleVanishedPlayerJoin(PlayerJoinEvent event, User user) {
         event.joinMessage(null);
         event.getPlayer().setSleepingIgnored(true);
-        event.getPlayer().setMetadata("vanished", new FixedMetadataValue(ServerSystem.Instance, true));
+        event.getPlayer().setMetadata("vanished", new FixedMetadataValue(ServerSystem.getInstance(), true));
         _commandVanish.vanishPacket.sendVanishPacket(user);
     }
 
@@ -188,12 +188,12 @@ public class ListenerVanish implements Listener {
         event.getPlayer().setGameMode(GameMode.SPECTATOR);
         event.setCancelled(false);
 
-        Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> event.getPlayer().setGameMode(previousGameMode), 5L);
+        Bukkit.getScheduler().runTaskLater(ServerSystem.getInstance(), () -> event.getPlayer().setGameMode(previousGameMode), 5L);
     }
 
     private User getVanishedUser(Player player) {
         if (player == null) return null;
-        return ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player)
+        return ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(player)
                 .filter(cachedUser -> !cachedUser.isOfflineUser())
                 .map(cachedUser -> (User) cachedUser.getOfflineUser())
                 .filter(User::isVanish)

@@ -69,7 +69,7 @@ public abstract class AbstractServerSystemCommand implements ServerSystemCommand
      */
     protected Optional<User> getTargetUser(User commandSender, int index, boolean returnSender, String... arguments) {
         if (arguments.length > index) {
-            var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(arguments[index], true);
+            var userOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(arguments[index], true);
             return userOptional.map(user -> (User) user.getOfflineUser());
         }
         return returnSender? Optional.of(commandSender) : Optional.empty();

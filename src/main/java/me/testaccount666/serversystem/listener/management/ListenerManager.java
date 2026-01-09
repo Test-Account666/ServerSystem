@@ -41,7 +41,7 @@ public class ListenerManager {
                         if (!shouldRegister) return;
                     }
 
-                    Bukkit.getPluginManager().registerEvents(listener, ServerSystem.Instance);
+                    Bukkit.getPluginManager().registerEvents(listener, ServerSystem.getInstance());
                     _registeredListeners.add(listener);
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException exception) {
                     throw new RuntimeException("Failed to register listener '${listenerClass.getName()}'", exception);

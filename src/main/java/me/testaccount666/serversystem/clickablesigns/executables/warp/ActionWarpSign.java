@@ -19,7 +19,7 @@ public class ActionWarpSign extends AbstractSignClickAction {
 
     @Override
     protected boolean executeAction(User user, Sign sign, FileConfiguration config) {
-        var warpManager = ServerSystem.Instance.getRegistry().getService(WarpManager.class);
+        var warpManager = ServerSystem.getInstance().getRegistry().getService(WarpManager.class);
         if (warpManager == null) {
             sign("Warp.NoWarpManager", user).build();
             return false;

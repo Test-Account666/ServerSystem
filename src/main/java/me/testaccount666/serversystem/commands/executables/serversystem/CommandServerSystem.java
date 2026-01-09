@@ -51,7 +51,7 @@ public class CommandServerSystem extends AbstractServerSystemCommand {
 
         command("ServerSystem.Version.Checking", commandSender).build();
 
-        var updateManager = ServerSystem.Instance.getRegistry().getService(UpdateManager.class);
+        var updateManager = ServerSystem.getInstance().getRegistry().getService(UpdateManager.class);
         updateManager.getUpdateChecker().getLatestVersion().thenAccept(latestVersion -> {
             command("ServerSystem.Version.Success", commandSender)
                     .postModifier(message -> applyVersion(message, latestVersion.getVersion()))
@@ -68,8 +68,8 @@ public class CommandServerSystem extends AbstractServerSystemCommand {
     private String applyVersion(String message, String latestVersion) {
         if (latestVersion == null) latestVersion = "?";
 
-        var currentVersion = ServerSystem.Instance.getDescription().getVersion();
-        var serverVersion = ServerSystem.getServerVersion().getVersion();
+        var currentVersion = ServerSystem.getInstance().getDescription().getVersion();
+        var serverVersion = ServerSystem.Companion.getServerVersion().getVersion();
 
         return message.replace("<LATEST_VERSION>", latestVersion)
                 .replace("<CURRENT_VERSION>", currentVersion)
@@ -79,12 +79,12 @@ public class CommandServerSystem extends AbstractServerSystemCommand {
     public void reload(User commandSender) {
         if (!checkBasePermission(commandSender, "ServerSystem.Reload")) return;
 
-        var serverSystem = ServerSystem.Instance;
+        var serverSystem = ServerSystem.getInstance();
         Bukkit.getScheduler().cancelTasks(serverSystem);
         serverSystem.onDisable();
         serverSystem.onEnable();
 
-        if (!ServerSystem.Instance.isEnabled()) {
+        if (!ServerSystem.getInstance().isEnabled()) {
             general("ErrorOccurred", commandSender).build();
             return;
         }
@@ -101,7 +101,7 @@ public class CommandServerSystem extends AbstractServerSystemCommand {
             return;
         }
 
-        var migratorRegistry = ServerSystem.Instance.getRegistry().getService(MigratorRegistry.class);
+        var migratorRegistry = ServerSystem.getInstance().getRegistry().getService(MigratorRegistry.class);
         var migratorName = arguments[1];
 
         var migrator = migratorRegistry.getMigrator(migratorName);

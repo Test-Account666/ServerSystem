@@ -12,7 +12,7 @@ public class ListenerSignDestroy implements Listener {
     @EventHandler
     public void onBlockDestroy(BlockBreakEvent event) {
         var block = event.getBlock();
-        var signManager = ServerSystem.Instance.getRegistry().getService(SignManager.class);
+        var signManager = ServerSystem.getInstance().getRegistry().getService(SignManager.class);
         var location = block.getLocation();
         var signOptional = signManager.getSignType(location);
         if (signOptional.isEmpty()) return;

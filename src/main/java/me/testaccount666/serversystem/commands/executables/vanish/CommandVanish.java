@@ -103,7 +103,7 @@ public class CommandVanish extends AbstractServerSystemCommand {
         messagePath = enableVanish? "${messagePath}.Enabled" : "${messagePath}.Disabled";
 
         targetUser.getPlayer().setSleepingIgnored(enableVanish);
-        targetUser.getPlayer().setMetadata("vanished", new FixedMetadataValue(ServerSystem.Instance, enableVanish));
+        targetUser.getPlayer().setMetadata("vanished", new FixedMetadataValue(ServerSystem.getInstance(), enableVanish));
         targetUser.setVanish(enableVanish);
         targetUser.save();
 

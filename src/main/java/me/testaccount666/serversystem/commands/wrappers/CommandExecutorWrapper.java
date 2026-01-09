@@ -17,7 +17,7 @@ public class CommandExecutorWrapper extends AbstractCommandWrapper implements Co
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] arguments) {
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] arguments) {
         var commandUser = resolveCommandUser(commandSender);
 
         // This should technically never happen...

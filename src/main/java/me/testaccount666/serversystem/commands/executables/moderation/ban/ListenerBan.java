@@ -23,7 +23,7 @@ public class ListenerBan implements Listener {
 
     @EventHandler
     public void onLogin(AsyncPlayerPreLoginEvent event) {
-        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(event.getUniqueId());
+        var userOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(event.getUniqueId());
         if (userOptional.isEmpty()) {
             ServerSystem.getLog().severe("(ListenerBan) User not found! This should not happen!");
             return;
@@ -43,7 +43,7 @@ public class ListenerBan implements Listener {
         var parsedDuration = banModeration.expireTime();
 
         var unbanDate = parseDate(parsedDuration, user);
-        var kickOptional = command("Moderation.Ban.Kick", UserManager.getConsoleUser()).sender(senderName)
+        var kickOptional = command("Moderation.Ban.Kick", UserManager.Companion.getConsoleUser()).sender(senderName)
                 .language(user.getPlayerLanguage())
                 .target(user.getName().get()).prefix(false).send(false)
                 .postModifier(message -> message.replace("<DATE>", unbanDate)

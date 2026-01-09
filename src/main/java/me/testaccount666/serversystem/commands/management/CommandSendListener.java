@@ -26,7 +26,7 @@ public class CommandSendListener implements Listener {
 
             var pluginCommand = Bukkit.getPluginCommand(command);
             if (pluginCommand == null) continue;
-            if (pluginCommand.getPlugin() != ServerSystem.Instance) continue;
+            if (pluginCommand.getPlugin() != ServerSystem.getInstance()) continue;
 
             var executor = pluginCommand.getExecutor();
             if (!(executor instanceof CommandExecutorWrapper commandWrapper)) continue;

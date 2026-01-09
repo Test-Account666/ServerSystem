@@ -65,7 +65,7 @@ public class TabCompleterKit implements ServerSystemTabCompleter {
     }
 
     private Optional<List<String>> handleKitNameCompletion(String argument) {
-        var kitManager = ServerSystem.Instance.getRegistry().getService(KitManager.class);
+        var kitManager = ServerSystem.getInstance().getRegistry().getService(KitManager.class);
         if (kitManager == null) return Optional.of(List.of());
 
         var possibleCompletions = kitManager.getAllKitNames();

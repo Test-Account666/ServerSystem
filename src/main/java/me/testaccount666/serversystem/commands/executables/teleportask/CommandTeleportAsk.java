@@ -261,7 +261,7 @@ public class CommandTeleportAsk extends AbstractServerSystemCommand {
         var targetPlayer = target.getPlayer();
 
         activeTeleportRequests.add(teleportRequest);
-        teleportRequest.setTimerId(Bukkit.getScheduler().scheduleSyncDelayedTask(ServerSystem.Instance, () -> {
+        teleportRequest.setTimerId(Bukkit.getScheduler().scheduleSyncDelayedTask(ServerSystem.getInstance(), () -> {
             if (teleporterPlayer == null || !teleporterPlayer.isOnline()) return;
             if (targetPlayer == null || !targetPlayer.isOnline()) return;
 

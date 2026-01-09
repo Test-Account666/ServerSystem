@@ -19,7 +19,7 @@ public class ActionKitSign extends AbstractSignClickAction {
 
     @Override
     protected boolean executeAction(User user, Sign sign, FileConfiguration config) {
-        var kitManager = ServerSystem.Instance.getRegistry().getService(KitManager.class);
+        var kitManager = ServerSystem.getInstance().getRegistry().getService(KitManager.class);
         if (kitManager == null) {
             sign("Kit.NoKitManager", user).build();
             return false;

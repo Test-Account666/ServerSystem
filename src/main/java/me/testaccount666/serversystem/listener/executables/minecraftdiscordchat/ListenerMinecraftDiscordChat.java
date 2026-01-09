@@ -22,17 +22,17 @@ public class ListenerMinecraftDiscordChat implements Listener {
 
     @SneakyThrows
     public ListenerMinecraftDiscordChat() {
-        var configManager = ServerSystem.Instance.getRegistry().getService(ConfigurationManager.class);
+        var configManager = ServerSystem.getInstance().getRegistry().getService(ConfigurationManager.class);
         var generalConfig = configManager.getGeneralConfig();
-        _enabled = generalConfig.getBoolean("MinecraftDiscordChat.Enabled");
-        _webHookUri = new URI(generalConfig.getString("MinecraftDiscordChat.WebhookUrl"));
+        _enabled = generalConfig.getBoolean("MinecraftDiscordChat.Enabled", false);
+        _webHookUri = new URI(generalConfig.getString("MinecraftDiscordChat.WebhookUrl", null));
     }
 
     @EventHandler
     public void onChat(AsyncChatEvent event) {
         if (!_enabled) return;
 
-        var message = ComponentColor.componentToString(event.message());
+        var message = ComponentColor.Companion.componentToString(event.message());
         message = ChatColor.stripColor(message);
         message = message.replace("@", "\\@");
 

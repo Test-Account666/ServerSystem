@@ -19,7 +19,7 @@ public class CommandUnlimited extends AbstractServerSystemCommand {
     protected final NamespacedKey unlimitedKey;
 
     public CommandUnlimited() {
-        unlimitedKey = new NamespacedKey(ServerSystem.Instance, "unlimited");
+        unlimitedKey = new NamespacedKey(ServerSystem.getInstance(), "unlimited");
     }
 
     @Override

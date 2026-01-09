@@ -10,9 +10,9 @@ import java.util.Optional;
 
 public abstract class AbstractCommandWrapper {
     protected static Optional<User> resolveCommandUser(CommandSender commandSender) {
-        if (!(commandSender instanceof Player player)) return Optional.of(UserManager.getConsoleUser());
+        if (!(commandSender instanceof Player player)) return Optional.of(UserManager.Companion.getConsoleUser());
 
-        var cachedUserOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player);
+        var cachedUserOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(player);
 
         if (cachedUserOptional.isEmpty()) return Optional.empty();
 

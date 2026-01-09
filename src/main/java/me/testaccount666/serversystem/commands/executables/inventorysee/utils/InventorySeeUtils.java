@@ -74,9 +74,9 @@ public class InventorySeeUtils {
         var viewers = new ArrayList<>(inventory.getViewers());
         inventory.close();
 
-        Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> viewers.forEach(viewer -> {
+        Bukkit.getScheduler().runTaskLater(ServerSystem.getInstance(), () -> viewers.forEach(viewer -> {
             if (!(viewer instanceof Player commandSenderPlayer)) return;
-            var registry = ServerSystem.Instance.getRegistry();
+            var registry = ServerSystem.getInstance().getRegistry();
             var userManager = registry.getService(UserManager.class);
             var cachedUserOptional = userManager.getUser(commandSenderPlayer);
             if (cachedUserOptional.isEmpty()) return;

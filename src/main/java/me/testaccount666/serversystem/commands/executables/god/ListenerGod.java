@@ -53,7 +53,7 @@ public class ListenerGod implements Listener {
      * @param player The player affected by the event
      */
     private void handleCancellableEvent(Cancellable event, Player player) {
-        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player);
+        var userOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(player);
 
         if (userOptional.isEmpty()) {
             ServerSystem.getLog().warning("(ListenerGod) User '${player.getName()}' is not cached! This should not happen!");

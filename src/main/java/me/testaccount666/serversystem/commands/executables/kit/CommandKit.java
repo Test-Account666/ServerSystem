@@ -43,7 +43,7 @@ public class CommandKit extends AbstractServerSystemCommand {
 
     private void handleCreateKit(User commandSender, String label, String... arguments) {
         var kitName = arguments[0].toLowerCase();
-        var kitManager = ServerSystem.Instance.getRegistry().getService(KitManager.class);
+        var kitManager = ServerSystem.getInstance().getRegistry().getService(KitManager.class);
         var kitOptional = kitManager.getKit(kitName);
         if (kitOptional.isPresent()) {
             command("Kit.Create.KitAlreadyExists", commandSender)
@@ -74,7 +74,7 @@ public class CommandKit extends AbstractServerSystemCommand {
 
     private void handleDeleteKit(User commandSender, String label, String... arguments) {
         var kitName = arguments[0].toLowerCase();
-        var kitManager = ServerSystem.Instance.getRegistry().getService(KitManager.class);
+        var kitManager = ServerSystem.getInstance().getRegistry().getService(KitManager.class);
         if (!kitManager.kitExists(kitName)) {
             command("Kit.KitNotFound", commandSender)
                     .postModifier(message -> message.replace("<KIT>", arguments[0])).build();
@@ -87,7 +87,7 @@ public class CommandKit extends AbstractServerSystemCommand {
 
     private void handleKit(User commandSender, String label, String... arguments) {
         var kitName = arguments[0].toLowerCase();
-        var kitManager = ServerSystem.Instance.getRegistry().getService(KitManager.class);
+        var kitManager = ServerSystem.getInstance().getRegistry().getService(KitManager.class);
         var kitOptional = kitManager.getKit(kitName);
         if (kitOptional.isEmpty()) {
             command("Kit.KitNotFound", commandSender)

@@ -17,7 +17,7 @@ public class ListenerSignCreation implements Listener {
     public void onSignCreation(SignChangeEvent event) {
         var firstLine = event.lines().getFirst();
         if (firstLine == null) return;
-        var firstLineString = ComponentColor.componentToString(firstLine);
+        var firstLineString = ComponentColor.Companion.componentToString(firstLine);
         if (!firstLineString.contains("[") || !firstLineString.contains("]")) return;
 
         var key = firstLineString.substring(firstLineString.indexOf("[") + 1, firstLineString.indexOf("]"));
@@ -30,7 +30,7 @@ public class ListenerSignCreation implements Listener {
 
 
         var player = event.getPlayer();
-        var registry = ServerSystem.Instance.getRegistry();
+        var registry = ServerSystem.getInstance().getRegistry();
         var userManager = registry.getService(UserManager.class);
         var userOptional = userManager.getUser(player);
         if (userOptional.isEmpty()) return;
@@ -38,7 +38,7 @@ public class ListenerSignCreation implements Listener {
         if (cachedUser.isOfflineUser()) return;
         var user = (User) cachedUser.getOfflineUser();
 
-        Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> {
+        Bukkit.getScheduler().runTaskLater(ServerSystem.getInstance(), () -> {
             var finalSign = (Sign) block.getState();
             signType.configurator().execute(user, finalSign);
         }, 1L);

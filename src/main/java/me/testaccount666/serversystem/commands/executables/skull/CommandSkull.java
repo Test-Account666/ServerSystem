@@ -45,7 +45,7 @@ public class CommandSkull extends AbstractServerSystemCommand {
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
-        Bukkit.getScheduler().runTaskAsynchronously(ServerSystem.Instance, () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(ServerSystem.getInstance(), () -> {
             if (!checkBasePermission(commandSender, "Skull.Use")) return;
             if (commandSender instanceof ConsoleUser) {
                 general("NotPlayer", commandSender).build();

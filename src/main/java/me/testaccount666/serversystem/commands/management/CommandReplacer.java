@@ -8,10 +8,10 @@ import org.bukkit.configuration.ConfigurationSection;
 
 public class CommandReplacer {
     public void replaceCommands() {
-        var configManager = ServerSystem.Instance.getRegistry().getService(ConfigurationManager.class);
+        var configManager = ServerSystem.getInstance().getRegistry().getService(ConfigurationManager.class);
         var replaceConfig = configManager.getCommandReplaceConfig();
 
-        if (!replaceConfig.getBoolean("ReplacedCommands.Enabled")) return;
+        if (!replaceConfig.getBoolean("ReplacedCommands.Enabled", false)) return;
 
         var replaceSection = replaceConfig.getConfigurationSection("ReplacedCommands.Replace");
         if (replaceSection == null) return;
@@ -19,21 +19,21 @@ public class CommandReplacer {
         for (var identifier : replaceSection.getKeys(false)) {
             var section = replaceSection.getConfigurationSection(identifier);
             if (section == null) {
-                ServerSystem.getLog().warning("Invalid command replacement identifier '${identifier}' in config.yml (Found no section?!)");
+                ServerSystem.getInstance().getLogger().warning("Invalid command replacement identifier '${identifier}' in config.yml (Found no section?!)");
                 continue;
             }
 
             var result = replaceCommands(identifier, section);
-            if (result.first()) ServerSystem.getLog().info(result.second());
-            else ServerSystem.getLog().warning(result.second());
+            if (result.first) ServerSystem.Companion.getLog().info(result.second);
+            else ServerSystem.Companion.getLog().warning(result.second);
         }
 
-        var commandManager = ServerSystem.Instance.getRegistry().getService(CommandManager.class);
+        var commandManager = ServerSystem.getInstance().getRegistry().getService(CommandManager.class);
         commandManager.syncCommands();
     }
 
     private Tuple<Boolean, String> replaceCommands(String identifier, ConfigurationSection section) {
-        var commandManager = ServerSystem.Instance.getRegistry().getService(CommandManager.class);
+        var commandManager = ServerSystem.getInstance().getRegistry().getService(CommandManager.class);
 
         var fromCommandName = section.getString("From.Command");
         if (fromCommandName == null)
@@ -45,8 +45,8 @@ public class CommandReplacer {
 
 
         var fromPluginResult = verifyPlugin(fromPluginName);
-        if (!fromPluginResult.first())
-            return new Tuple<>(false, "Invalid command replacement with identifier '${identifier}': ${fromPluginResult.second()} (FromPlugin)");
+        if (!fromPluginResult.first)
+            return new Tuple<>(false, "Invalid command replacement with identifier '${identifier}': ${fromPluginResult.second} (FromPlugin)");
 
         var fromCommand = commandManager.getCommand("${fromPluginName.toLowerCase()}:${fromCommandName.toLowerCase()}");
         if (fromCommand.isEmpty()) return new Tuple<>(false,

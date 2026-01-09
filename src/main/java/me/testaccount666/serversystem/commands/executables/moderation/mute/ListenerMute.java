@@ -29,7 +29,7 @@ public class ListenerMute implements Listener {
 
     @EventHandler
     public void onPlayerChat(AsyncChatEvent event) {
-        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(event.getPlayer());
+        var userOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(event.getPlayer());
         if (userOptional.isEmpty()) return;
         var cachedUser = userOptional.get();
         if (cachedUser.isOfflineUser()) return;

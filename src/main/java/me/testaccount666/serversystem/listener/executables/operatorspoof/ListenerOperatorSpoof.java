@@ -9,10 +9,10 @@ import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExe
 import me.testaccount666.serversystem.userdata.CachedUser;
 import me.testaccount666.serversystem.userdata.User;
 import me.testaccount666.serversystem.userdata.UserManager;
+import net.minecraft.network.protocol.game.ClientboundEntityEventPacket;
 import net.minecraft.network.protocol.game.ServerboundChangeGameModePacket;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -68,9 +68,9 @@ public class ListenerOperatorSpoof implements Listener {
 
     private void updateFakeOperatorStatus(Player player) {
         var craftPlayer = (CraftPlayer) player;
-        var craftServer = (CraftServer) Bukkit.getServer();
         // 28 is level 4 operator level
-        craftServer.getHandle().sendPlayerPermissionLevel(craftPlayer.getHandle(), 28, false);
+        //craftServer.getHandle().sendPlayerPermissionLevel(craftPlayer.getHandle(), 28, false);
+        craftPlayer.getHandle().connection.send(new ClientboundEntityEventPacket(craftPlayer.getHandle(), (byte) 28));
     }
 
     private void inject(Player player) {
@@ -110,7 +110,7 @@ public class ListenerOperatorSpoof implements Listener {
 
     @EventHandler
     public void onPluginUnload(PluginDisableEvent event) {
-        if (event.getPlugin() != ServerSystem.Instance) return;
+        if (event.getPlugin() != ServerSystem.getInstance()) return;
 
         Bukkit.getOnlinePlayers().forEach(this::uninject);
     }
@@ -122,7 +122,7 @@ public class ListenerOperatorSpoof implements Listener {
         public GameModePacketListener(Player player) {
             _player = player;
 
-            var cachedUserOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player);
+            var cachedUserOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(player);
             if (cachedUserOptional.isEmpty()) throw new RuntimeException("Couldn't cache User '${player.getName()}'! This should not happen!");
             _cachedUser = cachedUserOptional.get();
         }
@@ -149,7 +149,7 @@ public class ListenerOperatorSpoof implements Listener {
                 var user = (User) _cachedUser.getOfflineUser();
 
                 // Go back to main thread
-                Bukkit.getScheduler().runTask(ServerSystem.Instance, () -> _executorGameMode.handleGameModeCommand(user, null, "gamemode", gameMode, new String[0]));
+                Bukkit.getScheduler().runTask(ServerSystem.getInstance(), () -> _executorGameMode.handleGameModeCommand(user, null, "gamemode", gameMode, new String[0]));
             } catch (Throwable throwable) {
                 // We don't want to cause issues in case ServerSystem causes an exception
                 if (!_caughtException) {

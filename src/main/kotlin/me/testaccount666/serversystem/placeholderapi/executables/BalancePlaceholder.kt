@@ -1,57 +1,52 @@
-package me.testaccount666.serversystem.placeholderapi.executables;
+package me.testaccount666.serversystem.placeholderapi.executables
 
-import me.testaccount666.serversystem.ServerSystem;
-import me.testaccount666.serversystem.placeholderapi.Placeholder;
-import me.testaccount666.serversystem.userdata.OfflineUser;
-import me.testaccount666.serversystem.userdata.UserManager;
-import me.testaccount666.serversystem.userdata.money.EconomyProvider;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.jetbrains.annotations.Nullable;
+import me.testaccount666.serversystem.ServerSystem.Companion.instance
+import me.testaccount666.serversystem.placeholderapi.Placeholder
+import me.testaccount666.serversystem.userdata.OfflineUser
+import me.testaccount666.serversystem.userdata.UserManager
+import me.testaccount666.serversystem.userdata.money.EconomyProvider
+import org.bukkit.Bukkit
+import org.bukkit.OfflinePlayer
+import java.util.*
 
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+class BalancePlaceholder : Placeholder {
+    override fun execute(user: OfflineUser?, identifier: String, vararg arguments: String): String {
+        var user = user
+        if (user == null && arguments.isEmpty()) return "No user specified!"
+        if (user == null || arguments.isNotEmpty()) {
+            val player = getOfflinePlayer(arguments[0])
+            val userOptional = getOfflineUser(player)
+            if (userOptional.isEmpty) return "User ${arguments[0]}} not found!"
 
-public class BalancePlaceholder implements Placeholder {
-    @Override
-    public String execute(@Nullable OfflineUser user, String identifier, String... arguments) {
-        if (user == null && arguments.length == 0) return "No user specified!";
-        if (user == null || arguments.length >= 1) {
-            var player = getOfflinePlayer(arguments[0]);
-            var userOptional = getOfflineUser(player);
-            if (userOptional.isEmpty()) return "User ${arguments[0]}} not found!";
-
-            user = userOptional.get();
+            user = userOptional.get()
         }
 
-        var bankAccount = user.getBankAccount();
-        var balance = bankAccount.getBalance();
+        val bankAccount = user.bankAccount
+        requireNotNull(bankAccount) { "User BankAccount is null?!" }
 
-        var formatBalance = identifier.equalsIgnoreCase("balance");
-        if (!formatBalance) return String.format("%.2f", balance.doubleValue());
+        val balance = bankAccount.balance
 
-        return ServerSystem.Instance.getRegistry().getService(EconomyProvider.class).formatMoney(balance);
+        val formatBalance = identifier.equals("balance", ignoreCase = true)
+        if (!formatBalance) return String.format("%.2f", balance.toDouble())
+
+        return instance.registry.getService<EconomyProvider>().formatMoney(balance)
     }
 
-    @Override
-    public Set<String> getIdentifiers() {
-        return Set.of("balance", "unformattedbalance");
-    }
+    override val identifiers: MutableSet<String> = mutableSetOf("balance", "unformattedbalance")
 
-    private OfflinePlayer getOfflinePlayer(String nameOrUuid) {
+    private fun getOfflinePlayer(nameOrUuid: String): OfflinePlayer {
         try {
-            var uuid = UUID.fromString(nameOrUuid);
-            return Bukkit.getOfflinePlayer(uuid);
-        } catch (IllegalArgumentException ignored) {
+            val uuid = UUID.fromString(nameOrUuid)
+            return Bukkit.getOfflinePlayer(uuid)
+        } catch (_: IllegalArgumentException) {
         }
-        return Bukkit.getOfflinePlayer(nameOrUuid);
+        return Bukkit.getOfflinePlayer(nameOrUuid)
     }
 
-    private Optional<OfflineUser> getOfflineUser(OfflinePlayer player) {
-        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player.getUniqueId());
-        if (userOptional.isEmpty()) return Optional.empty();
-        var cachedUser = userOptional.get();
-        return Optional.of(cachedUser.getOfflineUser());
+    private fun getOfflineUser(player: OfflinePlayer): Optional<OfflineUser> {
+        val userOptional = instance.registry.getService<UserManager>().getUser(player.uniqueId)
+        if (userOptional.isEmpty) return Optional.empty()
+        val cachedUser = userOptional.get()
+        return Optional.of(cachedUser.offlineUser)
     }
 }

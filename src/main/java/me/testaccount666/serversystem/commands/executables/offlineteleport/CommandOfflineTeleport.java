@@ -60,7 +60,7 @@ public class CommandOfflineTeleport extends AbstractServerSystemCommand {
     }
 
     private Optional<CachedUser> getTargetUser(User commandSender, String label, String name) {
-        var cachedUserOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(name);
+        var cachedUserOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(name);
 
         if (cachedUserOptional.isEmpty()) {
             general("ErrorOccurred", commandSender).label(label).target(name).build();

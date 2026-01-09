@@ -1,12 +1,9 @@
-package me.testaccount666.serversystem.placeholderapi;
+package me.testaccount666.serversystem.placeholderapi
 
-import me.testaccount666.serversystem.userdata.OfflineUser;
-import org.jetbrains.annotations.Nullable;
+import me.testaccount666.serversystem.userdata.OfflineUser
 
-import java.util.Set;
+interface Placeholder {
+    fun execute(user: OfflineUser?, identifier: String, vararg arguments: String): String?
 
-public interface Placeholder {
-    String execute(@Nullable OfflineUser user, String identifier, String... arguments);
-
-    Set<String> getIdentifiers();
+    val identifiers: MutableSet<String>
 }

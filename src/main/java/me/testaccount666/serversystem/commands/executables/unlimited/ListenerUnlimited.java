@@ -213,14 +213,14 @@ public class ListenerUnlimited implements Listener {
         // When dropping an item, velocity is an actual direction vector.
         // Additionally, `BlockDispenseEvent` is fired AFTER removing the item from inventory, so we cannot grab the index
         if (facingX != velocityX || facingY != velocityY || facingZ != velocityZ) {
-            Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> container.getInventory().addItem(itemInHand), 1L);
+            Bukkit.getScheduler().runTaskLater(ServerSystem.getInstance(), () -> container.getInventory().addItem(itemInHand), 1L);
             return;
         }
 
         var foundIndex = findSimilarItemIndex(itemInHand, container);
         if (foundIndex == -1) return;
 
-        Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> container.getInventory().setItem(foundIndex, itemInHand), 1L);
+        Bukkit.getScheduler().runTaskLater(ServerSystem.getInstance(), () -> container.getInventory().setItem(foundIndex, itemInHand), 1L);
     }
 
     private int findSimilarItemIndex(ItemStack comparingItem, InventoryHolder inventoryHolder) {

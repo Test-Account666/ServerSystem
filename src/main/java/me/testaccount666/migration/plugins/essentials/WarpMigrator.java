@@ -10,7 +10,7 @@ public class WarpMigrator extends AbstractMigrator {
 
     @Override
     public int migrateFrom() {
-        var warpManager = ServerSystem.Instance.getRegistry().getService(WarpManager.class);
+        var warpManager = ServerSystem.getInstance().getRegistry().getService(WarpManager.class);
         var essentials = essentials();
 
         var count = 0;
@@ -29,7 +29,7 @@ public class WarpMigrator extends AbstractMigrator {
 
     @Override
     public int migrateTo() {
-        var warpManager = ServerSystem.Instance.getRegistry().getService(WarpManager.class);
+        var warpManager = ServerSystem.getInstance().getRegistry().getService(WarpManager.class);
         var essentials = essentials();
 
         var count = 0;

@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public class ModerationUtils {
     public static Optional<String> findSenderName(AbstractModeration banModeration) {
-        var senderOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(banModeration.senderUuid());
+        var senderOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(banModeration.senderUuid());
         if (senderOptional.isEmpty()) return Optional.empty();
         var sender = senderOptional.get();
         var senderNameOptional = sender.getOfflineUser().getName();

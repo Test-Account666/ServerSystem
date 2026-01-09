@@ -28,7 +28,7 @@ public class MuteMigrator extends AbstractMigrator {
 
             if (!essentialsUser.isMuted()) continue;
 
-            var defaultReason = command("Moderation.DefaultReason", UserManager.getConsoleUser())
+            var defaultReason = command("Moderation.DefaultReason", UserManager.Companion.getConsoleUser())
                     .target(essentialsUser.getName()).prefix(false).send(false).build();
             if (defaultReason.isEmpty()) {
                 ServerSystem.getLog().severe("(MuteMigrator) Default reason is empty! This should not happen! (Mute Migration cancelled)");
@@ -42,7 +42,7 @@ public class MuteMigrator extends AbstractMigrator {
             var reason = essentialsUser.getMuteReason();
             if (reason == null) reason = defaultReason.get();
 
-            var senderUUID = UserManager.getConsoleUser().getUuid(); // Sender UUID is lost
+            var senderUUID = UserManager.Companion.getConsoleUser().getUuid(); // Sender UUID is lost
             var targetUUID = user.getUuid();
 
             muteManager.addModeration(new MuteModeration(false, issueTime, expireTime, reason, senderUUID, targetUUID));

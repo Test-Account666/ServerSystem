@@ -50,7 +50,7 @@ public class CommandOfflineEnderChest extends AbstractServerSystemCommand {
     public void executeEnderChestCommand(User commandSender, String... arguments) {
         if (!checkBasePermission(commandSender, "OfflineEnderChest.Use")) return;
 
-        var cachedUserOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(arguments[0]);
+        var cachedUserOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(arguments[0]);
         if (cachedUserOptional.isEmpty()) {
             general("Offline.NeverPlayed", commandSender).target(arguments[0]).build();
             return;

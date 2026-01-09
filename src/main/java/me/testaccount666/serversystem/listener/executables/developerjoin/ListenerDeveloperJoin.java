@@ -19,8 +19,8 @@ public class ListenerDeveloperJoin implements Listener {
     private final boolean _enabled;
 
     public ListenerDeveloperJoin() {
-        var configManager = ServerSystem.Instance.getRegistry().getService(ConfigurationManager.class);
-        _enabled = configManager.getGeneralConfig().getBoolean("DeveloperJoin.NotifyDeveloper.Enabled");
+        var configManager = ServerSystem.getInstance().getRegistry().getService(ConfigurationManager.class);
+        _enabled = configManager.getGeneralConfig().getBoolean("DeveloperJoin.NotifyDeveloper.Enabled", false);
     }
 
     @EventHandler
@@ -33,6 +33,6 @@ public class ListenerDeveloperJoin implements Listener {
 
         var message = "&#7FBF06This Server uses ServerSystem <3";
         var messageComponent = ComponentColor.translateToComponent(message);
-        Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> player.sendMessage(messageComponent), 20);
+        Bukkit.getScheduler().runTaskLater(ServerSystem.getInstance(), () -> player.sendMessage(messageComponent), 20);
     }
 }

@@ -21,12 +21,12 @@ public class ListenerQuit implements Listener {
     private Sound _sound;
 
     public ListenerQuit() {
-        var configManager = ServerSystem.Instance.getRegistry().getService(ConfigurationManager.class);
+        var configManager = ServerSystem.getInstance().getRegistry().getService(ConfigurationManager.class);
         var config = configManager.getGeneralConfig();
-        _modifyMessage = config.getBoolean("Quit.Message.Enabled");
-        _sendMessage = config.getBoolean("Quit.Message.SendMessage");
+        _modifyMessage = config.getBoolean("Quit.Message.Enabled", false);
+        _sendMessage = config.getBoolean("Quit.Message.SendMessage", false);
         _message = config.getString("Quit.Message.Message", "");
-        _playSound = config.getBoolean("Quit.Sound.Enabled");
+        _playSound = config.getBoolean("Quit.Sound.Enabled", false);
         if (!_playSound) {
             _sound = null;
             return;
@@ -75,7 +75,7 @@ public class ListenerQuit implements Listener {
             return;
         }
         var player = event.getPlayer();
-        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player);
+        var userOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(player);
         if (userOptional.isEmpty()) {
             ServerSystem.getLog().warning("Couldn't cache User '${player.getName()}'! This should not happen!");
             return;

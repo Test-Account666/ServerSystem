@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
  */
 @SuppressWarnings("UnstableApiUsage")
 public class MenuUtils {
-    private static final boolean _LEGACY_VERSION = ServerSystem.getServerVersion().compareTo(new Version("1.21.4")) < 0;
+    private static final boolean _LEGACY_VERSION = ServerSystem.Companion.getServerVersion().compareTo(new Version("1.21.4")) < 0;
 
     /**
      * Opens a workbench menu for the player.

@@ -23,7 +23,7 @@ public class ListenerSocialSpy implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPrivateMessage(UserPrivateMessageEvent event) {
-        ServerSystem.Instance.getRegistry().getService(UserManager.class).getCachedUsers().forEach(cachedUser -> {
+        ServerSystem.getInstance().getRegistry().getService(UserManager.class).getCachedUsers().forEach(cachedUser -> {
             if (!cachedUser.isOnlineUser()) return;
             var user = (User) cachedUser.getOfflineUser();
             if (!user.isSocialSpyEnabled()) return;

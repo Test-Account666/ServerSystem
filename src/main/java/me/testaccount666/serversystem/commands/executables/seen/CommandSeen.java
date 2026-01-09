@@ -28,7 +28,7 @@ public class CommandSeen extends AbstractServerSystemCommand {
             return;
         }
 
-        var cachedUserOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(arguments[0]);
+        var cachedUserOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(arguments[0]);
 
         if (cachedUserOptional.isEmpty()) {
             ServerSystem.getLog().warning("(CommandSeen) User '${arguments[0]}' is not cached! This should not happen!");

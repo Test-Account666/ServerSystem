@@ -15,8 +15,8 @@ public class ListenerPrefixChat implements Listener {
     private final boolean _enabled;
 
     public ListenerPrefixChat() {
-        var configManager = ServerSystem.Instance.getRegistry().getService(ConfigurationManager.class);
-        var enabled = configManager.getGeneralConfig().getBoolean("Chat.PrefixChat.Enabled");
+        var configManager = ServerSystem.getInstance().getRegistry().getService(ConfigurationManager.class);
+        var enabled = configManager.getGeneralConfig().getBoolean("Chat.PrefixChat.Enabled", false);
 
         if (!ChatVaultAPI.isVaultInstalled() || !enabled) {
             _chatVaultAPI = null;
@@ -41,7 +41,7 @@ public class ListenerPrefixChat implements Listener {
         prefix = prefix.replace("%", "%%");
         suffix = suffix.replace("%", "%%");
 
-        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player);
+        var userOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(player);
         if (userOptional.isEmpty()) {
             ServerSystem.getLog().warning("Couldn't cache User '${player.getName()}'! This should not happen!");
             return;

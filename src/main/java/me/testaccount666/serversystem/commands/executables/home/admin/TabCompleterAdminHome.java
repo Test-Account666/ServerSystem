@@ -50,7 +50,7 @@ public class TabCompleterAdminHome implements ServerSystemTabCompleter {
     private Optional<List<String>> handleHomeCompletion(OfflineUser commandSender, String... arguments) {
         if (arguments.length != 2) return Optional.of(List.of());
 
-        var targetUserOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(arguments[0]);
+        var targetUserOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(arguments[0]);
         if (targetUserOptional.isEmpty()) return Optional.of(List.of());
 
         var targetCachedUser = targetUserOptional.get();

@@ -60,7 +60,7 @@ public class CommandOfflineInventorySee extends AbstractServerSystemCommand {
             return;
         }
 
-        var cachedUserOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(arguments[0]);
+        var cachedUserOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(arguments[0]);
         if (cachedUserOptional.isEmpty()) {
             general("Offline.NeverPlayed", commandSender).target(arguments[0]).build();
             return;

@@ -12,16 +12,16 @@ public class ListenerColorChat implements Listener {
     private final boolean _enabled;
 
     public ListenerColorChat() {
-        var configManager = ServerSystem.Instance.getRegistry().getService(ConfigurationManager.class);
+        var configManager = ServerSystem.getInstance().getRegistry().getService(ConfigurationManager.class);
         var config = configManager.getGeneralConfig();
-        _enabled = config.getBoolean("Chat.ColorChat.Enabled");
+        _enabled = config.getBoolean("Chat.ColorChat.Enabled", false);
     }
 
     @EventHandler
     public void onColorChat(AsyncChatEvent event) {
         if (!_enabled) return;
         if (!PermissionManager.hasPermission(event.getPlayer(), "Chat.ColorChat", false)) return;
-        var message = ComponentColor.componentToString(event.message());
+        var message = ComponentColor.Companion.componentToString(event.message());
 
         event.message(ComponentColor.translateToComponent(message));
     }

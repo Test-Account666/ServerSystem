@@ -14,7 +14,7 @@ public class KitManager {
     private final Map<String, Kit> _kits = new HashMap<>();
 
     public KitManager() {
-        var kitDirectory = Path.of(ServerSystem.Instance.getDataFolder().getPath(), "Kits").toFile();
+        var kitDirectory = Path.of(ServerSystem.getInstance().getDataFolder().getPath(), "Kits").toFile();
         if (!kitDirectory.exists()) kitDirectory.mkdirs();
         else if (!kitDirectory.isDirectory()) throw new IllegalStateException("The Kit directory is not a directory!");
 
@@ -125,7 +125,7 @@ public class KitManager {
      * @return The file for the kit
      */
     private File getKitFile(String name) {
-        var kitDirectory = Path.of(ServerSystem.Instance.getDataFolder().getPath(), "Kits").toFile();
+        var kitDirectory = Path.of(ServerSystem.getInstance().getDataFolder().getPath(), "Kits").toFile();
         if (!kitDirectory.exists()) kitDirectory.mkdirs();
 
         return new File(kitDirectory, "${name}.yml");

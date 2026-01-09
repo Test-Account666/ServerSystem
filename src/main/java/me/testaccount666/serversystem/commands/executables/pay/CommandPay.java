@@ -1,11 +1,11 @@
 package me.testaccount666.serversystem.commands.executables.pay;
 
 import me.testaccount666.serversystem.ServerSystem;
-import me.testaccount666.serversystem.userdata.money.EconomyProvider;
 import me.testaccount666.serversystem.commands.ServerSystemCommand;
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand;
 import me.testaccount666.serversystem.managers.PermissionManager;
 import me.testaccount666.serversystem.userdata.User;
+import me.testaccount666.serversystem.userdata.money.EconomyProvider;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
@@ -46,8 +46,13 @@ public class CommandPay extends AbstractServerSystemCommand {
         }
 
         try {
-            var amount = BigDecimal.valueOf(Double.parseDouble(arguments[1]));
+            var amount = new BigDecimal(arguments[1]);
             amount = amount.setScale(2, RoundingMode.HALF_UP);
+
+            if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+                command("Pay.InvalidAmount", commandSender).target(targetPlayer.getName()).build();
+                return;
+            }
 
             var bankAccount = commandSender.getBankAccount();
 
@@ -59,7 +64,7 @@ public class CommandPay extends AbstractServerSystemCommand {
             bankAccount.withdraw(amount);
             targetUser.getBankAccount().deposit(amount);
 
-            var formattedAmount = ServerSystem.Instance.getRegistry().getService(EconomyProvider.class).formatMoney(amount);
+            var formattedAmount = ServerSystem.getInstance().getRegistry().getService(EconomyProvider.class).formatMoney(amount);
 
 
             command("Pay.Success", commandSender).target(targetPlayer.getName())

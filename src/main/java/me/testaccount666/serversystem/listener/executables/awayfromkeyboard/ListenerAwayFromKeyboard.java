@@ -28,10 +28,10 @@ public class ListenerAwayFromKeyboard implements Listener {
     private final Map<UUID, Long> _lastMouseMovement = new HashMap<>();
 
     public ListenerAwayFromKeyboard() {
-        var configManager = ServerSystem.Instance.getRegistry().getService(ConfigurationManager.class);
-        _enabled = configManager.getGeneralConfig().getBoolean("AwayFromKeyboard.Enabled");
+        var configManager = ServerSystem.getInstance().getRegistry().getService(ConfigurationManager.class);
+        _enabled = configManager.getGeneralConfig().getBoolean("AwayFromKeyboard.Enabled", false);
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(ServerSystem.Instance, () -> Bukkit.getOnlinePlayers().forEach(player -> {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(ServerSystem.getInstance(), () -> Bukkit.getOnlinePlayers().forEach(player -> {
             var lastAction = _lastActionMap.getOrDefault(player.getUniqueId(), System.currentTimeMillis());
             var currentTime = System.currentTimeMillis();
 
@@ -167,7 +167,7 @@ public class ListenerAwayFromKeyboard implements Listener {
     }
 
     private Optional<User> getUser(Player player) {
-        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player);
+        var userOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(player);
         if (userOptional.isEmpty()) return Optional.empty();
         var cachedUser = userOptional.get();
 

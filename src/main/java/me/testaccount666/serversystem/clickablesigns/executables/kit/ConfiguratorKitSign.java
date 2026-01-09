@@ -28,14 +28,14 @@ public class ConfiguratorKitSign extends AbstractSignConfigurator {
 
     @Override
     protected boolean validateConfiguration(User user, Sign sign, YamlConfiguration config) {
-        var kitManager = ServerSystem.Instance.getRegistry().getService(KitManager.class);
+        var kitManager = ServerSystem.getInstance().getRegistry().getService(KitManager.class);
         if (kitManager == null) {
             sign("Kit.NoKitManager", user).build();
             return false;
         }
 
         var front = sign.getSide(Side.FRONT);
-        var kitName = ComponentColor.componentToString(front.line(1));
+        var kitName = ComponentColor.Companion.componentToString(front.line(1));
         if (kitName.isEmpty()) {
             sign("Kit.NoKitSpecified", user).build();
             return false;

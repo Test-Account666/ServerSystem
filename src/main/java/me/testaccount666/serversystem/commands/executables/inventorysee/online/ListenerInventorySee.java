@@ -51,7 +51,7 @@ public class ListenerInventorySee extends AbstractInventorySeeListener implement
         if (!PermissionManager.hasCommandPermission(viewerPlayer, "InventorySee.Modify", false)
                 || (event.getRawSlot() > 44 && event.getRawSlot() < 54)) event.setCancelled(true);
 
-        Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> _commandInventorySee.applyChangesToOwner(owner, cachedInventory), 1L);
+        Bukkit.getScheduler().runTaskLater(ServerSystem.getInstance(), () -> _commandInventorySee.applyChangesToOwner(owner, cachedInventory), 1L);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -89,7 +89,7 @@ public class ListenerInventorySee extends AbstractInventorySeeListener implement
         var cachedInventory = _commandInventorySee.inventoryCache.get(player);
         if (cachedInventory == null) return;
 
-        Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> _commandInventorySee.refreshInventoryContents(player, cachedInventory), 1L);
+        Bukkit.getScheduler().runTaskLater(ServerSystem.getInstance(), () -> _commandInventorySee.refreshInventoryContents(player, cachedInventory), 1L);
     }
 
     @EventHandler

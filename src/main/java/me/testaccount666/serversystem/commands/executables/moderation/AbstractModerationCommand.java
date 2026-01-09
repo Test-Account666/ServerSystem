@@ -31,7 +31,7 @@ public abstract class AbstractModerationCommand extends AbstractServerSystemComm
             return;
         }
 
-        var targetOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(arguments[0]);
+        var targetOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(arguments[0]);
         if (targetOptional.isEmpty()) {
             general("PlayerNotFound", commandSender).target(arguments[0]).build();
             return;

@@ -21,12 +21,12 @@ public class ListenerJoin implements Listener {
     private Sound _sound;
 
     public ListenerJoin() {
-        var configManager = ServerSystem.Instance.getRegistry().getService(ConfigurationManager.class);
+        var configManager = ServerSystem.getInstance().getRegistry().getService(ConfigurationManager.class);
         var config = configManager.getGeneralConfig();
-        _modifyMessage = config.getBoolean("Join.Message.Enabled");
-        _sendMessage = config.getBoolean("Join.Message.SendMessage");
+        _modifyMessage = config.getBoolean("Join.Message.Enabled", false);
+        _sendMessage = config.getBoolean("Join.Message.SendMessage", false);
         _message = config.getString("Join.Message.Message", "");
-        _playSound = config.getBoolean("Join.Sound.Enabled");
+        _playSound = config.getBoolean("Join.Sound.Enabled", false);
         if (!_playSound) {
             _sound = null;
             return;
@@ -75,7 +75,7 @@ public class ListenerJoin implements Listener {
             return;
         }
         var player = event.getPlayer();
-        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player);
+        var userOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(player);
         if (userOptional.isEmpty()) {
             ServerSystem.getLog().warning("Couldn't cache User '${player.getName()}'! This should not happen!");
             return;

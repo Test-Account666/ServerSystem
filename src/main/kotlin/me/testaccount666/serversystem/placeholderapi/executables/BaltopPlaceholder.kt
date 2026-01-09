@@ -1,117 +1,113 @@
-package me.testaccount666.serversystem.placeholderapi.executables;
+package me.testaccount666.serversystem.placeholderapi.executables
 
-import me.testaccount666.serversystem.ServerSystem;
-import me.testaccount666.serversystem.placeholderapi.Placeholder;
-import me.testaccount666.serversystem.userdata.OfflineUser;
-import me.testaccount666.serversystem.userdata.UserManager;
-import me.testaccount666.serversystem.userdata.money.EconomyProvider;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.jetbrains.annotations.Nullable;
+import me.testaccount666.serversystem.ServerSystem.Companion.instance
+import me.testaccount666.serversystem.placeholderapi.Placeholder
+import me.testaccount666.serversystem.userdata.OfflineUser
+import me.testaccount666.serversystem.userdata.UserManager
+import me.testaccount666.serversystem.userdata.UserManager.Companion.consoleUser
+import me.testaccount666.serversystem.userdata.money.EconomyProvider
+import org.bukkit.Bukkit
+import org.bukkit.OfflinePlayer
+import java.math.BigDecimal
+import java.util.*
 
-import java.math.BigDecimal;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+class BaltopPlaceholder : Placeholder {
+    override fun execute(user: OfflineUser?, identifier: String, vararg arguments: String): String {
+        var user = user
+        if (user == null) user = consoleUser
+        if (arguments.isEmpty()) return "Name or Balance not specified!"
 
-public class BaltopPlaceholder implements Placeholder {
+        val type: String = arguments[0]
 
-    @Override
-    public String execute(@Nullable OfflineUser user, String identifier, String... arguments) {
-        if (user == null) user = UserManager.getConsoleUser();
-        if (arguments.length == 0) return "Name or Balance not specified!";
+        val newArguments = arguments.copyOfRange(1, arguments.size)
 
-        var type = arguments[0];
+        if (type.equals("name", ignoreCase = true)) return executeName(user, *newArguments)
+        if (type.equals("balance", ignoreCase = true)) return executeBalance(user, true, *newArguments)
+        if (type.equals("unformattedbalance", ignoreCase = true)) return executeBalance(user, false, *newArguments)
 
-        var newArguments = new String[arguments.length - 1];
-        System.arraycopy(arguments, 1, newArguments, 0, newArguments.length);
-
-        if (type.equalsIgnoreCase("name")) return executeName(user, newArguments);
-        if (type.equalsIgnoreCase("balance")) return executeBalance(user, true, newArguments);
-        if (type.equalsIgnoreCase("unformattedbalance")) return executeBalance(user, false, newArguments);
-
-        return "Invalid type '${type}'";
+        return "Invalid type '${type}'"
     }
 
-    private String executeName(OfflineUser user, String... arguments) {
-        if (arguments.length == 0) return "No place specified!";
-        var placeString = arguments[0];
-        var place = -1;
+    private fun executeName(user: OfflineUser, vararg arguments: String): String {
+        if (arguments.isEmpty()) return "No place specified!"
+        val placeString: String = arguments[0]
+        var place: Int
 
         try {
-            place = Integer.parseInt(placeString);
-            if (place < 1) return "Invalid place '${placeString}', must be greater than 0!";
-            if (place > 10) return "Invalid place '${placeString}', must be less than 11!";
-        } catch (NumberFormatException ignored) {
-            return "Invalid place '${placeString}'";
+            place = placeString.toInt()
+            if (place < 1) return "Invalid place '${placeString}', must be greater than 0!"
+            if (place > 10) return "Invalid place '${placeString}', must be less than 11!"
+        } catch (ignored: NumberFormatException) {
+            return "Invalid place '${placeString}'"
         }
 
-        var bankAccount = user.getBankAccount();
-        var topTen = bankAccount.getTopTen();
-        UUID uuid = null;
-        var count = 0;
-        for (var top : topTen.keySet()) {
+        val bankAccount = user.bankAccount
+        requireNotNull(bankAccount) { "User BankAccount is null?!" }
+
+        val topTen = bankAccount.topTen
+        var uuid: UUID? = null
+        var count = 0
+        for (top in topTen.keys) {
             if (count != place - 1) {
-                count++;
-                continue;
+                count++
+                continue
             }
 
-            uuid = top;
-            break;
+            uuid = top
+            break
         }
 
-        if (uuid == null) uuid = topTen.keySet().stream().toList().getLast();
-        var optionalUser = getOfflineUser(Bukkit.getOfflinePlayer(uuid));
-        if (optionalUser.isEmpty()) return "User ${uuid} not found!";
-        var offlineUser = optionalUser.get();
-        var nameOptional = offlineUser.getName();
+        if (uuid == null) uuid = topTen.keys.stream().toList().last()
+        val optionalUser = getOfflineUser(Bukkit.getOfflinePlayer(uuid))
+        if (optionalUser.isEmpty) return "User ${uuid} not found!"
+        val offlineUser = optionalUser.get()
+        val nameOptional = offlineUser.getName()
 
-        return nameOptional.orElse("User ${uuid} has no name!");
+        return nameOptional.orElse("User ${uuid} has no name!")
     }
 
-    private String executeBalance(OfflineUser user, boolean format, String... arguments) {
-        if (arguments.length == 0) return "No place specified!";
-        var placeString = arguments[0];
-        var place = -1;
+    private fun executeBalance(user: OfflineUser, format: Boolean, vararg arguments: String): String {
+        if (arguments.isEmpty()) return "No place specified!"
+        val placeString: String = arguments[0]
+        var place: Int
 
         try {
-            place = Integer.parseInt(placeString);
-            if (place < 1) return "Invalid place '${placeString}', must be greater than 0!";
-            if (place > 10) return "Invalid place '${placeString}', must be less than 11!";
-        } catch (NumberFormatException ignored) {
-            return "Invalid place '${placeString}'";
+            place = placeString.toInt()
+            if (place < 1) return "Invalid place '${placeString}', must be greater than 0!"
+            if (place > 10) return "Invalid place '${placeString}', must be less than 11!"
+        } catch (_: NumberFormatException) {
+            return "Invalid place '${placeString}'"
         }
 
-        var bankAccount = user.getBankAccount();
-        var topTen = bankAccount.getTopTen();
-        BigDecimal balance = null;
-        var count = 0;
-        for (var top : topTen.values()) {
+        val bankAccount = user.bankAccount
+        requireNotNull(bankAccount) { "User BankAccount is null?!" }
+
+        val topTen = bankAccount.topTen
+        var balance: BigDecimal? = null
+        var count = 0
+        for (top in topTen.values) {
             if (count != place - 1) {
-                count++;
-                continue;
+                count++
+                continue
             }
 
-            balance = top;
-            break;
+            balance = top
+            break
         }
 
-        if (balance == null) balance = topTen.values().stream().toList().getLast();
+        if (balance == null) balance = topTen.values.stream().toList().last()
 
-        if (!format) return String.format("%.2f", balance.doubleValue());
+        if (!format) return String.format("%.2f", balance!!.toDouble())
 
-        return ServerSystem.Instance.getRegistry().getService(EconomyProvider.class).formatMoney(balance);
+        return instance.registry.getService<EconomyProvider>().formatMoney(balance!!)
     }
 
-    @Override
-    public Set<String> getIdentifiers() {
-        return Set.of("baltop");
-    }
+    override val identifiers = mutableSetOf("baltop")
 
-    private Optional<OfflineUser> getOfflineUser(OfflinePlayer player) {
-        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player.getUniqueId());
-        if (userOptional.isEmpty()) return Optional.empty();
-        var cachedUser = userOptional.get();
-        return Optional.of(cachedUser.getOfflineUser());
+    private fun getOfflineUser(player: OfflinePlayer): Optional<OfflineUser> {
+        val userOptional = instance.registry.getService<UserManager>().getUser(player.uniqueId)
+        if (userOptional.isEmpty) return Optional.empty()
+        val cachedUser = userOptional.get()
+        return Optional.of(cachedUser.offlineUser)
     }
 }

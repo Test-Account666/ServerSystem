@@ -45,7 +45,7 @@ public class TabCompleterServerSystem implements ServerSystemTabCompleter {
 
         if (arguments.length > 2) return Optional.of(Collections.emptyList());
 
-        var migratorRegistry = ServerSystem.Instance.getRegistry().getService(MigratorRegistry.class);
+        var migratorRegistry = ServerSystem.getInstance().getRegistry().getService(MigratorRegistry.class);
         var possibleCompletions = migratorRegistry.getMigrators();
 
         var completions = possibleCompletions.stream().filter(completion -> completion.toLowerCase().startsWith(arguments[1].toLowerCase())).toList();

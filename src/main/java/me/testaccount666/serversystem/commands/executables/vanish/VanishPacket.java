@@ -30,7 +30,7 @@ public class VanishPacket {
             if (!enableVanish) {
                 var craftAll = (CraftPlayer) all;
                 craftAll.getHandle().connection.send(infoPacket);
-                all.showPlayer(ServerSystem.Instance, vanishUser.getPlayer());
+                all.showPlayer(ServerSystem.getInstance(), vanishUser.getPlayer());
                 continue;
             }
 
@@ -40,7 +40,7 @@ public class VanishPacket {
                 continue;
             }
 
-            all.hidePlayer(ServerSystem.Instance, vanishUser.getPlayer());
+            all.hidePlayer(ServerSystem.getInstance(), vanishUser.getPlayer());
         }
     }
 }

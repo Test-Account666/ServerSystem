@@ -19,12 +19,12 @@ public class HikariConfigUtil {
      * @return A configured HikariConfig for MySQL
      */
     public static HikariConfig configureMySql(ConfigReader configReader, String configPrefix, String poolName) {
-        var host = configReader.getString("${configPrefix}.Host");
-        var port = configReader.getInt("${configPrefix}.Port");
-        var database = configReader.getString("${configPrefix}.Database");
-        var username = configReader.getString("${configPrefix}.Username");
-        var password = configReader.getString("${configPrefix}.Password");
-        var useSSL = configReader.getBoolean("${configPrefix}.UseSSL");
+        var host = configReader.getString("${configPrefix}.Host", null);
+        var port = configReader.getInt("${configPrefix}.Port", 0);
+        var database = configReader.getString("${configPrefix}.Database", null);
+        var username = configReader.getString("${configPrefix}.Username", null);
+        var password = configReader.getString("${configPrefix}.Password", null);
+        var useSSL = configReader.getBoolean("${configPrefix}.UseSSL", false);
 
         var maxPoolSize = configReader.getInt("${configPrefix}.Pool.MaxSize", 10);
         var minIdle = configReader.getInt("${configPrefix}.Pool.MinIdle", 5);

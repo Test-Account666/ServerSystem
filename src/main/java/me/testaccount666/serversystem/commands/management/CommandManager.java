@@ -47,7 +47,7 @@ public class CommandManager {
                 .filter(PluginCommand.class::isInstance)
                 .map(PluginCommand.class::cast)
                 .filter(pluginCommand -> pluginCommand.getName().equalsIgnoreCase(commandName))
-                .filter(pluginCommand -> pluginCommand.getPlugin() == ServerSystem.Instance)
+                .filter(pluginCommand -> pluginCommand.getPlugin() == ServerSystem.getInstance())
                 .filter(pluginCommand -> pluginCommand.getExecutor() instanceof ServerSystemCommandExecutor)
                 .findFirst();
     }
@@ -65,7 +65,7 @@ public class CommandManager {
     }
 
     private PluginCommand createCommand(String name) {
-        return _pluginCommandConstructor.apply(name, ServerSystem.Instance);
+        return _pluginCommandConstructor.apply(name, ServerSystem.getInstance());
     }
 
     private void registerCommand(ServerSystemCommandExecutor command, ServerSystemTabCompleter completer, Map<String, List<String>> variantAliasMap) {

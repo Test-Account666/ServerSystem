@@ -39,8 +39,8 @@ public class ListenerSpawn implements Listener {
         } else if (!_commandSpawn.teleportOnFirstJoin) return;
 
         // Delay by a second, because teleporting instantly sometimes doesn't work
-        Bukkit.getScheduler().runTaskLater(ServerSystem.Instance, () -> {
-            var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(player);
+        Bukkit.getScheduler().runTaskLater(ServerSystem.getInstance(), () -> {
+            var userOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(player);
             if (userOptional.isEmpty()) return;
 
             var cachedUser = userOptional.get();

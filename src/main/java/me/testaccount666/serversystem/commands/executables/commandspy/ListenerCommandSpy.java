@@ -19,13 +19,13 @@ public class ListenerCommandSpy implements Listener {
 
     @EventHandler
     public void onConsoleCommand(ServerCommandEvent event) {
-        sendCommandSpy(UserManager.getConsoleUser().getName().get(), event.getCommand());
+        sendCommandSpy(UserManager.Companion.getConsoleUser().getName().get(), event.getCommand());
     }
 
     private void sendCommandSpy(String sender, String command) {
         if (!command.startsWith("/")) command = "/${command}";
 
-        for (var cachedUser : ServerSystem.Instance.getRegistry().getService(UserManager.class).getCachedUsers()) {
+        for (var cachedUser : ServerSystem.getInstance().getRegistry().getService(UserManager.class).getCachedUsers()) {
             if (!cachedUser.isOnlineUser()) continue;
 
             var user = (User) cachedUser.getOfflineUser();

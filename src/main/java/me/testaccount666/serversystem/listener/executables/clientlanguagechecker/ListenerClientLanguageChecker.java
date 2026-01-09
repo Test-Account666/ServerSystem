@@ -13,13 +13,13 @@ public class ListenerClientLanguageChecker implements Listener {
     private boolean _useClientLanguage;
 
     public ListenerClientLanguageChecker() {
-        var configManager = ServerSystem.Instance.getRegistry().getService(ConfigurationManager.class);
+        var configManager = ServerSystem.getInstance().getRegistry().getService(ConfigurationManager.class);
         _useClientLanguage = configManager.getGeneralConfig().getBoolean("Language.UseClientLanguage", false);
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(event.getPlayer());
+        var userOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(event.getPlayer());
         if (userOptional.isEmpty()) return;
         var cachedUser = userOptional.get();
         if (cachedUser.isOfflineUser()) return;

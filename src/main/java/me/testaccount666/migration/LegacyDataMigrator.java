@@ -40,7 +40,7 @@ public class LegacyDataMigrator {
      * @return Optional containing the offline user if found, empty otherwise
      */
     private Optional<OfflineUser> getOfflineUser(UUID uuid) {
-        var userManager = ServerSystem.Instance.getRegistry().getService(UserManager.class);
+        var userManager = ServerSystem.getInstance().getRegistry().getService(UserManager.class);
         var userOptional = userManager.getUser(uuid);
 
         if (userOptional.isEmpty()) {
@@ -147,7 +147,7 @@ public class LegacyDataMigrator {
      * @return true if legacy data is present, false otherwise
      */
     public boolean isLegacyDataPresent() {
-        var directory = ServerSystem.Instance.getDataFolder();
+        var directory = ServerSystem.getInstance().getDataFolder();
         if (!directory.exists()) return false;
 
         var previousVersionFile = new File(directory, "previousVersion.yml");
@@ -174,7 +174,7 @@ public class LegacyDataMigrator {
      * Prepares for migration by renaming the current data directory to a backup directory.
      */
     public void prepareMigration() {
-        var directory = ServerSystem.Instance.getDataFolder();
+        var directory = ServerSystem.getInstance().getDataFolder();
         if (!directory.exists()) return;
 
         _legacyDataDirectory = new File(directory.getParent(), "ServerSystem-LegacyData-${System.currentTimeMillis()}");
@@ -209,7 +209,7 @@ public class LegacyDataMigrator {
         var migratedCount = 0;
 
         var defaultItem = new ItemStack(Material.AIR);
-        var kitManager = ServerSystem.Instance.getRegistry().getService(KitManager.class);
+        var kitManager = ServerSystem.getInstance().getRegistry().getService(KitManager.class);
         if (kitManager == null) {
             log(Level.WARNING, "Kit manager is null, skipping kits migration");
             return;
@@ -264,7 +264,7 @@ public class LegacyDataMigrator {
             return;
         }
 
-        var warpManager = ServerSystem.Instance.getRegistry().getService(WarpManager.class);
+        var warpManager = ServerSystem.getInstance().getRegistry().getService(WarpManager.class);
         var warpSection = legacyWarpsConfig.getConfigurationSection("Warps");
         var warpNames = warpSection.getKeys(false);
         var migratedCount = 0;

@@ -21,7 +21,7 @@ public class ListenerBack implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(event.getPlayer());
+        var userOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(event.getPlayer());
         if (userOptional.isEmpty()) return;
 
         var cachedUser = userOptional.get();
@@ -34,7 +34,7 @@ public class ListenerBack implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent event) {
-        var userOptional = ServerSystem.Instance.getRegistry().getService(UserManager.class).getUser(event.getEntity());
+        var userOptional = ServerSystem.getInstance().getRegistry().getService(UserManager.class).getUser(event.getEntity());
         if (userOptional.isEmpty()) return;
 
         var cachedUser = userOptional.get();

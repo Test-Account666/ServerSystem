@@ -24,7 +24,7 @@ import static me.testaccount666.serversystem.utils.MessageBuilder.general;
 
 @ServerSystemCommand(name = "sign", variants = "unsign")
 public class CommandSign extends AbstractServerSystemCommand {
-    protected final NamespacedKey signKey = new NamespacedKey(ServerSystem.Instance, "sign");
+    protected final NamespacedKey signKey = new NamespacedKey(ServerSystem.getInstance(), "sign");
 
     @Override
     public void execute(User commandSender, Command command, String label, String... arguments) {
@@ -61,7 +61,7 @@ public class CommandSign extends AbstractServerSystemCommand {
         if (lore == null) lore = new ArrayList<>();
 
         lore.removeIf(loreComponent -> {
-            var strippedLine = ChatColor.stripColor(ComponentColor.componentToString(loreComponent));
+            var strippedLine = ChatColor.stripColor(ComponentColor.Companion.componentToString(loreComponent));
             var strippedLore = ChatColor.stripColor(dataContainer.get(signKey, PersistentDataType.STRING));
 
             return Arrays.stream(strippedLore.split("\n")).anyMatch(strippedLine::equalsIgnoreCase);

@@ -1,70 +1,51 @@
-package me.testaccount666.serversystem.placeholderapi.executables;
+package me.testaccount666.serversystem.placeholderapi.executables
 
-import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import me.testaccount666.serversystem.ServerSystem;
-import me.testaccount666.serversystem.placeholderapi.PlaceholderManager;
-import me.testaccount666.serversystem.userdata.UserManager;
-import org.bukkit.OfflinePlayer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion
+import me.testaccount666.serversystem.ServerSystem.Companion.instance
+import me.testaccount666.serversystem.ServerSystem.Companion.log
+import me.testaccount666.serversystem.placeholderapi.PlaceholderManager
+import me.testaccount666.serversystem.userdata.UserManager
+import org.bukkit.OfflinePlayer
+import java.util.*
 
-public class PlaceholderExpansionWrapper extends PlaceholderExpansion {
+class PlaceholderExpansionWrapper : PlaceholderExpansion() {
+    override fun getIdentifier(): String = "serversystem"
 
-    @Override
-    public @NotNull String getIdentifier() {
-        return "serversystem";
-    }
+    override fun getAuthor(): String = instance.pluginMeta.authors.first()
 
-    @Override
-    public @NotNull String getAuthor() {
-        return ServerSystem.Instance.getPluginMeta().getAuthors().getFirst();
-    }
+    override fun getVersion(): String = instance.pluginMeta.version
 
-    @Override
-    public @NotNull String getVersion() {
-        return ServerSystem.Instance.getPluginMeta().getVersion();
-    }
+    override fun persist(): Boolean = true
 
-    @Override
-    public boolean persist() {
-        return true;
-    }
-
-    @Override
-    public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
+    override fun onRequest(player: OfflinePlayer?, params: String): String? {
         if (params.isBlank()) {
-            ServerSystem.getLog().warning("An invalid placeholder was requested!");
-            return null;
+            log.warning("An invalid placeholder was requested!")
+            return null
         }
 
-        var split = params.split("_");
-        var identifier = split[0].toLowerCase();
+        val split: Array<String> = params.split("_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val identifier = split[0].lowercase(Locale.getDefault())
 
-        var registry = ServerSystem.Instance.getRegistry();
-        var placeholderManager = registry.getService(PlaceholderManager.class);
-        var placeholderOptional = placeholderManager.getPlaceholder(identifier);
-        if (placeholderOptional.isEmpty()) {
-            ServerSystem.getLog().warning("An unknown placeholder was requested! '${params}'");
-            return null;
+        val registry = instance.registry
+        val placeholderManager = registry.getService<PlaceholderManager>()
+        val placeholderOptional = placeholderManager.getPlaceholder(identifier)
+        if (placeholderOptional.isEmpty) {
+            log.warning("An unknown placeholder was requested! '${params}'")
+            return null
         }
 
-        var placeholder = placeholderOptional.get();
+        val placeholder = placeholderOptional.get()
 
-        var arguments = new String[0];
+        val arguments: Array<String> = (if (split.size == 1) emptyArray<String>() else split.copyOfRange(1, split.size))
 
-        if (split.length > 1) {
-            arguments = new String[split.length - 1];
-            System.arraycopy(split, 1, arguments, 0, arguments.length);
-        }
+        if (player == null) return placeholder.execute(null, identifier, *arguments)
 
-        if (player == null) return placeholder.execute(null, identifier, arguments);
+        val userManager = registry.getService<UserManager>()
+        val userOptional = userManager.getUser(player.uniqueId)
+        if (userOptional.isEmpty) return null
+        val cachedUser = userOptional.get()
+        val offlineUser = cachedUser.offlineUser
 
-        var userManager = registry.getService(UserManager.class);
-        var userOptional = userManager.getUser(player.getUniqueId());
-        if (userOptional.isEmpty()) return null;
-        var cachedUser = userOptional.get();
-        var offlineUser = cachedUser.getOfflineUser();
-
-        return placeholder.execute(offlineUser, identifier, arguments);
+        return placeholder.execute(offlineUser, identifier, *arguments)
     }
 }

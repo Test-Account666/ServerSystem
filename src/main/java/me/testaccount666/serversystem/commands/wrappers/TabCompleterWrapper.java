@@ -18,7 +18,7 @@ public class TabCompleterWrapper extends AbstractCommandWrapper implements TabCo
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] arguments) {
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] arguments) {
         var commandUser = resolveCommandUser(commandSender);
 
         // This should technically never happen...
