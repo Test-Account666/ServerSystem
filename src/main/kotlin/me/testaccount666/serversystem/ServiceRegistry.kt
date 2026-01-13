@@ -1,6 +1,5 @@
 package me.testaccount666.serversystem
 
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 class ServiceRegistry {
@@ -16,7 +15,7 @@ class ServiceRegistry {
 
     fun <T : Any> getService(type: Class<T>): T = type.cast(_services[type])
 
-    fun <T : Any> getServiceOptional(type: Class<T>): Optional<T> = Optional.ofNullable(_services[type]?.let { type.cast(it) })
+    fun <T : Any> getServiceOrNull(type: Class<T>): T? = _services[type]?.let { type.cast(it) }
 
     fun <T : Any> hasService(type: Class<T>): Boolean = type in _services
 
@@ -25,7 +24,7 @@ class ServiceRegistry {
 
     inline fun <reified T : Any> registerService(service: T): T = registerService(T::class.java, service)
     inline fun <reified T : Any> getService(): T = getService(T::class.java)
-    inline fun <reified T : Any> getServiceOptional(): Optional<T> = getServiceOptional(T::class.java)
+    inline fun <reified T : Any> getServiceOrNull(): T? = getServiceOrNull(T::class.java)
     inline fun <reified T : Any> hasService(): Boolean = hasService(T::class.java)
 
 }

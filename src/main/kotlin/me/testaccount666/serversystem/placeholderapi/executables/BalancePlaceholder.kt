@@ -15,16 +15,12 @@ class BalancePlaceholder : Placeholder {
         if (user == null && arguments.isEmpty()) return "No user specified!"
         if (user == null || arguments.isNotEmpty()) {
             val player = getOfflinePlayer(arguments[0])
-            val userOptional = getOfflineUser(player)
-            if (userOptional.isEmpty) return "User ${arguments[0]}} not found!"
+            val targetUser = getOfflineUser(player) ?: return "User ${arguments[0]} not found!"
 
-            user = userOptional.get()
+            user = targetUser
         }
 
-        val bankAccount = user.bankAccount
-        requireNotNull(bankAccount) { "User BankAccount is null?!" }
-
-        val balance = bankAccount.balance
+        val balance = user.bankAccount.balance
 
         val formatBalance = identifier.equals("balance", ignoreCase = true)
         if (!formatBalance) return String.format("%.2f", balance.toDouble())
@@ -32,7 +28,7 @@ class BalancePlaceholder : Placeholder {
         return instance.registry.getService<EconomyProvider>().formatMoney(balance)
     }
 
-    override val identifiers: MutableSet<String> = mutableSetOf("balance", "unformattedbalance")
+    override val identifiers = setOf("balance", "unformattedbalance")
 
     private fun getOfflinePlayer(nameOrUuid: String): OfflinePlayer {
         try {
@@ -43,10 +39,8 @@ class BalancePlaceholder : Placeholder {
         return Bukkit.getOfflinePlayer(nameOrUuid)
     }
 
-    private fun getOfflineUser(player: OfflinePlayer): Optional<OfflineUser> {
-        val userOptional = instance.registry.getService<UserManager>().getUser(player.uniqueId)
-        if (userOptional.isEmpty) return Optional.empty()
-        val cachedUser = userOptional.get()
-        return Optional.of(cachedUser.offlineUser)
+    private fun getOfflineUser(player: OfflinePlayer): OfflineUser? {
+        val cachedUser = instance.registry.getService<UserManager>().getUserOrNull(player.uniqueId)
+        return cachedUser?.offlineUser
     }
 }

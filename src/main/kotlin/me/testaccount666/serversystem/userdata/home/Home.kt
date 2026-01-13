@@ -1,7 +1,7 @@
 package me.testaccount666.serversystem.userdata.home
 
 import org.bukkit.Location
-import java.util.*
+import java.util.Locale.getDefault
 import java.util.regex.Pattern
 
 /**
@@ -22,7 +22,7 @@ class Home internal constructor(name: String, location: Location) {
     init {
         require(_HOME_NAME_PATTERN.matcher(name).matches()) { "Home name must be alphanumeric" }
 
-        this.name = name.lowercase(Locale.getDefault())
+        this.name = name.lowercase(getDefault())
         this.location = location
     }
 
@@ -35,24 +35,19 @@ class Home internal constructor(name: String, location: Location) {
          */
         get() {
             if (_displayName != null) return _displayName!!
-
-            _displayName = name.lowercase(Locale.getDefault())
-            val chars = _displayName!!.toCharArray()
-            chars[0] = chars[0].uppercaseChar()
-
-            _displayName = String(chars)
+            _displayName = name.lowercase(getDefault()).replaceFirstChar { it.uppercase() }
 
             return _displayName!!
         }
 
     companion object {
-        private val _HOME_NAME_PATTERN: Pattern = Pattern.compile("[A-Za-z0-9_]+")
+        private val _HOME_NAME_PATTERN: Pattern = Pattern.compile("[A-Za-z0-9_ÄÖÜüäöẞß]+")
 
         @JvmStatic
-        fun of(name: String, location: Location): Optional<Home> {
-            if (!_HOME_NAME_PATTERN.matcher(name).matches()) return Optional.empty()
+        fun of(name: String, location: Location): Home? {
+            if (!_HOME_NAME_PATTERN.matcher(name).matches()) return null
 
-            return Optional.of(Home(name, location))
+            return Home(name, location)
         }
     }
 }

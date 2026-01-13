@@ -16,7 +16,7 @@ class MethodAccessor private constructor() {
 
     companion object {
         @JvmStatic
-        fun <T> createVoidAccessor(targetClass: Class<T?>, methodName: String): Consumer<T?> {
+        fun <T> createVoidAccessor(targetClass: Class<T>, methodName: String): Consumer<T?> {
             try {
                 val method = targetClass.getDeclaredMethod(methodName)
                 method.isAccessible = true
@@ -78,7 +78,7 @@ class MethodAccessor private constructor() {
         }
 
         @JvmStatic
-        fun <T, R> createAccessor(targetClass: Class<T?>, methodName: String, returnType: Class<R?>?): java.util.function.Function<T?, R?> {
+        fun <T, R> createAccessor(targetClass: Class<T?>, methodName: String, returnType: Class<R?>?): Function<T?, R?> {
             try {
                 val method = targetClass.getDeclaredMethod(methodName)
                 method.isAccessible = true
@@ -100,10 +100,10 @@ class MethodAccessor private constructor() {
 
         @JvmStatic
         fun <T, P, R> createAccessor(
-            targetClass: Class<T?>,
+            targetClass: Class<T>,
             methodName: String,
-            paramType: Class<P?>?,
-            returnType: Class<R?>?
+            paramType: Class<P>,
+            returnType: Class<R>
         ): BiFunction<T?, P?, R?> {
             try {
                 val method = targetClass.getDeclaredMethod(methodName, paramType)

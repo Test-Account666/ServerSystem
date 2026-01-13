@@ -4,9 +4,9 @@ import me.testaccount666.serversystem.utils.Version
 import java.net.URI
 
 class HangarUpdateChecker : AbstractUpdateChecker(URI.create("${_URL_START}latest?channel=release")) {
-    override fun parseLatestVersion(responseBody: String): Version = Version(responseBody.trim { it <= ' ' })
+    override fun parseLatestVersion(responseBody: String) = Version(responseBody.trim { it <= ' ' })
 
-    override val downloadUrl: String
+    override val downloadUrl
         get() = String.format(_DOWNLOAD_URL_TEMPLATE, latestVersion.toString())
 
     companion object {

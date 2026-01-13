@@ -1,3 +1,5 @@
+@file:Suppress("FoldInitializerAndIfToElvis")
+
 package me.testaccount666.serversystem.userdata.money.vault
 
 import me.testaccount666.serversystem.ServerSystem
@@ -8,13 +10,13 @@ import net.milkbowl.vault.economy.EconomyResponse
 import java.math.BigDecimal
 
 class VaultEconomyProvider : AbstractEconomy() {
-    override fun isEnabled(): Boolean = ServerSystem.instance.isEnabled
+    override fun isEnabled() = ServerSystem.instance.isEnabled
 
-    override fun getName(): String = ServerSystem.instance.name
+    override fun getName() = ServerSystem.instance.name
 
-    override fun hasBankSupport(): Boolean = false
+    override fun hasBankSupport() = false
 
-    override fun fractionalDigits(): Int = 2
+    override fun fractionalDigits() = 2
 
     override fun format(amount: Double): String {
         val registry = ServerSystem.instance.registry
@@ -38,59 +40,54 @@ class VaultEconomyProvider : AbstractEconomy() {
     override fun hasAccount(name: String): Boolean {
         val registry = ServerSystem.instance.registry
         val userManager = registry.getService<UserManager>()
-        val userOptional = userManager.getUser(name)
-        return userOptional.isPresent
+        val user = userManager.getUserOrNull(name)
+        return user != null
     }
 
     @Deprecated("Deprecated in Vault")
-    override fun hasAccount(name: String, world: String?): Boolean = hasAccount(name)
+    override fun hasAccount(name: String, world: String?) = hasAccount(name)
 
     @Deprecated("Deprecated in Vault")
     override fun getBalance(name: String): Double {
         val registry = ServerSystem.instance.registry
         val userManager = registry.getService<UserManager>()
-        val userOptional = userManager.getUser(name)
-        if (userOptional.isEmpty) return 0.0
+        val user = userManager.getUserOrNull(name) ?: return 0.0
 
-        val user = userOptional.get()
         val offlineUser = user.offlineUser
         val bankAccount = offlineUser.bankAccount
 
-        return bankAccount!!.balance.toDouble()
+        return bankAccount.balance.toDouble()
     }
 
     @Deprecated("Deprecated in Vault")
-    override fun getBalance(name: String, world: String?): Double = getBalance(name)
+    override fun getBalance(name: String, world: String?) = getBalance(name)
 
     @Deprecated("Deprecated in Vault")
     override fun has(name: String, amount: Double): Boolean {
         val registry = ServerSystem.instance.registry
         val userManager = registry.getService<UserManager>()
-        val userOptional = userManager.getUser(name)
-        if (userOptional.isEmpty) return false
+        val user = userManager.getUserOrNull(name) ?: return false
 
-        val user = userOptional.get()
         val offlineUser = user.offlineUser
         val bankAccount = offlineUser.bankAccount
 
-        return bankAccount!!.hasEnoughMoney(BigDecimal.valueOf(amount))
+        return bankAccount.hasEnoughMoney(BigDecimal.valueOf(amount))
     }
 
     @Deprecated("Deprecated in Vault")
-    override fun has(name: String, world: String?, amount: Double): Boolean = has(name, amount)
+    override fun has(name: String, world: String?, amount: Double) = has(name, amount)
 
     @Deprecated("Deprecated in Vault")
     override fun withdrawPlayer(name: String, amount: Double): EconomyResponse {
         val registry = ServerSystem.instance.registry
         val userManager = registry.getService<UserManager>()
-        val userOptional = userManager.getUser(name)
-        if (userOptional.isEmpty) return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, "User not found!")
+        val user = userManager.getUserOrNull(name)
+        if (user == null) return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, "User not found!")
 
-        val user = userOptional.get()
         val offlineUser = user.offlineUser
         val bankAccount = offlineUser.bankAccount
 
-        bankAccount!!.withdraw(BigDecimal.valueOf(amount))
+        bankAccount.withdraw(BigDecimal.valueOf(amount))
 
         val newBalance = bankAccount.balance
 
@@ -98,20 +95,19 @@ class VaultEconomyProvider : AbstractEconomy() {
     }
 
     @Deprecated("Deprecated in Vault")
-    override fun withdrawPlayer(name: String, world: String?, amount: Double): EconomyResponse = withdrawPlayer(name, amount)
+    override fun withdrawPlayer(name: String, world: String?, amount: Double) = withdrawPlayer(name, amount)
 
     @Deprecated("Deprecated in Vault")
     override fun depositPlayer(name: String, amount: Double): EconomyResponse {
         val registry = ServerSystem.instance.registry
         val userManager = registry.getService<UserManager>()
-        val userOptional = userManager.getUser(name)
-        if (userOptional.isEmpty) return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, "User not found!")
+        val user = userManager.getUserOrNull(name)
+        if (user == null) return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, "User not found!")
 
-        val user = userOptional.get()
         val offlineUser = user.offlineUser
         val bankAccount = offlineUser.bankAccount
 
-        bankAccount!!.deposit(BigDecimal.valueOf(amount))
+        bankAccount.deposit(BigDecimal.valueOf(amount))
 
         val newBalance = bankAccount.balance
 
@@ -119,7 +115,7 @@ class VaultEconomyProvider : AbstractEconomy() {
     }
 
     @Deprecated("Deprecated in Vault")
-    override fun depositPlayer(name: String, world: String?, amount: Double): EconomyResponse = depositPlayer(name, amount)
+    override fun depositPlayer(name: String, world: String?, amount: Double) = depositPlayer(name, amount)
 
     @Deprecated("Deprecated in Vault")
     override fun createBank(owner: String?, id: String?): EconomyResponse {
@@ -159,8 +155,8 @@ class VaultEconomyProvider : AbstractEconomy() {
     override fun getBanks(): MutableList<String> = mutableListOf()
 
     @Deprecated("Deprecated in Vault")
-    override fun createPlayerAccount(s: String?): Boolean = true
+    override fun createPlayerAccount(s: String?) = true
 
     @Deprecated("Deprecated in Vault")
-    override fun createPlayerAccount(name: String?, world: String?): Boolean = createPlayerAccount(name)
+    override fun createPlayerAccount(name: String?, world: String?) = createPlayerAccount(name)
 }

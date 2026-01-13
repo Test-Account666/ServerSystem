@@ -10,7 +10,7 @@ class NpcUser internal constructor() : User(UserManager.USER_DATA_PATH.resolve("
         name = "NPC"
         uuid = NPC_UUID
         bankAccount = DisabledBankAccount(NPC_UUID, BigInteger.valueOf(0))
-        playerLanguage = MessageManager.defaultLanguage!!
+        playerLanguage = MessageManager.defaultLanguage
     }
 
     override fun save() {

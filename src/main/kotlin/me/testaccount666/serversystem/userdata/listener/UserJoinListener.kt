@@ -12,11 +12,8 @@ class UserJoinListener : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     fun onUserJoin(event: PlayerJoinEvent) {
         val userManager = ServerSystem.instance.registry.getService<UserManager>()
-        val cachedUserOptional = userManager.getUser(event.getPlayer().uniqueId)
-
-        if (cachedUserOptional.isEmpty) throw RuntimeException("Couldn't cache User '${event.getPlayer().name}'! This should not happen!")
-
-        val cachedUser = cachedUserOptional.get()
+        val cachedUser = userManager.getUserOrNull(event.getPlayer().uniqueId)
+        if (cachedUser == null) throw RuntimeException("Couldn't cache User '${event.getPlayer().name}'! This should not happen!")
         if (cachedUser.isOnlineUser) return
 
         cachedUser.convertToOnlineUser()

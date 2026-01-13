@@ -8,9 +8,9 @@ import java.nio.file.Files
 
 object FileUtils {
     @JvmStatic
+    @Throws(IOException::class)
     fun deleteDirectory(file: File?) {
         if (file == null) return
-
         if (!file.exists()) throw FileNotFoundException("File not found: ${file.absolutePath}")
 
         if (!file.isDirectory) {
@@ -18,24 +18,27 @@ object FileUtils {
             return
         }
 
-        val filesList = file.listFiles() ?: arrayOf<File>();
+        val filesList = file.listFiles() ?: arrayOf();
 
-        for (listedFile in filesList) if (listedFile.isDirectory) deleteDirectory(listedFile)
-        else deleteFile(listedFile)
+        filesList.forEach {
+            if (it.isDirectory) deleteDirectory(it)
+            else deleteFile(it)
+        }
 
         deleteFile(file)
     }
 
     @JvmStatic
+    @Throws(IOException::class)
     fun deleteFile(file: File?) {
         if (file == null) return
 
         if (!file.exists()) throw FileNotFoundException("File not found: ${file.absolutePath}")
-
         if (!file.delete()) throw IOException("Couldn't delete file: ${file.absolutePath}")
     }
 
     @JvmStatic
+    @Throws(IOException::class)
     fun copyDirectory(source: File?, destination: File?) {
         if (source == null) return
         if (destination == null) return

@@ -2,12 +2,12 @@ package me.testaccount666.serversystem.userdata.money
 
 import me.testaccount666.serversystem.ServerSystem
 import me.testaccount666.serversystem.managers.config.ConfigReader
-import me.testaccount666.serversystem.managers.database.economy.AbstractEconomyDatabaseManager
+import me.testaccount666.serversystem.managers.database.economy.EconomyDatabaseManager
 import me.testaccount666.serversystem.userdata.OfflineUser
 import org.bukkit.configuration.file.FileConfiguration
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.util.*
+import java.util.Locale.getDefault
 import java.util.logging.Level
 
 class EconomyProvider {
@@ -20,37 +20,37 @@ class EconomyProvider {
     val economyType: Type
 
     constructor(configReader: ConfigReader) {
-        this.currencySingular = configReader.getString("Economy.Format.CurrencySymbol.Singular")
-        this.currencyPlural = configReader.getString("Economy.Format.CurrencySymbol.Plural")
+        currencySingular = configReader.getString("Economy.Format.CurrencySymbol.Singular")
+        currencyPlural = configReader.getString("Economy.Format.CurrencySymbol.Plural")
         _thousandSeparator = configReader.getString("Economy.Format.Separators.Thousands")
         _decimalSeparator = configReader.getString("Economy.Format.Separators.Decimals")
         _moneyFormat = configReader.getString("Economy.Format.MoneyFormat")
-        this.defaultBalance = configReader.getString("Economy.StartingBalance")
+        defaultBalance = configReader.getString("Economy.StartingBalance")
 
         if (!configReader.getBoolean("Economy.Enabled")) {
-            this.economyType = Type.DISABLED
+            economyType = Type.DISABLED
             return
         }
 
-        val economyTypeOptional: Optional<Type> =
-            Type.parseType(configReader.getString("Economy.StorageType.Value")?.uppercase(Locale.getDefault()))
-        val databaseManager = ServerSystem.Companion.instance.registry.getService<AbstractEconomyDatabaseManager>()
+        val economyTypeParsed =
+            Type.parseType(configReader.getString("Economy.StorageType.Value")?.uppercase(getDefault()))
+        val databaseManager = ServerSystem.instance.registry.getService<EconomyDatabaseManager>()
 
-        if (economyTypeOptional.isEmpty) {
-            this.economyType = Type.SQLITE
-            ServerSystem.Companion.log.warning("Found invalid economy type in the 'economy.yml'! Using SQLITE as default!")
+        if (economyTypeParsed == null) {
+            economyType = Type.SQLITE
+            ServerSystem.log.warning("Found invalid economy type in the 'economy.yml'! Using SQLITE as default!")
             return
         }
 
-        this.economyType = economyTypeOptional.get()
+        economyType = economyTypeParsed
         databaseManager.initialize()
     }
 
     fun instantiateBankAccount(offlineUser: OfflineUser, accountId: BigInteger, userConfig: FileConfiguration): AbstractBankAccount {
-        if (this.economyType == Type.DISABLED) return DisabledBankAccount(offlineUser.uuid, accountId)
+        if (economyType == Type.DISABLED) return DisabledBankAccount(offlineUser.uuid, accountId)
         migrateYamlBankAccountIfNeeded(offlineUser, accountId, userConfig)
 
-        return when (this.economyType) {
+        return when (economyType) {
             Type.MYSQL -> MySqlBankAccount(offlineUser.uuid, accountId)
             Type.SQLITE -> SqliteBankAccount(offlineUser.uuid, accountId)
         }
@@ -68,7 +68,7 @@ class EconomyProvider {
 
         val bankAccountsSection = userConfig.getConfigurationSection("User.BankAccounts")
         if (bankAccountsSection == null) {
-            ServerSystem.Companion.log.severe("Failed to get YAML bank accounts for user ${offlineUser.getName()} (${offlineUser.uuid}): bankAccountsSection is null!")
+            ServerSystem.log.severe("Failed to get YAML bank accounts for user ${offlineUser.getNameOrNull()} (${offlineUser.uuid}): bankAccountsSection is null!")
             return
         }
 
@@ -77,14 +77,14 @@ class EconomyProvider {
         for (key in bankAccountsSection.getKeys(false)) {
             val balance = bankAccountsSection.getString("${key}.Balance")
             if (balance == null) {
-                ServerSystem.log.severe("Failed to get YAML bank account balance for user ${offlineUser.getName()} (${offlineUser.uuid}, AccountID: ${key}): balance is null!")
+                ServerSystem.log.severe("Failed to get YAML bank account balance for user ${offlineUser.getNameOrNull()} (${offlineUser.uuid}, AccountID: ${key}): balance is null!")
                 continue
             }
 
             try {
                 val currentAccountId = BigInteger(key)
 
-                val bankAccount = when (this.economyType) {
+                val bankAccount = when (economyType) {
                     Type.MYSQL -> MySqlBankAccount(offlineUser.uuid, currentAccountId)
                     Type.SQLITE -> SqliteBankAccount(offlineUser.uuid, currentAccountId)
                     else -> throw IllegalStateException("Unexpected economy type: ${economyType} - Supported values: mysql, sqlite")
@@ -94,11 +94,11 @@ class EconomyProvider {
 
                 if (currentAccountId == accountId) anyMigrated = true
 
-                ServerSystem.Companion.log.info("Migrated YAML bank account data for user ${offlineUser.getName()} (${offlineUser.uuid}, AccountID: ${currentAccountId}) to ${economyType} database. Balance: ${balance}")
+                ServerSystem.log.info("Migrated YAML bank account data for user ${offlineUser.getNameOrNull()} (${offlineUser.uuid}, AccountID: ${currentAccountId}) to ${economyType} database. Balance: ${balance}")
             } catch (exception: NumberFormatException) {
-                ServerSystem.Companion.log.log(
+                ServerSystem.log.log(
                     Level.SEVERE,
-                    "Failed to migrate YAML bank account data for user ${offlineUser.getName()} (${offlineUser.uuid}, AccountID: ${key}): ${exception.message}",
+                    "Failed to migrate YAML bank account data for user ${offlineUser.getNameOrNull()} (${offlineUser.uuid}, AccountID: ${key}): ${exception.message}",
                     exception
                 )
             }
@@ -108,7 +108,7 @@ class EconomyProvider {
         userConfig.set("User.BankAccounts", null)
         offlineUser.save()
 
-        ServerSystem.Companion.log.info("Completed migration of all YAML bank accounts for user ${offlineUser.getName()} (${offlineUser.uuid})")
+        ServerSystem.log.info("Completed migration of all YAML bank accounts for user ${offlineUser.getNameOrNull()} (${offlineUser.uuid})")
     }
 
     fun formatMoney(balance: BigDecimal): String {
@@ -126,7 +126,7 @@ class EconomyProvider {
         if (decimal.length == 1) decimal += "0"
         if (decimal.isEmpty()) decimal = "00"
 
-        val currencySymbol = (if (balance > BigDecimal.ZERO) this.currencySingular else this.currencyPlural)!!
+        val currencySymbol = (if (balance > BigDecimal.ZERO) currencySingular else currencyPlural)!!
 
         return _moneyFormat!!.replace("<MAJOR>", major).replace("<DECIMAL>", decimal)
             .replace("<DECIMAL_SEPARATOR>", _decimalSeparator!!)
@@ -139,13 +139,13 @@ class EconomyProvider {
         DISABLED;
 
         companion object {
-            fun parseType(value: String?): Optional<Type> {
-                if (value == null) return Optional.empty()
+            fun parseType(value: String?): Type? {
+                if (value == null) return null
 
                 return try {
-                    Optional.of(valueOf(value.uppercase(Locale.getDefault())))
+                    valueOf(value.uppercase(getDefault()))
                 } catch (_: IllegalArgumentException) {
-                    Optional.empty()
+                    null
                 }
             }
         }

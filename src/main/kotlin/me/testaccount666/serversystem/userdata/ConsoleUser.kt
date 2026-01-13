@@ -21,16 +21,20 @@ open class ConsoleUser internal constructor() : User(UserManager.USER_DATA_PATH.
     override var onlinePlayer: Player? = null
 
     override fun loadBasicData() {
-        playerLanguage = MessageManager.defaultLanguage!!
+        playerLanguage = MessageManager.defaultLanguage
 
         val consoleName = MappingsData.console(this).getName("name")
-        name = consoleName.orElse("Server")
+        name = consoleName ?: "Server"
         uuid = CONSOLE_UUID
         bankAccount = ConsoleBankAccount()
         isAcceptsMessages = true
     }
 
-    override fun getName(): Optional<String> = Optional.ofNullable(name)
+    override fun save() {
+        // We don't want to save console users
+    }
+
+    override fun getNameOrNull() = name ?: "Server"
 
     companion object {
         // 00000000-0000-0000-0000-000000000000 is never a player, so let's just use that for the console

@@ -9,14 +9,14 @@ import org.bukkit.Bukkit
 
 class OnlinePlayersPlaceholder : Placeholder {
     override fun execute(user: OfflineUser?, identifier: String, vararg arguments: String): String {
-        val count = Bukkit.getOnlinePlayers().stream().filter { player -> !player.hasMetadata("vanished") }.count()
+        val count = Bukkit.getOnlinePlayers().count { !it.hasMetadata("vanished") }
         if ((user !is User) || user is ConsoleUser) return count.toString()
 
-        val player = user.getPlayer()
-        if (PermissionManager.hasCommandPermission(player!!, "Vanish.Show", false)) return Bukkit.getOnlinePlayers().size.toString()
+        val player = user.getPlayer()!!
+        if (PermissionManager.hasCommandPermission(player, "Vanish.Show", false)) return Bukkit.getOnlinePlayers().size.toString()
 
         return count.toString()
     }
 
-    override val identifiers = mutableSetOf("onlineplayers")
+    override val identifiers = setOf("onlineplayers")
 }

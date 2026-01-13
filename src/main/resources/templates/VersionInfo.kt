@@ -1,5 +1,5 @@
-package me.testaccount666.serversystem.utils;
+package me.testaccount666.serversystem.utils
 
-public class VersionInfo {
-    public static final String CLEAN_VERSION = "${cleanVersion}";
+object VersionInfo {
+    const val CLEAN_VERSION: String = "${cleanVersion}"
 }

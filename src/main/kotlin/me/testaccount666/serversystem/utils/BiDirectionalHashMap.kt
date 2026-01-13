@@ -1,18 +1,16 @@
 package me.testaccount666.serversystem.utils
 
-import java.util.*
-
 class BiDirectionalHashMap<T, V> {
-    private val _keyValueMap: MutableMap<T, V> = HashMap()
-    private val _valueKeyMap: MutableMap<V, T> = HashMap()
+    private val _keyValueMap = HashMap<T, V>()
+    private val _valueKeyMap = HashMap<V, T>()
 
-    fun containsKey(key: T): Boolean = key in _keyValueMap
+    fun containsKey(key: T) = key in _keyValueMap
 
-    fun containsValue(value: V): Boolean = value in _valueKeyMap
+    fun containsValue(value: V) = value in _valueKeyMap
 
-    fun getValue(key: T): Optional<V> = Optional.ofNullable(_keyValueMap[key]).map { obj: V -> obj }
+    fun getValue(key: T) = _keyValueMap[key]
 
-    fun getKey(value: V): Optional<T> = Optional.ofNullable(_valueKeyMap[value]).map { obj: T -> obj }
+    fun getKey(value: V) = _valueKeyMap[value]
 
     fun put(key: T, value: V) {
         _keyValueMap[key] = value
@@ -31,11 +29,11 @@ class BiDirectionalHashMap<T, V> {
         _valueKeyMap.remove(value)
     }
 
-    fun keySet(): MutableSet<T> = _keyValueMap.keys
+    fun keySet() = _keyValueMap.keys.toSet()
 
-    fun valueSet(): MutableSet<V> = _valueKeyMap.keys
+    fun valueSet() = _valueKeyMap.keys.toSet()
 
-    fun size(): Int = _keyValueMap.size
+    fun size() = _keyValueMap.size
 
     fun clear() {
         _keyValueMap.clear()

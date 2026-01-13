@@ -9,10 +9,10 @@ import me.testaccount666.serversystem.commands.management.CommandManager
 import me.testaccount666.serversystem.commands.management.CommandReplacer
 import me.testaccount666.serversystem.listener.management.ListenerManager
 import me.testaccount666.serversystem.managers.config.ConfigurationManager
-import me.testaccount666.serversystem.managers.database.economy.AbstractEconomyDatabaseManager
+import me.testaccount666.serversystem.managers.database.economy.EconomyDatabaseManager
 import me.testaccount666.serversystem.managers.database.economy.MySqlEconomyDatabaseManager
 import me.testaccount666.serversystem.managers.database.economy.SqliteEconomyDatabaseManager
-import me.testaccount666.serversystem.managers.database.moderation.AbstractModerationDatabaseManager
+import me.testaccount666.serversystem.managers.database.moderation.ModerationDatabaseManager
 import me.testaccount666.serversystem.managers.database.moderation.MySqlModerationDatabaseManager
 import me.testaccount666.serversystem.managers.database.moderation.SqliteModerationDatabaseManager
 import me.testaccount666.serversystem.placeholderapi.PlaceholderApiSupport
@@ -29,7 +29,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import java.io.IOException
 import java.nio.file.Path
-import java.util.*
+import java.util.Locale.getDefault
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -47,7 +47,7 @@ class ServerSystem : JavaPlugin() {
         )
 
         val migrator = LegacyDataMigrator()
-        if (migrator.isLegacyDataPresent()) {
+        if (migrator.isLegacyDataPresent) {
             log.log(Level.INFO, "Legacy data detected. Attempting to migrate...")
             migrator.prepareMigration()
         }
@@ -75,10 +75,10 @@ class ServerSystem : JavaPlugin() {
         Bukkit.getScheduler().runTaskLater(this, Runnable { migrator.migrateLegacyData() }, 1L)
 
         Bukkit.getScheduler().runTaskLater(this, Runnable {
-            registry.getServiceOptional<CommandManager>().ifPresent(CommandManager::registerCommands)
-            registry.getServiceOptional<ListenerManager>().ifPresent(ListenerManager::registerListeners)
-            registry.getServiceOptional<PlaceholderManager>().ifPresent(PlaceholderManager::registerPlaceholders)
-            registry.getServiceOptional<CommandReplacer>().ifPresent(CommandReplacer::replaceCommands)
+            registry.getServiceOrNull<CommandManager>()?.registerCommands()
+            registry.getServiceOrNull<ListenerManager>()?.registerListeners()
+            registry.getServiceOrNull<PlaceholderManager>()?.registerPlaceholders()
+            registry.getServiceOrNull<CommandReplacer>()?.replaceCommands()
         }, 2)
     }
 
@@ -88,15 +88,15 @@ class ServerSystem : JavaPlugin() {
         val configManager = ConfigurationManager(this)
         registry.registerService(configManager).loadAllConfigs()
 
-        val moderationType = configManager.moderationConfig!!.getString("Moderation.StorageType.Value")
+        val moderationType = configManager.moderationConfig.getString("Moderation.StorageType.Value")
         requireNotNull(moderationType) { "Moderation storage type not set?!" }
 
-        val moderationDbManager = when (moderationType.lowercase(Locale.getDefault())) {
+        val moderationDbManager = when (moderationType.lowercase(getDefault())) {
             "sqlite" -> SqliteModerationDatabaseManager(dataFolder)
             "mysql" -> MySqlModerationDatabaseManager(configManager.moderationConfig)
             else -> error("Unsupported moderation storage: $moderationType - Supported values: sqlite, mysql")
         }
-        registry.registerService<AbstractModerationDatabaseManager>(moderationDbManager)
+        registry.registerService<ModerationDatabaseManager>(moderationDbManager)
 
         val migratorRegistry = MigratorRegistry()
         registry.registerService(migratorRegistry).registerMigrators()
@@ -105,21 +105,21 @@ class ServerSystem : JavaPlugin() {
 
         moderationDbManager.initialize()
 
-        val economyStorageType = configManager.economyConfig!!.getString("Economy.StorageType.Value")
+        val economyStorageType = configManager.economyConfig.getString("Economy.StorageType.Value")
         requireNotNull(economyStorageType) { "Economy storage type not set?!" }
 
-        val economyDbManager = when (economyStorageType.lowercase(Locale.getDefault())) {
+        val economyDbManager = when (economyStorageType.lowercase(getDefault())) {
             "sqlite" -> SqliteEconomyDatabaseManager(dataFolder)
             "mysql" -> MySqlEconomyDatabaseManager(configManager.economyConfig)
             else -> error("Unsupported economy storage: $economyStorageType - Supported values: sqlite, mysql")
         }
-        registry.registerService<AbstractEconomyDatabaseManager>(economyDbManager)
+        registry.registerService<EconomyDatabaseManager>(economyDbManager)
 
         val commandManager = CommandManager(configManager.commandsConfig)
         registry.registerService(commandManager)
         registry.registerService(ListenerManager(commandManager))
         registry.registerService(PlaceholderManager())
-        registry.registerService(EconomyProvider(configManager.economyConfig!!))
+        registry.registerService(EconomyProvider(configManager.economyConfig))
         registry.registerService(UserManager())
 
         registry.registerService(KitManager())
@@ -129,7 +129,7 @@ class ServerSystem : JavaPlugin() {
 
         val migratorCount = migratorRegistry.migrators.size
 
-        if (migratorCount == 0 && configManager.economyConfig!!.getBoolean("Economy.HookIntoVault")) {
+        if (migratorCount == 0 && configManager.economyConfig.getBoolean("Economy.HookIntoVault")) {
             if (EconomyVaultAPI.isVaultInstalled) EconomyVaultAPI.initialize()
         }
 
@@ -146,15 +146,15 @@ class ServerSystem : JavaPlugin() {
     }
 
     override fun onDisable() {
-        registry.getServiceOptional<UserManager>().ifPresent(this::saveAllUsers)
+        registry.getServiceOrNull<UserManager>()?.let(this::saveAllUsers)
 
-        registry.getServiceOptional<CommandManager>().ifPresent(CommandManager::unregisterCommands)
-        registry.getServiceOptional<ListenerManager>().ifPresent(ListenerManager::unregisterListeners)
+        registry.getServiceOrNull<CommandManager>()?.let(CommandManager::unregisterCommands)
+        registry.getServiceOrNull<ListenerManager>()?.let(ListenerManager::unregisterListeners)
 
         PlaceholderApiSupport.unregisterPlaceholders()
 
-        registry.getServiceOptional<AbstractEconomyDatabaseManager>().ifPresent(AbstractEconomyDatabaseManager::shutdown)
-        registry.getServiceOptional<AbstractModerationDatabaseManager>().ifPresent(AbstractModerationDatabaseManager::shutdown)
+        registry.getServiceOrNull<EconomyDatabaseManager>()?.shutdown()
+        registry.getServiceOrNull<ModerationDatabaseManager>()?.shutdown()
 
         registry.clearServices()
     }
@@ -162,10 +162,10 @@ class ServerSystem : JavaPlugin() {
     private fun saveAllUsers(userManager: UserManager) = userManager.cachedUsers.forEach { it.offlineUser.save() }
 
     companion object {
-        val MINIMUM_MINECRAFT_VERSION: Version = Version("1.21")
+        val MINIMUM_MINECRAFT_VERSION = Version("1.21")
 
         @JvmField
-        val CURRENT_VERSION: Version = Version(VersionInfo.CLEAN_VERSION)
+        val CURRENT_VERSION = Version(VersionInfo.CLEAN_VERSION)
 
         @JvmStatic
         lateinit var instance: ServerSystem
@@ -173,7 +173,7 @@ class ServerSystem : JavaPlugin() {
         @JvmStatic
         lateinit var log: Logger
 
-        val serverVersion: Version by lazy {
+        val serverVersion by lazy {
             val version = Bukkit.getMinecraftVersion()
 
             log.log(Level.FINE, "Server version: $version")

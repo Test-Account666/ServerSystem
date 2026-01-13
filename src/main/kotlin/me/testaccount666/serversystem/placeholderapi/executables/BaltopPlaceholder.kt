@@ -37,12 +37,11 @@ class BaltopPlaceholder : Placeholder {
             place = placeString.toInt()
             if (place < 1) return "Invalid place '${placeString}', must be greater than 0!"
             if (place > 10) return "Invalid place '${placeString}', must be less than 11!"
-        } catch (ignored: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             return "Invalid place '${placeString}'"
         }
 
         val bankAccount = user.bankAccount
-        requireNotNull(bankAccount) { "User BankAccount is null?!" }
 
         val topTen = bankAccount.topTen
         var uuid: UUID? = null
@@ -58,17 +57,15 @@ class BaltopPlaceholder : Placeholder {
         }
 
         if (uuid == null) uuid = topTen.keys.stream().toList().last()
-        val optionalUser = getOfflineUser(Bukkit.getOfflinePlayer(uuid))
-        if (optionalUser.isEmpty) return "User ${uuid} not found!"
-        val offlineUser = optionalUser.get()
-        val nameOptional = offlineUser.getName()
+        val targetUser = getOfflineUser(Bukkit.getOfflinePlayer(uuid)) ?: return "User ${uuid} not found!"
+        val name = targetUser.getNameOrNull()
 
-        return nameOptional.orElse("User ${uuid} has no name!")
+        return name ?: "User ${uuid} has no name!"
     }
 
     private fun executeBalance(user: OfflineUser, format: Boolean, vararg arguments: String): String {
         if (arguments.isEmpty()) return "No place specified!"
-        val placeString: String = arguments[0]
+        val placeString = arguments[0]
         var place: Int
 
         try {
@@ -80,7 +77,6 @@ class BaltopPlaceholder : Placeholder {
         }
 
         val bankAccount = user.bankAccount
-        requireNotNull(bankAccount) { "User BankAccount is null?!" }
 
         val topTen = bankAccount.topTen
         var balance: BigDecimal? = null
@@ -102,12 +98,10 @@ class BaltopPlaceholder : Placeholder {
         return instance.registry.getService<EconomyProvider>().formatMoney(balance!!)
     }
 
-    override val identifiers = mutableSetOf("baltop")
+    override val identifiers = setOf("baltop")
 
-    private fun getOfflineUser(player: OfflinePlayer): Optional<OfflineUser> {
-        val userOptional = instance.registry.getService<UserManager>().getUser(player.uniqueId)
-        if (userOptional.isEmpty) return Optional.empty()
-        val cachedUser = userOptional.get()
-        return Optional.of(cachedUser.offlineUser)
+    private fun getOfflineUser(player: OfflinePlayer): OfflineUser? {
+        val cachedUser = instance.registry.getService<UserManager>().getUserOrNull(player.uniqueId)
+        return cachedUser?.offlineUser
     }
 }

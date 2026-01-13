@@ -10,12 +10,12 @@ import java.util.function.Function
 */
 //TODO: Make this look better
 object ConstructorAccessor {
-    fun <T> createConstructor(targetClass: Class<T?>): Function<Void?, T?> {
+    fun <T> createConstructor(targetClass: Class<T>): Function<Any?, T?> {
         try {
             val constructor = targetClass.getDeclaredConstructor()
             constructor.isAccessible = true
 
-            return Function { _: Void? ->
+            return Function { _ ->
                 try {
                     return@Function constructor.newInstance()
                 } catch (exception: ReflectiveOperationException) {
@@ -27,7 +27,7 @@ object ConstructorAccessor {
         }
     }
 
-    fun <T, P> createConstructor(targetClass: Class<T?>, paramType: Class<P?>?): Function<P?, T?> {
+    fun <T, P> createConstructor(targetClass: Class<T>, paramType: Class<P>): Function<P?, T?> {
         try {
             val constructor = targetClass.getDeclaredConstructor(paramType)
             constructor.isAccessible = true
@@ -46,9 +46,9 @@ object ConstructorAccessor {
 
     @JvmStatic
     fun <T, P1, P2> createConstructor(
-        targetClass: Class<T?>,
-        param1Type: Class<P1?>?,
-        param2Type: Class<P2?>?
+        targetClass: Class<T>,
+        param1Type: Class<P1>,
+        param2Type: Class<P2>
     ): BiFunction<P1?, P2?, T?> {
         try {
             val constructor = targetClass.getDeclaredConstructor(param1Type, param2Type)

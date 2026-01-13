@@ -4,57 +4,49 @@ import me.testaccount666.serversystem.ServerSystem
 import me.testaccount666.serversystem.managers.config.ConfigReader
 import me.testaccount666.serversystem.managers.config.ConfigurationManager
 import org.bukkit.Bukkit
-import java.util.*
-import java.util.function.Consumer
-import java.util.function.Function
 import java.util.logging.Level
-import java.util.stream.Collectors
 
 /**
  * Manages update checking and downloading lifecycle for the plugin.
  */
 class UpdateManager(private val _plugin: ServerSystem, private val _configManager: ConfigurationManager) {
-    var updateChecker: AbstractUpdateChecker? = null
+    lateinit var updateChecker: AbstractUpdateChecker
         private set
 
     fun start() {
         val generalConfig = _configManager.generalConfig
-        val updateCheckerType = resolveUpdateCheckerType(generalConfig!!)
+        val updateCheckerType = resolveUpdateCheckerType(generalConfig)
 
-        if (updateCheckerType.isEmpty) {
+        if (updateCheckerType == null) {
             handleInvalidUpdateCheckerType(generalConfig)
             return
         }
 
-        initializeUpdateChecker(updateCheckerType.get(), generalConfig)
+        initializeUpdateChecker(updateCheckerType, generalConfig)
         scheduleUpdateChecks(generalConfig)
     }
 
-    private fun resolveUpdateCheckerType(generalConfig: ConfigReader): Optional<UpdateCheckerType> {
+    private fun resolveUpdateCheckerType(generalConfig: ConfigReader): UpdateCheckerType? {
         var typeString = generalConfig.getString("UpdateChecker.Type.Value", null)
         if (typeString.isNullOrBlank()) typeString = "DISABLED"
         return UpdateCheckerType.of(typeString)
     }
 
     private fun handleInvalidUpdateCheckerType(generalConfig: ConfigReader) {
-        val typeString = generalConfig.getString("UpdateChecker.Type.Value", null)
+        val typeString = generalConfig.getString("UpdateChecker.Type.Value")
         val availableTypes = formatAvailableUpdateCheckerTypes()
 
         ServerSystem.log.warning("Updater type '${typeString}' not found. Available options: ${availableTypes}")
-        updateChecker = UpdateCheckerType.DISABLED.factory.get()
+        updateChecker = UpdateCheckerType.DISABLED.new()
     }
 
-    private fun formatAvailableUpdateCheckerTypes(): String {
-        return Arrays.stream<UpdateCheckerType?>(UpdateCheckerType.entries.toTypedArray())
-            .map<String?> { obj: UpdateCheckerType? -> obj!!.name }
-            .collect(Collectors.joining(", "))
-    }
+    private fun formatAvailableUpdateCheckerTypes(): String = UpdateCheckerType.entries.map { it.name }.joinToString { ", " }
 
     private fun initializeUpdateChecker(type: UpdateCheckerType, generalConfig: ConfigReader) {
         val autoUpdate = determineAutoUpdateSetting(generalConfig)
 
-        updateChecker = type.factory.get()
-        updateChecker!!.autoUpdate = autoUpdate
+        updateChecker = type.new()
+        updateChecker.autoUpdate = autoUpdate
     }
 
     private fun determineAutoUpdateSetting(generalConfig: ConfigReader): Boolean {
@@ -66,13 +58,13 @@ class UpdateManager(private val _plugin: ServerSystem, private val _configManage
     private fun scheduleUpdateChecks(generalConfig: ConfigReader) {
         val checkForUpdates = generalConfig.getBoolean("UpdateChecker.CheckForUpdates", false)
         if (!checkForUpdates) return
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(_plugin, { this.performUpdateCheck() }, 20L, 20L * 60 * 60)
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(_plugin, { performUpdateCheck() }, 20L, 20L * 60 * 60)
     }
 
     private fun performUpdateCheck() {
-        updateChecker!!.hasUpdate()
-            .exceptionally(Function { throwable -> this.handleUpdateCheckError(throwable) })
-            .thenAccept(Consumer { hasUpdate -> this.handleUpdateCheckResult(hasUpdate) })
+        updateChecker.hasUpdate()
+            .exceptionally { handleUpdateCheckError(it) }
+            .thenAccept { handleUpdateCheckResult(it) }
     }
 
     private fun handleUpdateCheckError(throwable: Throwable): Boolean {
@@ -83,9 +75,9 @@ class UpdateManager(private val _plugin: ServerSystem, private val _configManage
     private fun handleUpdateCheckResult(hasUpdate: Boolean) {
         if (!hasUpdate) return
 
-        updateChecker!!.downloadUpdate()
-            .exceptionally(Function { throwable -> this.handleUpdateDownloadError(throwable) })
-            .thenAccept(Consumer { success -> this.handleUpdateDownloadResult(success) })
+        updateChecker.downloadUpdate()
+            .exceptionally { handleUpdateDownloadError(it) }
+            .thenAccept { handleUpdateDownloadResult(it) }
     }
 
     private fun handleUpdateDownloadError(throwable: Throwable): Boolean {

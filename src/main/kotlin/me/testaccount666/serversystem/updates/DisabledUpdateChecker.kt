@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture
 
 class DisabledUpdateChecker : AbstractUpdateChecker(null) {
 
-    override var autoUpdate: Boolean
+    override var autoUpdate
         get() = false
         set(_) {}
 
@@ -15,6 +15,6 @@ class DisabledUpdateChecker : AbstractUpdateChecker(null) {
 
     override fun parseLatestVersion(responseBody: String): Version? = null
 
-    override val downloadUrl: String
+    override val downloadUrl
         get() = ""
 }

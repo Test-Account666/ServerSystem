@@ -4,6 +4,7 @@ libs/
 libs/*
 work/
 work/*
+git.properties
 
 *.iml
 *.ipr

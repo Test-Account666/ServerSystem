@@ -63,7 +63,7 @@ abstract class AbstractUpdateChecker(@JvmField protected val updateURI: URI?) {
             HttpClient.newHttpClient().use { client ->
                 val request = HttpRequest.newBuilder()
                     .timeout(Duration.ofMinutes(1))
-                    .uri(updateURI).GET().build()
+                    .uri(updateURI).build()
                 val response = client.send(request, HttpResponse.BodyHandlers.ofString())
                 val body = response.body()
 
@@ -98,13 +98,13 @@ abstract class AbstractUpdateChecker(@JvmField protected val updateURI: URI?) {
                 future.completeExceptionally(IllegalStateException("No version info available for download."))
                 return@Runnable
             }
-            val downloadUrl = this.downloadUrl
+            val downloadUrl = downloadUrl
             try {
                 HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS)
                     .connectTimeout(Duration.ofMinutes(1)).build().use { client ->
                         val request = HttpRequest.newBuilder()
                             .timeout(Duration.ofMinutes(1))
-                            .uri(URI.create(downloadUrl)).GET().build()
+                            .uri(URI.create(downloadUrl)).build()
                         ServerSystem.log.info("Downloading update from ${downloadUrl}")
 
                         val response = client.send(request, HttpResponse.BodyHandlers.ofInputStream())
@@ -115,7 +115,7 @@ abstract class AbstractUpdateChecker(@JvmField protected val updateURI: URI?) {
                         }
 
                         val pluginDir = ServerSystem.instance.dataFolder.parentFile.toPath()
-                        val updateFile = pluginDir.resolve("update").resolve(this.jarFileName)
+                        val updateFile = pluginDir.resolve("update").resolve(jarFileName)
                         Files.createDirectories(updateFile.parent)
 
                         val `in` = response.body()

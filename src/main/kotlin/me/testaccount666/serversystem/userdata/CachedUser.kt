@@ -9,13 +9,13 @@ open class CachedUser internal constructor(var offlineUser: OfflineUser) {
         _lastAccessTime = System.currentTimeMillis()
     }
 
-    val isOnlineUser: Boolean
+    val isOnlineUser
         get() = offlineUser is User
 
-    val isOfflineUser: Boolean
-        get() = !this.isOnlineUser
+    val isOfflineUser
+        get() = !isOnlineUser
 
-    val isStale: Boolean
+    val isStale
         get() = System.currentTimeMillis() - _lastAccessTime > _STALE_TIME_MILLIS
 
     internal fun updateLastAccessTime() {

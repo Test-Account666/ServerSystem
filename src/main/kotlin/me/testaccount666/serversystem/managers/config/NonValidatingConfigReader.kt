@@ -14,7 +14,7 @@ class NonValidatingConfigReader
  * @throws java.io.FileNotFoundException If the default configuration cannot be found
  */
     (file: File, plugin: Plugin) : DefaultConfigReader(file, plugin) {
-    override fun validateAndFixConfig(): Boolean = true
+    override fun validateAndFixConfig() = true
 
     override fun loadDefaultConfig() {
         // Nothing to do

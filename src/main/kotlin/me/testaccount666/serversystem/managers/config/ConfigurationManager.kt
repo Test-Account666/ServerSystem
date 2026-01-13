@@ -12,15 +12,15 @@ import java.nio.file.Path
 class ConfigurationManager(private val _plugin: Plugin) {
     private val _pluginFolder: Path = Path.of("plugins", "ServerSystem")
 
-    var generalConfig: ConfigReader? = null
+    lateinit var generalConfig: ConfigReader
 
-    var commandsConfig: ConfigReader? = null
+    lateinit var commandsConfig: ConfigReader
 
-    var economyConfig: ConfigReader? = null
+    lateinit var economyConfig: ConfigReader
 
-    var moderationConfig: ConfigReader? = null
+    lateinit var moderationConfig: ConfigReader
 
-    var commandReplaceConfig: ConfigReader? = null
+    lateinit var commandReplaceConfig: ConfigReader
 
     @Throws(FileNotFoundException::class)
     fun loadAllConfigs() {

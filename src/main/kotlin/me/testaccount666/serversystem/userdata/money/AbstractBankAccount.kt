@@ -24,7 +24,7 @@ abstract class AbstractBankAccount(val owner: UUID, val accountId: BigInteger) {
         targetAccount.deposit(amount)
     }
 
-    open fun hasEnoughMoney(amount: BigDecimal): Boolean = balance >= amount
+    open fun hasEnoughMoney(amount: BigDecimal) = balance >= amount
 
-    abstract val topTen: MutableMap<UUID, BigDecimal>
+    abstract val topTen: Map<UUID, BigDecimal>
 }

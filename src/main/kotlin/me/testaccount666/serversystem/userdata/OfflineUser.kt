@@ -3,15 +3,11 @@ package me.testaccount666.serversystem.userdata
 import me.testaccount666.serversystem.ServerSystem
 import me.testaccount666.serversystem.commands.executables.back.CommandBack
 import me.testaccount666.serversystem.managers.config.ConfigurationManager
-import me.testaccount666.serversystem.managers.database.moderation.AbstractModerationDatabaseManager
-import me.testaccount666.serversystem.managers.database.moderation.MySqlModerationDatabaseManager
-import me.testaccount666.serversystem.managers.database.moderation.SqliteModerationDatabaseManager
+import me.testaccount666.serversystem.managers.database.moderation.ModerationDatabaseManager
 import me.testaccount666.serversystem.managers.messages.MessageManager
 import me.testaccount666.serversystem.moderation.AbstractModerationManager
-import me.testaccount666.serversystem.moderation.ban.MySqlBanManager
-import me.testaccount666.serversystem.moderation.ban.SqliteBanManager
-import me.testaccount666.serversystem.moderation.mute.MySqlMuteManager
-import me.testaccount666.serversystem.moderation.mute.SqliteMuteManager
+import me.testaccount666.serversystem.moderation.BanModeration
+import me.testaccount666.serversystem.moderation.MuteModeration
 import me.testaccount666.serversystem.userdata.home.HomeManager
 import me.testaccount666.serversystem.userdata.money.AbstractBankAccount
 import me.testaccount666.serversystem.userdata.money.EconomyProvider
@@ -24,7 +20,6 @@ import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.*
 import java.math.BigInteger
-import java.sql.SQLException
 import java.util.*
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
@@ -40,26 +35,23 @@ import java.util.zip.GZIPOutputStream
  */
 open class OfflineUser(val userFile: File) {
     @SaveableField(path = "User.IgnoredPlayers", handler = UuidSetFieldHandler::class)
-    val ignoredPlayers: MutableSet<UUID> = HashSet()
+    val ignoredPlayers = HashSet<UUID>()
 
     @SaveableField(path = "User.LastKnownName")
     protected var name: String? = null
 
     lateinit var uuid: UUID
         protected set
-    open var player: OfflinePlayer? = null
-        get() {
-            if (field == null) field = Bukkit.getOfflinePlayer(uuid)
-
-            return field
-        }
-    var banManager: AbstractModerationManager? = null
+    open val player: OfflinePlayer? by lazy {
+        return@lazy Bukkit.getOfflinePlayer(uuid)
+    }
+    lateinit var banManager: AbstractModerationManager<BanModeration>
         protected set
-    var muteManager: AbstractModerationManager? = null
+    lateinit var muteManager: AbstractModerationManager<MuteModeration>
         protected set
-    var bankAccount: AbstractBankAccount? = null
+    lateinit var bankAccount: AbstractBankAccount
         protected set
-    var homeManager: HomeManager? = null
+    lateinit var homeManager: HomeManager
         protected set
     protected lateinit var userConfig: FileConfiguration
 
@@ -78,7 +70,7 @@ open class OfflineUser(val userFile: File) {
     var isVanish: Boolean = false
 
     @SaveableField(path = "User.VanishData.Data", handler = VanishDataFieldHandler::class)
-    var vanishData: VanishData? = null
+    lateinit var vanishData: VanishData
         protected set
 
     @SaveableField(path = "User.IsGodMode")
@@ -136,7 +128,7 @@ open class OfflineUser(val userFile: File) {
                 // Check for GZIP magic number (0x1F8B)
                 return (signature[0] == 0x1F.toByte() && signature[1] == 0x8B.toByte())
             }
-        } catch (exception: IOException) {
+        } catch (_: IOException) {
             return false
         }
     }
@@ -178,18 +170,18 @@ open class OfflineUser(val userFile: File) {
         isVanish = false
         vanishData = VanishData(false, false, false, false)
         isGodMode = false
-        this.isAcceptsTeleports = true
-        this.isAcceptsMessages = true
-        this.isSocialSpyEnabled = false
-        this.isCommandSpyEnabled = false
-        this.isUsesDefaultLanguage = true
-        playerLanguage = MessageManager.defaultLanguage!!
+        isAcceptsTeleports = true
+        isAcceptsMessages = true
+        isSocialSpyEnabled = false
+        isCommandSpyEnabled = false
+        isUsesDefaultLanguage = true
+        playerLanguage = MessageManager.defaultLanguage
         lastBackType = CommandBack.BackType.NONE
 
         // PersistenceManager loads all annotated fields
         PersistenceManager.loadFields(this, userConfig)
         // Quick fix that blocks potentially wanted behavior, but eh...
-        if (playerLanguage.equals(System.getProperty("user.language"), ignoreCase = true)) playerLanguage = MessageManager.defaultLanguage!!
+        if (playerLanguage.equals(System.getProperty("user.language"), ignoreCase = true)) playerLanguage = MessageManager.defaultLanguage
         playerLanguage = playerLanguage.lowercase(Locale.getDefault())
 
         if (name == null) name = player?.name
@@ -199,34 +191,9 @@ open class OfflineUser(val userFile: File) {
             ServerSystem.instance.registry.getService<EconomyProvider>()
                 .instantiateBankAccount(this, BigInteger.valueOf(0), userConfig)
 
-        val moderationManager = ServerSystem.instance.registry.getService<AbstractModerationDatabaseManager>()
-
-        // Create the appropriate ban manager based on the database type
-        try {
-            moderationManager.getConnection().use { _ ->
-
-                banManager = when (moderationManager) {
-                    is SqliteModerationDatabaseManager -> SqliteBanManager(uuid)
-                    is MySqlModerationDatabaseManager -> MySqlBanManager(uuid)
-                    else -> null
-                }
-            }
-        } catch (exception: SQLException) {
-            throw RuntimeException("Error loading userdata! (BanManager)", exception)
-        }
-
-        // Create the appropriate mute manager based on the database type
-        try {
-            moderationManager.getConnection().use { _ ->
-                muteManager = when (moderationManager) {
-                    is SqliteModerationDatabaseManager -> SqliteMuteManager(uuid)
-                    is MySqlModerationDatabaseManager -> MySqlMuteManager(uuid)
-                    else -> null
-                }
-            }
-        } catch (exception: SQLException) {
-            throw RuntimeException("Error loading userdata! (MuteManager)", exception)
-        }
+        val moderationManager = ServerSystem.instance.registry.getService<ModerationDatabaseManager>()
+        banManager = moderationManager.instantiateBanManager(uuid)
+        muteManager = moderationManager.instantiateMuteManager(uuid)
     }
 
     private val isCompressionEnabled: Boolean
@@ -235,7 +202,7 @@ open class OfflineUser(val userFile: File) {
          *
          * @return true if compression is enabled, false otherwise
          */
-        get() = ServerSystem.instance.registry.getService<ConfigurationManager>().generalConfig!!
+        get() = ServerSystem.instance.registry.getService<ConfigurationManager>().generalConfig
             .getBoolean("UserData.Compression.Enabled", true)
 
     /**
@@ -269,19 +236,21 @@ open class OfflineUser(val userFile: File) {
         PersistenceManager.saveFields(this, userConfig)
 
         try {
-            if (this.isCompressionEnabled) saveCompressedYamlConfiguration(userConfig, userFile)
+            if (isCompressionEnabled) saveCompressedYamlConfiguration(userConfig, userFile)
             else userConfig.save(userFile)
         } catch (exception: Exception) {
-            throw RuntimeException("Error while trying to save user data for user '${getName()}' ('${uuid}')", exception)
+            throw RuntimeException("Error while trying to save user data for user '${getNameOrNull()}' ('${uuid}')", exception)
         }
     }
 
     /**
      * Gets the name of this user.
      *
-     * @return An Optional containing the name of this user, or an empty Optional if the name is not available
+     * @return The name of this user, or null if the name is not available
      */
-    open fun getName(): Optional<String> = Optional.ofNullable(name)
+    open fun getNameOrNull(): String? = name
+
+    open fun getNameSafe(): String = getNameOrNull() ?: "???"
 
     fun isIgnoredPlayer(uuid: UUID?): Boolean = uuid in ignoredPlayers
 

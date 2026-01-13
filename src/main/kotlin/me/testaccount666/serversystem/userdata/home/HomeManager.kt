@@ -16,7 +16,7 @@ import java.util.*
  * as well as loading and saving homes to the user's configuration file.
  */
 class HomeManager(private val _owner: OfflineUser, private val _config: FileConfiguration) {
-    private val _homes: MutableSet<Home> = HashSet()
+    private val _homes = HashSet<Home>()
 
     /**
      * Creates a new HomeManager for the specified user.
@@ -28,8 +28,8 @@ class HomeManager(private val _owner: OfflineUser, private val _config: FileConf
         loadHomes()
     }
 
-    val homes: MutableSet<Home>
-        get() = Collections.unmodifiableSet<Home>(_homes)
+    val homes
+        get() = _homes.toSet()
 
 
     /**
@@ -62,13 +62,13 @@ class HomeManager(private val _owner: OfflineUser, private val _config: FileConf
      * @param name The name of the home to remove
      */
     fun removeHome(name: String) {
-        _homes.removeIf { home -> home.name.equals(name, ignoreCase = true) }
+        _homes.removeIf { it.name.equals(name, ignoreCase = true) }
 
         saveHomes()
     }
 
     fun removeHome(home: Home) {
-        _homes.removeIf { savedHome -> savedHome.name.equals(home.name, ignoreCase = true) }
+        _homes.removeIf { it.name.equals(home.name, ignoreCase = true) }
 
         saveHomes()
     }
@@ -77,12 +77,10 @@ class HomeManager(private val _owner: OfflineUser, private val _config: FileConf
      * Gets the home with the specified name.
      *
      * @param name The name of the home to get
-     * @return An Optional containing the home, or an empty Optional if no home with the specified name exists
+     * @return The home, or null if no home with the specified name exists
      */
-    fun getHomeByName(name: String): Optional<Home> {
-        return _homes.stream()
-            .filter { home -> home.name.equals(name, ignoreCase = true) }
-            .findFirst()
+    fun getHomeByName(name: String): Home? {
+        return _homes.firstOrNull { it.name.equals(name, ignoreCase = true) }
     }
 
     /**
@@ -91,23 +89,19 @@ class HomeManager(private val _owner: OfflineUser, private val _config: FileConf
      * @param name The name of the home to check for
      * @return true if a home with the specified name exists, false otherwise
      */
-    fun hasHome(name: String): Boolean = getHomeByName(name).isPresent
+    fun hasHome(name: String): Boolean = getHomeByName(name) != null
 
-    val maxHomeCount: Optional<Int>
+    val maxHomeCount: Int?
         /**
          * Gets the maximum number of homes the user can have.
          * This is determined by the user's permissions.
          *
-         * @return An Optional containing the maximum number of homes, or an empty Optional if the user is offline
+         * @return The maximum number of homes, or null if the user is offline
          */
         get() {
-            if (_owner !is User) return Optional.empty()
+            if (_owner !is User) return null
 
-            if (PermissionManager.hasPermission(
-                    _owner,
-                    "Homes.Unlimited",
-                    false
-                )) return Optional.of(Int.MAX_VALUE)
+            if (PermissionManager.hasPermission(_owner, "Homes.Unlimited", false)) return Int.MAX_VALUE
 
             val defaultValue = DefaultsData.home().defaultMaxHomes
             var maxHomes = -1
@@ -115,7 +109,7 @@ class HomeManager(private val _owner: OfflineUser, private val _config: FileConf
             var permissionPattern = PermissionManager.getPermission("Homes.MaxHomes")
             if (permissionPattern == null) {
                 ServerSystem.log.warning("Homes.MaxHomes permission not found! Using default value of $defaultValue")
-                return Optional.of(defaultValue)
+                return defaultValue
             }
             if (!permissionPattern.endsWith(".")) permissionPattern += "."
 
@@ -126,14 +120,14 @@ class HomeManager(private val _owner: OfflineUser, private val _config: FileConf
                 try {
                     val parsed = permission.substring(permissionPattern.length).toInt()
                     if (parsed > maxHomes) maxHomes = parsed
-                } catch (ignored: NumberFormatException) {
+                } catch (_: NumberFormatException) {
                     // I don't think we need to print this
                 }
             }
 
             if (maxHomes == -1) maxHomes = defaultValue
 
-            return Optional.of(maxHomes)
+            return maxHomes
         }
 
 
@@ -166,15 +160,13 @@ class HomeManager(private val _owner: OfflineUser, private val _config: FileConf
         for (name in homeNames) {
             val prefix = "User.Homes.${name}"
 
-            val home = parseHome(name, prefix)
+            val home = parseHome(name, prefix) ?: continue
 
-            if (home.isEmpty) continue
-
-            _homes.add(home.get())
+            _homes.add(home)
         }
     }
 
-    private fun parseHome(name: String, prefix: String): Optional<Home> {
+    private fun parseHome(name: String, prefix: String): Home? {
         val x = _config.getDouble("${prefix}.X")
         val y = _config.getDouble("${prefix}.Y")
         val z = _config.getDouble("${prefix}.Z")
@@ -183,10 +175,10 @@ class HomeManager(private val _owner: OfflineUser, private val _config: FileConf
         val pitch = _config.getDouble("${prefix}.Pitch").toFloat()
 
         val worldName: String = _config.getString("${prefix}.World", "")!!
-        val world = Bukkit.getWorld(worldName) ?: return Optional.empty()
+        val world = Bukkit.getWorld(worldName) ?: return null
 
         val location = Location(world, x, y, z, yaw, pitch)
 
-        return Optional.of(Home(name, location))
+        return Home(name, location)
     }
 }

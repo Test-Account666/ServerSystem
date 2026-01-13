@@ -1,7 +1,8 @@
 package me.testaccount666.serversystem.userdata.money
 
 import me.testaccount666.serversystem.ServerSystem
-import me.testaccount666.serversystem.managers.database.economy.AbstractEconomyDatabaseManager
+import me.testaccount666.serversystem.managers.database.AbstractSqlDatabaseManager
+import me.testaccount666.serversystem.managers.database.economy.EconomyDatabaseManager
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.sql.PreparedStatement
@@ -21,10 +22,12 @@ abstract class AbstractSqlBankAccount(
     accountId: BigInteger
 ) : AbstractBankAccount(owner, accountId) {
 
-    protected val databaseManager: AbstractEconomyDatabaseManager =
-        ServerSystem.instance.registry.getService()
+    protected val databaseManager = ServerSystem.instance.registry.getService<EconomyDatabaseManager>()
 
-    override var balance: BigDecimal
+    private val sqlDatabaseManager
+        get() = databaseManager as AbstractSqlDatabaseManager
+
+    override var balance
         get() = fetchBalance()
         set(newBalance) = upsertBalance(newBalance.min(BigDecimal.ZERO))
 
@@ -71,7 +74,7 @@ abstract class AbstractSqlBankAccount(
         handler: (resultSet: ResultSet) -> T
     ): T? {
         try {
-            databaseManager.getConnection().use { connection ->
+            sqlDatabaseManager.connection.use { connection ->
                 connection.prepareStatement(sql).use { stmt ->
                     bindParams(stmt, sql)
                     stmt.executeQuery().use { rs ->
@@ -86,7 +89,7 @@ abstract class AbstractSqlBankAccount(
 
     private fun executeUpdate(sql: String, vararg data: Any) {
         try {
-            databaseManager.getConnection().use { conn ->
+            sqlDatabaseManager.connection.use { conn ->
                 conn.prepareStatement(sql).use { stmt ->
                     bindParams(stmt, sql, *data)
                     stmt.executeUpdate()

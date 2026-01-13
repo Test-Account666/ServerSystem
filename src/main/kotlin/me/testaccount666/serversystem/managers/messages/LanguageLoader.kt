@@ -1,6 +1,5 @@
 package me.testaccount666.serversystem.managers.messages
 
-import lombok.SneakyThrows
 import me.testaccount666.serversystem.ServerSystem
 import me.testaccount666.serversystem.managers.config.ConfigReader
 import me.testaccount666.serversystem.managers.config.DefaultConfigReader
@@ -30,21 +29,19 @@ class LanguageLoader {
         if (!messagesFile.exists()) plugin.saveResource("messages/${language}/messages.yml", false)
     }
 
-    fun getMessageReader(language: String): Optional<ConfigReader> {
-        var language = language
-        language = language.lowercase(Locale.getDefault())
+    fun getMessageReader(language: String): ConfigReader? {
+        val lowerLanguage = language.lowercase(Locale.getDefault())
 
-        val configReader = _languageMessagesMap[language]
-        if (configReader != null) return Optional.of(configReader)
+        val configReader = _languageMessagesMap[lowerLanguage]
+        if (configReader != null) return configReader
 
-        val loadedReader = loadMessageReader(language) ?: return Optional.empty()
+        val loadedReader = loadMessageReader(lowerLanguage) ?: return null
 
-        _languageMessagesMap[language] = loadedReader
+        _languageMessagesMap[lowerLanguage] = loadedReader
 
-        return Optional.of(loadedReader)
+        return loadedReader
     }
 
-    @SneakyThrows
     private fun loadMessageReader(language: String): ConfigReader? {
         val languageDirectory = _baseDirectory.resolve(language).toFile()
         if (!languageDirectory.exists() || !languageDirectory.isDirectory) {
@@ -61,21 +58,19 @@ class LanguageLoader {
     }
 
 
-    fun getMappingReader(language: String): Optional<ConfigReader> {
-        var language = language
-        language = language.lowercase(Locale.getDefault())
+    fun getMappingReader(language: String): ConfigReader? {
+        val lowerLanguage = language.lowercase(Locale.getDefault())
 
-        val configReader = _languageMappingsMap[language]
-        if (configReader != null) return Optional.of(configReader)
+        val configReader = _languageMappingsMap[lowerLanguage]
+        if (configReader != null) return configReader
 
-        val loadedReader = loadMappingReader(language) ?: return Optional.empty()
+        val loadedReader = loadMappingReader(lowerLanguage) ?: return null
 
-        _languageMappingsMap[language] = loadedReader
+        _languageMappingsMap[lowerLanguage] = loadedReader
 
-        return Optional.of(loadedReader)
+        return loadedReader
     }
 
-    @SneakyThrows
     private fun loadMappingReader(language: String): ConfigReader? {
         val languageDirectory = _baseDirectory.resolve(language).toFile()
         if (!languageDirectory.exists() || !languageDirectory.isDirectory) {

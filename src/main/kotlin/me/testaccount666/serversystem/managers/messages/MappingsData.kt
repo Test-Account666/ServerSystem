@@ -34,9 +34,7 @@ class MappingsData {
             }
         }
 
-        fun getBackTypeName(backType: CommandBack.BackType): Optional<String> {
-            return Optional.ofNullable(_backTypeMappings.getOrDefault(backType, null))
-        }
+        fun getBackTypeName(backType: CommandBack.BackType) = _backTypeMappings[backType]
     }
 
     class GameMode {
@@ -55,12 +53,10 @@ class MappingsData {
 
         private val _gameModeMappings = HashMap<org.bukkit.GameMode, String>()
 
-        fun getGameModeName(gameMode: org.bukkit.GameMode): Optional<String> {
-            return Optional.ofNullable(_gameModeMappings.getOrDefault(gameMode, null))
-        }
+        fun getGameModeName(gameMode: org.bukkit.GameMode) = _gameModeMappings[gameMode]
 
-        val gameModeNames: MutableSet<String>
-            get() = HashSet(_gameModeMappings.values)
+        val gameModeNames
+            get() = _gameModeMappings.values.toSet()
     }
 
     class MessageColors(config: ConfigReader) {
@@ -93,10 +89,10 @@ class MappingsData {
          * Gets the message color as a legacy String with color codes.
          *
          * @param colorId The color identifier
-         * @return An Optional containing the color String, or empty if not found
+         * @return The color String, or null if not found
          */
-        fun getMessageColor(colorId: String): Optional<String> {
-            return Optional.ofNullable(_messageColorMappings.getOrDefault(colorId, null))
+        fun getMessageColor(colorId: String): String? {
+            return _messageColorMappings[colorId]
         }
     }
 
@@ -112,9 +108,7 @@ class MappingsData {
 
         private val _moderationMappings = HashMap<String, String>()
 
-        fun getName(key: String): Optional<String> {
-            return Optional.ofNullable(_moderationMappings.getOrDefault(key, null))
-        }
+        fun getName(key: String) = _moderationMappings[key]
     }
 
     class Console {
@@ -130,9 +124,7 @@ class MappingsData {
 
         private val _consoleMappings = HashMap<String, String>()
 
-        fun getName(key: String): Optional<String> {
-            return Optional.ofNullable(_consoleMappings.getOrDefault(key, null))
-        }
+        fun getName(key: String) = _consoleMappings[key]
     }
 
     companion object {
@@ -146,18 +138,17 @@ class MappingsData {
             var data = cache[language]
             if (data != null) return data
 
-            var readerOptional = MessageManager.languageLoader.getMappingReader(language)
-            if (readerOptional.isPresent) {
-                data = factory.apply(readerOptional.get())
+            var reader = MessageManager.languageLoader.getMappingReader(language)
+            if (reader != null) {
+                data = factory.apply(reader)
                 cache[language] = data
                 return data
             }
 
             val defaultLanguage = MessageManager.defaultLanguage
-            requireNotNull(defaultLanguage) { "default language not defined" }
 
-            readerOptional = MessageManager.languageLoader.getMappingReader(defaultLanguage)
-            data = factory.apply(readerOptional.get())
+            reader = MessageManager.languageLoader.getMappingReader(defaultLanguage)
+            data = factory.apply(reader!!)
             cache[language] = data
             return data
         }

@@ -2,7 +2,7 @@ package me.testaccount666.serversystem.utils
 
 import kotlin.math.min
 
-class Version(version: String) : Comparable<Version?> {
+class Version(version: String) : Comparable<Version> {
     val version: String
 
     init {
@@ -17,9 +17,7 @@ class Version(version: String) : Comparable<Version?> {
         this.version = normalizedVersion
     }
 
-    override fun compareTo(other: Version?): Int {
-        if (other == null) return 1
-
+    override fun compareTo(other: Version): Int {
         val thisVersion: Array<String> = version.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val otherVersion: Array<String> = other.version.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
@@ -34,5 +32,5 @@ class Version(version: String) : Comparable<Version?> {
         return thisVersion.size.compareTo(otherVersion.size)
     }
 
-    override fun toString(): String = version
+    override fun toString() = version
 }

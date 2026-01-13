@@ -9,13 +9,10 @@ import org.bukkit.OfflinePlayer
 import java.util.*
 
 class PlaceholderExpansionWrapper : PlaceholderExpansion() {
-    override fun getIdentifier(): String = "serversystem"
-
-    override fun getAuthor(): String = instance.pluginMeta.authors.first()
-
-    override fun getVersion(): String = instance.pluginMeta.version
-
-    override fun persist(): Boolean = true
+    override fun getIdentifier() = "serversystem"
+    override fun getAuthor() = instance.pluginMeta.authors.first()
+    override fun getVersion() = instance.pluginMeta.version
+    override fun persist() = true
 
     override fun onRequest(player: OfflinePlayer?, params: String): String? {
         if (params.isBlank()) {
@@ -23,27 +20,23 @@ class PlaceholderExpansionWrapper : PlaceholderExpansion() {
             return null
         }
 
-        val split: Array<String> = params.split("_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val split = params.split("_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val identifier = split[0].lowercase(Locale.getDefault())
 
         val registry = instance.registry
         val placeholderManager = registry.getService<PlaceholderManager>()
-        val placeholderOptional = placeholderManager.getPlaceholder(identifier)
-        if (placeholderOptional.isEmpty) {
+        val placeholder = placeholderManager.getPlaceholder(identifier)
+        if (placeholder == null) {
             log.warning("An unknown placeholder was requested! '${params}'")
             return null
         }
 
-        val placeholder = placeholderOptional.get()
-
-        val arguments: Array<String> = (if (split.size == 1) emptyArray<String>() else split.copyOfRange(1, split.size))
+        val arguments = (if (split.size == 1) emptyArray() else split.copyOfRange(1, split.size))
 
         if (player == null) return placeholder.execute(null, identifier, *arguments)
 
         val userManager = registry.getService<UserManager>()
-        val userOptional = userManager.getUser(player.uniqueId)
-        if (userOptional.isEmpty) return null
-        val cachedUser = userOptional.get()
+        val cachedUser = userManager.getUserOrNull(player.uniqueId) ?: return null
         val offlineUser = cachedUser.offlineUser
 
         return placeholder.execute(offlineUser, identifier, *arguments)

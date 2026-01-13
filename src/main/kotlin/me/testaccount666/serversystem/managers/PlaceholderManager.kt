@@ -28,39 +28,41 @@ class PlaceholderManager {
      * @return The message with placeholders replaced by the corresponding values.
      */
     fun applyPlaceholders(message: String, commandSender: User, targetName: String?, label: String): String {
-        var message = message
-        var targetName = targetName
-        if (commandSender.getName().isEmpty) {
+        var result = message
+        var finalTargetName = targetName
+        val senderName = commandSender.getNameOrNull()
+        if (senderName == null) {
             ServerSystem.log.warning("CommandSender (${commandSender.uuid}) has no name! This should not happen!")
-            return message
+            return result
         }
 
-        if (targetName == null) targetName = commandSender.getName().get()
+        if (finalTargetName == null) finalTargetName = senderName
 
-        message = applyColorPlaceholder(commandSender, message, "<Color:Prefix>", "Prefix")
-        message = applyColorPlaceholder(commandSender, message, "<Color:Separators>", "Separator")
-        message = applyColorPlaceholder(commandSender, message, "<Color:Message>", "Message")
-        message = applyColorPlaceholder(commandSender, message, "<Color:Highlight>", "Highlight")
-        message = applyColorPlaceholder(commandSender, message, "<Color:Error.Message>", "ErrorMessage")
-        message = applyColorPlaceholder(commandSender, message, "<Color:Error.Highlight>", "ErrorHighlight")
+        result = applyColorPlaceholder(commandSender, result, "<Color:Prefix>", "Prefix")
+        result = applyColorPlaceholder(commandSender, result, "<Color:Separators>", "Separator")
+        result = applyColorPlaceholder(commandSender, result, "<Color:Message>", "Message")
+        result = applyColorPlaceholder(commandSender, result, "<Color:Highlight>", "Highlight")
+        result = applyColorPlaceholder(commandSender, result, "<Color:Error.Message>", "ErrorMessage")
+        result = applyColorPlaceholder(commandSender, result, "<Color:Error.Highlight>", "ErrorHighlight")
 
-        message = message.replace("<SENDER>", commandSender.getName().get())
-            .replace("<TARGET>", targetName)
+        result = result.replace("<SENDER>", senderName)
+            .replace("<TARGET>", finalTargetName)
             .replace("<LABEL>", label)
 
         // ConsoleUser#getPlayer returns null btw
-        if (_placeholders) message = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(commandSender.getPlayer(), message)
+        if (_placeholders) result = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(commandSender.getPlayer(), result)
 
-        return message
+        return result
     }
 
     private fun applyColorPlaceholder(user: User, message: String, placeholder: String, colorId: String): String {
-        val colorOptional = MappingsData.messageColors(user).getMessageColor(colorId)
+        val color = MappingsData.messageColors(user).getMessageColor(colorId)
 
-        return colorOptional.map { prefixString -> message.replace(placeholder, prefixString) }
-            .orElseGet {
-                ServerSystem.log.warning("${colorId} color could not be found! This should not happen!")
-                message
-            }
+        if (color == null) {
+            ServerSystem.log.warning("${colorId} color could not be found! This should not happen!")
+            return message
+        }
+
+        return message.replace(placeholder, color)
     }
 }

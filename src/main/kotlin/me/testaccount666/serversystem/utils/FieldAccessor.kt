@@ -12,7 +12,7 @@ import java.util.function.Function
 //TODO: Make this look better
 object FieldAccessor {
     @JvmStatic
-    fun <T, R> createGetter(targetClass: Class<T?>, fieldName: String): Function<T?, R?> {
+    fun <T, R> createGetter(targetClass: Class<T>, fieldName: String): Function<T?, R?> {
         try {
             val field = findField(targetClass, fieldName)
             field.isAccessible = true
@@ -49,7 +49,7 @@ object FieldAccessor {
         throw NoSuchFieldException("Field '${fieldName}' not found in class ${clazz.name} or any of its superclasses")
     }
 
-    fun <T, R> createGetter(targetClass: Class<T?>, fieldName: String, fieldType: Class<R?>): Function<T?, R?> {
+    fun <T, R> createGetter(targetClass: Class<T>, fieldName: String, fieldType: Class<R>): Function<T?, R?> {
         try {
             val field = findField(targetClass, fieldName)
             field.isAccessible = true
@@ -71,7 +71,7 @@ object FieldAccessor {
 
 
     @JvmStatic
-    fun <T, R> createSetter(targetClass: Class<T?>, fieldName: String): BiFunction<T?, R?, R?> {
+    fun <T, R> createSetter(targetClass: Class<T>, fieldName: String): BiFunction<T?, R?, R?> {
         try {
             val field = findField(targetClass, fieldName)
             field.isAccessible = true
@@ -89,7 +89,7 @@ object FieldAccessor {
         }
     }
 
-    fun <T, R> createSetter(targetClass: Class<T?>, fieldName: String, fieldType: Class<R?>): BiFunction<T?, R?, R?> {
+    fun <T, R> createSetter(targetClass: Class<T>, fieldName: String, fieldType: Class<R>): BiFunction<T?, R?, R?> {
         try {
             val field = findField(targetClass, fieldName)
             field.isAccessible = true

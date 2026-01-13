@@ -28,6 +28,6 @@ class MainUpdateChecker : AbstractUpdateChecker(URI.create("https://pluginsuppor
         return foundLatestVersion
     }
 
-    override val downloadUrl: String
+    override val downloadUrl
         get() = updateURI.toString() + latestVersion?.version
 }

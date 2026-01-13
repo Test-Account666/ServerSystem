@@ -9,23 +9,23 @@ import kotlin.math.max
 
 
 object DurationParser {
-    private const val _SECONDS_IN_MINUTE: Long = 60
-    private const val _SECONDS_IN_HOUR: Long = 3600
-    private const val _SECONDS_IN_DAY: Long = 86400
-    private const val _SECONDS_IN_WEEK: Long = 604800
-    private const val _SECONDS_IN_MONTH: Long = 2419200
-    private const val _SECONDS_IN_YEAR: Long = 31536000
+    private const val _SECONDS_IN_MINUTE = 60L
+    private const val _SECONDS_IN_HOUR = 3600L
+    private const val _SECONDS_IN_DAY = 86400L
+    private const val _SECONDS_IN_WEEK = 604800L
+    private const val _SECONDS_IN_MONTH = 2419200L
+    private const val _SECONDS_IN_YEAR = 31536000L
 
     @JvmStatic
     fun parseDate(durationMillis: Long, user: OfflineUser): String {
         if (durationMillis == -1L) {
-            val permanentOptional = MappingsData.moderation(user).getName("permanent")
-            if (permanentOptional.isEmpty) {
+            val permanent = MappingsData.moderation(user).getName("permanent")
+            if (permanent == null) {
                 log.warning("Permanent name could not be found! This should not happen!")
                 return "Never"
             }
 
-            return permanentOptional.get()
+            return permanent
         }
 
 

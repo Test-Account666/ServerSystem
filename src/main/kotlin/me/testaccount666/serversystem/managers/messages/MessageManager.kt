@@ -9,8 +9,6 @@ import me.testaccount666.serversystem.utils.ChatColor
 import me.testaccount666.serversystem.utils.ComponentColor
 import net.kyori.adventure.text.Component
 import java.io.FileNotFoundException
-import java.util.*
-import java.util.function.Supplier
 import java.util.logging.Level
 
 object MessageManager {
@@ -23,19 +21,19 @@ object MessageManager {
     lateinit var placeholderManager: PlaceholderManager
 
     @JvmStatic
-    var defaultLanguage: String? = null
+    lateinit var defaultLanguage: String
 
     @JvmStatic
     fun initialize() {
         placeholderManager = PlaceholderManager()
         languageLoader = LanguageLoader()
-        defaultLanguage = ServerSystem.instance.registry.getService<ConfigurationManager>().generalConfig!!
-            .getString("Language.DefaultLanguage", FALLBACK_LANGUAGE)
+        defaultLanguage = ServerSystem.instance.registry.getService<ConfigurationManager>().generalConfig
+            .getString("Language.DefaultLanguage", FALLBACK_LANGUAGE)!!
 
-        val messageOptional = languageLoader.getMessageReader(defaultLanguage!!)
-        val mappingsOptional = languageLoader.getMappingReader(defaultLanguage!!)
+        val message = languageLoader.getMessageReader(defaultLanguage)
+        val mappings = languageLoader.getMappingReader(defaultLanguage)
 
-        if (messageOptional.isPresent && mappingsOptional.isPresent) return
+        if (message != null && mappings != null) return
         ServerSystem.log.warning("Could not load default language '${defaultLanguage}'! Falling back to '${FALLBACK_LANGUAGE}'...")
         ServerSystem.log.warning("Make sure you have a 'messages.yml' AND 'mappings.yml' file in your language folder!")
         defaultLanguage = FALLBACK_LANGUAGE
@@ -46,7 +44,7 @@ object MessageManager {
         var message = message ?: return ""
 
         if (addPrefix) {
-            val prefix = getMessage(commandSender, "General.Prefix").orElse("")
+            val prefix = getMessage(commandSender, "General.Prefix") ?: ""
             message = prefix + message
         }
 
@@ -74,7 +72,7 @@ object MessageManager {
         var message = message ?: return Component.empty()
 
         if (addPrefix) {
-            val prefix = getMessage(commandSender, "General.Prefix").orElse("")
+            val prefix = getMessage(commandSender, "General.Prefix") ?: ""
             message = prefix + message
         }
 
@@ -87,10 +85,10 @@ object MessageManager {
      *
      * @param user        The user to get the message for
      * @param messagePath The path to the message in the messages file
-     * @return An Optional containing the message, or empty if not found
+     * @return The message, or null if not found
      */
     @JvmStatic
-    fun getMessage(user: User, messagePath: String): Optional<String> {
+    fun getMessage(user: User, messagePath: String): String? {
         val language = user.playerLanguage
 
         return getMessage(user, messagePath, language)
@@ -101,9 +99,10 @@ object MessageManager {
      *
      * @param user        The user to get the message for
      * @param messagePath The path to the message in the messages file
-     * @return An Optional containing the message, or empty if not found
+     * @param language    The language to get the message for
+     * @return The message, or null if not found
      */
-    fun getMessage(user: User, messagePath: String, language: String): Optional<String> {
+    fun getMessage(user: User, messagePath: String, language: String): String? {
         var messagePath = messagePath
         messagePath = "Messages.${messagePath}"
 
@@ -113,17 +112,17 @@ object MessageManager {
             reader = getConfigReader(language)
         } catch (exception: FileNotFoundException) {
             ServerSystem.log.log(Level.WARNING, "Failed to load messages for language '${language}': ${exception.message}", exception)
-            reader = getConfigReader(defaultLanguage!!)
+            reader = getConfigReader(defaultLanguage)
         }
 
         val message = reader.getString(messagePath, null)
 
         if (message == null) {
             ServerSystem.log.warning("Message '${messagePath}' not found for language ${language}!")
-            return Optional.empty<String?>()
+            return null
         }
 
-        return Optional.of<String?>(message)
+        return message
     }
 
     /**
@@ -134,7 +133,8 @@ object MessageManager {
      * @throws FileNotFoundException If the messages file couldn't be found
      */
     private fun getConfigReader(language: String): ConfigReader {
-        val readerOptional = languageLoader.getMessageReader(language)
-        return readerOptional.orElseGet(Supplier { languageLoader.getMessageReader(defaultLanguage!!).get() })
+        return languageLoader.getMessageReader(language)
+            ?: languageLoader.getMessageReader(defaultLanguage)
+            ?: throw FileNotFoundException("Could not find messages file for language $language or default language $defaultLanguage")
     }
 }

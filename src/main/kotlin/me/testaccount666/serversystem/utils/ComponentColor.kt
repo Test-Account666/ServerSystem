@@ -25,7 +25,7 @@ class ComponentColor private constructor() {
      */
     private class FormatState {
         var currentColor: TextColor? = null
-        var activeDecorations: ArrayList<TextDecoration> = ArrayList()
+        var activeDecorations = ArrayList<TextDecoration>()
 
         fun resetFormatting() {
             currentColor = null
@@ -37,27 +37,27 @@ class ComponentColor private constructor() {
         /**
          * Logger for error reporting.
          */
-        private val _LOGGER: Logger = Logger.getLogger(ComponentColor::class.java.name)
+        private val _LOGGER = Logger.getLogger(ComponentColor::class.java.name)
 
         /**
          * Map of legacy color codes to NamedTextColor
          */
-        private val _COLOR_MAP: MutableMap<Char, NamedTextColor> = HashMap()
+        private val _COLOR_MAP = HashMap<Char, NamedTextColor>()
 
         /**
          * Map of legacy formatting codes to TextDecoration
          */
-        private val _DECORATION_MAP: MutableMap<Char, TextDecoration> = HashMap()
+        private val _DECORATION_MAP = HashMap<Char, TextDecoration>()
 
         /**
          * Reverse map of NamedTextColor to legacy color codes
          */
-        private val _REVERSE_COLOR_MAP: MutableMap<NamedTextColor, Char> = HashMap()
+        private val _REVERSE_COLOR_MAP = HashMap<NamedTextColor, Char>()
 
         /**
          * Reverse map of TextDecoration to legacy formatting codes
          */
-        private val _REVERSE_DECORATION_MAP: MutableMap<TextDecoration, Char> = HashMap()
+        private val _REVERSE_DECORATION_MAP = HashMap<TextDecoration, Char>()
 
         init {
             _COLOR_MAP['0'] = NamedTextColor.BLACK
@@ -96,7 +96,7 @@ class ComponentColor private constructor() {
          * @return The translated text as a Component
          */
         @JvmStatic
-        fun translateToComponent(text: String?): Component = translateAlternateColorCodesToComponent('&', text)
+        fun translateToComponent(text: String?) = translateAlternateColorCodesToComponent('&', text)
 
         /**
          * Translates a string with alternate color codes to a Component.
@@ -149,7 +149,7 @@ class ComponentColor private constructor() {
             if (text.isNullOrEmpty()) return Component.empty()
             if (!text.contains(altColorChar.toString())) return Component.text(text)
 
-            val textParts: Array<String> = text.split(altColorChar.toString().toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            val textParts = text.split(altColorChar.toString().toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             val componentBuilder = Component.text()
 
             // Handle the first part (before any color codes)
@@ -161,7 +161,7 @@ class ComponentColor private constructor() {
             val formatState = FormatState()
 
             for (index in 1..<textParts.size) {
-                val partComponent: Component = processTextPart(altColorChar, textParts[index], formatState)
+                val partComponent = processTextPart(altColorChar, textParts[index], formatState)
                 componentBuilder.append(partComponent)
             }
 
@@ -208,7 +208,7 @@ class ComponentColor private constructor() {
                 formatState.currentColor = TextColor.fromHexString(hexCode)
                 formatState.activeDecorations.clear()
                 return coloredHex(remainingText, hexCode)
-            } catch (ignored: IllegalArgumentException) {
+            } catch (_: IllegalArgumentException) {
                 return Component.text(altColorChar.toString() + textPart)
             }
         }
@@ -236,7 +236,7 @@ class ComponentColor private constructor() {
          * @return A component with the decoration applied
          */
         private fun processDecorationCode(decorationCode: Char, textPart: String, formatState: FormatState): Component {
-            val decoration: TextDecoration = _DECORATION_MAP[decorationCode]!!
+            val decoration = _DECORATION_MAP[decorationCode]!!
             formatState.activeDecorations.add(decoration)
 
             var component = Component.text(textPart.substring(1)).decoration(decoration, true)
@@ -258,11 +258,10 @@ class ComponentColor private constructor() {
         private fun processResetCode(textPart: String, formatState: FormatState): Component {
             var component = Component.text(textPart.substring(1))
 
-            for (decoration in _DECORATION_MAP.values) component = component.decoration(decoration, false)
+            _DECORATION_MAP.values.forEach { component = component.decoration(it, false) }
             component = component.color(NamedTextColor.WHITE)
 
             formatState.resetFormatting()
-
             return component
         }
 
@@ -297,7 +296,7 @@ class ComponentColor private constructor() {
 
             val color = component.color()
             if (color != null) if (color is NamedTextColor) {
-                val colorCode: Char? = _REVERSE_COLOR_MAP[color]
+                val colorCode = _REVERSE_COLOR_MAP[color]
                 if (colorCode != null) builder.append(altColorChar).append(colorCode)
                 else {
                     val hexString = color.asHexString().uppercase(Locale.getDefault())
@@ -309,7 +308,7 @@ class ComponentColor private constructor() {
             }
 
             for (decoration in TextDecoration.entries) if (component.decoration(decoration) == TextDecoration.State.TRUE) {
-                val decorationCode: Char? = _REVERSE_DECORATION_MAP[decoration]
+                val decorationCode = _REVERSE_DECORATION_MAP[decoration]
                 if (decorationCode != null) builder.append(altColorChar).append(decorationCode)
             }
 

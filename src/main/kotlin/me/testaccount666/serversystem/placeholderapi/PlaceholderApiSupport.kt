@@ -15,26 +15,23 @@ class PlaceholderApiSupport private constructor() {
                 try {
                     Class.forName("me.clip.placeholderapi.PlaceholderAPI")
                     return true
-                } catch (throwable: Throwable) {
+                } catch (_: Throwable) {
                     return false
                 }
             }
 
         fun registerPlaceholders() {
             if (!isPlaceholderApiInstalled) return
-
-            if (_Wrapper != null) unregisterPlaceholders()
+            unregisterPlaceholders()
 
             _Wrapper = PlaceholderExpansionWrapper()
-            _Wrapper!!.register()
+            _Wrapper?.register()
         }
 
         fun unregisterPlaceholders() {
             if (!isPlaceholderApiInstalled) return
 
-            if (_Wrapper == null) return
-
-            _Wrapper!!.unregister()
+            _Wrapper?.unregister()
             _Wrapper = null
         }
     }

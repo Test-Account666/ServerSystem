@@ -37,20 +37,20 @@ enum class ChatColor {
      * The underlying Bukkit ChatColor.
      */
     @JvmField
-    val _chatColor: ChatColor = ChatColor.valueOf(name)
+    val _chatColor = ChatColor.valueOf(name)
 
     /**
      * Returns the string representation of this color.
      * 
      * @return The color code as a string
      */
-    override fun toString(): String = _chatColor.toString()
+    override fun toString() = _chatColor.toString()
 
     companion object {
         /**
          * The character used to indicate a color code in Minecraft chat.
          */
-        const val COLOR_CHAR: Char = '§'
+        const val COLOR_CHAR = '§'
 
         /**
          * Pattern to match hex color codes.
@@ -66,7 +66,7 @@ enum class ChatColor {
         /**
          * Logger for error reporting.
          */
-        private val _LOGGER: Logger = Logger.getLogger(me.testaccount666.serversystem.utils.ChatColor::class.java.name)
+        private val _LOGGER = Logger.getLogger(me.testaccount666.serversystem.utils.ChatColor::class.java.name)
 
         /**
          * Translates alternate color codes in a string to the internal Minecraft color code format.
@@ -76,7 +76,7 @@ enum class ChatColor {
          * @return The translated text with proper Minecraft color codes
          */
         @JvmStatic
-        fun translateColor(text: String): String = translateAlternateColorCodes('&', text)
+        fun translateColor(text: String) = translateAlternateColorCodes('&', text)
 
         /**
          * Translates alternate color codes in a string to the internal Minecraft color code format.
