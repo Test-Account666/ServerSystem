@@ -281,6 +281,7 @@ Messages:
       Set:
         Success: "The warp <Color:Highlight><WARP> <Color:Message>was set to your current location."
         WarpAlreadyExists: "<Color:Error.Message>Specified warp <Color:Error.Highlight><WARP> <Color:Error.Message>already exists."
+        InvalidName: "<Color:Error.Message>The specified name is not alphanumeric."
       Delete:
         Success: "The warp <Color:Highlight><WARP> <Color:Message>was deleted."
       WarpNotFound: "<Color:Error.Message>Specified warp <Color:Error.Highlight><WARP> <Color:Error.Message>doesn't exist."
@@ -335,6 +336,7 @@ Messages:
       Reload:
         Success: "ServerSystem was reloaded."
       Migrate:
+        NotFound: "<Color:Error.Message>Migrator <Color:Error.Highlight><MIGRATOR> <Color:Error.Message>not found! Is plugin installed?"
         Success:
           From: "Migrated data from <Color:Highlight><MIGRATOR> <Color:Message>to <Color:Highlight>ServerSystem. <Color:Message>Please see logs for more information."
           To: "Migrated data from <Color:Highlight>ServerSystem <Color:Message>to <Color:Highlight><MIGRATOR>. <Color:Message>Please see logs for more information."

@@ -4,6 +4,8 @@ libs/
 libs/*
 work/
 work/*
+git.properties
+.paper-nms/*
 
 *.iml
 *.ipr
