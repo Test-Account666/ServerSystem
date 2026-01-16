@@ -281,6 +281,7 @@ Messages:
       Set:
         Success: "Warp <Color:Highlight><WARP> <Color:Message>je bil nastavljen na tvojo trenutno lokacijo."
         WarpAlreadyExists: "<Color:Error.Message>Navedeni warp <Color:Error.Highlight><WARP> <Color:Error.Message>že obstaja."
+        InvalidName: "<Color:Error.Message>Navedeno ime ni alfanumerično."
       Delete:
         Success: "Warp <Color:Highlight><WARP> <Color:Message>je bil izbrisan."
       WarpNotFound: "<Color:Error.Message>Navedeni warp <Color:Error.Highlight><WARP> <Color:Error.Message>ne obstaja."

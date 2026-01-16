@@ -281,6 +281,7 @@ Messages:
       Set:
         Success: "Der Warp <Color:Highlight><WARP> <Color:Message>wurde auf deine aktuelle Position gesetzt."
         WarpAlreadyExists: "<Color:Error.Message>Der angegebene Warp <Color:Error.Highlight><WARP> <Color:Error.Message>existiert bereits."
+        InvalidName: "<Color:Error.Message>Der angegebene Name ist nicht alphanumerisch."
       Delete:
         Success: "Der Warp <Color:Highlight><WARP> <Color:Message>wurde gelöscht."
       WarpNotFound: "<Color:Error.Message>Der angegebene Warp <Color:Error.Highlight><WARP> <Color:Error.Message>existiert nicht."
