@@ -21,6 +21,7 @@ import org.bukkit.configuration.file.YamlConfiguration
 import java.io.*
 import java.math.BigInteger
 import java.util.*
+import java.util.Locale.getDefault
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 
@@ -182,7 +183,7 @@ open class OfflineUser(val userFile: File) {
         PersistenceManager.loadFields(this, userConfig)
         // Quick fix that blocks potentially wanted behavior, but eh...
         if (playerLanguage.equals(System.getProperty("user.language"), ignoreCase = true)) playerLanguage = MessageManager.defaultLanguage
-        playerLanguage = playerLanguage.lowercase(Locale.getDefault())
+        playerLanguage = playerLanguage.lowercase(getDefault())
 
         if (name == null) name = player?.name
 
@@ -248,11 +249,11 @@ open class OfflineUser(val userFile: File) {
      *
      * @return The name of this user, or null if the name is not available
      */
-    open fun getNameOrNull(): String? = name
+    open fun getNameOrNull() = name
 
-    open fun getNameSafe(): String = getNameOrNull() ?: "???"
+    open fun getNameSafe() = getNameOrNull() ?: "???"
 
-    fun isIgnoredPlayer(uuid: UUID?): Boolean = uuid in ignoredPlayers
+    fun isIgnoredPlayer(uuid: UUID?) = uuid in ignoredPlayers
 
     fun addIgnoredPlayer(uuid: UUID) = ignoredPlayers.add(uuid)
 

@@ -65,7 +65,7 @@ class UserManager {
     fun getUserOrNull(uuid: UUID, forceOnlineUser: Boolean): CachedUser? {
         if (!forceOnlineUser && uuid == ConsoleUser.CONSOLE_UUID) return CachedUser(consoleUser)
 
-        val foundUser = _userUuidMap[uuid];
+        val foundUser = _userUuidMap[uuid]
 
         if (foundUser != null) {
             val cachedUser: CachedUser = foundUser
@@ -105,7 +105,7 @@ class UserManager {
      * @return The cached user or null if the user doesn't exist
      */
     fun getUserOrNull(name: String, forceOnlineUser: Boolean): CachedUser? {
-        val foundUser = _userMap[name];
+        val foundUser = _userMap[name]
 
         if (foundUser != null) {
             val cachedUser: CachedUser = foundUser

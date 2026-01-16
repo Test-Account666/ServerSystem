@@ -27,32 +27,28 @@ class TabCompleterAdminHome : ServerSystemTabCompleter {
     }
 
     private fun handleSetHomeCommand(commandSender: User, vararg arguments: String): List<String>? {
-        if (!hasCommandPermission(commandSender, "AdminSetHome.Use", false)) return null
+        if (!hasCommandPermission(commandSender, "AdminHome.Set", false)) return null
         if (arguments.size <= 1) return null
 
         return mutableListOf()
     }
 
     private fun handleDeleteHomeCommand(commandSender: User, vararg arguments: String): List<String>? {
-        if (!hasCommandPermission(commandSender, "AdminDeleteHome.Use", false)) return null
+        if (!hasCommandPermission(commandSender, "AdminHome.Delete", false)) return null
         if (arguments.size <= 1) return null
 
         return handleHomeCompletion(*arguments)
     }
 
     private fun handleHomeCompletion(vararg arguments: String): List<String> {
-        if (arguments.size != 2) return mutableListOf()
+        if (arguments.size != 2) return listOf()
 
-        val targetCachedUser = instance.registry.getService<UserManager>().getUserOrNull(arguments[0]) ?: return mutableListOf()
+        val targetCachedUser = instance.registry.getService<UserManager>().getUserOrNull(arguments[0]) ?: return listOf()
         val targetUser = targetCachedUser.offlineUser
 
         val homeManager = targetUser.homeManager
 
-        val potentialCompletions = homeManager.homes.map(Home::displayName).toList()
-        val foundCompletions = potentialCompletions
-            .filter { completion -> completion.startsWith(arguments[1], true) }
-            .toList()
-
-        return foundCompletions
+        val potentialCompletions = homeManager.homes.map(Home::displayName)
+        return potentialCompletions.filter { it.startsWith(arguments[1], true) }
     }
 }

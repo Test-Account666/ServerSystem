@@ -21,7 +21,7 @@ import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import java.io.IOException
 import java.math.BigDecimal
-import java.util.*
+import java.util.Locale.getDefault
 import java.util.logging.Level
 
 @ServerSystemCommand("signcost", [], TabCompleterSignCost::class)
@@ -42,7 +42,7 @@ class CommandSignCost : AbstractServerSystemCommand() {
             return
         }
 
-        val costTypeStr = arguments[0].lowercase(Locale.getDefault())
+        val costTypeStr = arguments[0].lowercase(getDefault())
         if (!_COST_TYPES.contains(costTypeStr)) {
             sign("Cost.InvalidType", commandSender) {
                 postModifier { it.replace("<TYPES>", _COST_TYPES.joinToString { ", " }) }
@@ -52,7 +52,7 @@ class CommandSignCost : AbstractServerSystemCommand() {
 
         val costType: CostType?
         try {
-            costType = CostType.valueOf(costTypeStr.uppercase(Locale.getDefault()))
+            costType = CostType.valueOf(costTypeStr.uppercase(getDefault()))
         } catch (_: IllegalArgumentException) {
             sign("Cost.InvalidType", commandSender) {
                 postModifier { it.replace("<TYPES>", _COST_TYPES.joinToString { ", " }) }
@@ -85,7 +85,7 @@ class CommandSignCost : AbstractServerSystemCommand() {
 
         val targetBlock = player.getTargetBlock(null, _MAX_DISTANCE)
         if (targetBlock.state !is Sign) {
-            command("ClickableSigns.Cost.NotLookingAtSign", commandSender).build()
+            sign("Cost.NotLookingAtSign", commandSender).build()
             return
         }
         val sign = targetBlock.state as Sign
@@ -135,7 +135,7 @@ class CommandSignCost : AbstractServerSystemCommand() {
         }.build()
     }
 
-    override fun getSyntaxPath(command: Command?): String = "SignCost"
+    override fun getSyntaxPath(command: Command?) = "SignCost"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "SignCost.Use", false)

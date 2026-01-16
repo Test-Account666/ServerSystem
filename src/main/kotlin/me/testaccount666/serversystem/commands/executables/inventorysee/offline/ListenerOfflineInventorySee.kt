@@ -19,7 +19,7 @@ class ListenerOfflineInventorySee : AbstractInventorySeeListener(), Listener {
      * @param commands Set of available commands
      * @return true if the listener can be registered, false otherwise
      */
-    fun canRegister(commands: Set<ServerSystemCommandExecutor>): Boolean = internalCanRegister(commands)
+    fun canRegister(commands: Set<ServerSystemCommandExecutor>) = internalCanRegister(commands)
 
     override fun additionalRegistrationChecks(): Boolean = _commandInventorySee.offlineInventorySee.inventoryLoader != null
 
@@ -37,9 +37,9 @@ class ListenerOfflineInventorySee : AbstractInventorySeeListener(), Listener {
         inventoryMap.removeByKey(uuid)
         inventoryLoader.saveOfflineInventory(uuid, inventory)
 
-        InventorySeeUtils.handleInventoryViewers(
-            inventory, player, 10L
-        ) { user, playerName -> _commandInventorySee.processInventorySee(user, "", playerName) }
+        InventorySeeUtils.handleInventoryViewers(inventory, player, 10L) { user, playerName ->
+            _commandInventorySee.processInventorySee(user, "", playerName)
+        }
     }
 
     @EventHandler

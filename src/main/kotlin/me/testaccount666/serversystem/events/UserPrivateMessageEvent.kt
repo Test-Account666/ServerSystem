@@ -25,6 +25,7 @@ class UserPrivateMessageEvent(val sender: User, val message: String, vararg reci
 
 
     companion object {
+        @JvmStatic // Important!
         val handlerList: HandlerList = HandlerList()
     }
 }

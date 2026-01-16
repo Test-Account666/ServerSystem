@@ -36,7 +36,7 @@ object PersistenceManager {
         registerHandler(String::class.java, PrimitiveFieldHandler(String::class.java))
         registerHandler(Location::class.java, LocationFieldHandler())
         @Suppress("UNCHECKED_CAST")
-        registerHandler(Set::class.java, UuidSetFieldHandler() as FieldHandler<Set<*>>)
+        registerHandler(HashSet::class.java, UuidSetFieldHandler() as FieldHandler<HashSet<*>>)
         @Suppress("UNCHECKED_CAST")
         registerHandler(Map::class.java, KitMapFieldHandler() as FieldHandler<Map<*, *>>)
         registerHandler(VanishData::class.java, VanishDataFieldHandler())

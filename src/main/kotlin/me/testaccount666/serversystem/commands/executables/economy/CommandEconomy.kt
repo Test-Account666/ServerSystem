@@ -11,7 +11,7 @@ import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
 import java.math.BigDecimal
-import java.util.*
+import java.util.Locale.getDefault
 
 @ServerSystemCommand("economy", [], TabCompleterEconomy::class)
 class CommandEconomy : AbstractServerSystemCommand() {
@@ -40,7 +40,7 @@ class CommandEconomy : AbstractServerSystemCommand() {
             return
         }
 
-        val economyOperation = arguments[0].lowercase(Locale.getDefault())
+        val economyOperation = arguments[0].lowercase(getDefault())
 
         when (economyOperation) {
             "set" -> handleSetEconomy(commandSender, targetUser, amount)
@@ -90,7 +90,7 @@ class CommandEconomy : AbstractServerSystemCommand() {
         }.build()
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Economy"
+    override fun getSyntaxPath(command: Command?) = "Economy"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "Economy.Use", false)

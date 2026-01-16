@@ -4,7 +4,7 @@ import me.testaccount666.serversystem.ServerSystem
 import me.testaccount666.serversystem.commands.executables.back.CommandBack
 import me.testaccount666.serversystem.managers.config.ConfigReader
 import me.testaccount666.serversystem.userdata.OfflineUser
-import java.util.*
+import java.util.Locale.getDefault
 import java.util.function.Function
 
 class MappingsData {
@@ -23,7 +23,7 @@ class MappingsData {
 
         init {
             for (backType in CommandBack.BackType.entries.toTypedArray()) {
-                val backTypeName = config.getString("Mappings.BackType.${backType.name.lowercase(Locale.getDefault())}", null)
+                val backTypeName = config.getString("Mappings.BackType.${backType.name.lowercase(getDefault())}", null)
 
                 if (backTypeName == null) {
                     ServerSystem.log.warning("BackType mapping for '${backType.name}' is not defined in the config!")
@@ -40,7 +40,7 @@ class MappingsData {
     class GameMode {
         constructor(config: ConfigReader) {
             for (gameMode in org.bukkit.GameMode.entries.toTypedArray()) {
-                val gameModeName = config.getString("Mappings.GameMode.${gameMode.name.lowercase(Locale.getDefault())}")
+                val gameModeName = config.getString("Mappings.GameMode.${gameMode.name.lowercase(getDefault())}")
 
                 if (gameModeName == null) {
                     ServerSystem.log.warning("GameMode mapping for '${gameMode.name}' is not defined in the config!")

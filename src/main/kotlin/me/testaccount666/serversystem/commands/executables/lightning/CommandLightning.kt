@@ -15,11 +15,12 @@ class CommandLightning : AbstractServerSystemCommand() {
         if (!checkBasePermission(commandSender, "Lightning.Use")) return
         if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-        if (targetUser == null) {
+        var targetUser = getTargetUser(commandSender, arguments = arguments)
+        val firstArgument = if (arguments.isEmpty()) "" else arguments[0]
+        if (targetUser == null && !firstArgument.startsWith("-")) {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
-        }
+        } else if (targetUser == null) targetUser = commandSender
 
         val targetPlayer = targetUser.getPlayer()!!
         val isSelf = targetUser === commandSender
@@ -30,16 +31,16 @@ class CommandLightning : AbstractServerSystemCommand() {
             return
         }
 
-        val effectOnly = arguments.size > 1 && "visual".startsWith(arguments[1], true)
+        val effectOnly = arguments.any { it.equals("-v", true) || it.equals("--visual", true) }
 
         if (effectOnly) block.world.strikeLightningEffect(block.location)
         else block.world.strikeLightning(block.location)
 
-        if (isSelf) general("Lightning.Success", commandSender).build()
-        else general("Lightning.TargetSuccess", commandSender) { target(targetPlayer.name) }.build()
+        if (isSelf) command("Lightning.Success", commandSender).build()
+        else command("Lightning.TargetSuccess", commandSender) { target(targetPlayer.name) }.build()
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Lightning"
+    override fun getSyntaxPath(command: Command?) = "Lightning"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "Lightning.Use", false)

@@ -82,7 +82,7 @@ class ConfiguratorGiveSign : AbstractSignConfigurator(), Listener {
         _CONFIGURATORS.removeByValue(sign)
 
         val front = sign.getSide(Side.FRONT)
-        front.line(0, translateToComponent(SignType.GIVE.signName()))
+        front.line(0, translateToComponent(SignType.GIVE.signName))
         front.line(1, translateToComponent("&2${itemToGive.type.name}"))
         val back = sign.getSide(Side.BACK)
         for (index in 0..3) back.line(index, front.line(index))

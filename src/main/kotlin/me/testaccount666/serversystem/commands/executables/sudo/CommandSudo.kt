@@ -108,7 +108,7 @@ class CommandSudo : AbstractServerSystemCommand() {
         val sudoArguments = arguments.drop(2).toTypedArray()
 
         val commandManager = instance.registry.getService(CommandManager::class.java)
-        val foundCommand = commandManager.getCommand(sudoCommand.substring(1))
+        val foundCommand = commandManager.getCommand(sudoCommand.drop(1))
         if (foundCommand == null) {
             val tempArgumentList = ArrayList<String>()
             tempArgumentList.add(sudoCommand)
@@ -120,7 +120,7 @@ class CommandSudo : AbstractServerSystemCommand() {
             return
         }
 
-        foundCommand.execute(hookedTargetPlayer, sudoCommand.substring(1), sudoArguments)
+        foundCommand.execute(hookedTargetPlayer, sudoCommand.drop(1), sudoArguments)
         targetUser.removeMessageListener(cachedSender)
     }
 
@@ -168,7 +168,7 @@ class CommandSudo : AbstractServerSystemCommand() {
         return targetPlayer
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Sudo"
+    override fun getSyntaxPath(command: Command?) = "Sudo"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "Sudo.Use", false)

@@ -68,7 +68,7 @@ class CommandWarp : AbstractServerSystemCommand() {
 
         val registry = instance.registry
         val warpManager = registry.getService<WarpManager>()
-        val warpName: String = arguments[0]
+        val warpName = arguments[0]
         val warpLocation = commandSender.getPlayer()!!.location
 
         val existingWarp = warpManager.getWarpByName(warpName)
@@ -80,10 +80,16 @@ class CommandWarp : AbstractServerSystemCommand() {
             return
         }
 
-        val warp = warpManager.addWarp(warpName, warpLocation)
-        command("Warp.Set.Success", commandSender) {
-            postModifier { it.replace("<WARP>", warp.displayName) }
-        }.build()
+        try {
+            val warp = warpManager.addWarp(warpName, warpLocation)
+            command("Warp.Set.Success", commandSender) {
+                postModifier { it.replace("<WARP>", warp.displayName) }
+            }.build()
+        } catch (_: IllegalArgumentException) {
+            command("Warp.Set.InvalidName", commandSender) {
+                postModifier { it.replace("<WARP>", arguments[0]) }
+            }.build()
+        }
     }
 
     private fun handleDeleteWarpCommand(commandSender: User, vararg arguments: String) {
@@ -117,7 +123,7 @@ class CommandWarp : AbstractServerSystemCommand() {
         location.world.spawnParticle(Particle.PORTAL, location, 100, 0.5, 0.5, 0.5, 0.05)
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Warp"
+    override fun getSyntaxPath(command: Command?) = "Warp"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         val permissionPath = when (command.name.lowercase(getDefault())) {

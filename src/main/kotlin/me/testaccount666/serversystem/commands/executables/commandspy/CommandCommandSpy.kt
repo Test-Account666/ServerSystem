@@ -41,7 +41,7 @@ class CommandCommandSpy : AbstractServerSystemCommand() {
         command("CommandSpy.Success" + (if (isEnabled) "Enabled" else "Disabled"), targetUser).build()
     }
 
-    override fun getSyntaxPath(command: Command?): String = "CommandSpy"
+    override fun getSyntaxPath(command: Command?) = "CommandSpy"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "CommandSpy.Use", false)

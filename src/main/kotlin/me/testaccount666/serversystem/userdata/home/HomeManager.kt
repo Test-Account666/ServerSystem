@@ -8,7 +8,6 @@ import me.testaccount666.serversystem.userdata.User
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.configuration.file.FileConfiguration
-import java.util.*
 
 /**
  * Manages homes for a specific user.
@@ -115,7 +114,7 @@ class HomeManager(private val _owner: OfflineUser, private val _config: FileConf
 
             for (effectivePermission in _owner.getPlayer()!!.effectivePermissions) {
                 val permission = effectivePermission.permission
-                if (!permission.lowercase(Locale.getDefault()).startsWith(permissionPattern.lowercase(Locale.getDefault()))) continue
+                if (!permission.startsWith(permissionPattern, true)) continue
 
                 try {
                     val parsed = permission.substring(permissionPattern.length).toInt()

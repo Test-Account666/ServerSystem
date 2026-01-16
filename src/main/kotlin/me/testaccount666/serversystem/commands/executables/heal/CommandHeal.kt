@@ -10,7 +10,7 @@ import org.bukkit.attribute.Attribute
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffectType
-import java.util.*
+import java.util.Locale.getDefault
 
 @ServerSystemCommand("heal", ["feed"])
 class CommandHeal : AbstractServerSystemCommand() {
@@ -95,7 +95,7 @@ class CommandHeal : AbstractServerSystemCommand() {
     override fun getSyntaxPath(command: Command?): String {
         if (command == null) error("(CommandHeal;SyntaxPath) Command is null")
 
-        return when (val commandName = command.name.lowercase(Locale.getDefault())) {
+        return when (val commandName = command.name.lowercase(getDefault())) {
             "heal" -> "Heal"
             "feed" -> "Feed"
             else -> error("(CommandHeal;SyntaxPath) Unexpected value: ${commandName}")

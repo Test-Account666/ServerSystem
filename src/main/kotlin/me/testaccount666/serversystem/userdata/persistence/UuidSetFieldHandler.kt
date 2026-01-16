@@ -8,8 +8,8 @@ import java.util.stream.Collectors
  * A field handler for sets of UUIDs.
  * This handler saves UUIDs as strings and loads them back as UUIDs.
  */
-class UuidSetFieldHandler : FieldHandler<Set<UUID>> {
-    override fun save(config: FileConfiguration, path: String, value: Set<UUID>?) {
+class UuidSetFieldHandler : FieldHandler<HashSet<UUID>> {
+    override fun save(config: FileConfiguration, path: String, value: HashSet<UUID>?) {
         if (value.isNullOrEmpty()) {
             config.set(path, null)
             return
@@ -20,12 +20,12 @@ class UuidSetFieldHandler : FieldHandler<Set<UUID>> {
         config.set(path, uuidStrings)
     }
 
-    override fun load(config: FileConfiguration, path: String, defaultValue: Set<UUID>?): Set<UUID>? {
+    override fun load(config: FileConfiguration, path: String, defaultValue: HashSet<UUID>?): HashSet<UUID> {
         if (!config.isSet(path)) return defaultValue ?: HashSet()
 
         val uuidStrings = config.getStringList(path)
         if (uuidStrings.isEmpty()) return defaultValue ?: HashSet()
 
-        return uuidStrings.stream().map<UUID> { name -> UUID.fromString(name) }.collect(Collectors.toSet())
+        return uuidStrings.map { UUID.fromString(it) }.toHashSet()
     }
 }

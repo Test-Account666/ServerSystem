@@ -18,7 +18,7 @@ object FileUtils {
             return
         }
 
-        val filesList = file.listFiles() ?: arrayOf();
+        val filesList = file.listFiles() ?: arrayOf()
 
         filesList.forEach {
             if (it.isDirectory) deleteDirectory(it)
@@ -55,7 +55,7 @@ object FileUtils {
         if (!destination.exists()) if (!destination.mkdirs()) throw IOException("Could not copy file: ${source.absolutePath}\nTo: ${destination.absolutePath}")
         else if (!destination.isDirectory) throw NotDirectoryException("Destination is not a directory!")
 
-        val filesList = source.listFiles() ?: arrayOf<File>();
+        val filesList = source.listFiles() ?: arrayOf<File>()
         for (file in filesList) if (file.isDirectory) copyDirectory(file, File(destination, file.name))
         else copyFile(file, File(destination, file.name))
     }

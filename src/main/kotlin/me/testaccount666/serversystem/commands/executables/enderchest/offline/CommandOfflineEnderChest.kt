@@ -81,7 +81,7 @@ class CommandOfflineEnderChest : AbstractServerSystemCommand {
         commandSender.getPlayer()!!.openInventory(inventory)
     }
 
-    override fun getSyntaxPath(command: Command?): String = "OfflineEnderChest"
+    override fun getSyntaxPath(command: Command?) = "OfflineEnderChest"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "OfflineEnderChest.Use", false)

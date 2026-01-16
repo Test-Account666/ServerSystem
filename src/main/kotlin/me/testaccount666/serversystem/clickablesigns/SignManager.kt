@@ -7,7 +7,7 @@ import java.io.File
 import java.nio.file.Path
 
 class SignManager {
-    private val _signTypes: MutableMap<Location, SignType> = HashMap()
+    private val _signTypes = HashMap<Location, SignType>()
     private val _signDirectory: File = Path.of("plugins", "ServerSystem", "data", "signs").toFile()
 
     fun addSignType(location: Location, signType: SignType) {
@@ -34,10 +34,10 @@ class SignManager {
             val locationSplit = locationString.split("_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             if (locationSplit.size != 4) continue
 
-            val worldName: String = locationSplit[0]
-            val xString: String = locationSplit[1]
-            val yString: String = locationSplit[2]
-            val zString: String = locationSplit[3]
+            val worldName = locationSplit[0]
+            val xString = locationSplit[1]
+            val yString = locationSplit[2]
+            val zString = locationSplit[3]
 
             val world = Bukkit.getWorld(worldName) ?: continue
             val x = xString.toInt()

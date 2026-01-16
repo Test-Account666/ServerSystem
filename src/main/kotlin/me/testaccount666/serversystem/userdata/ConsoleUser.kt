@@ -23,8 +23,8 @@ open class ConsoleUser internal constructor() : User(UserManager.USER_DATA_PATH.
     override fun loadBasicData() {
         playerLanguage = MessageManager.defaultLanguage
 
-        val consoleName = MappingsData.console(this).getName("name")
-        name = consoleName ?: "Server"
+        val consoleName = MappingsData.console(this).getName("name") ?: "Server"
+        name = consoleName
         uuid = CONSOLE_UUID
         bankAccount = ConsoleBankAccount()
         isAcceptsMessages = true
@@ -35,6 +35,8 @@ open class ConsoleUser internal constructor() : User(UserManager.USER_DATA_PATH.
     }
 
     override fun getNameOrNull() = name ?: "Server"
+    override fun getNameSafe() = getNameOrNull()
+    override fun getPlayer(): Player? = null
 
     companion object {
         // 00000000-0000-0000-0000-000000000000 is never a player, so let's just use that for the console

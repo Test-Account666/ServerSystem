@@ -22,12 +22,12 @@ class CommandTeamChat : AbstractServerSystemCommand() {
             return
         }
 
-        val message = arguments.joinToString { " " }.trim { it <= ' ' }
+        val message = arguments.joinToString(" ").trim { it <= ' ' }
         val format = command("TeamChat.Format", commandSender) {
             send(false)
             prefix(false)
             blankError(true)
-            postModifier { format -> format.replace("<MESSAGE>", message) }
+            postModifier { it.replace("<MESSAGE>", message) }
         }.build()
         if (format.isEmpty()) return
 
@@ -37,7 +37,7 @@ class CommandTeamChat : AbstractServerSystemCommand() {
         }
     }
 
-    override fun getSyntaxPath(command: Command?): String = "TeamChat"
+    override fun getSyntaxPath(command: Command?) = "TeamChat"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "TeamChat.Use", false)

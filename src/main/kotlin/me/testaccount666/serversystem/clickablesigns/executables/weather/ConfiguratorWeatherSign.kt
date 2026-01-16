@@ -32,7 +32,7 @@ class ConfiguratorWeatherSign : AbstractSignConfigurator() {
             return false
         }
 
-        front.line(0, translateToComponent(SignType.WEATHER.signName()))
+        front.line(0, translateToComponent(SignType.WEATHER.signName))
         front.line(1, translateToComponent("&2${weatherType}"))
         val back = sign.getSide(Side.BACK)
         for (index in 0..3) back.line(index, front.line(index))

@@ -33,10 +33,10 @@ class CommandBroadcast : AbstractServerSystemCommand() {
             send(false)
             postModifier { it.replace("<BROADCAST>", broadcast) }
             blankError(true)
-        }.build().takeIf { it.isEmpty() }?.also { broadcastMessage(it) }
+        }.build().takeIf { !it.isEmpty() }?.also { broadcastMessage(it) }
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Broadcast"
+    override fun getSyntaxPath(command: Command?) = "Broadcast"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "Broadcast.Use", false)

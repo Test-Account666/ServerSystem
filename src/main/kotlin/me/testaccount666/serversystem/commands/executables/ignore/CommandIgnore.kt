@@ -84,7 +84,7 @@ class CommandIgnore : AbstractServerSystemCommand() {
         return targetUser
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Ignore"
+    override fun getSyntaxPath(command: Command?) = "Ignore"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         val permissionPath = if (command.name.equals("ignore", true)) "Ignore.Use" else "Unignore.Use"

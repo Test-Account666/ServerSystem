@@ -29,7 +29,7 @@ abstract class AbstractSqlBankAccount(
 
     override var balance
         get() = fetchBalance()
-        set(newBalance) = upsertBalance(newBalance.min(BigDecimal.ZERO))
+        set(newBalance) = upsertBalance(newBalance.max(BigDecimal.ZERO))
 
     override fun delete() = executeUpdate(DELETE_ACCOUNT)
 
@@ -37,7 +37,7 @@ abstract class AbstractSqlBankAccount(
         // Intentional no-op for SQL
     }
 
-    override val topTen: MutableMap<UUID, BigDecimal>
+    override val topTen
         get() = fetchTopTen()
 
     private fun fetchBalance(): BigDecimal =
@@ -59,7 +59,7 @@ abstract class AbstractSqlBankAccount(
     private fun existsInDatabase(): Boolean =
         tryQuery(CHECK_EXISTS) { it.next() } ?: false
 
-    private fun fetchTopTen(): MutableMap<UUID, BigDecimal> =
+    private fun fetchTopTen(): Map<UUID, BigDecimal> =
         tryQuery(SELECT_TOP_TEN) { rs ->
             linkedMapOf<UUID, BigDecimal>().apply {
                 while (rs.next()) {

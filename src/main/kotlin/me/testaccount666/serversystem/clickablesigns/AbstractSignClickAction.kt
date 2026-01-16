@@ -14,8 +14,11 @@ import org.bukkit.configuration.file.FileConfiguration
  * Handles common functionality such as permission checking and cost handling.
  */
 abstract class AbstractSignClickAction : SignClickAction {
-    override val usePermissionNode: String = "$basePermissionNode.Use"
-    override val destroyPermissionNode: String = "$basePermissionNode.Destroy"
+    override val usePermissionNode
+        get() = "$basePermissionNode.Use"
+
+    override val destroyPermissionNode
+        get() = "$basePermissionNode.Destroy"
 
     /**
      * Executes the sign-specific action.

@@ -26,14 +26,14 @@ class CommandPing : AbstractServerSystemCommand() {
 
         if (!isSelf && !checkOtherPermission(commandSender, "Ping.Other", targetPlayer.name)) return
 
-        val messagePath = if (isSelf) "Ping.Success" else "Ping.SuccessOther"
+        val messagePath = if (isSelf) "Ping.Success" else "Ping.Other"
         command(messagePath, commandSender) {
             target(targetPlayer.name)
             postModifier { it.replace("<PING>", "${targetPlayer.ping}ms") }
         }.build()
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Ping"
+    override fun getSyntaxPath(command: Command?) = "Ping"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "Ping.Use", false)

@@ -9,19 +9,18 @@ import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.Bukkit
 import org.bukkit.Location
-import org.bukkit.World
 import org.bukkit.command.Command
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 import java.text.DecimalFormat
-import java.util.*
+import java.util.Locale.getDefault
 import java.util.function.Consumer
 
 @ServerSystemCommand("teleport", ["teleportposition", "teleporthere", "teleportall"])
 class CommandTeleport : AbstractServerSystemCommand() {
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        val commandName = command.name.lowercase(Locale.getDefault())
+        val commandName = command.name.lowercase(getDefault())
         when (commandName) {
             "teleportposition" -> executeTeleportPosition(commandSender, command, label, *arguments)
             "teleporthere" -> executeTeleportHere(commandSender, command, label, *arguments)
@@ -243,11 +242,10 @@ class CommandTeleport : AbstractServerSystemCommand() {
             // If parsing fails, it might be a world name, so we skip pitch parsing
         }
 
-        var world: World? = target.world
+        var world = target.world
         if (arguments.size > currentIndex) {
             val worldName = arguments[currentIndex]
-            val targetWorld = target.server.getWorld(worldName)
-            if (targetWorld != null) world = targetWorld
+            target.server.getWorld(worldName)?.let { world = it }
         }
 
         return Location(world, x, y, z, yaw, pitch)
@@ -282,13 +280,13 @@ class CommandTeleport : AbstractServerSystemCommand() {
     }
 
     private fun parseRotationOffset(input: String, location: Location, isYaw: Boolean, offsetStartIndex: Int): Float {
-        val offset = input.substring(offsetStartIndex).toFloat()
+        val offset = input.drop(offsetStartIndex).toFloat()
         val currentValue = if (isYaw) location.yaw else location.pitch
         return currentValue + offset
     }
 
     private fun parseOffset(input: String, location: Location, axis: Vector, offsetStartIndex: Int): Double {
-        val offset = input.substring(offsetStartIndex).toDouble()
+        val offset = input.drop(offsetStartIndex).toDouble()
         return getCoordinate(location, axis) + offset
     }
 
@@ -299,7 +297,7 @@ class CommandTeleport : AbstractServerSystemCommand() {
     override fun getSyntaxPath(command: Command?): String {
         if (command == null) return "Teleport"
 
-        val commandName = command.name.lowercase(Locale.getDefault())
+        val commandName = command.name.lowercase(getDefault())
         return when (commandName) {
             "teleportposition" -> "TeleportPosition"
             "teleporthere" -> "TeleportHere"
@@ -309,7 +307,7 @@ class CommandTeleport : AbstractServerSystemCommand() {
     }
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        val commandName = command.name.lowercase(Locale.getDefault())
+        val commandName = command.name.lowercase(getDefault())
         val permission = when (commandName) {
             "teleportposition" -> "TeleportPosition.Use"
             "teleporthere" -> "TeleportHere.Use"

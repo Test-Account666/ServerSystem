@@ -67,7 +67,7 @@ class CommandSkull : AbstractServerSystemCommand() {
         return _skullCreator.getSkull(input)
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Skull"
+    override fun getSyntaxPath(command: Command?) = "Skull"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "Skull.Use", false)

@@ -8,11 +8,11 @@ import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
-import java.util.*
+import java.util.Locale.getDefault
 import kotlin.math.max
 import kotlin.math.min
 
-@ServerSystemCommand("speed", ["flyspeed", "walkspeed"])
+@ServerSystemCommand("speed", ["flyspeed", "walkspeed"], TabCompleterSpeed::class)
 class CommandSpeed : AbstractServerSystemCommand() {
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
         if (!checkBasePermission(commandSender, "Speed.Use")) return
@@ -36,7 +36,7 @@ class CommandSpeed : AbstractServerSystemCommand() {
 
         if (!isSelf && !checkOtherPermission(commandSender, "Speed.Other", targetPlayer.name)) return
 
-        val speedType = when (command.name.lowercase(Locale.getDefault())) {
+        val speedType = when (command.name.lowercase(getDefault())) {
             "flyspeed" -> "Fly"
             "walkspeed" -> "Walk"
             else -> if (targetPlayer.isFlying) "Fly" else "Walk"
@@ -52,7 +52,7 @@ class CommandSpeed : AbstractServerSystemCommand() {
             return
         }
 
-        val speedTuple: SpeedResult = calculateSpeeds(speed)
+        val speedTuple = calculateSpeeds(speed)
 
         speed = when (speedType) {
             "Fly" -> speedTuple.flySpeed
@@ -60,24 +60,27 @@ class CommandSpeed : AbstractServerSystemCommand() {
             else -> error("Unexpected speed value: ${speedType}")
         }
 
+        speed = Math.clamp(speed, 0f, 1f)
+
         if (speedType.equals("Fly", true)) targetPlayer.flySpeed = speed
         else targetPlayer.walkSpeed = speed
 
+        val speedString = String.format("%.2f", speed * 10F)
         val messagePath = if (isSelf) "Speed.Success" else "Speed.SuccessOther"
         command(messagePath, commandSender) {
             target(targetPlayer.name)
-            postModifier { it.replace("<SPEED>", arguments[0]) }
+            postModifier { it.replace("<SPEED>", speedString) }
         }.build()
 
         if (isSelf) return
         command("Speed.Success", targetUser) {
             target(targetPlayer.name)
             sender(commandSender.getNameSafe())
-            postModifier { it.replace("<SPEED>", arguments[0]) }
+            postModifier { it.replace("<SPEED>", speedString) }
         }.build()
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Speed"
+    override fun getSyntaxPath(command: Command?) = "Speed"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "Speed.Use", false)

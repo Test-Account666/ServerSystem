@@ -15,7 +15,7 @@ class ListenerSignDestroy : Listener {
         val location = block.location
         val signType = signManager.getSignType(location) ?: return
 
-        if (hasPermission(event.player, signType.clickAction().destroyPermissionNode, false)) return
+        if (hasPermission(event.player, signType.clickAction.destroyPermissionNode, false)) return
 
         event.isCancelled = true
     }

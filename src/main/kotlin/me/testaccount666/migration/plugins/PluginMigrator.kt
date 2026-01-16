@@ -7,5 +7,5 @@ interface PluginMigrator {
 
     fun migrateTo()
 
-    val plugin: Plugin
+    val plugin: Plugin?
 }

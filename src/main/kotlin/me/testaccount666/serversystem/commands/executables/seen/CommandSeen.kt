@@ -65,7 +65,7 @@ class CommandSeen : AbstractServerSystemCommand() {
             .format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"))
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Seen"
+    override fun getSyntaxPath(command: Command?) = "Seen"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "Seen.Use", false)

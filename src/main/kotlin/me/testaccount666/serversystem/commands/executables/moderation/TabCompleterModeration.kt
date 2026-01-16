@@ -41,18 +41,22 @@ class TabCompleterModeration : ServerSystemTabCompleter {
         val possibleCompletions = getPlayerNames(commandName)
         if (argument.isEmpty()) return possibleCompletions
 
-        return possibleCompletions.filter { name -> name.startsWith(argument, true) }
+        return possibleCompletions.filter { it.startsWith(argument, true) }
     }
 
     private fun getPlayerNames(commandName: String): List<String> {
-        if (commandName.equals("unban", true)) return Bukkit.getServer().getBanList(BanListType.PROFILE)
-            .getEntries<BanEntry<in PlayerProfile>>()
-            .map { it.getBanTarget() as? PlayerProfile }.mapNotNull { it?.name }
+        if (commandName.equals("unban", true)) {
+            return Bukkit.getServer().getBanList(BanListType.PROFILE)
+                .getEntries<BanEntry<PlayerProfile>>()
+                .map { it.getBanTarget() }.mapNotNull { it.name }
+        }
 
-        if (commandName.equals("unmute", true)) return instance.registry.getService<UserManager>()
-            .cachedUsers.asSequence()
-            .map(CachedUser::offlineUser).filter { it.muteManager.hasActiveModeration() }
-            .mapNotNull { it.getNameOrNull() }.toList()
+        if (commandName.equals("unmute", true)) {
+            return instance.registry.getService<UserManager>()
+                .cachedUsers.asSequence()
+                .map(CachedUser::offlineUser).filter { it.muteManager.hasActiveModeration() }
+                .mapNotNull { it.getNameOrNull() }.toList()
+        }
 
         return Bukkit.getOfflinePlayers().map { it.name }.filterNotNull()
     }
@@ -86,10 +90,10 @@ class TabCompleterModeration : ServerSystemTabCompleter {
     }
 
     private fun getMatchingTimeUnits(argument: String): List<String> {
-        return _TIME_UNITS.filter { unit -> unit.startsWith(argument, true) }.toList()
+        return _TIME_UNITS.filter { it.startsWith(argument, true) }.toList()
     }
 
-    private fun isRemoveCommand(commandName: String): Boolean = commandName.lowercase(getDefault()).startsWith("un")
+    private fun isRemoveCommand(commandName: String) = commandName.startsWith("un", true)
 
     companion object {
         private val _TIME_UNITS = listOf("s", "m", "h", "d", "w", "mo", "y")

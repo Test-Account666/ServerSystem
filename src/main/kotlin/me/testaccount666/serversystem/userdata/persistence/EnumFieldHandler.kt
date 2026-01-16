@@ -17,7 +17,7 @@ class EnumFieldHandler<T : Enum<T>> : FieldHandler<T> {
 
             requireNotNull(field) { "Invalid enum value '$enumName' for field '$path'!" }
 
-            return field;
+            return field
         } catch (exception: Exception) {
             exception.printStackTrace()
             defaultValue

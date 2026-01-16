@@ -51,7 +51,6 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
         }
 
         val targetPlayer = targetUser.getPlayer()!!
-
         val isSelf = targetUser === commandSender
 
         if (isSelf) {

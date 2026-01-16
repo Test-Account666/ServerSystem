@@ -29,10 +29,7 @@ class MessageBuilder private constructor(
             Type.CLICKABLE_SIGN -> "ClickableSigns.$messagePath"
         }
 
-        var message = if (language != null)
-            MessageManager.getMessage(receiver, path, language!!)
-        else
-            MessageManager.getMessage(receiver, path)
+        var message = MessageManager.getMessage(receiver, path, language)
 
         if (message == null) {
             if (messagePath.equals("ErrorOccurred", ignoreCase = true)) {

@@ -34,7 +34,7 @@ class CommandDisposal : AbstractServerSystemCommand() {
         command("Disposal.Success", targetUser) { target(targetPlayer.name) }.build()
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Disposal"
+    override fun getSyntaxPath(command: Command?) = "Disposal"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "Disposal.Use", false)

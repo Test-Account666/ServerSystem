@@ -10,7 +10,7 @@ import org.bukkit.block.Sign
 import org.bukkit.block.sign.Side
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
-import java.util.*
+import java.util.Locale.getDefault
 
 class ConfiguratorTimeSign : AbstractSignConfigurator() {
     override val createPermissionNode = "ClickableSigns.Time.Create"
@@ -19,7 +19,7 @@ class ConfiguratorTimeSign : AbstractSignConfigurator() {
 
     override fun validateConfiguration(user: User, sign: Sign, config: YamlConfiguration): Boolean {
         val front = sign.getSide(Side.FRONT)
-        val timeType = front.getLine(1).lowercase(Locale.getDefault())
+        val timeType = front.getLine(1).lowercase(getDefault())
         if (timeType.isEmpty()) {
             sign("Time.NoTimeSpecified", user).build()
             return false
@@ -32,7 +32,7 @@ class ConfiguratorTimeSign : AbstractSignConfigurator() {
             return false
         }
 
-        front.line(0, translateToComponent(SignType.TIME.signName()))
+        front.line(0, translateToComponent(SignType.TIME.signName))
         front.line(1, translateToComponent("&2${timeType}"))
         val back = sign.getSide(Side.BACK)
         for (index in 0..3) back.line(index, front.line(index))
@@ -41,7 +41,7 @@ class ConfiguratorTimeSign : AbstractSignConfigurator() {
     }
 
     override fun addSignSpecificConfiguration(user: User, sign: Sign, config: FileConfiguration) {
-        var timeType = sign.getSide(Side.FRONT).getLine(1).lowercase(Locale.getDefault())
+        var timeType = sign.getSide(Side.FRONT).getLine(1).lowercase(getDefault())
         timeType = stripColor(timeType)
         config.set("TimeType", timeType)
     }

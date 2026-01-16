@@ -45,7 +45,7 @@ class CommandClearInventory : AbstractServerSystemCommand() {
         }.build()
     }
 
-    override fun getSyntaxPath(command: Command?): String = "ClearInventory"
+    override fun getSyntaxPath(command: Command?) = "ClearInventory"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "ClearInventory.Use", false)

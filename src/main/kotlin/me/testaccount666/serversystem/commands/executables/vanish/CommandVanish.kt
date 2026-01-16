@@ -116,7 +116,7 @@ class CommandVanish : AbstractServerSystemCommand() {
         }.build()
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Vanish"
+    override fun getSyntaxPath(command: Command?) = "Vanish"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "Vanish.Use", false)

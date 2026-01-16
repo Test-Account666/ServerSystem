@@ -39,7 +39,7 @@ class ListenerQuit : Listener {
         var isMinecraft = true
         if (soundString.contains(":")) {
             val space = soundString.substring(0, soundString.indexOf(":"))
-            soundString = soundString.substring(soundString.indexOf(":") + 1)
+            soundString = soundString.drop(soundString.indexOf(":") + 1)
             isMinecraft = space.contentEquals("minecraft", true)
         }
 

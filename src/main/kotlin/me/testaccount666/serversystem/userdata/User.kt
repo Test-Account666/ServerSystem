@@ -48,8 +48,8 @@ open class User(userFile: File) : OfflineUser(userFile) {
      *
      * @return The Player object for this user
      */
-    fun getPlayer(): Player? {
-        if (onlinePlayer == null) onlinePlayer = super.player as Player?
+    open fun getPlayer(): Player? {
+        if (onlinePlayer == null) onlinePlayer = super.player as? Player
 
         return onlinePlayer
     }

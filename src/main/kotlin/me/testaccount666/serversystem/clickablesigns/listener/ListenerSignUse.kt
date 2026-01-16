@@ -29,6 +29,6 @@ class ListenerSignUse : Listener {
         val user = cachedUser.offlineUser as User
 
         event.isCancelled = true
-        signType.clickAction().execute(user, sign)
+        signType.clickAction.execute(user, sign)
     }
 }

@@ -89,7 +89,7 @@ open class CommandSign : AbstractServerSystemCommand() {
         var lore = itemMeta.lore()
         if (lore == null) lore = ArrayList<Component?>()
 
-        val message = arguments.joinToString { " " }.trim { it <= ' ' }
+        val message = arguments.joinToString(" ").trim { it <= ' ' }
         if (message.isEmpty()) {
             general("InvalidArguments", commandSender) {
                 syntax(getSyntaxPath(command))

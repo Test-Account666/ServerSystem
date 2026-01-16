@@ -11,7 +11,7 @@ import java.util.*
 import java.util.logging.Level
 
 class KitManager {
-    private val _kits: MutableMap<String, Kit> = HashMap()
+    private val _kits = HashMap<String, Kit>()
 
     constructor() {
         val kitDirectory = Path.of(instance.dataFolder.path, "Kits").toFile()
@@ -33,35 +33,23 @@ class KitManager {
 
         val coolDown = kitConfig.getLong("Cooldown", -1)
 
-        val offHandItem = kitConfig.getItemStack("Items.OffHand", null)
-        val armorContents = LinkedList<ItemStack?>()
         val inventoryContents = LinkedList<ItemStack?>()
 
-        val armorSection = kitConfig.getConfigurationSection("Items.Armor")
-        if (armorSection != null) for (key in 0..3) {
-            val item = armorSection.getItemStack(key.toString(), null)
-            armorContents.add(item)
-        }
-
         val inventorySection = kitConfig.getConfigurationSection("Items.Inventory")
-        if (inventorySection != null) for (key in 0..35) {
-            val item = inventorySection.getItemStack(key.toString(), null)
+        if (inventorySection != null) for (key in 0..41) {
+            val item = inventorySection.getItemStack(key.toString())
             inventoryContents.add(item)
         }
 
-        _kits[name] = Kit(
-            name, coolDown, offHandItem,
-            armorContents.toTypedArray<ItemStack?>(),
-            inventoryContents.toTypedArray<ItemStack?>()
-        )
+        _kits[name] = Kit(name, coolDown, inventoryContents.toTypedArray<ItemStack?>())
     }
 
-    val allKitNames: List<String>
+    val allKitNames
         get() = _kits.keys.toList()
 
-    fun getKit(name: String): Kit? = _kits[name]
+    fun getKit(name: String) = _kits[name]
 
-    fun kitExists(name: String): Boolean = _kits.containsKey(name)
+    fun kitExists(name: String) = _kits.containsKey(name)
 
     fun addKit(kit: Kit) {
         _kits[kit.name] = kit
@@ -71,7 +59,7 @@ class KitManager {
         _kits.remove(name)
 
         val kitFile = getKitFile(name)
-        if (kitFile.exists() || !kitFile.delete()) log.warning("Failed to delete kit file: ${kitFile.path}")
+        if (!kitFile.exists() || !kitFile.delete()) log.warning("Failed to delete kit file: ${kitFile.path}")
     }
 
     /**
@@ -86,11 +74,6 @@ class KitManager {
 
         kitConfig.set("Name", kit.name)
         kitConfig.set("Cooldown", kit.coolDown)
-
-        kitConfig.set("Items.OffHand", kit.offHandItem)
-
-        val armorContents = kit.armorContents
-        for (index in armorContents.indices) kitConfig.set("Items.Armor.${index}", armorContents[index])
 
         val inventoryContents = kit.inventoryContents
         for (index in inventoryContents.indices) kitConfig.set("Items.Inventory.${index}", inventoryContents[index])
@@ -109,13 +92,7 @@ class KitManager {
      * 
      * @return The number of kits that were saved successfully
      */
-    fun saveAllKits(): Int {
-        var successCount = 0
-
-        for (kit in _kits.values) if (saveKit(kit)) successCount++
-
-        return successCount
-    }
+    fun saveAllKits() = _kits.values.count { saveKit(it) }
 
     /**
      * Gets the file for a kit with the given name.

@@ -58,7 +58,7 @@ class CommandFly : AbstractServerSystemCommand() {
         }.build()
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Fly"
+    override fun getSyntaxPath(command: Command?) = "Fly"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "Fly.Use", false)

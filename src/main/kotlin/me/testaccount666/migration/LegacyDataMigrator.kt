@@ -32,6 +32,7 @@ import java.util.logging.Level
 
 class LegacyDataMigrator {
     private lateinit var _legacyDataDirectory: File
+    private var _foundLegacyData = false
 
     /**
      * Retrieves an offline user by UUID.
@@ -144,7 +145,7 @@ class LegacyDataMigrator {
                 val split = previousVersion.split("".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                 previousVersion = split.joinToString { "." }.trim { it <= ' ' }
 
-                if (previousVersion.startsWith(".")) previousVersion = previousVersion.substring(1)
+                if (previousVersion.startsWith(".")) previousVersion = previousVersion.drop(1)
                 if (previousVersion.endsWith(".")) previousVersion = previousVersion.substring(0, previousVersion.length - 1)
                 if (previousVersion.isEmpty()) return true
             } catch (_: NumberFormatException) {
@@ -161,6 +162,7 @@ class LegacyDataMigrator {
         val directory = instance.dataFolder
         if (!directory.exists()) return
 
+        _foundLegacyData = true
         _legacyDataDirectory = File(directory.parent, "ServerSystem-LegacyData-${System.currentTimeMillis()}")
         directory.renameTo(_legacyDataDirectory)
     }
@@ -169,6 +171,7 @@ class LegacyDataMigrator {
      * Migrates all legacy data.
      */
     fun migrateLegacyData() {
+        if (!_foundLegacyData) return
         migrateModerationAndEconomy()
         migrateHomes()
         migrateWarps()
@@ -209,15 +212,17 @@ class LegacyDataMigrator {
                 armorContents[index] = armor
             }
 
-            val inventoryContents = arrayOfNulls<ItemStack>(36)
+            var inventoryContents = arrayOfNulls<ItemStack>(36)
             for (index in 0..35) {
                 var item = kitsSection.getItemStack("${kitName}.${index}", defaultItem)
                 if (item.isAir()) item = null
                 inventoryContents[index] = item
             }
 
+            inventoryContents += armorContents + offhandItem
+
             val cooldown = kitsSection.getLong("${kitName}.Delay", -1)
-            val kit = Kit(kitName, cooldown, offhandItem, armorContents, inventoryContents)
+            val kit = Kit(kitName, cooldown, inventoryContents)
             kitManager.addKit(kit)
             migratedCount++
         } catch (exception: Exception) {

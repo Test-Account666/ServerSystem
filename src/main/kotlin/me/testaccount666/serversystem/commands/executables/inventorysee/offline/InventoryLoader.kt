@@ -1,6 +1,7 @@
 package me.testaccount666.serversystem.commands.executables.inventorysee.offline
 
 import de.tr7zw.nbtapi.NBT
+import de.tr7zw.nbtapi.handler.NBTHandlers
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.executables.inventorysee.utils.InventorySeeUtils
 import me.testaccount666.serversystem.utils.BiDirectionalHashMap
@@ -47,7 +48,7 @@ class InventoryLoader {
             }
 
             val equipmentTag = fileHandle.getCompound("equipment")
-            val equipmentSlotList = arrayOf("head", "chest", "legs", "feet", "offhand")
+            val equipmentSlotList = arrayOf("feet", "legs", "chest", "head", "offhand")
 
             if (equipmentTag != null) for (index in equipmentSlotList.indices) {
                 val equipmentSlot = equipmentSlotList[index]
@@ -93,11 +94,14 @@ class InventoryLoader {
                 inventoryTag.addCompound(itemTag)
             }
 
+            var equipmentTag = fileHandle.getCompound("equipment")
+            val equipmentSlotList = arrayOf("feet", "legs", "chest", "head", "offhand")
 
-            val equipmentTag = fileHandle.getCompound("equipment")
-            val equipmentSlotList = arrayOf("head", "chest", "legs", "feet", "offhand")
+            val addTag = equipmentTag == null
+            equipmentTag = equipmentTag ?: NBT.createNBTObject()
 
-            if (equipmentTag != null) for (i in equipmentSlotList.indices) {
+            var added = false
+            for (i in equipmentSlotList.indices) {
                 val equipmentSlot = equipmentSlotList[i]
                 val slotIndex = 36 + i
                 val item = inventory.getItem(slotIndex)
@@ -106,8 +110,11 @@ class InventoryLoader {
                     continue
                 }
 
+                added = true
                 equipmentTag.setItemStack(equipmentSlot, item)
             }
+
+            if (addTag && added) fileHandle.set("equipment", equipmentTag, NBTHandlers.STORE_READWRITE_TAG)
 
             fileHandle.save()
 

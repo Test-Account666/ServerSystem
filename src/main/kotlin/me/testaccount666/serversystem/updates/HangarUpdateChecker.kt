@@ -10,7 +10,7 @@ class HangarUpdateChecker : AbstractUpdateChecker(URI.create("${_URL_START}lates
         get() = String.format(_DOWNLOAD_URL_TEMPLATE, latestVersion.toString())
 
     companion object {
-        private const val _URL_START = "https://hangar.papermc.io/api/v1/projects/TestAccount666/ServerSystem/";
+        private const val _URL_START = "https://hangar.papermc.io/api/v1/projects/TestAccount666/ServerSystem/"
         private const val _DOWNLOAD_URL_TEMPLATE = "${_URL_START}versions/%s/PAPER/download"
     }
 }

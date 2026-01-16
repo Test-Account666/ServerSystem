@@ -5,7 +5,7 @@ import me.testaccount666.serversystem.managers.config.ConfigReader
 import me.testaccount666.serversystem.managers.config.DefaultConfigReader
 import org.bukkit.plugin.Plugin
 import java.nio.file.Path
-import java.util.*
+import java.util.Locale.getDefault
 
 class LanguageLoader {
     private val _baseDirectory: Path = Path.of("plugins", "ServerSystem", "messages")
@@ -30,7 +30,7 @@ class LanguageLoader {
     }
 
     fun getMessageReader(language: String): ConfigReader? {
-        val lowerLanguage = language.lowercase(Locale.getDefault())
+        val lowerLanguage = language.lowercase(getDefault())
 
         val configReader = _languageMessagesMap[lowerLanguage]
         if (configReader != null) return configReader
@@ -59,7 +59,7 @@ class LanguageLoader {
 
 
     fun getMappingReader(language: String): ConfigReader? {
-        val lowerLanguage = language.lowercase(Locale.getDefault())
+        val lowerLanguage = language.lowercase(getDefault())
 
         val configReader = _languageMappingsMap[lowerLanguage]
         if (configReader != null) return configReader

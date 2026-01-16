@@ -84,7 +84,7 @@ abstract class AbstractModerationCommand<T : AbstractModeration> : AbstractServe
         val moderationManager = getModerationManager(targetUser)
         val activeModeration = moderationManager.activeModeration
         if (activeModeration == null) {
-            general("Moderation.${type(command)}.Remove.NoActiveModeration", commandSender) { target(targetUser.getNameSafe()) }.build()
+            command("Moderation.${type(command)}.Remove.NoActiveModeration", commandSender) { target(targetUser.getNameSafe()) }.build()
             return
         }
 
@@ -96,7 +96,7 @@ abstract class AbstractModerationCommand<T : AbstractModeration> : AbstractServe
     private fun handleCreateModeration(command: Command, commandSender: User, targetUser: OfflineUser, expireTime: Long, reason: String) {
         val moderationManager = getModerationManager(targetUser)
         if (moderationManager.hasActiveModeration()) {
-            general("Moderation.${type(command)}.Add.AlreadyActiveModeration", commandSender) { target(targetUser.getNameSafe()) }.build()
+            command("Moderation.${type(command)}.Add.AlreadyActiveModeration", commandSender) { target(targetUser.getNameSafe()) }.build()
             return
         }
 

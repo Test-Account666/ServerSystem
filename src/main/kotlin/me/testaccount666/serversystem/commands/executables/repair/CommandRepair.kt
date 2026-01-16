@@ -2,19 +2,22 @@ package me.testaccount666.serversystem.commands.executables.repair
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.commands.executables.repair.CommandRepair.RepairType.*
 import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
+import me.testaccount666.serversystem.utils.ItemStackExtensions.Companion.isAir
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.PlayerInventory
 import org.bukkit.inventory.meta.Damageable
-import java.util.*
 
 @ServerSystemCommand("repair", [], TabCompleterRepair::class)
 class CommandRepair : AbstractServerSystemCommand() {
+
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
         if (!checkBasePermission(commandSender, "Repair.Use")) return
         if (commandSender is ConsoleUser) {
@@ -22,59 +25,63 @@ class CommandRepair : AbstractServerSystemCommand() {
             return
         }
 
-        val repairType = if (arguments.isEmpty()) "hand" else arguments[0].lowercase(Locale.getDefault())
-        val player = commandSender.getPlayer()!!
+        val typeArg = arguments.getOrNull(0) ?: "hand"
 
-        when (repairType) {
-            "all", "*" -> {
-                var repaired = 0
-                repaired += repairInventory(player.inventory.contents)
-                repaired += repairInventory(player.inventory.armorContents)
-                repaired += repairInventory(player.inventory.extraContents)
-
-                sendSuccessMessage(commandSender, repaired)
-            }
-
-            "hand" -> {
-                val item = player.inventory.itemInMainHand
-                if (repairItem(item)) sendSuccessMessage(commandSender, 1)
-                else command("Repair.NotRepairable", commandSender).build()
-            }
-
-            "offhand" -> {
-                val item = player.inventory.itemInOffHand
-                if (repairItem(item)) sendSuccessMessage(commandSender, 1)
-                else command("Repair.NotRepairable", commandSender).build()
-            }
-
-            "armor" -> {
-                val repaired = repairInventory(player.inventory.armorContents)
-                sendSuccessMessage(commandSender, repaired)
-            }
-
-            "inventory" -> {
-                val repaired = repairInventory(player.inventory.contents)
-                sendSuccessMessage(commandSender, repaired)
-            }
-
-            else -> general("InvalidArguments", commandSender) {
+        val repairType = RepairType.fromString(typeArg)
+        if (repairType == null) {
+            general("InvalidArguments", commandSender) {
                 syntax(getSyntaxPath(command))
                 label(label)
             }.build()
+            return
         }
-    }
 
-    private fun sendSuccessMessage(commandSender: User, count: Int) {
+        val player = commandSender.getPlayer()!!
+        val items = extractItems(player.inventory, repairType)
+
+        val repairedCount = items.count { repairItem(it) }
+        if (repairedCount <= 0) {
+            command("Repair.NotRepairable", commandSender).build()
+            return
+        }
+
         command("Repair.Success", commandSender) {
-            postModifier { it.replace("<COUNT>", count.toString()) }
+            postModifier { it.replace("<COUNT>", repairedCount.toString()) }
         }.build()
     }
 
-    private fun repairItem(item: ItemStack?): Boolean {
-        if (item?.type?.isAir ?: true) return false
+    enum class RepairType {
+        HAND, OFFHAND, ARMOR, INVENTORY, ALL;
 
-        val meta = item.itemMeta
-        if (meta !is Damageable) return false
+        companion object {
+            fun fromString(value: String) = when {
+                value.equals("hand", true) -> HAND
+                value.equals("offhand", true) -> OFFHAND
+                value.equals("armor", true) -> ARMOR
+                value.equals("inventory", true) -> INVENTORY
+                value.equals("all", true) || value == "*" -> ALL
+                else -> null
+            }
+        }
+    }
+
+    private fun extractItems(inventory: PlayerInventory, type: RepairType): List<ItemStack> {
+        return when (type) {
+            HAND -> listOf(inventory.itemInMainHand)
+            OFFHAND -> listOf(inventory.itemInOffHand)
+            ARMOR -> inventory.armorContents.filterNotNull()
+            INVENTORY -> inventory.contents.filterNotNull()
+            ALL -> buildList {
+                addAll(inventory.contents.filterNotNull())
+                addAll(inventory.armorContents.filterNotNull())
+                addAll(inventory.extraContents.filterNotNull())
+                addAll(inventory.storageContents.filterNotNull())
+            }
+        }.filterNot { it.isAir() }
+    }
+
+    private fun repairItem(item: ItemStack): Boolean {
+        val meta = item.itemMeta as? Damageable ?: return false
         if (!meta.hasDamage()) return false
 
         meta.damage = 0
@@ -82,9 +89,7 @@ class CommandRepair : AbstractServerSystemCommand() {
         return true
     }
 
-    private fun repairInventory(items: Array<ItemStack?>): Int = items.count { repairItem(it) }
-
-    override fun getSyntaxPath(command: Command?): String = "Repair"
+    override fun getSyntaxPath(command: Command?) = "Repair"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "Repair.Use", false)

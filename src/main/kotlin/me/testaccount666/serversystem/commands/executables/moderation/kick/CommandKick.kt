@@ -63,7 +63,7 @@ class CommandKick : AbstractServerSystemCommand() {
         command("Moderation.Kick.Success", commandSender) { target(targetUser.getNameSafe()) }.build()
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Kick"
+    override fun getSyntaxPath(command: Command?) = "Kick"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "Moderation.Kick.Use", false)

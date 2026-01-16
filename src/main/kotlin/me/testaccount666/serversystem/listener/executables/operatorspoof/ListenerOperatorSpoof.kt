@@ -22,7 +22,7 @@ import org.bukkit.event.player.PlayerGameModeChangeEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.server.PluginDisableEvent
-import java.util.*
+import java.util.Locale.getDefault
 import java.util.logging.Level
 
 @RequiredCommands([CommandGameMode::class])
@@ -55,7 +55,6 @@ class ListenerOperatorSpoof : Listener {
     private fun updateFakeOperatorStatus(player: Player) {
         val craftPlayer = player as CraftPlayer
         // 28 is level 4 operator level
-        //craftServer.getHandle().sendPlayerPermissionLevel(craftPlayer.getHandle(), 28, false);
         craftPlayer.handle.connection.send(ClientboundEntityEventPacket(craftPlayer.handle, 28.toByte()))
     }
 
@@ -127,7 +126,7 @@ class ListenerOperatorSpoof : Listener {
 
                 val mode = msg.mode
 
-                val gameMode = GameMode.valueOf(mode.getName().uppercase(Locale.getDefault()))
+                val gameMode = GameMode.valueOf(mode.getName().uppercase(getDefault()))
                 val user = _cachedUser.offlineUser as User
 
                 // Go back to main thread

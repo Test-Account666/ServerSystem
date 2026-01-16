@@ -35,7 +35,7 @@ class CommandIp : AbstractServerSystemCommand() {
         }.build()
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Ip"
+    override fun getSyntaxPath(command: Command?) = "Ip"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "Ip.Use", false)

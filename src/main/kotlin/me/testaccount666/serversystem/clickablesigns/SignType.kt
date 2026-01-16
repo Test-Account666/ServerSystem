@@ -11,35 +11,12 @@ import me.testaccount666.serversystem.clickablesigns.executables.warp.Configurat
 import me.testaccount666.serversystem.clickablesigns.executables.weather.ActionWeatherSign
 import me.testaccount666.serversystem.clickablesigns.executables.weather.ConfiguratorWeatherSign
 
-enum class SignType(private val _key: String, signName: String, clickAction: SignClickAction, configurator: SignConfigurator) {
+enum class SignType(private val _key: String, val signName: String, val clickAction: SignClickAction, val configurator: SignConfigurator) {
     GIVE("Give", "&#3F3FD1[Give]", ActionGiveSign(), ConfiguratorGiveSign()),
     KIT("Kit", "&#3F3FD1[KIT]", ActionKitSign(), ConfiguratorKitSign()),
     WARP("Warp", "&#3F3FD1[WARP]", ActionWarpSign(), ConfiguratorWarpSign()),
     TIME("Time", "&#3F3FD1[TIME]", ActionTimeSign(), ConfiguratorTimeSign()),
     WEATHER("Weather", "&#3F3FD1[WEATHER]", ActionWeatherSign(), ConfiguratorWeatherSign());
-
-    private val _signName: String = signName
-    private val _clickAction = clickAction
-    private val _configurator: SignConfigurator = configurator
-
-    /*TODO: REMOVE THIS AFTER KOTLIN MIGRATION!!!!*/
-    fun key(): String {
-        return _key
-    }
-
-    fun signName(): String {
-        return _signName
-    }
-
-    fun clickAction(): SignClickAction {
-        return _clickAction
-    }
-
-    fun configurator(): SignConfigurator {
-        return _configurator
-    }
-
-    /*TODO END: REMOVE THIS AFTER KOTLIN MIGRATION!!!!*/
 
     companion object {
         fun getSignTypeByKey(key: String): SignType? {

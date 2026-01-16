@@ -6,7 +6,7 @@ import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.sign
 import org.bukkit.configuration.file.FileConfiguration
 import java.math.BigDecimal
-import java.util.*
+import java.util.Locale.getDefault
 import java.util.logging.Level
 
 /**
@@ -27,7 +27,7 @@ object CostHandler {
         val costAmount = config.getDouble("Cost.Amount")
         if (costAmount <= 0) return true
 
-        if (costType == CostType.EXP) return user.getPlayer()!!.totalExperience >= costAmount
+        if (costType == CostType.EXP) return user.getPlayer()!!.calculateTotalExperiencePoints() >= costAmount
         if (costType == CostType.ECONOMY) {
             val bankAccount = user.bankAccount
             return bankAccount.hasEnoughMoney(BigDecimal.valueOf(costAmount))
@@ -45,7 +45,7 @@ object CostHandler {
 
         if (costType == CostType.EXP) {
             val player = user.getPlayer()
-            player!!.totalExperience = player.totalExperience + costAmount.toInt()
+            player!!.setExperienceLevelAndProgress(player.calculateTotalExperiencePoints() + costAmount.toInt())
             return
         }
         if (costType == CostType.ECONOMY) {
@@ -77,19 +77,19 @@ object CostHandler {
 
         if (!canAfford(user, config)) {
             if (costType == CostType.EXP) sign("Cost.NotEnoughExp", user) {
-                postModifier { it.replace("<COST>", costAmount.toInt().toString()) }
+                postModifier { it.replace("<AMOUNT>", costAmount.toInt().toString()) }
             }.build()
             else if (costType == CostType.ECONOMY) sign("Cost.NotEnoughMoney", user) {
-                postModifier { it.replace("<COST>", costAmount.toString()) }
+                postModifier { it.replace("<AMOUNT>", costAmount.toString()) }
             }.build()
             return false
         }
 
         if (costType == CostType.EXP) {
             val player = user.getPlayer()
-            player!!.totalExperience = player.totalExperience - costAmount.toInt()
+            player!!.setExperienceLevelAndProgress(player.calculateTotalExperiencePoints() - costAmount.toInt())
             sign("Cost.PaidExp", user) {
-                postModifier { it.replace("<COST>", costAmount.toInt().toString()) }
+                postModifier { it.replace("<AMOUNT>", costAmount.toInt().toString()) }
             }.build()
             return true
         }
@@ -100,7 +100,7 @@ object CostHandler {
                 bankAccount.withdraw(BigDecimal.valueOf(costAmount))
                 bankAccount.save()
                 sign("Cost.PaidMoney", user) {
-                    postModifier { it.replace("<COST>", costAmount.toString()) }
+                    postModifier { it.replace("<AMOUNT>", costAmount.toString()) }
                 }.build()
                 return true
             } catch (_: Exception) {
@@ -120,7 +120,7 @@ object CostHandler {
     fun getCostType(config: FileConfiguration): CostType {
         val costTypeStr: String = config.getString("Cost.Type", "NONE")!!
         return try {
-            CostType.valueOf(costTypeStr.uppercase(Locale.getDefault()))
+            CostType.valueOf(costTypeStr.uppercase(getDefault()))
         } catch (_: IllegalArgumentException) {
             CostType.NONE
         }

@@ -6,13 +6,13 @@ import me.testaccount666.serversystem.utils.ChatColor.Companion.stripColor
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.sign
 import org.bukkit.block.Sign
 import org.bukkit.configuration.file.FileConfiguration
-import java.util.*
+import java.util.Locale.getDefault
 
 class ActionTimeSign : AbstractSignClickAction() {
     override val basePermissionNode = "ClickableSigns.Time"
 
     override fun executeAction(user: User, sign: Sign, config: FileConfiguration): Boolean {
-        var timeType = config.getString("TimeType", sign.getLine(1))?.lowercase(Locale.getDefault())
+        var timeType = config.getString("TimeType", sign.getLine(1))?.lowercase(getDefault())
         timeType = stripColor(timeType)
         if (timeType.isEmpty()) {
             sign("Time.NoTimeSpecified", user).build()

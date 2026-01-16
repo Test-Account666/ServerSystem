@@ -338,6 +338,7 @@ Messages:
         Success:
           From: "Podatki so bili uspešno migrirani iz <Color:Highlight><MIGRATOR> <Color:Message>v <Color:Highlight>ServerSystem. <Color:Message>Podrobnosti najdete v zapiskih."
           To: "Podatki so bili uspešno migrirani iz <Color:Highlight>ServerSystem <Color:Message>v <Color:Highlight><MIGRATOR>. <Color:Message>Podrobnosti najdete v zapiskih."
+        NotFound: "<Color:Error.Message>Migrator ni najden! <Color:Error.Highlight><MIGRATOR> <Color:Error.Message>Je vtičnik nameščen?"
   General:
     Prefix: "<Color:Prefix>ServerSystem <Color:Separators>»<Color:Message> "
     NoPermission: "<Color:Error.Message>Nimaš dovoljenja za to dejanje. (<Color:Error.Highlight><PERMISSION><Color:Error.Message>)"

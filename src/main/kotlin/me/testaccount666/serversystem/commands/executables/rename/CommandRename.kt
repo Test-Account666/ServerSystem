@@ -9,6 +9,7 @@ import me.testaccount666.serversystem.utils.ComponentColor.Companion.translateTo
 import me.testaccount666.serversystem.utils.ItemStackExtensions.Companion.isAir
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
+import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
 
@@ -34,15 +35,21 @@ class CommandRename : AbstractServerSystemCommand() {
             return
         }
 
-        val newName = arguments.joinToString { " " }.trim { it <= ' ' }
+        val newName = arguments.joinToString(" ").trim { it <= ' ' }
 
         val itemMeta = itemInHand.itemMeta
-        itemMeta.itemName(translateToComponent(newName))
+
+        var name = translateToComponent(newName)
+        val nukeItalic = !name.hasDecoration(TextDecoration.ITALIC)
+        if (nukeItalic) name = name.decoration(TextDecoration.ITALIC, false)
+
+        itemMeta.itemName(name)
+        itemMeta.displayName(name)
         itemInHand.setItemMeta(itemMeta)
         command("Rename.Success", commandSender).build()
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Rename"
+    override fun getSyntaxPath(command: Command?) = "Rename"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "Rename.Use", false)

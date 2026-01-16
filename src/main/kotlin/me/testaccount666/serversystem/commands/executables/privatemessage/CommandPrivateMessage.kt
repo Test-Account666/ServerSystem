@@ -5,7 +5,7 @@ import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.events.UserPrivateMessageEvent
 import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
-import me.testaccount666.serversystem.managers.messages.MessageManager
+import me.testaccount666.serversystem.managers.messages.MessageManager.applyPlaceholders
 import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.ComponentColor.Companion.translateToComponent
@@ -168,7 +168,7 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
             send(false)
             blankError(true)
             postModifier {
-                MessageManager.applyPlaceholders(it, commandSender, targetName, label)
+                applyPlaceholders(it, commandSender, targetName, label)
                     .replace("<MESSAGE>", message)
             }
         }.build()
@@ -179,7 +179,7 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
             send(false)
             blankError(true)
             postModifier {
-                MessageManager.applyPlaceholders(it, targetUser, targetName, label)
+                applyPlaceholders(it, targetUser, targetName, label)
                     .replace("<MESSAGE>", message)
             }
         }.build()

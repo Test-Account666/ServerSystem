@@ -10,7 +10,6 @@ import java.net.http.HttpResponse
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.Duration
-import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.logging.Level
 
@@ -167,7 +166,7 @@ abstract class AbstractUpdateChecker(@JvmField protected val updateURI: URI?) {
             )
 
             var name = jarPath.fileName.toString()
-            if (!name.lowercase(Locale.getDefault()).endsWith(".jar")) name = "${name}.jar"
+            if (!name.endsWith(".jar", true)) name = "${name}.jar"
 
             return name
         }

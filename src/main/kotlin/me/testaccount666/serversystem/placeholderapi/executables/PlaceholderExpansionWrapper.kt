@@ -6,7 +6,7 @@ import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.placeholderapi.PlaceholderManager
 import me.testaccount666.serversystem.userdata.UserManager
 import org.bukkit.OfflinePlayer
-import java.util.*
+import java.util.Locale.getDefault
 
 class PlaceholderExpansionWrapper : PlaceholderExpansion() {
     override fun getIdentifier() = "serversystem"
@@ -21,7 +21,7 @@ class PlaceholderExpansionWrapper : PlaceholderExpansion() {
         }
 
         val split = params.split("_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        val identifier = split[0].lowercase(Locale.getDefault())
+        val identifier = split[0].lowercase(getDefault())
 
         val registry = instance.registry
         val placeholderManager = registry.getService<PlaceholderManager>()

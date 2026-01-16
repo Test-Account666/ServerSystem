@@ -56,7 +56,7 @@ class CommandLanguage : AbstractServerSystemCommand() {
         }.build()
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Language"
+    override fun getSyntaxPath(command: Command?) = "Language"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "Language.Use", false)

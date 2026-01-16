@@ -32,8 +32,8 @@ class CommandKit : AbstractServerSystemCommand() {
             return
         }
 
-        val permissionPath = getPermission(command)
-        if (!checkBasePermission(commandSender, permissionPath!!)) return
+        val permissionPath = getPermission(command)!!
+        if (!checkBasePermission(commandSender, permissionPath)) return
 
         when (command.name.lowercase(getDefault())) {
             "createkit" -> handleCreateKit(commandSender, *arguments)
@@ -63,12 +63,9 @@ class CommandKit : AbstractServerSystemCommand() {
 
         val player = commandSender.getPlayer()
         val inventory = player!!.inventory
-
-        val offHandItem = inventory.itemInOffHand
-        val armorContents = inventory.armorContents
         val contents = inventory.contents
 
-        val newKit = Kit(kitName, cooldown, offHandItem, armorContents, contents)
+        val newKit = Kit(kitName, cooldown, contents)
         kitManager.addKit(newKit)
         kitManager.saveAllKits()
         command("Kit.Create.Success", commandSender) {

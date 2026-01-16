@@ -85,11 +85,11 @@ class CommandBalance : AbstractServerSystemCommand() {
 
         command(messagePath, commandSender) {
             target(targetPlayer.name)
-            postModifier { message -> message.replace("<BALANCE>", formattedBalance) }
+            postModifier { it.replace("<BALANCE>", formattedBalance) }
         }.build()
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Balance"
+    override fun getSyntaxPath(command: Command?) = "Balance"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "Balance.Use", false)

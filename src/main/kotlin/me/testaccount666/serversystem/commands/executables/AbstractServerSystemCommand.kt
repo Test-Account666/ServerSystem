@@ -27,7 +27,7 @@ abstract class AbstractServerSystemCommand : ServerSystemCommandExecutor {
         if (arguments.size > index) {
             val registry = ServerSystem.instance.registry.getService<UserManager>()
             val cachedUser = registry.getUserOrNull(arguments[index], true)
-            return cachedUser?.offlineUser as User?
+            return cachedUser?.offlineUser as? User
         }
         return if (returnSender) commandSender else null
     }

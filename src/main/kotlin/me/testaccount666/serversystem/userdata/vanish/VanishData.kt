@@ -1,6 +1,6 @@
 package me.testaccount666.serversystem.userdata.vanish
 
-class VanishData(
+data class VanishData(
     var canDrop: Boolean,
     var canPickup: Boolean,
     var canInteract: Boolean,

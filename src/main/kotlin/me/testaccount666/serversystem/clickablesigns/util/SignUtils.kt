@@ -1,7 +1,6 @@
 package me.testaccount666.serversystem.clickablesigns.util
 
 import org.bukkit.Location
-import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 import java.nio.file.Path
@@ -10,7 +9,7 @@ import java.nio.file.Path
  * Utility class for common sign operations.
  */
 object SignUtils {
-    private val _DATA_DIRECTORY_PATH: Path = Path.of("plugins", "ServerSystem", "data", "signs")
+    private val _DATA_DIRECTORY_PATH = Path.of("plugins", "ServerSystem", "data", "signs")
 
     /**
      * Converts a location to a string format used for file names.
@@ -18,7 +17,7 @@ object SignUtils {
      * @param location The location to convert
      * @return The location as a string in the format "world_x_y_z"
      */
-    fun locationToString(location: Location): String = "${location.world.name}_${location.blockX}_${location.blockY}_${location.blockZ}"
+    fun locationToString(location: Location) = "${location.world.name}_${location.blockX}_${location.blockY}_${location.blockZ}"
 
     val dataDirectory: File
         /**
@@ -48,5 +47,5 @@ object SignUtils {
      * @param location The location of the sign
      * @return The configuration
      */
-    fun loadSignConfig(location: Location): FileConfiguration = YamlConfiguration.loadConfiguration(getSignFile(location))
+    fun loadSignConfig(location: Location) = YamlConfiguration.loadConfiguration(getSignFile(location))
 }

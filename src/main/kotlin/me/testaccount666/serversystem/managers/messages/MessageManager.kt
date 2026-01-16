@@ -12,7 +12,7 @@ import java.io.FileNotFoundException
 import java.util.logging.Level
 
 object MessageManager {
-    const val FALLBACK_LANGUAGE: String = "english"
+    const val FALLBACK_LANGUAGE = "english"
 
     @JvmStatic
     lateinit var languageLoader: LanguageLoader
@@ -85,24 +85,13 @@ object MessageManager {
      *
      * @param user        The user to get the message for
      * @param messagePath The path to the message in the messages file
-     * @return The message, or null if not found
-     */
-    @JvmStatic
-    fun getMessage(user: User, messagePath: String): String? {
-        val language = user.playerLanguage
-
-        return getMessage(user, messagePath, language)
-    }
-
-    /**
-     * Gets a message from the messages file for the specified user's language.
-     *
-     * @param user        The user to get the message for
-     * @param messagePath The path to the message in the messages file
      * @param language    The language to get the message for
      * @return The message, or null if not found
      */
-    fun getMessage(user: User, messagePath: String, language: String): String? {
+    fun getMessage(user: User, messagePath: String, language: String? = user.playerLanguage): String? {
+        var language = language
+        if (language == null) language = user.playerLanguage
+
         var messagePath = messagePath
         messagePath = "Messages.${messagePath}"
 

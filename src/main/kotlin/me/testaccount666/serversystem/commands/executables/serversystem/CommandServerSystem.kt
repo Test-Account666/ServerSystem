@@ -17,7 +17,7 @@ import java.util.Locale.getDefault
 
 @ServerSystemCommand("serversystem", [], TabCompleterServerSystem::class)
 class CommandServerSystem : AbstractServerSystemCommand() {
-    override fun getSyntaxPath(command: Command?): String = "ServerSystem"
+    override fun getSyntaxPath(command: Command?) = "ServerSystem"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "ServerSystem.Use", false)

@@ -93,7 +93,7 @@ class CommandOfflineInventorySee : AbstractServerSystemCommand {
         commandSender.getPlayer()!!.openInventory(inventory)
     }
 
-    override fun getSyntaxPath(command: Command?): String = "OfflineInventorySee"
+    override fun getSyntaxPath(command: Command?) = "OfflineInventorySee"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "OfflineInventorySee.Use", false)

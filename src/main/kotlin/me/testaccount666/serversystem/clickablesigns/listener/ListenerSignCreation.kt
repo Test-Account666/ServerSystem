@@ -33,7 +33,7 @@ class ListenerSignCreation : Listener {
 
         Bukkit.getScheduler().runTaskLater(instance, Runnable {
             val sign = block.state as Sign
-            signType.configurator().execute(onlineUser, sign)
+            signType.configurator.execute(onlineUser, sign)
         }, 1L)
     }
 }

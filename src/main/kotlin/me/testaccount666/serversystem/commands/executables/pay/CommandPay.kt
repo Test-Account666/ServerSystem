@@ -79,7 +79,7 @@ class CommandPay : AbstractServerSystemCommand() {
         }
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Pay"
+    override fun getSyntaxPath(command: Command?) = "Pay"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "Pay.Use", false)

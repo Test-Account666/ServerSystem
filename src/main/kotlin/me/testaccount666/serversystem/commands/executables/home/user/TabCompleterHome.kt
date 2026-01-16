@@ -31,7 +31,7 @@ class TabCompleterHome : ServerSystemTabCompleter {
     private fun handleSetHomeCommand(): List<String> = listOf()
 
     private fun handleDeleteHomeCommand(commandSender: User, vararg arguments: String): List<String>? {
-        if (!hasCommandPermission(commandSender, "DeleteHome.Use", false)) return null
+        if (!hasCommandPermission(commandSender, "Home.Delete", false)) return null
 
         return handleHomeCompletion(commandSender, *arguments)
     }
@@ -40,8 +40,8 @@ class TabCompleterHome : ServerSystemTabCompleter {
         if (arguments.size != 1) return listOf()
 
         val homeManager = commandSender.homeManager
-        val potentialCompletions = homeManager.homes.map(Home::displayName).toList()
+        val potentialCompletions = homeManager.homes.map(Home::displayName)
 
-        return potentialCompletions.filter { completion -> completion.startsWith(arguments[0], true) }
+        return potentialCompletions.filter { it.startsWith(arguments[0], true) }
     }
 }

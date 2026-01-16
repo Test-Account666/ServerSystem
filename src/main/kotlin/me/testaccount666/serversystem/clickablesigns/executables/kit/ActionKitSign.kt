@@ -8,7 +8,7 @@ import me.testaccount666.serversystem.utils.ChatColor.Companion.stripColor
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.sign
 import org.bukkit.block.Sign
 import org.bukkit.configuration.file.FileConfiguration
-import java.util.*
+import java.util.Locale.getDefault
 
 class ActionKitSign : AbstractSignClickAction() {
     override val basePermissionNode = "ClickableSigns.Kit"
@@ -23,7 +23,7 @@ class ActionKitSign : AbstractSignClickAction() {
             return false
         }
 
-        val kit = kitManager.getKit(kitName.lowercase(Locale.getDefault()))
+        val kit = kitManager.getKit(kitName.lowercase(getDefault()))
         if (kit == null) {
             sign("Kit.KitNotFound", user) {
                 postModifier { it.replace("<KIT>", kitName) }

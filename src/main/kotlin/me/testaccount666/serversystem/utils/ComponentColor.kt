@@ -5,7 +5,7 @@ import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
-import java.util.*
+import java.util.Locale.getDefault
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -202,7 +202,7 @@ class ComponentColor private constructor() {
          */
         private fun processHexColorCode(altColorChar: Char, textPart: String, formatState: FormatState): Component {
             val hexCode = textPart.substring(0, 7)
-            val remainingText = textPart.substring(7)
+            val remainingText = textPart.drop(7)
 
             try {
                 formatState.currentColor = TextColor.fromHexString(hexCode)
@@ -224,7 +224,7 @@ class ComponentColor private constructor() {
         private fun processStandardColorCode(colorCode: Char, textPart: String, formatState: FormatState): Component {
             formatState.currentColor = _COLOR_MAP[colorCode]
             formatState.activeDecorations.clear()
-            return Component.text(textPart.substring(1)).color(formatState.currentColor)
+            return Component.text(textPart.drop(1)).color(formatState.currentColor)
         }
 
         /**
@@ -239,7 +239,7 @@ class ComponentColor private constructor() {
             val decoration = _DECORATION_MAP[decorationCode]!!
             formatState.activeDecorations.add(decoration)
 
-            var component = Component.text(textPart.substring(1)).decoration(decoration, true)
+            var component = Component.text(textPart.drop(1)).decoration(decoration, true)
 
             for (activeDecoration in formatState.activeDecorations) component = component.decoration(activeDecoration, true)
 
@@ -256,7 +256,7 @@ class ComponentColor private constructor() {
          * @return A component with all formatting reset
          */
         private fun processResetCode(textPart: String, formatState: FormatState): Component {
-            var component = Component.text(textPart.substring(1))
+            var component = Component.text(textPart.drop(1))
 
             _DECORATION_MAP.values.forEach { component = component.decoration(it, false) }
             component = component.color(NamedTextColor.WHITE)
@@ -299,11 +299,11 @@ class ComponentColor private constructor() {
                 val colorCode = _REVERSE_COLOR_MAP[color]
                 if (colorCode != null) builder.append(altColorChar).append(colorCode)
                 else {
-                    val hexString = color.asHexString().uppercase(Locale.getDefault())
+                    val hexString = color.asHexString().uppercase(getDefault())
                     builder.append(altColorChar).append(hexString)
                 }
             } else {
-                val hexString = color.asHexString().uppercase(Locale.getDefault())
+                val hexString = color.asHexString().uppercase(getDefault())
                 builder.append(altColorChar).append(hexString)
             }
 

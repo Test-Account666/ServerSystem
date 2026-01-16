@@ -40,7 +40,7 @@ class ConfiguratorWarpSign : AbstractSignConfigurator() {
             return false
         }
 
-        front.line(0, translateToComponent(SignType.WARP.signName()))
+        front.line(0, translateToComponent(SignType.WARP.signName))
         front.line(1, translateToComponent("&2${warpName}"))
         val back = sign.getSide(Side.BACK)
         for (index in 0..3) back.line(index, front.line(index))

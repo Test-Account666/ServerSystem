@@ -13,7 +13,7 @@ import org.bukkit.block.Sign
 import org.bukkit.block.sign.Side
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
-import java.util.*
+import java.util.Locale.getDefault
 
 class ConfiguratorKitSign : AbstractSignConfigurator() {
     override val createPermissionNode = "ClickableSigns.Kit.Create"
@@ -30,14 +30,14 @@ class ConfiguratorKitSign : AbstractSignConfigurator() {
             return false
         }
 
-        if (!kitManager.kitExists(kitName.lowercase(Locale.getDefault()))) {
+        if (!kitManager.kitExists(kitName.lowercase(getDefault()))) {
             sign("Kit.KitNotFound", user) {
                 postModifier { it.replace("<KIT>", kitName) }
             }.build()
             return false
         }
 
-        front.line(0, translateToComponent(SignType.KIT.signName()))
+        front.line(0, translateToComponent(SignType.KIT.signName))
         front.line(1, translateToComponent("&2${kitName}"))
         val back = sign.getSide(Side.BACK)
         for (index in 0..3) back.line(index, front.line(index))

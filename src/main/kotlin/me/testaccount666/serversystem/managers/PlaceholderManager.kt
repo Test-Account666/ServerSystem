@@ -29,14 +29,8 @@ class PlaceholderManager {
      */
     fun applyPlaceholders(message: String, commandSender: User, targetName: String?, label: String): String {
         var result = message
-        var finalTargetName = targetName
-        val senderName = commandSender.getNameOrNull()
-        if (senderName == null) {
-            ServerSystem.log.warning("CommandSender (${commandSender.uuid}) has no name! This should not happen!")
-            return result
-        }
-
-        if (finalTargetName == null) finalTargetName = senderName
+        val senderName = commandSender.getNameSafe()
+        val finalTargetName = targetName ?: senderName
 
         result = applyColorPlaceholder(commandSender, result, "<Color:Prefix>", "Prefix")
         result = applyColorPlaceholder(commandSender, result, "<Color:Separators>", "Separator")

@@ -12,7 +12,7 @@ class EssentialsMigrator : PluginMigrator {
     private val _stateMigrator: AbstractMigrator by lazy { PlayerStateMigrator() }
     private val _muteMigrator: AbstractMigrator by lazy { MuteMigrator() }
 
-    override val plugin by lazy { Bukkit.getPluginManager().getPlugin("Essentials")!! }
+    override val plugin by lazy { Bukkit.getPluginManager().getPlugin("Essentials") }
 
     override fun migrateFrom() {
         val logger = log

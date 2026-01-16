@@ -16,7 +16,7 @@ class MigratorRegistry {
                 val migratorClasses = scanResult.getClassesImplementing(PluginMigrator::class.java).loadClasses()
                 for (migratorClass in migratorClasses) try {
                     val migrator = migratorClass.getConstructor().newInstance() as PluginMigrator
-                    val plugin = migrator.plugin
+                    val plugin = migrator.plugin ?: continue
 
                     _migrators[plugin.name.lowercase(getDefault())] = migrator
                 } catch (exception: Exception) {

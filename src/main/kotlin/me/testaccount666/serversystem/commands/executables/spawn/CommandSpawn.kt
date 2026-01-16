@@ -148,7 +148,7 @@ open class CommandSpawn : AbstractServerSystemCommand {
         }
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Spawn"
+    override fun getSyntaxPath(command: Command?) = "Spawn"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         if (command.name.equals("spawn", true)) return hasCommandPermission(player, "Spawn.Use", false)

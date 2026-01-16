@@ -14,7 +14,6 @@ import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
-import java.util.Locale.getDefault
 
 @ServerSystemCommand("inventorysee", ["offlineinventorysee"], TabCompleterInventorySee::class)
 class CommandInventorySee : AbstractServerSystemCommand() {
@@ -81,7 +80,7 @@ class CommandInventorySee : AbstractServerSystemCommand() {
         for (slot in 0..39) displayInventory.setItem(slot, owner.inventory.getItem(slot))
 
         displayInventory.setItem(40, owner.inventory.itemInOffHand)
-        displayInventory.setItem(41, owner.openInventory.cursor)
+        displayInventory.setItem(41, owner.itemOnCursor)
     }
 
     fun addSectionDecorators(displayInventory: Inventory) {
@@ -111,10 +110,10 @@ class CommandInventorySee : AbstractServerSystemCommand() {
         }
     }
 
-    override fun getSyntaxPath(command: Command?): String = "InventorySee"
+    override fun getSyntaxPath(command: Command?) = "InventorySee"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        if (command.name.lowercase(getDefault()).startsWith("offline")) return offlineInventorySee.hasCommandAccess(player, command)
+        if (command.name.startsWith("offline", true)) return offlineInventorySee.hasCommandAccess(player, command)
 
         return hasCommandPermission(player, "InventorySee.Use", false)
     }

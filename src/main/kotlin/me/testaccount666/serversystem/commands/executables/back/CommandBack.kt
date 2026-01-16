@@ -58,11 +58,11 @@ class CommandBack : AbstractServerSystemCommand() {
         val typeName = backType(commandSender).getBackTypeName(backType) ?: "ERROR"
 
         command("Back.Success", commandSender) {
-            postModifier { message -> message.replace("<TYPE>", typeName) }
+            postModifier { it.replace("<TYPE>", typeName) }
         }.build()
     }
 
-    override fun getSyntaxPath(command: Command?): String = "Back"
+    override fun getSyntaxPath(command: Command?) = "Back"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return hasCommandPermission(player, "Back.Use", false)
