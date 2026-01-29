@@ -6,14 +6,13 @@ import me.testaccount666.serversystem.clickablesigns.SignType
 import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.ChatColor.Companion.stripColor
-import me.testaccount666.serversystem.utils.ComponentColor.Companion.componentToString
-import me.testaccount666.serversystem.utils.ComponentColor.Companion.translateToComponent
+import me.testaccount666.serversystem.utils.ComponentColor.componentToString
+import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.sign
 import org.bukkit.block.Sign
 import org.bukkit.block.sign.Side
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
-import java.util.Locale.getDefault
 
 class ConfiguratorKitSign : AbstractSignConfigurator() {
     override val createPermissionNode = "ClickableSigns.Kit.Create"
@@ -30,7 +29,7 @@ class ConfiguratorKitSign : AbstractSignConfigurator() {
             return false
         }
 
-        if (!kitManager.kitExists(kitName.lowercase(getDefault()))) {
+        if (!kitManager.kitExists(kitName.lowercase())) {
             sign("Kit.KitNotFound", user) {
                 postModifier { it.replace("<KIT>", kitName) }
             }.build()

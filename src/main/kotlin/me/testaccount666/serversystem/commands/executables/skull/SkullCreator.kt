@@ -3,6 +3,7 @@ package me.testaccount666.serversystem.commands.executables.skull
 import com.destroystokyo.paper.profile.PlayerProfile
 import com.destroystokyo.paper.profile.ProfileProperty
 import com.google.gson.JsonParser
+import me.testaccount666.serversystem.ServerSystem
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -13,29 +14,24 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.net.*
 import java.nio.charset.StandardCharsets
-import java.nio.file.*
+import java.nio.file.FileSystem
+import java.nio.file.FileSystemAlreadyExistsException
+import java.nio.file.FileSystems
+import java.nio.file.Files
 import java.util.*
-import java.util.Map
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
 class SkullCreator {
-    fun getSkull(uuid: UUID): ItemStack {
-        val playerProfile = Bukkit.createProfile(uuid)
+    fun getSkull(it: UUID) = getSkull(it as Any)
+    fun getSkull(it: String) = getSkull(it as Any)
+    fun getSkull(it: OfflinePlayer) = getSkull(it as Any)
 
-        return getSkullByPlayerProfile(playerProfile)
-    }
-
-    fun getSkull(name: String): ItemStack {
-        val playerProfile = Bukkit.createProfile(name)
-
-        return getSkullByPlayerProfile(playerProfile)
-    }
-
-    fun getSkull(offlinePlayer: OfflinePlayer): ItemStack {
-        val playerProfile = offlinePlayer.playerProfile
-
-        return getSkullByPlayerProfile(playerProfile)
+    private fun getSkull(obj: Any): ItemStack {
+        if (obj is String) return getSkullByPlayerProfile(Bukkit.createProfile(obj))
+        if (obj is UUID) return getSkullByPlayerProfile(Bukkit.createProfile(obj))
+        if (obj is OfflinePlayer) return getSkullByPlayerProfile(obj.playerProfile)
+        error("Invalid object type: ${obj::class.qualifiedName}")
     }
 
     fun getSkullByTexture(base64: String?): ItemStack? {
@@ -81,15 +77,15 @@ class SkullCreator {
         if (!Files.exists(_CACHE_FILE)) return null
 
         val zipUri = URI.create("jar:${_CACHE_FILE.toUri()}")
-        getFileSystem(zipUri, Map.of<String, Any>()).use { zipFileSystem ->
-            val entry = zipFileSystem.getPath("/$entryName")
+        getFileSystem(zipUri, mapOf()).use {
+            val entry = it.getPath("/$entryName")
             if (!Files.exists(entry)) return null
             return Files.readString(entry, StandardCharsets.UTF_8)
         }
     }
 
     @kotlin.jvm.Throws(IOException::class)
-    private fun getFileSystem(zipUri: URI, environment: MutableMap<String, Any>): FileSystem {
+    private fun getFileSystem(zipUri: URI, environment: Map<String, Any>): FileSystem {
         return try {
             FileSystems.newFileSystem(zipUri, environment)
         } catch (_: FileSystemAlreadyExistsException) {
@@ -99,8 +95,7 @@ class SkullCreator {
 
     @Throws(IOException::class, URISyntaxException::class)
     private fun getResponse(textureURL: URL): String {
-        val cachedResponse = getCachedResponse(textureURL)
-        if (cachedResponse != null) return cachedResponse
+        getCachedResponse(textureURL)?.let { return it }
 
         val jsonPayload = """
                 {
@@ -111,11 +106,9 @@ class SkullCreator {
                 
                 """.trimIndent()
 
-        val connection: HttpURLConnection = createConnection()
+        val connection = createConnection()
 
-        connection.getOutputStream().use { outputStream ->
-            outputStream.write(jsonPayload.toByteArray(StandardCharsets.UTF_8))
-        }
+        connection.getOutputStream().use { it.write(jsonPayload.toByteArray(StandardCharsets.UTF_8)) }
         val status = connection.getResponseCode()
 
         log.fine("'${textureURL}' got http response: ${status}")
@@ -129,9 +122,7 @@ class SkullCreator {
                 if (success) connection.getInputStream() else connection.errorStream,
                 StandardCharsets.UTF_8
             )
-        ).use { scanner ->
-            response = scanner.useDelimiter("\\A").next()
-        }
+        ).use { response = it.useDelimiter("\\A").next() }
         if (!success) {
             require(status != 400) { "Got status '400', is '${textureURL}' directly pointing to an image? ${response}" }
             throw IllegalArgumentException("Got status '${status}' for '${textureURL}' with message: ${response}")
@@ -174,10 +165,10 @@ class SkullCreator {
     }
 
     companion object {
-        private val _DATA_DIRECTORY: Path = Path.of("plugins", "ServerSystem", "data")
+        private val _DATA_DIRECTORY = ServerSystem.instance.dataPath.resolve("data")
 
         // Yes, inconsistent with User Data, but a zip archive allows us to read individual entries more easily
-        private val _CACHE_FILE: Path = _DATA_DIRECTORY.resolve("MineSkinCache.zip")
+        private val _CACHE_FILE = _DATA_DIRECTORY.resolve("MineSkinCache.zip")
 
         private fun createConnection(): HttpURLConnection {
             val apiURL = URI("https://api.mineskin.org/v2/generate").toURL()

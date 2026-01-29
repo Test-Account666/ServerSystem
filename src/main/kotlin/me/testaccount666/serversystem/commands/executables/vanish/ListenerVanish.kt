@@ -1,7 +1,6 @@
 package me.testaccount666.serversystem.commands.executables.vanish
 
 import com.destroystokyo.paper.event.server.PaperServerListPingEvent
-import com.destroystokyo.paper.event.server.PaperServerListPingEvent.ListedPlayerInfo
 import io.papermc.paper.event.player.AsyncChatEvent
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.annotations.RequiredCommands
@@ -10,6 +9,7 @@ import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermi
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.UserManager
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
+import me.testaccount666.serversystem.utils.ServiceExtensions.getService
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
@@ -37,8 +37,7 @@ class ListenerVanish : Listener {
 
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
-        val user = getVanishedUser(event.getPlayer())
-        if (user == null) {
+        val user = getVanishedUser(event.getPlayer()) ?: run {
             handleOtherPlayerJoin(event.getPlayer())
             return
         }
@@ -54,18 +53,14 @@ class ListenerVanish : Listener {
 
     @EventHandler
     fun onServerPing(event: PaperServerListPingEvent) {
-        val listedPlayers = HashSet<ListedPlayerInfo>(event.listedPlayers)
-        for (listedPlayer in listedPlayers) {
-            val user = getVanishedUser(Bukkit.getPlayer(listedPlayer.id())) ?: continue
-
-            event.listedPlayers.remove(listedPlayer)
-            event.numPlayers -= 1
+        event.listedPlayers.removeIf { player ->
+            (getVanishedUser(Bukkit.getPlayer(player.id())) != null).also { if (it) event.numPlayers -= 1 }
         }
     }
 
     @EventHandler
     fun onPlayerQuit(event: PlayerQuitEvent) {
-        val user = getVanishedUser(event.getPlayer()) ?: return
+        getVanishedUser(event.getPlayer()) ?: return
 
         event.quitMessage(null)
     }
@@ -119,7 +114,7 @@ class ListenerVanish : Listener {
         if (event.action != Action.RIGHT_CLICK_BLOCK) return
         if (event.clickedBlock == null || event.clickedBlock!!.state !is InventoryHolder) return
 
-        val user = getVanishedUser(event.getPlayer()) ?: return
+        getVanishedUser(event.getPlayer()) ?: return
 
         temporarilySetSpectatorMode(event)
     }
@@ -132,7 +127,7 @@ class ListenerVanish : Listener {
 
     @EventHandler
     fun onAdvancement(event: PlayerAdvancementDoneEvent) {
-        val user = getVanishedUser(event.getPlayer()) ?: return
+        getVanishedUser(event.getPlayer()) ?: return
         event.message(null)
     }
 
@@ -147,10 +142,10 @@ class ListenerVanish : Listener {
     private fun handleOtherPlayerJoin(joiningPlayer: Player) {
         if (hasCommandPermission(joiningPlayer, "Vanish.Show", false)) return
 
-        instance.registry.getService<UserManager>().cachedUsers
+        getService<UserManager>().cachedUsers
             .mapNotNull { it.offlineUser as? User }
             .filter(User::isVanish)
-            .forEach { user -> _commandVanish.vanishPacket.sendVanishPacket(user) }
+            .forEach { _commandVanish.vanishPacket.sendVanishPacket(it) }
     }
 
     private fun handleVanishedPlayerJoin(event: PlayerJoinEvent, user: User) {
@@ -162,14 +157,11 @@ class ListenerVanish : Listener {
 
     private fun handleVanishRestriction(player: Player, cancellable: Cancellable, permissionCheck: VanishDataCheck, messagePath: String?) {
         val user = getVanishedUser(player) ?: return
-
         if (permissionCheck.hasPermission(user)) return
 
         cancellable.isCancelled = true
 
-        if (messagePath == null) return
-
-        command(messagePath, user).build()
+        messagePath?.let { command(messagePath, user).build() }
     }
 
     private fun temporarilySetSpectatorMode(event: PlayerInteractEvent) {
@@ -182,7 +174,7 @@ class ListenerVanish : Listener {
 
     private fun getVanishedUser(player: Player?): User? {
         if (player == null) return null
-        val user = instance.registry.getService<UserManager>().getUserOrNull(player) ?: return null
+        val user = getService<UserManager>().getUserOrNull(player) ?: return null
         if (!user.isOnlineUser) return null
 
         val onlineUser = user.offlineUser as User
@@ -191,9 +183,7 @@ class ListenerVanish : Listener {
         return onlineUser
     }
 
-    private fun isPlayerVanished(player: Player?): Boolean {
-        return getVanishedUser(player) != null
-    }
+    private fun isPlayerVanished(player: Player?) = getVanishedUser(player) != null
 
     private fun interface VanishDataCheck {
         fun hasPermission(user: User): Boolean

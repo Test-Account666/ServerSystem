@@ -50,9 +50,7 @@ class PlaceholderManager {
     }
 
     private fun applyColorPlaceholder(user: User, message: String, placeholder: String, colorId: String): String {
-        val color = MappingsData.messageColors(user).getMessageColor(colorId)
-
-        if (color == null) {
+        val color = MappingsData.messageColors(user).getMessageColor(colorId) ?: run {
             ServerSystem.log.warning("${colorId} color could not be found! This should not happen!")
             return message
         }

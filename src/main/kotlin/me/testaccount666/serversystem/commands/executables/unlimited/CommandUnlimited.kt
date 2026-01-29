@@ -16,7 +16,7 @@ import org.bukkit.persistence.PersistentDataType
 
 @ServerSystemCommand("unlimited")
 class CommandUnlimited : AbstractServerSystemCommand() {
-    val unlimitedKey: NamespacedKey = NamespacedKey(instance, "unlimited")
+    val unlimitedKey = NamespacedKey(instance, "unlimited")
 
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
         if (!checkBasePermission(commandSender, "Unlimited.Use")) return
@@ -26,7 +26,6 @@ class CommandUnlimited : AbstractServerSystemCommand() {
         }
 
         val itemInHand = commandSender.getPlayer()!!.inventory.itemInMainHand
-
         if (itemInHand.isAir()) {
             command("Unlimited.NoItemInHand", commandSender).build()
             return

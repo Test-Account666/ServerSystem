@@ -10,7 +10,6 @@ import org.bukkit.attribute.Attribute
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffectType
-import java.util.Locale.getDefault
 
 @ServerSystemCommand("heal", ["feed"])
 class CommandHeal : AbstractServerSystemCommand() {
@@ -35,19 +34,19 @@ class CommandHeal : AbstractServerSystemCommand() {
         if (!checkBasePermission(commandSender, "Feed.Use")) return
         if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
 
-        val targetPlayer = targetUser.getPlayer()
+        val targetPlayer = targetUser.getPlayer()!!
         val isSelf = targetUser === commandSender
 
-        if (!isSelf && !checkOtherPermission(commandSender, "Feed.Other", targetPlayer!!.name)) return
+        if (!isSelf && !checkOtherPermission(commandSender, "Feed.Other", targetPlayer.name)) return
 
-        targetPlayer!!.foodLevel = 20
+        targetPlayer.foodLevel = 20
         targetPlayer.saturation = 20f
+        targetPlayer.sendHealthUpdate()
 
         val messagePath = if (isSelf) "Feed.Success" else "Feed.SuccessOther"
 
@@ -64,8 +63,7 @@ class CommandHeal : AbstractServerSystemCommand() {
         if (!checkBasePermission(commandSender, "Heal.Use")) return
         if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
@@ -75,11 +73,12 @@ class CommandHeal : AbstractServerSystemCommand() {
 
         if (!isSelf && !checkOtherPermission(commandSender, "Heal.Other", targetPlayer.name)) return
 
-        targetPlayer.health = targetPlayer.getAttribute(Attribute.MAX_HEALTH)!!.value
+        targetPlayer.health = targetPlayer.getAttribute(Attribute.MAX_HEALTH)?.value ?: 20.0
         targetPlayer.foodLevel = 20
         targetPlayer.saturation = 20f
         targetPlayer.fireTicks = 0
-        _badEffectsSet.forEach { potionEffectType -> targetPlayer.removePotionEffect(potionEffectType) }
+        _badEffectsSet.forEach(targetPlayer::removePotionEffect)
+        targetPlayer.sendHealthUpdate()
 
         val messagePath = if (isSelf) "Heal.Success" else "Heal.SuccessOther"
 
@@ -93,12 +92,12 @@ class CommandHeal : AbstractServerSystemCommand() {
     }
 
     override fun getSyntaxPath(command: Command?): String {
-        if (command == null) error("(CommandHeal;SyntaxPath) Command is null")
+        val commandName = command?.name?.lowercase() ?: error("(CommandHeal;SyntaxPath) Command is null")
 
-        return when (val commandName = command.name.lowercase(getDefault())) {
+        return when (commandName) {
             "heal" -> "Heal"
             "feed" -> "Feed"
-            else -> error("(CommandHeal;SyntaxPath) Unexpected value: ${commandName}")
+            else -> error("(CommandHeal;SyntaxPath) Unexpected value: $commandName")
         }
     }
 

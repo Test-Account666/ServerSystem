@@ -8,10 +8,8 @@ import org.bukkit.command.CommandSender
 
 class CommandExecutorWrapper(val commandExecutor: ServerSystemCommandExecutor) : AbstractCommandWrapper(), CommandExecutor {
     override fun onCommand(commandSender: CommandSender, command: Command, label: String, arguments: Array<String>): Boolean {
-        val commandUser = resolveCommandUser(commandSender)
-
-        // This should technically never happen...
-        if (commandUser == null) {
+        val commandUser = resolveCommandUser(commandSender) ?: run {
+            // This should technically never happen...
             log.severe("Error executing command '${command.name}'. CommandSender '${commandSender.name}' is not a valid user?!")
             return false
         }

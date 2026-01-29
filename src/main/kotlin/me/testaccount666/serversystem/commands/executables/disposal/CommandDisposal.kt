@@ -4,6 +4,7 @@ import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.userdata.User
+import me.testaccount666.serversystem.utils.ComponentColor
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.Bukkit
@@ -17,8 +18,7 @@ class CommandDisposal : AbstractServerSystemCommand() {
         if (!checkBasePermission(commandSender, "Disposal.Use")) return
         if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
@@ -28,7 +28,12 @@ class CommandDisposal : AbstractServerSystemCommand() {
 
         if (!isSelf && !checkOtherPermission(commandSender, "Disposal.Other", targetPlayer.name)) return
 
-        targetPlayer.openInventory(Bukkit.createInventory(targetPlayer, InventoryType.CHEST.defaultSize * 2, "§cTrash"))
+        val inventory = Bukkit.createInventory(
+            targetPlayer, InventoryType.CHEST.defaultSize * 2,
+            ComponentColor.translateToComponent("&cTrash")
+        )
+
+        targetPlayer.openInventory(inventory)
 
         if (isSelf) return
         command("Disposal.Success", targetUser) { target(targetPlayer.name) }.build()

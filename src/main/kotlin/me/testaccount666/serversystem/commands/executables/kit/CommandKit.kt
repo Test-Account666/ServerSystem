@@ -1,6 +1,5 @@
 package me.testaccount666.serversystem.commands.executables.kit
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.kit.manager.Kit
@@ -14,7 +13,6 @@ import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
-import java.util.Locale.getDefault
 
 @ServerSystemCommand("kit", ["createkit", "deletekit"], TabCompleterKit::class)
 class CommandKit : AbstractServerSystemCommand() {
@@ -35,7 +33,7 @@ class CommandKit : AbstractServerSystemCommand() {
         val permissionPath = getPermission(command)!!
         if (!checkBasePermission(commandSender, permissionPath)) return
 
-        when (command.name.lowercase(getDefault())) {
+        when (command.name.lowercase()) {
             "createkit" -> handleCreateKit(commandSender, *arguments)
             "deletekit" -> handleDeleteKit(commandSender, *arguments)
             "kit" -> handleKit(commandSender, *arguments)
@@ -43,10 +41,9 @@ class CommandKit : AbstractServerSystemCommand() {
     }
 
     private fun handleCreateKit(commandSender: User, vararg arguments: String) {
-        val kitName = arguments[0].lowercase(getDefault())
-        val kitManager = instance.registry.getService<KitManager>()
-        val kit = kitManager.getKit(kitName)
-        if (kit != null) {
+        val kitName = arguments[0].lowercase()
+        val kitManager = getService<KitManager>()
+        kitManager.getKit(kitName)?.also { kit ->
             command("Kit.Create.KitAlreadyExists", commandSender) {
                 postModifier { it.replace("<KIT>", kit.displayName) }
             }.build()
@@ -74,8 +71,8 @@ class CommandKit : AbstractServerSystemCommand() {
     }
 
     private fun handleDeleteKit(commandSender: User, vararg arguments: String) {
-        val kitName = arguments[0].lowercase(getDefault())
-        val kitManager = instance.registry.getService<KitManager>()
+        val kitName = arguments[0].lowercase()
+        val kitManager = getService<KitManager>()
         if (!kitManager.kitExists(kitName)) {
             command("Kit.KitNotFound", commandSender) {
                 postModifier { it.replace("<KIT>", arguments[0]) }
@@ -90,18 +87,16 @@ class CommandKit : AbstractServerSystemCommand() {
     }
 
     private fun handleKit(commandSender: User, vararg arguments: String) {
-        val kitName = arguments[0].lowercase(getDefault())
-        val kitManager = instance.registry.getService<KitManager>()
-        val kit = kitManager.getKit(kitName)
-        if (kit == null) {
+        val kitName = arguments[0].lowercase()
+        val kitManager = getService<KitManager>()
+        val kit = kitManager.getKit(kitName) ?: run {
             command("Kit.KitNotFound", commandSender) {
                 postModifier { it.replace("<KIT>", arguments[0]) }
             }.build()
             return
         }
 
-        val targetUser = getTargetUser(commandSender, 1, arguments = arguments)
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, 1, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[1]) }.build()
             return
         }
@@ -133,7 +128,7 @@ class CommandKit : AbstractServerSystemCommand() {
     }
 
     private fun getPermission(command: Command): String? {
-        return when (command.name.lowercase(getDefault())) {
+        return when (command.name.lowercase()) {
             "createkit" -> "Kit.Create"
             "deletekit" -> "Kit.Delete"
             "kit" -> "Kit.Use"
@@ -148,7 +143,7 @@ class CommandKit : AbstractServerSystemCommand() {
 
     override fun getSyntaxPath(command: Command?): String {
         if (command == null) return "Kit"
-        return when (val commandName = command.name.lowercase(getDefault())) {
+        return when (val commandName = command.name.lowercase()) {
             "createkit" -> "CreateKit"
             "deletekit" -> "DeleteKit"
             "kit" -> "Kit"

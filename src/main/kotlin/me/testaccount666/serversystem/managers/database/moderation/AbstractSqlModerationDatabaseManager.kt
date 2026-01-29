@@ -8,7 +8,8 @@ import java.sql.SQLException
  * Abstract base class for SQL-based moderation database managers.
  * Provides common table creation logic with hooks for platform-specific syntax.
  */
-abstract class AbstractSqlModerationDatabaseManager(configReader: ConfigReader?) : AbstractSqlDatabaseManager(configReader, "moderation"),
+abstract class AbstractSqlModerationDatabaseManager(configReader: ConfigReader?) :
+    AbstractSqlDatabaseManager(configReader, "moderation"),
     ModerationDatabaseManager {
 
     /**

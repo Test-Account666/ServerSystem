@@ -21,8 +21,7 @@ class CommandSuicide : AbstractServerSystemCommand() {
             return
         }
 
-        val player = commandSender.getPlayer()!!
-        player.damage(Double.MAX_VALUE, DamageSource.builder(DamageType.GENERIC_KILL).build())
+        commandSender.getPlayer()!!.damage(Double.MAX_VALUE, DamageSource.builder(DamageType.GENERIC_KILL).build())
     }
 
     override fun getSyntaxPath(command: Command?): String {

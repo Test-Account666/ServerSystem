@@ -2,7 +2,6 @@ package me.testaccount666.migration.plugins
 
 import io.github.classgraph.ClassGraph
 import me.testaccount666.serversystem.ServerSystem.Companion.log
-import java.util.Locale.getDefault
 import java.util.logging.Level
 
 class MigratorRegistry {
@@ -18,14 +17,14 @@ class MigratorRegistry {
                     val migrator = migratorClass.getConstructor().newInstance() as PluginMigrator
                     val plugin = migrator.plugin ?: continue
 
-                    _migrators[plugin.name.lowercase(getDefault())] = migrator
+                    _migrators[plugin.name.lowercase()] = migrator
                 } catch (exception: Exception) {
                     log.log(Level.WARNING, "Failed to register migrator '${migratorClass.name}'", exception)
                 }
             }
     }
 
-    fun getMigrator(pluginName: String) = _migrators[pluginName.lowercase(getDefault())]
+    fun getMigrator(pluginName: String) = _migrators[pluginName.lowercase()]
 
     val migrators
         get() = _migrators.keys.toSet()

@@ -280,12 +280,14 @@ Messages:
     Warp:
       Set:
         Success: "Warp <Color:Highlight><WARP> <Color:Message>je bil nastavljen na tvojo trenutno lokacijo."
-        WarpAlreadyExists: "<Color:Error.Message>Navedeni warp <Color:Error.Highlight><WARP> <Color:Error.Message>že obstaja."
+        AlreadyExists: "<Color:Error.Message>Navedeni warp <Color:Error.Highlight><WARP> <Color:Error.Message>že obstaja."
         InvalidName: "<Color:Error.Message>Navedeno ime ni alfanumerično."
       Delete:
         Success: "Warp <Color:Highlight><WARP> <Color:Message>je bil izbrisan."
-      WarpNotFound: "<Color:Error.Message>Navedeni warp <Color:Error.Highlight><WARP> <Color:Error.Message>ne obstaja."
-      Success: "Teleportiral si se na <Color:Highlight><WARP><Color:Message>."
+        WarpNotFound: "<Color:Error.Message>Navedeni warp <Color:Error.Highlight><WARP> <Color:Error.Message>ne obstaja."
+      Teleport:
+        WarpNotFound: "<Color:Error.Message>Navedeni warp <Color:Error.Highlight><WARP> <Color:Error.Message>ne obstaja."
+        Success: "Teleportiral si se na <Color:Highlight><WARP><Color:Message>."
     Kit:
       Create:
         KitAlreadyExists: "<Color:Error.Message>Komplet <Color:Error.Highlight><KIT> <Color:Error.Message>že obstaja."

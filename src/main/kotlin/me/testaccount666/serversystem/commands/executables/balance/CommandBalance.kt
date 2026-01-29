@@ -1,6 +1,5 @@
 package me.testaccount666.serversystem.commands.executables.balance
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
@@ -42,12 +41,9 @@ class CommandBalance : AbstractServerSystemCommand() {
         command("Baltop.Header", commandSender) { prefix(false) }.build()
 
         var position = 1
-        for (entry in topTen.entries) {
-            val playerUuid = entry.key
-            val balance = entry.value
-            val formattedBalance = instance.registry.getService<EconomyProvider>().formatMoney(balance)
-            var playerName = Bukkit.getOfflinePlayer(playerUuid).name
-            playerName = playerName ?: "Unknown"
+        for ((playerUuid, balance) in topTen.entries) {
+            val formattedBalance = getService<EconomyProvider>().formatMoney(balance)
+            val playerName = Bukkit.getOfflinePlayer(playerUuid).name ?: "Unknown"
 
             val currentPosition = position
             command("Baltop.Entry", commandSender) {
@@ -66,9 +62,7 @@ class CommandBalance : AbstractServerSystemCommand() {
         if (!checkBasePermission(commandSender, "Balance.Use")) return
         if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
@@ -79,7 +73,7 @@ class CommandBalance : AbstractServerSystemCommand() {
         if (!isSelf && !checkOtherPermission(commandSender, "Balance.Other", targetPlayer.name)) return
 
         val balance = targetUser.bankAccount.balance
-        val formattedBalance = instance.registry.getService<EconomyProvider>().formatMoney(balance)
+        val formattedBalance = getService<EconomyProvider>().formatMoney(balance)
 
         val messagePath = if (isSelf) "Balance.Success" else "Balance.SuccessOther"
 

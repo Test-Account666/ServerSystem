@@ -8,7 +8,6 @@ import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
-import java.util.Locale.getDefault
 
 @ServerSystemCommand("workbench", ["anvil", "smithing", "loom", "grindstone", "cartography", "stonecutter"])
 class CommandWorkbench : AbstractServerSystemCommand() {
@@ -31,34 +30,31 @@ class CommandWorkbench : AbstractServerSystemCommand() {
         }
 
         val player = commandSender.getPlayer()!!
-        val commandName = capitalizeFirstLetter(command.name)
+        val commandName = command.name.replaceFirstChar { it.uppercaseChar() }
 
         val permissionPath = "${commandName}.Use"
         if (!checkBasePermission(commandSender, permissionPath)) return
 
-        val opener = _menuOpeners[commandName] ?: return
-        opener(player)
+        _menuOpeners[commandName]?.invoke(player)
     }
-
-    private fun capitalizeFirstLetter(input: String) = input.replaceFirstChar { it.uppercaseChar() }
 
 
     override fun getSyntaxPath(command: Command?): String {
         throw UnsupportedOperationException("Workbench command doesn't have an available syntax!")
     }
 
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        val permissionMap = mapOf(
-            "workbench" to "Workbench.Use",
-            "anvil" to "Anvil.Use",
-            "smithing" to "Smithing.Use",
-            "loom" to "Loom.Use",
-            "grindstone" to "Grindstone.Use",
-            "cartography" to "Cartography.Use",
-            "stonecutter" to "Stonecutter.Use"
-        )
+    private val _permissionMap = mapOf(
+        "workbench" to "Workbench.Use",
+        "anvil" to "Anvil.Use",
+        "smithing" to "Smithing.Use",
+        "loom" to "Loom.Use",
+        "grindstone" to "Grindstone.Use",
+        "cartography" to "Cartography.Use",
+        "stonecutter" to "Stonecutter.Use"
+    )
 
-        val permissionPath = permissionMap[command.name.lowercase(getDefault())] ?: return false
+    override fun hasCommandAccess(player: Player, command: Command): Boolean {
+        val permissionPath = _permissionMap[command.name.lowercase()] ?: return false
 
         return hasCommandPermission(player, permissionPath, false)
     }

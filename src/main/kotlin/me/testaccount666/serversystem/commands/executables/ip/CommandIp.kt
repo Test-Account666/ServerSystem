@@ -21,8 +21,7 @@ class CommandIp : AbstractServerSystemCommand() {
             return
         }
 
-        val targetUser = getTargetUser(commandSender, returnSender = false, arguments = arguments)
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, returnSender = false, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }

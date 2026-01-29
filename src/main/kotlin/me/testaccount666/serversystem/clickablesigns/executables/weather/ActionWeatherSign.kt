@@ -6,13 +6,12 @@ import me.testaccount666.serversystem.utils.ChatColor.Companion.stripColor
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.sign
 import org.bukkit.block.Sign
 import org.bukkit.configuration.file.FileConfiguration
-import java.util.Locale.getDefault
 
 class ActionWeatherSign : AbstractSignClickAction() {
     override val basePermissionNode = "ClickableSigns.Weather"
 
     override fun executeAction(user: User, sign: Sign, config: FileConfiguration): Boolean {
-        var weatherType = config.getString("WeatherType", sign.getLine(1))?.lowercase(getDefault())
+        var weatherType = config.getString("WeatherType", sign.getLine(1))?.lowercase()
         weatherType = stripColor(weatherType)
         if (weatherType.isEmpty()) {
             sign("Weather.NoWeatherSpecified", user).build()

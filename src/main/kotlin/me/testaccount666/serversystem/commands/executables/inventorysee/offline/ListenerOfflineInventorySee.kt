@@ -21,7 +21,7 @@ class ListenerOfflineInventorySee : AbstractInventorySeeListener(), Listener {
      */
     fun canRegister(commands: Set<ServerSystemCommandExecutor>) = internalCanRegister(commands)
 
-    override fun additionalRegistrationChecks(): Boolean = _commandInventorySee.offlineInventorySee.inventoryLoader != null
+    override fun additionalRegistrationChecks() = _commandInventorySee.offlineInventorySee.inventoryLoader != null
 
     @EventHandler
     fun onPlayerJoin(event: PlayerLoginEvent) { // Sorry paper, but I think PlayerJoinEvent is too late.

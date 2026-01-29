@@ -8,11 +8,9 @@ import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
+import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
-import java.util.Locale.getDefault
-import java.util.function.BooleanSupplier
-import java.util.function.Consumer
 
 @ServerSystemCommand("vanish", ["drop", "pickup", "interact", "message"])
 class CommandVanish : AbstractServerSystemCommand() {
@@ -22,15 +20,14 @@ class CommandVanish : AbstractServerSystemCommand() {
         if (!checkBasePermission(commandSender, "Vanish.Use")) return
         if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
 
         val isSelf = targetUser === commandSender
 
-        when (command.name.lowercase(getDefault())) {
+        when (command.name.lowercase()) {
             "vanish" -> handleVanishCommand(commandSender, targetUser, isSelf)
             "drop" -> handleDropCommand(commandSender, targetUser, isSelf)
             "pickup" -> handlePickupCommand(commandSender, targetUser, isSelf)
@@ -58,14 +55,14 @@ class CommandVanish : AbstractServerSystemCommand() {
 
     private fun handleToggleCommand(
         commandSender: User, targetUser: User, isSelf: Boolean, featureName: String?,
-        getCurrentState: BooleanSupplier, setState: Consumer<Boolean>
+        getCurrentState: () -> Boolean, setState: (Boolean) -> Unit
     ) {
         var messagePath = if (isSelf) "${featureName}.Success" else "${featureName}.SuccessOther"
-        val enableFeature = !getCurrentState.asBoolean
+        val enableFeature = !getCurrentState()
 
         messagePath = if (enableFeature) "${messagePath}.Enabled" else "${messagePath}.Disabled"
 
-        setState.accept(enableFeature)
+        setState(enableFeature)
         targetUser.save()
 
         command(messagePath, commandSender) { target(targetUser.getNameSafe()) }.build()
@@ -106,6 +103,13 @@ class CommandVanish : AbstractServerSystemCommand() {
         targetUser.save()
 
         vanishPacket.sendVanishPacket(targetUser)
+
+        if (enableVanish) {
+            val targetPlayer = targetUser.getPlayer()!!
+            targetPlayer.location.getNearbyEntitiesByType(Mob::class.java, 16.0) {
+                it.target?.uniqueId == targetPlayer.uniqueId
+            }.forEach { it.target = null }
+        }
 
         command(messagePath, commandSender) { target(targetUser.getNameSafe()) }.build()
 

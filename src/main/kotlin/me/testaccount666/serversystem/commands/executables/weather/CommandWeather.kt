@@ -8,10 +8,8 @@ import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.Bukkit
-import org.bukkit.World
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
-import java.util.Locale.getDefault
 import java.util.concurrent.ThreadLocalRandom
 
 @ServerSystemCommand("weather", ["sun", "storm", "rain"], TabCompleterWeather::class)
@@ -30,14 +28,9 @@ class CommandWeather : AbstractServerSystemCommand() {
             return
         }
 
-        val world: World?
+        if (arguments.isNotEmpty() && !checkBasePermission(commandSender, "Weather.World")) return
 
-        if (arguments.isNotEmpty()) {
-            if (!checkBasePermission(commandSender, "Weather.World")) return
-            world = Bukkit.getWorld(arguments[0])
-        } else world = commandSender.getPlayer()!!.world
-
-        if (world == null) {
+        val world = (if (arguments.isNotEmpty()) Bukkit.getWorld(arguments[0]) else commandSender.getPlayer()!!.world) ?: run {
             command("Weather.WorldNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
@@ -64,26 +57,17 @@ class CommandWeather : AbstractServerSystemCommand() {
             return
         }
 
-        val world: World?
+        if (arguments.size >= 2 && !checkBasePermission(commandSender, "Weather.World")) return
 
-        if (arguments.size >= 2) {
-            if (!checkBasePermission(commandSender, "Weather.World")) return
-            world = Bukkit.getWorld(arguments[1])
-        } else world = commandSender.getPlayer()!!.world
-
-        if (world == null) {
+        val world = (if (arguments.size >= 2) Bukkit.getWorld(arguments[1]) else commandSender.getPlayer()!!.world) ?: run {
             command("Weather.WorldNotFound", commandSender) { target(arguments[1]) }.build()
             return
         }
 
-        val random = ThreadLocalRandom.current()
-
         // Random duration between 300 and 900 seconds (5 to 15 minutes)
-        var weatherDuration = random.nextInt(300, 900) + 1
-        // Convert to ticks
-        weatherDuration *= 20
+        val weatherDuration = (ThreadLocalRandom.current().nextInt(300, 900) + 1) * 20
 
-        when (arguments[0].lowercase(getDefault())) {
+        when (arguments[0].lowercase()) {
             "sun", "clear" -> {
                 world.isThundering = false
                 world.setStorm(false)
@@ -125,7 +109,7 @@ class CommandWeather : AbstractServerSystemCommand() {
     override fun getSyntaxPath(command: Command?): String {
         if (command == null) return "Weather"
 
-        return when (val commandName = command.name.lowercase(getDefault())) {
+        return when (val commandName = command.name.lowercase()) {
             "weather" -> "Weather"
             "sun" -> "Sun"
             "storm" -> "Storm"

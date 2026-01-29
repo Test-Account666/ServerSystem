@@ -15,9 +15,7 @@ class UpdateManager(private val _plugin: ServerSystem, private val _configManage
 
     fun start() {
         val generalConfig = _configManager.generalConfig
-        val updateCheckerType = resolveUpdateCheckerType(generalConfig)
-
-        if (updateCheckerType == null) {
+        val updateCheckerType = resolveUpdateCheckerType(generalConfig) ?: run {
             handleInvalidUpdateCheckerType(generalConfig)
             return
         }

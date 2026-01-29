@@ -22,7 +22,7 @@ class BalancePlaceholder : Placeholder {
 
         val balance = user.bankAccount.balance
 
-        val formatBalance = identifier.equals("balance", ignoreCase = true)
+        val formatBalance = identifier.equals("balance", true)
         if (!formatBalance) return String.format("%.2f", balance.toDouble())
 
         return instance.registry.getService<EconomyProvider>().formatMoney(balance)

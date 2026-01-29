@@ -4,13 +4,12 @@ import me.testaccount666.serversystem.clickablesigns.AbstractSignConfigurator
 import me.testaccount666.serversystem.clickablesigns.SignType
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.ChatColor.Companion.stripColor
-import me.testaccount666.serversystem.utils.ComponentColor.Companion.translateToComponent
+import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.sign
 import org.bukkit.block.Sign
 import org.bukkit.block.sign.Side
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
-import java.util.Locale.getDefault
 
 class ConfiguratorWeatherSign : AbstractSignConfigurator() {
     override val createPermissionNode = "ClickableSigns.Weather.Create"
@@ -19,7 +18,7 @@ class ConfiguratorWeatherSign : AbstractSignConfigurator() {
 
     override fun validateConfiguration(user: User, sign: Sign, config: YamlConfiguration): Boolean {
         val front = sign.getSide(Side.FRONT)
-        val weatherType = front.getLine(1).lowercase(getDefault())
+        val weatherType = front.getLine(1).lowercase()
         if (weatherType.isEmpty()) {
             sign("Weather.NoWeatherSpecified", user).build()
             return false
@@ -41,7 +40,7 @@ class ConfiguratorWeatherSign : AbstractSignConfigurator() {
     }
 
     override fun addSignSpecificConfiguration(user: User, sign: Sign, config: FileConfiguration) {
-        var weatherType = sign.getSide(Side.FRONT).getLine(1).lowercase(getDefault())
+        var weatherType = sign.getSide(Side.FRONT).getLine(1).lowercase()
         weatherType = stripColor(weatherType)
         config.set("WeatherType", weatherType)
     }

@@ -8,7 +8,7 @@ import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermi
 import me.testaccount666.serversystem.managers.messages.MessageManager.applyPlaceholders
 import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.ComponentColor.Companion.translateToComponent
+import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import net.kyori.adventure.text.Component
@@ -43,9 +43,7 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
      * @return The target User if valid, null if validation failed
      */
     private fun validateTargetPlayer(commandSender: User, vararg arguments: String): User? {
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return null
         }
@@ -101,7 +99,6 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
         val targetPlayer = targetUser.getPlayer()!!
         val timeOut = System.currentTimeMillis() + (1000 * 60 * 2) // Two minutes
 
-
         command("TeleportAsk.Success", commandSender) { target(targetPlayer.name) }.build()
 
         if (targetUser.isIgnoredPlayer(commandSender.uuid)) return
@@ -134,7 +131,6 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
 
     private fun sendAcceptDenyButtons(commandSender: User, targetUser: User, label: String) {
         val targetPlayer = targetUser.getPlayer()!!
-
 
         val acceptButton = command("TeleportAsk.Buttons.Accept.Name", targetUser) {
             format(false)
@@ -326,9 +322,7 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
         if (!checkBasePermission(commandSender, "TeleportToggle.Use")) return
         if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
@@ -368,8 +362,7 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
             "teleporthereask" -> "TeleportHereAsk.Use"
             "teleporttoggle" -> "TeleportToggle.Use"
             else -> null
-        }
-        if (permissionPath == null) return false
+        } ?: return false
 
         return hasCommandPermission(player, permissionPath, false)
     }

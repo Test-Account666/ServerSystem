@@ -4,7 +4,7 @@ import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.clickablesigns.SignType
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.UserManager
-import me.testaccount666.serversystem.utils.ComponentColor.Companion.componentToString
+import me.testaccount666.serversystem.utils.ComponentColor.componentToString
 import org.bukkit.Bukkit
 import org.bukkit.block.Sign
 import org.bukkit.event.EventHandler

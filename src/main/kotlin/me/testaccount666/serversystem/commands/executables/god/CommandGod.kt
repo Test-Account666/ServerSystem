@@ -7,6 +7,7 @@ import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
+import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
 
 /**
@@ -29,8 +30,7 @@ class CommandGod : AbstractServerSystemCommand() {
         if (!checkBasePermission(commandSender, "God.Use")) return
         if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
@@ -46,6 +46,10 @@ class CommandGod : AbstractServerSystemCommand() {
 
         targetUser.isGodMode = isGod
         targetUser.save()
+
+        targetPlayer.location.getNearbyEntitiesByType(Mob::class.java, 16.0) {
+            it.target?.uniqueId == targetPlayer.uniqueId
+        }.forEach { it.target = null }
 
         command(messagePath, commandSender) { target(targetPlayer.name) }.build()
 

@@ -1,7 +1,6 @@
 package me.testaccount666.serversystem.commands.executables.moderation.mute
 
 import io.papermc.paper.event.player.AsyncChatEvent
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.annotations.RequiredCommands
 import me.testaccount666.serversystem.commands.executables.moderation.ModerationUtils
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor
@@ -12,6 +11,7 @@ import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.UserManager
 import me.testaccount666.serversystem.utils.DurationParser.parseDate
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
+import me.testaccount666.serversystem.utils.ServiceExtensions.getService
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.EventHandler
@@ -23,7 +23,7 @@ class ListenerMute : Listener {
 
     @EventHandler
     fun onPlayerChat(event: AsyncChatEvent) {
-        val user = instance.registry.getService<UserManager>().getUserOrNull(event.getPlayer()) ?: return
+        val user = getService<UserManager>().getUserOrNull(event.getPlayer()) ?: return
         if (user.isOfflineUser) return
         val onlineUser = user.offlineUser as User
         val muteManager = onlineUser.muteManager

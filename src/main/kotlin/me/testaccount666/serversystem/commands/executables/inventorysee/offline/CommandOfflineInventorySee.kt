@@ -1,7 +1,6 @@
 package me.testaccount666.serversystem.commands.executables.inventorysee.offline
 
 import de.tr7zw.nbtapi.NBT
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.inventorysee.online.CommandInventorySee
@@ -61,8 +60,7 @@ class CommandOfflineInventorySee : AbstractServerSystemCommand {
             return
         }
 
-        val cachedUser = instance.registry.getService<UserManager>().getUserOrNull(arguments[0])
-        if (cachedUser == null) {
+        val cachedUser = getService<UserManager>().getUserOrNull(arguments[0]) ?: run {
             general("Offline.NeverPlayed", commandSender) { target(arguments[0]) }.build()
             return
         }
@@ -72,16 +70,13 @@ class CommandOfflineInventorySee : AbstractServerSystemCommand {
             return
         }
 
-        val targetUser = cachedUser.offlineUser
-        val targetPlayer = targetUser.player ?: return
-
+        val targetPlayer = cachedUser.offlineUser.player ?: return
         if (!targetPlayer.hasPlayedBefore()) {
             general("Offline.NeverPlayed", commandSender) { target(arguments[0]) }.build()
             return
         }
 
-        val inventory = inventoryLoader!!.loadOfflineInventory(targetPlayer)
-        if (inventory == null) {
+        val inventory = inventoryLoader!!.loadOfflineInventory(targetPlayer) ?: run {
             log.warning("(OfflineInventorySee) Failed to load inventory of '${arguments[0]}'!")
             general("ErrorOccurred", commandSender) {
                 target(arguments[0])

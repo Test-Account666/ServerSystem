@@ -41,13 +41,11 @@ abstract class AbstractSqlBankAccount(
         get() = fetchTopTen()
 
     private fun fetchBalance(): BigDecimal =
-        tryQuery(SELECT_BALANCE) { rs ->
-            if (rs.next()) rs.getBigDecimal("Balance")
-            else BigDecimal(
-                ServerSystem.instance.registry
-                    .getService<EconomyProvider>()
-                    .defaultBalance
-            )
+        tryQuery(SELECT_BALANCE) {
+            if (it.next()) it.getBigDecimal("Balance")
+            else ServerSystem.instance.registry
+                .getService<EconomyProvider>()
+                .defaultBalance?.toBigDecimal()
         } ?: BigDecimal.ZERO // should never happen
 
 
@@ -56,15 +54,14 @@ abstract class AbstractSqlBankAccount(
         executeUpdate(query, value)
     }
 
-    private fun existsInDatabase(): Boolean =
-        tryQuery(CHECK_EXISTS) { it.next() } ?: false
+    private fun existsInDatabase() = tryQuery(CHECK_EXISTS) { it.next() } ?: false
 
     private fun fetchTopTen(): Map<UUID, BigDecimal> =
-        tryQuery(SELECT_TOP_TEN) { rs ->
+        tryQuery(SELECT_TOP_TEN) {
             linkedMapOf<UUID, BigDecimal>().apply {
-                while (rs.next()) {
-                    val ownerUuid = UUID.fromString(rs.getString("Owner"))
-                    put(ownerUuid, rs.getBigDecimal("Balance"))
+                while (it.next()) {
+                    val ownerUuid = UUID.fromString(it.getString("Owner"))
+                    put(ownerUuid, it.getBigDecimal("Balance"))
                 }
             }
         } ?: linkedMapOf()
@@ -77,9 +74,7 @@ abstract class AbstractSqlBankAccount(
             sqlDatabaseManager.connection.use { connection ->
                 connection.prepareStatement(sql).use { stmt ->
                     bindParams(stmt, sql)
-                    stmt.executeQuery().use { rs ->
-                        return handler(rs)
-                    }
+                    stmt.executeQuery().use { return handler(it) }
                 }
             }
         } catch (ex: SQLException) {
@@ -89,8 +84,8 @@ abstract class AbstractSqlBankAccount(
 
     private fun executeUpdate(sql: String, vararg data: Any) {
         try {
-            sqlDatabaseManager.connection.use { conn ->
-                conn.prepareStatement(sql).use { stmt ->
+            sqlDatabaseManager.connection.use { connection ->
+                connection.prepareStatement(sql).use { stmt ->
                     bindParams(stmt, sql, *data)
                     stmt.executeUpdate()
                 }
@@ -100,11 +95,7 @@ abstract class AbstractSqlBankAccount(
         }
     }
 
-    private fun bindParams(
-        stmt: PreparedStatement,
-        sql: String,
-        vararg manual: Any
-    ) {
+    private fun bindParams(stmt: PreparedStatement, sql: String, vararg manual: Any) {
         val params = when (sql) {
             SELECT_BALANCE,
             CHECK_EXISTS,

@@ -12,7 +12,7 @@ import java.io.File
  * for interacting with online players.
  */
 open class User(userFile: File) : OfflineUser(userFile) {
-    protected val messageListeners = HashSet<CachedUser>()
+    protected val messageListeners = mutableSetOf<CachedUser>()
     protected open var onlinePlayer: Player? = null
 
     var teleportRequest: TeleportRequest? = null
@@ -48,11 +48,7 @@ open class User(userFile: File) : OfflineUser(userFile) {
      *
      * @return The Player object for this user
      */
-    open fun getPlayer(): Player? {
-        if (onlinePlayer == null) onlinePlayer = super.player as? Player
-
-        return onlinePlayer
-    }
+    open fun getPlayer() = (onlinePlayer ?: super.player as? Player).also { onlinePlayer = it }
 
     /**
      * Gets the name of this user.
@@ -70,19 +66,7 @@ open class User(userFile: File) : OfflineUser(userFile) {
      *
      * @param message The message to be sent
      */
-    fun sendMessage(message: String) {
-        commandSender?.sendMessage(message)
-
-        for (listener in messageListeners.toSet()) {
-            if (listener.isOfflineUser) {
-                messageListeners.remove(listener)
-                continue
-            }
-
-            val user = listener.offlineUser as User
-            user.sendMessage(message)
-        }
-    }
+    fun sendMessage(message: String) = sendMessage(message as Any)
 
     /**
      * Uses User#getCommandSender() to send a component message.
@@ -90,17 +74,19 @@ open class User(userFile: File) : OfflineUser(userFile) {
      *
      * @param component The component message to be sent
      */
-    fun sendMessage(component: Component) {
-        commandSender?.sendMessage(component)
+    fun sendMessage(component: Component) = sendMessage(component as Any)
 
-        for (listener in messageListeners.toSet()) {
-            if (listener.isOfflineUser) {
-                messageListeners.remove(listener)
-                continue
+    private fun sendMessage(obj: Any) {
+        if (obj is String) commandSender?.sendMessage(obj)
+        if (obj is Component) commandSender?.sendMessage(obj)
+
+        messageListeners.toSet().forEach {
+            if (it.isOfflineUser) {
+                messageListeners.remove(it)
+                return@forEach
             }
 
-            val user = listener.offlineUser as User
-            user.sendMessage(component)
+            (it.offlineUser as? User)?.sendMessage(obj)
         }
     }
 

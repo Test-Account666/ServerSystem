@@ -1,6 +1,5 @@
 package me.testaccount666.serversystem.commands.executables.pay
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
@@ -27,9 +26,7 @@ class CommandPay : AbstractServerSystemCommand() {
             return
         }
 
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
@@ -42,41 +39,36 @@ class CommandPay : AbstractServerSystemCommand() {
             return
         }
 
-        try {
-            var amount = BigDecimal(arguments[1])
-            amount = amount.setScale(2, RoundingMode.HALF_UP)
-
-            if (amount <= BigDecimal.ZERO) {
-                command("Pay.InvalidAmount", commandSender) { target(targetPlayer.name) }.build()
-                return
-            }
-
-            val bankAccount = commandSender.bankAccount
-
-            if (!bankAccount.hasEnoughMoney(amount)) {
-                command("Pay.NotEnoughMoney", commandSender) { target(targetPlayer.name) }.build()
-                return
-            }
-
-            bankAccount.withdraw(amount)
-            targetUser.bankAccount.deposit(amount)
-
-            val formattedAmount = instance.registry.getService(EconomyProvider::class.java).formatMoney(amount)
-
-
-            command("Pay.Success", commandSender) {
-                target(targetPlayer.name)
-                postModifier { it.replace("<AMOUNT>", formattedAmount) }
-            }.build()
-
-            command("Pay.SuccessOther", targetUser) {
-                target(targetPlayer.name)
-                sender(commandSender.getNameSafe())
-                postModifier { it.replace("<AMOUNT>", formattedAmount) }
-            }.build()
-        } catch (_: NumberFormatException) {
+        val amount = arguments[1].toBigDecimalOrNull()?.setScale(2, RoundingMode.HALF_UP) ?: run {
             command("Pay.InvalidAmount", commandSender) { target(targetPlayer.name) }.build()
+            return
         }
+
+        if (amount <= BigDecimal.ZERO) {
+            command("Pay.InvalidAmount", commandSender) { target(targetPlayer.name) }.build()
+            return
+        }
+
+        val bankAccount = commandSender.bankAccount
+
+        if (bankAccount.balance < amount) {
+            command("Pay.NotEnoughMoney", commandSender) { target(targetPlayer.name) }.build()
+            return
+        }
+
+        bankAccount.transfer(amount, targetUser.bankAccount)
+        val formattedAmount = getService<EconomyProvider>().formatMoney(amount)
+
+        command("Pay.Success", commandSender) {
+            target(targetPlayer.name)
+            postModifier { it.replace("<AMOUNT>", formattedAmount) }
+        }.build()
+
+        command("Pay.SuccessOther", targetUser) {
+            target(targetPlayer.name)
+            sender(commandSender.getNameSafe())
+            postModifier { it.replace("<AMOUNT>", formattedAmount) }
+        }.build()
     }
 
     override fun getSyntaxPath(command: Command?) = "Pay"

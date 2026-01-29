@@ -7,8 +7,8 @@ import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermi
 import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.ChatColor.Companion.stripColor
-import me.testaccount666.serversystem.utils.ComponentColor.Companion.componentToString
-import me.testaccount666.serversystem.utils.ComponentColor.Companion.translateToComponent
+import me.testaccount666.serversystem.utils.ComponentColor.componentToString
+import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
 import me.testaccount666.serversystem.utils.DurationParser.parseDate
 import me.testaccount666.serversystem.utils.ItemStackExtensions.Companion.isAir
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
@@ -23,7 +23,7 @@ import org.bukkit.persistence.PersistentDataType
 
 @ServerSystemCommand("sign", ["unsign"])
 open class CommandSign : AbstractServerSystemCommand() {
-    protected val signKey: NamespacedKey = NamespacedKey(instance, "sign")
+    protected val signKey = NamespacedKey(instance, "sign")
 
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
         if (!checkBasePermission(commandSender, getCommandPermission(command))) return
@@ -38,14 +38,16 @@ open class CommandSign : AbstractServerSystemCommand() {
             command("Sign.NoItemInHand", commandSender).build()
             return
         }
-        val meta = itemInHand.itemMeta
-        if (meta == null) {
+        val meta = itemInHand.itemMeta ?: run {
             command("Sign.NoItemMeta", commandSender).build()
             return
         }
 
-        if (command.name.equals("sign", true)) executeSign(itemInHand, meta, commandSender, command, label, *arguments)
-        else executeUnsign(itemInHand, meta, commandSender)
+        if (command.name.equals("sign", true)) {
+            executeSign(itemInHand, meta, commandSender, command, label, *arguments)
+        } else {
+            executeUnsign(itemInHand, meta, commandSender)
+        }
     }
 
     private fun executeUnsign(itemInHand: ItemStack, itemMeta: ItemMeta, commandSender: User) {
@@ -55,14 +57,14 @@ open class CommandSign : AbstractServerSystemCommand() {
             return
         }
 
-        var lore = itemMeta.lore()
-        if (lore == null) lore = ArrayList<Component?>()
+        val lore = itemMeta.lore() ?: mutableListOf<Component>()
 
-        lore.removeIf { loreComponent: Component? ->
+        lore.removeIf { loreComponent ->
             val strippedLine = stripColor(componentToString(loreComponent))
             val strippedLore = stripColor(dataContainer.get(signKey, PersistentDataType.STRING))
-            strippedLore.split("\n".toRegex()).dropLastWhile { it.isEmpty() }
-                .any { anotherString -> strippedLine.equals(anotherString, true) }
+            strippedLore.split("\n")
+                .filter { it.isNotEmpty() }
+                .any { it.equals(strippedLine, true) }
         }
         itemMeta.lore(lore)
 
@@ -86,10 +88,9 @@ open class CommandSign : AbstractServerSystemCommand() {
             return
         }
 
-        var lore = itemMeta.lore()
-        if (lore == null) lore = ArrayList<Component?>()
+        val lore = itemMeta.lore() ?: mutableListOf<Component>()
 
-        val message = arguments.joinToString(" ").trim { it <= ' ' }
+        val message = arguments.joinToString(" ").trim()
         if (message.isEmpty()) {
             general("InvalidArguments", commandSender) {
                 syntax(getSyntaxPath(command))
@@ -100,27 +101,25 @@ open class CommandSign : AbstractServerSystemCommand() {
 
         val parsedDate = parseDate(System.currentTimeMillis(), commandSender)
 
-        val loreMessage = command("Sign.Format", commandSender) {
-            prefix(false)
-            send(false)
-            blankError(true)
-            postModifier {
-                it.replace("<MESSAGE>", message)
-                    .replace("<DATE>", parsedDate)
-            }
-        }.build()
+        val loreMessage =
+            command("Sign.Format", commandSender) {
+                prefix(false)
+                send(false)
+                blankError(true)
+                postModifier {
+                    it.replace("<MESSAGE>", message)
+                        .replace("<DATE>", parsedDate)
+                }
+            }.build()
 
         if (loreMessage.isEmpty()) {
             general("ErrorOccurred", commandSender) { label(label) }.build()
             return
         }
 
-        dataContainer.set<String?, String?>(signKey, PersistentDataType.STRING, loreMessage)
+        dataContainer.set(signKey, PersistentDataType.STRING, loreMessage)
 
-        for (line in loreMessage.split("\n".toRegex()).dropLastWhile { it.isEmpty() }) {
-            val lineComponent = translateToComponent(line)
-            lore.add(lineComponent)
-        }
+        loreMessage.split("\n").filter { it.isNotEmpty() }.forEach { lore.add(translateToComponent(it)) }
 
         itemMeta.lore(lore)
         itemInHand.setItemMeta(itemMeta)
@@ -129,8 +128,8 @@ open class CommandSign : AbstractServerSystemCommand() {
     }
 
     override fun getSyntaxPath(command: Command?): String {
-        if (command == null) error("(CommandSign;SyntaxPath) Command is null")
-        return if (command.name.equals("sign", true)) "Sign" else "Unsign"
+        val name = command?.name ?: error("(CommandSign;SyntaxPath) Command is null")
+        return if (name.equals("sign", true)) "Sign" else "Unsign"
     }
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {

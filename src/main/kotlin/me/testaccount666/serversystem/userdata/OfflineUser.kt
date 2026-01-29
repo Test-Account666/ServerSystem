@@ -21,7 +21,6 @@ import org.bukkit.configuration.file.YamlConfiguration
 import java.io.*
 import java.math.BigInteger
 import java.util.*
-import java.util.Locale.getDefault
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 
@@ -43,9 +42,7 @@ open class OfflineUser(val userFile: File) {
 
     lateinit var uuid: UUID
         protected set
-    open val player: OfflinePlayer? by lazy {
-        return@lazy Bukkit.getOfflinePlayer(uuid)
-    }
+    open val player: OfflinePlayer? by lazy { Bukkit.getOfflinePlayer(uuid) }
     lateinit var banManager: AbstractModerationManager<BanModeration>
         protected set
     lateinit var muteManager: AbstractModerationManager<MuteModeration>
@@ -182,8 +179,8 @@ open class OfflineUser(val userFile: File) {
         // PersistenceManager loads all annotated fields
         PersistenceManager.loadFields(this, userConfig)
         // Quick fix that blocks potentially wanted behavior, but eh...
-        if (playerLanguage.equals(System.getProperty("user.language"), ignoreCase = true)) playerLanguage = MessageManager.defaultLanguage
-        playerLanguage = playerLanguage.lowercase(getDefault())
+        if (playerLanguage.equals(System.getProperty("user.language"), true)) playerLanguage = MessageManager.defaultLanguage
+        playerLanguage = playerLanguage.lowercase()
 
         if (name == null) name = player?.name
 

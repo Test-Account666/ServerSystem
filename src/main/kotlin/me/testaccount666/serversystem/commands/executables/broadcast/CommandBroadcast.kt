@@ -7,7 +7,7 @@ import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.ChatColor.Companion.translateColor
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
-import org.bukkit.Bukkit.broadcastMessage
+import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
 
@@ -33,7 +33,7 @@ class CommandBroadcast : AbstractServerSystemCommand() {
             send(false)
             postModifier { it.replace("<BROADCAST>", broadcast) }
             blankError(true)
-        }.build().takeIf { !it.isEmpty() }?.also { broadcastMessage(it) }
+        }.build().takeIf { !it.isEmpty() }?.also(Bukkit::broadcastMessage)
     }
 
     override fun getSyntaxPath(command: Command?) = "Broadcast"

@@ -19,8 +19,7 @@ class EnderChestLoader {
         if (!offlinePlayer.hasPlayedBefore()) return null
 
         val playerUUID = offlinePlayer.uniqueId
-        val cachedInventory = inventoryMap.getValue(playerUUID)
-        if (cachedInventory != null) return cachedInventory
+        inventoryMap.getValue(playerUUID)?.let { return it }
 
         val playerDataFile = Path.of(Bukkit.getWorlds().first().worldFolder.path, "playerdata", "${playerUUID}.dat").toFile()
 

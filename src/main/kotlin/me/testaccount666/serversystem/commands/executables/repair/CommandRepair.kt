@@ -27,8 +27,7 @@ class CommandRepair : AbstractServerSystemCommand() {
 
         val typeArg = arguments.getOrNull(0) ?: "hand"
 
-        val repairType = RepairType.fromString(typeArg)
-        if (repairType == null) {
+        val repairType = RepairType.fromString(typeArg) ?: run {
             general("InvalidArguments", commandSender) {
                 syntax(getSyntaxPath(command))
                 label(label)

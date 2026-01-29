@@ -2,8 +2,8 @@ package me.testaccount666.serversystem.commands.executables.moderation
 
 import com.destroystokyo.paper.profile.PlayerProfile
 import io.papermc.paper.ban.BanListType
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabCompleter
+import me.testaccount666.serversystem.commands.interfaces.getService
 import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.userdata.CachedUser
 import me.testaccount666.serversystem.userdata.User
@@ -11,11 +11,10 @@ import me.testaccount666.serversystem.userdata.UserManager
 import org.bukkit.BanEntry
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
-import java.util.Locale.getDefault
 
 class TabCompleterModeration : ServerSystemTabCompleter {
     override fun tabComplete(commandSender: User, command: Command, label: String, vararg arguments: String): List<String>? {
-        val commandName = command.name.lowercase(getDefault())
+        val commandName = command.name.lowercase()
         if (!hasPermission(commandSender, commandName)) return listOf()
 
         return when (arguments.size) {
@@ -52,46 +51,37 @@ class TabCompleterModeration : ServerSystemTabCompleter {
         }
 
         if (commandName.equals("unmute", true)) {
-            return instance.registry.getService<UserManager>()
+            return getService<UserManager>()
                 .cachedUsers.asSequence()
                 .map(CachedUser::offlineUser).filter { it.muteManager.hasActiveModeration() }
                 .mapNotNull { it.getNameOrNull() }.toList()
         }
 
-        return Bukkit.getOfflinePlayers().map { it.name }.filterNotNull()
+        return Bukkit.getOfflinePlayers().mapNotNull { it.name }
     }
 
     private fun handleTimeCompletion(argument: String, commandName: String): List<String>? {
         if (isRemoveCommand(commandName)) return null
         if (argument.isEmpty()) return defaultTimeSuggestions
 
-        val suggestions = ArrayList<String>()
+        val suggestions = mutableListOf<String>()
 
-        if (_PERMANENT.startsWith(argument.lowercase(getDefault()))) suggestions.add(_PERMANENT)
+        if (_PERMANENT.startsWith(argument, true)) suggestions.add(_PERMANENT)
 
-        if (argument.matches(".*\\d$".toRegex())) suggestions.addAll(getTimeSuggestions(argument))
-        else if (argument.matches("\\d+".toRegex())) suggestions.addAll(getTimeSuggestions(argument))
-        else suggestions.addAll(getMatchingTimeUnits(argument))
+        if (argument.matches(".*\\d$".toRegex()) || argument.matches("\\d+".toRegex())) {
+            suggestions.addAll(getTimeSuggestions(argument))
+        } else {
+            suggestions.addAll(getMatchingTimeUnits(argument))
+        }
 
         return suggestions
     }
 
-    private val defaultTimeSuggestions: List<String> by lazy {
-        val suggestions = ArrayList(_NUMBERS)
-        suggestions.add(_PERMANENT)
-        return@lazy suggestions
-    }
+    private val defaultTimeSuggestions by lazy { _NUMBERS + _PERMANENT }
 
-    private fun getTimeSuggestions(argument: String): List<String> {
-        val suggestions = ArrayList<String>()
-        _NUMBERS.forEach { suggestions.add(argument + it) }
-        _TIME_UNITS.forEach { suggestions.add(argument + it) }
-        return suggestions
-    }
+    private fun getTimeSuggestions(argument: String) = _NUMBERS.map { argument + it } + _TIME_UNITS.map { argument + it }
 
-    private fun getMatchingTimeUnits(argument: String): List<String> {
-        return _TIME_UNITS.filter { it.startsWith(argument, true) }.toList()
-    }
+    private fun getMatchingTimeUnits(argument: String) = _TIME_UNITS.filter { it.startsWith(argument, true) }
 
     private fun isRemoveCommand(commandName: String) = commandName.startsWith("un", true)
 

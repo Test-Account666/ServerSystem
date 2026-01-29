@@ -12,7 +12,7 @@ class ActionTimeSign : AbstractSignClickAction() {
     override val basePermissionNode = "ClickableSigns.Time"
 
     override fun executeAction(user: User, sign: Sign, config: FileConfiguration): Boolean {
-        var timeType = config.getString("TimeType", sign.getLine(1))?.lowercase(getDefault())
+        var timeType = config.getString("TimeType", sign.getLine(1))?.lowercase()
         timeType = stripColor(timeType)
         if (timeType.isEmpty()) {
             sign("Time.NoTimeSpecified", user).build()

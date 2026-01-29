@@ -10,7 +10,6 @@ import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.GameMode
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
-import java.util.Locale.getDefault
 
 /**
  * Command executor for the gamemode command.
@@ -59,8 +58,7 @@ class CommandGameMode : AbstractServerSystemCommand() {
             return
         }
 
-        val gameMode = parseGameMode(arguments[0])
-        if (gameMode == null) {
+        val gameMode = parseGameMode(arguments[0]) ?: run {
             command("GameMode.InvalidGameMode", commandSender) {
                 postModifier { replaceGameModePlaceholder(it, arguments[0]) }
             }.build()
@@ -85,9 +83,7 @@ class CommandGameMode : AbstractServerSystemCommand() {
         if (!checkBasePermission(commandSender, gameModePermission)) return
         if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
@@ -115,31 +111,25 @@ class CommandGameMode : AbstractServerSystemCommand() {
         }.build()
     }
 
-    private fun replaceGameModePlaceholder(message: String, gameModeName: String): String {
-        return message.replace("<GAMEMODE>", gameModeName)
-    }
+    private fun replaceGameModePlaceholder(message: String, gameModeName: String) = message.replace("<GAMEMODE>", gameModeName)
 
     private fun parseGameMode(input: String): GameMode? {
-        try {
-            val value = input.toInt()
-            return when (value) {
+        input.toIntOrNull()?.let {
+            return when (it) {
                 0 -> GameMode.SURVIVAL
                 1 -> GameMode.CREATIVE
                 2 -> GameMode.ADVENTURE
                 3 -> GameMode.SPECTATOR
                 else -> null
             }
-        } catch (ignored: NumberFormatException) {
-            // Not a number, try to match by name
         }
 
-        return GameMode.entries
-            .firstOrNull { gameMode -> gameMode.name.startsWith(input, true) }
+        return GameMode.entries.firstOrNull { it.name.startsWith(input, true) }
     }
 
     override fun getSyntaxPath(command: Command?): String {
         if (command == null) return "GameMode"
-        val commandName = command.name.lowercase(getDefault())
+        val commandName = command.name.lowercase()
         return when (commandName) {
             "gms" -> "GMS"
             "gmc" -> "GMC"

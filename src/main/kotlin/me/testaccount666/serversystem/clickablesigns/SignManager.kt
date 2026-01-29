@@ -1,26 +1,19 @@
 package me.testaccount666.serversystem.clickablesigns
 
+import me.testaccount666.serversystem.ServerSystem
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.configuration.file.YamlConfiguration
-import java.io.File
-import java.nio.file.Path
 
 class SignManager {
     private val _signTypes = HashMap<Location, SignType>()
-    private val _signDirectory: File = Path.of("plugins", "ServerSystem", "data", "signs").toFile()
+    private val _signDirectory = ServerSystem.instance.dataPath.resolve("data").resolve("signs").toFile()
 
-    fun addSignType(location: Location, signType: SignType) {
-        _signTypes[location] = signType
-    }
+    fun addSignType(location: Location, signType: SignType) = let { _signTypes[location] = signType }
 
-    fun removeSignType(location: Location) {
-        _signTypes.remove(location)
-    }
+    fun removeSignType(location: Location) = let { _signTypes.remove(location) }
 
-    fun getSignType(location: Location): SignType? {
-        return _signTypes[location]
-    }
+    fun getSignType(location: Location) = _signTypes[location]
 
     fun loadSignTypes() {
         if (!_signDirectory.exists()) return

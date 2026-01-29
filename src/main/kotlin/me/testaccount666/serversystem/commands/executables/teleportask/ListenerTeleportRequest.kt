@@ -20,8 +20,7 @@ class ListenerTeleportRequest : Listener {
 
     @EventHandler
     fun onTeleporterMove(event: PlayerMoveEvent) {
-        val distance: Double = getDistance(event)
-        if (distance < .1) return
+        getDistance(event).let { if (it < .1) return }
 
         _commandTeleportAsk.activeTeleportRequests.toList()
             .forEach { teleportRequest ->

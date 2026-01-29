@@ -21,7 +21,7 @@ enum class SignType(private val _key: String, val signName: String, val clickAct
     companion object {
         fun getSignTypeByKey(key: String): SignType? {
             for (signType in entries) {
-                if (!signType._key.equals(key, ignoreCase = true)) continue
+                if (!signType._key.equals(key, true)) continue
                 return signType
             }
 

@@ -29,16 +29,13 @@ class MessageBuilder private constructor(
             Type.CLICKABLE_SIGN -> "ClickableSigns.$messagePath"
         }
 
-        var message = MessageManager.getMessage(receiver, path, language)
-
-        if (message == null) {
-            if (messagePath.equals("ErrorOccurred", ignoreCase = true)) {
+        var message = MessageManager.getMessage(receiver, path, language) ?: run {
+            if (messagePath.equals("ErrorOccurred", true)) {
                 ServerSystem.log.severe("'ErrorOccurred' message could not be found!")
                 receiver.sendMessage("Something went seriously wrong! Please contact an administrator!")
                 return if (blankError) "" else "!!ERROR!!"
             }
-            val err = general("ErrorOccurred", receiver).build()
-            return if (blankError) "" else err
+            return if (blankError) "" else general("ErrorOccurred", receiver).build()
         }
 
         message = preModifier?.invoke(message) ?: message
@@ -53,18 +50,15 @@ class MessageBuilder private constructor(
                 label = this@MessageBuilder.label
                 send = false
             }.build()
-            message = message?.replace("<USAGE>", usage)
+            message = message.replace("<USAGE>", usage)
         }
 
-        message = postModifier?.invoke(message!!) ?: message
+        message = postModifier?.invoke(message) ?: message
 
         val formatted = if (!format) message
         else MessageManager.formatMessage(message, receiver, resolvedTarget, label, prefix)
 
-        formatted ?: return if (blankError) "" else "!!ERROR!!"
-
-        if (send) receiver.sendMessage(formatted)
-        return formatted
+        return formatted.also { if (send) receiver.sendMessage(it) }
     }
 
     enum class Type { GENERAL, COMMAND, CLICKABLE_SIGN, SYNTAX }

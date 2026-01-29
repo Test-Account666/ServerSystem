@@ -18,7 +18,6 @@ import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
 import java.time.Instant
-import java.util.Locale.getDefault
 
 @ServerSystemCommand("ban", ["unban"], TabCompleterModeration::class)
 class CommandBan : AbstractModerationCommand<BanModeration>() {
@@ -66,7 +65,7 @@ class CommandBan : AbstractModerationCommand<BanModeration>() {
     }
 
     override fun checkBasePermission(commandSender: User, command: Command): Boolean {
-        val permissionPath = when (command.name.lowercase(getDefault())) {
+        val permissionPath = when (command.name.lowercase()) {
             "ban" -> "Moderation.Ban.Use"
             "unban" -> "Moderation.Ban.Remove"
             else -> null
@@ -81,7 +80,7 @@ class CommandBan : AbstractModerationCommand<BanModeration>() {
     override fun getSyntaxPath(command: Command?): String {
         if (command == null) return "Ban"
 
-        return when (val commandName = command.name.lowercase(getDefault())) {
+        return when (val commandName = command.name.lowercase()) {
             "ban" -> "Ban"
             "unban" -> "Unban"
             else -> throw IllegalArgumentException("(CommandBan) Unknown command name: ${commandName}")
@@ -89,7 +88,7 @@ class CommandBan : AbstractModerationCommand<BanModeration>() {
     }
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        val permissionPath = when (command.name.lowercase(getDefault())) {
+        val permissionPath = when (command.name.lowercase()) {
             "ban" -> "Moderation.Ban.Use"
             "unban" -> "Moderation.Ban.Remove"
             else -> null

@@ -5,6 +5,7 @@ import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermi
 import me.testaccount666.serversystem.managers.PermissionManager.hasPermission
 import me.testaccount666.serversystem.userdata.User
 import org.bukkit.Bukkit
+import org.bukkit.World
 import org.bukkit.command.Command
 
 class TabCompleterWeather : ServerSystemTabCompleter {
@@ -13,8 +14,7 @@ class TabCompleterWeather : ServerSystemTabCompleter {
 
         if (command.name.equals("weather", true)) {
             if (arguments.size <= 1) {
-                val possibleCompletions = listOf("sun", "clear", "rain", "storm", "thunder")
-                return possibleCompletions.filter { it.startsWith(arguments[0], true) }
+                return listOf("sun", "clear", "rain", "storm", "thunder").filter { it.startsWith(arguments[0], true) }
             }
 
             if (arguments.size == 2) return handleWorldCompletions(1, *arguments)
@@ -30,7 +30,6 @@ class TabCompleterWeather : ServerSystemTabCompleter {
     private fun handleWorldCompletions(index: Int, vararg arguments: String): List<String> {
         if (!hasPermission(Bukkit.getConsoleSender(), "Commands.Weather.World", false)) return listOf()
 
-        val possibleCompletions = Bukkit.getWorlds().map { it.name }
-        return possibleCompletions.filter { it.startsWith(arguments[index], true) }
+        return Bukkit.getWorlds().map(World::getName).filter { it.startsWith(arguments[index], true) }
     }
 }

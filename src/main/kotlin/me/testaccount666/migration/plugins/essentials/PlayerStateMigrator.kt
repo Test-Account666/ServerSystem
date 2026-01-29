@@ -11,14 +11,13 @@ class PlayerStateMigrator : AbstractMigrator() {
         val uuids = essentials.users.allUserUUIDs
 
         for (uuid in uuids) {
-            val userOptional = userManager.getUserOrNull(uuid)
-            if (userOptional == null) {
+            val cachedUser = userManager.getUserOrNull(uuid) ?: run {
                 log.warning("Couldn't find user '${uuid}', skipping state migration!")
                 continue
             }
 
             val essentialsUser = essentials.getUser(uuid)
-            val user = userOptional.offlineUser
+            val user = cachedUser.offlineUser
 
             user.isAcceptsMessages = !essentialsUser.isIgnoreMsg
             user.isSocialSpyEnabled = essentialsUser.isSocialSpyEnabled
@@ -46,8 +45,7 @@ class PlayerStateMigrator : AbstractMigrator() {
         for (player in offlinePlayers()) {
             val uuid = player.uniqueId
 
-            val cachedUser = userManager.getUserOrNull(uuid)
-            if (cachedUser == null) {
+            val cachedUser = userManager.getUserOrNull(uuid) ?: run {
                 log.warning("Couldn't find user '${uuid}', skipping state migration!")
                 continue
             }

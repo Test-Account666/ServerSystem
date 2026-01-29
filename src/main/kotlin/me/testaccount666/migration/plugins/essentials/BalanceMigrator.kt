@@ -14,14 +14,13 @@ class BalanceMigrator : AbstractMigrator() {
         val uuids = essentials.users.allUserUUIDs
 
         for (uuid in uuids) {
-            val userOptional = userManager.getUserOrNull(uuid)
-            if (userOptional == null) {
+            val cachedUser = userManager.getUserOrNull(uuid) ?: run {
                 log.warning("Couldn't find user '${uuid}', skipping balance migration!")
                 continue
             }
 
             val essentialsUser = essentials.getUser(uuid)
-            val user = userOptional.offlineUser
+            val user = cachedUser.offlineUser
             val bankAccount = user.bankAccount
 
             bankAccount.balance = essentialsUser.money
@@ -41,13 +40,12 @@ class BalanceMigrator : AbstractMigrator() {
         for (player in offlinePlayers()) {
             val uuid = player.uniqueId
 
-            val userOptional = userManager.getUserOrNull(uuid)
-            if (userOptional == null) {
+            val cachedUser = userManager.getUserOrNull(uuid) ?: run {
                 log.warning("Couldn't find user '${uuid}', skipping balance migration!")
                 continue
             }
 
-            val user = userOptional.offlineUser
+            val user = cachedUser.offlineUser
             val bankAccount = user.bankAccount
 
             val essentials = essentials

@@ -1,6 +1,5 @@
 package me.testaccount666.serversystem.commands.executables.signcost
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.clickablesigns.cost.CostType
 import me.testaccount666.serversystem.clickablesigns.util.SignUtils.getSignFile
@@ -10,7 +9,7 @@ import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermi
 import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.money.EconomyProvider
-import me.testaccount666.serversystem.utils.ComponentColor.Companion.translateToComponent
+import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.sign
@@ -21,7 +20,6 @@ import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import java.io.IOException
 import java.math.BigDecimal
-import java.util.Locale.getDefault
 import java.util.logging.Level
 
 @ServerSystemCommand("signcost", [], TabCompleterSignCost::class)
@@ -42,7 +40,7 @@ class CommandSignCost : AbstractServerSystemCommand() {
             return
         }
 
-        val costTypeStr = arguments[0].lowercase(getDefault())
+        val costTypeStr = arguments[0].lowercase()
         if (!_COST_TYPES.contains(costTypeStr)) {
             sign("Cost.InvalidType", commandSender) {
                 postModifier { it.replace("<TYPES>", _COST_TYPES.joinToString { ", " }) }
@@ -52,7 +50,7 @@ class CommandSignCost : AbstractServerSystemCommand() {
 
         val costType: CostType?
         try {
-            costType = CostType.valueOf(costTypeStr.uppercase(getDefault()))
+            costType = CostType.valueOf(costTypeStr.uppercase())
         } catch (_: IllegalArgumentException) {
             sign("Cost.InvalidType", commandSender) {
                 postModifier { it.replace("<TYPES>", _COST_TYPES.joinToString { ", " }) }
@@ -70,13 +68,8 @@ class CommandSignCost : AbstractServerSystemCommand() {
                 return
             }
 
-            try {
-                amount = arguments[1].toDouble()
-                if (amount <= 0) {
-                    sign("Cost.InvalidAmount", commandSender).build()
-                    return
-                }
-            } catch (_: NumberFormatException) {
+            amount = arguments[1].toDoubleOrNull() ?: -1.0
+            if (amount <= 0) {
                 sign("Cost.InvalidAmount", commandSender).build()
                 return
             }
@@ -120,17 +113,16 @@ class CommandSignCost : AbstractServerSystemCommand() {
             return
         }
         val costLine = if (costType == CostType.EXP) "${amount.toInt()} EXP"
-        else instance.registry.getService<EconomyProvider>().formatMoney(BigDecimal(amount))
+        else getService<EconomyProvider>().formatMoney(BigDecimal(amount))
 
         sign.getSide(Side.FRONT).line(3, translateToComponent("&6${costLine}"))
         sign.getSide(Side.BACK).line(3, translateToComponent("&6${costLine}"))
         sign.update()
 
-        val finalAmount = amount
         sign("Cost.Set", commandSender) {
             postModifier {
                 it.replace("<TYPE>", costType.name)
-                    .replace("<AMOUNT>", finalAmount.toString())
+                    .replace("<AMOUNT>", amount.toString())
             }
         }.build()
     }

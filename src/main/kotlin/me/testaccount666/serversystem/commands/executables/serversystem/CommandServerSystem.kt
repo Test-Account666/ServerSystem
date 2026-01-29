@@ -13,7 +13,6 @@ import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
-import java.util.Locale.getDefault
 
 @ServerSystemCommand("serversystem", [], TabCompleterServerSystem::class)
 class CommandServerSystem : AbstractServerSystemCommand() {
@@ -35,7 +34,7 @@ class CommandServerSystem : AbstractServerSystemCommand() {
 
         val newArguments = arguments.drop(1).toTypedArray()
 
-        val subCommand = arguments[0].lowercase(getDefault())
+        val subCommand = arguments[0].lowercase()
         when (subCommand) {
             "version" -> version(commandSender, label)
             "reload" -> reload(commandSender)
@@ -52,7 +51,7 @@ class CommandServerSystem : AbstractServerSystemCommand() {
 
         command("ServerSystem.Version.Checking", commandSender).build()
 
-        val updateManager = instance.registry.getService<UpdateManager>()
+        val updateManager = getService<UpdateManager>()
         updateManager.updateChecker.getLatestVersion().thenAccept { latestVersion ->
             command("ServerSystem.Version.Success", commandSender) {
                 prefix(false)
@@ -106,18 +105,17 @@ class CommandServerSystem : AbstractServerSystemCommand() {
             return
         }
 
-        val migratorRegistry = instance.registry.getService<MigratorRegistry>()
-        val migratorName: String = arguments[1]
+        val migratorRegistry = getService<MigratorRegistry>()
+        val migratorName = arguments[1]
 
-        val migrator = migratorRegistry.getMigrator(migratorName)
-        if (migrator == null) {
+        val migrator = migratorRegistry.getMigrator(migratorName) ?: run {
             command("ServerSystem.Migrate.NotFound", commandSender) {
                 postModifier { it.replace("<MIGRATOR>", migratorName) }
             }.build()
             return
         }
 
-        var migrationType = arguments[0].lowercase(getDefault())
+        var migrationType = arguments[0].lowercase()
         when (migrationType) {
             "to" -> {
                 migrator.migrateTo()

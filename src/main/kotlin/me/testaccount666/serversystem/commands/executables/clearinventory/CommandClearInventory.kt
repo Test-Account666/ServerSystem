@@ -15,8 +15,7 @@ class CommandClearInventory : AbstractServerSystemCommand() {
         if (!checkBasePermission(commandSender, "ClearInventory.Use")) return
         if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
@@ -28,14 +27,13 @@ class CommandClearInventory : AbstractServerSystemCommand() {
 
         val inventory = targetPlayer.inventory
         inventory.clear()
-        inventory.contents = arrayOfNulls(0)
-        inventory.armorContents = arrayOfNulls(0)
-        inventory.extraContents = arrayOfNulls(0)
-        inventory.storageContents = arrayOfNulls(0)
+        inventory.contents = arrayOf()
+        inventory.armorContents = arrayOf()
+        inventory.extraContents = arrayOf()
+        inventory.storageContents = arrayOf()
 
         val messagePath = if (isSelf) "ClearInventory.Success" else "ClearInventory.SuccessOther"
         command(messagePath, commandSender) { target(targetPlayer.name) }.build()
-
 
         if (isSelf) return
 

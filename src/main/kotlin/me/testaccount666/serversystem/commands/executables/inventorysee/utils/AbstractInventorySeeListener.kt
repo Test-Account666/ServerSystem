@@ -29,5 +29,5 @@ abstract class AbstractInventorySeeListener {
      * 
      * @return true if additional checks pass, false otherwise
      */
-    protected open fun additionalRegistrationChecks(): Boolean = true
+    protected open fun additionalRegistrationChecks() = true
 }

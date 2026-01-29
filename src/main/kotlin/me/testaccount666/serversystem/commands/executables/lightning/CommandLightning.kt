@@ -25,8 +25,7 @@ class CommandLightning : AbstractServerSystemCommand() {
         val targetPlayer = targetUser.getPlayer()!!
         val isSelf = targetUser === commandSender
 
-        val block = if (isSelf) commandSender.getPlayer()!!.getTargetBlockExact(100) else targetPlayer.location.block
-        if (block == null) {
+        val block = (if (isSelf) commandSender.getPlayer()!!.getTargetBlockExact(100) else targetPlayer.location.block) ?: run {
             command("Lightning.NoTarget", commandSender).build()
             return
         }

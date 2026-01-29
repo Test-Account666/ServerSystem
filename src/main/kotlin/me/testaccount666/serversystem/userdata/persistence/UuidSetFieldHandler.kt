@@ -2,7 +2,6 @@ package me.testaccount666.serversystem.userdata.persistence
 
 import org.bukkit.configuration.file.FileConfiguration
 import java.util.*
-import java.util.stream.Collectors
 
 /**
  * A field handler for sets of UUIDs.
@@ -15,9 +14,7 @@ class UuidSetFieldHandler : FieldHandler<HashSet<UUID>> {
             return
         }
 
-        val uuidStrings = value.stream().map { it.toString() }.collect(Collectors.toList())
-
-        config.set(path, uuidStrings)
+        config.set(path, value.map { it.toString() })
     }
 
     override fun load(config: FileConfiguration, path: String, defaultValue: HashSet<UUID>?): HashSet<UUID> {

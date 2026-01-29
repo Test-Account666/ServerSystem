@@ -10,7 +10,6 @@ import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
-import java.util.Locale.getDefault
 
 @ServerSystemCommand("back")
 class CommandBack : AbstractServerSystemCommand() {
@@ -25,7 +24,7 @@ class CommandBack : AbstractServerSystemCommand() {
         var backType = commandSender.lastBackType
         backType = if (backType == BackType.NONE) BackType.DEATH else backType
 
-        if (arguments.isNotEmpty()) backType = when (arguments[0].lowercase(getDefault())) {
+        if (arguments.isNotEmpty()) backType = when (arguments[0].lowercase()) {
             "death" -> BackType.DEATH
             "teleport", "tp" -> BackType.TELEPORT
             else -> {
@@ -35,9 +34,7 @@ class CommandBack : AbstractServerSystemCommand() {
                 }.build()
                 null
             }
-        }
-
-        if (backType == null) return
+        } ?: return
 
         val backLocation = when (backType) {
             BackType.DEATH -> commandSender.lastDeathLocation
@@ -46,9 +43,7 @@ class CommandBack : AbstractServerSystemCommand() {
                 general("ErrorOccurred", commandSender) { label(label) }.build()
                 throw IllegalStateException("Unexpected value: ${backType}")
             }
-        }
-
-        if (backLocation == null) {
+        } ?: run {
             command("Back.NoBackLocation", commandSender).build()
             return
         }

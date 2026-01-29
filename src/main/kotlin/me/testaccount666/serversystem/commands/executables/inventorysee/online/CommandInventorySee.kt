@@ -46,8 +46,7 @@ class CommandInventorySee : AbstractServerSystemCommand() {
             return
         }
 
-        val targetUser = getTargetUser(sender, arguments = arrayOf(arguments[0]))
-        if (targetUser == null) {
+        val targetUser = getTargetUser(sender, arguments = arrayOf(arguments[0])) ?: run {
             general("PlayerNotFound", sender) { target(arguments[0]) }.build()
             return
         }

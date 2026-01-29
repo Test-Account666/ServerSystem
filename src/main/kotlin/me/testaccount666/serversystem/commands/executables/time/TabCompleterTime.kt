@@ -12,8 +12,7 @@ class TabCompleterTime : ServerSystemTabCompleter {
 
         if (command.name.equals("time", true)) {
             if (arguments.size <= 1) {
-                val possibleCompletions = listOf("day", "night", "noon", "midnight")
-                return possibleCompletions.filter { it.startsWith(arguments[0], true) }
+                return listOf("day", "night", "noon", "midnight").filter { it.startsWith(arguments[0], true) }
             }
 
             if (arguments.size == 2) return handleWorldCompletions(commandSender, 1, *arguments)

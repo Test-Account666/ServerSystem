@@ -23,10 +23,9 @@ class CommandIgnore : AbstractServerSystemCommand() {
 
     private fun executeUnignore(commandSender: User, label: String, vararg arguments: String) {
         val targetUser = validateAndGetUser(commandSender, label, "Unignore", *arguments) ?: return
+        val targetPlayer = targetUser.getPlayer()!!
 
-        val targetPlayer = targetUser.getPlayer()
-
-        val targetUuid = targetPlayer!!.uniqueId
+        val targetUuid = targetPlayer.uniqueId
         if (!commandSender.isIgnoredPlayer(targetUuid)) {
             command("Unignore.NotIgnored", commandSender) { target(targetPlayer.name) }.build()
             return
@@ -40,7 +39,6 @@ class CommandIgnore : AbstractServerSystemCommand() {
 
     private fun executeIgnore(commandSender: User, label: String, vararg arguments: String) {
         val targetUser = validateAndGetUser(commandSender, label, "Ignore", *arguments) ?: return
-
         val targetPlayer = targetUser.getPlayer()!!
 
         val targetUuid = targetPlayer.uniqueId
@@ -68,8 +66,7 @@ class CommandIgnore : AbstractServerSystemCommand() {
             return null
         }
 
-        val targetUser = getTargetUser(commandSender, returnSender = false, arguments = arguments)
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, returnSender = false, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return null
         }

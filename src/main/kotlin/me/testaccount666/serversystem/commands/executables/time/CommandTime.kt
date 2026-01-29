@@ -8,10 +8,8 @@ import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.Bukkit
-import org.bukkit.World
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
-import java.util.Locale.getDefault
 
 @ServerSystemCommand("time", ["day", "night", "noon", "midnight"], TabCompleterTime::class)
 class CommandTime : AbstractServerSystemCommand() {
@@ -29,14 +27,9 @@ class CommandTime : AbstractServerSystemCommand() {
             return
         }
 
-        val world: World?
+        if (arguments.isNotEmpty() && !checkBasePermission(commandSender, "Time.World")) return
 
-        if (arguments.isNotEmpty()) {
-            if (!checkBasePermission(commandSender, "Time.World")) return
-            world = Bukkit.getWorld(arguments[0])
-        } else world = commandSender.getPlayer()!!.world
-
-        if (world == null) {
+        val world = (if (arguments.isNotEmpty()) Bukkit.getWorld(arguments[0]) else commandSender.getPlayer()!!.world) ?: run {
             command("Time.WorldNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
@@ -63,36 +56,26 @@ class CommandTime : AbstractServerSystemCommand() {
             return
         }
 
-        val world: World?
+        if (arguments.size >= 2 && !checkBasePermission(commandSender, "Time.World")) return
 
-        if (arguments.size >= 2) {
-            if (!checkBasePermission(commandSender, "Time.World")) return
-            world = Bukkit.getWorld(arguments[1])
-        } else world = commandSender.getPlayer()!!.world
-
-        if (world == null) {
+        val world = (if (arguments.size >= 2) Bukkit.getWorld(arguments[1]) else commandSender.getPlayer()!!.world) ?: run {
             command("Time.WorldNotFound", commandSender) { target(arguments[1]) }.build()
             return
         }
 
-        when (arguments[0].lowercase(getDefault())) {
+        when (arguments[0].lowercase()) {
             "day" -> world.time = 0
             "night" -> world.time = 13000
             "noon" -> world.time = 6000
             "midnight" -> world.time = 18000
             else -> {
-                try {
-                    var time = arguments[0].toLong()
-                    time *= 20
-
-                    world.time = time
-                } catch (_: NumberFormatException) {
+                world.time = 20L * (arguments[0].toLongOrNull() ?: run {
                     general("InvalidArguments", commandSender) {
                         syntax(getSyntaxPath(command))
                         label(label)
                     }.build()
                     return
-                }
+                })
             }
         }
 
@@ -108,7 +91,7 @@ class CommandTime : AbstractServerSystemCommand() {
     override fun getSyntaxPath(command: Command?): String {
         if (command == null) return "Time"
 
-        return when (val commandName = command.name.lowercase(getDefault())) {
+        return when (val commandName = command.name.lowercase()) {
             "time" -> "Time"
             "day" -> "Day"
             "night" -> "Night"

@@ -5,6 +5,7 @@ import me.testaccount666.serversystem.annotations.RequiredCommands
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.UserManager
+import me.testaccount666.serversystem.utils.ServiceExtensions.getService
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -29,7 +30,7 @@ class ListenerSpawn : Listener {
 
         // Delay by a second, because teleporting instantly sometimes doesn't work
         Bukkit.getScheduler().runTaskLater(instance, Runnable {
-            val cachedUser = instance.registry.getService<UserManager>().getUserOrNull(player) ?: return@Runnable
+            val cachedUser = getService<UserManager>().getUserOrNull(player) ?: return@Runnable
             if (cachedUser.isOfflineUser) return@Runnable
 
             val user = cachedUser.offlineUser as User

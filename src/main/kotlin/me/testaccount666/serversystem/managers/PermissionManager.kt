@@ -13,9 +13,7 @@ object PermissionManager {
     private val _PERMISSION_FILE: File = Path.of("plugins", "ServerSystem", "permissions.yml").toFile()
     private lateinit var _configReader: ConfigReader
 
-    fun initialize(plugin: Plugin) {
-        _configReader = DefaultConfigReader(_PERMISSION_FILE, plugin)
-    }
+    fun initialize(plugin: Plugin) = DefaultConfigReader(_PERMISSION_FILE, plugin).let { _configReader = it }
 
     @JvmStatic
     @JvmOverloads
@@ -63,10 +61,9 @@ object PermissionManager {
     fun getPermission(permissionPath: String): String? {
         val permissionPath = "Permissions.${permissionPath}.Value"
 
-        val permission = _configReader.getString(permissionPath)
-
-        if (permission == null) ServerSystem.log.warning("Permission '${permissionPath}' not found! (Denying permission)")
-
-        return permission
+        return _configReader.getString(permissionPath) ?: let {
+            ServerSystem.log.warning("Permission '${permissionPath}' not found! (Denying permission)")
+            null
+        }
     }
 }

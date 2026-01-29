@@ -11,7 +11,7 @@ import me.testaccount666.serversystem.managers.PermissionManager.getPermission
 import me.testaccount666.serversystem.managers.PermissionManager.hasPermission
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.BiDirectionalHashMap
-import me.testaccount666.serversystem.utils.ComponentColor.Companion.translateToComponent
+import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
 import me.testaccount666.serversystem.utils.ItemStackExtensions.Companion.isAir
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.sign

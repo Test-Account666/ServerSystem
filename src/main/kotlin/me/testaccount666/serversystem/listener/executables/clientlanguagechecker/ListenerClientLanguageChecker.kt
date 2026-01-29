@@ -36,6 +36,6 @@ class ListenerClientLanguageChecker : Listener {
         if (locale.startsWith("de_")) language = "German"
         if (locale.startsWith("sl_")) language = "Slovene"
 
-        onlineUser.playerLanguage = language.lowercase(getDefault())
+        onlineUser.playerLanguage = language.lowercase()
     }
 }

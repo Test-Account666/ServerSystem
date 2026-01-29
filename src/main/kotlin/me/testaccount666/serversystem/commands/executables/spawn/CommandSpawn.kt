@@ -16,9 +16,7 @@ import org.bukkit.command.Command
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
-import java.io.File
 import java.io.IOException
-import java.nio.file.Path
 import java.util.logging.Level
 
 @ServerSystemCommand("spawn", ["setspawn"])
@@ -27,21 +25,20 @@ open class CommandSpawn : AbstractServerSystemCommand {
     val teleportOnJoin: Boolean
     val teleportOnFirstJoin: Boolean
 
-    private val _spawnFile: File = Path.of("plugins", "ServerSystem", "data", "spawn.yml").toFile()
+    private val _spawnFile = instance.dataPath.resolve("data").resolve("spawn.yml").toFile()
     protected var spawnLocation: Location? = null
 
     constructor() {
-        val legacySpawnFile = Path.of("plugins", "ServerSystem", "spawn.yml")
-        if (legacySpawnFile.toFile().exists()) {
-            legacySpawnFile.toFile().renameTo(_spawnFile)
+        val legacySpawnFile = instance.dataPath.resolve("spawn.yml").toFile()
+        if (legacySpawnFile.exists()) {
+            legacySpawnFile.renameTo(_spawnFile)
             log.info("Found 'spawn.yml' in wrong directory. It was moved to '${_spawnFile.absolutePath}'.")
         }
 
         spawnConfiguration = YamlConfiguration.loadConfiguration(_spawnFile)
 
         saveDefaultConfig()
-        val configManager = instance.registry.getService(ConfigurationManager::class.java)
-        val config = configManager.generalConfig
+        val config = getService<ConfigurationManager>().generalConfig
 
         teleportOnJoin = config.getBoolean("Join.Spawn.TeleportOnJoin", false)
         teleportOnFirstJoin = config.getBoolean("Join.Spawn.TeleportOnFirstJoin", false)
@@ -79,8 +76,7 @@ open class CommandSpawn : AbstractServerSystemCommand {
             return
         }
 
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }

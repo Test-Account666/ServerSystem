@@ -39,8 +39,7 @@ class ListenerPrefixChat : Listener {
         prefix = prefix.replace("%", "%%")
         suffix = suffix.replace("%", "%%")
 
-        val user = instance.registry.getService<UserManager>().getUserOrNull(player)
-        if (user == null) {
+        val user = instance.registry.getService<UserManager>().getUserOrNull(player) ?: run {
             log.warning("Couldn't cache User '${player.name}'! This should not happen!")
             return
         }

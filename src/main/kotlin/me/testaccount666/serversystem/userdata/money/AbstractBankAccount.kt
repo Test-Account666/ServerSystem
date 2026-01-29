@@ -20,8 +20,8 @@ abstract class AbstractBankAccount(val owner: UUID, val accountId: BigInteger) {
     }
 
     fun transfer(amount: BigDecimal, targetAccount: AbstractBankAccount) {
-        withdraw(amount)
-        targetAccount.deposit(amount)
+        balance -= amount
+        targetAccount.balance += amount
     }
 
     open fun hasEnoughMoney(amount: BigDecimal) = balance >= amount

@@ -13,17 +13,16 @@ import java.util.*
 
 class BaltopPlaceholder : Placeholder {
     override fun execute(user: OfflineUser?, identifier: String, vararg arguments: String): String {
-        var user = user
-        if (user == null) user = consoleUser
+        val user = user ?: consoleUser
         if (arguments.isEmpty()) return "Name or Balance not specified!"
 
-        val type: String = arguments[0]
+        val type = arguments[0]
 
-        val newArguments = arguments.copyOfRange(1, arguments.size)
+        val newArguments = arguments.drop(1).toTypedArray()
 
-        if (type.equals("name", ignoreCase = true)) return executeName(user, *newArguments)
-        if (type.equals("balance", ignoreCase = true)) return executeBalance(user, true, *newArguments)
-        if (type.equals("unformattedbalance", ignoreCase = true)) return executeBalance(user, false, *newArguments)
+        if (type.equals("name", true)) return executeName(user, *newArguments)
+        if (type.equals("balance", true)) return executeBalance(user, true, *newArguments)
+        if (type.equals("unformattedbalance", true)) return executeBalance(user, false, *newArguments)
 
         return "Invalid type '${type}'"
     }
@@ -56,7 +55,7 @@ class BaltopPlaceholder : Placeholder {
             break
         }
 
-        if (uuid == null) uuid = topTen.keys.stream().toList().last()
+        if (uuid == null) uuid = topTen.keys.last()
         val targetUser = getOfflineUser(Bukkit.getOfflinePlayer(uuid)) ?: return "User ${uuid} not found!"
         val name = targetUser.getNameOrNull()
 
@@ -91,11 +90,11 @@ class BaltopPlaceholder : Placeholder {
             break
         }
 
-        if (balance == null) balance = topTen.values.stream().toList().last()
+        if (balance == null) balance = topTen.values.last()
 
-        if (!format) return String.format("%.2f", balance!!.toDouble())
+        if (!format) return String.format("%.2f", balance.toDouble())
 
-        return instance.registry.getService<EconomyProvider>().formatMoney(balance!!)
+        return instance.registry.getService<EconomyProvider>().formatMoney(balance)
     }
 
     override val identifiers = setOf("baltop")

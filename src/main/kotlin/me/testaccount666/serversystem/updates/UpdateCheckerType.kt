@@ -6,6 +6,6 @@ enum class UpdateCheckerType(val new: () -> AbstractUpdateChecker) {
     MAIN({ MainUpdateChecker() });
 
     companion object {
-        fun of(name: String) = entries.firstOrNull { it.name.equals(name, ignoreCase = true) }
+        fun of(name: String) = entries.firstOrNull { it.name.equals(name, true) }
     }
 }

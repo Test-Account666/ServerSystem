@@ -35,10 +35,11 @@ class KitManager {
 
         val inventoryContents = LinkedList<ItemStack?>()
 
-        val inventorySection = kitConfig.getConfigurationSection("Items.Inventory")
-        if (inventorySection != null) for (key in 0..41) {
-            val item = inventorySection.getItemStack(key.toString())
-            inventoryContents.add(item)
+        kitConfig.getConfigurationSection("Items.Inventory")?.let {
+            (0..41).forEach { key ->
+                val item = it.getItemStack(key.toString())
+                inventoryContents.add(item)
+            }
         }
 
         _kits[name] = Kit(name, coolDown, inventoryContents.toTypedArray<ItemStack?>())
@@ -92,7 +93,7 @@ class KitManager {
      * 
      * @return The number of kits that were saved successfully
      */
-    fun saveAllKits() = _kits.values.count { saveKit(it) }
+    fun saveAllKits() = _kits.values.count(::saveKit)
 
     /**
      * Gets the file for a kit with the given name.

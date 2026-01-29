@@ -10,11 +10,11 @@ class TabCompleterSpeed : ServerSystemTabCompleter {
 
     override fun tabComplete(commandSender: User, command: Command, label: String, vararg arguments: String): List<String>? {
         if (!PermissionManager.hasCommandPermission(commandSender, "Speed.Use")) return listOf()
-        if (arguments.size == 2) return null
-
-        if (arguments.size == 1) return numbers.filter { it.startsWith(arguments[0], true) }
-        if (arguments.isEmpty()) return numbers
-
-        return listOf()
+        return when (arguments.size) {
+            0 -> numbers
+            1 -> numbers.filter { it.startsWith(arguments[0], true) }
+            2 -> null
+            else -> listOf()
+        }
     }
 }

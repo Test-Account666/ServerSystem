@@ -11,6 +11,9 @@ import org.bukkit.command.Command
 import org.bukkit.entity.Player
 
 abstract class AbstractServerSystemCommand : ServerSystemCommandExecutor {
+    protected inline fun <reified T : Any> getService(): T = ServerSystem.instance.registry.getService<T>()
+    protected inline fun <reified T : Any> getServiceOrNull(): T? = ServerSystem.instance.registry.getServiceOrNull<T>()
+
     /**
      * Gets the target user for the command with full control over index and fallback behavior.
      * If arguments are provided, tries to find a player with the name specified at the given index.
@@ -25,8 +28,8 @@ abstract class AbstractServerSystemCommand : ServerSystemCommandExecutor {
      */
     protected fun getTargetUser(commandSender: User, index: Int = 0, returnSender: Boolean = true, vararg arguments: String): User? {
         if (arguments.size > index) {
-            val registry = ServerSystem.instance.registry.getService<UserManager>()
-            val cachedUser = registry.getUserOrNull(arguments[index], true)
+            val userManager = getService<UserManager>()
+            val cachedUser = userManager.getUserOrNull(arguments[index], true)
             return cachedUser?.offlineUser as? User
         }
         return if (returnSender) commandSender else null

@@ -8,9 +8,6 @@ import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
-import java.util.Locale.getDefault
-import kotlin.math.max
-import kotlin.math.min
 
 @ServerSystemCommand("speed", ["flyspeed", "walkspeed"], TabCompleterSpeed::class)
 class CommandSpeed : AbstractServerSystemCommand() {
@@ -26,8 +23,7 @@ class CommandSpeed : AbstractServerSystemCommand() {
             return
         }
 
-        val targetUser = getTargetUser(commandSender, 1, arguments = arguments)
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, 1, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[1]) }.build()
             return
         }
@@ -36,21 +32,16 @@ class CommandSpeed : AbstractServerSystemCommand() {
 
         if (!isSelf && !checkOtherPermission(commandSender, "Speed.Other", targetPlayer.name)) return
 
-        val speedType = when (command.name.lowercase(getDefault())) {
+        val speedType = when (command.name.lowercase()) {
             "flyspeed" -> "Fly"
             "walkspeed" -> "Walk"
             else -> if (targetPlayer.isFlying) "Fly" else "Walk"
         }
 
-        var speed: Float
-        try {
-            speed = arguments[0].toFloat()
-            speed = max(0f, speed)
-            speed = min(10f, speed)
-        } catch (_: NumberFormatException) {
+        var speed = (arguments[0].toFloatOrNull() ?: run {
             command("Speed.InvalidSpeed", commandSender) { target(targetPlayer.name) }.build()
             return
-        }
+        }).coerceIn(0f, 10f)
 
         val speedTuple = calculateSpeeds(speed)
 
@@ -58,9 +49,7 @@ class CommandSpeed : AbstractServerSystemCommand() {
             "Fly" -> speedTuple.flySpeed
             "Walk" -> speedTuple.walkSpeed
             else -> error("Unexpected speed value: ${speedType}")
-        }
-
-        speed = Math.clamp(speed, 0f, 1f)
+        }.coerceIn(0f, 1f)
 
         if (speedType.equals("Fly", true)) targetPlayer.flySpeed = speed
         else targetPlayer.walkSpeed = speed
@@ -86,7 +75,6 @@ class CommandSpeed : AbstractServerSystemCommand() {
         return hasCommandPermission(player, "Speed.Use", false)
     }
 
-    @JvmRecord
     private data class SpeedResult(val walkSpeed: Float, val flySpeed: Float)
     companion object {
         private fun calculateSpeeds(speed: Float): SpeedResult {

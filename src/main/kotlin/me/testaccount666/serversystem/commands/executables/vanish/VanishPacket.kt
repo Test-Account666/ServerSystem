@@ -12,7 +12,6 @@ import java.util.*
 class VanishPacket {
     fun sendVanishPacket(vanishUser: User) {
         val enableVanish = vanishUser.isVanish
-
         val craftPlayer = vanishUser.getPlayer() as CraftPlayer
 
         val updateEntry = ClientboundPlayerInfoUpdatePacket.Entry(

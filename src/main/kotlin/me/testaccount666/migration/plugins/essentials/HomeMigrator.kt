@@ -13,13 +13,12 @@ class HomeMigrator : AbstractMigrator() {
         val uuids = essentials.users.allUserUUIDs
 
         for (uuid in uuids) {
-            val userOptional = userManager.getUserOrNull(uuid)
-            if (userOptional == null) {
+            val cachedUser = userManager.getUserOrNull(uuid) ?: run {
                 log.warning("Couldn't find user '${uuid}', skipping home migration!")
                 continue
             }
 
-            count += migrateFrom(userOptional.offlineUser)
+            count += migrateFrom(cachedUser.offlineUser)
         }
 
         return count
@@ -35,7 +34,7 @@ class HomeMigrator : AbstractMigrator() {
         for (homeName in essentialsUser.homes) try {
             val location = essentialsUser.getHome(homeName)
 
-            homeManager.addHome(homeName, location)
+            homeManager.addPoint(homeName, location)
             count += 1
         } catch (exception: Exception) {
             val userName = user.getNameSafe()
@@ -56,13 +55,12 @@ class HomeMigrator : AbstractMigrator() {
         for (player in offlinePlayers()) {
             val uuid = player.uniqueId
 
-            val userOptional = userManager.getUserOrNull(uuid)
-            if (userOptional == null) {
+            val cachedUser = userManager.getUserOrNull(uuid) ?: run {
                 log.warning("Couldn't find user '${uuid}', skipping home migration!")
                 continue
             }
 
-            count += migrateTo(userOptional.offlineUser)
+            count += migrateTo(cachedUser.offlineUser)
         }
 
         return count
@@ -77,7 +75,7 @@ class HomeMigrator : AbstractMigrator() {
         ensureUserDataExists(user.uuid)
         val essentialsUser = essentials.getUser(user.uuid)
 
-        for (home in homeManager.homes) {
+        for (home in homeManager.waypoints) {
             val homeName = home.displayName
             val location = home.location
 

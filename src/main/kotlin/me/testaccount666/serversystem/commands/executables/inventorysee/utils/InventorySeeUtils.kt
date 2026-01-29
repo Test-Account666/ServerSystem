@@ -11,7 +11,6 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import java.util.function.BiConsumer
 
 /**
  * Utility class for common inventory see operations.
@@ -70,21 +69,20 @@ object InventorySeeUtils {
      */
     fun handleInventoryViewers(
         inventory: Inventory, player: Player, delayTicks: Long,
-        inventoryAction: BiConsumer<User, String>
+        inventoryAction: (User, String) -> Unit
     ) {
         val viewers = ArrayList(inventory.viewers)
         inventory.close()
 
         Bukkit.getScheduler().runTaskLater(instance, Runnable {
-            viewers.forEach { viewer ->
-                if (viewer !is Player) return@forEach
-                val registry = instance.registry
-                val userManager = registry.getService<UserManager>()
-                val cachedUser = userManager.getUserOrNull(viewer) ?: return@forEach
+            viewers.forEach {
+                if (it !is Player) return@forEach
+                val userManager = instance.registry.getService<UserManager>()
+                val cachedUser = userManager.getUserOrNull(it) ?: return@forEach
 
                 if (cachedUser.isOfflineUser) return@forEach
                 val user = cachedUser.offlineUser as User
-                inventoryAction.accept(user, player.name)
+                inventoryAction(user, player.name)
             }
         }, delayTicks)
     }

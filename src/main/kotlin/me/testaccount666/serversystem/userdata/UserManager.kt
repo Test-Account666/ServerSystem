@@ -3,7 +3,6 @@ package me.testaccount666.serversystem.userdata
 import me.testaccount666.serversystem.ServerSystem
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import java.io.File
 import java.nio.file.Path
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -26,7 +25,7 @@ class UserManager {
                 (15 * 20 * 60).toLong()
             ) // 15 Minutes
 
-        Bukkit.getOnlinePlayers().forEach(this::getUserOrNull)
+        Bukkit.getOnlinePlayers().forEach(::getUserOrNull)
     }
 
     /**
@@ -65,22 +64,14 @@ class UserManager {
     fun getUserOrNull(uuid: UUID, forceOnlineUser: Boolean): CachedUser? {
         if (!forceOnlineUser && uuid == ConsoleUser.CONSOLE_UUID) return CachedUser(consoleUser)
 
-        val foundUser = _userUuidMap[uuid]
-
-        if (foundUser != null) {
-            val cachedUser: CachedUser = foundUser
-            if (cachedUser.isOfflineUser && forceOnlineUser) return null
-
-            cachedUser.updateLastAccessTime()
-
-            return cachedUser
+        _userUuidMap[uuid]?.let {
+            if (it.isOfflineUser && forceOnlineUser) return null
+            it.updateLastAccessTime()
+            return it
         }
 
-        val player = Bukkit.getPlayer(uuid)
-        if (player != null) return createOnlineUser(uuid)
-        if (forceOnlineUser) return null
-
-        return createOfflineUserOrNull(uuid)
+        if (Bukkit.getPlayer(uuid) != null) return createOnlineUser(uuid)
+        return if (!forceOnlineUser) createOfflineUserOrNull(uuid) else null
     }
 
     /**
@@ -105,26 +96,17 @@ class UserManager {
      * @return The cached user or null if the user doesn't exist
      */
     fun getUserOrNull(name: String, forceOnlineUser: Boolean): CachedUser? {
-        val foundUser = _userMap[name]
-
-        if (foundUser != null) {
-            val cachedUser: CachedUser = foundUser
-
-            if (cachedUser.isOfflineUser && forceOnlineUser) return null
-
-            cachedUser.updateLastAccessTime()
-
-            return cachedUser
+        _userMap[name]?.let {
+            if (it.isOfflineUser && forceOnlineUser) return null
+            it.updateLastAccessTime()
+            return it
         }
 
-        val player = Bukkit.getPlayer(name)
-        if (player != null) return createOnlineUser(player.uniqueId)
+        Bukkit.getPlayer(name)?.let { return createOnlineUser(it.uniqueId) }
         if (forceOnlineUser) return null
 
-        val offlineUser = Bukkit.getOfflinePlayer(name)
-        if (offlineUser.name == null) return null
-
-        return createOfflineUserOrNull(offlineUser.uniqueId)
+        val offlinePlayer = Bukkit.getOfflinePlayer(name).takeIf { it.name != null } ?: return null
+        return createOfflineUserOrNull(offlinePlayer.uniqueId)
     }
 
     /**
@@ -134,16 +116,13 @@ class UserManager {
      * @return The cached user or null if the user doesn't exist
      */
     private fun createOfflineUserOrNull(uuid: UUID): CachedUser? {
-        val userFile: File = getUserFile(uuid)
-        val user = OfflineUser(userFile)
-
+        val user = OfflineUser(getUserFile(uuid))
         val name = user.getNameOrNull() ?: return null
 
-        val cachedUser = CachedUser(user)
-        _userUuidMap[uuid] = cachedUser
-        _userMap[name] = cachedUser
-
-        return cachedUser
+        return CachedUser(user).also {
+            _userUuidMap[uuid] = it
+            _userMap[name] = it
+        }
     }
 
     /**
@@ -153,14 +132,12 @@ class UserManager {
      * @return The cached user
      */
     private fun createOnlineUser(uuid: UUID): CachedUser {
-        val userFile: File = getUserFile(uuid)
-        val user = User(userFile)
+        val user = User(getUserFile(uuid))
 
-        val cachedUser = CachedUser(user)
-        _userUuidMap[uuid] = cachedUser
-        _userMap[user.getNameOrNull()!!] = cachedUser
-
-        return cachedUser
+        return CachedUser(user).also {
+            _userUuidMap[uuid] = it
+            _userMap[user.getNameOrNull()!!] = it
+        }
     }
 
     val cachedUsers
@@ -171,15 +148,13 @@ class UserManager {
      * This method is called periodically by a scheduled task.
      */
     fun cleanStaleUsers() {
-        val staleUsers = _userMap.values.filter { it.isStale }
-
-        _userMap.entries.removeIf { staleUsers.contains(it.value) }
-        _userUuidMap.entries.removeIf { staleUsers.contains(it.value) }
+        _userMap.values.removeIf { it.isStale }
+        _userUuidMap.values.removeIf { it.isStale }
     }
 
     companion object {
         @JvmField
-        val USER_DATA_PATH: Path = Path.of("plugins", "ServerSystem", "UserData")
+        val USER_DATA_PATH: Path = ServerSystem.instance.dataFolder.toPath().resolve("UserData")
 
         /**
          * Gets the console user instance.
@@ -188,6 +163,6 @@ class UserManager {
          */
         val consoleUser = ConsoleUser()
         private val _NPC_USER = NpcUser()
-        private fun getUserFile(uuid: UUID): File = USER_DATA_PATH.resolve("${uuid}.yml.gz").toFile()
+        private fun getUserFile(uuid: UUID) = USER_DATA_PATH.resolve("${uuid}.yml.gz").toFile()
     }
 }

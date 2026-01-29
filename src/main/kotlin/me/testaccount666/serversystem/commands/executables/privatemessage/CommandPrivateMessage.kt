@@ -8,21 +8,20 @@ import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermi
 import me.testaccount666.serversystem.managers.messages.MessageManager.applyPlaceholders
 import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.ComponentColor.Companion.translateToComponent
+import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import net.kyori.adventure.text.event.ClickEvent
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
-import java.util.Locale.getDefault
 
 @ServerSystemCommand("privatemessage", ["reply", "messagetoggle", "socialspy"])
 class CommandPrivateMessage : AbstractServerSystemCommand() {
     private var _privateMessageCommand: String? = null
 
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        val commandName = command.name.lowercase(getDefault())
+        val commandName = command.name.lowercase()
 
         when (commandName) {
             "socialspy" -> handleSocialSpyCommand(commandSender, command, label, *arguments)
@@ -36,8 +35,7 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
         if (!checkBasePermission(commandSender, "SocialSpy.Use")) return
         if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
@@ -66,8 +64,7 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
         if (!checkBasePermission(commandSender, "PrivateMessage.Toggle.Use")) return
         if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
@@ -128,8 +125,7 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
             return
         }
 
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
@@ -138,8 +134,7 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
     }
 
     private fun sendPrivateMessage(commandSender: User, targetUser: User, label: String, vararg arguments: String) {
-        val targetName = targetUser.getNameOrNull()
-        if (targetName == null) {
+        val targetName = targetUser.getNameOrNull() ?: run {
             general("ErrorOccurred", commandSender) {
                 label(label)
                 target(targetUser.uuid.toString())
@@ -231,7 +226,7 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
     override fun getSyntaxPath(command: Command?): String {
         if (command == null) return "PrivateMessage"
 
-        return when (val name = command.name.lowercase(getDefault())) {
+        return when (val name = command.name.lowercase()) {
             "privatemessage" -> "PrivateMessage"
             "reply" -> "Reply"
             "messagetoggle" -> "MessageToggle"
@@ -241,7 +236,7 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
     }
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        val permissionPath = when (val name = command.name.lowercase(getDefault())) {
+        val permissionPath = when (val name = command.name.lowercase()) {
             "privatemessage" -> "PrivateMessage.Use"
             "reply" -> "PrivateMessage.Use"
             "messagetoggle" -> "PrivateMessage.Toggle.Use"

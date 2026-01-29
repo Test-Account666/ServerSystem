@@ -11,9 +11,7 @@ class UserQuitListener : Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onUserQuit(event: PlayerQuitEvent) {
         val userManager = ServerSystem.instance.registry.getService<UserManager>()
-        val user = userManager.getUserOrNull(event.getPlayer().uniqueId)
-
-        if (user == null) {
+        val user = userManager.getUserOrNull(event.getPlayer().uniqueId) ?: run {
             ServerSystem.log.warning("(UserQuitListener) User '${event.getPlayer().name}' is not cached! This should not happen!")
             return
         }

@@ -4,7 +4,7 @@ import me.testaccount666.migration.LegacyDataMigrator
 import me.testaccount666.migration.plugins.MigratorRegistry
 import me.testaccount666.serversystem.clickablesigns.SignManager
 import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager
-import me.testaccount666.serversystem.commands.executables.warp.manager.WarpManager
+import me.testaccount666.serversystem.commands.executables.waypoints.warp.manager.WarpManager
 import me.testaccount666.serversystem.commands.management.CommandManager
 import me.testaccount666.serversystem.commands.management.CommandReplacer
 import me.testaccount666.serversystem.listener.management.ListenerManager
@@ -29,7 +29,6 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import java.io.IOException
 import java.nio.file.Path
-import java.util.Locale.getDefault
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -41,10 +40,12 @@ class ServerSystem : JavaPlugin() {
         log = logger
 
         val minecraftVersion: Version = serverVersion
-        if (minecraftVersion < MINIMUM_MINECRAFT_VERSION) log.warning(
-            "You're running an unsupported/legacy version of Minecraft! " +
-                    "Please update to at least ${MINIMUM_MINECRAFT_VERSION.version}!"
-        )
+        if (minecraftVersion < MINIMUM_MINECRAFT_VERSION) {
+            log.warning(
+                "You're running an unsupported/legacy version of Minecraft! " +
+                        "Please update to at least ${MINIMUM_MINECRAFT_VERSION.version}!"
+            )
+        }
 
         val migrator = LegacyDataMigrator()
         if (migrator.isLegacyDataPresent) {
@@ -79,7 +80,7 @@ class ServerSystem : JavaPlugin() {
             registry.getServiceOrNull<ListenerManager>()?.registerListeners()
             registry.getServiceOrNull<PlaceholderManager>()?.registerPlaceholders()
             registry.getServiceOrNull<CommandReplacer>()?.replaceCommands()
-        }, 2)
+        }, 2L)
     }
 
     private fun initialize() {
@@ -91,11 +92,12 @@ class ServerSystem : JavaPlugin() {
         val moderationType = configManager.moderationConfig.getString("Moderation.StorageType.Value")
         requireNotNull(moderationType) { "Moderation storage type not set?!" }
 
-        val moderationDbManager = when (moderationType.lowercase(getDefault())) {
-            "sqlite" -> SqliteModerationDatabaseManager(dataFolder)
-            "mysql" -> MySqlModerationDatabaseManager(configManager.moderationConfig)
-            else -> error("Unsupported moderation storage: $moderationType - Supported values: sqlite, mysql")
-        }
+        val moderationDbManager =
+            when (moderationType.lowercase()) {
+                "sqlite" -> SqliteModerationDatabaseManager(dataFolder)
+                "mysql" -> MySqlModerationDatabaseManager(configManager.moderationConfig)
+                else -> error("Unsupported moderation storage: $moderationType - Supported values: sqlite, mysql")
+            }
         registry.registerService<ModerationDatabaseManager>(moderationDbManager)
 
         val migratorRegistry = MigratorRegistry()
@@ -108,11 +110,12 @@ class ServerSystem : JavaPlugin() {
         val economyStorageType = configManager.economyConfig.getString("Economy.StorageType.Value")
         requireNotNull(economyStorageType) { "Economy storage type not set?!" }
 
-        val economyDbManager = when (economyStorageType.lowercase(getDefault())) {
-            "sqlite" -> SqliteEconomyDatabaseManager(dataFolder)
-            "mysql" -> MySqlEconomyDatabaseManager(configManager.economyConfig)
-            else -> error("Unsupported economy storage: $economyStorageType - Supported values: sqlite, mysql")
-        }
+        val economyDbManager =
+            when (economyStorageType.lowercase()) {
+                "sqlite" -> SqliteEconomyDatabaseManager(dataFolder)
+                "mysql" -> MySqlEconomyDatabaseManager(configManager.economyConfig)
+                else -> error("Unsupported economy storage: $economyStorageType - Supported values: sqlite, mysql")
+            }
         registry.registerService<EconomyDatabaseManager>(economyDbManager)
 
         val commandManager = CommandManager(configManager.commandsConfig)
@@ -126,13 +129,11 @@ class ServerSystem : JavaPlugin() {
 
         registry.registerService(CommandReplacer())
 
-
         val migratorCount = migratorRegistry.migrators.size
 
         if (migratorCount == 0 && configManager.economyConfig.getBoolean("Economy.HookIntoVault")) {
             if (EconomyVaultAPI.isVaultInstalled) EconomyVaultAPI.initialize()
         }
-
 
         if (migratorCount > 0) log.info("Not hooking into Vault since we found data migrators!")
 

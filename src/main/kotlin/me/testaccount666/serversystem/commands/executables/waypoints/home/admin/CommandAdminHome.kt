@@ -1,8 +1,9 @@
-package me.testaccount666.serversystem.commands.executables.home.admin
+package me.testaccount666.serversystem.commands.executables.waypoints.home.admin
 
-import me.testaccount666.serversystem.commands.executables.home.AbstractCommandHome
-import me.testaccount666.serversystem.commands.executables.home.HomeType
+import me.testaccount666.serversystem.commands.executables.waypoints.CommandType
+import me.testaccount666.serversystem.commands.executables.waypoints.home.AbstractCommandHome
 import me.testaccount666.serversystem.managers.PermissionManager
+import me.testaccount666.serversystem.userdata.home.HomeManager
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
 
@@ -19,16 +20,24 @@ class CommandAdminHome : AbstractCommandHome() {
         }
     }
 
-    override fun argsBeforeHome(command: Command) = 1
+    override fun argsBeforePoint(command: Command) = 1
 
-    override fun getHomeType(command: Command): HomeType {
+    override fun getCommandType(command: Command): CommandType {
         val name = command.name.drop("admin".length)
 
         return when (name) {
-            "sethome" -> HomeType.SET
-            "deletehome" -> HomeType.DELETE
-            "home" -> HomeType.TELEPORT
+            "sethome" -> CommandType.CREATE
+            "deletehome" -> CommandType.DELETE
+            "home" -> CommandType.TELEPORT
             else -> error("Invalid command name: ${command.name}")
+        }
+    }
+
+    override fun getPrefix(command: Command): String {
+        return when (getCommandType(command)) {
+            CommandType.CREATE -> "SetHome"
+            CommandType.DELETE -> "DeleteHome"
+            CommandType.TELEPORT -> "Home"
         }
     }
 
@@ -37,4 +46,6 @@ class CommandAdminHome : AbstractCommandHome() {
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         return PermissionManager.hasCommandPermission(player, getBasePermission(command), false)
     }
+
+    override fun canAddPoints(pointManager: HomeManager, command: Command) = true
 }

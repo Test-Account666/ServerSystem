@@ -14,13 +14,11 @@ import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 import java.text.DecimalFormat
-import java.util.Locale.getDefault
-import java.util.function.Consumer
 
 @ServerSystemCommand("teleport", ["teleportposition", "teleporthere", "teleportall"])
 class CommandTeleport : AbstractServerSystemCommand() {
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        val commandName = command.name.lowercase(getDefault())
+        val commandName = command.name.lowercase()
         when (commandName) {
             "teleportposition" -> executeTeleportPosition(commandSender, command, label, *arguments)
             "teleporthere" -> executeTeleportHere(commandSender, command, label, *arguments)
@@ -54,7 +52,7 @@ class CommandTeleport : AbstractServerSystemCommand() {
 
         getTargetUserAndTeleport(
             commandSender,
-            { targetPlayer -> targetPlayer.teleport(commandSender.getPlayer()!!.location) },
+            { it.teleport(commandSender.getPlayer()!!.location) },
             "TeleportHere.Success", *arguments
         )
     }
@@ -81,14 +79,11 @@ class CommandTeleport : AbstractServerSystemCommand() {
         if (!validatePermissions(commandSender, "Teleport.Use", "Teleport.Other")) return
         if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, 1, *arguments)) return
 
-        val sourceUser = getTargetUser(commandSender, arguments = arguments)
-        val targetUser = getTargetUser(commandSender, 1, false, *arguments)
-
-        if (sourceUser == null) {
+        val sourceUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, 1, false, *arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[1]) }.build()
             return
         }
@@ -117,8 +112,7 @@ class CommandTeleport : AbstractServerSystemCommand() {
         var startIndex = 0
 
         if (arguments.size > 3) {
-            val potentialTargetUser = getTargetUser(commandSender, arguments = arguments)
-            if (potentialTargetUser != null) {
+            getTargetUser(commandSender, arguments = arguments)?.also {
                 isSelf = false
                 startIndex = 1
             }
@@ -126,8 +120,7 @@ class CommandTeleport : AbstractServerSystemCommand() {
 
         if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, 3, *arguments)) return
 
-        val targetUser = if (isSelf) commandSender else getTargetUser(commandSender, arguments = arguments)
-        if (targetUser == null) {
+        val targetUser = (if (isSelf) commandSender else getTargetUser(commandSender, arguments = arguments)) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
@@ -138,9 +131,7 @@ class CommandTeleport : AbstractServerSystemCommand() {
 
         val executionLocation = if (commandSender is ConsoleUser) targetPlayer.location else commandSender.getPlayer()!!.location
 
-        val location = extractLocationWithRotation(executionLocation, targetPlayer, startIndex, *arguments)
-
-        if (location == null) {
+        val location = extractLocationWithRotation(executionLocation, targetPlayer, startIndex, *arguments) ?: run {
             command("TeleportPosition.InvalidLocation", commandSender) { target(targetPlayer.name) }.build()
             return
         }
@@ -189,15 +180,14 @@ class CommandTeleport : AbstractServerSystemCommand() {
         return true
     }
 
-    private fun getTargetUserAndTeleport(commandSender: User, teleportAction: Consumer<Player>, successMessage: String, vararg arguments: String) {
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-        if (targetUser == null) {
+    private fun getTargetUserAndTeleport(commandSender: User, teleportAction: (Player) -> Unit, successMessage: String, vararg arguments: String) {
+        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
 
         val targetPlayer = targetUser.getPlayer()!!
-        teleportAction.accept(targetPlayer)
+        teleportAction(targetPlayer)
         command(successMessage, commandSender) { target(targetPlayer.name) }.build()
     }
 
@@ -297,7 +287,7 @@ class CommandTeleport : AbstractServerSystemCommand() {
     override fun getSyntaxPath(command: Command?): String {
         if (command == null) return "Teleport"
 
-        val commandName = command.name.lowercase(getDefault())
+        val commandName = command.name.lowercase()
         return when (commandName) {
             "teleportposition" -> "TeleportPosition"
             "teleporthere" -> "TeleportHere"
@@ -307,7 +297,7 @@ class CommandTeleport : AbstractServerSystemCommand() {
     }
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        val commandName = command.name.lowercase(getDefault())
+        val commandName = command.name.lowercase()
         val permission = when (commandName) {
             "teleportposition" -> "TeleportPosition.Use"
             "teleporthere" -> "TeleportHere.Use"

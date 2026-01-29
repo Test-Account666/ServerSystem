@@ -1,6 +1,5 @@
 package me.testaccount666.serversystem.commands.executables.seen
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
@@ -28,23 +27,20 @@ class CommandSeen : AbstractServerSystemCommand() {
             return
         }
 
-        val cachedUserOptional = instance.registry.getService<UserManager>().getUserOrNull(arguments[0])
-
-        if (cachedUserOptional == null) {
+        val cachedUser = getService<UserManager>().getUserOrNull(arguments[0]) ?: run {
             log.warning("(CommandSeen) User '${arguments[0]}' is not cached! This should not happen!")
             general("ErrorOccurred", commandSender) { label(label) }.build()
             return
         }
 
-        val targetUser = cachedUserOptional.offlineUser
-
-        if (targetUser.getNameOrNull() == null) {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
-            return
+        val targetUser = cachedUser.offlineUser.also {
+            if (it.getNameOrNull() == null) {
+                general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
+                return
+            }
         }
 
         var lastSeen = targetUser.lastSeen
-
         if (targetUser is User) lastSeen = System.currentTimeMillis()
 
         val formattedDate = parseDate(lastSeen)

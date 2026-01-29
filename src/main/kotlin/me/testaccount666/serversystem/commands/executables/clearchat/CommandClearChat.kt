@@ -16,11 +16,11 @@ class CommandClearChat : AbstractServerSystemCommand() {
 
         Bukkit.getOnlinePlayers().forEach { everyone ->
             if (!hasCommandPermission(everyone, "ClearChat.Bypass", false)) {
-                for (index in 0..<_CLEAR_LINES) {
+                repeat(_CLEAR_LINES) {
                     val randomChar = (33 + (Math.random() * (126 - 33))).toInt().toChar() // Safe ASCII range
                     everyone.sendMessage(randomChar.toString())
                 }
-                for (index in 0..<_CLEAR_LINES) everyone.sendMessage(_EMPTY_LINE)
+                repeat(_CLEAR_LINES) { everyone.sendMessage(_EMPTY_LINE) }
             }
         }
 

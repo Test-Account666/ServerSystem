@@ -9,7 +9,6 @@ import me.testaccount666.serversystem.userdata.OfflineUser
 import me.testaccount666.serversystem.userdata.User
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
-import java.util.Locale.getDefault
 
 @ServerSystemCommand("mute", ["unmute", "shadowmute"], TabCompleterModeration::class)
 class CommandMute : AbstractModerationCommand<MuteModeration>() {
@@ -23,7 +22,7 @@ class CommandMute : AbstractModerationCommand<MuteModeration>() {
     }
 
     override fun checkBasePermission(commandSender: User, command: Command): Boolean {
-        val permissionPath = when (command.name.lowercase(getDefault())) {
+        val permissionPath = when (command.name.lowercase()) {
             "mute" -> "Moderation.Mute.Use"
             "shadowmute" -> "Moderation.Mute.Shadow"
             "unmute" -> "Moderation.Mute.Remove"
@@ -44,7 +43,7 @@ class CommandMute : AbstractModerationCommand<MuteModeration>() {
     override fun getSyntaxPath(command: Command?): String {
         if (command == null) return "Mute"
 
-        return when (val commandName = command.name.lowercase(getDefault())) {
+        return when (val commandName = command.name.lowercase()) {
             "mute", "shadowmute" -> "Mute"
             "unmute" -> "Unmute"
             else -> throw IllegalArgumentException("(CommandMute) Unknown command name: ${commandName}")
@@ -52,7 +51,7 @@ class CommandMute : AbstractModerationCommand<MuteModeration>() {
     }
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        val permissionPath = when (command.name.lowercase(getDefault())) {
+        val permissionPath = when (command.name.lowercase()) {
             "mute" -> "Moderation.Mute.Use"
             "shadowmute" -> "Moderation.Mute.Shadow"
             "unmute" -> "Moderation.Mute.Remove"

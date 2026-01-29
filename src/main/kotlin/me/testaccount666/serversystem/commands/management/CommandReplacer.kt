@@ -6,7 +6,6 @@ import me.testaccount666.serversystem.managers.config.ConfigurationManager
 import me.testaccount666.serversystem.utils.tuples.Tuple
 import org.bukkit.Bukkit
 import org.bukkit.configuration.ConfigurationSection
-import java.util.Locale.getDefault
 
 class CommandReplacer {
     fun replaceCommands() {
@@ -18,8 +17,7 @@ class CommandReplacer {
         val replaceSection = replaceConfig.getConfigurationSection("ReplacedCommands.Replace") ?: return
 
         for (identifier in replaceSection.getKeys(false)) {
-            val section = replaceSection.getConfigurationSection(identifier)
-            if (section == null) {
+            val section = replaceSection.getConfigurationSection(identifier) ?: run {
                 instance.logger.warning("Invalid command replacement identifier '${identifier}' in config.yml (Found no section?!)")
                 continue
             }
@@ -55,10 +53,9 @@ class CommandReplacer {
 
         val fromCommand = commandManager.getCommand(
             "${
-                fromPluginName.lowercase(getDefault())
-            }:${fromCommandName.lowercase(getDefault())}"
-        )
-        if (fromCommand == null) return Tuple(
+                fromPluginName.lowercase()
+            }:${fromCommandName.lowercase()}"
+        ) ?: return Tuple(
             false,
             "Invalid command replacement with identifier '${identifier}': ${fromPluginName}:${fromCommandName} (Command not found in plugin '${fromPluginName}')"
         )
@@ -69,15 +66,15 @@ class CommandReplacer {
             "Invalid command replacement with identifier '${identifier}': 'To Command' is null!"
         )
 
-        val toCommand = commandManager.getCommand(toCommandName.lowercase(getDefault()))
-        if (toCommand == null) return Tuple(
+        commandManager.getCommand(toCommandName.lowercase()) ?: return Tuple(
             false,
             "Invalid command replacement with identifier '${identifier}': ${toCommandName} (Command not found!)"
         )
 
+
         val commandMap = commandManager.commandMap
-        commandMap.remove(toCommandName.lowercase(getDefault()))
-        commandMap[toCommandName.lowercase(getDefault())] = fromCommand
+        commandMap.remove(toCommandName.lowercase())
+        commandMap[toCommandName.lowercase()] = fromCommand
 
         return Tuple(true, "Replaced command '${toCommandName}' with '${fromPluginName}:${fromCommandName}'")
     }

@@ -14,8 +14,7 @@ class MuteMigrator : AbstractMigrator() {
         val uuids = essentials.users.allUserUUIDs
 
         for (uuid in uuids) {
-            val cachedUser = userManager.getUserOrNull(uuid)
-            if (cachedUser == null) {
+            val cachedUser = userManager.getUserOrNull(uuid) ?: run {
                 log.warning("Couldn't find user '${uuid}', skipping state migration!")
                 continue
             }
@@ -40,8 +39,7 @@ class MuteMigrator : AbstractMigrator() {
             val expireTime = essentialsUser.muteTimeout
             val issueTime = System.currentTimeMillis() // Issue time is lost
 
-            var reason = essentialsUser.muteReason
-            if (reason == null) reason = defaultReason
+            val reason = essentialsUser.muteReason ?: defaultReason
 
             val senderUUID = consoleUser.uuid // Sender UUID is lost
             val targetUUID = user.uuid
@@ -68,8 +66,7 @@ class MuteMigrator : AbstractMigrator() {
         for (player in offlinePlayers()) {
             val uuid = player.uniqueId
 
-            val cachedUser = userManager.getUserOrNull(uuid)
-            if (cachedUser == null) {
+            val cachedUser = userManager.getUserOrNull(uuid) ?: run {
                 log.warning("Couldn't find user '${uuid}', skipping mute migration!")
                 continue
             }

@@ -30,8 +30,7 @@ class CommandSmelt : AbstractServerSystemCommand() {
             return
         }
 
-        val smeltedItem = getSmeltedItem(itemInHand)
-        if (smeltedItem == null) {
+        val smeltedItem = getSmeltedItem(itemInHand) ?: run {
             command("Smelt.NoSmeltedItem", commandSender).build()
             return
         }
@@ -51,8 +50,7 @@ class CommandSmelt : AbstractServerSystemCommand() {
         val recipeIterator = Bukkit.recipeIterator()
 
         while (recipeIterator.hasNext()) {
-            val recipe = recipeIterator.next()
-            if (recipe !is FurnaceRecipe) continue
+            val recipe = recipeIterator.next() as? FurnaceRecipe ?: continue
             if (!recipe.inputChoice.test(itemStack)) continue
 
             return recipe.result

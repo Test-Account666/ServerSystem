@@ -64,12 +64,8 @@ class ListenerInventorySee : AbstractInventorySeeListener(), Listener {
     }
 
     private fun findInventoryOwner(topInventory: Inventory, bottomInventory: Inventory): Player? {
-        var holder = topInventory.holder
-        if (holder is Player) return holder
-
-        holder = bottomInventory.holder
-        if (holder is Player) return holder
-
+        (topInventory.holder as? Player)?.let { return it }
+        (bottomInventory.holder as? Player)?.let { return it }
         return null
     }
 

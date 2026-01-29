@@ -1,17 +1,16 @@
 package me.testaccount666.serversystem.commands.executables.kit
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabCompleter
+import me.testaccount666.serversystem.commands.interfaces.getService
 import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.userdata.User
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
-import java.util.Locale.getDefault
 
 class TabCompleterKit : ServerSystemTabCompleter {
     override fun tabComplete(commandSender: User, command: Command, label: String, vararg arguments: String): List<String>? {
-        val commandName = command.name.lowercase(getDefault())
+        val commandName = command.name.lowercase()
         if (!hasPermission(commandSender, commandName)) return listOf()
 
         return when (commandName) {
@@ -55,12 +54,12 @@ class TabCompleterKit : ServerSystemTabCompleter {
     }
 
     private fun handleKitNameCompletion(argument: String): List<String> {
-        val kitManager = instance.registry.getService<KitManager>()
+        val kitManager = getService<KitManager>()
 
         val possibleCompletions = kitManager.allKitNames
         if (argument.isEmpty()) return possibleCompletions
 
-        return possibleCompletions.filter { name -> name.startsWith(argument, true) }
+        return possibleCompletions.filter { it.startsWith(argument, true) }
     }
 
     private fun handlePlayerNameCompletion(argument: String): List<String> {
@@ -73,28 +72,18 @@ class TabCompleterKit : ServerSystemTabCompleter {
     private fun handleTimeCompletion(argument: String): List<String> {
         if (argument.isEmpty()) return defaultTimeSuggestions
 
-        val suggestions = ArrayList<String>()
-
-        if (argument.matches(".*\\d$".toRegex())) suggestions.addAll(getTimeSuggestions(argument))
-        else if (argument.matches("\\d+".toRegex())) suggestions.addAll(getTimeSuggestions(argument))
-        else suggestions.addAll(getMatchingTimeUnits(argument))
-
-        return suggestions
+        return if (argument.matches(".*\\d$".toRegex()) || argument.matches("\\d+".toRegex())) {
+            getTimeSuggestions(argument)
+        } else {
+            getMatchingTimeUnits(argument)
+        }
     }
 
-    private val defaultTimeSuggestions: List<String>
-        get() = ArrayList(_NUMBERS)
+    private val defaultTimeSuggestions
+        get() = _NUMBERS.toList()
 
-    private fun getTimeSuggestions(argument: String): List<String> {
-        val suggestions = ArrayList<String>()
-        _NUMBERS.forEach { suggestions.add(argument + it) }
-        _TIME_UNITS.forEach { suggestions.add(argument + it) }
-        return suggestions
-    }
-
-    private fun getMatchingTimeUnits(argument: String): List<String> {
-        return _TIME_UNITS.filter { unit -> unit.startsWith(argument, true) }
-    }
+    private fun getTimeSuggestions(argument: String) = _NUMBERS.map { argument + it } + _TIME_UNITS.map { argument + it }
+    private fun getMatchingTimeUnits(argument: String) = _TIME_UNITS.filter { it.startsWith(argument, true) }
 
     companion object {
         private val _TIME_UNITS = listOf("s", "m", "h", "d", "w", "mo", "y")

@@ -1,6 +1,5 @@
 package me.testaccount666.serversystem.commands.executables.offlineteleport
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
@@ -51,9 +50,7 @@ class CommandOfflineTeleport : AbstractServerSystemCommand() {
     }
 
     private fun getTargetUser(commandSender: User, label: String, name: String): CachedUser? {
-        val cachedUser = instance.registry.getService<UserManager>().getUserOrNull(name)
-
-        if (cachedUser == null) {
+        val cachedUser = getService<UserManager>().getUserOrNull(name) ?: run {
             general("ErrorOccurred", commandSender) {
                 label(label)
                 target(name)
@@ -71,9 +68,7 @@ class CommandOfflineTeleport : AbstractServerSystemCommand() {
         return cachedUser
     }
 
-    override fun getSyntaxPath(command: Command?): String {
-        return "OfflineTeleport"
-    }
+    override fun getSyntaxPath(command: Command?) = "OfflineTeleport"
 
     override fun hasCommandAccess(player: Player, command: Command): Boolean {
         if (command.name.equals("offlineteleport", true)) return hasCommandPermission(player, "OfflineTeleport.Use", false)

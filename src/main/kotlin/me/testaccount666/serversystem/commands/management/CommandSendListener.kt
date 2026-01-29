@@ -18,23 +18,17 @@ import java.util.logging.Level
 class CommandSendListener : Listener {
     @EventHandler
     fun onCommandSend(event: PlayerCommandSendEvent) {
-        val sentCommands = event.commands.iterator()
+        event.commands.removeIf {
+            val pluginCommand = Bukkit.getPluginCommand(it) ?: return@removeIf false
+            if (pluginCommand.plugin !== instance) return@removeIf false
 
-        while (sentCommands.hasNext()) {
-            val command = sentCommands.next()
+            val wrapper = pluginCommand.executor as? CommandExecutorWrapper ?: return@removeIf false
+            val serverCommand = wrapper.commandExecutor as? AbstractServerSystemCommand ?: return@removeIf false
 
-            val pluginCommand = Bukkit.getPluginCommand(command) ?: continue
-            if (pluginCommand.plugin !== instance) continue
+            if (serverCommand.hasCommandAccess(event.getPlayer(), pluginCommand)) return@removeIf false
 
-            val executor = pluginCommand.executor
-            val wrapper = executor as? CommandExecutorWrapper ?: continue
-            val commandExecutor = wrapper.commandExecutor
-            val serverCommand = commandExecutor as? AbstractServerSystemCommand ?: continue
-
-            if (serverCommand.hasCommandAccess(event.getPlayer(), pluginCommand)) continue
-
-            sentCommands.remove()
-            log.log(Level.FINE, "Filtered command '${command}' from suggestions for player ${event.getPlayer().name}")
+            log.log(Level.FINE, "Filtered command '${it}' from suggestions for player ${event.getPlayer().name}")
+            return@removeIf true
         }
     }
 }

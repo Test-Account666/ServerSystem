@@ -1,7 +1,6 @@
 package me.testaccount666.serversystem.commands.executables.enderchest.offline
 
 import de.tr7zw.nbtapi.NBT
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
@@ -52,8 +51,7 @@ class CommandOfflineEnderChest : AbstractServerSystemCommand {
     fun executeEnderChestCommand(commandSender: User, vararg arguments: String) {
         if (!checkBasePermission(commandSender, "OfflineEnderChest.Use")) return
 
-        val cachedUser = instance.registry.getService<UserManager>().getUserOrNull(arguments[0])
-        if (cachedUser == null) {
+        val cachedUser = getService<UserManager>().getUserOrNull(arguments[0]) ?: run {
             general("Offline.NeverPlayed", commandSender) { target(arguments[0]) }.build()
             return
         }
@@ -71,8 +69,7 @@ class CommandOfflineEnderChest : AbstractServerSystemCommand {
             return
         }
 
-        val inventory = enderChestLoader?.loadOfflineInventory(targetPlayer)
-        if (inventory == null) {
+        val inventory = enderChestLoader?.loadOfflineInventory(targetPlayer) ?: run {
             log.warning("(OfflineEnderChest) Failed to load inventory of '${arguments[0]}'!")
             general("ErrorOccurred", commandSender) { target(arguments[0]) }.build()
             return
