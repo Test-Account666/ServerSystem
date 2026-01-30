@@ -27,18 +27,12 @@ import java.util.logging.Level
 
 @ServerSystemCommand("sudo")
 class CommandSudo : AbstractServerSystemCommand() {
+    override fun minRequiredArguments(command: Command) = 2
+    override fun getUsagePermission(command: Command) = "Sudo.Use"
+    override fun getSyntaxPath(command: Command?) = "Sudo"
+
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, "Sudo.Use")) return
-        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
-
-        if (arguments.isEmpty()) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
-            return
-        }
-
+        if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
         val targetUser = getTargetUser(commandSender, returnSender = false, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
@@ -50,14 +44,6 @@ class CommandSudo : AbstractServerSystemCommand() {
         // No inception here. You can't sudo yourself. Nice try, DiCaprio.
         if (isSelf) {
             command("Sudo.CannotSudoSelf", commandSender).build()
-            return
-        }
-
-        if (arguments.size <= 1) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
             return
         }
 
@@ -166,12 +152,6 @@ class CommandSudo : AbstractServerSystemCommand() {
                 }
             }
         return targetPlayer
-    }
-
-    override fun getSyntaxPath(command: Command?) = "Sudo"
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        return hasCommandPermission(player, "Sudo.Use", false)
     }
 
     companion object {

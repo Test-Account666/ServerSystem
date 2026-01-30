@@ -2,24 +2,19 @@ package me.testaccount666.serversystem.commands.executables.back
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.managers.messages.MappingsData.Companion.backType
-import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
-import org.bukkit.entity.Player
 
 @ServerSystemCommand("back")
 class CommandBack : AbstractServerSystemCommand() {
-    override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, "Back.Use")) return
+    override fun getUsagePermission(command: Command) = "Back.Use"
+    override fun getSyntaxPath(command: Command?) = "Back"
 
-        if (commandSender is ConsoleUser) {
-            general("NotPlayer", commandSender).build()
-            return
-        }
+    override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
+        if (!isPlayer(commandSender)) return
 
         var backType = commandSender.lastBackType
         backType = if (backType == BackType.NONE) BackType.DEATH else backType
@@ -55,12 +50,6 @@ class CommandBack : AbstractServerSystemCommand() {
         command("Back.Success", commandSender) {
             postModifier { it.replace("<TYPE>", typeName) }
         }.build()
-    }
-
-    override fun getSyntaxPath(command: Command?) = "Back"
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        return hasCommandPermission(player, "Back.Use", false)
     }
 
     enum class BackType {

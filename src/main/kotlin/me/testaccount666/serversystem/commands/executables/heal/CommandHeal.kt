@@ -2,13 +2,11 @@ package me.testaccount666.serversystem.commands.executables.heal
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.attribute.Attribute
 import org.bukkit.command.Command
-import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffectType
 
 @ServerSystemCommand("heal", ["feed"])
@@ -21,6 +19,21 @@ class CommandHeal : AbstractServerSystemCommand() {
         PotionEffectType.WEAKNESS, PotionEffectType.LEVITATION
     )
 
+    override fun getUsagePermission(command: Command): String {
+        if (command.name.equals("heal", true)) return "Heal.Use"
+        return "Feed.Use"
+    }
+
+    override fun getSyntaxPath(command: Command?): String {
+        val commandName = command?.name?.lowercase() ?: error("(CommandHeal;SyntaxPath) Command is null")
+
+        return when (commandName) {
+            "heal" -> "Heal"
+            "feed" -> "Feed"
+            else -> error("(CommandHeal;SyntaxPath) Unexpected value: $commandName")
+        }
+    }
+
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
         if (command.name.equals("heal", true)) {
             handleHealCommand(commandSender, command, label, *arguments)
@@ -31,8 +44,7 @@ class CommandHeal : AbstractServerSystemCommand() {
     }
 
     private fun handleFeedCommand(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, "Feed.Use")) return
-        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
+        if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
         val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
@@ -42,7 +54,7 @@ class CommandHeal : AbstractServerSystemCommand() {
         val targetPlayer = targetUser.getPlayer()!!
         val isSelf = targetUser === commandSender
 
-        if (!isSelf && !checkOtherPermission(commandSender, "Feed.Other", targetPlayer.name)) return
+        if (!isSelf && !checkPermission(commandSender, "Feed.Other", targetPlayer.name)) return
 
         targetPlayer.foodLevel = 20
         targetPlayer.saturation = 20f
@@ -60,8 +72,7 @@ class CommandHeal : AbstractServerSystemCommand() {
     }
 
     private fun handleHealCommand(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, "Heal.Use")) return
-        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
+        if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
         val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
@@ -71,7 +82,7 @@ class CommandHeal : AbstractServerSystemCommand() {
         val targetPlayer = targetUser.getPlayer()!!
         val isSelf = targetUser === commandSender
 
-        if (!isSelf && !checkOtherPermission(commandSender, "Heal.Other", targetPlayer.name)) return
+        if (!isSelf && !checkPermission(commandSender, "Heal.Other", targetPlayer.name)) return
 
         targetPlayer.health = targetPlayer.getAttribute(Attribute.MAX_HEALTH)?.value ?: 20.0
         targetPlayer.foodLevel = 20
@@ -89,19 +100,5 @@ class CommandHeal : AbstractServerSystemCommand() {
             sender(commandSender.getNameSafe())
             target(targetPlayer.name)
         }.build()
-    }
-
-    override fun getSyntaxPath(command: Command?): String {
-        val commandName = command?.name?.lowercase() ?: error("(CommandHeal;SyntaxPath) Command is null")
-
-        return when (commandName) {
-            "heal" -> "Heal"
-            "feed" -> "Feed"
-            else -> error("(CommandHeal;SyntaxPath) Unexpected value: $commandName")
-        }
-    }
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        return hasCommandPermission(player, "Heal.Use", false)
     }
 }

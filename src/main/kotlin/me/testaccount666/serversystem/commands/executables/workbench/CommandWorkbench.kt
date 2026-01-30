@@ -2,10 +2,7 @@ package me.testaccount666.serversystem.commands.executables.workbench
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
-import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
 
@@ -22,27 +19,6 @@ class CommandWorkbench : AbstractServerSystemCommand() {
             "Stonecutter" to MenuUtils::openStonecutter
         )
     }
-
-    override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (commandSender is ConsoleUser) {
-            general("NotPlayer", commandSender).build()
-            return
-        }
-
-        val player = commandSender.getPlayer()!!
-        val commandName = command.name.replaceFirstChar { it.uppercaseChar() }
-
-        val permissionPath = "${commandName}.Use"
-        if (!checkBasePermission(commandSender, permissionPath)) return
-
-        _menuOpeners[commandName]?.invoke(player)
-    }
-
-
-    override fun getSyntaxPath(command: Command?): String {
-        throw UnsupportedOperationException("Workbench command doesn't have an available syntax!")
-    }
-
     private val _permissionMap = mapOf(
         "workbench" to "Workbench.Use",
         "anvil" to "Anvil.Use",
@@ -53,9 +29,15 @@ class CommandWorkbench : AbstractServerSystemCommand() {
         "stonecutter" to "Stonecutter.Use"
     )
 
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        val permissionPath = _permissionMap[command.name.lowercase()] ?: return false
+    override fun getUsagePermission(command: Command) = _permissionMap[command.name.lowercase()] ?: error("Invalid command name: ${command.name}")
+    override fun getSyntaxPath(command: Command?) = "Generic"
 
-        return hasCommandPermission(player, permissionPath, false)
+    override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
+        if (!isPlayer(commandSender)) return
+        val player = commandSender.getPlayer()!!
+
+        val commandName = command.name.replaceFirstChar { it.uppercaseChar() }
+
+        _menuOpeners[commandName]?.invoke(player)
     }
 }

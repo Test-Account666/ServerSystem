@@ -14,6 +14,8 @@ abstract class AbstractServerSystemCommand : ServerSystemCommandExecutor {
     protected inline fun <reified T : Any> getService(): T = ServerSystem.instance.registry.getService<T>()
     protected inline fun <reified T : Any> getServiceOrNull(): T? = ServerSystem.instance.registry.getServiceOrNull<T>()
 
+    val variantLabelMap = mutableMapOf<String, List<String>>()
+
     /**
      * Gets the target user for the command with full control over index and fallback behavior.
      * If arguments are provided, tries to find a player with the name specified at the given index.
@@ -26,7 +28,7 @@ abstract class AbstractServerSystemCommand : ServerSystemCommandExecutor {
      * @param arguments     The arguments passed to the command
      * @return The target user, or null if the target user is not found
      */
-    protected fun getTargetUser(commandSender: User, index: Int = 0, returnSender: Boolean = true, vararg arguments: String): User? {
+    internal fun getTargetUser(commandSender: User, index: Int = 0, returnSender: Boolean = true, vararg arguments: String): User? {
         if (arguments.size > index) {
             val userManager = getService<UserManager>()
             val cachedUser = userManager.getUserOrNull(arguments[index], true)
@@ -44,12 +46,9 @@ abstract class AbstractServerSystemCommand : ServerSystemCommandExecutor {
      * @param arguments      The arguments passed to the command
      * @return true if the command was executed by console without a target, false otherwise
      */
-    protected fun handleConsoleWithNoTarget(
-        commandSender: User,
-        syntaxPath: String,
-        label: String,
-        expectedLength: Int = 0,
-        vararg arguments: String
+    internal fun isConsoleWithNoTarget(
+        commandSender: User, syntaxPath: String, label: String,
+        expectedLength: Int = 0, vararg arguments: String
     ): Boolean {
         if (arguments.size <= expectedLength && commandSender is ConsoleUser) {
             general("InvalidArguments", commandSender) {
@@ -62,15 +61,6 @@ abstract class AbstractServerSystemCommand : ServerSystemCommandExecutor {
     }
 
     /**
-     * Checks if the command sender has the base permission required to execute the command.
-     *
-     * @param commandSender The user who executed the command
-     * @param permission    The permission to check
-     * @return true if the user has the required permission, false otherwise
-     */
-    protected fun checkBasePermission(commandSender: User, permission: String): Boolean = checkOtherPermission(commandSender, permission)
-
-    /**
      * Checks if the command sender has the permission required to execute the command on a target.
      * If the user doesn't have the required permission, sends a no permission message.
      *
@@ -79,7 +69,7 @@ abstract class AbstractServerSystemCommand : ServerSystemCommandExecutor {
      * @param targetName    The name of the target player, or null if there is no target
      * @return true if the user has the required permission, false otherwise
      */
-    protected fun checkOtherPermission(commandSender: User, permission: String, targetName: String? = null): Boolean {
+    internal fun checkPermission(commandSender: User, permission: String, targetName: String? = null): Boolean {
         if (!PermissionManager.hasCommandPermission(commandSender, permission)) {
             sendNoPermissionMessage(commandSender, "Commands.${permission}", targetName)
             return false
@@ -94,14 +84,26 @@ abstract class AbstractServerSystemCommand : ServerSystemCommandExecutor {
      * @param permission The permission that was checked and failed
      * @param targetName The name of the target player, or null if there is no target
      */
-    protected fun sendNoPermissionMessage(recipient: User, permission: String, targetName: String?) {
+    internal fun sendNoPermissionMessage(recipient: User, permission: String, targetName: String?) {
         general("NoPermission", recipient) {
             target(targetName)
             postModifier { it.replace("<PERMISSION>", PermissionManager.getPermission(permission)!!) }
         }.build()
     }
 
+    internal fun isPlayer(commandSender: User, sendMessage: Boolean = true): Boolean {
+        if (commandSender !is ConsoleUser) return true
+
+        if (sendMessage) general("NotPlayer", commandSender).build()
+        return false
+    }
+
+    abstract fun getUsagePermission(command: Command): String
+    open fun minRequiredArguments(command: Command) = 0
+
     abstract fun getSyntaxPath(command: Command?): String
 
-    abstract fun hasCommandAccess(player: Player, command: Command): Boolean
+    fun hasCommandAccess(player: Player, command: Command): Boolean {
+        return PermissionManager.hasCommandPermission(player, getUsagePermission(command), false)
+    }
 }

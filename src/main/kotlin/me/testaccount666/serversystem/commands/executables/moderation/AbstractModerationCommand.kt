@@ -14,23 +14,6 @@ import org.bukkit.command.Command
 
 abstract class AbstractModerationCommand<T : AbstractModeration> : AbstractServerSystemCommand() {
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, command)) return
-        if (arguments.isEmpty()) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
-            return
-        }
-
-        if (!isRemoveModeration(command) && arguments.size < 2) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
-            return
-        }
-
         val targetUser = getService<UserManager>().getUserOrNull(arguments[0]) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
@@ -109,8 +92,6 @@ abstract class AbstractModerationCommand<T : AbstractModeration> : AbstractServe
     protected abstract fun handlePostModeration(command: Command, commandSender: User, targetUser: OfflineUser, moderation: T)
 
     protected abstract fun createModeration(command: Command, commandSender: User, targetUser: OfflineUser, expireTime: Long, reason: String): T
-
-    protected abstract fun checkBasePermission(commandSender: User, command: Command): Boolean
 
     protected fun isRemoveModeration(command: Command) = command.name.startsWith("un")
 

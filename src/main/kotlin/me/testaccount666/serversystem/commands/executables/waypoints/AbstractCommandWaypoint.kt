@@ -1,7 +1,6 @@
 package me.testaccount666.serversystem.commands.executables.waypoints
 
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
-import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
@@ -13,20 +12,7 @@ import org.bukkit.command.Command
 
 abstract class AbstractCommandWaypoint<T : WaypointManager<P>, P : Waypoint> : AbstractServerSystemCommand() {
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, getBasePermission(command))) return
-
-        if (commandSender is ConsoleUser) {
-            general("NotPlayer", commandSender).build()
-            return
-        }
-
-        if (arguments.size < argsBeforePoint(command) + 1) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
-            return
-        }
+        if (!isPlayer(commandSender)) return
 
         val (target, pointName) = resolveTargetAndPoint(commandSender, command, *arguments) ?: return
         val pointManager = getWaypointManager(command, target)
@@ -131,7 +117,6 @@ abstract class AbstractCommandWaypoint<T : WaypointManager<P>, P : Waypoint> : A
     }
 
     abstract fun argsBeforePoint(command: Command): Int
-    abstract fun getBasePermission(command: Command): String
     abstract fun getWaypointManager(command: Command, targetUser: User): T
     abstract fun getCommandType(command: Command): CommandType
     abstract fun canAddPoints(pointManager: T, command: Command): Boolean

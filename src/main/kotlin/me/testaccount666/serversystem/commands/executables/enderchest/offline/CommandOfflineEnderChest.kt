@@ -3,17 +3,17 @@ package me.testaccount666.serversystem.commands.executables.enderchest.offline
 import de.tr7zw.nbtapi.NBT
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
-import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.UserManager
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
-import org.bukkit.entity.Player
 
 class CommandOfflineEnderChest : AbstractServerSystemCommand {
     val enderChestLoader: EnderChestLoader?
+    override fun minRequiredArguments(command: Command) = 1
+    override fun getUsagePermission(command: Command) = "OfflineEnderChest.Use"
+    override fun getSyntaxPath(command: Command?) = "OfflineEnderChest"
 
     constructor() {
         if (!Bukkit.getPluginManager().isPluginEnabled("NBTAPI")) {
@@ -32,25 +32,12 @@ class CommandOfflineEnderChest : AbstractServerSystemCommand {
     }
 
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (commandSender is ConsoleUser) {
-            general("NotPlayer", commandSender).build()
-            return
-        }
-
-        if (arguments.isEmpty()) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
-            return
-        }
+        if (!isPlayer(commandSender)) return
 
         executeEnderChestCommand(commandSender, *arguments)
     }
 
     fun executeEnderChestCommand(commandSender: User, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, "OfflineEnderChest.Use")) return
-
         val cachedUser = getService<UserManager>().getUserOrNull(arguments[0]) ?: run {
             general("Offline.NeverPlayed", commandSender) { target(arguments[0]) }.build()
             return
@@ -76,11 +63,5 @@ class CommandOfflineEnderChest : AbstractServerSystemCommand {
         }
 
         commandSender.getPlayer()!!.openInventory(inventory)
-    }
-
-    override fun getSyntaxPath(command: Command?) = "OfflineEnderChest"
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        return hasCommandPermission(player, "OfflineEnderChest.Use", false)
     }
 }

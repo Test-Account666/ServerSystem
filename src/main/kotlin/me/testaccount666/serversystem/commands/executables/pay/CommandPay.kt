@@ -2,29 +2,22 @@ package me.testaccount666.serversystem.commands.executables.pay
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.money.EconomyProvider
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
-import org.bukkit.entity.Player
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 @ServerSystemCommand("pay")
 class CommandPay : AbstractServerSystemCommand() {
-    override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, "Pay.Use")) return
-        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, 1, *arguments)) return
+    override fun minRequiredArguments(command: Command) = 2
+    override fun getUsagePermission(command: Command) = "Pay.Use"
+    override fun getSyntaxPath(command: Command?) = "Pay"
 
-        if (arguments.size < 2) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
-            return
-        }
+    override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
+        if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, 1, *arguments)) return
 
         val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
@@ -69,11 +62,5 @@ class CommandPay : AbstractServerSystemCommand() {
             sender(commandSender.getNameSafe())
             postModifier { it.replace("<AMOUNT>", formattedAmount) }
         }.build()
-    }
-
-    override fun getSyntaxPath(command: Command?) = "Pay"
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        return hasCommandPermission(player, "Pay.Use", false)
     }
 }

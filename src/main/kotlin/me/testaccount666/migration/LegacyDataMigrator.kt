@@ -142,7 +142,7 @@ class LegacyDataMigrator {
                 if (verInt < 300) return true
 
                 val split = previousVersion.split("".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                previousVersion = split.joinToString { "." }.trim { it <= ' ' }
+                previousVersion = split.joinToString { "." }.trim()
 
                 if (previousVersion.startsWith(".")) previousVersion = previousVersion.drop(1)
                 if (previousVersion.endsWith(".")) previousVersion = previousVersion.dropLast(1)

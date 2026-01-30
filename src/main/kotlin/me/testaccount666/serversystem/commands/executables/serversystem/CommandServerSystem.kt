@@ -5,40 +5,24 @@ import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.serverVersion
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.updates.UpdateManager
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
-import org.bukkit.entity.Player
 
 @ServerSystemCommand("serversystem", [], TabCompleterServerSystem::class)
 class CommandServerSystem : AbstractServerSystemCommand() {
+    override fun minRequiredArguments(command: Command) = 1
+    override fun getUsagePermission(command: Command) = "ServerSystem.Use"
     override fun getSyntaxPath(command: Command?) = "ServerSystem"
 
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        return hasCommandPermission(player, "ServerSystem.Use", false)
-    }
-
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, "ServerSystem.Use")) return
-        if (arguments.isEmpty()) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
-            return
-        }
-
-        val newArguments = arguments.drop(1).toTypedArray()
-
-        val subCommand = arguments[0].lowercase()
-        when (subCommand) {
+        when (arguments[0].lowercase()) {
             "version" -> version(commandSender, label)
             "reload" -> reload(commandSender)
-            "migrate" -> migrate(commandSender, label, *newArguments)
+            "migrate" -> migrate(commandSender, label, *arguments.drop(1).toTypedArray())
             else -> general("InvalidArguments", commandSender) {
                 syntax(getSyntaxPath(command))
                 label(label)
@@ -47,7 +31,7 @@ class CommandServerSystem : AbstractServerSystemCommand() {
     }
 
     fun version(commandSender: User, label: String) {
-        if (!checkBasePermission(commandSender, "ServerSystem.Version")) return
+        if (!checkPermission(commandSender, "ServerSystem.Version")) return
 
         command("ServerSystem.Version.Checking", commandSender).build()
 
@@ -57,8 +41,10 @@ class CommandServerSystem : AbstractServerSystemCommand() {
                 prefix(false)
                 postModifier { applyVersion(it, latestVersion.version) }
             }.build()
-        }.exceptionally { _ ->
+        }.exceptionally { throwable ->
+            throwable.printStackTrace()
             general("ErrorOccurred", commandSender) { label(label) }.build()
+
             command("ServerSystem.Version.Success", commandSender) {
                 prefix(false)
                 postModifier { applyVersion(it, null) }
@@ -79,7 +65,7 @@ class CommandServerSystem : AbstractServerSystemCommand() {
     }
 
     fun reload(commandSender: User) {
-        if (!checkBasePermission(commandSender, "ServerSystem.Reload")) return
+        if (!checkPermission(commandSender, "ServerSystem.Reload")) return
 
         val serverSystem = instance
         Bukkit.getScheduler().cancelTasks(serverSystem)
@@ -95,7 +81,7 @@ class CommandServerSystem : AbstractServerSystemCommand() {
     }
 
     fun migrate(commandSender: User, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, "ServerSystem.Migrate")) return
+        if (!checkPermission(commandSender, "ServerSystem.Migrate")) return
 
         if (arguments.size <= 1) {
             general("InvalidArguments", commandSender) {

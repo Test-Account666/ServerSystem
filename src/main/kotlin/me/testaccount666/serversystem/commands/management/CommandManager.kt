@@ -3,6 +3,7 @@ package me.testaccount666.serversystem.commands.management
 import io.github.classgraph.ClassGraph
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.commands.ServerSystemCommand
+import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabCompleter
 import me.testaccount666.serversystem.commands.wrappers.CommandExecutorWrapper
@@ -71,9 +72,12 @@ class CommandManager(private val _configReader: ConfigReader) {
             val aliases = aliases.toMutableList()
             aliases.forEach { commandMap.remove(it) }
 
-            val bukkitCommand = createCommand(variant)
-            bukkitCommand.setExecutor(CommandExecutorWrapper(command))
-            bukkitCommand.tabCompleter = TabCompleterWrapper(completer)
+            if (command is AbstractServerSystemCommand) command.variantLabelMap[variant] = aliases
+
+            val bukkitCommand = createCommand(variant).apply {
+                setExecutor(CommandExecutorWrapper(command))
+                tabCompleter = TabCompleterWrapper(completer)
+            }
 
             for (alias in aliases) {
                 commandMap[alias] = bukkitCommand
@@ -131,11 +135,9 @@ class CommandManager(private val _configReader: ConfigReader) {
         instantiateAndRegisterCommand(commandExecutor, commandAnnotation.tabCompleter.java, variantAliasMap, command)
     }
 
-    private fun isCommandEnabled(command: String): Boolean = _configReader.getBoolean("Commands.${command}.Enabled")
+    private fun isCommandEnabled(command: String) = _configReader.getBoolean("Commands.${command}.Enabled")
 
-    private fun isVariantEnabled(command: String, variant: String): Boolean {
-        return _configReader.getBoolean("Commands.${command}.Variants.${variant}.Enabled")
-    }
+    private fun isVariantEnabled(command: String, variant: String) = _configReader.getBoolean("Commands.${command}.Variants.${variant}.Enabled")
 
     private fun buildVariantAliasMap(command: String, variants: Array<String>): Map<String, List<String>> {
         val variantAliasMap = HashMap<String, List<String>>()
@@ -155,9 +157,9 @@ class CommandManager(private val _configReader: ConfigReader) {
 
     private fun getAliases(configPath: String): List<String> {
         return _configReader.getString(configPath, "")!!.split(",")
-            .dropLastWhile { it.isEmpty() }
-            .map { obj -> obj.trim { it <= ' ' } }
-            .filter { it.isNotEmpty() }
+            .dropLastWhile(String::isEmpty)
+            .map(String::trim)
+            .filter(String::isNotEmpty)
     }
 
     private fun instantiateAndRegisterCommand(

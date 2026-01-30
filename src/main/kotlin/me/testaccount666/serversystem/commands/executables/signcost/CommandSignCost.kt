@@ -5,8 +5,6 @@ import me.testaccount666.serversystem.clickablesigns.cost.CostType
 import me.testaccount666.serversystem.clickablesigns.util.SignUtils.getSignFile
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
-import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.money.EconomyProvider
 import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
@@ -17,28 +15,18 @@ import org.bukkit.block.Sign
 import org.bukkit.block.sign.Side
 import org.bukkit.command.Command
 import org.bukkit.configuration.file.YamlConfiguration
-import org.bukkit.entity.Player
 import java.io.IOException
 import java.math.BigDecimal
 import java.util.logging.Level
 
 @ServerSystemCommand("signcost", [], TabCompleterSignCost::class)
 class CommandSignCost : AbstractServerSystemCommand() {
+    override fun minRequiredArguments(command: Command) = 1
+    override fun getUsagePermission(command: Command) = "SignCost.Use"
+    override fun getSyntaxPath(command: Command?) = "SignCost"
+
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, "SignCost.Use")) return
-
-        if (commandSender is ConsoleUser) {
-            general("NotPlayer", commandSender).build()
-            return
-        }
-
-        if (arguments.isEmpty()) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
-            return
-        }
+        if (!isPlayer(commandSender)) return
 
         val costTypeStr = arguments[0].lowercase()
         if (!_COST_TYPES.contains(costTypeStr)) {
@@ -125,12 +113,6 @@ class CommandSignCost : AbstractServerSystemCommand() {
                     .replace("<AMOUNT>", amount.toString())
             }
         }.build()
-    }
-
-    override fun getSyntaxPath(command: Command?) = "SignCost"
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        return hasCommandPermission(player, "SignCost.Use", false)
     }
 
     companion object {

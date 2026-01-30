@@ -3,8 +3,6 @@ package me.testaccount666.serversystem.commands.executables.sign
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
-import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.ChatColor.Companion.stripColor
 import me.testaccount666.serversystem.utils.ComponentColor.componentToString
@@ -16,7 +14,6 @@ import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import net.kyori.adventure.text.Component
 import org.bukkit.NamespacedKey
 import org.bukkit.command.Command
-import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.persistence.PersistentDataType
@@ -24,13 +21,15 @@ import org.bukkit.persistence.PersistentDataType
 @ServerSystemCommand("sign", ["unsign"])
 open class CommandSign : AbstractServerSystemCommand() {
     protected val signKey = NamespacedKey(instance, "sign")
+    override fun minRequiredArguments(command: Command) = if (command.name.equals("sign", true)) 1 else 0
+    override fun getUsagePermission(command: Command) = if (command.name.equals("sign", true)) "Sign.Use" else "Unsign.Use"
+    override fun getSyntaxPath(command: Command?): String {
+        val name = command?.name ?: "sign"
+        return if (name.equals("sign", true)) "Sign" else "Unsign"
+    }
 
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, getCommandPermission(command))) return
-        if (commandSender is ConsoleUser) {
-            general("NotPlayer", commandSender).build()
-            return
-        }
+        if (!isPlayer(commandSender)) return
 
         val player = commandSender.getPlayer()!!
         val itemInHand = player.inventory.itemInMainHand
@@ -63,7 +62,7 @@ open class CommandSign : AbstractServerSystemCommand() {
             val strippedLine = stripColor(componentToString(loreComponent))
             val strippedLore = stripColor(dataContainer.get(signKey, PersistentDataType.STRING))
             strippedLore.split("\n")
-                .filter { it.isNotEmpty() }
+                .filter(String::isNotEmpty)
                 .any { it.equals(strippedLine, true) }
         }
         itemMeta.lore(lore)
@@ -90,8 +89,7 @@ open class CommandSign : AbstractServerSystemCommand() {
 
         val lore = itemMeta.lore() ?: mutableListOf<Component>()
 
-        val message = arguments.joinToString(" ").trim()
-        if (message.isEmpty()) {
+        val message = arguments.joinToString(" ").trim().takeIf(String::isNotEmpty) ?: run {
             general("InvalidArguments", commandSender) {
                 syntax(getSyntaxPath(command))
                 label(label)
@@ -119,24 +117,11 @@ open class CommandSign : AbstractServerSystemCommand() {
 
         dataContainer.set(signKey, PersistentDataType.STRING, loreMessage)
 
-        loreMessage.split("\n").filter { it.isNotEmpty() }.forEach { lore.add(translateToComponent(it)) }
+        loreMessage.split("\n").filter(String::isNotEmpty).forEach { lore.add(translateToComponent(it)) }
 
         itemMeta.lore(lore)
         itemInHand.setItemMeta(itemMeta)
 
         command("Sign.Success", commandSender).build()
-    }
-
-    override fun getSyntaxPath(command: Command?): String {
-        val name = command?.name ?: error("(CommandSign;SyntaxPath) Command is null")
-        return if (name.equals("sign", true)) "Sign" else "Unsign"
-    }
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        return hasCommandPermission(player, getCommandPermission(command), false)
-    }
-
-    private fun getCommandPermission(command: Command): String {
-        return if (command.name.equals("sign", true)) "Sign.Use" else "Unsign.Use"
     }
 }

@@ -396,6 +396,7 @@ Messages:
       SetNone: "Kosten erfolgreich vom Schild entfernt."
       Set: "Kosten auf <Color:Highlight><TYPE> <Color:Message>mit Betrag <Color:Highlight><AMOUNT><Color:Message> gesetzt."
   Syntax:
+    Generic: "</LABEL>"
     Balance: "/<LABEL> (Spieler)"
     Ban: "/<LABEL> [Spieler] [Zeit] (Grund...)"
     Broadcast: "/<LABEL> [Nachricht...]"

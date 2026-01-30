@@ -84,8 +84,6 @@ class ServerSystem : JavaPlugin() {
     }
 
     private fun initialize() {
-        val registry = registry
-
         val configManager = ConfigurationManager(this)
         registry.registerService(configManager).loadAllConfigs()
 
@@ -100,9 +98,7 @@ class ServerSystem : JavaPlugin() {
             }
         registry.registerService<ModerationDatabaseManager>(moderationDbManager)
 
-        val migratorRegistry = MigratorRegistry()
-        registry.registerService(migratorRegistry).registerMigrators()
-
+        val migratorRegistry = registry.registerService(MigratorRegistry()).also(MigratorRegistry::registerMigrators)
         PlaceholderApiSupport.registerPlaceholders()
 
         moderationDbManager.initialize()

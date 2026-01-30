@@ -5,7 +5,6 @@ import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.moderation.AbstractModerationCommand
 import me.testaccount666.serversystem.commands.executables.moderation.TabCompleterModeration
-import me.testaccount666.serversystem.managers.PermissionManager
 import me.testaccount666.serversystem.moderation.BanModeration
 import me.testaccount666.serversystem.userdata.OfflineUser
 import me.testaccount666.serversystem.userdata.User
@@ -16,11 +15,33 @@ import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
-import org.bukkit.entity.Player
 import java.time.Instant
 
 @ServerSystemCommand("ban", ["unban"], TabCompleterModeration::class)
 class CommandBan : AbstractModerationCommand<BanModeration>() {
+    override fun minRequiredArguments(command: Command): Int {
+        if (isRemoveModeration(command)) return 1
+        return 2
+    }
+
+    override fun getUsagePermission(command: Command): String {
+        return when (command.name.lowercase()) {
+            "ban" -> "Moderation.Ban.Use"
+            "unban" -> "Moderation.Ban.Remove"
+            else -> error("(CommandBan;getUsagePermission) Unknown command name: ${command.name}")
+        }
+    }
+
+    override fun getSyntaxPath(command: Command?): String {
+        command ?: return "Ban"
+
+        return when (val commandName = command.name.lowercase()) {
+            "ban" -> "Ban"
+            "unban" -> "Unban"
+            else -> error("(CommandBan;getSyntaxPath) Unknown command name: ${commandName}")
+        }
+    }
+
     override fun handlePostModeration(command: Command, commandSender: User, targetUser: OfflineUser, moderation: BanModeration) {
         val player = targetUser.player!!
         val unbanDate = parseDate(moderation.expireTime, targetUser)
@@ -64,35 +85,7 @@ class CommandBan : AbstractModerationCommand<BanModeration>() {
             .reason(reason).expireTime(expireTime).build()
     }
 
-    override fun checkBasePermission(commandSender: User, command: Command): Boolean {
-        val permissionPath = when (command.name.lowercase()) {
-            "ban" -> "Moderation.Ban.Use"
-            "unban" -> "Moderation.Ban.Remove"
-            else -> null
-        }
-        return checkBasePermission(commandSender, permissionPath!!)
-    }
-
     override fun getModerationManager(targetUser: OfflineUser) = targetUser.banManager
 
     override fun type(command: Command?): String = "Ban"
-
-    override fun getSyntaxPath(command: Command?): String {
-        if (command == null) return "Ban"
-
-        return when (val commandName = command.name.lowercase()) {
-            "ban" -> "Ban"
-            "unban" -> "Unban"
-            else -> throw IllegalArgumentException("(CommandBan) Unknown command name: ${commandName}")
-        }
-    }
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        val permissionPath = when (command.name.lowercase()) {
-            "ban" -> "Moderation.Ban.Use"
-            "unban" -> "Moderation.Ban.Remove"
-            else -> null
-        }
-        return PermissionManager.hasCommandPermission(player, permissionPath!!, false)
-    }
 }

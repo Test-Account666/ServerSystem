@@ -6,7 +6,6 @@ import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.managers.messages.MessageManager.applyPlaceholders
-import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
@@ -19,10 +18,32 @@ import org.bukkit.Location
 import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.command.Command
-import org.bukkit.entity.Player
 
 @ServerSystemCommand("teleportask", ["teleporthereask", "teleportaccept", "teleportdeny", "teleporttoggle"])
 class CommandTeleportAsk : AbstractServerSystemCommand() {
+    override fun minRequiredArguments(command: Command): Int {
+        return when (command.name.lowercase()) {
+            "teleportask", "teleporthereask" -> 1
+            else -> 0
+        }
+    }
+
+    override fun getUsagePermission(command: Command): String {
+        return when (command.name) {
+            "teleportask" -> "TeleportAsk.Use"
+            "teleportaccept" -> "TeleportAccept.Use"
+            "teleportdeny" -> "TeleportDeny.Use"
+            "teleporthereask" -> "TeleportHereAsk.Use"
+            "teleporttoggle" -> "TeleportToggle.Use"
+            else -> error("(CommandTeleportAsk;getUsagePermission) Unknown command name: ${command.name}")
+        }
+    }
+
+    override fun getSyntaxPath(command: Command?): String {
+        if (command != null && command.name.equals("teleporttoggle", true)) return "TeleportToggle"
+        return "TeleportAsk"
+    }
+
     val activeTeleportRequests = HashSet<TeleportRequest>()
 
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
@@ -37,7 +58,7 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
 
     /**
      * Validates a target player for teleport commands
-     * 
+     *
      * @param commandSender The user sending the command
      * @param arguments     Command arguments containing target player name
      * @return The target User if valid, null if validation failed
@@ -64,37 +85,7 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
         return targetUser
     }
 
-    /**
-     * Validates common command requirements for teleport commands
-     * 
-     * @param commandSender    The user sending the command
-     * @param permissionSuffix The permission suffix to check
-     * @param label            The command label used
-     * @param arguments        Command arguments
-     * @return true if validation failed and command should exit, false to continue processing
-     */
-    private fun validateTeleportCommand(commandSender: User, permissionSuffix: String, label: String, vararg arguments: String): Boolean {
-        if (!checkBasePermission(commandSender, permissionSuffix)) return true
-
-        if (commandSender is ConsoleUser) {
-            general("NotPlayer", commandSender).build()
-            return true
-        }
-
-        if (arguments.isEmpty()) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(null))
-                label(label)
-            }.build()
-            return true
-        }
-
-        return false
-    }
-
     private fun handleTeleportAsk(commandSender: User, label: String, vararg arguments: String) {
-        if (validateTeleportCommand(commandSender, "TeleportAsk.Use", label, *arguments)) return
-
         val targetUser = validateTargetPlayer(commandSender, *arguments) ?: return
         val targetPlayer = targetUser.getPlayer()!!
         val timeOut = System.currentTimeMillis() + (1000 * 60 * 2) // Two minutes
@@ -111,11 +102,8 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
     }
 
     private fun handleTeleportHereAsk(commandSender: User, label: String, vararg arguments: String) {
-        if (validateTeleportCommand(commandSender, "TeleportHereAsk.Use", label, *arguments)) return
-
         val targetUser = validateTargetPlayer(commandSender, *arguments) ?: return
         val targetPlayer = targetUser.getPlayer()!!
-
         val timeOut = System.currentTimeMillis() + (1000 * 60 * 2) // Two minutes
 
         command("TeleportHereAsk.Success", commandSender) { target(targetPlayer.name) }.build()
@@ -128,6 +116,7 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
         targetUser.teleportRequest = teleportRequest
         sendAcceptDenyButtons(commandSender, targetUser, label)
     }
+
 
     private fun sendAcceptDenyButtons(commandSender: User, targetUser: User, label: String) {
         val targetPlayer = targetUser.getPlayer()!!
@@ -200,20 +189,14 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
         targetPlayer.sendMessage(denyComponent)
     }
 
-
     /**
      * Validates a teleport request for accept/deny commands
-     * 
+     *
      * @param commandSender    The user who is accepting/denying
-     * @param permissionSuffix The permission suffix to check
      * @return The teleport request if valid, null otherwise
      */
-    private fun validateTeleportRequest(commandSender: User, permissionSuffix: String): TeleportRequest? {
-        if (!checkBasePermission(commandSender, permissionSuffix)) return null
-
-        val teleportRequest = commandSender.teleportRequest
-
-        if (teleportRequest == null || teleportRequest.isExpired) {
+    private fun validateTeleportRequest(commandSender: User): TeleportRequest? {
+        val teleportRequest = commandSender.teleportRequest?.takeUnless(TeleportRequest::isExpired) ?: run {
             command("TeleportAccept.NoRequest", commandSender).build()
             return null
         }
@@ -228,7 +211,7 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
     }
 
     private fun handleTeleportAccept(commandSender: User) {
-        val teleportRequest = validateTeleportRequest(commandSender, "TeleportAccept.Use") ?: return
+        val teleportRequest = validateTeleportRequest(commandSender) ?: return
 
         val requester = teleportRequest.sender
         commandSender.teleportRequest = null
@@ -250,10 +233,9 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
     }
 
     private fun handleTeleportDeny(commandSender: User) {
-        val teleportRequest = validateTeleportRequest(commandSender, "TeleportDeny.Use") ?: return
+        val teleportRequest = validateTeleportRequest(commandSender) ?: return
 
         val requester = teleportRequest.sender
-
         commandSender.teleportRequest = null
 
         command("TeleportDeny.Success", commandSender) { target(requester.getNameSafe()) }.build()
@@ -276,7 +258,7 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
 
     /**
      * Executes the teleport with animation and notification
-     * 
+     *
      * @param teleporter The user who is teleporting
      * @param target     The target user to teleport to
      */
@@ -290,9 +272,10 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
         command("TeleportAsk.TeleportFinished", teleporter) { target(target.getNameSafe()) }.build()
     }
 
+
     /**
      * Creates an interactive message component with hover text and click action
-     * 
+     *
      * @param text        The button text
      * @param hoverText   The text to show when hovering over the button
      * @param clickAction The action to perform when clicked
@@ -307,10 +290,9 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
             .asComponent()
     }
 
-
     /**
      * Plays a teleportation animation effect at the given location
-     * 
+     *
      * @param location The location to play the animation at
      */
     private fun playAnimation(location: Location) {
@@ -319,8 +301,7 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
     }
 
     private fun handleTeleportToggle(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, "TeleportToggle.Use")) return
-        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
+        if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
         val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
@@ -330,7 +311,7 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
         val targetPlayer = targetUser.getPlayer()!!
         val isSelf = targetUser === commandSender
 
-        if (!isSelf && !checkOtherPermission(commandSender, "TeleportToggle.Other", targetPlayer.name)) return
+        if (!isSelf && !checkPermission(commandSender, "TeleportToggle.Other", targetPlayer.name)) return
 
         val acceptsTeleports = !targetUser.isAcceptsTeleports
 
@@ -347,23 +328,5 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
         command("TeleportToggle.Success" + (if (acceptsTeleports) "Enabled" else "Disabled"), targetUser) {
             sender(commandSender.getNameSafe())
         }.build()
-    }
-
-    override fun getSyntaxPath(command: Command?): String {
-        if (command != null && command.name.equals("teleporttoggle", true)) return "TeleportToggle"
-        return "TeleportAsk"
-    }
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        val permissionPath = when (command.name) {
-            "teleportask" -> "TeleportAsk.Use"
-            "teleportaccept" -> "TeleportAccept.Use"
-            "teleportdeny" -> "TeleportDeny.Use"
-            "teleporthereask" -> "TeleportHereAsk.Use"
-            "teleporttoggle" -> "TeleportToggle.Use"
-            else -> null
-        } ?: return false
-
-        return hasCommandPermission(player, permissionPath, false)
     }
 }

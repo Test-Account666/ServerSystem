@@ -3,14 +3,11 @@ package me.testaccount666.serversystem.commands.executables.skull
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
-import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
-import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.net.URI
 import java.util.*
@@ -18,16 +15,14 @@ import java.util.*
 @ServerSystemCommand("skull")
 class CommandSkull : AbstractServerSystemCommand() {
     private val _skullCreator = SkullCreator()
+    override fun getUsagePermission(command: Command) = "Skull.Use"
+    override fun getSyntaxPath(command: Command?) = "Skull"
 
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, "Skull.Use")) return
-        if (commandSender is ConsoleUser) {
-            general("NotPlayer", commandSender).build()
-            return
-        }
+        if (!isPlayer(commandSender)) return
 
         val other = arguments.isNotEmpty()
-        if (other && !checkOtherPermission(commandSender, "Skull.Other", arguments[0])) return
+        if (other && !checkPermission(commandSender, "Skull.Other", arguments[0])) return
 
         Bukkit.getScheduler().runTaskAsynchronously(instance, Runnable {
             if (other) executeOtherSkull(commandSender, *arguments)
@@ -59,12 +54,6 @@ class CommandSkull : AbstractServerSystemCommand() {
         }
 
         return _skullCreator.getSkull(input)
-    }
-
-    override fun getSyntaxPath(command: Command?) = "Skull"
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        return hasCommandPermission(player, "Skull.Use", false)
     }
 
     companion object {

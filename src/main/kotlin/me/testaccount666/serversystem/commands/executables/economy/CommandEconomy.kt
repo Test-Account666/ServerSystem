@@ -2,27 +2,20 @@ package me.testaccount666.serversystem.commands.executables.economy
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.money.EconomyProvider
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
-import org.bukkit.entity.Player
 import java.math.BigDecimal
 
 @ServerSystemCommand("economy", [], TabCompleterEconomy::class)
 class CommandEconomy : AbstractServerSystemCommand() {
-    override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, "Economy.Use")) return
+    override fun minRequiredArguments(command: Command) = 3
+    override fun getUsagePermission(command: Command) = "Economy.Use"
+    override fun getSyntaxPath(command: Command?) = "Economy"
 
-        if (arguments.size <= 2) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
-            return
-        }
+    override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
 
         val targetUser = getTargetUser(commandSender, 1, false, *arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[1]) }.build()
@@ -46,21 +39,21 @@ class CommandEconomy : AbstractServerSystemCommand() {
     }
 
     private fun handleSetEconomy(commandSender: User, targetUser: User, amount: BigDecimal) {
-        if (!checkBasePermission(commandSender, "Economy.Set")) return
+        if (!checkPermission(commandSender, "Economy.Set")) return
 
         targetUser.bankAccount.balance = amount
         sendSuccess(commandSender, targetUser, amount, "Set")
     }
 
     private fun handleGiveEconomy(commandSender: User, targetUser: User, amount: BigDecimal) {
-        if (!checkBasePermission(commandSender, "Economy.Give")) return
+        if (!checkPermission(commandSender, "Economy.Give")) return
 
         targetUser.bankAccount.balance += amount
         sendSuccess(commandSender, targetUser, amount, "Give")
     }
 
     private fun handleTakeEconomy(commandSender: User, targetUser: User, amount: BigDecimal) {
-        if (!checkBasePermission(commandSender, "Economy.Take")) return
+        if (!checkPermission(commandSender, "Economy.Take")) return
 
         targetUser.bankAccount.balance -= amount
         sendSuccess(commandSender, targetUser, amount, "Take")
@@ -80,11 +73,5 @@ class CommandEconomy : AbstractServerSystemCommand() {
             target(targetUser.getNameOrNull())
             postModifier(modifier)
         }.build()
-    }
-
-    override fun getSyntaxPath(command: Command?) = "Economy"
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        return hasCommandPermission(player, "Economy.Use", false)
     }
 }

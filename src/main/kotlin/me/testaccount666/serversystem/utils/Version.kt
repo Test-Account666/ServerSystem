@@ -6,9 +6,9 @@ class Version(version: String) : Comparable<Version> {
     val version: String
 
     init {
-        require((version.trim { it <= ' ' }.isNotEmpty())) { "Version string cannot be null or empty" }
+        require((version.trim().isNotEmpty())) { "Version string cannot be null or empty" }
 
-        val normalizedVersion = version.trim { it <= ' ' }
+        val normalizedVersion = version.trim()
 
         require(normalizedVersion.matches("^\\d+(\\.\\d+)*$".toRegex())) {
             "Invalid version format: ${version}. Expected format: x.y.z (numeric segments separated by dots)"

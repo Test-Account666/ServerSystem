@@ -2,26 +2,19 @@ package me.testaccount666.serversystem.commands.executables.speed
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
-import org.bukkit.entity.Player
 
 @ServerSystemCommand("speed", ["flyspeed", "walkspeed"], TabCompleterSpeed::class)
 class CommandSpeed : AbstractServerSystemCommand() {
-    override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, "Speed.Use")) return
-        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, 1, *arguments)) return
+    override fun minRequiredArguments(command: Command) = 1
+    override fun getUsagePermission(command: Command) = "Speed.Use"
+    override fun getSyntaxPath(command: Command?) = "Speed"
 
-        if (arguments.isEmpty()) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
-            return
-        }
+    override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
+        if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, 1, *arguments)) return
 
         val targetUser = getTargetUser(commandSender, 1, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[1]) }.build()
@@ -30,7 +23,7 @@ class CommandSpeed : AbstractServerSystemCommand() {
         val targetPlayer = targetUser.getPlayer()!!
         val isSelf = targetUser === commandSender
 
-        if (!isSelf && !checkOtherPermission(commandSender, "Speed.Other", targetPlayer.name)) return
+        if (!isSelf && !checkPermission(commandSender, "Speed.Other", targetPlayer.name)) return
 
         val speedType = when (command.name.lowercase()) {
             "flyspeed" -> "Fly"
@@ -67,12 +60,6 @@ class CommandSpeed : AbstractServerSystemCommand() {
             sender(commandSender.getNameSafe())
             postModifier { it.replace("<SPEED>", speedString) }
         }.build()
-    }
-
-    override fun getSyntaxPath(command: Command?) = "Speed"
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        return hasCommandPermission(player, "Speed.Use", false)
     }
 
     private data class SpeedResult(val walkSpeed: Float, val flySpeed: Float)

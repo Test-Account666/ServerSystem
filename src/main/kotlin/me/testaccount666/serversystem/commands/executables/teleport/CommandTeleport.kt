@@ -2,7 +2,6 @@ package me.testaccount666.serversystem.commands.executables.teleport
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
@@ -17,9 +16,38 @@ import java.text.DecimalFormat
 
 @ServerSystemCommand("teleport", ["teleportposition", "teleporthere", "teleportall"])
 class CommandTeleport : AbstractServerSystemCommand() {
+    override fun minRequiredArguments(command: Command): Int {
+        return when (command.name.lowercase()) {
+            "teleportposition" -> 3
+            "teleporthere", "teleport" -> 1
+            "teleportall" -> 0
+            else -> error("(CommandTeleport) Unexpected value: ${command.name}")
+        }
+    }
+
+    override fun getUsagePermission(command: Command): String {
+        return when (command.name.lowercase()) {
+            "teleport" -> "Teleport.Use"
+            "teleportposition" -> "TeleportPosition.Use"
+            "teleporthere" -> "TeleportHere.Use"
+            "teleportall" -> "TeleportAll.Use"
+            else -> error("(CommandTeleport) Unexpected value: ${command.name}")
+        }
+    }
+
+    override fun getSyntaxPath(command: Command?): String {
+        command ?: return "Teleport"
+
+        return when (command.name.lowercase()) {
+            "teleportposition" -> "TeleportPosition"
+            "teleporthere" -> "TeleportHere"
+            "teleportall" -> "TeleportAll"
+            else -> "Teleport"
+        }
+    }
+
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        val commandName = command.name.lowercase()
-        when (commandName) {
+        when (command.name.lowercase()) {
             "teleportposition" -> executeTeleportPosition(commandSender, command, label, *arguments)
             "teleporthere" -> executeTeleportHere(commandSender, command, label, *arguments)
             "teleportall" -> executeTeleportAll(commandSender)
@@ -32,7 +60,7 @@ class CommandTeleport : AbstractServerSystemCommand() {
     }
 
     private fun executeTeleportAll(commandSender: User) {
-        if (!validateSenderAndPermission(commandSender, "TeleportAll.Use")) return
+        if (!isPlayer(commandSender)) return
 
         val senderLocation = commandSender.getPlayer()!!.location
         Bukkit.getOnlinePlayers().forEach { player -> player.teleport(senderLocation) }
@@ -40,7 +68,7 @@ class CommandTeleport : AbstractServerSystemCommand() {
     }
 
     private fun executeTeleportHere(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!validateSenderAndPermission(commandSender, "TeleportHere.Use")) return
+        if (!isPlayer(commandSender)) return
 
         if (arguments.isEmpty()) {
             general("InvalidArguments", commandSender) {
@@ -58,7 +86,7 @@ class CommandTeleport : AbstractServerSystemCommand() {
     }
 
     private fun executeTeleport(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!validateSenderAndPermission(commandSender, "Teleport.Use")) return
+        if (!isPlayer(commandSender)) return
 
         if (arguments.isEmpty()) {
             general("InvalidArguments", commandSender) {
@@ -77,7 +105,7 @@ class CommandTeleport : AbstractServerSystemCommand() {
 
     private fun executeTeleportOther(commandSender: User, command: Command, label: String, vararg arguments: String) {
         if (!validatePermissions(commandSender, "Teleport.Use", "Teleport.Other")) return
-        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, 1, *arguments)) return
+        if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, 1, *arguments)) return
 
         val sourceUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
@@ -99,15 +127,6 @@ class CommandTeleport : AbstractServerSystemCommand() {
     }
 
     private fun executeTeleportPosition(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!validatePermissions(commandSender, "TeleportPosition.Use")) return
-        if (arguments.size < 3) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
-            return
-        }
-
         var isSelf = true
         var startIndex = 0
 
@@ -118,7 +137,7 @@ class CommandTeleport : AbstractServerSystemCommand() {
             }
         }
 
-        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, 3, *arguments)) return
+        if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, 3, *arguments)) return
 
         val targetUser = (if (isSelf) commandSender else getTargetUser(commandSender, arguments = arguments)) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
@@ -127,7 +146,7 @@ class CommandTeleport : AbstractServerSystemCommand() {
 
         val targetPlayer = targetUser.getPlayer()!!
 
-        if (!isSelf && !checkOtherPermission(commandSender, "TeleportPosition.Other", targetPlayer.name)) return
+        if (!isSelf && !checkPermission(commandSender, "TeleportPosition.Other", targetPlayer.name)) return
 
         val executionLocation = if (commandSender is ConsoleUser) targetPlayer.location else commandSender.getPlayer()!!.location
 
@@ -148,7 +167,7 @@ class CommandTeleport : AbstractServerSystemCommand() {
             return false
         }
 
-        return location.world === targetPlayer.world || checkBasePermission(commandSender, "TeleportPosition.World")
+        return location.world === targetPlayer.world || checkPermission(commandSender, "TeleportPosition.World")
     }
 
     private fun sendTeleportPositionSuccess(commandSender: User, targetPlayer: Player, location: Location, isSelf: Boolean) {
@@ -166,19 +185,11 @@ class CommandTeleport : AbstractServerSystemCommand() {
             .replace("<WORLD>", location.world.name)
     }
 
-    private fun validateSenderAndPermission(commandSender: User, permission: String): Boolean {
-        if (!checkBasePermission(commandSender, permission)) return false
-        if (commandSender is ConsoleUser) {
-            general("NotPlayer", commandSender).build()
-            return false
-        }
+    private fun validatePermissions(commandSender: User, vararg permissions: String): Boolean {
+        for (permission in permissions) if (!checkPermission(commandSender, permission)) return false
         return true
     }
 
-    private fun validatePermissions(commandSender: User, vararg permissions: String): Boolean {
-        for (permission in permissions) if (!checkBasePermission(commandSender, permission)) return false
-        return true
-    }
 
     private fun getTargetUserAndTeleport(commandSender: User, teleportAction: (Player) -> Unit, successMessage: String, vararg arguments: String) {
         val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
@@ -190,7 +201,6 @@ class CommandTeleport : AbstractServerSystemCommand() {
         teleportAction(targetPlayer)
         command(successMessage, commandSender) { target(targetPlayer.name) }.build()
     }
-
 
     private fun roundDecimal(location: Double): String {
         val format = DecimalFormat("0.##")
@@ -282,29 +292,6 @@ class CommandTeleport : AbstractServerSystemCommand() {
 
     private fun getCoordinate(location: Location, axis: Vector): Double {
         return (axis.getX() * location.x + axis.getY() * location.y + axis.getZ() * location.z)
-    }
-
-    override fun getSyntaxPath(command: Command?): String {
-        if (command == null) return "Teleport"
-
-        val commandName = command.name.lowercase()
-        return when (commandName) {
-            "teleportposition" -> "TeleportPosition"
-            "teleporthere" -> "TeleportHere"
-            "teleportall" -> "TeleportAll"
-            else -> "Teleport"
-        }
-    }
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        val commandName = command.name.lowercase()
-        val permission = when (commandName) {
-            "teleportposition" -> "TeleportPosition.Use"
-            "teleporthere" -> "TeleportHere.Use"
-            "teleportall" -> "TeleportAll.Use"
-            else -> "Teleport.Use"
-        }
-        return hasCommandPermission(player, permission, false)
     }
 
     companion object {

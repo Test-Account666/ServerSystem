@@ -3,15 +3,37 @@ package me.testaccount666.serversystem.commands.executables.moderation.mute
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.moderation.AbstractModerationCommand
 import me.testaccount666.serversystem.commands.executables.moderation.TabCompleterModeration
-import me.testaccount666.serversystem.managers.PermissionManager
 import me.testaccount666.serversystem.moderation.MuteModeration
 import me.testaccount666.serversystem.userdata.OfflineUser
 import me.testaccount666.serversystem.userdata.User
 import org.bukkit.command.Command
-import org.bukkit.entity.Player
 
 @ServerSystemCommand("mute", ["unmute", "shadowmute"], TabCompleterModeration::class)
 class CommandMute : AbstractModerationCommand<MuteModeration>() {
+    override fun minRequiredArguments(command: Command): Int {
+        if (isRemoveModeration(command)) return 1
+        return 2
+    }
+
+    override fun getUsagePermission(command: Command): String {
+        return when (command.name.lowercase()) {
+            "mute" -> "Moderation.Mute.Use"
+            "shadowmute" -> "Moderation.Mute.Shadow"
+            "unmute" -> "Moderation.Mute.Remove"
+            else -> error("(CommandMute;getUsagePermission) Unknown command name: ${command.name}")
+        }
+    }
+
+    override fun getSyntaxPath(command: Command?): String {
+        if (command == null) return "Mute"
+
+        return when (val commandName = command.name.lowercase()) {
+            "mute", "shadowmute" -> "Mute"
+            "unmute" -> "Unmute"
+            else -> error("(CommandMute) Unknown command name: ${commandName}")
+        }
+    }
+
     override fun createModeration(command: Command, commandSender: User, targetUser: OfflineUser, expireTime: Long, reason: String): MuteModeration {
         val shadowMute = command.name.equals("shadowmute", true)
 
@@ -21,16 +43,6 @@ class CommandMute : AbstractModerationCommand<MuteModeration>() {
             .targetUuid(targetUser.uuid).build()
     }
 
-    override fun checkBasePermission(commandSender: User, command: Command): Boolean {
-        val permissionPath = when (command.name.lowercase()) {
-            "mute" -> "Moderation.Mute.Use"
-            "shadowmute" -> "Moderation.Mute.Shadow"
-            "unmute" -> "Moderation.Mute.Remove"
-            else -> null
-        }
-        return checkBasePermission(commandSender, permissionPath!!)
-    }
-
     override fun getModerationManager(targetUser: OfflineUser) = targetUser.muteManager
 
     override fun type(command: Command?): String {
@@ -38,26 +50,6 @@ class CommandMute : AbstractModerationCommand<MuteModeration>() {
 
         if (command.name.equals("shadowmute", true)) return "ShadowMute"
         return "Mute"
-    }
-
-    override fun getSyntaxPath(command: Command?): String {
-        if (command == null) return "Mute"
-
-        return when (val commandName = command.name.lowercase()) {
-            "mute", "shadowmute" -> "Mute"
-            "unmute" -> "Unmute"
-            else -> throw IllegalArgumentException("(CommandMute) Unknown command name: ${commandName}")
-        }
-    }
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        val permissionPath = when (command.name.lowercase()) {
-            "mute" -> "Moderation.Mute.Use"
-            "shadowmute" -> "Moderation.Mute.Shadow"
-            "unmute" -> "Moderation.Mute.Remove"
-            else -> null
-        }
-        return PermissionManager.hasCommandPermission(player, permissionPath!!, false)
     }
 
     override fun handlePostRemoveModeration(command: Command, commandSender: User, targetUser: OfflineUser) {

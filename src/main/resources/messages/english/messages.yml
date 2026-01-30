@@ -396,6 +396,7 @@ Messages:
       SetNone: "Cost removed from sign successfully."
       Set: "Cost set to <Color:Highlight><TYPE> <Color:Message>with amount <Color:Highlight><AMOUNT><Color:Message>."
   Syntax:
+    Generic: "</LABEL>"
     Balance: "/<LABEL> (player)"
     Ban: "/<LABEL> [player] [duration] (reason...)"
     Broadcast: "/<LABEL> [message...]"

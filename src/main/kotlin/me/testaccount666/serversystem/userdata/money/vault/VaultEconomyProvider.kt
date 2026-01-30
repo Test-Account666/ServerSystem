@@ -1,5 +1,3 @@
-@file:Suppress("FoldInitializerAndIfToElvis")
-
 package me.testaccount666.serversystem.userdata.money.vault
 
 import me.testaccount666.serversystem.ServerSystem

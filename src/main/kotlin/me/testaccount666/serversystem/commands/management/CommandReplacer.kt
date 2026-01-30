@@ -22,13 +22,12 @@ class CommandReplacer {
                 continue
             }
 
-            val result = replaceCommands(identifier, section)
-            if (result.first) log.info(result.second)
-            else log.warning(result.second)
+            val (success, message) = replaceCommands(identifier, section)
+            if (success) log.info(message)
+            else log.warning(message)
         }
 
-        val commandManager = instance.registry.getService<CommandManager>()
-        commandManager.syncCommands()
+        instance.registry.getService<CommandManager>().syncCommands()
     }
 
     private fun replaceCommands(identifier: String, section: ConfigurationSection): Tuple<Boolean, String> {
@@ -45,10 +44,10 @@ class CommandReplacer {
         )
 
 
-        val fromPluginResult = verifyPlugin(fromPluginName)
-        if (!fromPluginResult.first) return Tuple(
+        val (success, message) = verifyPlugin(fromPluginName)
+        if (!success) return Tuple(
             false,
-            "Invalid command replacement with identifier '${identifier}': ${fromPluginResult.second} (FromPlugin)"
+            "Invalid command replacement with identifier '${identifier}': ${message} (FromPlugin)"
         )
 
         val fromCommand = commandManager.getCommand(

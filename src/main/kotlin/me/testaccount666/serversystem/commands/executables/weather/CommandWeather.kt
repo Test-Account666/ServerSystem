@@ -2,18 +2,30 @@ package me.testaccount666.serversystem.commands.executables.weather
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
-import org.bukkit.entity.Player
 import java.util.concurrent.ThreadLocalRandom
 
 @ServerSystemCommand("weather", ["sun", "storm", "rain"], TabCompleterWeather::class)
 class CommandWeather : AbstractServerSystemCommand() {
+    override fun minRequiredArguments(command: Command) = if (command.name.equals("weather", true)) 1 else 0
+    override fun getUsagePermission(command: Command) = "Weather.Use"
+    override fun getSyntaxPath(command: Command?): String {
+        if (command == null) return "Weather"
+
+        return when (val commandName = command.name.lowercase()) {
+            "weather" -> "Weather"
+            "sun" -> "Sun"
+            "storm" -> "Storm"
+            "rain" -> "Rain"
+            else -> error("(CommandWeather;SyntaxPath) Unexpected value: ${commandName}")
+        }
+    }
+
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
         if (command.name.equals("weather", true)) {
             handleWeatherCommand(commandSender, command, label, *arguments)
@@ -28,7 +40,7 @@ class CommandWeather : AbstractServerSystemCommand() {
             return
         }
 
-        if (arguments.isNotEmpty() && !checkBasePermission(commandSender, "Weather.World")) return
+        if (arguments.isNotEmpty() && !checkPermission(commandSender, "Weather.World")) return
 
         val world = (if (arguments.isNotEmpty()) Bukkit.getWorld(arguments[0]) else commandSender.getPlayer()!!.world) ?: run {
             command("Weather.WorldNotFound", commandSender) { target(arguments[0]) }.build()
@@ -39,16 +51,6 @@ class CommandWeather : AbstractServerSystemCommand() {
     }
 
     private fun handleWeatherCommand(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, "Weather.Use")) return
-
-        if (arguments.isEmpty()) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
-            return
-        }
-
         if (commandSender is ConsoleUser && arguments.size == 1) {
             general("InvalidArguments", commandSender) {
                 syntax(getSyntaxPath(command))
@@ -57,7 +59,7 @@ class CommandWeather : AbstractServerSystemCommand() {
             return
         }
 
-        if (arguments.size >= 2 && !checkBasePermission(commandSender, "Weather.World")) return
+        if (arguments.size >= 2 && !checkPermission(commandSender, "Weather.World")) return
 
         val world = (if (arguments.size >= 2) Bukkit.getWorld(arguments[1]) else commandSender.getPlayer()!!.world) ?: run {
             command("Weather.WorldNotFound", commandSender) { target(arguments[1]) }.build()
@@ -104,21 +106,5 @@ class CommandWeather : AbstractServerSystemCommand() {
                     .replace("<WORLD>", world.name)
             }
         }.build()
-    }
-
-    override fun getSyntaxPath(command: Command?): String {
-        if (command == null) return "Weather"
-
-        return when (val commandName = command.name.lowercase()) {
-            "weather" -> "Weather"
-            "sun" -> "Sun"
-            "storm" -> "Storm"
-            "rain" -> "Rain"
-            else -> error("(CommandWeather;SyntaxPath) Unexpected value: ${commandName}")
-        }
-    }
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        return hasCommandPermission(player, "Weather.Use", false)
     }
 }
