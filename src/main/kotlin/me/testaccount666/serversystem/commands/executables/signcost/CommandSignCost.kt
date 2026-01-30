@@ -4,6 +4,7 @@ import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.clickablesigns.cost.CostType
 import me.testaccount666.serversystem.clickablesigns.util.SignUtils.getSignFile
 import me.testaccount666.serversystem.commands.ServerSystemCommand
+import me.testaccount666.serversystem.commands.SimpleCompletion
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.money.EconomyProvider
@@ -19,7 +20,11 @@ import java.io.IOException
 import java.math.BigDecimal
 import java.util.logging.Level
 
-@ServerSystemCommand("signcost", [], TabCompleterSignCost::class)
+@ServerSystemCommand(
+    "signcost", simpleCompletions = [
+        SimpleCompletion(0, ["none", "exp", "economy"])
+    ]
+)
 class CommandSignCost : AbstractServerSystemCommand() {
     override fun minRequiredArguments(command: Command) = 1
     override fun getUsagePermission(command: Command) = "SignCost.Use"

@@ -1,6 +1,7 @@
 package me.testaccount666.serversystem.commands.executables.economy
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
+import me.testaccount666.serversystem.commands.SimpleCompletion
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.money.EconomyProvider
@@ -9,7 +10,12 @@ import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 import java.math.BigDecimal
 
-@ServerSystemCommand("economy", [], TabCompleterEconomy::class)
+@ServerSystemCommand(
+    "economy", simpleCompletions = [
+        SimpleCompletion(0, ["set", "give", "take"]),
+        SimpleCompletion(1, isNull = true)
+    ]
+)
 class CommandEconomy : AbstractServerSystemCommand() {
     override fun minRequiredArguments(command: Command) = 3
     override fun getUsagePermission(command: Command) = "Economy.Use"

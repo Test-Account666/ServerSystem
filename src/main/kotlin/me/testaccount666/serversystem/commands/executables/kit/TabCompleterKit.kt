@@ -3,17 +3,13 @@ package me.testaccount666.serversystem.commands.executables.kit
 import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabCompleter
 import me.testaccount666.serversystem.commands.interfaces.getService
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.userdata.User
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 
 class TabCompleterKit : ServerSystemTabCompleter {
     override fun tabComplete(commandSender: User, command: Command, label: String, vararg arguments: String): List<String>? {
-        val commandName = command.name.lowercase()
-        if (!hasPermission(commandSender, commandName)) return listOf()
-
-        return when (commandName) {
+        return when (command.name.lowercase()) {
             "kit" -> handleKitCommand(*arguments)
             "createkit" -> handleCreateKitCommand(*arguments)
             "deletekit" -> handleDeleteKitCommand(*arguments)
@@ -41,16 +37,6 @@ class TabCompleterKit : ServerSystemTabCompleter {
         if (arguments.size != 1) return listOf()
 
         return handleKitNameCompletion(arguments[0])
-    }
-
-    private fun hasPermission(commandSender: User, commandName: String): Boolean {
-        val permissionNode = when (commandName) {
-            "kit" -> "Kit.Use"
-            "createkit" -> "Kit.Create"
-            "deletekit" -> "Kit.Delete"
-            else -> null
-        }
-        return hasCommandPermission(commandSender, permissionNode, false)
     }
 
     private fun handleKitNameCompletion(argument: String): List<String> {

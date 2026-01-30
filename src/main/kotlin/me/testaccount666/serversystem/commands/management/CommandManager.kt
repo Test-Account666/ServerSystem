@@ -3,6 +3,7 @@ package me.testaccount666.serversystem.commands.management
 import io.github.classgraph.ClassGraph
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.commands.ServerSystemCommand
+import me.testaccount666.serversystem.commands.common.tabcompleters.SimpleTabCompleter
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabCompleter
@@ -132,7 +133,7 @@ class CommandManager(private val _configReader: ConfigReader) {
         if (!isCommandEnabled(command)) return
 
         val variantAliasMap = buildVariantAliasMap(command, commandAnnotation.variants)
-        instantiateAndRegisterCommand(commandExecutor, commandAnnotation.tabCompleter.java, variantAliasMap, command)
+        instantiateAndRegisterCommand(commandExecutor, commandAnnotation.tabCompleter.java, variantAliasMap, command, commandAnnotation)
     }
 
     private fun isCommandEnabled(command: String) = _configReader.getBoolean("Commands.${command}.Enabled")
@@ -166,12 +167,20 @@ class CommandManager(private val _configReader: ConfigReader) {
         commandExecutor: Class<ServerSystemCommandExecutor>,
         tabCompleter: Class<out ServerSystemTabCompleter>,
         variantAliasMap: Map<String, List<String>>,
-        command: String
+        command: String, commandAnnotation: ServerSystemCommand
     ) {
         try {
+            var simpleCompleter: SimpleTabCompleter? = null
+
+            commandAnnotation.simpleCompletions.takeIf { it.isNotEmpty() }?.let { simpleCompletions ->
+                simpleCompleter = SimpleTabCompleter(simpleCompletions.associate {
+                    (it.position + 1) to (if (it.isNull) null else it.values.toList())
+                })
+            }
+
             registerCommand(
                 commandExecutor.getDeclaredConstructor().newInstance(),
-                tabCompleter.getDeclaredConstructor().newInstance(),
+                simpleCompleter ?: tabCompleter.getDeclaredConstructor().newInstance(),
                 variantAliasMap
             )
         } catch (exception: Exception) {

@@ -1,7 +1,6 @@
 package me.testaccount666.serversystem.commands.executables.weather
 
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabCompleter
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.managers.PermissionManager.hasPermission
 import me.testaccount666.serversystem.userdata.User
 import org.bukkit.Bukkit
@@ -10,8 +9,6 @@ import org.bukkit.command.Command
 
 class TabCompleterWeather : ServerSystemTabCompleter {
     override fun tabComplete(commandSender: User, command: Command, label: String, vararg arguments: String): List<String> {
-        if (!hasCommandPermission(commandSender, "Weather.Use", false)) return listOf()
-
         if (command.name.equals("weather", true)) {
             if (arguments.size <= 1) {
                 return listOf("sun", "clear", "rain", "storm", "thunder").filter { it.startsWith(arguments[0], true) }

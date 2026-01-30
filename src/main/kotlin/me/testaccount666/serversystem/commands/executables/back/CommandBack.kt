@@ -1,6 +1,7 @@
 package me.testaccount666.serversystem.commands.executables.back
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
+import me.testaccount666.serversystem.commands.SimpleCompletion
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.managers.messages.MappingsData.Companion.backType
 import me.testaccount666.serversystem.userdata.User
@@ -8,7 +9,11 @@ import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 
-@ServerSystemCommand("back")
+@ServerSystemCommand(
+    "back", simpleCompletions = [
+        SimpleCompletion(0, ["teleport", "death"])
+    ]
+)
 class CommandBack : AbstractServerSystemCommand() {
     override fun getUsagePermission(command: Command) = "Back.Use"
     override fun getSyntaxPath(command: Command?) = "Back"
