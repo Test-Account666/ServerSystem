@@ -2,41 +2,38 @@ package me.testaccount666.migration.plugins.essentials
 
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
-import me.testaccount666.serversystem.commands.executables.warp.manager.WarpManager
+import me.testaccount666.serversystem.commands.executables.waypoints.warp.manager.WarpManager
 import java.util.logging.Level
 
 class WarpMigrator : AbstractMigrator() {
+    val warpManager by lazy { instance.registry.getService<WarpManager>() }
     override fun migrateFrom(): Int {
-        val warpManager = instance.registry.getService<WarpManager>()
         val essentials = essentials
 
-        var count = 0
-        for (warpName in essentials.warps.list) try {
-            val location = essentials.warps.getWarp(warpName)
-            warpManager.addWarp(warpName, location)
+        val count = essentials.warps.list.count { warpName ->
+            runCatching {
+                val location = essentials.warps.getWarp(warpName)
+                warpManager.addPoint(warpName, location)
 
-            count += 1
-        } catch (exception: Exception) {
-            log.log(Level.WARNING, "Couldn't migrate warp '${warpName}'", exception)
+                return@runCatching true
+            }.onFailure { log.log(Level.WARNING, "Couldn't migrate warp '$warpName'", it) }.getOrDefault(false)
         }
 
         return count
     }
 
     override fun migrateTo(): Int {
-        val warpManager = instance.registry.getService<WarpManager>()
         val essentials = essentials
 
-        var count = 0
-        for (warp in warpManager.warps) try {
-            val warpName = warp.displayName
-            val location = warp.location
+        val count = warpManager.waypoints.count { warp ->
+            runCatching {
+                val warpName = warp.displayName
+                val location = warp.location
 
-            essentials.warps.setWarp(warpName, location)
+                essentials.warps.setWarp(warpName, location)
 
-            count += 1
-        } catch (exception: Exception) {
-            log.log(Level.WARNING, "Couldn't migrate warp '${warp.displayName}'", exception)
+                return@runCatching true
+            }.onFailure { log.log(Level.WARNING, "Couldn't migrate warp '${warp.displayName}'", it) }.getOrDefault(false)
         }
 
         return count

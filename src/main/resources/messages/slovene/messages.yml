@@ -81,7 +81,7 @@ Messages:
     SetHome:
       Success: "Ustvaril si dom <Color:Highlight><HOME><Color:Message>."
       AlreadyExists: "<Color:Error.Message>Navedeni dom <Color:Error.Highlight><HOME> <Color:Error.Message>že obstaja."
-      MaxHomes: "<Color:Error.Message>Dosegel si omejitev domov: <Color:Error.Highlight><CURRENT_HOMES><Color:Error.Message>/<Color:Error.Highlight><MAX_HOMES><Color:Error.Message>."
+      MaxReached: "<Color:Error.Message>Dosegel si omejitev domov."
       InvalidName: "<Color:Error.Message>Navedeno ime ni alfanumerično."
     Economy:
       Give:
@@ -280,12 +280,14 @@ Messages:
     Warp:
       Set:
         Success: "Warp <Color:Highlight><WARP> <Color:Message>je bil nastavljen na tvojo trenutno lokacijo."
-        WarpAlreadyExists: "<Color:Error.Message>Navedeni warp <Color:Error.Highlight><WARP> <Color:Error.Message>že obstaja."
+        AlreadyExists: "<Color:Error.Message>Navedeni warp <Color:Error.Highlight><WARP> <Color:Error.Message>že obstaja."
         InvalidName: "<Color:Error.Message>Navedeno ime ni alfanumerično."
       Delete:
         Success: "Warp <Color:Highlight><WARP> <Color:Message>je bil izbrisan."
-      WarpNotFound: "<Color:Error.Message>Navedeni warp <Color:Error.Highlight><WARP> <Color:Error.Message>ne obstaja."
-      Success: "Teleportiral si se na <Color:Highlight><WARP><Color:Message>."
+        WarpNotFound: "<Color:Error.Message>Navedeni warp <Color:Error.Highlight><WARP> <Color:Error.Message>ne obstaja."
+      Teleport:
+        WarpNotFound: "<Color:Error.Message>Navedeni warp <Color:Error.Highlight><WARP> <Color:Error.Message>ne obstaja."
+        Success: "Teleportiral si se na <Color:Highlight><WARP><Color:Message>."
     Kit:
       Create:
         KitAlreadyExists: "<Color:Error.Message>Komplet <Color:Error.Highlight><KIT> <Color:Error.Message>že obstaja."
@@ -394,6 +396,7 @@ Messages:
       SetNone: "Strošek uspešno odstranjen s table."
       Set: "Strošek nastavljen na <Color:Highlight><TYPE> <Color:Message> z zneskom <Color:Highlight><AMOUNT><Color:Message>."
   Syntax:
+    Generic: "</LABEL>"
     Balance: "/<LABEL> (player)"
     Ban: "/<LABEL> [player] [duration] (reason...)"
     Broadcast: "/<LABEL> [message...]"
@@ -438,6 +441,7 @@ Messages:
     Sudo: "/<LABEL> [player] [command] (args...)"
     TeamChat: "/<LABEL> [message...]"
     Teleport: "/<LABEL> [player] (player)"
+    TeleportHere: "/<LABEL> [player]"
     TeleportPosition: "/<LABEL> (player) [X] [Y] [Z] [Yaw] [Pitch] [World]"
     TeleportAsk: "/<LABEL> [player]"
     TeleportToggle: "/<LABEL> (player)"

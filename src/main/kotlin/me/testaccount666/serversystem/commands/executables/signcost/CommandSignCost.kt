@@ -1,48 +1,38 @@
 package me.testaccount666.serversystem.commands.executables.signcost
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.clickablesigns.cost.CostType
 import me.testaccount666.serversystem.clickablesigns.util.SignUtils.getSignFile
 import me.testaccount666.serversystem.commands.ServerSystemCommand
+import me.testaccount666.serversystem.commands.SimpleCompletion
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
-import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.money.EconomyProvider
-import me.testaccount666.serversystem.utils.ComponentColor.Companion.translateToComponent
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
+import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.sign
 import org.bukkit.block.Sign
 import org.bukkit.block.sign.Side
 import org.bukkit.command.Command
 import org.bukkit.configuration.file.YamlConfiguration
-import org.bukkit.entity.Player
 import java.io.IOException
 import java.math.BigDecimal
-import java.util.Locale.getDefault
 import java.util.logging.Level
 
-@ServerSystemCommand("signcost", [], TabCompleterSignCost::class)
+@ServerSystemCommand(
+    "signcost", simpleCompletions = [
+        SimpleCompletion(0, ["none", "exp", "economy"])
+    ]
+)
 class CommandSignCost : AbstractServerSystemCommand() {
+    override fun minRequiredArguments(command: Command) = 1
+    override fun getUsagePermission(command: Command) = "SignCost.Use"
+    override fun getSyntaxPath(command: Command?) = "SignCost"
+
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, "SignCost.Use")) return
+        if (!isPlayer(commandSender)) return
 
-        if (commandSender is ConsoleUser) {
-            general("NotPlayer", commandSender).build()
-            return
-        }
-
-        if (arguments.isEmpty()) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
-            return
-        }
-
-        val costTypeStr = arguments[0].lowercase(getDefault())
+        val costTypeStr = arguments[0].lowercase()
         if (!_COST_TYPES.contains(costTypeStr)) {
             sign("Cost.InvalidType", commandSender) {
                 postModifier { it.replace("<TYPES>", _COST_TYPES.joinToString { ", " }) }
@@ -50,10 +40,9 @@ class CommandSignCost : AbstractServerSystemCommand() {
             return
         }
 
-        val costType: CostType?
-        try {
-            costType = CostType.valueOf(costTypeStr.uppercase(getDefault()))
-        } catch (_: IllegalArgumentException) {
+        val costType = runCatching {
+            CostType.valueOf(costTypeStr.uppercase())
+        }.getOrNull() ?: run {
             sign("Cost.InvalidType", commandSender) {
                 postModifier { it.replace("<TYPES>", _COST_TYPES.joinToString { ", " }) }
             }.build()
@@ -70,21 +59,15 @@ class CommandSignCost : AbstractServerSystemCommand() {
                 return
             }
 
-            try {
-                amount = arguments[1].toDouble()
-                if (amount <= 0) {
-                    sign("Cost.InvalidAmount", commandSender).build()
-                    return
-                }
-            } catch (_: NumberFormatException) {
+            amount = arguments[1].toDoubleOrNull() ?: -1.0
+            if (amount <= 0) {
                 sign("Cost.InvalidAmount", commandSender).build()
                 return
             }
         }
         val player = commandSender.getPlayer()!!
 
-        val targetBlock = player.getTargetBlock(null, _MAX_DISTANCE)
-        if (targetBlock.state !is Sign) {
+        val targetBlock = player.getTargetBlock(null, _MAX_DISTANCE).takeIf { it.state is Sign } ?: run {
             sign("Cost.NotLookingAtSign", commandSender).build()
             return
         }
@@ -116,29 +99,22 @@ class CommandSignCost : AbstractServerSystemCommand() {
         if (costType == CostType.NONE) {
             sign.setLine(3, "")
             sign.update()
-            command("ClickableSigns.Cost.SetNone", commandSender).build()
+            sign("Cost.SetNone", commandSender).build()
             return
         }
         val costLine = if (costType == CostType.EXP) "${amount.toInt()} EXP"
-        else instance.registry.getService<EconomyProvider>().formatMoney(BigDecimal(amount))
+        else getService<EconomyProvider>().formatMoney(BigDecimal(amount))
 
         sign.getSide(Side.FRONT).line(3, translateToComponent("&6${costLine}"))
         sign.getSide(Side.BACK).line(3, translateToComponent("&6${costLine}"))
         sign.update()
 
-        val finalAmount = amount
         sign("Cost.Set", commandSender) {
             postModifier {
                 it.replace("<TYPE>", costType.name)
-                    .replace("<AMOUNT>", finalAmount.toString())
+                    .replace("<AMOUNT>", amount.toString())
             }
         }.build()
-    }
-
-    override fun getSyntaxPath(command: Command?) = "SignCost"
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        return hasCommandPermission(player, "SignCost.Use", false)
     }
 
     companion object {

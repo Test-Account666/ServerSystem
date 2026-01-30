@@ -43,17 +43,17 @@ class ListenerQuit : Listener {
             isMinecraft = space.contentEquals("minecraft", true)
         }
 
-        val soundKey = if (isMinecraft) NamespacedKey.minecraft(soundString) else NamespacedKey.fromString(soundString)
-        if (soundKey == null) {
+        val soundKey = (if (isMinecraft) NamespacedKey.minecraft(soundString)
+        else NamespacedKey.fromString(soundString)) ?: run {
             _playSound = false
             log.warning("Failed to parse sound '${soundString}' for quit message!")
             return
         }
 
-        _sound = Registry.SOUND_EVENT.get(soundKey)
-        if (_sound == null) {
+        _sound = Registry.SOUND_EVENT.get(soundKey) ?: let {
             _playSound = false
             log.warning("Failed to find sound '${soundString}' for quit message!")
+            null
         }
     }
 
@@ -77,8 +77,7 @@ class ListenerQuit : Listener {
             return
         }
         val player = event.getPlayer()
-        val user = instance.registry.getService<UserManager>().getUserOrNull(player)
-        if (user == null) {
+        val user = instance.registry.getService<UserManager>().getUserOrNull(player) ?: run {
             log.warning("Couldn't cache User '${player.name}'! This should not happen!")
             return
         }

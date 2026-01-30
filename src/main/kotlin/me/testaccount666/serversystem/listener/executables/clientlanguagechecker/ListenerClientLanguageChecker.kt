@@ -8,7 +8,6 @@ import me.testaccount666.serversystem.userdata.UserManager
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
-import java.util.Locale.getDefault
 
 class ListenerClientLanguageChecker : Listener {
     private val _useClientLanguage: Boolean
@@ -36,6 +35,6 @@ class ListenerClientLanguageChecker : Listener {
         if (locale.startsWith("de_")) language = "German"
         if (locale.startsWith("sl_")) language = "Slovene"
 
-        onlineUser.playerLanguage = language.lowercase(getDefault())
+        onlineUser.playerLanguage = language.lowercase()
     }
 }

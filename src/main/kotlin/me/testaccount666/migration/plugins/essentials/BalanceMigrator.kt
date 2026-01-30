@@ -1,72 +1,50 @@
 package me.testaccount666.migration.plugins.essentials
 
 import me.testaccount666.serversystem.ServerSystem.Companion.log
-import net.ess3.api.MaxMoneyException
 import net.ess3.api.events.UserBalanceUpdateEvent
 import java.util.logging.Level
 
 class BalanceMigrator : AbstractMigrator() {
     override fun migrateFrom(): Int {
-        var count = 0
+        val count = essentials.users.allUserUUIDs.count { uuid ->
+            runCatching {
+                val cachedUser = userManager.getUserOrNull(uuid) ?: run {
+                    log.warning("Couldn't find user '${uuid}', skipping balance migration!")
+                    return@count false
+                }
 
-        val userManager = userManager
-        val essentials = essentials
-        val uuids = essentials.users.allUserUUIDs
+                val essentialsUser = essentials.getUser(uuid)
+                val user = cachedUser.offlineUser
+                val bankAccount = user.bankAccount
 
-        for (uuid in uuids) {
-            val userOptional = userManager.getUserOrNull(uuid)
-            if (userOptional == null) {
-                log.warning("Couldn't find user '${uuid}', skipping balance migration!")
-                continue
-            }
+                bankAccount.balance = essentialsUser.money
 
-            val essentialsUser = essentials.getUser(uuid)
-            val user = userOptional.offlineUser
-            val bankAccount = user.bankAccount
-
-            bankAccount.balance = essentialsUser.money
-
-            user.save()
-            count += 1
+                user.save()
+                return@runCatching true
+            }.onFailure { log.log(Level.WARNING, "Couldn't migrate balance for '${uuid}'", it) }.getOrDefault(false)
         }
 
         return count
     }
 
     override fun migrateTo(): Int {
-        var count = 0
-
-        val userManager = userManager
-
-        for (player in offlinePlayers()) {
+        val count = offlinePlayers().count { player ->
             val uuid = player.uniqueId
+            runCatching {
+                val cachedUser = userManager.getUserOrNull(uuid) ?: run {
+                    log.warning("Couldn't find user '${uuid}', skipping balance migration!")
+                    return@count false
+                }
 
-            val userOptional = userManager.getUserOrNull(uuid)
-            if (userOptional == null) {
-                log.warning("Couldn't find user '${uuid}', skipping balance migration!")
-                continue
-            }
+                val user = cachedUser.offlineUser
+                val bankAccount = user.bankAccount
 
-            val user = userOptional.offlineUser
-            val bankAccount = user.bankAccount
+                ensureUserDataExists(uuid)
+                val essentialsUser = essentials.getUser(uuid)
 
-            val essentials = essentials
-
-            ensureUserDataExists(uuid)
-            val essentialsUser = essentials.getUser(uuid)
-
-            try {
                 essentialsUser.setMoney(bankAccount.balance, UserBalanceUpdateEvent.Cause.SPECIAL)
-                count += 1
-            } catch (exception: MaxMoneyException) {
-                val userName = user.getNameSafe()
-
-                log.log(
-                    Level.WARNING,
-                    "Couldn't migrate balance for '${uuid}' (${userName}) with balance '${bankAccount.balance}'",
-                    exception
-                )
-            }
+                return@runCatching true
+            }.onFailure { log.log(Level.WARNING, "Couldn't migrate balance for '${uuid}'", it) }.getOrDefault(false)
         }
 
         return count

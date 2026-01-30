@@ -2,13 +2,9 @@ package me.testaccount666.serversystem.commands.executables.workbench
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
-import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
-import java.util.Locale.getDefault
 
 @ServerSystemCommand("workbench", ["anvil", "smithing", "loom", "grindstone", "cartography", "stonecutter"])
 class CommandWorkbench : AbstractServerSystemCommand() {
@@ -23,43 +19,25 @@ class CommandWorkbench : AbstractServerSystemCommand() {
             "Stonecutter" to MenuUtils::openStonecutter
         )
     }
+    private val _permissionMap = mapOf(
+        "workbench" to "Workbench.Use",
+        "anvil" to "Anvil.Use",
+        "smithing" to "Smithing.Use",
+        "loom" to "Loom.Use",
+        "grindstone" to "Grindstone.Use",
+        "cartography" to "Cartography.Use",
+        "stonecutter" to "Stonecutter.Use"
+    )
+
+    override fun getUsagePermission(command: Command) = _permissionMap[command.name.lowercase()] ?: error("Invalid command name: ${command.name}")
+    override fun getSyntaxPath(command: Command?) = "Generic"
 
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (commandSender is ConsoleUser) {
-            general("NotPlayer", commandSender).build()
-            return
-        }
-
+        if (!isPlayer(commandSender)) return
         val player = commandSender.getPlayer()!!
-        val commandName = capitalizeFirstLetter(command.name)
 
-        val permissionPath = "${commandName}.Use"
-        if (!checkBasePermission(commandSender, permissionPath)) return
+        val commandName = command.name.replaceFirstChar { it.uppercaseChar() }
 
-        val opener = _menuOpeners[commandName] ?: return
-        opener(player)
-    }
-
-    private fun capitalizeFirstLetter(input: String) = input.replaceFirstChar { it.uppercaseChar() }
-
-
-    override fun getSyntaxPath(command: Command?): String {
-        throw UnsupportedOperationException("Workbench command doesn't have an available syntax!")
-    }
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        val permissionMap = mapOf(
-            "workbench" to "Workbench.Use",
-            "anvil" to "Anvil.Use",
-            "smithing" to "Smithing.Use",
-            "loom" to "Loom.Use",
-            "grindstone" to "Grindstone.Use",
-            "cartography" to "Cartography.Use",
-            "stonecutter" to "Stonecutter.Use"
-        )
-
-        val permissionPath = permissionMap[command.name.lowercase(getDefault())] ?: return false
-
-        return hasCommandPermission(player, permissionPath, false)
+        _menuOpeners[commandName]?.invoke(player)
     }
 }

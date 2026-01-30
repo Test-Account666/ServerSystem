@@ -2,7 +2,6 @@ package me.testaccount666.serversystem.placeholderapi
 
 import io.github.classgraph.ClassGraph
 import me.testaccount666.serversystem.ServerSystem.Companion.log
-import java.util.Locale.getDefault
 import java.util.logging.Level
 
 class PlaceholderManager {
@@ -17,7 +16,7 @@ class PlaceholderManager {
                 for (placeholderClass in placeholderClasses) try {
                     val placeholder = placeholderClass.loadClass().getDeclaredConstructor().newInstance() as Placeholder
                     placeholder.identifiers.forEach { identifier ->
-                        _registeredPlaceholders[identifier.lowercase(getDefault())] = placeholder
+                        _registeredPlaceholders[identifier.lowercase()] = placeholder
                     }
                 } catch (exception: Exception) {
                     log.log(Level.SEVERE, "Error registering placeholder '${placeholderClass.getName()}'", exception)
@@ -25,5 +24,5 @@ class PlaceholderManager {
             }
     }
 
-    fun getPlaceholder(identifier: String) = _registeredPlaceholders[identifier.lowercase(getDefault())]
+    fun getPlaceholder(identifier: String) = _registeredPlaceholders[identifier.lowercase()]
 }

@@ -19,8 +19,7 @@ object DurationParser {
     @JvmStatic
     fun parseDate(durationMillis: Long, user: OfflineUser): String {
         if (durationMillis == -1L) {
-            val permanent = MappingsData.moderation(user).getName("permanent")
-            if (permanent == null) {
+            val permanent = MappingsData.moderation(user).getName("permanent") ?: run {
                 log.warning("Permanent name could not be found! This should not happen!")
                 return "Never"
             }
@@ -35,7 +34,7 @@ object DurationParser {
 
     @JvmStatic
     fun parseDuration(duration: String): Long {
-        if (duration.equals("permanent", ignoreCase = true)) return -1
+        if (duration.equals("permanent", true)) return -1
 
         val regex = Pattern.compile("(\\d{1,9})(mo|y|w|d|h|m|s)")
         val matcher = regex.matcher(duration)

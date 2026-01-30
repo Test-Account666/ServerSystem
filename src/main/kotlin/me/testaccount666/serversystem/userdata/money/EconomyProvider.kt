@@ -7,7 +7,6 @@ import me.testaccount666.serversystem.userdata.OfflineUser
 import org.bukkit.configuration.file.FileConfiguration
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.util.Locale.getDefault
 import java.util.logging.Level
 
 class EconomyProvider {
@@ -33,7 +32,7 @@ class EconomyProvider {
         }
 
         val economyTypeParsed =
-            Type.parseType(configReader.getString("Economy.StorageType.Value")?.uppercase(getDefault()))
+            Type.parseType(configReader.getString("Economy.StorageType.Value")?.uppercase())
         val databaseManager = ServerSystem.instance.registry.getService<EconomyDatabaseManager>()
 
         if (economyTypeParsed == null) {
@@ -66,8 +65,7 @@ class EconomyProvider {
     private fun migrateYamlBankAccountIfNeeded(offlineUser: OfflineUser, accountId: BigInteger, userConfig: FileConfiguration) {
         if (!userConfig.isSet("User.BankAccounts")) return
 
-        val bankAccountsSection = userConfig.getConfigurationSection("User.BankAccounts")
-        if (bankAccountsSection == null) {
+        val bankAccountsSection = userConfig.getConfigurationSection("User.BankAccounts") ?: run {
             ServerSystem.log.severe("Failed to get YAML bank accounts for user ${offlineUser.getNameOrNull()} (${offlineUser.uuid}): bankAccountsSection is null!")
             return
         }
@@ -75,8 +73,7 @@ class EconomyProvider {
         var anyMigrated = false
 
         for (key in bankAccountsSection.getKeys(false)) {
-            val balance = bankAccountsSection.getString("${key}.Balance")
-            if (balance == null) {
+            val balance = bankAccountsSection.getString("${key}.Balance") ?: run {
                 ServerSystem.log.severe("Failed to get YAML bank account balance for user ${offlineUser.getNameOrNull()} (${offlineUser.uuid}, AccountID: ${key}): balance is null!")
                 continue
             }
@@ -143,7 +140,7 @@ class EconomyProvider {
                 if (value == null) return null
 
                 return try {
-                    valueOf(value.uppercase(getDefault()))
+                    valueOf(value.uppercase())
                 } catch (_: IllegalArgumentException) {
                     null
                 }

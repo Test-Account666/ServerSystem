@@ -1,6 +1,5 @@
 package me.testaccount666.serversystem.commands.executables.moderation.ban
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.annotations.RequiredCommands
 import me.testaccount666.serversystem.commands.executables.moderation.ModerationUtils
@@ -9,6 +8,7 @@ import me.testaccount666.serversystem.userdata.UserManager
 import me.testaccount666.serversystem.userdata.UserManager.Companion.consoleUser
 import me.testaccount666.serversystem.utils.DurationParser.parseDate
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
+import me.testaccount666.serversystem.utils.ServiceExtensions.getService
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
@@ -19,8 +19,7 @@ class ListenerBan : Listener {
 
     @EventHandler
     fun onLogin(event: AsyncPlayerPreLoginEvent) {
-        val cachedUser = instance.registry.getService<UserManager>().getUserOrNull(event.uniqueId)
-        if (cachedUser == null) {
+        val cachedUser = getService<UserManager>().getUserOrNull(event.uniqueId) ?: run {
             log.severe("(ListenerBan) User not found! This should not happen!")
             return
         }

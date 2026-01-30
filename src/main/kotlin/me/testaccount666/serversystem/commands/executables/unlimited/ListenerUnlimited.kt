@@ -48,9 +48,7 @@ class ListenerUnlimited : Listener {
      */
     @EventHandler
     fun onConsume(event: PlayerItemConsumeEvent) {
-        val itemInHand = event.item
-        if (!isUnlimited(itemInHand)) return
-
+        val itemInHand = event.item.takeIf(::isUnlimited) ?: return
         event.replacement = itemInHand
     }
 
@@ -59,10 +57,13 @@ class ListenerUnlimited : Listener {
      */
     @EventHandler
     fun onBlockPlace(event: BlockPlaceEvent) {
-        val itemInHand = event.getItemInHand()
-        if (!isUnlimited(itemInHand)) return
-
-        itemInHand.amount += 1
+        val player = event.player
+        val itemInHand = event.itemInHand.takeIf(::isUnlimited) ?: return
+        val amount = itemInHand.amount
+        Bukkit.getScheduler().runTaskLater(instance, Runnable {
+            itemInHand.amount = amount
+            player.updateInventory()
+        }, 1L)
     }
 
     /**
@@ -70,8 +71,7 @@ class ListenerUnlimited : Listener {
      */
     @EventHandler
     fun onItemDrop(event: PlayerDropItemEvent) {
-        val itemInHand = event.itemDrop.itemStack
-        if (!isUnlimited(itemInHand)) return
+        val itemInHand = event.itemDrop.itemStack.takeIf(::isUnlimited) ?: return
 
         event.isCancelled = true
         val newItem = event.itemDrop.world.dropItemNaturally(event.itemDrop.location, itemInHand)
@@ -88,8 +88,7 @@ class ListenerUnlimited : Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onBucketEmpty(event: PlayerBucketEmptyEvent) {
-        val itemInHand = event.getPlayer().inventory.getItem(event.hand)
-        if (!isUnlimited(itemInHand)) return
+        event.getPlayer().inventory.getItem(event.hand).takeIf(::isUnlimited) ?: return
 
         event.isCancelled = true
         handleBucketEmpty(event)
@@ -173,8 +172,7 @@ class ListenerUnlimited : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onBucketFill(event: PlayerBucketFillEvent) {
-        val itemInHand = event.getPlayer().inventory.getItem(event.hand)
-        if (!isUnlimited(itemInHand)) return
+        event.getPlayer().inventory.getItem(event.hand).takeIf(::isUnlimited) ?: return
 
         event.isCancelled = true
 
@@ -186,17 +184,13 @@ class ListenerUnlimited : Listener {
 
     @EventHandler
     fun onItemDamage(event: PlayerItemDamageEvent) {
-        val itemInHand = event.item
-        if (!isUnlimited(itemInHand)) return
-
+        event.item.takeIf(::isUnlimited) ?: return
         event.isCancelled = true
     }
 
     @EventHandler
     fun onDispenserFire(event: BlockDispenseEvent) {
-        val itemInHand = event.item
-
-        if (!isUnlimited(itemInHand)) return
+        val itemInHand = event.item.takeIf(::isUnlimited) ?: return
 
         val dispenserBlock = event.getBlock()
         val blockState = dispenserBlock.state
@@ -248,8 +242,7 @@ class ListenerUnlimited : Listener {
 
     @EventHandler
     fun onDispenserArmorFire(event: BlockDispenseArmorEvent) {
-        val itemInHand = event.item
-        if (!isUnlimited(itemInHand)) return
+        val itemInHand = event.item.takeIf(::isUnlimited) ?: return
 
         val newItemStack = itemInHand.clone()
         val newItemMeta = newItemStack.itemMeta
@@ -276,8 +269,7 @@ class ListenerUnlimited : Listener {
 
     @EventHandler
     fun onItemSpawn(event: ItemSpawnEvent) {
-        val itemStack = event.getEntity().itemStack
-        if (!isUnlimited(itemStack)) return
+        val itemStack = event.getEntity().itemStack.takeIf(::isUnlimited) ?: return
 
         val itemMeta = itemStack.itemMeta
         val dataContainer = itemMeta.persistentDataContainer

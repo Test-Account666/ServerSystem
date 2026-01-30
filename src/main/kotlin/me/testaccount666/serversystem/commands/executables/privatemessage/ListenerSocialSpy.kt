@@ -1,12 +1,12 @@
 package me.testaccount666.serversystem.commands.executables.privatemessage
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.annotations.RequiredCommands
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor
 import me.testaccount666.serversystem.events.UserPrivateMessageEvent
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.UserManager
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
+import me.testaccount666.serversystem.utils.ServiceExtensions.getService
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -17,12 +17,12 @@ class ListenerSocialSpy : Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onPrivateMessage(event: UserPrivateMessageEvent) {
-        instance.registry.getService<UserManager>().cachedUsers.forEach { cachedUser ->
+        getService<UserManager>().cachedUsers.forEach { cachedUser ->
             if (!cachedUser.isOnlineUser) return@forEach
             val user = cachedUser.offlineUser as User
             if (!user.isSocialSpyEnabled) return@forEach
 
-            val target = event.recipients.firstOrNull { recipient -> recipient != event.sender } ?: return@forEach
+            val target = event.recipients.firstOrNull { it != event.sender } ?: return@forEach
 
             val senderName = event.sender.getNameSafe()
             val targetName = target.getNameOrNull()

@@ -5,20 +5,10 @@ import org.bukkit.plugin.Plugin
 import java.io.File
 import java.util.logging.Level
 
-class NonValidatingConfigReader
-/**
- * Creates a new DefaultConfigReader for the specified file and plugin.
- *
- * @param file   The configuration file to read
- * @param plugin The plugin associated with this configuration
- * @throws java.io.FileNotFoundException If the default configuration cannot be found
- */
-    (file: File, plugin: Plugin) : DefaultConfigReader(file, plugin) {
+class NonValidatingConfigReader(file: File, plugin: Plugin) : DefaultConfigReader(file, plugin) {
     override fun validateAndFixConfig() = true
 
-    override fun loadDefaultConfig() {
-        // Nothing to do
-    }
+    override fun loadDefaultConfig() {}
 
     override fun load(file: File?) {
         requireNotNull(file)

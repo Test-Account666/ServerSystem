@@ -102,8 +102,9 @@ class ListenerOperatorSpoof : Listener {
         private val _cachedUser: CachedUser
 
         init {
-            val cachedUser = instance.registry.getService<UserManager>().getUserOrNull(_player)
-            if (cachedUser == null) throw RuntimeException("Couldn't cache User '${_player.name}'! This should not happen!")
+            val cachedUser = instance.registry.getService<UserManager>().getUserOrNull(_player) ?: run {
+                throw RuntimeException("Couldn't cache User '${_player.name}'! This should not happen!")
+            }
             _cachedUser = cachedUser
         }
 

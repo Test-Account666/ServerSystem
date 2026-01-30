@@ -4,25 +4,55 @@ import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.events.UserPrivateMessageEvent
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.managers.messages.MessageManager.applyPlaceholders
 import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.ComponentColor.Companion.translateToComponent
+import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import net.kyori.adventure.text.event.ClickEvent
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
-import org.bukkit.entity.Player
-import java.util.Locale.getDefault
 
 @ServerSystemCommand("privatemessage", ["reply", "messagetoggle", "socialspy"])
 class CommandPrivateMessage : AbstractServerSystemCommand() {
-    private var _privateMessageCommand: String? = null
+    private val _privateMessageCommand by lazy {
+        return@lazy variantLabelMap["privatemessage"]?.first() ?: error("(CommandPrivateMessage) PrivateMessage command not found")
+    }
+
+    override fun minRequiredArguments(command: Command): Int {
+        return when (command.name.lowercase()) {
+            "privatemessage" -> 2
+            "reply" -> 1
+            "messagetoggle", "socialspy" -> 0
+            else -> error("(CommandPrivateMessage) Unexpected value: ${command.name}")
+        }
+    }
+
+    override fun getUsagePermission(command: Command): String {
+        return when (command.name.lowercase()) {
+            "privatemessage" -> "PrivateMessage.Use"
+            "reply" -> "PrivateMessage.Use"
+            "messagetoggle" -> "PrivateMessage.Toggle.Use"
+            "socialspy" -> "SocialSpy.Use"
+            else -> error("(CommandPrivateMessage) Unexpected value: ${command.name}")
+        }
+    }
+
+    override fun getSyntaxPath(command: Command?): String {
+        if (command == null) return "PrivateMessage"
+
+        return when (val name = command.name.lowercase()) {
+            "privatemessage" -> "PrivateMessage"
+            "reply" -> "Reply"
+            "messagetoggle" -> "MessageToggle"
+            "socialspy" -> "SocialSpy"
+            else -> error("(CommandPrivateMessage) Unexpected value: ${name}")
+        }
+    }
 
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        val commandName = command.name.lowercase(getDefault())
+        val commandName = command.name.lowercase()
 
         when (commandName) {
             "socialspy" -> handleSocialSpyCommand(commandSender, command, label, *arguments)
@@ -33,11 +63,9 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
     }
 
     private fun handleSocialSpyCommand(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, "SocialSpy.Use")) return
-        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
+        if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
@@ -45,7 +73,7 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
         val targetPlayer = targetUser.getPlayer()!!
         val isSelf = targetUser === commandSender
 
-        if (!isSelf && !checkOtherPermission(commandSender, "SocialSpy.Other", targetPlayer.name)) return
+        if (!isSelf && !checkPermission(commandSender, "SocialSpy.Other", targetPlayer.name)) return
 
         val isEnabled = !targetUser.isSocialSpyEnabled
 
@@ -63,11 +91,9 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
     }
 
     private fun handleMessageToggleCommand(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, "PrivateMessage.Toggle.Use")) return
-        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
+        if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
@@ -75,7 +101,7 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
         val targetPlayer = targetUser.getPlayer()!!
         val isSelf = targetUser === commandSender
 
-        if (!isSelf && !checkOtherPermission(commandSender, "PrivateMessage.Toggle.Other", targetPlayer.name)) return
+        if (!isSelf && !checkPermission(commandSender, "PrivateMessage.Toggle.Other", targetPlayer.name)) return
 
         val acceptsMessages = !targetUser.isAcceptsMessages
 
@@ -94,42 +120,17 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
     }
 
     private fun handleReplyCommand(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, "PrivateMessage.Use")) return
-
-        if (arguments.isEmpty()) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
-            return
-        }
-
-        val targetUser = commandSender.replyUser
-
-        if (targetUser == null || !isValidReplyTarget(targetUser)) {
+        val targetUser = commandSender.replyUser?.takeIf(::isValidReplyTarget) ?: run {
             command("Reply.NoReply", commandSender).build()
             return
         }
 
         val newArguments = arrayOf(targetUser.getNameSafe()) + arguments
-
         sendPrivateMessage(commandSender, targetUser, label, *newArguments)
     }
 
     private fun handlePrivateMessageCommand(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (_privateMessageCommand == null) _privateMessageCommand = label
-        if (!checkBasePermission(commandSender, "PrivateMessage.Use")) return
-
-        if (arguments.size <= 1) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
-            return
-        }
-
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
@@ -138,8 +139,7 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
     }
 
     private fun sendPrivateMessage(commandSender: User, targetUser: User, label: String, vararg arguments: String) {
-        val targetName = targetUser.getNameOrNull()
-        if (targetName == null) {
+        val targetName = targetUser.getNameOrNull() ?: run {
             general("ErrorOccurred", commandSender) {
                 label(label)
                 target(targetUser.uuid.toString())
@@ -159,30 +159,9 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
             return
         }
 
-        val message = arguments.drop(1).joinToString(" ").trim { it <= ' ' }
-
-        val success = command("PrivateMessage.Success", commandSender) {
-            format(false)
-            target(targetName)
-            prefix(false)
-            send(false)
-            blankError(true)
-            postModifier {
-                applyPlaceholders(it, commandSender, targetName, label)
-                    .replace("<MESSAGE>", message)
-            }
-        }.build()
-
-        val successOther = command("PrivateMessage.SuccessOther", targetUser) {
-            sender(commandSender.getNameSafe())
-            prefix(false)
-            send(false)
-            blankError(true)
-            postModifier {
-                applyPlaceholders(it, targetUser, targetName, label)
-                    .replace("<MESSAGE>", message)
-            }
-        }.build()
+        val message = arguments.drop(1).joinToString(" ").trim()
+        val success = getSuccessMessage(commandSender, targetName, label, message)
+        val successOther = getSuccessOther(targetUser, commandSender, targetName, label, message)
 
         if (success.isEmpty() || successOther.isEmpty()) {
             log.warning("Couldn't find message for path Commands.PrivateMessage.Success or Commands.PrivateMessage.SuccessOther")
@@ -220,35 +199,37 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
         }
     }
 
+    private fun getSuccessOther(targetUser: User, commandSender: User, targetName: String, label: String, message: String): String {
+        return command("PrivateMessage.SuccessOther", targetUser) {
+            sender(commandSender.getNameSafe())
+            prefix(false)
+            send(false)
+            blankError(true)
+            postModifier {
+                applyPlaceholders(it, targetUser, targetName, label)
+                    .replace("<MESSAGE>", message)
+            }
+        }.build()
+    }
+
+    private fun getSuccessMessage(commandSender: User, targetName: String, label: String, message: String): String {
+        return command("PrivateMessage.Success", commandSender) {
+            format(false)
+            target(targetName)
+            prefix(false)
+            send(false)
+            blankError(true)
+            postModifier {
+                applyPlaceholders(it, commandSender, targetName, label)
+                    .replace("<MESSAGE>", message)
+            }
+        }.build()
+    }
+
     private fun isValidReplyTarget(targetUser: User): Boolean {
         if (targetUser.commandSender == null || targetUser.getNameOrNull() == null) return false
-
         if (targetUser is ConsoleUser) return true
 
         return targetUser.getPlayer()?.isOnline ?: false
-    }
-
-    override fun getSyntaxPath(command: Command?): String {
-        if (command == null) return "PrivateMessage"
-
-        return when (val name = command.name.lowercase(getDefault())) {
-            "privatemessage" -> "PrivateMessage"
-            "reply" -> "Reply"
-            "messagetoggle" -> "MessageToggle"
-            "socialspy" -> "SocialSpy"
-            else -> error("(CommandPrivateMessage) Unexpected value: ${name}")
-        }
-    }
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        val permissionPath = when (val name = command.name.lowercase(getDefault())) {
-            "privatemessage" -> "PrivateMessage.Use"
-            "reply" -> "PrivateMessage.Use"
-            "messagetoggle" -> "PrivateMessage.Toggle.Use"
-            "socialspy" -> "SocialSpy.Use"
-            else -> error("(CommandPrivateMessage) Unexpected value: ${name}")
-        }
-
-        return hasCommandPermission(player, permissionPath, false)
     }
 }

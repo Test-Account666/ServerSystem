@@ -7,10 +7,9 @@ import me.testaccount666.serversystem.managers.messages.MessageManager
 import org.bukkit.plugin.Plugin
 import java.io.File
 import java.io.FileNotFoundException
-import java.nio.file.Path
 
 class ConfigurationManager(private val _plugin: Plugin) {
-    private val _pluginFolder: Path = Path.of("plugins", "ServerSystem")
+    private val _pluginFolder = _plugin.dataPath
 
     lateinit var generalConfig: ConfigReader
 
@@ -36,9 +35,7 @@ class ConfigurationManager(private val _plugin: Plugin) {
         createUserDataFolder()
     }
 
-    private fun initializeMappingsData() {
-        MappingsData()
-    }
+    private fun initializeMappingsData() = MappingsData()
 
     @Throws(FileNotFoundException::class)
     private fun initializeGeneralConfig() {
@@ -62,9 +59,7 @@ class ConfigurationManager(private val _plugin: Plugin) {
     }
 
     @Throws(FileNotFoundException::class)
-    private fun initializeMessagesConfig() {
-        MessageManager.initialize()
-    }
+    private fun initializeMessagesConfig() = MessageManager.initialize()
 
     @Throws(FileNotFoundException::class)
     private fun initializeDefaultsConfig() {
@@ -100,6 +95,7 @@ class ConfigurationManager(private val _plugin: Plugin) {
     }
 
     private fun ensureConfigFileExists(configFile: File, resourceName: String) {
-        if (!configFile.exists()) _plugin.saveResource(resourceName, false)
+        if (configFile.exists()) return
+        _plugin.saveResource(resourceName, false)
     }
 }

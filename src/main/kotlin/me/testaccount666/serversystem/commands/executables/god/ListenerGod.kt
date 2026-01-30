@@ -1,23 +1,27 @@
 package me.testaccount666.serversystem.commands.executables.god
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.UserManager
+import me.testaccount666.serversystem.utils.ServiceExtensions.getService
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.entity.EntityCombustEvent
-import org.bukkit.event.entity.EntityDamageEvent
-import org.bukkit.event.entity.FoodLevelChangeEvent
-import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.event.entity.*
 
 /**
  * Listener for handling events related to god mode functionality.
  * This class cancels damage, death, combustion, and hunger events for players in god mode.
  */
 class ListenerGod : Listener {
+    @EventHandler
+    fun onUserTarget(event: EntityTargetLivingEntityEvent) {
+        val player = event.target as? Player ?: return
+
+        handleCancellableEvent(event, player)
+    }
+
     @EventHandler
     fun onUserDamage(event: EntityDamageEvent) {
         val player = event.entity as? Player ?: return
@@ -53,9 +57,7 @@ class ListenerGod : Listener {
      * @param player The player affected by the event
      */
     private fun handleCancellableEvent(event: Cancellable, player: Player) {
-        val user = instance.registry.getService<UserManager>().getUserOrNull(player)
-
-        if (user == null) {
+        val user = getService<UserManager>().getUserOrNull(player) ?: run {
             log.warning("(ListenerGod) User '${player.name}' is not cached! This should not happen!")
             return
         }

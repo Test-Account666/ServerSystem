@@ -2,7 +2,7 @@ package me.testaccount666.serversystem.clickablesigns.executables.warp
 
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.clickablesigns.AbstractSignClickAction
-import me.testaccount666.serversystem.commands.executables.warp.manager.WarpManager
+import me.testaccount666.serversystem.commands.executables.waypoints.warp.manager.WarpManager
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.ChatColor.Companion.stripColor
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.sign
@@ -13,8 +13,7 @@ class ActionWarpSign : AbstractSignClickAction() {
     override val basePermissionNode = "ClickableSigns.Warp"
 
     override fun executeAction(user: User, sign: Sign, config: FileConfiguration): Boolean {
-        val warpManager = instance.registry.getServiceOrNull<WarpManager>()
-        if (warpManager == null) {
+        val warpManager = instance.registry.getServiceOrNull<WarpManager>() ?: run {
             sign("Warp.NoWarpManager", user).build()
             return false
         }
@@ -26,8 +25,7 @@ class ActionWarpSign : AbstractSignClickAction() {
             return false
         }
 
-        val warp = warpManager.getWarpByName(warpName)
-        if (warp == null) {
+        val warp = warpManager.getPointByName(warpName) ?: run {
             sign("Warp.WarpNotFound", user) {
                 postModifier { it.replace("<WARP>", warpName) }
             }.build()

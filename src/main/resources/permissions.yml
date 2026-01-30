@@ -295,7 +295,7 @@ Permissions:
         Value: "serversystem.admin.command.skull.use"
       Other:
         Required: true
-        Value: "serversystem.admin.command.skull.use"
+        Value: "serversystem.admin.command.skull.other"
     Sudo:
       Use:
         Required: true
@@ -371,9 +371,9 @@ Permissions:
         Required: true
         Value: "serversystem.support.command.teamchat.use"
     Warp:
-      Use:
+      Teleport:
         Required: false
-        Value: "serversystem.command.warp.use"
+        Value: "serversystem.command.warp.teleport"
       Set:
         Required: true
         Value: "serversystem.admin.command.warp.set"

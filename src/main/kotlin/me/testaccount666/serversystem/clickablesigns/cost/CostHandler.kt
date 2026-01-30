@@ -5,8 +5,6 @@ import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.sign
 import org.bukkit.configuration.file.FileConfiguration
-import java.math.BigDecimal
-import java.util.Locale.getDefault
 import java.util.logging.Level
 
 /**
@@ -28,10 +26,7 @@ object CostHandler {
         if (costAmount <= 0) return true
 
         if (costType == CostType.EXP) return user.getPlayer()!!.calculateTotalExperiencePoints() >= costAmount
-        if (costType == CostType.ECONOMY) {
-            val bankAccount = user.bankAccount
-            return bankAccount.hasEnoughMoney(BigDecimal.valueOf(costAmount))
-        }
+        if (costType == CostType.ECONOMY) return user.bankAccount.balance >= costAmount.toBigDecimal()
 
         return false
     }
@@ -52,7 +47,7 @@ object CostHandler {
             val bankAccount = user.bankAccount
 
             try {
-                bankAccount.deposit(BigDecimal.valueOf(costAmount))
+                bankAccount.balance += costAmount.toBigDecimal()
                 bankAccount.save()
             } catch (exception: Exception) {
                 log.log(Level.SEVERE, "Failed to refund cost for '${user.getNameOrNull()}', failed to save bank account", exception)
@@ -97,7 +92,7 @@ object CostHandler {
             val bankAccount = user.bankAccount
 
             try {
-                bankAccount.withdraw(BigDecimal.valueOf(costAmount))
+                bankAccount.balance -= costAmount.toBigDecimal()
                 bankAccount.save()
                 sign("Cost.PaidMoney", user) {
                     postModifier { it.replace("<AMOUNT>", costAmount.toString()) }
@@ -118,9 +113,9 @@ object CostHandler {
      * @return The cost type
      */
     fun getCostType(config: FileConfiguration): CostType {
-        val costTypeStr: String = config.getString("Cost.Type", "NONE")!!
+        val costTypeStr = config.getString("Cost.Type", "NONE")!!
         return try {
-            CostType.valueOf(costTypeStr.uppercase(getDefault()))
+            CostType.valueOf(costTypeStr.uppercase())
         } catch (_: IllegalArgumentException) {
             CostType.NONE
         }

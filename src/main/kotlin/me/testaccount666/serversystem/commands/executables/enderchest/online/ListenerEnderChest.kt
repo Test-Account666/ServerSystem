@@ -1,4 +1,4 @@
-package me.testaccount666.serversystem.commands.executables.enderchest
+package me.testaccount666.serversystem.commands.executables.enderchest.online
 
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.annotations.RequiredCommands
@@ -6,12 +6,12 @@ import me.testaccount666.serversystem.commands.executables.enderchest.offline.Co
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.UserManager
+import me.testaccount666.serversystem.utils.ServiceExtensions.getService
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
-import java.util.function.Consumer
 
 @RequiredCommands([CommandEnderChest::class])
 class ListenerEnderChest : Listener {
@@ -20,11 +20,11 @@ class ListenerEnderChest : Listener {
     fun canRegister(requiredCommands: Set<ServerSystemCommandExecutor>): Boolean {
         var canRegister = false
 
-        requiredCommands.forEach { command ->
-            if (command !is CommandEnderChest) return@forEach
-            command.offlineEnderChest.enderChestLoader ?: return@forEach
+        requiredCommands.forEach {
+            if (it !is CommandEnderChest) return@forEach
+            it.offlineEnderChest.enderChestLoader ?: return@forEach
 
-            _enderChest = command.offlineEnderChest
+            _enderChest = it.offlineEnderChest
             canRegister = true
         }
 
@@ -33,21 +33,20 @@ class ListenerEnderChest : Listener {
 
     @EventHandler
     fun onViewedQuit(event: PlayerQuitEvent) {
-        val viewedPlayer = event.getPlayer()
+        val viewedPlayer = event.player
         val inventory = viewedPlayer.enderChest
 
-        val viewers = ArrayList(inventory.viewers)
+        val viewers = inventory.viewers.toList()
         inventory.close()
 
         Bukkit.getScheduler().runTaskLater(instance, Runnable {
-            viewers.forEach(Consumer { viewer ->
-                if (viewer !is Player) return@Consumer
-                val cachedUser = instance.registry.getService<UserManager>().getUserOrNull(viewer) ?: return@Consumer
+            viewers.filterIsInstance<Player>().forEach { viewer ->
+                val cachedUser = getService<UserManager>().getUserOrNull(viewer) ?: return@forEach
 
-                if (cachedUser.isOfflineUser) return@Consumer
+                if (cachedUser.isOfflineUser) return@forEach
                 val user = cachedUser.offlineUser as User
                 _enderChest.executeEnderChestCommand(user, viewedPlayer.name)
-            })
+            }
         }, 10L)
     }
 }

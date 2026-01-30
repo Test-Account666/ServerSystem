@@ -4,8 +4,8 @@ import io.papermc.paper.event.player.AsyncChatEvent
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.managers.PermissionManager.hasPermission
 import me.testaccount666.serversystem.managers.config.ConfigurationManager
-import me.testaccount666.serversystem.utils.ComponentColor.Companion.componentToString
-import me.testaccount666.serversystem.utils.ComponentColor.Companion.translateToComponent
+import me.testaccount666.serversystem.utils.ComponentColor.componentToString
+import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 

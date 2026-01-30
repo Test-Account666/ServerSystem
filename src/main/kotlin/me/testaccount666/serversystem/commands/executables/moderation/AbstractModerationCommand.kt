@@ -1,6 +1,5 @@
 package me.testaccount666.serversystem.commands.executables.moderation
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.moderation.AbstractModeration
@@ -15,32 +14,15 @@ import org.bukkit.command.Command
 
 abstract class AbstractModerationCommand<T : AbstractModeration> : AbstractServerSystemCommand() {
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, command)) return
-        if (arguments.isEmpty()) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
-            return
-        }
-
-        if (!isRemoveModeration(command) && arguments.size < 2) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
-            return
-        }
-
-        val targetUser = instance.registry.getService<UserManager>().getUserOrNull(arguments[0])
-        if (targetUser == null) {
+        val targetUser = getService<UserManager>().getUserOrNull(arguments[0]) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
-        val targetOfflineUser = targetUser.offlineUser
-        if (targetOfflineUser.getNameOrNull() == null) {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
-            return
+        val targetOfflineUser = targetUser.offlineUser.also {
+            if (it.getNameOrNull() == null) {
+                general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
+                return
+            }
         }
 
         if (isRemoveModeration(command)) {
@@ -82,8 +64,7 @@ abstract class AbstractModerationCommand<T : AbstractModeration> : AbstractServe
 
     private fun handleRemoveModeration(command: Command, commandSender: User, targetUser: OfflineUser) {
         val moderationManager = getModerationManager(targetUser)
-        val activeModeration = moderationManager.activeModeration
-        if (activeModeration == null) {
+        val activeModeration = moderationManager.activeModeration ?: run {
             command("Moderation.${type(command)}.Remove.NoActiveModeration", commandSender) { target(targetUser.getNameSafe()) }.build()
             return
         }
@@ -112,9 +93,7 @@ abstract class AbstractModerationCommand<T : AbstractModeration> : AbstractServe
 
     protected abstract fun createModeration(command: Command, commandSender: User, targetUser: OfflineUser, expireTime: Long, reason: String): T
 
-    protected abstract fun checkBasePermission(commandSender: User, command: Command): Boolean
-
-    protected fun isRemoveModeration(command: Command): Boolean = command.name.startsWith("un")
+    protected fun isRemoveModeration(command: Command) = command.name.startsWith("un")
 
     protected abstract fun getModerationManager(targetUser: OfflineUser): AbstractModerationManager<T>
 

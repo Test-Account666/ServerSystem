@@ -13,7 +13,6 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStreamReader
-import java.nio.file.Path
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.logging.Level
@@ -23,14 +22,13 @@ import kotlin.reflect.KClass
  * Default implementation of ConfigReader interface that handles loading, validation,
  * and operations on YAML configuration files.
  */
-open class DefaultConfigReader(
-    override val file: File, protected val _plugin: Plugin,
-) : ConfigReader {
+open class DefaultConfigReader(override val file: File, protected val _plugin: Plugin) : ConfigReader {
     override val configuration: FileConfiguration = YamlConfiguration.loadConfiguration(file)
     protected var originalCfg: FileConfiguration? = null
-
-    @JvmField
     protected var _newReader: DefaultConfigReader? = null
+
+    protected val configReader
+        get() = _newReader ?: this
 
     /**
      * Creates a new DefaultConfigReader for the specified file and plugin.
@@ -70,7 +68,7 @@ open class DefaultConfigReader(
             return
         }
 
-        if (filename.equals("messages.yml", ignoreCase = true) || filename.equals("mappings.yml", ignoreCase = true)) {
+        if (filename.equals("messages.yml", true) || filename.equals("mappings.yml", true)) {
             val language: String = configuration.getString("language", MessageManager.FALLBACK_LANGUAGE)!!
             val languageFile = "messages/${language}/${filename}"
 
@@ -97,13 +95,13 @@ open class DefaultConfigReader(
 
 
         var isValid = true
-        val typeWarnings: MutableMap<KClass<*>?, String?> = initializeTypeWarnings()
+        val typeWarnings = initializeTypeWarnings()
         val defaultSection = originalCfg!!.getConfigurationSection("") ?: return true
 
 
         for (key in defaultSection.getKeys(true)) {
             // Skip example entries
-            if (key.lowercase().contains("example")) continue
+            if (key.contains("example", true)) continue
 
             // Fix missing entries
             if (!configuration.isSet(key)) {
@@ -119,8 +117,8 @@ open class DefaultConfigReader(
 
             if (userValue == null || defaultValue == null) continue
 
-            val userType: Class<*> = userValue.javaClass
-            val defaultType: Class<*> = defaultValue.javaClass
+            val userType = userValue.javaClass
+            val defaultType = defaultValue.javaClass
 
             if (userType.isAssignableFrom(defaultType)) continue
 
@@ -132,12 +130,11 @@ open class DefaultConfigReader(
                 val list = if (userIsStringList) userValue
                 else defaultValue as MutableList<*>
 
-                if (list.isEmpty() || list.stream().allMatch { line: Any? -> line == null || line is String }) continue
+                if (list.isEmpty() || list.all { it == null || it is String }) continue
             }
 
-            val warningMessage = typeWarnings[defaultType.kotlin]
-            if (warningMessage != null) {
-                logConfigFix(key, warningMessage)
+            typeWarnings[defaultType.kotlin]?.let {
+                logConfigFix(key, it)
                 configuration.set(key, defaultValue)
                 isValid = false
             }
@@ -158,7 +155,7 @@ open class DefaultConfigReader(
             val dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm-ss")
             val now = LocalDateTime.now()
             val date = dtf.format(now)
-            val backupFile = Path.of("plugins", "ServerSystem", "${filename}.backup-${date}").toFile()
+            val backupFile = ServerSystem.instance.dataPath.resolve("${filename}.backup-${date}").toFile()
 
             FileUtils.copyFile(file, backupFile)
 
@@ -170,22 +167,16 @@ open class DefaultConfigReader(
     }
 
     override fun getObject(path: String, def: Any?): Any? {
-        val configReader: DefaultConfigReader = _newReader ?: this
-
         configReader.ensureConfigHasValue(path)
         return configReader.configuration.get(path, def)
     }
 
     override fun getBoolean(path: String, def: Boolean): Boolean {
-        val configReader: DefaultConfigReader = _newReader ?: this
-
         configReader.ensureConfigHasValue(path)
         return configReader.configuration.getBoolean(path, def)
     }
 
     override fun getString(path: String, def: String?): String? {
-        val configReader: DefaultConfigReader = _newReader ?: this
-
         configReader.ensureConfigHasValue(path)
 
         // Allow `List<String>` to be consumed as a String by joining with line breaks
@@ -200,36 +191,26 @@ open class DefaultConfigReader(
     }
 
     override fun getInt(path: String, def: Int): Int {
-        val configReader: DefaultConfigReader = _newReader ?: this
-
         configReader.ensureConfigHasValue(path)
         return configReader.configuration.getInt(path, def)
     }
 
     override fun getLong(path: String, def: Long): Long {
-        val configReader: DefaultConfigReader = _newReader ?: this
-
         configReader.ensureConfigHasValue(path)
         return configReader.configuration.getLong(path, def)
     }
 
     override fun getDouble(path: String, def: Double): Double {
-        val configReader: DefaultConfigReader = _newReader ?: this
-
         configReader.ensureConfigHasValue(path)
         return configReader.configuration.getDouble(path, def)
     }
 
     override fun getItemStack(path: String, def: ItemStack?): ItemStack? {
-        val configReader: DefaultConfigReader = _newReader ?: this
-
         configReader.ensureConfigHasValue(path)
         return configReader.configuration.getItemStack(path, def)
     }
 
     override fun getStringList(path: String, def: MutableList<String>): MutableList<String> {
-        val configReader: DefaultConfigReader = _newReader ?: this
-
         configReader.ensureConfigHasValue(path)
         if (!configReader.configuration.isSet(path)) return def
 
@@ -242,15 +223,9 @@ open class DefaultConfigReader(
         return configReader.configuration.getStringList(path)
     }
 
-    override fun set(path: String, `object`: Any?) {
-        val configReader: DefaultConfigReader = _newReader ?: this
-
-        configReader.configuration.set(path, `object`)
-    }
+    override fun set(path: String, `object`: Any?) = configReader.configuration.set(path, `object`)
 
     override fun save() {
-        val configReader: DefaultConfigReader = _newReader ?: this
-
         try {
             configReader.configuration.save(configReader.file)
         } catch (exception: IOException) {
@@ -259,8 +234,6 @@ open class DefaultConfigReader(
     }
 
     override fun reload() {
-        val configReader: DefaultConfigReader = _newReader ?: this
-
         try {
             configReader.configuration.load(configReader.file)
         } catch (exception: IOException) {
@@ -283,16 +256,12 @@ open class DefaultConfigReader(
     override fun getConfigurationSection(path: String?): ConfigurationSection? {
         if (path == null) return null
 
-        val configReader: DefaultConfigReader = _newReader ?: this
-
         configReader.ensureConfigHasValue(path)
         return configReader.configuration.getConfigurationSection(path)
     }
 
     override fun isConfigurationSection(path: String?): Boolean {
         if (path == null) return false
-
-        val configReader: DefaultConfigReader = _newReader ?: this
 
         return configReader.configuration.isConfigurationSection(path)
     }
@@ -316,8 +285,7 @@ open class DefaultConfigReader(
             return
         }
 
-        val section = configuration.getConfigurationSection(partialPath)
-        if (section == null) {
+        val section = configuration.getConfigurationSection(partialPath) ?: run {
             restoreConfigValue(path)
             return
         }
@@ -335,7 +303,7 @@ open class DefaultConfigReader(
     private fun findClosestExistingParentPath(path: String): String {
         if (!path.contains(".")) return ""
 
-        val pathParts: Array<String?> = path.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val pathParts = path.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val currentPath = StringBuilder()
 
         for (i in 0..<pathParts.size - 1) {
@@ -397,7 +365,7 @@ open class DefaultConfigReader(
          * @return Map of types to warning messages
          */
         private fun initializeTypeWarnings(): MutableMap<KClass<*>?, String?> {
-            val typeWarnings = HashMap<KClass<*>?, String?>()
+            val typeWarnings = mutableMapOf<KClass<*>?, String?>()
             typeWarnings[String::class] = "should be a string"
             typeWarnings[Int::class] = "should be an integer"
             typeWarnings[Long::class] = "should be a long"

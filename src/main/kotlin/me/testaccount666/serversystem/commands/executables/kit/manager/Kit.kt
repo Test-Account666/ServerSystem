@@ -5,39 +5,25 @@ import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import java.util.Locale.getDefault
 
-class Kit(
-    val name: String,
-    val coolDown: Long,
-    val inventoryContents: Array<ItemStack?>
-) {
-    private var _displayName: String? = null
-
-    val displayName: String
-        get() {
-            if (_displayName != null) return _displayName!!
-            _displayName = name.lowercase(getDefault()).replaceFirstChar { it.uppercase() }
-
-            return _displayName!!
-        }
+class Kit(val name: String, val coolDown: Long, val inventoryContents: Array<ItemStack?>) {
+    val displayName by lazy { name.lowercase().replaceFirstChar { it.uppercase() } }
 
     fun giveKit(player: Player) {
         val inventory = player.inventory
-        val overflowItems = ArrayList<ItemStack>()
+        val overflowItems = mutableListOf<ItemStack>()
 
         handleInventoryItems(inventory, overflowItems)
         dropOverflowItems(player, overflowItems)
     }
 
     private fun handleInventoryItems(inventory: Inventory, overflowItems: MutableList<ItemStack>) {
-        for (index in inventoryContents.indices) {
-            val currentItem = inventory.getItem(index)
-            val newInventoryItem = inventoryContents[index] ?: continue
+        inventoryContents.forEachIndexed { index, newInventoryItem ->
+            newInventoryItem ?: return@forEachIndexed
 
-            if (!currentItem.isAir()) {
+            if (!inventory.getItem(index).isAir()) {
                 overflowItems.add(newInventoryItem)
-                continue
+                return@forEachIndexed
             }
 
             inventory.setItem(index, newInventoryItem)

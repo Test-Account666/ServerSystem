@@ -1,5 +1,3 @@
-@file:Suppress("FoldInitializerAndIfToElvis")
-
 package me.testaccount666.serversystem.userdata.money.vault
 
 import me.testaccount666.serversystem.ServerSystem
@@ -7,9 +5,11 @@ import me.testaccount666.serversystem.userdata.UserManager
 import me.testaccount666.serversystem.userdata.money.EconomyProvider
 import net.milkbowl.vault.economy.AbstractEconomy
 import net.milkbowl.vault.economy.EconomyResponse
-import java.math.BigDecimal
 
 class VaultEconomyProvider : AbstractEconomy() {
+    private val registry
+        get() = ServerSystem.instance.registry
+
     override fun isEnabled() = ServerSystem.instance.isEnabled
 
     override fun getName() = ServerSystem.instance.name
@@ -18,30 +18,16 @@ class VaultEconomyProvider : AbstractEconomy() {
 
     override fun fractionalDigits() = 2
 
-    override fun format(amount: Double): String {
-        val registry = ServerSystem.instance.registry
-        val economyProvider = registry.getService<EconomyProvider>()
-        return economyProvider.formatMoney(BigDecimal.valueOf(amount))
-    }
+    override fun format(amount: Double) = registry.getService<EconomyProvider>().formatMoney(amount.toBigDecimal())
 
-    override fun currencyNamePlural(): String? {
-        val registry = ServerSystem.instance.registry
-        val economyProvider = registry.getService<EconomyProvider>()
-        return economyProvider.currencyPlural
-    }
+    override fun currencyNamePlural() = registry.getService<EconomyProvider>().currencyPlural
 
-    override fun currencyNameSingular(): String? {
-        val registry = ServerSystem.instance.registry
-        val economyProvider = registry.getService<EconomyProvider>()
-        return economyProvider.currencySingular
-    }
+    override fun currencyNameSingular() = registry.getService<EconomyProvider>().currencySingular
 
     @Deprecated("Deprecated in Vault")
     override fun hasAccount(name: String): Boolean {
-        val registry = ServerSystem.instance.registry
         val userManager = registry.getService<UserManager>()
-        val user = userManager.getUserOrNull(name)
-        return user != null
+        return userManager.getUserOrNull(name) != null
     }
 
     @Deprecated("Deprecated in Vault")
@@ -49,7 +35,6 @@ class VaultEconomyProvider : AbstractEconomy() {
 
     @Deprecated("Deprecated in Vault")
     override fun getBalance(name: String): Double {
-        val registry = ServerSystem.instance.registry
         val userManager = registry.getService<UserManager>()
         val user = userManager.getUserOrNull(name) ?: return 0.0
 
@@ -64,14 +49,11 @@ class VaultEconomyProvider : AbstractEconomy() {
 
     @Deprecated("Deprecated in Vault")
     override fun has(name: String, amount: Double): Boolean {
-        val registry = ServerSystem.instance.registry
         val userManager = registry.getService<UserManager>()
         val user = userManager.getUserOrNull(name) ?: return false
 
         val offlineUser = user.offlineUser
-        val bankAccount = offlineUser.bankAccount
-
-        return bankAccount.hasEnoughMoney(BigDecimal.valueOf(amount))
+        return offlineUser.bankAccount.balance <= amount.toBigDecimal()
     }
 
     @Deprecated("Deprecated in Vault")
@@ -79,19 +61,16 @@ class VaultEconomyProvider : AbstractEconomy() {
 
     @Deprecated("Deprecated in Vault")
     override fun withdrawPlayer(name: String, amount: Double): EconomyResponse {
-        val registry = ServerSystem.instance.registry
         val userManager = registry.getService<UserManager>()
-        val user = userManager.getUserOrNull(name)
-        if (user == null) return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, "User not found!")
+        val user = userManager.getUserOrNull(name) ?: run {
+            return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, "User not found!")
+        }
 
         val offlineUser = user.offlineUser
         val bankAccount = offlineUser.bankAccount
 
-        bankAccount.withdraw(BigDecimal.valueOf(amount))
-
-        val newBalance = bankAccount.balance
-
-        return EconomyResponse(amount, newBalance.toDouble(), EconomyResponse.ResponseType.SUCCESS, "Withdraw successful!")
+        bankAccount.balance -= amount.toBigDecimal()
+        return EconomyResponse(amount, bankAccount.balance.toDouble(), EconomyResponse.ResponseType.SUCCESS, "Withdraw successful!")
     }
 
     @Deprecated("Deprecated in Vault")
@@ -99,19 +78,16 @@ class VaultEconomyProvider : AbstractEconomy() {
 
     @Deprecated("Deprecated in Vault")
     override fun depositPlayer(name: String, amount: Double): EconomyResponse {
-        val registry = ServerSystem.instance.registry
         val userManager = registry.getService<UserManager>()
-        val user = userManager.getUserOrNull(name)
-        if (user == null) return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, "User not found!")
+        val user = userManager.getUserOrNull(name) ?: run {
+            return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, "User not found!")
+        }
 
         val offlineUser = user.offlineUser
         val bankAccount = offlineUser.bankAccount
 
-        bankAccount.deposit(BigDecimal.valueOf(amount))
-
-        val newBalance = bankAccount.balance
-
-        return EconomyResponse(amount, newBalance.toDouble(), EconomyResponse.ResponseType.SUCCESS, "Deposit successful!")
+        bankAccount.balance += amount.toBigDecimal()
+        return EconomyResponse(amount, bankAccount.balance.toDouble(), EconomyResponse.ResponseType.SUCCESS, "Deposit successful!")
     }
 
     @Deprecated("Deprecated in Vault")
@@ -152,7 +128,7 @@ class VaultEconomyProvider : AbstractEconomy() {
         return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, "Bank member retrieval is not supported!")
     }
 
-    override fun getBanks(): MutableList<String> = mutableListOf()
+    override fun getBanks() = listOf<String>()
 
     @Deprecated("Deprecated in Vault")
     override fun createPlayerAccount(s: String?) = true

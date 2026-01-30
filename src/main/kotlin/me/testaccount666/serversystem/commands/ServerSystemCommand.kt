@@ -30,5 +30,6 @@ annotation class ServerSystemCommand(
      * 
      * @return The class that will handle tab completion for this command
      */
-    val tabCompleter: KClass<out ServerSystemTabCompleter> = DefaultTabCompleter::class
+    val tabCompleter: KClass<out ServerSystemTabCompleter> = DefaultTabCompleter::class,
+    val simpleCompletions: Array<SimpleCompletion> = []
 )

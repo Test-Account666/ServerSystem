@@ -4,9 +4,7 @@ import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.managers.config.ConfigurationManager
-import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
@@ -15,33 +13,39 @@ import org.bukkit.Location
 import org.bukkit.command.Command
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
-import org.bukkit.entity.Player
-import java.io.File
 import java.io.IOException
-import java.nio.file.Path
 import java.util.logging.Level
 
 @ServerSystemCommand("spawn", ["setspawn"])
 open class CommandSpawn : AbstractServerSystemCommand {
+    override fun getUsagePermission(command: Command): String {
+        if (command.name.equals("spawn", true)) return "Spawn.Use"
+        return "Spawn.Set"
+    }
+
     protected val spawnConfiguration: FileConfiguration
     val teleportOnJoin: Boolean
     val teleportOnFirstJoin: Boolean
 
-    private val _spawnFile: File = Path.of("plugins", "ServerSystem", "data", "spawn.yml").toFile()
+    private val _spawnFile = instance.dataPath.resolve("data").resolve("spawn.yml").toFile()
     protected var spawnLocation: Location? = null
+    override fun getSyntaxPath(command: Command?): String {
+        command ?: return "Spawn"
+        if (command.name.equals("spawn", true)) return "Spawn"
+        return "Generic"
+    }
 
     constructor() {
-        val legacySpawnFile = Path.of("plugins", "ServerSystem", "spawn.yml")
-        if (legacySpawnFile.toFile().exists()) {
-            legacySpawnFile.toFile().renameTo(_spawnFile)
+        val legacySpawnFile = instance.dataPath.resolve("spawn.yml").toFile()
+        if (legacySpawnFile.exists()) {
+            legacySpawnFile.renameTo(_spawnFile)
             log.info("Found 'spawn.yml' in wrong directory. It was moved to '${_spawnFile.absolutePath}'.")
         }
 
         spawnConfiguration = YamlConfiguration.loadConfiguration(_spawnFile)
 
         saveDefaultConfig()
-        val configManager = instance.registry.getService(ConfigurationManager::class.java)
-        val config = configManager.generalConfig
+        val config = getService<ConfigurationManager>().generalConfig
 
         teleportOnJoin = config.getBoolean("Join.Spawn.TeleportOnJoin", false)
         teleportOnFirstJoin = config.getBoolean("Join.Spawn.TeleportOnFirstJoin", false)
@@ -71,16 +75,14 @@ open class CommandSpawn : AbstractServerSystemCommand {
     }
 
     fun handleSpawnCommand(commandSender: User, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, "Spawn.Use")) return
-        if (handleConsoleWithNoTarget(commandSender, getSyntaxPath(null), label, arguments = arguments)) return
+        if (isConsoleWithNoTarget(commandSender, getSyntaxPath(null), label, arguments = arguments)) return
 
         if (spawnLocation == null) {
             command("Spawn.NoSpawnSet", commandSender).build()
             return
         }
 
-        val targetUser = getTargetUser(commandSender, arguments = arguments)
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
@@ -88,7 +90,7 @@ open class CommandSpawn : AbstractServerSystemCommand {
         val targetPlayer = targetUser.getPlayer()!!
         val isSelf = targetUser === commandSender
 
-        if (!isSelf && !checkOtherPermission(commandSender, "Spawn.Other", targetPlayer.name)) return
+        if (!isSelf && !checkPermission(commandSender, "Spawn.Other", targetPlayer.name)) return
 
         targetPlayer.teleport(spawnLocation!!)
 
@@ -100,12 +102,7 @@ open class CommandSpawn : AbstractServerSystemCommand {
     }
 
     private fun handleSetSpawnCommand(commandSender: User, label: String) {
-        if (!checkBasePermission(commandSender, "Spawn.Set")) return
-
-        if (commandSender is ConsoleUser) {
-            general("NotPlayer", commandSender).build()
-            return
-        }
+        if (!isPlayer(commandSender)) return
 
         val currentLocation = commandSender.getPlayer()!!.location
 
@@ -146,13 +143,5 @@ open class CommandSpawn : AbstractServerSystemCommand {
         } catch (exception: IOException) {
             throw RuntimeException("Error while trying to spawn 'spawn.yml'", exception)
         }
-    }
-
-    override fun getSyntaxPath(command: Command?) = "Spawn"
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        if (command.name.equals("spawn", true)) return hasCommandPermission(player, "Spawn.Use", false)
-
-        return hasCommandPermission(player, "Spawn.Set", false)
     }
 }

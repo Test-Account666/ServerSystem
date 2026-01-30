@@ -3,6 +3,8 @@ package me.testaccount666.serversystem.commands.management
 import io.github.classgraph.ClassGraph
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.commands.ServerSystemCommand
+import me.testaccount666.serversystem.commands.common.tabcompleters.SimpleTabCompleter
+import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabCompleter
 import me.testaccount666.serversystem.commands.wrappers.CommandExecutorWrapper
@@ -12,13 +14,11 @@ import me.testaccount666.serversystem.utils.ConstructorAccessor
 import me.testaccount666.serversystem.utils.FieldAccessor
 import me.testaccount666.serversystem.utils.MethodAccessor
 import org.bukkit.Bukkit
-import org.bukkit.Server
 import org.bukkit.command.Command
 import org.bukkit.command.PluginCommand
 import org.bukkit.command.SimpleCommandMap
+import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
-import java.util.*
-import java.util.function.Consumer
 
 class CommandManager(private val _configReader: ConfigReader) {
     private val _commandMapAccessor =
@@ -28,21 +28,19 @@ class CommandManager(private val _configReader: ConfigReader) {
             PluginCommand::class.java,
             String::class.java, Plugin::class.java
         )
-    private val _syncCommandsAccessor: Consumer<Server?> = MethodAccessor.createVoidAccessor(Bukkit.getServer().javaClass, "syncCommands")
-    private val _registeredCommands = HashSet<String>()
-    private val _registeredCommandInstances = HashSet<ServerSystemCommandExecutor>()
+    private val _syncCommandsAccessor = MethodAccessor.createVoidAccessor(Bukkit.getServer().javaClass, "syncCommands")
+    private val _registeredCommands = mutableSetOf<String>()
+    private val _registeredCommandInstances = mutableSetOf<ServerSystemCommandExecutor>()
 
-    fun getCommand(commandName: String): Command? {
-        return commandMap[commandName]
-    }
+    fun getCommand(commandName: String) = commandMap[commandName]
 
     fun getServerSystemCommand(commandName: String): PluginCommand? {
         return commandMap.values
             .filterIsInstance<PluginCommand>()
-            .find { pluginCommand ->
-                pluginCommand.name.equals(commandName, ignoreCase = true) &&
-                        pluginCommand.plugin === instance &&
-                        pluginCommand.executor is ServerSystemCommandExecutor
+            .find {
+                it.name.equals(commandName, true) &&
+                        it.plugin === instance &&
+                        it.executor is ServerSystemCommandExecutor
             }
     }
 
@@ -71,12 +69,16 @@ class CommandManager(private val _configReader: ConfigReader) {
         val commandMap = commandMap
 
         variantAliasMap.forEach { (variant, aliases) ->
-            var aliases = aliases
+            // Make aliases List modifiable
+            val aliases = aliases.toMutableList()
             aliases.forEach { commandMap.remove(it) }
 
-            val bukkitCommand = createCommand(variant)
-            bukkitCommand.setExecutor(CommandExecutorWrapper(command))
-            bukkitCommand.tabCompleter = TabCompleterWrapper(completer)
+            if (command is AbstractServerSystemCommand) command.variantLabelMap[variant] = aliases
+
+            val bukkitCommand = createCommand(variant).apply {
+                setExecutor(CommandExecutorWrapper(command))
+                tabCompleter = TabCompleterWrapper(completer)
+            }
 
             for (alias in aliases) {
                 commandMap[alias] = bukkitCommand
@@ -87,9 +89,6 @@ class CommandManager(private val _configReader: ConfigReader) {
 
                 _registeredCommandInstances.add(command)
             }
-
-            // Make aliases List modifiable
-            aliases = ArrayList(aliases)
 
             // Paper, for some reason, throws an error if the alias and command name are the same...
             aliases.remove(bukkitCommand.name)
@@ -116,10 +115,10 @@ class CommandManager(private val _configReader: ConfigReader) {
         _registeredCommandInstances.clear()
     }
 
-    val registeredCommands: Set<String>
+    val registeredCommands
         get() = _registeredCommands.toSet()
 
-    val registeredCommandInstances: Set<ServerSystemCommandExecutor>
+    val registeredCommandInstances
         get() = _registeredCommandInstances.toSet()
 
     @Suppress("UNCHECKED_CAST")
@@ -134,14 +133,12 @@ class CommandManager(private val _configReader: ConfigReader) {
         if (!isCommandEnabled(command)) return
 
         val variantAliasMap = buildVariantAliasMap(command, commandAnnotation.variants)
-        instantiateAndRegisterCommand(commandExecutor, commandAnnotation.tabCompleter.java, variantAliasMap, command)
+        instantiateAndRegisterCommand(commandExecutor, commandAnnotation.tabCompleter.java, variantAliasMap, command, commandAnnotation)
     }
 
-    private fun isCommandEnabled(command: String): Boolean = _configReader.getBoolean("Commands.${command}.Enabled")
+    private fun isCommandEnabled(command: String) = _configReader.getBoolean("Commands.${command}.Enabled")
 
-    private fun isVariantEnabled(command: String, variant: String): Boolean {
-        return _configReader.getBoolean("Commands.${command}.Variants.${variant}.Enabled")
-    }
+    private fun isVariantEnabled(command: String, variant: String) = _configReader.getBoolean("Commands.${command}.Variants.${variant}.Enabled")
 
     private fun buildVariantAliasMap(command: String, variants: Array<String>): Map<String, List<String>> {
         val variantAliasMap = HashMap<String, List<String>>()
@@ -160,25 +157,30 @@ class CommandManager(private val _configReader: ConfigReader) {
     }
 
     private fun getAliases(configPath: String): List<String> {
-        return Arrays.stream(
-            _configReader.getString(configPath, "")!!.split(",".toRegex())
-                .dropLastWhile { it.isEmpty() }.toTypedArray()
-        )
-            .map { obj -> obj.trim { it <= ' ' } }
-            .filter { alias -> alias.isNotEmpty() }
-            .toList()
+        return _configReader.getString(configPath, "")!!.split(",")
+            .dropLastWhile(String::isEmpty)
+            .map(String::trim)
+            .filter(String::isNotEmpty)
     }
 
     private fun instantiateAndRegisterCommand(
         commandExecutor: Class<ServerSystemCommandExecutor>,
         tabCompleter: Class<out ServerSystemTabCompleter>,
         variantAliasMap: Map<String, List<String>>,
-        command: String
+        command: String, commandAnnotation: ServerSystemCommand
     ) {
         try {
+            var simpleCompleter: SimpleTabCompleter? = null
+
+            commandAnnotation.simpleCompletions.takeIf { it.isNotEmpty() }?.let { simpleCompletions ->
+                simpleCompleter = SimpleTabCompleter(simpleCompletions.associate {
+                    (it.position + 1) to (if (it.isNull) null else it.values.toList())
+                })
+            }
+
             registerCommand(
                 commandExecutor.getDeclaredConstructor().newInstance(),
-                tabCompleter.getDeclaredConstructor().newInstance(),
+                simpleCompleter ?: tabCompleter.getDeclaredConstructor().newInstance(),
                 variantAliasMap
             )
         } catch (exception: Exception) {
@@ -190,6 +192,6 @@ class CommandManager(private val _configReader: ConfigReader) {
     fun syncCommands() {
         _syncCommandsAccessor.accept(Bukkit.getServer())
 
-        Bukkit.getOnlinePlayers().forEach { it.updateCommands() }
+        Bukkit.getOnlinePlayers().forEach(Player::updateCommands)
     }
 }

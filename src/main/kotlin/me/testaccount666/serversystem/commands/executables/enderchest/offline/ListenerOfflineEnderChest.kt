@@ -3,10 +3,11 @@ package me.testaccount666.serversystem.commands.executables.enderchest.offline
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.annotations.RequiredCommands
-import me.testaccount666.serversystem.commands.executables.enderchest.CommandEnderChest
+import me.testaccount666.serversystem.commands.executables.enderchest.online.CommandEnderChest
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.UserManager
+import me.testaccount666.serversystem.utils.ServiceExtensions.getService
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -22,9 +23,9 @@ class ListenerOfflineEnderChest : Listener {
     fun canRegister(requiredCommands: Set<ServerSystemCommandExecutor>): Boolean {
         var canRegister = false
 
-        requiredCommands.forEach { command ->
-            _enderChest = command as? CommandEnderChest ?: return@forEach
-            _enderChestLoader = command.offlineEnderChest.enderChestLoader ?: return@forEach
+        requiredCommands.forEach {
+            _enderChest = it as? CommandEnderChest ?: return@forEach
+            _enderChestLoader = it.offlineEnderChest.enderChestLoader ?: return@forEach
 
             canRegister = true
         }
@@ -36,8 +37,7 @@ class ListenerOfflineEnderChest : Listener {
     fun onViewedJoin(event: PlayerLoginEvent) {
         val viewedPlayer = event.getPlayer()
 
-        val inventory = _enderChestLoader.inventoryMap.getValue(viewedPlayer.uniqueId)
-        if (inventory == null) {
+        val inventory = _enderChestLoader.inventoryMap.getValue(viewedPlayer.uniqueId) ?: run {
             log.fine("OfflineEnderChest: No offline inventory found for player ${viewedPlayer.name}")
             return
         }
@@ -53,7 +53,7 @@ class ListenerOfflineEnderChest : Listener {
         Bukkit.getScheduler().runTaskLater(instance, Runnable {
             viewers.forEach { viewer ->
                 if (viewer !is Player) return@forEach
-                val cachedUser = instance.registry.getService<UserManager>().getUserOrNull(viewer) ?: return@forEach
+                val cachedUser = getService<UserManager>().getUserOrNull(viewer) ?: return@forEach
 
                 if (cachedUser.isOfflineUser) return@forEach
                 val user = cachedUser.offlineUser as User
@@ -65,9 +65,6 @@ class ListenerOfflineEnderChest : Listener {
     @EventHandler
     fun onInventoryClose(event: InventoryCloseEvent) {
         val inventory = event.inventory
-
-        if (!_enderChestLoader.inventoryMap.containsValue(inventory)) return
-
         val uuid = _enderChestLoader.inventoryMap.getKey(inventory) ?: return
 
         _enderChestLoader.inventoryMap.removeByValue(inventory)

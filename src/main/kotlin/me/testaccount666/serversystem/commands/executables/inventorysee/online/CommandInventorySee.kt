@@ -4,8 +4,6 @@ import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.inventorysee.offline.CommandOfflineInventorySee
 import me.testaccount666.serversystem.commands.executables.inventorysee.utils.InventorySeeUtils
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
-import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
@@ -19,6 +17,21 @@ import org.bukkit.inventory.Inventory
 class CommandInventorySee : AbstractServerSystemCommand() {
     val inventoryCache: MutableMap<Player, Inventory> = HashMap()
     val offlineInventorySee = CommandOfflineInventorySee(this)
+    override fun minRequiredArguments(command: Command): Int {
+        if (isOffline(command)) return offlineInventorySee.minRequiredArguments(command)
+        return 1
+    }
+
+    override fun getUsagePermission(command: Command): String {
+        if (isOffline(command)) return offlineInventorySee.getUsagePermission(command)
+        return "InventorySee.Use"
+    }
+
+    override fun getSyntaxPath(command: Command?): String {
+        command ?: return "InventorySee"
+        if (isOffline(command)) return offlineInventorySee.getSyntaxPath(command)
+        return "InventorySee"
+    }
 
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
         if (command.name.startsWith("offline", true)) {
@@ -31,23 +44,9 @@ class CommandInventorySee : AbstractServerSystemCommand() {
     }
 
     fun processInventorySee(sender: User, label: String, vararg arguments: String) {
-        if (!checkBasePermission(sender, "InventorySee.Use")) return
+        if (!isPlayer(sender)) return
 
-        if (sender is ConsoleUser) {
-            general("NotPlayer", sender).build()
-            return
-        }
-
-        if (arguments.isEmpty()) {
-            general("InvalidArguments", sender) {
-                syntax(getSyntaxPath(null))
-                label(label)
-            }.build()
-            return
-        }
-
-        val targetUser = getTargetUser(sender, arguments = arrayOf(arguments[0]))
-        if (targetUser == null) {
+        val targetUser = getTargetUser(sender, arguments = arrayOf(arguments[0])) ?: run {
             general("PlayerNotFound", sender) { target(arguments[0]) }.build()
             return
         }
@@ -110,11 +109,5 @@ class CommandInventorySee : AbstractServerSystemCommand() {
         }
     }
 
-    override fun getSyntaxPath(command: Command?) = "InventorySee"
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        if (command.name.startsWith("offline", true)) return offlineInventorySee.hasCommandAccess(player, command)
-
-        return hasCommandPermission(player, "InventorySee.Use", false)
-    }
+    private fun isOffline(command: Command) = command.name.startsWith("offline", true)
 }

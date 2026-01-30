@@ -81,7 +81,7 @@ Messages:
     SetHome:
       Success: "Du hast das Zuhause <Color:Highlight><HOME><Color:Message> erstellt."
       AlreadyExists: "<Color:Error.Message>Das angegebene Zuhause <Color:Error.Highlight><HOME> <Color:Error.Message>existiert bereits."
-      MaxHomes: "<Color:Error.Message>Du hast bereits dein Zuhause-Limit erreicht: <Color:Error.Highlight><CURRENT_HOMES><Color:Error.Message>/<Color:Error.Highlight><MAX_HOMES><Color:Error.Message>."
+      MaxReached: "<Color:Error.Message>Du hast bereits dein Zuhause-Limit erreicht."
       InvalidName: "<Color:Error.Message>Der angegebene Name ist nicht alphanumerisch."
     Economy:
       Give:
@@ -280,12 +280,14 @@ Messages:
     Warp:
       Set:
         Success: "Der Warp <Color:Highlight><WARP> <Color:Message>wurde auf deine aktuelle Position gesetzt."
-        WarpAlreadyExists: "<Color:Error.Message>Der angegebene Warp <Color:Error.Highlight><WARP> <Color:Error.Message>existiert bereits."
+        AlreadyExists: "<Color:Error.Message>Der angegebene Warp <Color:Error.Highlight><WARP> <Color:Error.Message>existiert bereits."
         InvalidName: "<Color:Error.Message>Der angegebene Name ist nicht alphanumerisch."
       Delete:
         Success: "Der Warp <Color:Highlight><WARP> <Color:Message>wurde gelöscht."
-      WarpNotFound: "<Color:Error.Message>Der angegebene Warp <Color:Error.Highlight><WARP> <Color:Error.Message>existiert nicht."
-      Success: "Du wurdest zu <Color:Highlight><WARP><Color:Message> teleportiert."
+        DoesNotExist: "<Color:Error.Message>Der angegebene Warp <Color:Error.Highlight><WARP> <Color:Error.Message>existiert nicht."
+      Teleport:
+        DoesNotExist: "<Color:Error.Message>Der angegebene Warp <Color:Error.Highlight><WARP> <Color:Error.Message>existiert nicht."
+        Success: "Du wurdest zu <Color:Highlight><WARP><Color:Message> teleportiert."
     Kit:
       Create:
         KitAlreadyExists: "<Color:Error.Message>Das Kit <Color:Error.Highlight><KIT> <Color:Error.Message>existiert bereits."
@@ -394,6 +396,7 @@ Messages:
       SetNone: "Kosten erfolgreich vom Schild entfernt."
       Set: "Kosten auf <Color:Highlight><TYPE> <Color:Message>mit Betrag <Color:Highlight><AMOUNT><Color:Message> gesetzt."
   Syntax:
+    Generic: "</LABEL>"
     Balance: "/<LABEL> (Spieler)"
     Ban: "/<LABEL> [Spieler] [Zeit] (Grund...)"
     Broadcast: "/<LABEL> [Nachricht...]"
@@ -438,6 +441,7 @@ Messages:
     Sudo: "/<LABEL> [Spieler] [Befehl] (Argumente...)"
     TeamChat: "/<LABEL> [Nachricht...]"
     Teleport: "/<LABEL> [Spieler] (Spieler)"
+    TeleportHere: "/<LABEL> [Spieler]"
     TeleportPosition: "/<LABEL> (Spieler) [X] [Y] [Z] [Yaw] [Pitch] [Welt]"
     TeleportAsk: "/<LABEL> [Spieler]"
     TeleportToggle: "/<LABEL> (Spieler)"

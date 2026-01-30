@@ -6,7 +6,7 @@ import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.managers.config.ConfigurationManager
 import me.testaccount666.serversystem.utils.ChatColor.Companion.stripColor
-import me.testaccount666.serversystem.utils.ComponentColor.Companion.componentToString
+import me.testaccount666.serversystem.utils.ComponentColor.componentToString
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.net.URI
@@ -45,16 +45,21 @@ class ListenerMinecraftDiscordChat : Listener {
             jsonObject.addProperty("username", event.getPlayer().name)
             jsonObject.addProperty("avatar_url", "https://minotar.net/armor/bust/${event.getPlayer().name}/500.png")
 
-            val request = HttpRequest.newBuilder()
-                .uri(_webHookUri)
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonObject.toString()))
-                .build()
-            httpClient.sendAsync<String?>(request, HttpResponse.BodyHandlers.ofString())
-                .exceptionally(Function { exception ->
-                    log.log(Level.SEVERE, "Couldn't send Minecraft Discord Chat message to Webhook '${_webHookUri}'", exception)
-                    null
-                })
+            val request =
+                HttpRequest
+                    .newBuilder()
+                    .uri(_webHookUri)
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonObject.toString()))
+                    .build()
+            httpClient
+                .sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .exceptionally(
+                    Function { exception ->
+                        log.log(Level.SEVERE, "Couldn't send Minecraft Discord Chat message to Webhook '${_webHookUri}'", exception)
+                        null
+                    },
+                )
         }
     }
 }

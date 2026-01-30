@@ -8,14 +8,12 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 abstract class AbstractCommandWrapper {
-    companion object {
-        internal fun resolveCommandUser(commandSender: CommandSender): User? {
-            if (commandSender !is Player) return consoleUser
+    internal fun resolveCommandUser(commandSender: CommandSender): User? {
+        if (commandSender !is Player) return consoleUser
 
-            val cachedUser = instance.registry.getService<UserManager>().getUserOrNull(commandSender) ?: return null
-            if (cachedUser.isOfflineUser) return null
+        val cachedUser = instance.registry.getService<UserManager>().getUserOrNull(commandSender) ?: return null
+        if (cachedUser.isOfflineUser) return null
 
-            return cachedUser.offlineUser as User
-        }
+        return cachedUser.offlineUser as User
     }
 }

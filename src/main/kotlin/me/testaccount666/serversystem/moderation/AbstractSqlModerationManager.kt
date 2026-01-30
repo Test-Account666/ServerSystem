@@ -7,7 +7,7 @@ import java.util.*
 
 abstract class AbstractSqlModerationManager<T : AbstractModeration>(ownerUuid: UUID) : AbstractModerationManager<T>(ownerUuid) {
 
-    private val sqlDatabaseManager: AbstractSqlDatabaseManager
+    private val sqlDatabaseManager
         get() = databaseManager as AbstractSqlDatabaseManager
 
     protected abstract val moderationTypes: List<String>
@@ -44,9 +44,7 @@ abstract class AbstractSqlModerationManager<T : AbstractModeration>(ownerUuid: U
                         statement.setString(1, moderation.targetUuid.toString())
                         statement.setString(2, moderation.senderUuid.toString())
                         statement.setLong(3, moderation.issueTime)
-                        for (i in moderationTypes.indices) {
-                            statement.setString(4 + i, moderationTypes[i])
-                        }
+                        moderationTypes.forEachIndexed { i, type -> statement.setString(4 + i, type) }
                         statement.executeUpdate()
                     }
             }
@@ -63,15 +61,13 @@ abstract class AbstractSqlModerationManager<T : AbstractModeration>(ownerUuid: U
                     connection.prepareStatement("SELECT * FROM Moderation WHERE TargetUUID = ? AND ($typePlaceholders)")
                         .use { statement ->
                             statement.setString(1, ownerUuid.toString())
-                            for (i in moderationTypes.indices) {
-                                statement.setString(2 + i, moderationTypes[i])
-                            }
+                            moderationTypes.forEachIndexed { i, type -> statement.setString(2 + i, type) }
                             statement.executeQuery().use { resultSet ->
-                                val moderations = ArrayList<T>()
-                                while (resultSet.next()) {
-                                    moderations.add(mapResultSet(resultSet))
+                                return buildList {
+                                    while (resultSet.next()) {
+                                        add(mapResultSet(resultSet))
+                                    }
                                 }
-                                return moderations
                             }
                         }
                 }

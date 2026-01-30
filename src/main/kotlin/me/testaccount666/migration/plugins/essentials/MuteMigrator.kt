@@ -4,92 +4,80 @@ import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.moderation.MuteModeration
 import me.testaccount666.serversystem.userdata.UserManager.Companion.consoleUser
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
+import java.util.logging.Level
 
 class MuteMigrator : AbstractMigrator() {
     override fun migrateFrom(): Int {
-        var count = 0
+        return essentials.users.allUserUUIDs.count { uuid ->
+            runCatching {
+                val cachedUser = userManager.getUserOrNull(uuid) ?: run {
+                    log.warning("Couldn't find user '${uuid}', skipping state migration!")
+                    return@count false
+                }
 
-        val userManager = userManager
-        val essentials = essentials
-        val uuids = essentials.users.allUserUUIDs
+                val essentialsUser = essentials.getUser(uuid)
+                val user = cachedUser.offlineUser
 
-        for (uuid in uuids) {
-            val cachedUser = userManager.getUserOrNull(uuid)
-            if (cachedUser == null) {
-                log.warning("Couldn't find user '${uuid}', skipping state migration!")
-                continue
-            }
+                if (!essentialsUser.isMuted) return@count false
 
-            val essentialsUser = essentials.getUser(uuid)
-            val user = cachedUser.offlineUser
+                val defaultReason = command("Moderation.DefaultReason", consoleUser) {
+                    target(essentialsUser.name)
+                    prefix(false)
+                    send(false)
+                    blankError(true)
+                }.build()
 
-            if (!essentialsUser.isMuted) continue
+                if (defaultReason.isEmpty()) {
+                    log.severe("(MuteMigrator) Default reason is empty! This should not happen!")
+                    return@count false
+                }
 
-            val defaultReason = command("Moderation.DefaultReason", consoleUser) {
-                target(essentialsUser.name)
-                prefix(false)
-                send(false)
-                blankError(true)
-            }.build()
-            if (defaultReason.isEmpty()) {
-                log.severe("(MuteMigrator) Default reason is empty! This should not happen! (Mute Migration cancelled)")
-                return count
-            }
+                val muteManager = user.muteManager
+                val expireTime = essentialsUser.muteTimeout
+                val issueTime = System.currentTimeMillis() // Issue time is lost
 
-            val muteManager = user.muteManager
-            val expireTime = essentialsUser.muteTimeout
-            val issueTime = System.currentTimeMillis() // Issue time is lost
+                val reason = essentialsUser.muteReason ?: defaultReason
 
-            var reason = essentialsUser.muteReason
-            if (reason == null) reason = defaultReason
+                val senderUUID = consoleUser.uuid // Sender UUID is lost
+                val targetUUID = user.uuid
 
-            val senderUUID = consoleUser.uuid // Sender UUID is lost
-            val targetUUID = user.uuid
+                muteManager.addModeration(
+                    MuteModeration.builder().isShadowMute(false)
+                        .targetUuid(targetUUID).issueTime(issueTime).expireTime(expireTime)
+                        .senderUuid(senderUUID).reason(reason).build()
+                )
+                user.save()
 
-            muteManager.addModeration(
-                MuteModeration.builder().isShadowMute(false)
-                    .targetUuid(targetUUID).issueTime(issueTime).expireTime(expireTime)
-                    .senderUuid(senderUUID).reason(reason).build()
-            )
-            user.save()
-
-            count += 1
+                return@runCatching true
+            }.onFailure { log.log(Level.WARNING, "Couldn't migrate mute for '${uuid}'", it) }.getOrDefault(false)
         }
-
-        return count
     }
 
     override fun migrateTo(): Int {
-        var count = 0
-
-        val userManager = userManager
-        val essentials = essentials
-
-        for (player in offlinePlayers()) {
+        return offlinePlayers().count { player ->
             val uuid = player.uniqueId
 
-            val cachedUser = userManager.getUserOrNull(uuid)
-            if (cachedUser == null) {
-                log.warning("Couldn't find user '${uuid}', skipping mute migration!")
-                continue
-            }
+            runCatching {
+                val cachedUser = userManager.getUserOrNull(uuid) ?: run {
+                    log.warning("Couldn't find user '${uuid}', skipping mute migration!")
+                    return@count false
+                }
 
-            val user = cachedUser.offlineUser
+                val user = cachedUser.offlineUser
 
-            ensureUserDataExists(uuid)
-            val essentialsUser = essentials.getUser(uuid)
+                ensureUserDataExists(uuid)
+                val essentialsUser = essentials.getUser(uuid)
 
-            val muteManager = user.muteManager
-            val mute = muteManager.activeModeration ?: continue
+                val muteManager = user.muteManager
+                val mute = muteManager.activeModeration ?: return@count false
 
-            essentialsUser.muted = true
-            essentialsUser.muteReason = mute.reason
-            essentialsUser.muteTimeout = mute.expireTime
+                essentialsUser.muted = true
+                essentialsUser.muteReason = mute.reason
+                essentialsUser.muteTimeout = mute.expireTime
 
-            // Again, `issueTime` and `senderUUID` is lost
-            count += 1
+                // Again, `issueTime` and `senderUUID` is lost
+                return@runCatching true
+            }.onFailure { log.log(Level.WARNING, "Couldn't migrate mute for '${uuid}'", it) }.getOrDefault(false)
         }
-
-        return count
     }
 }

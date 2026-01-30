@@ -32,8 +32,7 @@ class MySqlModerationDatabaseManager
         val isClosed = dataSource?.isClosed ?: true
         if (!isClosed) return
 
-        val reader = configReader
-        if (reader == null) {
+        val reader = configReader ?: run {
             log.warning("Failed to initialize MySQL connection pool for $databaseType: No configuration found.")
             return
         }

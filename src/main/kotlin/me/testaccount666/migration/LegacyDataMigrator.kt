@@ -4,8 +4,8 @@ import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.executables.kit.manager.Kit
 import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager
-import me.testaccount666.serversystem.commands.executables.warp.manager.Warp
-import me.testaccount666.serversystem.commands.executables.warp.manager.WarpManager
+import me.testaccount666.serversystem.commands.executables.waypoints.warp.manager.Warp
+import me.testaccount666.serversystem.commands.executables.waypoints.warp.manager.WarpManager
 import me.testaccount666.serversystem.moderation.AbstractModeration
 import me.testaccount666.serversystem.moderation.BanModeration
 import me.testaccount666.serversystem.moderation.MuteModeration
@@ -27,24 +27,23 @@ import java.sql.DriverManager
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.util.*
-import java.util.function.Consumer
 import java.util.logging.Level
 
+//TODO: Remove this class
+@Deprecated("This class is deprecated and will be removed in v4.4.0!")
 class LegacyDataMigrator {
     private lateinit var _legacyDataDirectory: File
     private var _foundLegacyData = false
 
     /**
      * Retrieves an offline user by UUID.
-     * 
+     *
      * @param uuid The UUID of the user to retrieve
      * @return Optional containing the offline user if found, empty otherwise
      */
     private fun getOfflineUser(uuid: UUID): OfflineUser? {
         val userManager = instance.registry.getService<UserManager>()
-        val user = userManager.getUserOrNull(uuid)
-
-        if (user == null) {
+        val user = userManager.getUserOrNull(uuid) ?: run {
             log.warning("Could not find user with UUID: ${uuid}")
             return null
         }
@@ -54,7 +53,7 @@ class LegacyDataMigrator {
 
     /**
      * Logs a message with the specified level.
-     * 
+     *
      * @param level   The log level
      * @param message The message to log
      */
@@ -62,7 +61,7 @@ class LegacyDataMigrator {
 
     /**
      * Logs a message with the specified level and exception.
-     * 
+     *
      * @param level     The log level
      * @param message   The message to log
      * @param exception The exception to log
@@ -71,7 +70,7 @@ class LegacyDataMigrator {
 
     /**
      * Processes database records using a generic approach.
-     * 
+     *
      * @param connection      The database connection
      * @param query           The SQL query to execute
      * @param recordType      The type of records being processed (for logging)
@@ -98,13 +97,13 @@ class LegacyDataMigrator {
 
     /**
      * Opens a database connection with the given URL.
-     * 
+     *
      * @param url       The JDBC URL
      * @param processor The function to process the connection
      */
-    private fun withConnection(url: String, processor: Consumer<Connection>) {
+    private fun withConnection(url: String, processor: (Connection) -> Unit) {
         try {
-            DriverManager.getConnection(url).use { processor.accept(it) }
+            DriverManager.getConnection(url).use { processor(it) }
         } catch (exception: SQLException) {
             log(Level.SEVERE, "Error connecting to database: ${exception.message}", exception)
         }
@@ -112,21 +111,24 @@ class LegacyDataMigrator {
 
     /**
      * Applies moderation to a user.
-     * 
+     *
      * @param targetUuid The UUID of the target user
      * @param moderation The moderation to apply
      */
     private fun applyModeration(targetUuid: UUID, moderation: AbstractModeration) {
         val user = getOfflineUser(targetUuid) ?: return
 
-        if (moderation is BanModeration) user.banManager.addModeration(moderation)
-        if (moderation is MuteModeration) user.muteManager.addModeration(moderation)
+        when (moderation) {
+            is BanModeration -> user.banManager.addModeration(moderation)
+            is MuteModeration -> user.muteManager.addModeration(moderation)
+        }
     }
 
+    @Deprecated("This method is deprecated and will be removed in v4.4.0!")
     val isLegacyDataPresent: Boolean
         /**
          * Checks if legacy data is present that needs to be migrated.
-         * 
+         *
          * @return true if legacy data is present, false otherwise
          */
         get() {
@@ -143,10 +145,10 @@ class LegacyDataMigrator {
                 if (verInt < 300) return true
 
                 val split = previousVersion.split("".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                previousVersion = split.joinToString { "." }.trim { it <= ' ' }
+                previousVersion = split.joinToString { "." }.trim()
 
                 if (previousVersion.startsWith(".")) previousVersion = previousVersion.drop(1)
-                if (previousVersion.endsWith(".")) previousVersion = previousVersion.substring(0, previousVersion.length - 1)
+                if (previousVersion.endsWith(".")) previousVersion = previousVersion.dropLast(1)
                 if (previousVersion.isEmpty()) return true
             } catch (_: NumberFormatException) {
                 return true
@@ -158,6 +160,7 @@ class LegacyDataMigrator {
     /**
      * Prepares for migration by renaming the current data directory to a backup directory.
      */
+    @Deprecated("This method is deprecated and will be removed in v4.4.0!")
     fun prepareMigration() {
         val directory = instance.dataFolder
         if (!directory.exists()) return
@@ -170,6 +173,7 @@ class LegacyDataMigrator {
     /**
      * Migrates all legacy data.
      */
+    @Deprecated("This method is deprecated and will be removed in v4.4.0!")
     fun migrateLegacyData() {
         if (!_foundLegacyData) return
         migrateModerationAndEconomy()
@@ -187,8 +191,7 @@ class LegacyDataMigrator {
         val legacyKitsConfig = YamlConfiguration.loadConfiguration(legacyKitsFile)
         log(Level.INFO, "Legacy Kits Data detected. Migrating...")
 
-        val kitsSection = legacyKitsConfig.getConfigurationSection("Kits")
-        if (kitsSection == null) {
+        val kitsSection = legacyKitsConfig.getConfigurationSection("Kits") ?: run {
             log(Level.WARNING, "No kits found in legacy kits file")
             return
         }
@@ -264,21 +267,18 @@ class LegacyDataMigrator {
             val pitch = legacyWarpsConfig.getDouble("${prefix}.Pitch").toFloat()
             val worldName = legacyWarpsConfig.getString("${prefix}.World") ?: ""
 
-            val world = Bukkit.getWorld(worldName)
-            if (world == null) {
+            val world = Bukkit.getWorld(worldName) ?: run {
                 log(Level.WARNING, "World '${worldName}' not found for warp '${warpName}', skipping")
                 continue
             }
 
             val location = Location(world, x, y, z, yaw, pitch)
-            val warp = Warp.of(warpName, location)
-
-            if (warp == null) {
+            val warp = Warp.of(warpName, location) ?: run {
                 log(Level.WARNING, "Warp name '${warpName}' contains invalid characters, skipping")
                 continue
             }
 
-            warpManager.addWarp(warp)
+            warpManager.addPoint(warp)
             migratedCount++
         } catch (exception: Exception) {
             log(Level.WARNING, "Failed to migrate warp '${warpName}'", exception)
@@ -316,7 +316,7 @@ class LegacyDataMigrator {
 
     /**
      * Migrates homes for a specific user.
-     * 
+     *
      * @param uuid              The UUID of the user
      * @param legacyHomesConfig The legacy homes configuration
      * @return The number of homes migrated
@@ -331,13 +331,12 @@ class LegacyDataMigrator {
 
         for (homeName in homeNames) try {
             val location = legacyHomesConfig.getLocation("Homes.${homeName}") ?: continue
-            val home = Home.of(homeName, location)
-            if (home == null) {
+            val home = Home.of(homeName, location) ?: run {
                 log(Level.WARNING, "Home name '${homeName}' (${uuid}) contains invalid characters, skipping")
                 continue
             }
 
-            user.homeManager.addHome(home)
+            user.homeManager.addPoint(home)
             migratedCount++
         } catch (exception: Exception) {
             log(Level.WARNING, "Failed to migrate home '${homeName}' for ${uuid}: ${exception.message}", exception)
@@ -380,18 +379,18 @@ class LegacyDataMigrator {
 
     /**
      * Migrates ban data from a SQLite file.
-     * 
+     *
      * @param bansFile The SQLite file containing ban data
      */
     private fun migrateBansFile(bansFile: File) {
         log(Level.INFO, "Migrating bans from legacy database: ${bansFile.absolutePath}")
         val url = "jdbc:sqlite:${bansFile.absolutePath}"
-        withConnection(url) { connection -> processBanRecords(connection, "Sqlite Ban") }
+        withConnection(url) { processBanRecords(it, "Sqlite Ban") }
     }
 
     /**
      * Processes ban records from a database.
-     * 
+     *
      * @param connection The database connection
      * @param recordType The type of records being processed (for logging)
      */
@@ -417,7 +416,7 @@ class LegacyDataMigrator {
 
     /**
      * Parses a sender UUID string, falling back to the console UUID if invalid.
-     * 
+     *
      * @param senderUuidStr The sender UUID string to parse
      * @return The parsed UUID, or the console UUID if the input is invalid
      */
@@ -432,7 +431,7 @@ class LegacyDataMigrator {
 
     /**
      * Migrates mute data from a SQLite file.
-     * 
+     *
      * @param mutesFile The SQLite file containing mute data
      */
     private fun migrateMutesFile(mutesFile: File) {
@@ -443,7 +442,7 @@ class LegacyDataMigrator {
 
     /**
      * Processes mute records from a database.
-     * 
+     *
      * @param connection The database connection
      * @param recordType The type of records being processed (for logging)
      */
@@ -470,7 +469,7 @@ class LegacyDataMigrator {
 
     /**
      * Migrates economy data from a SQLite file.
-     * 
+     *
      * @param economyFile The SQLite file containing economy data
      */
     private fun migrateEconomyFile(economyFile: File) {
@@ -481,7 +480,7 @@ class LegacyDataMigrator {
 
     /**
      * Processes economy records from a database.
-     * 
+     *
      * @param connection The database connection
      * @param query      The SQL query to execute
      * @param recordType The type of records being processed (for logging)
@@ -499,7 +498,7 @@ class LegacyDataMigrator {
 
     /**
      * Migrates data from MySQL configuration.
-     * 
+     *
      * @param legacyConfig The legacy configuration
      */
     private fun migrateMySqlConfig(legacyConfig: FileConfiguration) {
@@ -527,7 +526,7 @@ class LegacyDataMigrator {
 
     /**
      * Migrates data from H2 configuration.
-     * 
+     *
      * @param legacyConfig The legacy configuration
      */
     private fun migrateH2Config(legacyConfig: FileConfiguration) {
@@ -556,7 +555,7 @@ class LegacyDataMigrator {
 
     /**
      * Migrates economy data from MySQL.
-     * 
+     *
      * @param connection The database connection
      * @param serverName The server name to filter by
      */
@@ -566,14 +565,14 @@ class LegacyDataMigrator {
 
     /**
      * Migrates ban data from MySQL.
-     * 
+     *
      * @param connection The database connection
      */
     private fun migrateBansFromMySql(connection: Connection) = processBanRecords(connection, "MySQL ban")
 
     /**
      * Migrates data from an H2 database file.
-     * 
+     *
      * @param h2File The H2 database file
      * @param type   The type of data to migrate
      */
@@ -581,7 +580,7 @@ class LegacyDataMigrator {
         log(Level.INFO, "Migrating ${type} from H2 database: ${h2File.absolutePath}")
 
         var h2Path = h2File.absolutePath
-        if (h2Path.endsWith(".h2.db")) h2Path = h2Path.substring(0, h2Path.length - 6) // Remove .h2.db extension
+        if (h2Path.endsWith(".h2.db", true)) h2Path = h2Path.dropLast(6) // Remove .h2.db extension
 
         val url = "jdbc:h2:file:${h2Path}"
 
@@ -592,9 +591,9 @@ class LegacyDataMigrator {
             withConnection(url) { connection ->
                 log(Level.INFO, "Successfully connected to H2 database.")
                 when {
-                    type.equals("economy", ignoreCase = true) -> processEconomyRecords(connection, "SELECT * FROM Economy", "H2 economy")
-                    type.equals("bans", ignoreCase = true) -> processBanRecords(connection, "H2 ban")
-                    type.equals("mutes", ignoreCase = true) -> processMuteRecords(connection, "H2 mute")
+                    type.equals("economy", true) -> processEconomyRecords(connection, "SELECT * FROM Economy", "H2 economy")
+                    type.equals("bans", true) -> processBanRecords(connection, "H2 ban")
+                    type.equals("mutes", true) -> processMuteRecords(connection, "H2 mute")
                 }
             }
         } catch (exception: ClassNotFoundException) {

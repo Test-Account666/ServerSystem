@@ -6,41 +6,29 @@ import java.util.logging.Level
 
 class HomeMigrator : AbstractMigrator() {
     override fun migrateFrom(): Int {
-        var count = 0
-
-        val userManager = userManager
-        val essentials = essentials
-        val uuids = essentials.users.allUserUUIDs
-
-        for (uuid in uuids) {
-            val userOptional = userManager.getUserOrNull(uuid)
-            if (userOptional == null) {
-                log.warning("Couldn't find user '${uuid}', skipping home migration!")
-                continue
+        val count = essentials.users.allUserUUIDs.sumOf {
+            val cachedUser = userManager.getUserOrNull(it) ?: run {
+                log.warning("Couldn't find user '${it}', skipping home migration!")
+                return@sumOf 0
             }
 
-            count += migrateFrom(userOptional.offlineUser)
+            return@sumOf migrateFrom(cachedUser.offlineUser)
         }
 
         return count
     }
 
     private fun migrateFrom(user: OfflineUser): Int {
-        var count = 0
-
-        val homeManager = user.homeManager
-        val essentials = essentials
-
         val essentialsUser = essentials.getUser(user.uuid)
-        for (homeName in essentialsUser.homes) try {
-            val location = essentialsUser.getHome(homeName)
+        val count = essentialsUser.homes.count { homeName ->
+            runCatching {
+                val location = essentialsUser.getHome(homeName)
 
-            homeManager.addHome(homeName, location)
-            count += 1
-        } catch (exception: Exception) {
-            val userName = user.getNameSafe()
-
-            log.log(Level.WARNING, "Couldn't migrate home '${homeName}' for user '${user.uuid}' (${userName})", exception)
+                user.homeManager.addPoint(homeName, location)
+                return@runCatching true
+            }.onFailure {
+                log.log(Level.WARNING, "Couldn't migrate home '${homeName}' for user '${user.uuid}' (${user.getNameSafe()})", it)
+            }.getOrDefault(false)
         }
 
         user.save()
@@ -49,47 +37,33 @@ class HomeMigrator : AbstractMigrator() {
     }
 
     override fun migrateTo(): Int {
-        var count = 0
+        val count = offlinePlayers().sumOf {
+            val uuid = it.uniqueId
 
-        val userManager = userManager
-
-        for (player in offlinePlayers()) {
-            val uuid = player.uniqueId
-
-            val userOptional = userManager.getUserOrNull(uuid)
-            if (userOptional == null) {
+            val cachedUser = userManager.getUserOrNull(uuid) ?: run {
                 log.warning("Couldn't find user '${uuid}', skipping home migration!")
-                continue
+                return@sumOf 0
             }
 
-            count += migrateTo(userOptional.offlineUser)
+            return@sumOf migrateTo(cachedUser.offlineUser)
         }
 
         return count
     }
 
     private fun migrateTo(user: OfflineUser): Int {
-        var count = 0
-
-        val homeManager = user.homeManager
-        val essentials = essentials
-
         ensureUserDataExists(user.uuid)
         val essentialsUser = essentials.getUser(user.uuid)
 
-        for (home in homeManager.homes) {
-            val homeName = home.displayName
-            val location = home.location
-
-            try {
+        val count = user.homeManager.waypoints.count { home ->
+            runCatching {
+                val homeName = home.displayName
+                val location = home.location
                 essentialsUser.setHome(homeName, location)
-
-                count += 1
-            } catch (exception: Exception) {
-                val userName = user.getNameSafe()
-
-                log.log(Level.WARNING, "Couldn't migrate home '${homeName}' for user '${user.uuid}' (${userName})", exception)
-            }
+                return@runCatching true
+            }.onFailure {
+                log.log(Level.WARNING, "Couldn't migrate home '${home.displayName}' for user '${user.uuid}' (${user.getNameSafe()})", it)
+            }.getOrDefault(false)
         }
 
         return count

@@ -81,7 +81,7 @@ Messages:
     SetHome:
       Success: "You created the home <Color:Highlight><HOME><Color:Message>."
       AlreadyExists: "<Color:Error.Message>The specified home <Color:Error.Highlight><HOME> <Color:Error.Message>already exists."
-      MaxHomes: "<Color:Error.Message>You already reached your home limit: <Color:Error.Highlight><CURRENT_HOMES><Color:Error.Message>/<Color:Error.Highlight><MAX_HOMES><Color:Error.Message>."
+      MaxReached: "<Color:Error.Message>You already reached your home limit."
       InvalidName: "<Color:Error.Message>The specified name is not alphanumeric."
     Economy:
       Give:
@@ -280,12 +280,14 @@ Messages:
     Warp:
       Set:
         Success: "The warp <Color:Highlight><WARP> <Color:Message>was set to your current location."
-        WarpAlreadyExists: "<Color:Error.Message>Specified warp <Color:Error.Highlight><WARP> <Color:Error.Message>already exists."
+        AlreadyExists: "<Color:Error.Message>Specified warp <Color:Error.Highlight><WARP> <Color:Error.Message>already exists."
         InvalidName: "<Color:Error.Message>The specified name is not alphanumeric."
       Delete:
         Success: "The warp <Color:Highlight><WARP> <Color:Message>was deleted."
-      WarpNotFound: "<Color:Error.Message>Specified warp <Color:Error.Highlight><WARP> <Color:Error.Message>doesn't exist."
-      Success: "You teleported to <Color:Highlight><WARP><Color:Message>."
+        DoesNotExist: "<Color:Error.Message>Specified warp <Color:Error.Highlight><WARP> <Color:Error.Message>doesn't exist."
+      Teleport:
+        DoesNotExist: "<Color:Error.Message>Specified warp <Color:Error.Highlight><WARP> <Color:Error.Message>doesn't exist."
+        Success: "You teleported to <Color:Highlight><WARP><Color:Message>."
     Kit:
       Create:
         KitAlreadyExists: "<Color:Error.Message>The kit <Color:Error.Highlight><KIT> <Color:Error.Message>already exists."
@@ -394,6 +396,7 @@ Messages:
       SetNone: "Cost removed from sign successfully."
       Set: "Cost set to <Color:Highlight><TYPE> <Color:Message>with amount <Color:Highlight><AMOUNT><Color:Message>."
   Syntax:
+    Generic: "</LABEL>"
     Balance: "/<LABEL> (player)"
     Ban: "/<LABEL> [player] [duration] (reason...)"
     Broadcast: "/<LABEL> [message...]"
@@ -438,6 +441,7 @@ Messages:
     Sudo: "/<LABEL> [player] [command] (args...)"
     TeamChat: "/<LABEL> [message...]"
     Teleport: "/<LABEL> [player] (player)"
+    TeleportHere: "/<LABEL> [player]"
     TeleportPosition: "/<LABEL> (player) [X] [Y] [Z] [Yaw] [Pitch] [World]"
     TeleportAsk: "/<LABEL> [player]"
     TeleportToggle: "/<LABEL> (player)"

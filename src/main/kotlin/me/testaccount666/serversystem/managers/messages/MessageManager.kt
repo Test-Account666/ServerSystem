@@ -89,12 +89,8 @@ object MessageManager {
      * @return The message, or null if not found
      */
     fun getMessage(user: User, messagePath: String, language: String? = user.playerLanguage): String? {
-        var language = language
-        if (language == null) language = user.playerLanguage
-
-        var messagePath = messagePath
-        messagePath = "Messages.${messagePath}"
-
+        val language = language ?: user.playerLanguage
+        val messagePath = "Messages.${messagePath}"
 
         var reader: ConfigReader
         try {
@@ -104,11 +100,9 @@ object MessageManager {
             reader = getConfigReader(defaultLanguage)
         }
 
-        val message = reader.getString(messagePath, null)
-
-        if (message == null) {
+        val message = reader.getString(messagePath) ?: let {
             ServerSystem.log.warning("Message '${messagePath}' not found for language ${language}!")
-            return null
+            null
         }
 
         return message

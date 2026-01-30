@@ -4,8 +4,6 @@ import me.testaccount666.serversystem.ServerSystem
 import me.testaccount666.serversystem.commands.executables.back.CommandBack
 import me.testaccount666.serversystem.managers.config.ConfigReader
 import me.testaccount666.serversystem.userdata.OfflineUser
-import java.util.Locale.getDefault
-import java.util.function.Function
 
 class MappingsData {
     private val _gameModeByLanguage = HashMap<String, GameMode>()
@@ -23,9 +21,7 @@ class MappingsData {
 
         init {
             for (backType in CommandBack.BackType.entries.toTypedArray()) {
-                val backTypeName = config.getString("Mappings.BackType.${backType.name.lowercase(getDefault())}", null)
-
-                if (backTypeName == null) {
+                val backTypeName = config.getString("Mappings.BackType.${backType.name.lowercase()}") ?: run {
                     ServerSystem.log.warning("BackType mapping for '${backType.name}' is not defined in the config!")
                     continue
                 }
@@ -40,9 +36,7 @@ class MappingsData {
     class GameMode {
         constructor(config: ConfigReader) {
             for (gameMode in org.bukkit.GameMode.entries.toTypedArray()) {
-                val gameModeName = config.getString("Mappings.GameMode.${gameMode.name.lowercase(getDefault())}")
-
-                if (gameModeName == null) {
+                val gameModeName = config.getString("Mappings.GameMode.${gameMode.name.lowercase()}") ?: run {
                     ServerSystem.log.warning("GameMode mapping for '${gameMode.name}' is not defined in the config!")
                     continue
                 }
@@ -91,15 +85,12 @@ class MappingsData {
          * @param colorId The color identifier
          * @return The color String, or null if not found
          */
-        fun getMessageColor(colorId: String): String? {
-            return _messageColorMappings[colorId]
-        }
+        fun getMessageColor(colorId: String) = _messageColorMappings[colorId]
     }
 
     class Moderation {
         constructor(config: ConfigReader) {
-            val neverName = config.getString("Mappings.Moderation.Permanent", null)
-            if (neverName == null) {
+            val neverName = config.getString("Mappings.Moderation.Permanent") ?: run {
                 ServerSystem.log.warning("Moderation mapping for 'Permanent' is not defined in the config!")
                 return
             }
@@ -113,8 +104,7 @@ class MappingsData {
 
     class Console {
         constructor(config: ConfigReader) {
-            val neverName = config.getString("Mappings.Console.Name", null)
-            if (neverName == null) {
+            val neverName = config.getString("Mappings.Console.Name") ?: run {
                 ServerSystem.log.warning("Console mapping for 'Name' is not defined in the config!")
                 return
             }
@@ -129,28 +119,19 @@ class MappingsData {
 
     companion object {
         private lateinit var _Instance: MappingsData
-        private fun <T> getOrLoadMappingData(user: OfflineUser, cache: MutableMap<String, T>, factory: Function<ConfigReader, T>): T {
-            val language = user.playerLanguage
-            return getOrLoadMappingData(language, cache, factory)
+        private fun <T> getOrLoadMappingData(user: OfflineUser, cache: MutableMap<String, T>, factory: (ConfigReader) -> T): T {
+            return getOrLoadMappingData(user.playerLanguage, cache, factory)
         }
 
-        private fun <T> getOrLoadMappingData(language: String, cache: MutableMap<String, T>, factory: Function<ConfigReader, T>): T {
-            var data = cache[language]
-            if (data != null) return data
+        private fun <T> getOrLoadMappingData(language: String, cache: MutableMap<String, T>, factory: (ConfigReader) -> T): T {
+            cache[language]?.let { return it }
 
-            var reader = MessageManager.languageLoader.getMappingReader(language)
-            if (reader != null) {
-                data = factory.apply(reader)
-                cache[language] = data
-                return data
+            MessageManager.languageLoader.getMappingReader(language)?.let { reader ->
+                return factory(reader).also { cache[language] = it }
             }
 
-            val defaultLanguage = MessageManager.defaultLanguage
-
-            reader = MessageManager.languageLoader.getMappingReader(defaultLanguage)
-            data = factory.apply(reader!!)
-            cache[language] = data
-            return data
+            val reader = MessageManager.languageLoader.getMappingReader(MessageManager.defaultLanguage)!!
+            return factory(reader).also { cache[language] = it }
         }
 
         /**
@@ -160,9 +141,7 @@ class MappingsData {
          * @return The Moderation mapping data
          */
         fun moderation(user: OfflineUser): Moderation {
-            return getOrLoadMappingData(
-                user, _Instance._moderationByLanguage
-            ) { config -> Moderation(config) }
+            return getOrLoadMappingData(user, _Instance._moderationByLanguage) { Moderation(it) }
         }
 
         /**
@@ -172,7 +151,7 @@ class MappingsData {
          * @return The Console mapping data
          */
         fun console(user: OfflineUser): Console {
-            return getOrLoadMappingData(user, _Instance._consoleByLanguage) { config -> Console(config) }
+            return getOrLoadMappingData(user, _Instance._consoleByLanguage) { Console(it) }
         }
 
         /**
@@ -183,7 +162,7 @@ class MappingsData {
          */
         @JvmStatic
         fun gameMode(user: OfflineUser): GameMode {
-            return getOrLoadMappingData(user, _Instance._gameModeByLanguage) { config -> GameMode(config) }
+            return getOrLoadMappingData(user, _Instance._gameModeByLanguage) { GameMode(it) }
         }
 
         /**
@@ -194,9 +173,7 @@ class MappingsData {
          */
         @JvmStatic
         fun messageColors(user: OfflineUser): MessageColors {
-            return getOrLoadMappingData(
-                user, _Instance._messageColorsByLanguage
-            ) { config -> MessageColors(config) }
+            return getOrLoadMappingData(user, _Instance._messageColorsByLanguage) { MessageColors(it) }
         }
 
         /**
@@ -207,9 +184,9 @@ class MappingsData {
          */
         @JvmStatic
         fun backType(user: OfflineUser): BackType {
-            return getOrLoadMappingData(user, _Instance._backTypeByLanguage) { config -> BackType(config) }
+            return getOrLoadMappingData(user, _Instance._backTypeByLanguage) { BackType(it) }
         }
 
-        fun instance(): MappingsData = _Instance
+        fun instance() = _Instance
     }
 }

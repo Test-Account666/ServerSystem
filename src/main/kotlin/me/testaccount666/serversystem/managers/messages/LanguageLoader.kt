@@ -1,22 +1,20 @@
 package me.testaccount666.serversystem.managers.messages
 
 import me.testaccount666.serversystem.ServerSystem
+import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.managers.config.ConfigReader
 import me.testaccount666.serversystem.managers.config.DefaultConfigReader
 import org.bukkit.plugin.Plugin
-import java.nio.file.Path
-import java.util.Locale.getDefault
 
 class LanguageLoader {
-    private val _baseDirectory: Path = Path.of("plugins", "ServerSystem", "messages")
+    private val _baseDirectory = instance.dataPath.resolve("messages")
     private val _languageMessagesMap: MutableMap<String, ConfigReader> = HashMap()
     private val _languageMappingsMap: MutableMap<String, ConfigReader> = HashMap()
 
     init {
-        val plugin = ServerSystem.instance
-        ensureExists(plugin, "english")
-        ensureExists(plugin, "german")
-        ensureExists(plugin, "slovene")
+        ensureExists(instance, "english")
+        ensureExists(instance, "german")
+        ensureExists(instance, "slovene")
     }
 
     private fun ensureExists(plugin: Plugin, language: String) {
@@ -30,16 +28,10 @@ class LanguageLoader {
     }
 
     fun getMessageReader(language: String): ConfigReader? {
-        val lowerLanguage = language.lowercase(getDefault())
+        val lowerLanguage = language.lowercase()
+        _languageMessagesMap[lowerLanguage]?.let { return it }
 
-        val configReader = _languageMessagesMap[lowerLanguage]
-        if (configReader != null) return configReader
-
-        val loadedReader = loadMessageReader(lowerLanguage) ?: return null
-
-        _languageMessagesMap[lowerLanguage] = loadedReader
-
-        return loadedReader
+        return loadMessageReader(lowerLanguage)?.also { _languageMessagesMap[lowerLanguage] = it }
     }
 
     private fun loadMessageReader(language: String): ConfigReader? {
@@ -59,16 +51,10 @@ class LanguageLoader {
 
 
     fun getMappingReader(language: String): ConfigReader? {
-        val lowerLanguage = language.lowercase(getDefault())
+        val lowerLanguage = language.lowercase()
+        _languageMappingsMap[lowerLanguage]?.let { return it }
 
-        val configReader = _languageMappingsMap[lowerLanguage]
-        if (configReader != null) return configReader
-
-        val loadedReader = loadMappingReader(lowerLanguage) ?: return null
-
-        _languageMappingsMap[lowerLanguage] = loadedReader
-
-        return loadedReader
+        return loadMappingReader(lowerLanguage)?.also { _languageMappingsMap[lowerLanguage] = it }
     }
 
     private fun loadMappingReader(language: String): ConfigReader? {

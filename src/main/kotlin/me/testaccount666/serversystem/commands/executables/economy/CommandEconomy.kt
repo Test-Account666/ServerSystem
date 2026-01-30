@@ -1,48 +1,39 @@
 package me.testaccount666.serversystem.commands.executables.economy
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.commands.ServerSystemCommand
+import me.testaccount666.serversystem.commands.SimpleCompletion
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.money.EconomyProvider
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
-import org.bukkit.entity.Player
 import java.math.BigDecimal
-import java.util.Locale.getDefault
 
-@ServerSystemCommand("economy", [], TabCompleterEconomy::class)
+@ServerSystemCommand(
+    "economy", simpleCompletions = [
+        SimpleCompletion(0, ["set", "give", "take"]),
+        SimpleCompletion(1, isNull = true)
+    ]
+)
 class CommandEconomy : AbstractServerSystemCommand() {
+    override fun minRequiredArguments(command: Command) = 3
+    override fun getUsagePermission(command: Command) = "Economy.Use"
+    override fun getSyntaxPath(command: Command?) = "Economy"
+
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!checkBasePermission(commandSender, "Economy.Use")) return
 
-        if (arguments.size <= 2) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
-            return
-        }
-
-        val targetUser = getTargetUser(commandSender, 1, false, *arguments)
-        if (targetUser == null) {
+        val targetUser = getTargetUser(commandSender, 1, false, *arguments) ?: run {
             general("PlayerNotFound", commandSender) { target(arguments[1]) }.build()
             return
         }
 
-        val amount: BigDecimal
-        try {
-            amount = BigDecimal(arguments[2])
-        } catch (_: NumberFormatException) {
+        val amount = arguments[2].toBigDecimalOrNull() ?: run {
             command("Economy.InvalidAmount", commandSender).build()
             return
         }
 
-        val economyOperation = arguments[0].lowercase(getDefault())
-
-        when (economyOperation) {
+        when (arguments[0].lowercase()) {
             "set" -> handleSetEconomy(commandSender, targetUser, amount)
             "give", "add" -> handleGiveEconomy(commandSender, targetUser, amount)
             "take", "remove" -> handleTakeEconomy(commandSender, targetUser, amount)
@@ -54,28 +45,28 @@ class CommandEconomy : AbstractServerSystemCommand() {
     }
 
     private fun handleSetEconomy(commandSender: User, targetUser: User, amount: BigDecimal) {
-        if (!checkBasePermission(commandSender, "Economy.Set")) return
+        if (!checkPermission(commandSender, "Economy.Set")) return
 
         targetUser.bankAccount.balance = amount
         sendSuccess(commandSender, targetUser, amount, "Set")
     }
 
     private fun handleGiveEconomy(commandSender: User, targetUser: User, amount: BigDecimal) {
-        if (!checkBasePermission(commandSender, "Economy.Give")) return
+        if (!checkPermission(commandSender, "Economy.Give")) return
 
-        targetUser.bankAccount.deposit(amount)
+        targetUser.bankAccount.balance += amount
         sendSuccess(commandSender, targetUser, amount, "Give")
     }
 
     private fun handleTakeEconomy(commandSender: User, targetUser: User, amount: BigDecimal) {
-        if (!checkBasePermission(commandSender, "Economy.Take")) return
+        if (!checkPermission(commandSender, "Economy.Take")) return
 
-        targetUser.bankAccount.withdraw(amount)
+        targetUser.bankAccount.balance -= amount
         sendSuccess(commandSender, targetUser, amount, "Take")
     }
 
     fun sendSuccess(commandSender: User, targetUser: User, amount: BigDecimal, key: String) {
-        val formattedAmount = instance.registry.getService<EconomyProvider>().formatMoney(amount)
+        val formattedAmount = getService<EconomyProvider>().formatMoney(amount)
         val modifier = { message: String -> message.replace("<AMOUNT>", formattedAmount) }
 
         command("Economy.${key}.Success", commandSender) {
@@ -88,11 +79,5 @@ class CommandEconomy : AbstractServerSystemCommand() {
             target(targetUser.getNameOrNull())
             postModifier(modifier)
         }.build()
-    }
-
-    override fun getSyntaxPath(command: Command?) = "Economy"
-
-    override fun hasCommandAccess(player: Player, command: Command): Boolean {
-        return hasCommandPermission(player, "Economy.Use", false)
     }
 }
