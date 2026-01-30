@@ -1,4 +1,4 @@
-package me.testaccount666.serversystem.commands.executables.enderchest
+package me.testaccount666.serversystem.commands.executables.enderchest.online
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
@@ -7,7 +7,7 @@ import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 
-@ServerSystemCommand("enderchest", ["offlineenderchest"])
+@ServerSystemCommand("enderchest", ["offlineenderchest"], TabCompleterEnderChest::class)
 class CommandEnderChest : AbstractServerSystemCommand() {
     val offlineEnderChest: CommandOfflineEnderChest = CommandOfflineEnderChest()
     override fun minRequiredArguments(command: Command): Int {

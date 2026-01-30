@@ -9,7 +9,6 @@ import me.testaccount666.serversystem.commands.executables.AbstractServerSystemC
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.money.EconomyProvider
 import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.sign
 import org.bukkit.block.Sign
@@ -41,10 +40,9 @@ class CommandSignCost : AbstractServerSystemCommand() {
             return
         }
 
-        val costType: CostType?
-        try {
-            costType = CostType.valueOf(costTypeStr.uppercase())
-        } catch (_: IllegalArgumentException) {
+        val costType = runCatching {
+            CostType.valueOf(costTypeStr.uppercase())
+        }.getOrNull() ?: run {
             sign("Cost.InvalidType", commandSender) {
                 postModifier { it.replace("<TYPES>", _COST_TYPES.joinToString { ", " }) }
             }.build()
@@ -69,8 +67,7 @@ class CommandSignCost : AbstractServerSystemCommand() {
         }
         val player = commandSender.getPlayer()!!
 
-        val targetBlock = player.getTargetBlock(null, _MAX_DISTANCE)
-        if (targetBlock.state !is Sign) {
+        val targetBlock = player.getTargetBlock(null, _MAX_DISTANCE).takeIf { it.state is Sign } ?: run {
             sign("Cost.NotLookingAtSign", commandSender).build()
             return
         }
@@ -102,7 +99,7 @@ class CommandSignCost : AbstractServerSystemCommand() {
         if (costType == CostType.NONE) {
             sign.setLine(3, "")
             sign.update()
-            command("ClickableSigns.Cost.SetNone", commandSender).build()
+            sign("Cost.SetNone", commandSender).build()
             return
         }
         val costLine = if (costType == CostType.EXP) "${amount.toInt()} EXP"

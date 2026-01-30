@@ -1,4 +1,4 @@
-package me.testaccount666.serversystem.commands.executables.enderchest
+package me.testaccount666.serversystem.commands.executables.enderchest.online
 
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.annotations.RequiredCommands

@@ -40,7 +40,7 @@ class CommandWarp : AbstractCommandWaypoint<WarpManager, Warp>() {
         return when (getCommandType(command)) {
             CommandType.CREATE -> "Warp.Set"
             CommandType.DELETE -> "Warp.Delete"
-            CommandType.TELEPORT -> "Warp.Use"
+            CommandType.TELEPORT -> "Warp.Teleport"
         }
     }
 }

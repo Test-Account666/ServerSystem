@@ -441,6 +441,7 @@ Messages:
     Sudo: "/<LABEL> [player] [command] (args...)"
     TeamChat: "/<LABEL> [message...]"
     Teleport: "/<LABEL> [player] (player)"
+    TeleportHere: "/<LABEL> [player]"
     TeleportPosition: "/<LABEL> (player) [X] [Y] [Z] [Yaw] [Pitch] [World]"
     TeleportAsk: "/<LABEL> [player]"
     TeleportToggle: "/<LABEL> (player)"

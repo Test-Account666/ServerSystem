@@ -57,8 +57,13 @@ class ListenerUnlimited : Listener {
      */
     @EventHandler
     fun onBlockPlace(event: BlockPlaceEvent) {
-        val itemInHand = event.getItemInHand().takeIf(::isUnlimited) ?: return
-        itemInHand.amount += 1
+        val player = event.player
+        val itemInHand = event.itemInHand.takeIf(::isUnlimited) ?: return
+        val amount = itemInHand.amount
+        Bukkit.getScheduler().runTaskLater(instance, Runnable {
+            itemInHand.amount = amount
+            player.updateInventory()
+        }, 1L)
     }
 
     /**

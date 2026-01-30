@@ -3,7 +3,7 @@ package me.testaccount666.serversystem.commands.executables.enderchest.offline
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.annotations.RequiredCommands
-import me.testaccount666.serversystem.commands.executables.enderchest.CommandEnderChest
+import me.testaccount666.serversystem.commands.executables.enderchest.online.CommandEnderChest
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.UserManager

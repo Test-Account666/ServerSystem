@@ -32,22 +32,26 @@ class CommandSpeed : AbstractServerSystemCommand() {
         }
 
         var speed = (arguments[0].toFloatOrNull() ?: run {
-            command("Speed.InvalidSpeed", commandSender) { target(targetPlayer.name) }.build()
+            general("InvalidArguments", commandSender) {
+                label(label)
+                target(targetPlayer.name)
+                syntax(getSyntaxPath(command))
+            }.build()
             return
         }).coerceIn(0f, 10f)
 
         val speedTuple = calculateSpeeds(speed)
 
-        speed = when (speedType) {
+        val actualSpeed = when (speedType) {
             "Fly" -> speedTuple.flySpeed
             "Walk" -> speedTuple.walkSpeed
             else -> error("Unexpected speed value: ${speedType}")
         }.coerceIn(0f, 1f)
 
-        if (speedType.equals("Fly", true)) targetPlayer.flySpeed = speed
-        else targetPlayer.walkSpeed = speed
+        if (speedType.equals("Fly", true)) targetPlayer.flySpeed = actualSpeed
+        else targetPlayer.walkSpeed = actualSpeed
 
-        val speedString = String.format("%.2f", speed * 10F)
+        val speedString = String.format("%.2f", speed)
         val messagePath = if (isSelf) "Speed.Success" else "Speed.SuccessOther"
         command(messagePath, commandSender) {
             target(targetPlayer.name)
@@ -67,11 +71,8 @@ class CommandSpeed : AbstractServerSystemCommand() {
         private fun calculateSpeeds(speed: Float): SpeedResult {
             if (speed <= 0) return SpeedResult(0f, 0f)
 
-            var flySpeed = speed / 10f
-            flySpeed = Math.clamp(flySpeed, 0f, 1f)
-            var walkSpeed = 0.2f + (speed - 1) * 0.0888889f
-            walkSpeed = Math.clamp(walkSpeed, 0f, 1f)
-
+            val flySpeed = (speed / 10f).coerceIn(0f, 1f)
+            val walkSpeed = (0.2f + (speed - 1) * 0.0888889f).coerceIn(0f, 1f)
             return SpeedResult(walkSpeed, flySpeed)
         }
     }
