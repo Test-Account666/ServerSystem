@@ -41,7 +41,10 @@ abstract class AbstractCommandWaypoint<T : WaypointManager<P>, P : Waypoint> : A
             return
         }
 
-        if (!canAddPoints(pointManager, command)) return
+        if (!canAddPoints(pointManager, command)) {
+            command("${getPrefix(command)}.MaxReached", commandSender) { target(target.getNameSafe()) }.build()
+            return
+        }
 
         pointManager.addPoint(point)
 

@@ -81,7 +81,7 @@ Messages:
     SetHome:
       Success: "Du hast das Zuhause <Color:Highlight><HOME><Color:Message> erstellt."
       AlreadyExists: "<Color:Error.Message>Das angegebene Zuhause <Color:Error.Highlight><HOME> <Color:Error.Message>existiert bereits."
-      MaxHomes: "<Color:Error.Message>Du hast bereits dein Zuhause-Limit erreicht: <Color:Error.Highlight><CURRENT_HOMES><Color:Error.Message>/<Color:Error.Highlight><MAX_HOMES><Color:Error.Message>."
+      MaxReached: "<Color:Error.Message>Du hast bereits dein Zuhause-Limit erreicht."
       InvalidName: "<Color:Error.Message>Der angegebene Name ist nicht alphanumerisch."
     Economy:
       Give:

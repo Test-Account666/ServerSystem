@@ -81,7 +81,7 @@ Messages:
     SetHome:
       Success: "Ustvaril si dom <Color:Highlight><HOME><Color:Message>."
       AlreadyExists: "<Color:Error.Message>Navedeni dom <Color:Error.Highlight><HOME> <Color:Error.Message>že obstaja."
-      MaxHomes: "<Color:Error.Message>Dosegel si omejitev domov: <Color:Error.Highlight><CURRENT_HOMES><Color:Error.Message>/<Color:Error.Highlight><MAX_HOMES><Color:Error.Message>."
+      MaxReached: "<Color:Error.Message>Dosegel si omejitev domov."
       InvalidName: "<Color:Error.Message>Navedeno ime ni alfanumerično."
     Economy:
       Give:
