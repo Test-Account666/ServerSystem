@@ -5,7 +5,7 @@ import me.testaccount666.serversystem.ServerSystem.Companion.log
 import java.util.logging.Level
 
 class MigratorRegistry {
-    private val _migrators: MutableMap<String, PluginMigrator> = HashMap()
+    private val _migrators = HashMap<String, PluginMigrator>()
 
     fun registerMigrators() {
         ClassGraph()

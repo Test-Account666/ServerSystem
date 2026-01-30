@@ -29,6 +29,8 @@ import java.sql.SQLException
 import java.util.*
 import java.util.logging.Level
 
+//TODO: Remove this class
+@Deprecated("This class is deprecated and will be removed in v4.4.0!")
 class LegacyDataMigrator {
     private lateinit var _legacyDataDirectory: File
     private var _foundLegacyData = false
@@ -122,6 +124,7 @@ class LegacyDataMigrator {
         }
     }
 
+    @Deprecated("This method is deprecated and will be removed in v4.4.0!")
     val isLegacyDataPresent: Boolean
         /**
          * Checks if legacy data is present that needs to be migrated.
@@ -157,6 +160,7 @@ class LegacyDataMigrator {
     /**
      * Prepares for migration by renaming the current data directory to a backup directory.
      */
+    @Deprecated("This method is deprecated and will be removed in v4.4.0!")
     fun prepareMigration() {
         val directory = instance.dataFolder
         if (!directory.exists()) return
@@ -169,6 +173,7 @@ class LegacyDataMigrator {
     /**
      * Migrates all legacy data.
      */
+    @Deprecated("This method is deprecated and will be removed in v4.4.0!")
     fun migrateLegacyData() {
         if (!_foundLegacyData) return
         migrateModerationAndEconomy()

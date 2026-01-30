@@ -35,18 +35,19 @@ import java.util.logging.Logger
 class ServerSystem : JavaPlugin() {
     val registry = ServiceRegistry()
 
-    override fun onEnable() {
+    override fun onLoad() {
         instance = this
         log = logger
 
-        val minecraftVersion: Version = serverVersion
-        if (minecraftVersion < MINIMUM_MINECRAFT_VERSION) {
+        if (serverVersion < MINIMUM_MINECRAFT_VERSION) {
             log.warning(
                 "You're running an unsupported/legacy version of Minecraft! " +
                         "Please update to at least ${MINIMUM_MINECRAFT_VERSION.version}!"
             )
         }
+    }
 
+    override fun onEnable() {
         val migrator = LegacyDataMigrator()
         if (migrator.isLegacyDataPresent) {
             log.log(Level.INFO, "Legacy data detected. Attempting to migrate...")
@@ -143,10 +144,10 @@ class ServerSystem : JavaPlugin() {
     }
 
     override fun onDisable() {
-        registry.getServiceOrNull<UserManager>()?.let(this::saveAllUsers)
+        registry.getServiceOrNull<UserManager>()?.run(::saveAllUsers)
 
-        registry.getServiceOrNull<CommandManager>()?.let(CommandManager::unregisterCommands)
-        registry.getServiceOrNull<ListenerManager>()?.let(ListenerManager::unregisterListeners)
+        registry.getServiceOrNull<CommandManager>()?.run(CommandManager::unregisterCommands)
+        registry.getServiceOrNull<ListenerManager>()?.run(ListenerManager::unregisterListeners)
 
         PlaceholderApiSupport.unregisterPlaceholders()
 
