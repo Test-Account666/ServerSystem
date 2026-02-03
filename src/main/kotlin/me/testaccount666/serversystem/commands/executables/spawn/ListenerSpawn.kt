@@ -34,7 +34,7 @@ class ListenerSpawn : Listener {
             if (cachedUser.isOfflineUser) return@Runnable
 
             val user = cachedUser.offlineUser as User
-            _commandSpawn.handleSpawnCommand(user, "spawn")
+            _commandSpawn.handleSpawnCommand(user, "spawn", false)
         }, 20L)
     }
 }

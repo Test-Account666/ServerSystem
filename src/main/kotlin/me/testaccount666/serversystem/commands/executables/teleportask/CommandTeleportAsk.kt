@@ -1,22 +1,20 @@
 package me.testaccount666.serversystem.commands.executables.teleportask
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.managers.messages.MessageManager.applyPlaceholders
 import me.testaccount666.serversystem.userdata.User
+import me.testaccount666.serversystem.userdata.teleport.TeleportRequest
+import me.testaccount666.serversystem.userdata.teleport.TeleportRunnable.Companion.teleportLater
+import me.testaccount666.serversystem.userdata.teleport.TeleportRunnable.Companion.teleportNow
 import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
-import org.bukkit.Bukkit
-import org.bukkit.Location
-import org.bukkit.Particle
-import org.bukkit.Sound
 import org.bukkit.command.Command
 
 @ServerSystemCommand("teleportask", ["teleporthereask", "teleportaccept", "teleportdeny", "teleporttoggle"])
@@ -212,6 +210,7 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
 
     private fun handleTeleportAccept(commandSender: User) {
         val teleportRequest = validateTeleportRequest(commandSender) ?: return
+        teleportRequest.isCancelled = true
 
         val requester = teleportRequest.sender
         commandSender.teleportRequest = null
@@ -221,15 +220,7 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
         val teleporter = if (teleportRequest.isTeleportHere) commandSender else requester
         val target = if (teleportRequest.isTeleportHere) requester else commandSender
 
-        val canInstantTeleport = hasCommandPermission(teleporter, "TeleportAsk.InstantTeleport", false)
-
-        if (canInstantTeleport) {
-            executeTeleport(teleporter, target)
-            return
-        }
-
-        command("TeleportAsk.StartingTeleporting", teleporter) { target(target.getNameSafe()) }.build()
-        startTeleportTimer(teleporter, target, teleportRequest)
+        executeTeleport(teleporter, target)
     }
 
     private fun handleTeleportDeny(commandSender: User) {
@@ -242,20 +233,6 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
         command("TeleportDeny.SuccessOther", requester) { target(commandSender.getNameSafe()) }.build()
     }
 
-    private fun startTeleportTimer(teleporter: User, target: User, teleportRequest: TeleportRequest) {
-        val teleporterPlayer = teleporter.getPlayer()
-        val targetPlayer = target.getPlayer()
-
-        activeTeleportRequests.add(teleportRequest)
-        (Bukkit.getScheduler().scheduleSyncDelayedTask(instance, {
-            if (teleporterPlayer == null || !teleporterPlayer.isOnline) return@scheduleSyncDelayedTask
-            if (targetPlayer == null || !targetPlayer.isOnline) return@scheduleSyncDelayedTask
-
-            executeTeleport(teleporter, target)
-            activeTeleportRequests.remove(teleportRequest)
-        }, 20L * 5)).also { teleportRequest.timerId = it }
-    }
-
     /**
      * Executes the teleport with animation and notification
      *
@@ -265,11 +242,16 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
     private fun executeTeleport(teleporter: User, target: User) {
         val targetLocation = target.getPlayer()!!.location
 
-        playAnimation(targetLocation)
-        teleporter.getPlayer()!!.teleport(targetLocation)
-        playAnimation(targetLocation)
-
-        command("TeleportAsk.TeleportFinished", teleporter) { target(target.getNameSafe()) }.build()
+        if (!hasCommandPermission(teleporter, "TeleportAsk.InstantTeleport", false)) {
+            command("TeleportAsk.StartingTeleporting", teleporter) { target(target.getNameSafe()) }.build()
+            teleporter.teleportLater(targetLocation).apply {
+                onFailure = { command("TeleportAsk.Moved", user).build() }
+                onSuccess = { command("TeleportAsk.TeleportFinished", user).build() }
+            }
+        } else {
+            teleporter.teleportNow(targetLocation)
+            command("TeleportAsk.TeleportFinished", teleporter) { target(target.getNameSafe()) }.build()
+        }
     }
 
 
@@ -288,16 +270,6 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
             .hoverEvent(HoverEvent.showText(translateToComponent(hoverText)))
             .clickEvent(clickAction)
             .asComponent()
-    }
-
-    /**
-     * Plays a teleportation animation effect at the given location
-     *
-     * @param location The location to play the animation at
-     */
-    private fun playAnimation(location: Location) {
-        location.world.playSound(location, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 1.0f)
-        location.world.spawnParticle(Particle.PORTAL, location, 100, 0.5, 0.5, 0.5, 0.05)
     }
 
     private fun handleTeleportToggle(commandSender: User, command: Command, label: String, vararg arguments: String) {

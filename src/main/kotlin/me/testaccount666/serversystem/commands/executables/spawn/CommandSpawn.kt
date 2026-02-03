@@ -4,8 +4,11 @@ import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.managers.config.ConfigurationManager
 import me.testaccount666.serversystem.userdata.User
+import me.testaccount666.serversystem.userdata.teleport.TeleportRunnable.Companion.teleportLater
+import me.testaccount666.serversystem.userdata.teleport.TeleportRunnable.Companion.teleportNow
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.Bukkit
@@ -53,7 +56,6 @@ open class CommandSpawn : AbstractServerSystemCommand {
         if (!spawnConfiguration.isSet("Spawn")) return
 
         val worldName = spawnConfiguration.getString("Spawn.World") ?: return
-
         val world = Bukkit.getWorld(worldName) ?: return
 
         val x = spawnConfiguration.getDouble("Spawn.X")
@@ -67,17 +69,17 @@ open class CommandSpawn : AbstractServerSystemCommand {
 
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
         if (command.name.equals("spawn", true)) {
-            handleSpawnCommand(commandSender, label, *arguments)
+            handleSpawnCommand(commandSender, label, true, *arguments)
             return
         }
 
         handleSetSpawnCommand(commandSender, label)
     }
 
-    fun handleSpawnCommand(commandSender: User, label: String, vararg arguments: String) {
+    fun handleSpawnCommand(commandSender: User, label: String, fromCommand: Boolean, vararg arguments: String) {
         if (isConsoleWithNoTarget(commandSender, getSyntaxPath(null), label, arguments = arguments)) return
 
-        if (spawnLocation == null) {
+        val spawnLocation = spawnLocation ?: run {
             command("Spawn.NoSpawnSet", commandSender).build()
             return
         }
@@ -86,16 +88,28 @@ open class CommandSpawn : AbstractServerSystemCommand {
             general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
             return
         }
-
-        val targetPlayer = targetUser.getPlayer()!!
         val isSelf = targetUser === commandSender
 
-        if (!isSelf && !checkPermission(commandSender, "Spawn.Other", targetPlayer.name)) return
+        if (!isSelf && !checkPermission(commandSender, "Spawn.Other", targetUser.getNameSafe())) return
 
-        targetPlayer.teleport(spawnLocation!!)
+        val instantTeleport = !fromCommand || !isSelf || hasCommandPermission(commandSender, "Spawn.InstantTeleport", false)
 
+        if (instantTeleport) {
+            targetUser.teleportNow(spawnLocation)
+            sendSuccessMessage(commandSender, targetUser, isSelf)
+            return
+        }
+
+        command("Spawn.Teleporting", commandSender) { target(targetUser.getNameSafe()) }.build()
+        targetUser.teleportLater(spawnLocation).apply {
+            onSuccess = { sendSuccessMessage(commandSender, targetUser, true) }
+            onFailure = { command("Spawn.Moved", commandSender).build() }
+        }
+    }
+
+    private fun sendSuccessMessage(commandSender: User, targetUser: User, isSelf: Boolean) {
         val messagePath = if (isSelf) "Spawn.Success" else "Spawn.SuccessOther"
-        command(messagePath, commandSender) { target(targetPlayer.name) }.build()
+        command(messagePath, commandSender) { target(targetUser.getNameSafe()) }.build()
 
         if (isSelf) return
         command("Spawn.Success", targetUser) { sender(commandSender.getNameSafe()) }.build()
