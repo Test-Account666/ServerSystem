@@ -1,0 +1,23 @@
+Mappings:
+  GameMode:
+    survival: "Survie"
+    creative: "Créatif"
+    adventure: "Aventure"
+    spectator: "Spectateur"
+  MessageColors:
+    prefix: "&#7FBF06"
+    separators: "&8"
+    message: "&7"
+    highlight: "&2"
+    error:
+      message: "&c"
+      highlight: "&4"
+  BackType:
+    death: "Mort"
+    teleport: "Téléportation"
+    none: "AUCUN"
+  Moderation:
+    Permanent: "Jamais"
+  Console:
+    Name: "Serveur"
+language: "french"
