@@ -1,13 +1,11 @@
 package me.testaccount666.serversystem.userdata.money
 
-import me.testaccount666.serversystem.ServerSystem
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.managers.database.AbstractSqlDatabaseManager
 import me.testaccount666.serversystem.managers.database.economy.EconomyDatabaseManager
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.sql.PreparedStatement
-import java.sql.ResultSet
-import java.sql.SQLException
+import java.sql.*
 import java.util.*
 
 private const val SELECT_BALANCE = "SELECT Balance FROM Economy WHERE Owner = ? AND AccountId = ?"
@@ -19,10 +17,10 @@ private const val SELECT_TOP_TEN = "SELECT Owner, Balance FROM Economy ORDER BY 
 
 abstract class AbstractSqlBankAccount(
     owner: UUID,
-    accountId: BigInteger
+    accountId: BigInteger,
 ) : AbstractBankAccount(owner, accountId) {
 
-    protected val databaseManager = ServerSystem.instance.registry.getService<EconomyDatabaseManager>()
+    protected val databaseManager = getService<EconomyDatabaseManager>()
 
     private val sqlDatabaseManager
         get() = databaseManager as AbstractSqlDatabaseManager
@@ -43,9 +41,7 @@ abstract class AbstractSqlBankAccount(
     private fun fetchBalance(): BigDecimal =
         tryQuery(SELECT_BALANCE) {
             if (it.next()) it.getBigDecimal("Balance")
-            else ServerSystem.instance.registry
-                .getService<EconomyProvider>()
-                .defaultBalance?.toBigDecimal()
+            else getService<EconomyProvider>().defaultBalance?.toBigDecimal()
         } ?: BigDecimal.ZERO // should never happen
 
 
@@ -68,7 +64,7 @@ abstract class AbstractSqlBankAccount(
 
     private fun <T> tryQuery(
         sql: String,
-        handler: (resultSet: ResultSet) -> T
+        handler: (resultSet: ResultSet) -> T,
     ): T? {
         try {
             sqlDatabaseManager.connection.use { connection ->
@@ -99,7 +95,8 @@ abstract class AbstractSqlBankAccount(
         val params = when (sql) {
             SELECT_BALANCE,
             CHECK_EXISTS,
-            DELETE_ACCOUNT -> arrayOf(owner.toString(), accountId.toString())
+            DELETE_ACCOUNT,
+                -> arrayOf(owner.toString(), accountId.toString())
 
             UPDATE_BALANCE -> arrayOf(manual[0], owner.toString(), accountId.toString())
             INSERT_BALANCE -> arrayOf(manual[0], owner.toString(), accountId.toString())

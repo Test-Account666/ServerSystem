@@ -35,7 +35,6 @@ open class ConsoleUser internal constructor() : User(UserManager.USER_DATA_PATH.
     }
 
     override fun getNameOrNull() = name ?: "Server"
-    override fun getNameSafe() = getNameOrNull()
     override fun getPlayer(): Player? = null
 
     companion object {

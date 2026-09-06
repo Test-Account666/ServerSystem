@@ -13,7 +13,7 @@ object SignUtils {
 
     /**
      * Converts a location to a string format used for file names.
-     * 
+     *
      * @param location The location to convert
      * @return The location as a string in the format "world_x_y_z"
      */
@@ -23,7 +23,7 @@ object SignUtils {
         /**
          * Gets the data directory for sign configurations.
          * Creates the directory if it doesn't exist.
-         * 
+         *
          * @return The data directory
          */
         get() {
@@ -34,7 +34,7 @@ object SignUtils {
 
     /**
      * Gets the configuration file for a sign at the specified location.
-     * 
+     *
      * @param location The location of the sign
      * @return The configuration file
      */
@@ -43,7 +43,7 @@ object SignUtils {
 
     /**
      * Loads the configuration for a sign at the specified location.
-     * 
+     *
      * @param location The location of the sign
      * @return The configuration
      */

@@ -3,13 +3,10 @@ package me.testaccount666.serversystem.commands.executables.privatemessage
 import me.testaccount666.serversystem.annotations.RequiredCommands
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor
 import me.testaccount666.serversystem.events.UserPrivateMessageEvent
-import me.testaccount666.serversystem.userdata.User
+import me.testaccount666.serversystem.extensions.commandMsg
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.userdata.UserManager
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.ServiceExtensions.getService
-import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority
-import org.bukkit.event.Listener
+import org.bukkit.event.*
 
 @RequiredCommands([CommandPrivateMessage::class])
 class ListenerSocialSpy : Listener {
@@ -19,18 +16,18 @@ class ListenerSocialSpy : Listener {
     fun onPrivateMessage(event: UserPrivateMessageEvent) {
         getService<UserManager>().cachedUsers.forEach { cachedUser ->
             if (!cachedUser.isOnlineUser) return@forEach
-            val user = cachedUser.offlineUser as User
+            val user = cachedUser.onlineUser
             if (!user.isSocialSpyEnabled) return@forEach
 
             val target = event.recipients.firstOrNull { it != event.sender } ?: return@forEach
 
-            val senderName = event.sender.getNameSafe()
+            val senderName = event.sender.nameSafe
             val targetName = target.getNameOrNull()
-            command("SocialSpy.Format", user) {
+            user.commandMsg("SocialSpy.Format") {
                 sender(senderName).target(targetName)
                 prefix(false)
                 postModifier { it.replace("<MESSAGE>", event.message) }
-            }.build()
+            }
         }
     }
 }

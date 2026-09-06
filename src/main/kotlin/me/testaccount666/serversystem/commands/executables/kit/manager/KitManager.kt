@@ -48,15 +48,17 @@ class KitManager {
     val allKitNames
         get() = _kits.keys.toList()
 
-    fun getKit(name: String) = _kits[name]
+    fun getKit(name: String) = _kits[name.lowercase()]
 
-    fun kitExists(name: String) = _kits.containsKey(name)
+    fun kitExists(name: String) = _kits.containsKey(name.lowercase())
 
     fun addKit(kit: Kit) {
         _kits[kit.name] = kit
     }
 
     fun removeKit(name: String) {
+        val name = name.lowercase()
+
         _kits.remove(name)
 
         val kitFile = getKitFile(name)
@@ -65,7 +67,7 @@ class KitManager {
 
     /**
      * Saves a kit to a file in the Kits directory.
-     * 
+     *
      * @param kit The kit to save
      * @return true if the kit was saved successfully, false otherwise
      */
@@ -73,11 +75,11 @@ class KitManager {
         val kitFile = getKitFile(kit.name)
         val kitConfig = YamlConfiguration()
 
-        kitConfig.set("Name", kit.name)
-        kitConfig.set("Cooldown", kit.coolDown)
+        kitConfig["Name"] = kit.name
+        kitConfig["Cooldown"] = kit.coolDown
 
         val inventoryContents = kit.inventoryContents
-        for (index in inventoryContents.indices) kitConfig.set("Items.Inventory.${index}", inventoryContents[index])
+        for (index in inventoryContents.indices) kitConfig["Items.Inventory.${index}"] = inventoryContents[index]
 
         try {
             kitConfig.save(kitFile)
@@ -90,18 +92,20 @@ class KitManager {
 
     /**
      * Saves all kits to files in the Kits directory.
-     * 
+     *
      * @return The number of kits that were saved successfully
      */
     fun saveAllKits() = _kits.values.count(::saveKit)
 
     /**
      * Gets the file for a kit with the given name.
-     * 
+     *
      * @param name The name of the kit
      * @return The file for the kit
      */
     private fun getKitFile(name: String): File {
+        val name = name.lowercase()
+
         val kitDirectory = Path.of(instance.dataFolder.path, "Kits").toFile()
         if (!kitDirectory.exists()) kitDirectory.mkdirs()
 

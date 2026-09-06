@@ -1,11 +1,12 @@
 package me.testaccount666.serversystem.clickablesigns.executables.weather
 
+import me.testaccount666.paperktx.colors.ChatColor.Companion.stripColor
+import me.testaccount666.paperktx.extensions.ChecksExtensions.isAny
+import me.testaccount666.paperktx.extensions.ComponentExtensions.asComponent
 import me.testaccount666.serversystem.clickablesigns.AbstractSignConfigurator
 import me.testaccount666.serversystem.clickablesigns.SignType
+import me.testaccount666.serversystem.extensions.signMsg
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.ChatColor.Companion.stripColor
-import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.sign
 import org.bukkit.block.Sign
 import org.bukkit.block.sign.Side
 import org.bukkit.configuration.file.FileConfiguration
@@ -20,19 +21,19 @@ class ConfiguratorWeatherSign : AbstractSignConfigurator() {
         val front = sign.getSide(Side.FRONT)
         val weatherType = front.getLine(1).lowercase()
         if (weatherType.isEmpty()) {
-            sign("Weather.NoWeatherSpecified", user).build()
+            user.signMsg("Weather.NoWeatherSpecified")
             return false
         }
 
         if (!isValidWeatherType(weatherType)) {
-            sign("Weather.InvalidWeather", user) {
+            user.signMsg("Weather.InvalidWeather") {
                 postModifier { it.replace("<WEATHER>", weatherType) }
-            }.build()
+            }
             return false
         }
 
-        front.line(0, translateToComponent(SignType.WEATHER.signName))
-        front.line(1, translateToComponent("&2${weatherType}"))
+        front.line(0, SignType.WEATHER.signName.asComponent())
+        front.line(1, "&2${weatherType}".asComponent())
         val back = sign.getSide(Side.BACK)
         for (index in 0..3) back.line(index, front.line(index))
         sign.update()
@@ -42,14 +43,8 @@ class ConfiguratorWeatherSign : AbstractSignConfigurator() {
     override fun addSignSpecificConfiguration(user: User, sign: Sign, config: FileConfiguration) {
         var weatherType = sign.getSide(Side.FRONT).getLine(1).lowercase()
         weatherType = stripColor(weatherType)
-        config.set("WeatherType", weatherType)
+        config["WeatherType"] = weatherType
     }
 
-    private fun isValidWeatherType(weatherType: String): Boolean {
-        return weatherType == "sun" ||
-                weatherType == "clear" ||
-                weatherType == "storm" ||
-                weatherType == "thunder" ||
-                weatherType == "rain"
-    }
+    private fun isValidWeatherType(weatherType: String) = weatherType.isAny("sun", "clear", "storm", "thunder", "rain")
 }

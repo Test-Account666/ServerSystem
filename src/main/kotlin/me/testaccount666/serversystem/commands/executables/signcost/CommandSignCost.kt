@@ -1,16 +1,15 @@
 package me.testaccount666.serversystem.commands.executables.signcost
 
+import me.testaccount666.paperktx.extensions.ComponentExtensions.asComponent
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.clickablesigns.cost.CostType
 import me.testaccount666.serversystem.clickablesigns.util.SignUtils.getSignFile
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.SimpleCompletion
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.extensions.*
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.money.EconomyProvider
-import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.sign
 import org.bukkit.block.Sign
 import org.bukkit.block.sign.Side
 import org.bukkit.command.Command
@@ -34,64 +33,64 @@ class CommandSignCost : AbstractServerSystemCommand() {
 
         val costTypeStr = arguments[0].lowercase()
         if (!_COST_TYPES.contains(costTypeStr)) {
-            sign("Cost.InvalidType", commandSender) {
+            commandSender.signMsg("Cost.InvalidType") {
                 postModifier { it.replace("<TYPES>", _COST_TYPES.joinToString { ", " }) }
-            }.build()
+            }
             return
         }
 
         val costType = runCatching {
             CostType.valueOf(costTypeStr.uppercase())
         }.getOrNull() ?: run {
-            sign("Cost.InvalidType", commandSender) {
+            commandSender.signMsg("Cost.InvalidType") {
                 postModifier { it.replace("<TYPES>", _COST_TYPES.joinToString { ", " }) }
-            }.build()
+            }
             return
         }
 
         var amount = 0.0
         if (costType != CostType.NONE) {
             if (arguments.size < 2) {
-                general("InvalidArguments", commandSender) {
+                commandSender.generalMsg("InvalidArguments") {
                     syntax(getSyntaxPath(command))
                     label(label)
-                }.build()
+                }
                 return
             }
 
             amount = arguments[1].toDoubleOrNull() ?: -1.0
             if (amount <= 0) {
-                sign("Cost.InvalidAmount", commandSender).build()
+                commandSender.signMsg("Cost.InvalidAmount")
                 return
             }
         }
         val player = commandSender.getPlayer()!!
 
-        val targetBlock = player.getTargetBlock(null, _MAX_DISTANCE).takeIf { it.state is Sign } ?: run {
-            sign("Cost.NotLookingAtSign", commandSender).build()
+        val targetBlock = player.getTargetBlockExact(_MAX_DISTANCE).takeIf { it?.state is Sign } ?: run {
+            commandSender.signMsg("Cost.NotLookingAtSign")
             return
         }
         val sign = targetBlock.state as Sign
 
         val signFile = getSignFile(sign.location)
         if (!signFile.exists()) {
-            sign("Cost.NotClickableSign", commandSender).build()
+            commandSender.signMsg("Cost.NotClickableSign")
             return
         }
 
         val config = YamlConfiguration.loadConfiguration(signFile)
-        if (!config.contains("Key")) {
-            sign("Cost.NotClickableSign", commandSender).build()
+        if ("Key" !in config) {
+            commandSender.signMsg("Cost.NotClickableSign")
             return
         }
 
-        config.set("Cost.Type", costType.name)
-        config.set("Cost.Amount", amount)
+        config["Cost.Type"] = costType.name
+        config["Cost.Amount"] = amount
 
         try {
             config.save(signFile)
         } catch (exception: IOException) {
-            general("ErrorOccurred", commandSender).build()
+            commandSender.generalMsg("ErrorOccurred")
             log.log(Level.SEVERE, "Error occurred while saving sign cost config '${signFile.absolutePath}'", exception)
             return
         }
@@ -99,22 +98,22 @@ class CommandSignCost : AbstractServerSystemCommand() {
         if (costType == CostType.NONE) {
             sign.setLine(3, "")
             sign.update()
-            sign("Cost.SetNone", commandSender).build()
+            commandSender.signMsg("Cost.SetNone")
             return
         }
         val costLine = if (costType == CostType.EXP) "${amount.toInt()} EXP"
         else getService<EconomyProvider>().formatMoney(BigDecimal(amount))
 
-        sign.getSide(Side.FRONT).line(3, translateToComponent("&6${costLine}"))
-        sign.getSide(Side.BACK).line(3, translateToComponent("&6${costLine}"))
+        sign.getSide(Side.FRONT).line(3, "&6${costLine}".asComponent())
+        sign.getSide(Side.BACK).line(3, "&6${costLine}".asComponent())
         sign.update()
 
-        sign("Cost.Set", commandSender) {
+        commandSender.signMsg("Cost.Set") {
             postModifier {
                 it.replace("<TYPE>", costType.name)
                     .replace("<AMOUNT>", amount.toString())
             }
-        }.build()
+        }
     }
 
     companion object {

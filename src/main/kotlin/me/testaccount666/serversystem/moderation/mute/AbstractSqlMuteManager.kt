@@ -13,14 +13,14 @@ abstract class AbstractSqlMuteManager(ownerUuid: UUID) : AbstractSqlModerationMa
 
     override fun mapResultSet(resultSet: ResultSet): MuteModeration {
         val type = resultSet.getString("Type")
-        return MuteModeration.builder()
-            .issueTime(resultSet.getLong("IssueTime"))
-            .expireTime(resultSet.getLong("ExpireTime"))
-            .reason(resultSet.getString("Reason"))
-            .senderUuid(UUID.fromString(resultSet.getString("SenderUUID")))
-            .targetUuid(UUID.fromString(resultSet.getString("TargetUUID")))
-            .isShadowMute("SHADOW_MUTE" == type)
-            .build()
+        return MuteModeration.builder {
+            issueTime(resultSet.getLong("IssueTime"))
+            expireTime(resultSet.getLong("ExpireTime"))
+            reason(resultSet.getString("Reason"))
+            senderUuid(UUID.fromString(resultSet.getString("SenderUUID")))
+            targetUuid(UUID.fromString(resultSet.getString("TargetUUID")))
+            isShadowMute("SHADOW_MUTE" == type)
+        }
     }
 
     val isPlayerMuted

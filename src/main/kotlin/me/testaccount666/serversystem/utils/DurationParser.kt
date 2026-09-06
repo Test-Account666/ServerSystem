@@ -6,17 +6,13 @@ import me.testaccount666.serversystem.userdata.OfflineUser
 import java.text.SimpleDateFormat
 import java.util.regex.Pattern
 import kotlin.math.max
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 
 object DurationParser {
-    private const val _SECONDS_IN_MINUTE = 60L
-    private const val _SECONDS_IN_HOUR = 3600L
-    private const val _SECONDS_IN_DAY = 86400L
-    private const val _SECONDS_IN_WEEK = 604800L
-    private const val _SECONDS_IN_MONTH = 2419200L
-    private const val _SECONDS_IN_YEAR = 31536000L
-
-    @JvmStatic
     fun parseDate(durationMillis: Long, user: OfflineUser): String {
         if (durationMillis == -1L) {
             val permanent = MappingsData.moderation(user).getName("permanent") ?: run {
@@ -27,19 +23,16 @@ object DurationParser {
             return permanent
         }
 
-
-        val dateFormatter = SimpleDateFormat("dd.MM.yyyy HH:mm:ss")
-        return dateFormatter.format(durationMillis)
+        return SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(durationMillis)
     }
 
-    @JvmStatic
     fun parseDuration(duration: String): Long {
         if (duration.equals("permanent", true)) return -1
 
         val regex = Pattern.compile("(\\d{1,9})(mo|y|w|d|h|m|s)")
         val matcher = regex.matcher(duration)
 
-        var totalSeconds = 0L
+        var totalMillis = -2L
 
         try {
             while (matcher.find()) {
@@ -48,21 +41,22 @@ object DurationParser {
                 val unit = matcher.group(2)
 
                 when (unit) {
-                    "y" -> totalSeconds += value * _SECONDS_IN_YEAR
-                    "mo" -> totalSeconds += value * _SECONDS_IN_MONTH
-                    "w" -> totalSeconds += value * _SECONDS_IN_WEEK
-                    "d" -> totalSeconds += value * _SECONDS_IN_DAY
-                    "h" -> totalSeconds += value * _SECONDS_IN_HOUR
-                    "m" -> totalSeconds += value * _SECONDS_IN_MINUTE
-                    "s" -> totalSeconds += value
+                    "y" -> totalMillis += value.days.times(365).inWholeMilliseconds
+                    "mo" -> totalMillis += value.days.times(30).inWholeMilliseconds
+                    "w" -> totalMillis += value.days.times(7).inWholeMilliseconds
+                    "d" -> totalMillis += value.days.inWholeMilliseconds
+                    "h" -> totalMillis += value.hours.inWholeMilliseconds
+                    "m" -> totalMillis += value.minutes.inWholeMilliseconds
+                    "s" -> totalMillis += value.seconds.inWholeMilliseconds
                 }
             }
         } catch (_: NumberFormatException) {
             return -2
         }
 
-        totalSeconds *= 1000
-        return totalSeconds
+        if (totalMillis <= -2) return -2
+
+        return totalMillis + 2
     }
 }
 

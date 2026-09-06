@@ -19,7 +19,7 @@ class ListenerManager(private val _commandManager: CommandManager) {
     fun registerListeners() {
         ClassGraph().enableAllInfo().scan().use { scan ->
             val listeners = scan.getClassesImplementing(Listener::class.java)
-            listeners.forEach(Consumer { listenerClass ->
+            listeners.filter { !it.packageName.contains("paperktx") }.forEach(Consumer { listenerClass ->
                 try {
                     val loadedClass = listenerClass.loadClass()
                     val listener = loadedClass.getDeclaredConstructor().newInstance() as Listener
@@ -40,7 +40,7 @@ class ListenerManager(private val _commandManager: CommandManager) {
     }
 
     fun unregisterListeners() {
-        _registeredListeners.forEach(Consumer { listener: Listener? -> HandlerList.unregisterAll(listener!!) })
+        _registeredListeners.forEach(HandlerList::unregisterAll)
         _registeredListeners.clear()
     }
 

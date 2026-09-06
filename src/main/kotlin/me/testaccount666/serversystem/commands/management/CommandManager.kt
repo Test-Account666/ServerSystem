@@ -10,13 +10,9 @@ import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabComplet
 import me.testaccount666.serversystem.commands.wrappers.CommandExecutorWrapper
 import me.testaccount666.serversystem.commands.wrappers.TabCompleterWrapper
 import me.testaccount666.serversystem.managers.config.ConfigReader
-import me.testaccount666.serversystem.utils.ConstructorAccessor
-import me.testaccount666.serversystem.utils.FieldAccessor
-import me.testaccount666.serversystem.utils.MethodAccessor
+import me.testaccount666.serversystem.utils.*
 import org.bukkit.Bukkit
-import org.bukkit.command.Command
-import org.bukkit.command.PluginCommand
-import org.bukkit.command.SimpleCommandMap
+import org.bukkit.command.*
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
@@ -64,14 +60,14 @@ class CommandManager(private val _configReader: ConfigReader) {
     private fun registerCommand(
         command: ServerSystemCommandExecutor,
         completer: ServerSystemTabCompleter,
-        variantAliasMap: Map<String, List<String>>
+        variantAliasMap: Map<String, List<String>>,
     ) {
         val commandMap = commandMap
 
         variantAliasMap.forEach { (variant, aliases) ->
             // Make aliases List modifiable
             val aliases = aliases.toMutableList()
-            aliases.forEach { commandMap.remove(it) }
+            aliases.forEach(commandMap::remove)
 
             if (command is AbstractServerSystemCommand) command.variantLabelMap[variant] = aliases
 
@@ -167,22 +163,14 @@ class CommandManager(private val _configReader: ConfigReader) {
         commandExecutor: Class<ServerSystemCommandExecutor>,
         tabCompleter: Class<out ServerSystemTabCompleter>,
         variantAliasMap: Map<String, List<String>>,
-        command: String, commandAnnotation: ServerSystemCommand
+        command: String, commandAnnotation: ServerSystemCommand,
     ) {
         try {
-            var simpleCompleter: SimpleTabCompleter? = null
+            val completer = commandAnnotation.simpleCompletions.takeIf { it.isNotEmpty() }?.let { completions ->
+                SimpleTabCompleter(completions.associate { (it.position + 1) to (if (it.isNull) null else it.values.toList()) })
+            } ?: tabCompleter.getDeclaredConstructor().newInstance()
 
-            commandAnnotation.simpleCompletions.takeIf { it.isNotEmpty() }?.let { simpleCompletions ->
-                simpleCompleter = SimpleTabCompleter(simpleCompletions.associate {
-                    (it.position + 1) to (if (it.isNull) null else it.values.toList())
-                })
-            }
-
-            registerCommand(
-                commandExecutor.getDeclaredConstructor().newInstance(),
-                simpleCompleter ?: tabCompleter.getDeclaredConstructor().newInstance(),
-                variantAliasMap
-            )
+            registerCommand(commandExecutor.getDeclaredConstructor().newInstance(), completer, variantAliasMap)
         } catch (exception: Exception) {
             throw RuntimeException("Error registering command '${command}'!", exception)
         }

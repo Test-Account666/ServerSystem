@@ -1,11 +1,10 @@
 package me.testaccount666.serversystem.listener.executables.chat.prefixchat
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
+import me.testaccount666.serversystem.extensions.generalMsg
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.managers.config.ConfigurationManager
-import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.UserManager
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
@@ -15,8 +14,7 @@ class ListenerPrefixChat : Listener {
     private val _enabled: Boolean
 
     constructor() {
-        val configManager = instance.registry.getService<ConfigurationManager>()
-        val enabled = configManager.generalConfig.getBoolean("Chat.PrefixChat.Enabled", false)
+        val enabled = getService<ConfigurationManager>().generalConfig.getBoolean("Chat.PrefixChat.Enabled", false)
 
         if (!ChatVaultAPI.isVaultInstalled || !enabled) {
             _chatVaultAPI = null
@@ -39,7 +37,7 @@ class ListenerPrefixChat : Listener {
         prefix = prefix.replace("%", "%%")
         suffix = suffix.replace("%", "%%")
 
-        val user = instance.registry.getService<UserManager>().getUserOrNull(player) ?: run {
+        val user = getService<UserManager>().getUserOrNull(player) ?: run {
             log.warning("Couldn't cache User '${player.name}'! This should not happen!")
             return
         }
@@ -47,9 +45,8 @@ class ListenerPrefixChat : Listener {
             log.warning("User '${player.name}' is cached as Offline User! This should not happen!")
             return
         }
-        val onlineUser = user.offlineUser as User
 
-        val chatFormat = general("ChatFormat", onlineUser) {
+        val chatFormat = user.onlineUser.generalMsg("ChatFormat") {
             sender($$"%1$s")
             prefix(false)
             send(false)
@@ -60,8 +57,7 @@ class ListenerPrefixChat : Listener {
                     .replace("<SUFFIX>", suffix)
                     .replace("<MESSAGE>", $$"%2$s")
             }
-        }.build()
-        if (chatFormat.isEmpty()) return
+        }.takeUnless { it.isBlank() } ?: return
 
         event.format = chatFormat
     }

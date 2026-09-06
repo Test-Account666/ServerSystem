@@ -1,41 +1,42 @@
 package me.testaccount666.serversystem.clickablesigns.executables.warp
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
+import me.testaccount666.paperktx.colors.ChatColor.Companion.stripColor
+import me.testaccount666.paperktx.extensions.getValue
 import me.testaccount666.serversystem.clickablesigns.AbstractSignClickAction
 import me.testaccount666.serversystem.commands.executables.waypoints.warp.manager.WarpManager
+import me.testaccount666.serversystem.extensions.getServiceOrNull
+import me.testaccount666.serversystem.extensions.signMsg
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.ChatColor.Companion.stripColor
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.sign
 import org.bukkit.block.Sign
 import org.bukkit.configuration.file.FileConfiguration
 
 class ActionWarpSign : AbstractSignClickAction() {
     override val basePermissionNode = "ClickableSigns.Warp"
 
-    override fun executeAction(user: User, sign: Sign, config: FileConfiguration): Boolean {
-        val warpManager = instance.registry.getServiceOrNull<WarpManager>() ?: run {
-            sign("Warp.NoWarpManager", user).build()
+    override fun executeAction(user: User, sign: Sign, config: FileConfiguration, onSuccess: () -> Unit): Boolean {
+        val warpManager = getServiceOrNull<WarpManager>() ?: run {
+            user.signMsg("Warp.NoWarpManager")
             return false
         }
 
-        var warpName = config.getString("WarpName", sign.getLine(1))
-        warpName = stripColor(warpName)
+        val warpName = stripColor(config.getValue("WarpName", sign.getLine(1)))
         if (warpName.isEmpty()) {
-            sign("Warp.NoWarpSpecified", user).build()
+            user.signMsg("Warp.NoWarpSpecified")
             return false
         }
 
         val warp = warpManager.getPointByName(warpName) ?: run {
-            sign("Warp.WarpNotFound", user) {
+            user.signMsg("Warp.WarpNotFound") {
                 postModifier { it.replace("<WARP>", warpName) }
-            }.build()
+            }
             return false
         }
 
         user.getPlayer()?.teleport(warp.location)
-        sign("Warp.Teleported", user) {
+        user.signMsg("Warp.Teleported") {
             postModifier { it.replace("<WARP>", warp.displayName) }
-        }.build()
+        }
+        onSuccess()
         return true
     }
 }

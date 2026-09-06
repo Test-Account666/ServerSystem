@@ -1,11 +1,13 @@
 package me.testaccount666.serversystem.listener.executables.awayfromkeyboard
 
 import io.papermc.paper.event.player.AsyncChatEvent
+import me.testaccount666.paperktx.extensions.TimeExtensions.toTicks
+import me.testaccount666.paperktx.extensions.location
+import me.testaccount666.paperktx.scheduler.skedule.okkero.schedule
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
+import me.testaccount666.serversystem.extensions.*
 import me.testaccount666.serversystem.managers.config.ConfigurationManager
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.userdata.UserManager
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -17,33 +19,35 @@ import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.player.*
 import java.util.*
 import kotlin.math.abs
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 class ListenerAwayFromKeyboard : Listener {
-    private val _enabled: Boolean
-    private val _lastActionMap: MutableMap<UUID, Long> = HashMap()
-    private val _chunkLocationMap: MutableMap<UUID, Location> = HashMap()
-    private val _lastMouseMovement: MutableMap<UUID, Long> = HashMap()
+    private val _enabled = getService<ConfigurationManager>().generalConfig.getValue("AwayFromKeyboard.Enabled", false)
+    private val _lastActionMap = HashMap<UUID, Long>()
+    private val _chunkLocationMap = HashMap<UUID, Location>()
+    private val _lastMouseMovement = HashMap<UUID, Long>()
 
     init {
-        val configManager = instance.registry.getService<ConfigurationManager>()
-        _enabled = configManager.generalConfig.getBoolean("AwayFromKeyboard.Enabled", false)
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(instance, {
-            Bukkit.getOnlinePlayers().forEach { player ->
-                val lastAction = _lastActionMap.getOrDefault(player.uniqueId, System.currentTimeMillis())
-                val currentTime = System.currentTimeMillis()
+        instance.schedule {
+            loop(1.minutes.toTicks(), 1.minutes.toTicks()) {
+                Bukkit.getOnlinePlayers().forEach { player ->
+                    val lastAction = _lastActionMap.getOrDefault(player.uniqueId, System.currentTimeMillis())
+                    val currentTime = System.currentTimeMillis()
 
-                val timeOut = lastAction + 1000 * 60 * 5
+                    val timeOut = lastAction + 5.minutes.inWholeMilliseconds
 
-                if (currentTime < timeOut) return@forEach
+                    if (currentTime < timeOut) return@forEach
 
-                val user = getUser(player) ?: return@forEach
-                if (user.isAfk) return@forEach
+                    val user = player.asUser() ?: return@forEach
+                    if (user.isAfk) return@forEach
 
-                user.isAfk = true
-                general("AwayFromKeyboard.NowAfk", user).build()
+                    user.isAfk = true
+                    user.generalMsg("AwayFromKeyboard.NowAfk")
+                }
             }
-        }, (20 * 60).toLong(), (20 * 60).toLong())
+        }
     }
 
     @EventHandler
@@ -163,29 +167,17 @@ class ListenerAwayFromKeyboard : Listener {
         resetAfkStatus(event.getPlayer())
     }
 
-    private fun getUser(player: Player): User? {
-        val cachedUser = instance.registry.getService<UserManager>().getUserOrNull(player) ?: return null
-
-        if (cachedUser.isOfflineUser) return null
-        return cachedUser.offlineUser as User
-    }
+    private fun getUser(player: Player): User? = player.asUser()
 
     private fun getChunkLocation(player: Player): Location {
         val chunk = player.location.chunk
 
-        val chunkX = chunk.x
-        val chunkY = player.location.blockY
-        val chunkZ = chunk.z
-        val world = chunk.world
-
-        return Location(world, chunkX.toDouble(), chunkY.toDouble(), chunkZ.toDouble())
+        return location(chunk.x, player.location.blockY, chunk.z, chunk.world)
     }
 
     fun isMouseInactive(player: Player): Boolean {
-        var lastMouseMovement = _lastMouseMovement.getOrDefault(player.uniqueId, System.currentTimeMillis())
         val currentTime = System.currentTimeMillis()
-
-        lastMouseMovement += (1000 * 30).toLong()
+        val lastMouseMovement = _lastMouseMovement.getOrDefault(player.uniqueId, currentTime) + 30.seconds.inWholeMilliseconds
 
         return currentTime > lastMouseMovement
     }
@@ -193,10 +185,10 @@ class ListenerAwayFromKeyboard : Listener {
     private fun resetAfkStatus(player: Player) {
         _lastActionMap[player.uniqueId] = System.currentTimeMillis()
 
-        val user = getUser(player) ?: return
+        val user = player.asUser() ?: return
         if (!user.isAfk) return
 
         user.isAfk = false
-        general("AwayFromKeyboard.NoLongerAfk", user).build()
+        user.generalMsg("AwayFromKeyboard.NoLongerAfk")
     }
 }

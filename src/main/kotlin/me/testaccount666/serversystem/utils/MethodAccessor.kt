@@ -1,8 +1,6 @@
 package me.testaccount666.serversystem.utils
 
-import java.util.function.BiConsumer
-import java.util.function.BiFunction
-import java.util.function.Consumer
+import java.util.function.*
 import java.util.function.Function
 
 /*
@@ -35,9 +33,9 @@ class MethodAccessor private constructor() {
 
         @JvmStatic
         fun <T, P> createVoidAccessor(
-            targetClass: Class<T?>,
+            targetClass: Class<T>,
             methodName: String,
-            paramType: Class<P?>?
+            paramType: Class<P>?,
         ): BiConsumer<T?, P?> {
             try {
                 val method = targetClass.getDeclaredMethod(methodName, paramType)
@@ -59,7 +57,7 @@ class MethodAccessor private constructor() {
         fun <T> createVoidAccessor(
             targetClass: Class<T?>,
             methodName: String,
-            vararg paramTypes: Class<*>?
+            vararg paramTypes: Class<*>?,
         ): BiConsumer<T?, Array<Any?>?> {
             try {
                 val method = targetClass.getDeclaredMethod(methodName, *paramTypes)
@@ -78,7 +76,7 @@ class MethodAccessor private constructor() {
         }
 
         @JvmStatic
-        fun <T, R> createAccessor(targetClass: Class<T?>, methodName: String, returnType: Class<R?>?): Function<T?, R?> {
+        fun <T, R> createAccessor(targetClass: Class<T>, methodName: String, returnType: Class<R>?): Function<T?, R?> {
             try {
                 val method = targetClass.getDeclaredMethod(methodName)
                 method.isAccessible = true
@@ -103,7 +101,7 @@ class MethodAccessor private constructor() {
             targetClass: Class<T>,
             methodName: String,
             paramType: Class<P>,
-            returnType: Class<R>
+            returnType: Class<R>,
         ): BiFunction<T?, P?, R?> {
             try {
                 val method = targetClass.getDeclaredMethod(methodName, paramType)
@@ -129,7 +127,7 @@ class MethodAccessor private constructor() {
             targetClass: Class<T?>,
             methodName: String,
             returnType: Class<R?>?,
-            vararg paramTypes: Class<*>?
+            vararg paramTypes: Class<*>?,
         ): BiFunction<T?, Array<Any?>?, R?> {
             try {
                 val method = targetClass.getDeclaredMethod(methodName, *paramTypes)

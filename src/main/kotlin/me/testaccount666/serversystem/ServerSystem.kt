@@ -2,6 +2,8 @@ package me.testaccount666.serversystem
 
 import me.testaccount666.migration.LegacyDataMigrator
 import me.testaccount666.migration.plugins.MigratorRegistry
+import me.testaccount666.paperktx.PaperKTX
+import me.testaccount666.paperktx.scheduler.skedule.okkero.schedule
 import me.testaccount666.serversystem.clickablesigns.SignManager
 import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager
 import me.testaccount666.serversystem.commands.executables.waypoints.warp.manager.WarpManager
@@ -9,12 +11,8 @@ import me.testaccount666.serversystem.commands.management.CommandManager
 import me.testaccount666.serversystem.commands.management.CommandReplacer
 import me.testaccount666.serversystem.listener.management.ListenerManager
 import me.testaccount666.serversystem.managers.config.ConfigurationManager
-import me.testaccount666.serversystem.managers.database.economy.EconomyDatabaseManager
-import me.testaccount666.serversystem.managers.database.economy.MySqlEconomyDatabaseManager
-import me.testaccount666.serversystem.managers.database.economy.SqliteEconomyDatabaseManager
-import me.testaccount666.serversystem.managers.database.moderation.ModerationDatabaseManager
-import me.testaccount666.serversystem.managers.database.moderation.MySqlModerationDatabaseManager
-import me.testaccount666.serversystem.managers.database.moderation.SqliteModerationDatabaseManager
+import me.testaccount666.serversystem.managers.database.economy.*
+import me.testaccount666.serversystem.managers.database.moderation.*
 import me.testaccount666.serversystem.placeholderapi.PlaceholderApiSupport
 import me.testaccount666.serversystem.placeholderapi.PlaceholderManager
 import me.testaccount666.serversystem.updates.UpdateManager
@@ -48,6 +46,7 @@ class ServerSystem : JavaPlugin() {
     }
 
     override fun onEnable() {
+        PaperKTX.plugin = this
         val migrator = LegacyDataMigrator()
         if (migrator.isLegacyDataPresent) {
             log.log(Level.INFO, "Legacy data detected. Attempting to migrate...")
@@ -56,7 +55,7 @@ class ServerSystem : JavaPlugin() {
 
         val previousVersionFile = File(dataFolder, "previousVersion.yml")
         val previousVersionConfig = YamlConfiguration.loadConfiguration(previousVersionFile)
-        previousVersionConfig.set("previousVersion", CURRENT_VERSION.toString())
+        previousVersionConfig["previousVersion"] = CURRENT_VERSION.toString()
         try {
             previousVersionConfig.save(previousVersionFile)
         } catch (exception: IOException) {
@@ -74,14 +73,18 @@ class ServerSystem : JavaPlugin() {
         val configManager = registry.getService<ConfigurationManager>()
         registry.registerService(UpdateManager(this, configManager)).start()
 
-        Bukkit.getScheduler().runTaskLater(this, Runnable { migrator.migrateLegacyData() }, 1L)
+        schedule {
+            waitFor(1)
+            migrator.migrateLegacyData()
+        }
 
-        Bukkit.getScheduler().runTaskLater(this, Runnable {
+        schedule {
+            waitFor(2)
             registry.getServiceOrNull<CommandManager>()?.registerCommands()
             registry.getServiceOrNull<ListenerManager>()?.registerListeners()
             registry.getServiceOrNull<PlaceholderManager>()?.registerPlaceholders()
             registry.getServiceOrNull<CommandReplacer>()?.replaceCommands()
-        }, 2L)
+        }
     }
 
     private fun initialize() {
@@ -134,27 +137,27 @@ class ServerSystem : JavaPlugin() {
 
         if (migratorCount > 0) log.info("Not hooking into Vault since we found data migrators!")
 
-        Bukkit.getScheduler().runTask(this, Runnable {
+        schedule {
             val warpFile = Path.of(dataFolder.path, "data", "warps.yml").toFile()
             val warpConfig = YamlConfiguration.loadConfiguration(warpFile)
 
             registry.registerService(WarpManager(warpConfig, warpFile))
             registry.registerService(SignManager()).loadSignTypes()
-        })
+        }
     }
 
-    override fun onDisable() {
-        registry.getServiceOrNull<UserManager>()?.run(::saveAllUsers)
+    override fun onDisable() = with(registry) {
+        getServiceOrNull<UserManager>()?.run(::saveAllUsers)
 
-        registry.getServiceOrNull<CommandManager>()?.run(CommandManager::unregisterCommands)
-        registry.getServiceOrNull<ListenerManager>()?.run(ListenerManager::unregisterListeners)
+        getServiceOrNull<CommandManager>()?.run(CommandManager::unregisterCommands)
+        getServiceOrNull<ListenerManager>()?.run(ListenerManager::unregisterListeners)
 
         PlaceholderApiSupport.unregisterPlaceholders()
 
-        registry.getServiceOrNull<EconomyDatabaseManager>()?.shutdown()
-        registry.getServiceOrNull<ModerationDatabaseManager>()?.shutdown()
+        getServiceOrNull<EconomyDatabaseManager>()?.shutdown()
+        getServiceOrNull<ModerationDatabaseManager>()?.shutdown()
 
-        registry.clearServices()
+        clearServices()
     }
 
     private fun saveAllUsers(userManager: UserManager) = userManager.cachedUsers.forEach { it.offlineUser.save() }

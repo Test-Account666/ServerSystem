@@ -1,10 +1,9 @@
 package me.testaccount666.serversystem.commands.executables.commandspy
 
-import me.testaccount666.serversystem.userdata.User
+import me.testaccount666.serversystem.extensions.commandMsg
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.userdata.UserManager
 import me.testaccount666.serversystem.userdata.UserManager.Companion.consoleUser
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.ServiceExtensions.getService
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
@@ -24,14 +23,14 @@ class ListenerCommandSpy : Listener {
         getService<UserManager>().cachedUsers.forEach { cachedUser ->
             if (!cachedUser.isOnlineUser) return@forEach
 
-            val user = cachedUser.offlineUser as User
+            val user = cachedUser.onlineUser
             if (!user.isCommandSpyEnabled) return@forEach
 
-            command("CommandSpy.Format", user) {
+            user.commandMsg("CommandSpy.Format") {
                 prefix(false)
                 target(sender)
                 postModifier { it.replace("<COMMAND>", command) }
-            }.build()
+            }
         }
     }
 }

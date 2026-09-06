@@ -5,10 +5,9 @@ import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.serverVersion
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.extensions.*
 import me.testaccount666.serversystem.updates.UpdateManager
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 
@@ -23,32 +22,31 @@ class CommandServerSystem : AbstractServerSystemCommand() {
             "version" -> version(commandSender, label)
             "reload" -> reload(commandSender)
             "migrate" -> migrate(commandSender, label, *arguments.drop(1).toTypedArray())
-            else -> general("InvalidArguments", commandSender) {
+            else -> commandSender.generalMsg("InvalidArguments") {
                 syntax(getSyntaxPath(command))
                 label(label)
-            }.build()
+            }
         }
     }
 
     fun version(commandSender: User, label: String) {
         if (!checkPermission(commandSender, "ServerSystem.Version")) return
 
-        command("ServerSystem.Version.Checking", commandSender).build()
+        commandSender.commandMsg("ServerSystem.Version.Checking")
 
-        val updateManager = getService<UpdateManager>()
-        updateManager.updateChecker.getLatestVersion().thenAccept { latestVersion ->
-            command("ServerSystem.Version.Success", commandSender) {
+        getService<UpdateManager>().updateChecker.getLatestVersion().thenAccept { latestVersion ->
+            commandSender.commandMsg("ServerSystem.Version.Success") {
                 prefix(false)
                 postModifier { applyVersion(it, latestVersion.version) }
-            }.build()
+            }
         }.exceptionally { throwable ->
             throwable.printStackTrace()
-            general("ErrorOccurred", commandSender) { label(label) }.build()
+            commandSender.generalMsg("ErrorOccurred") { label(label) }
 
-            command("ServerSystem.Version.Success", commandSender) {
+            commandSender.commandMsg("ServerSystem.Version.Success") {
                 prefix(false)
                 postModifier { applyVersion(it, null) }
-            }.build()
+            }
             null
         }
     }
@@ -67,27 +65,30 @@ class CommandServerSystem : AbstractServerSystemCommand() {
     fun reload(commandSender: User) {
         if (!checkPermission(commandSender, "ServerSystem.Reload")) return
 
-        val serverSystem = instance
-        Bukkit.getScheduler().cancelTasks(serverSystem)
-        serverSystem.onDisable()
-        serverSystem.onEnable()
+        runCatching {
+            with(instance) {
+                Bukkit.getScheduler().cancelTasks(this)
+                onDisable()
+                onEnable()
+            }
+        }.onFailure { it.printStackTrace() }
 
         if (!instance.isEnabled) {
-            general("ErrorOccurred", commandSender).build()
+            commandSender.generalMsg("ErrorOccurred")
             return
         }
 
-        command("ServerSystem.Reload.Success", commandSender).build()
+        commandSender.commandMsg("ServerSystem.Reload.Success")
     }
 
     fun migrate(commandSender: User, label: String, vararg arguments: String) {
         if (!checkPermission(commandSender, "ServerSystem.Migrate")) return
 
         if (arguments.size <= 1) {
-            general("InvalidArguments", commandSender) {
+            commandSender.generalMsg("InvalidArguments") {
                 label(label)
                 syntax(getSyntaxPath(null))
-            }.build()
+            }
             return
         }
 
@@ -95,9 +96,9 @@ class CommandServerSystem : AbstractServerSystemCommand() {
         val migratorName = arguments[1]
 
         val migrator = migratorRegistry.getMigrator(migratorName) ?: run {
-            command("ServerSystem.Migrate.NotFound", commandSender) {
+            commandSender.commandMsg("ServerSystem.Migrate.NotFound") {
                 postModifier { it.replace("<MIGRATOR>", migratorName) }
-            }.build()
+            }
             return
         }
 
@@ -114,16 +115,16 @@ class CommandServerSystem : AbstractServerSystemCommand() {
             }
 
             else -> {
-                general("InvalidArguments", commandSender) {
+                commandSender.generalMsg("InvalidArguments") {
                     label(label)
                     syntax(getSyntaxPath(null))
-                }.build()
+                }
                 return
             }
         }
 
-        command("ServerSystem.Migrate.Success.${migrationType}", commandSender) {
+        commandSender.commandMsg("ServerSystem.Migrate.Success.${migrationType}") {
             postModifier { it.replace("<MIGRATOR>", migratorName) }
-        }.build()
+        }
     }
 }

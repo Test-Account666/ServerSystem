@@ -2,9 +2,9 @@ package me.testaccount666.serversystem.commands.executables.god
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.extensions.commandMsg
+import me.testaccount666.serversystem.extensions.generalMsg
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 import org.bukkit.entity.Mob
 
@@ -31,7 +31,7 @@ class CommandGod : AbstractServerSystemCommand() {
         if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
         val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
+            commandSender.generalMsg("PlayerNotFound") { target(arguments[0]) }
             return
         }
 
@@ -51,12 +51,12 @@ class CommandGod : AbstractServerSystemCommand() {
             it.target?.uniqueId == targetPlayer.uniqueId
         }.forEach { it.target = null }
 
-        command(messagePath, commandSender) { target(targetPlayer.name) }.build()
+        commandSender.commandMsg(messagePath) { target(targetPlayer.name) }
 
         if (isSelf) return
-        command("God.Success." + (if (isGod) "Enabled" else "Disabled"), targetUser) {
-            sender(commandSender.getNameSafe())
+        targetUser.commandMsg("God.Success." + (if (isGod) "Enabled" else "Disabled")) {
+            sender(commandSender.nameSafe)
             target(targetPlayer.name)
-        }.build()
+        }
     }
 }

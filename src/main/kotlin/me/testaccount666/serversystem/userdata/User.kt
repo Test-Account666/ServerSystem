@@ -1,6 +1,7 @@
 package me.testaccount666.serversystem.userdata
 
-import me.testaccount666.serversystem.commands.executables.teleportask.TeleportRequest
+import me.testaccount666.serversystem.userdata.teleport.TeleportRequest
+import me.testaccount666.serversystem.userdata.teleport.TeleportRunnable
 import net.kyori.adventure.text.Component
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -16,7 +17,7 @@ open class User(userFile: File) : OfflineUser(userFile) {
     protected open var onlinePlayer: Player? = null
 
     var teleportRequest: TeleportRequest? = null
-
+    var teleportRunnable: TeleportRunnable? = null
     var replyUser: User? = null
 
     var isAfk = false
@@ -57,8 +58,8 @@ open class User(userFile: File) : OfflineUser(userFile) {
      */
     override fun getNameOrNull() = getPlayer()?.name ?: name
 
-    open val commandSender: CommandSender?
-        get() = getPlayer()
+    open val commandSender: CommandSender
+        get() = getPlayer()!!
 
     /**
      * Uses User#getCommandSender() to send a message.
@@ -77,8 +78,8 @@ open class User(userFile: File) : OfflineUser(userFile) {
     fun sendMessage(component: Component) = sendMessage(component as Any)
 
     private fun sendMessage(obj: Any) {
-        if (obj is String) commandSender?.sendMessage(obj)
-        if (obj is Component) commandSender?.sendMessage(obj)
+        if (obj is String) commandSender.sendMessage(obj)
+        if (obj is Component) commandSender.sendMessage(obj)
 
         messageListeners.toSet().forEach {
             if (it.isOfflineUser) {
@@ -86,7 +87,7 @@ open class User(userFile: File) : OfflineUser(userFile) {
                 return@forEach
             }
 
-            (it.offlineUser as? User)?.sendMessage(obj)
+            it.onlineUser.sendMessage(obj)
         }
     }
 

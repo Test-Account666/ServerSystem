@@ -67,14 +67,18 @@ Messages:
     ClearChat:
       Success: "The chat has been cleared by <Color:Highlight><TARGET><Color:Message>."
     Spawn:
+      NoSpawnSet: "<Color:Error.Message>No spawn was set."
+      Teleporting: "Starting teleport, please stand still..."
       Success: "You have been teleported to spawn."
       SuccessOther: "You have teleported <Color:Highlight><TARGET> <Color:Message>to spawn."
-      NoSpawnSet: "<Color:Error.Message>No spawn was set."
+      Moved: "<Color:Error.Message>Your teleport was cancelled, since you moved."
     SetSpawn:
       Success: "You have set spawn to your current location."
     Home:
-      Success: "You teleported to the home <Color:Highlight><HOME><Color:Message>."
+      Success: "You have been teleported to <Color:Highlight><HOME><Color:Message>."
       DoesNotExist: "<Color:Error.Message>The specified home <Color:Error.Highlight><HOME> <Color:Error.Message>does not exist."
+      Teleporting: "Starting teleport, please stand still..."
+      Moved: "<Color:Error.Message>Your teleport was cancelled, since you moved."
     DeleteHome:
       Success: "You deleted the home <Color:Highlight><HOME><Color:Message>."
       DoesNotExist: "<Color:Error.Message>The specified home <Color:Error.Highlight><HOME> <Color:Error.Message>does not exist."
@@ -287,7 +291,9 @@ Messages:
         DoesNotExist: "<Color:Error.Message>Specified warp <Color:Error.Highlight><WARP> <Color:Error.Message>doesn't exist."
       Teleport:
         DoesNotExist: "<Color:Error.Message>Specified warp <Color:Error.Highlight><WARP> <Color:Error.Message>doesn't exist."
-        Success: "You teleported to <Color:Highlight><WARP><Color:Message>."
+        Teleporting: "Starting teleport, please stand still..."
+        Success: "You have been teleported to <Color:Highlight><WARP><Color:Message>."
+        Moved: "<Color:Error.Message>Your teleport was cancelled, since you moved."
     Kit:
       Create:
         KitAlreadyExists: "<Color:Error.Message>The kit <Color:Error.Highlight><KIT> <Color:Error.Message>already exists."

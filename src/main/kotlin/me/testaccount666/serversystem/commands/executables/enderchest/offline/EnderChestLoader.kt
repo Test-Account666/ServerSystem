@@ -1,9 +1,10 @@
 package me.testaccount666.serversystem.commands.executables.enderchest.offline
 
 import de.tr7zw.nbtapi.NBT
+import me.testaccount666.paperktx.extensions.*
+import me.testaccount666.paperktx.extensions.ComponentExtensions.asComponent
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.utils.BiDirectionalHashMap
-import me.testaccount666.serversystem.utils.ItemStackExtensions.Companion.isAir
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.inventory.Inventory
@@ -32,7 +33,7 @@ class EnderChestLoader {
             val fileHandle = NBT.getFileHandle(playerDataFile)
             val enderItemsTag = fileHandle.getCompoundList("EnderItems") ?: return null
 
-            val inventory = Bukkit.createInventory(null, 27, "${offlinePlayer.name}'s Ender Chest")
+            val inventory = Bukkit.createInventory(null, 27, "${offlinePlayer.name}'s Ender Chest".asComponent())
 
             for (index in 0..<enderItemsTag.size()) {
                 val itemTag = enderItemsTag.get(index) ?: continue
@@ -40,7 +41,7 @@ class EnderChestLoader {
                 val slot = itemTag.getByte("Slot")
                 val itemStack = NBT.itemStackFromNBT(itemTag)
 
-                inventory.setItem(slot.toInt(), itemStack)
+                inventory[slot.toInt()] = itemStack
             }
 
             inventoryMap.put(playerUUID, inventory)
@@ -66,7 +67,7 @@ class EnderChestLoader {
 
             enderItemsTag.clear()
             for (slot in 0..26) {
-                val item = inventory.getItem(slot)
+                val item = inventory[slot]
                 if (item.isAir()) continue
 
                 val itemTag = NBT.itemStackToNBT(item)

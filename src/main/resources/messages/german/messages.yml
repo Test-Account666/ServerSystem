@@ -67,14 +67,18 @@ Messages:
     ClearChat:
       Success: "Der Chat wurde von <Color:Highlight><TARGET><Color:Message> geleert."
     Spawn:
+      NoSpawnSet: "<Color:Error.Message>Kein Spawn wurde gesetzt."
+      Moved: "<Color:Error.Message>Deine Teleportation wurde abgebrochen, da du dich bewegt hast."
       Success: "Du wurdest zum Spawn teleportiert."
       SuccessOther: "Du hast <Color:Highlight><TARGET> <Color:Message>zum Spawn teleportiert."
-      NoSpawnSet: "<Color:Error.Message>Kein Spawn wurde gesetzt."
+      StartingTeleporting: "Teleportation wird gestartet, bitte stehen bleiben..."
     SetSpawn:
       Success: "Du hast den Spawn auf deine aktuelle Position gesetzt."
     Home:
-      Success: "Du wurdest zum Zuhause <Color:Highlight><HOME><Color:Message> teleportiert."
       DoesNotExist: "<Color:Error.Message>Das angegebene Zuhause <Color:Error.Highlight><HOME> <Color:Error.Message>existiert nicht."
+      Moved: "<Color:Error.Message>Deine Teleportation wurde abgebrochen, da du dich bewegt hast."
+      Success: "Du wurdest zu <Color:Highlight><HOME><Color:Message> teleportiert."
+      StartingTeleporting: "Teleportation wird gestartet, bitte stehen bleiben..."
     DeleteHome:
       Success: "Du hast das Zuhause <Color:Highlight><HOME><Color:Message> gelöscht."
       DoesNotExist: "<Color:Error.Message>Das angegebene Zuhause <Color:Error.Highlight><HOME> <Color:Error.Message>existiert nicht."
@@ -287,7 +291,9 @@ Messages:
         DoesNotExist: "<Color:Error.Message>Der angegebene Warp <Color:Error.Highlight><WARP> <Color:Error.Message>existiert nicht."
       Teleport:
         DoesNotExist: "<Color:Error.Message>Der angegebene Warp <Color:Error.Highlight><WARP> <Color:Error.Message>existiert nicht."
+        Moved: "<Color:Error.Message>Deine Teleportation wurde abgebrochen, da du dich bewegt hast."
         Success: "Du wurdest zu <Color:Highlight><WARP><Color:Message> teleportiert."
+        StartingTeleporting: "Teleportation wird gestartet, bitte stehen bleiben..."
     Kit:
       Create:
         KitAlreadyExists: "<Color:Error.Message>Das Kit <Color:Error.Highlight><KIT> <Color:Error.Message>existiert bereits."

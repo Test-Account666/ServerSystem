@@ -1,10 +1,11 @@
 package me.testaccount666.serversystem.commands.executables.clearchat
 
+import me.testaccount666.paperktx.extensions.ComponentExtensions.asComponent
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.extensions.commandMsg
 import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 
@@ -22,13 +23,12 @@ class CommandClearChat : AbstractServerSystemCommand() {
                 everyone.sendMessage(randomChar.toString())
             }
             repeat(_CLEAR_LINES) { everyone.sendMessage(_EMPTY_LINE) }
-
         }
 
-        command("ClearChat.Success", commandSender) {
+        commandSender.commandMsg("ClearChat.Success") {
             send(false)
             blankError(true)
-        }.build().takeIf { it.isNotEmpty() }?.also(Bukkit::broadcastMessage)
+        }.takeIf { it.isNotEmpty() }?.asComponent()?.also(Bukkit::broadcast)
     }
 
     companion object {

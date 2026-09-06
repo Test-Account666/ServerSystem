@@ -67,14 +67,18 @@ Messages:
     ClearChat:
       Success: "Klepet je počistil <Color:Highlight><TARGET><Color:Message>."
     Spawn:
+      NoSpawnSet: "<Color:Error.Message>Spawn ni nastavljen."
+      Teleporting: "Teleportacija se zacenja. Stoj pri miru..."
       Success: "Bil si teleportiran na spawn."
       SuccessOther: "Teleportiral si <Color:Highlight><TARGET> <Color:Message>na spawn."
-      NoSpawnSet: "<Color:Error.Message>Spawn ni nastavljen."
+      Moved: "<Color:Error.Message>Zaradi premika je bila teleportacija prekinjena."
     SetSpawn:
       Success: "Spawn si nastavil na svojo trenutno lokacijo."
     Home:
-      Success: "Teleportiral si se v dom <Color:Highlight><HOME><Color:Message>."
       DoesNotExist: "<Color:Error.Message>Navedeni dom <Color:Error.Highlight><HOME> <Color:Error.Message>ne obstaja."
+      Teleporting: "Teleportacija se zacenja. Stoj pri miru..."
+      Success: "Teleportacija k <Color:Highlight><HOME><Color:Message> uspešna."
+      Moved: "<Color:Error.Message>Zaradi premika je bila teleportacija prekinjena."
     DeleteHome:
       Success: "Izbrisal si dom <Color:Highlight><HOME><Color:Message>."
       DoesNotExist: "<Color:Error.Message>Navedeni dom <Color:Error.Highlight><HOME> <Color:Error.Message>ne obstaja."
@@ -287,7 +291,9 @@ Messages:
         WarpNotFound: "<Color:Error.Message>Navedeni warp <Color:Error.Highlight><WARP> <Color:Error.Message>ne obstaja."
       Teleport:
         WarpNotFound: "<Color:Error.Message>Navedeni warp <Color:Error.Highlight><WARP> <Color:Error.Message>ne obstaja."
-        Success: "Teleportiral si se na <Color:Highlight><WARP><Color:Message>."
+        Teleporting: "Teleportacija se zacenja. Stoj pri miru..."
+        Success: "Teleportacija k <Color:Highlight><WARP><Color:Message> uspešna."
+        Moved: "<Color:Error.Message>Zaradi premika je bila teleportacija prekinjena."
     Kit:
       Create:
         KitAlreadyExists: "<Color:Error.Message>Komplet <Color:Error.Highlight><KIT> <Color:Error.Message>že obstaja."

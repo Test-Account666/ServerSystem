@@ -1,6 +1,6 @@
 package me.testaccount666.serversystem.userdata.money
 
-import me.testaccount666.serversystem.ServerSystem
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.userdata.ConsoleUser
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -9,8 +9,7 @@ class ConsoleBankAccount : AbstractBankAccount(ConsoleUser.CONSOLE_UUID, BigInte
     private val _topTenFetcher: AbstractBankAccount
 
     init {
-        val economyProvider = ServerSystem.instance.registry.getService<EconomyProvider>()
-        val economyType = economyProvider.economyType
+        val economyType = getService<EconomyProvider>().economyType
 
         _topTenFetcher = when (economyType) {
             EconomyProvider.Type.MYSQL -> MySqlBankAccount(owner, accountId)

@@ -9,14 +9,10 @@ open class CachedUser internal constructor(var offlineUser: OfflineUser) {
         _lastAccessTime = System.currentTimeMillis()
     }
 
-    val isOnlineUser
-        get() = offlineUser is User
-
-    val isOfflineUser
-        get() = !isOnlineUser
-
-    val isStale
-        get() = System.currentTimeMillis() - _lastAccessTime > _STALE_TIME_MILLIS
+    val onlineUser by lazy { offlineUser as User }
+    val isOnlineUser get() = offlineUser is User
+    val isOfflineUser get() = !isOnlineUser
+    val isStale get() = System.currentTimeMillis() - _lastAccessTime > _STALE_TIME_MILLIS
 
     internal fun updateLastAccessTime() {
         _lastAccessTime = System.currentTimeMillis()

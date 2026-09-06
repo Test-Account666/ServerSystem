@@ -2,11 +2,8 @@ package me.testaccount666.serversystem.commands.executables.offlineteleport
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
-import me.testaccount666.serversystem.userdata.CachedUser
-import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.userdata.UserManager
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
+import me.testaccount666.serversystem.extensions.*
+import me.testaccount666.serversystem.userdata.*
 import org.bukkit.command.Command
 
 @ServerSystemCommand("offlineteleport", ["offlineteleporthere"], TabCompleterOfflineTeleport::class)
@@ -36,7 +33,7 @@ class CommandOfflineTeleport : AbstractServerSystemCommand() {
 
         commandSender.getPlayer()!!.teleport(cachedUser.offlineUser.logoutPosition!!)
 
-        command("OfflineTeleport.Success", commandSender) { target(targetName) }.build()
+        commandSender.commandMsg("OfflineTeleport.Success") { target(targetName) }
     }
 
     private fun handleOfflineTeleportHere(commandSender: User, label: String, vararg arguments: String) {
@@ -46,22 +43,22 @@ class CommandOfflineTeleport : AbstractServerSystemCommand() {
         cachedUser.offlineUser.logoutPosition = commandSender.getPlayer()!!.location
         cachedUser.offlineUser.save()
 
-        command("OfflineTeleportHere.Success", commandSender) { target(targetName) }.build()
+        commandSender.commandMsg("OfflineTeleportHere.Success") { target(targetName) }
     }
 
     private fun getTargetUser(commandSender: User, label: String, name: String): CachedUser? {
         val cachedUser = getService<UserManager>().getUserOrNull(name) ?: run {
-            general("ErrorOccurred", commandSender) {
+            commandSender.generalMsg("ErrorOccurred") {
                 label(label)
                 target(name)
-            }.build()
+            }
             return null
         }
 
         val targetName = cachedUser.offlineUser.getNameOrNull() ?: name
 
         if (cachedUser.isOnlineUser) {
-            general("Offline.NotOffline", commandSender) { target(targetName) }.build()
+            commandSender.generalMsg("Offline.NotOffline") { target(targetName) }
             return null
         }
 

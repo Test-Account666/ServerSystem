@@ -1,21 +1,21 @@
 package me.testaccount666.serversystem.commands.executables.repair
 
+import io.papermc.paper.datacomponent.DataComponentTypes
+import me.testaccount666.paperktx.extensions.isAir
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.SimpleCompletion
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.repair.CommandRepair.RepairType.*
+import me.testaccount666.serversystem.extensions.commandMsg
+import me.testaccount666.serversystem.extensions.generalMsg
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.ItemStackExtensions.Companion.isAir
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
-import org.bukkit.inventory.meta.Damageable
 
 @ServerSystemCommand(
     "repair", simpleCompletions = [
-        SimpleCompletion(0, ["all", "*", "armor", "hand", "offhand", "inventory"])
+        SimpleCompletion(0, ["all", "*", "armor", "hand", "offhand", "inv", "inventory"])
     ]
 )
 class CommandRepair : AbstractServerSystemCommand() {
@@ -28,10 +28,10 @@ class CommandRepair : AbstractServerSystemCommand() {
         val typeArg = arguments.getOrNull(0) ?: "hand"
 
         val repairType = RepairType.fromString(typeArg) ?: run {
-            general("InvalidArguments", commandSender) {
+            commandSender.generalMsg("InvalidArguments") {
                 syntax(getSyntaxPath(command))
                 label(label)
-            }.build()
+            }
             return
         }
 
@@ -40,27 +40,26 @@ class CommandRepair : AbstractServerSystemCommand() {
 
         val repairedCount = items.count { repairItem(it) }
         if (repairedCount <= 0) {
-            command("Repair.NotRepairable", commandSender).build()
+            commandSender.commandMsg("Repair.NotRepairable")
             return
         }
 
-        command("Repair.Success", commandSender) {
+        commandSender.commandMsg("Repair.Success") {
             postModifier { it.replace("<COUNT>", repairedCount.toString()) }
-        }.build()
+        }
     }
 
-    enum class RepairType {
-
-        HAND, OFFHAND, ARMOR, INVENTORY, ALL;
+    enum class RepairType(vararg val names: String) {
+        HAND("hand"),
+        OFFHAND("offhand"),
+        ARMOR("armor"),
+        INVENTORY("inv", "inventory"),
+        ALL("all", "*");
 
         companion object {
-            fun fromString(value: String) = when {
-                value.equals("hand", true) -> HAND
-                value.equals("offhand", true) -> OFFHAND
-                value.equals("armor", true) -> ARMOR
-                value.equals("inventory", true) -> INVENTORY
-                value.equals("all", true) || value == "*" -> ALL
-                else -> null
+            fun fromString(value: String): RepairType? {
+                val value = value.lowercase()
+                return entries.find { value in it.names }
             }
         }
     }
@@ -81,11 +80,8 @@ class CommandRepair : AbstractServerSystemCommand() {
     }
 
     private fun repairItem(item: ItemStack): Boolean {
-        val meta = item.itemMeta as? Damageable ?: return false
-        if (!meta.hasDamage()) return false
-
-        meta.damage = 0
-        item.setItemMeta(meta)
-        return true
+        item.getData(DataComponentTypes.DAMAGE)?.takeIf { it > 0 } ?: return false
+        item.setData(DataComponentTypes.DAMAGE, 0)
+        return true;
     }
 }

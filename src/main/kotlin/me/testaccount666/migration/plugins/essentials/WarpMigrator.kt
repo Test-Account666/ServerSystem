@@ -1,12 +1,12 @@
 package me.testaccount666.migration.plugins.essentials
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.executables.waypoints.warp.manager.WarpManager
+import me.testaccount666.serversystem.extensions.getService
 import java.util.logging.Level
 
 class WarpMigrator : AbstractMigrator() {
-    val warpManager by lazy { instance.registry.getService<WarpManager>() }
+    val warpManager by lazy { getService<WarpManager>() }
     override fun migrateFrom(): Int {
         val essentials = essentials
 

@@ -13,7 +13,7 @@ abstract class AbstractInventorySeeListener {
     /**
      * Internal method to check if the listener can be registered.
      * This is called by the canRegister method in subclasses.
-     * 
+     *
      * @param commands Set of available commands
      * @return true if the listener can be registered, false otherwise
      */
@@ -26,7 +26,7 @@ abstract class AbstractInventorySeeListener {
     /**
      * Additional checks to be performed during registration.
      * Subclasses can override this method to add specific checks.
-     * 
+     *
      * @return true if additional checks pass, false otherwise
      */
     protected open fun additionalRegistrationChecks() = true

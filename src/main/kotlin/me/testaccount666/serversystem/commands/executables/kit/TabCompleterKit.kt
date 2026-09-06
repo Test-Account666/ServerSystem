@@ -2,7 +2,7 @@ package me.testaccount666.serversystem.commands.executables.kit
 
 import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabCompleter
-import me.testaccount666.serversystem.commands.interfaces.getService
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.userdata.User
 import org.bukkit.Bukkit
 import org.bukkit.command.Command

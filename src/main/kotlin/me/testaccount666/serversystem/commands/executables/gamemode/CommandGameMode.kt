@@ -2,10 +2,10 @@ package me.testaccount666.serversystem.commands.executables.gamemode
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.extensions.commandMsg
+import me.testaccount666.serversystem.extensions.generalMsg
 import me.testaccount666.serversystem.managers.messages.MappingsData.Companion.gameMode
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.GameMode
 import org.bukkit.command.Command
 
@@ -67,9 +67,9 @@ class CommandGameMode : AbstractServerSystemCommand() {
 
         // Handle /gamemode <Mode> <Target> command
         val gameMode = parseGameMode(arguments[0]) ?: run {
-            command("GameMode.InvalidGameMode", commandSender) {
+            commandSender.commandMsg("GameMode.InvalidGameMode") {
                 postModifier { replaceGameModePlaceholder(it, arguments[0]) }
-            }.build()
+            }
             return
         }
 
@@ -90,7 +90,7 @@ class CommandGameMode : AbstractServerSystemCommand() {
         if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
         val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
+            commandSender.generalMsg("PlayerNotFound") { target(arguments[0]) }
             return
         }
 
@@ -102,19 +102,19 @@ class CommandGameMode : AbstractServerSystemCommand() {
         val gameModeNameSender = gameMode(commandSender).getGameModeName(gameMode) ?: gameMode.name
         val messageKey = if (isSelf) "GameMode.Success" else "GameMode.SuccessOther"
 
-        command(messageKey, commandSender) {
+        commandSender.commandMsg(messageKey) {
             target(targetPlayer.name)
             postModifier { replaceGameModePlaceholder(it, gameModeNameSender) }
-        }.build()
+        }
 
         if (isSelf) return
         val gameModeNameTarget = gameMode(targetUser).getGameModeName(gameMode) ?: gameMode.name
 
-        command("GameMode.Success", targetUser) {
-            sender(commandSender.getNameSafe())
+        targetUser.commandMsg("GameMode.Success") {
+            sender(commandSender.nameSafe)
             target(targetPlayer.name)
             postModifier { replaceGameModePlaceholder(it, gameModeNameTarget) }
-        }.build()
+        }
     }
 
     private fun replaceGameModePlaceholder(message: String, gameModeName: String) = message.replace("<GAMEMODE>", gameModeName)
