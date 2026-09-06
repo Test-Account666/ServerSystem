@@ -1,21 +1,17 @@
 package me.testaccount666.serversystem.userdata
 
-import me.testaccount666.serversystem.ServerSystem
 import me.testaccount666.serversystem.commands.executables.back.CommandBack
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.managers.config.ConfigurationManager
 import me.testaccount666.serversystem.managers.database.moderation.ModerationDatabaseManager
 import me.testaccount666.serversystem.managers.messages.MessageManager
-import me.testaccount666.serversystem.moderation.AbstractModerationManager
-import me.testaccount666.serversystem.moderation.BanModeration
-import me.testaccount666.serversystem.moderation.MuteModeration
+import me.testaccount666.serversystem.moderation.*
 import me.testaccount666.serversystem.userdata.home.HomeManager
 import me.testaccount666.serversystem.userdata.money.AbstractBankAccount
 import me.testaccount666.serversystem.userdata.money.EconomyProvider
 import me.testaccount666.serversystem.userdata.persistence.*
 import me.testaccount666.serversystem.userdata.vanish.VanishData
-import org.bukkit.Bukkit
-import org.bukkit.Location
-import org.bukkit.OfflinePlayer
+import org.bukkit.*
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.*
@@ -99,10 +95,12 @@ open class OfflineUser(val userFile: File) {
     lateinit var playerLanguage: String
 
     @SaveableField(path = "User.KitCooldowns", handler = KitMapFieldHandler::class)
-    protected var kitCooldowns: MutableMap<String, Long> = HashMap()
+    protected var kitCooldowns = HashMap<String, Long>()
 
     @SaveableField(path = "Language.UsesDefault")
     var isUsesDefaultLanguage: Boolean = false
+
+    val nameSafe get() = getNameOrNull() ?: "???"
 
     init {
         loadBasicData()
@@ -185,11 +183,9 @@ open class OfflineUser(val userFile: File) {
         if (name == null) name = player?.name
 
         homeManager = HomeManager(this, userConfig)
-        bankAccount =
-            ServerSystem.instance.registry.getService<EconomyProvider>()
-                .instantiateBankAccount(this, BigInteger.valueOf(0), userConfig)
+        bankAccount = getService<EconomyProvider>().instantiateBankAccount(this, BigInteger.valueOf(0), userConfig)
 
-        val moderationManager = ServerSystem.instance.registry.getService<ModerationDatabaseManager>()
+        val moderationManager = getService<ModerationDatabaseManager>()
         banManager = moderationManager.instantiateBanManager(uuid)
         muteManager = moderationManager.instantiateMuteManager(uuid)
     }
@@ -200,8 +196,7 @@ open class OfflineUser(val userFile: File) {
          *
          * @return true if compression is enabled, false otherwise
          */
-        get() = ServerSystem.instance.registry.getService<ConfigurationManager>().generalConfig
-            .getBoolean("UserData.Compression.Enabled", true)
+        get() = getService<ConfigurationManager>().generalConfig.getBoolean("UserData.Compression.Enabled", true)
 
     /**
      * Saves a YAML configuration to a file with compression.
@@ -248,8 +243,6 @@ open class OfflineUser(val userFile: File) {
      */
     open fun getNameOrNull() = name
 
-    open fun getNameSafe() = getNameOrNull() ?: "???"
-
     fun isIgnoredPlayer(uuid: UUID?) = uuid in ignoredPlayers
 
     fun addIgnoredPlayer(uuid: UUID) = ignoredPlayers.add(uuid)
@@ -257,11 +250,15 @@ open class OfflineUser(val userFile: File) {
     fun removeIgnoredPlayer(uuid: UUID) = ignoredPlayers.remove(uuid)
 
     fun isOnKitCooldown(kitName: String?): Boolean {
+        val kitName = kitName?.lowercase() ?: return false
+
         val cooldown = kitCooldowns.getOrDefault(kitName, null) ?: return false
         return cooldown > System.currentTimeMillis()
     }
 
     fun getKitCooldown(kitName: String?): Long {
+        val kitName = kitName?.lowercase() ?: return -1
+
         val cooldown = kitCooldowns.getOrDefault(kitName, null) ?: return -1
         return cooldown
     }

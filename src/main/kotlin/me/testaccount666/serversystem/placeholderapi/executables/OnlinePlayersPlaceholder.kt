@@ -2,9 +2,7 @@ package me.testaccount666.serversystem.placeholderapi.executables
 
 import me.testaccount666.serversystem.managers.PermissionManager
 import me.testaccount666.serversystem.placeholderapi.Placeholder
-import me.testaccount666.serversystem.userdata.ConsoleUser
-import me.testaccount666.serversystem.userdata.OfflineUser
-import me.testaccount666.serversystem.userdata.User
+import me.testaccount666.serversystem.userdata.*
 import org.bukkit.Bukkit
 
 class OnlinePlayersPlaceholder : Placeholder {

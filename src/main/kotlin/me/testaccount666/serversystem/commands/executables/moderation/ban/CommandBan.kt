@@ -1,18 +1,16 @@
 package me.testaccount666.serversystem.commands.executables.moderation.ban
 
 import io.papermc.paper.ban.BanListType
+import me.testaccount666.paperktx.extensions.ComponentExtensions.asComponent
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.moderation.AbstractModerationCommand
 import me.testaccount666.serversystem.commands.executables.moderation.TabCompleterModeration
+import me.testaccount666.serversystem.extensions.commandMsg
+import me.testaccount666.serversystem.extensions.generalMsg
 import me.testaccount666.serversystem.moderation.BanModeration
-import me.testaccount666.serversystem.userdata.OfflineUser
-import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.userdata.UserManager
-import me.testaccount666.serversystem.utils.ComponentColor
+import me.testaccount666.serversystem.userdata.*
 import me.testaccount666.serversystem.utils.DurationParser.parseDate
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import java.time.Instant
@@ -47,8 +45,8 @@ class CommandBan : AbstractModerationCommand<BanModeration>() {
         val unbanDate = parseDate(moderation.expireTime, targetUser)
         val user = targetUser as? User ?: UserManager.consoleUser
 
-        val kickMessage = command("Moderation.Ban.Kick", user) {
-            sender(commandSender.getNameSafe())
+        val kickMessage = user.commandMsg("Moderation.Ban.Kick") {
+            sender(commandSender.nameSafe)
             send(false)
             target(targetUser.getNameOrNull())
             prefix(false)
@@ -57,11 +55,11 @@ class CommandBan : AbstractModerationCommand<BanModeration>() {
                     .replace("<REASON>", moderation.reason)
             }
             blankError(true)
-        }.build()
+        }
 
         if (kickMessage.isEmpty()) {
             log.severe("(CommandBan) Kick message is empty! This should not happen!")
-            general("ErrorOccurred", commandSender).build()
+            commandSender.generalMsg("ErrorOccurred")
             return
         }
 
@@ -72,7 +70,7 @@ class CommandBan : AbstractModerationCommand<BanModeration>() {
         val banlist = Bukkit.getServer().getBanList(BanListType.PROFILE)
         banlist.addBan(player.playerProfile, kickMessage, unbanTime, moderation.senderUuid.toString())?.save()
 
-        player.player?.kick(ComponentColor.translateToComponent(kickMessage))
+        player.player?.kick(kickMessage.asComponent())
     }
 
     override fun handlePostRemoveModeration(command: Command, commandSender: User, targetUser: OfflineUser) {
@@ -80,9 +78,12 @@ class CommandBan : AbstractModerationCommand<BanModeration>() {
     }
 
     override fun createModeration(command: Command, commandSender: User, targetUser: OfflineUser, expireTime: Long, reason: String): BanModeration {
-        return BanModeration.builder()
-            .senderUuid(commandSender.uuid).targetUuid(targetUser.uuid)
-            .reason(reason).expireTime(expireTime).build()
+        return BanModeration.builder {
+            senderUuid(commandSender.uuid)
+            targetUuid(targetUser.uuid)
+            reason(reason)
+            expireTime(expireTime)
+        }
     }
 
     override fun getModerationManager(targetUser: OfflineUser) = targetUser.banManager

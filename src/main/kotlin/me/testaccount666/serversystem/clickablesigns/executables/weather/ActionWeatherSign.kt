@@ -1,60 +1,61 @@
 package me.testaccount666.serversystem.clickablesigns.executables.weather
 
+import me.testaccount666.paperktx.colors.ChatColor.Companion.stripColor
 import me.testaccount666.serversystem.clickablesigns.AbstractSignClickAction
+import me.testaccount666.serversystem.extensions.signMsg
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.ChatColor.Companion.stripColor
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.sign
 import org.bukkit.block.Sign
 import org.bukkit.configuration.file.FileConfiguration
 
 class ActionWeatherSign : AbstractSignClickAction() {
     override val basePermissionNode = "ClickableSigns.Weather"
 
-    override fun executeAction(user: User, sign: Sign, config: FileConfiguration): Boolean {
-        var weatherType = config.getString("WeatherType", sign.getLine(1))?.lowercase()
+    override fun executeAction(user: User, sign: Sign, config: FileConfiguration, onSuccess: () -> Unit): Boolean {
+        var weatherType = config.getString("WeatherType", sign.getLine(1))!!.lowercase()
         weatherType = stripColor(weatherType)
         if (weatherType.isEmpty()) {
-            sign("Weather.NoWeatherSpecified", user).build()
+            user.signMsg("Weather.NoWeatherSpecified")
             return false
         }
 
-        val world = user.getPlayer()?.world ?: return false
+        val world = user.getPlayer()!!.world
 
-        val finalWeatherType = weatherType
-        return when (weatherType) {
+        val success = when (weatherType) {
             "sun", "clear" -> {
                 world.setStorm(false)
                 world.isThundering = false
-                sign("Weather.WeatherSet", user) {
+                user.signMsg("Weather.WeatherSet") {
                     postModifier { it.replace("<WEATHER>", "clear") }
-                }.build()
+                }
                 true
             }
 
             "rain", "storm" -> {
                 world.setStorm(true)
                 world.isThundering = false
-                sign("Weather.WeatherSet", user) {
+                user.signMsg("Weather.WeatherSet") {
                     postModifier { it.replace("<WEATHER>", "rain") }
-                }.build()
+                }
                 true
             }
 
             "thunder" -> {
                 world.setStorm(true)
                 world.isThundering = true
-                sign("Weather.WeatherSet", user) {
+                user.signMsg("Weather.WeatherSet") {
                     postModifier { it.replace("<WEATHER>", "thunder") }
-                }.build()
+                }
                 true
             }
 
             else -> {
-                sign("Weather.InvalidWeather", user) {
-                    postModifier { it.replace("<WEATHER>", finalWeatherType) }
-                }.build()
+                user.signMsg("Weather.InvalidWeather") {
+                    postModifier { it.replace("<WEATHER>", weatherType) }
+                }
                 false
             }
         }
+        if (success) onSuccess().also { return true }
+        return false
     }
 }

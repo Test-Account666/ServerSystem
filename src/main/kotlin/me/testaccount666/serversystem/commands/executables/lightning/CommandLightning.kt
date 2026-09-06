@@ -2,9 +2,9 @@ package me.testaccount666.serversystem.commands.executables.lightning
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.extensions.commandMsg
+import me.testaccount666.serversystem.extensions.generalMsg
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 
 @ServerSystemCommand("lightning", [], TabCompleterLightning::class)
@@ -16,9 +16,9 @@ class CommandLightning : AbstractServerSystemCommand() {
         if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
         var targetUser = getTargetUser(commandSender, arguments = arguments)
-        val firstArgument = if (arguments.isEmpty()) "" else arguments[0]
+        val firstArgument = arguments.getOrNull(0) ?: ""
         if (targetUser == null && !firstArgument.startsWith("-")) {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
+            commandSender.generalMsg("PlayerNotFound") { target(arguments[0]) }
             return
         } else if (targetUser == null) targetUser = commandSender
 
@@ -26,7 +26,7 @@ class CommandLightning : AbstractServerSystemCommand() {
         val isSelf = targetUser === commandSender
 
         val block = (if (isSelf) commandSender.getPlayer()!!.getTargetBlockExact(100) else targetPlayer.location.block) ?: run {
-            command("Lightning.NoTarget", commandSender).build()
+            commandSender.commandMsg("Lightning.NoTarget")
             return
         }
 
@@ -35,7 +35,7 @@ class CommandLightning : AbstractServerSystemCommand() {
         if (effectOnly) block.world.strikeLightningEffect(block.location)
         else block.world.strikeLightning(block.location)
 
-        if (isSelf) command("Lightning.Success", commandSender).build()
-        else command("Lightning.TargetSuccess", commandSender) { target(targetPlayer.name) }.build()
+        if (isSelf) commandSender.commandMsg("Lightning.Success")
+        else commandSender.commandMsg("Lightning.TargetSuccess") { target(targetPlayer.name) }
     }
 }

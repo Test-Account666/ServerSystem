@@ -1,13 +1,10 @@
 package me.testaccount666.serversystem.commands.executables.god
 
 import me.testaccount666.serversystem.ServerSystem.Companion.log
-import me.testaccount666.serversystem.userdata.User
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.userdata.UserManager
-import me.testaccount666.serversystem.utils.ServiceExtensions.getService
 import org.bukkit.entity.Player
-import org.bukkit.event.Cancellable
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
+import org.bukkit.event.*
 import org.bukkit.event.entity.*
 
 /**
@@ -52,7 +49,7 @@ class ListenerGod : Listener {
      * Common handler for events affecting players in god mode.
      * Checks if the player is in god mode and cancels the event if they are.
      * Also ensures the player's food level and saturation remain at maximum.
-     * 
+     *
      * @param event  The cancellable event to handle
      * @param player The player affected by the event
      */
@@ -63,8 +60,7 @@ class ListenerGod : Listener {
         }
 
         // Player should be online, so casting, without additional checks, should be safe
-        val onlineUser = user.offlineUser as User
-        if (!onlineUser.isGodMode) return
+        if (!user.onlineUser.isGodMode) return
 
         event.isCancelled = true
         player.foodLevel = 20

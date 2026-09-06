@@ -1,19 +1,19 @@
 package me.testaccount666.serversystem.userdata.teleport
 
+import me.testaccount666.paperktx.scheduler.skedule.okkero.schedule
 import me.testaccount666.serversystem.ServerSystem
 import me.testaccount666.serversystem.userdata.User
-import org.bukkit.Bukkit
-import org.bukkit.Location
-import org.bukkit.Particle
-import org.bukkit.Sound
+import org.bukkit.*
 import org.bukkit.event.player.PlayerTeleportEvent
-import org.bukkit.scheduler.BukkitRunnable
 
 class TeleportRunnable(val user: User, val location: Location, val originLocation: Location, delay: Long) {
     private val endTime = System.currentTimeMillis() + delay
     private var _running = true
 
-    fun cancel() = let { _running = false }
+    fun cancel() {
+        _running = false
+    }
+
     var onFailure: ((user: User) -> Unit)? = null
     var onSuccess: ((user: User) -> Unit)? = null
 
@@ -21,49 +21,37 @@ class TeleportRunnable(val user: User, val location: Location, val originLocatio
         user.teleportRunnable?.cancel()
         user.teleportRunnable = this
 
-        createTask().runTaskTimer(ServerSystem.instance, 5L, 5L)
-    }
+        ServerSystem.instance.schedule {
+            repeating(5L)
+            while (_running) {
+                yield()
 
-    private fun createTask(): BukkitRunnable {
-        return object : BukkitRunnable() {
-            override fun run() {
-                runCatching {
-                    if (!_running) {
-                        stopTask()
-                        return
-                    }
-
-                    if (calculateDistance() > 0.1) {
-                        stopTask()
-                        return
-                    }
-
-                    if (endTime > System.currentTimeMillis()) return
-
-                    user.getPlayer()?.let {
-                        playAnimation(originLocation)
-                        it.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN)
-                        playAnimation(location)
-
-                        onSuccess?.invoke(user)
-                    }
-
-                    _running = false
+                if (calculateDistance() > 0.1) {
                     stopTask()
-                }.onFailure {
-                    it.printStackTrace()
-                    stopTask()
+                    break
                 }
-            }
 
-            fun stopTask() {
-                if (_running) onFailure?.invoke(user)
+                if (endTime > System.currentTimeMillis()) continue
+
+                user.getPlayer()?.let {
+                    playAnimation(originLocation)
+                    it.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN)
+                    playAnimation(location)
+
+                    onSuccess?.invoke(user)
+                }
 
                 _running = false
-                user.teleportRunnable = null
-                Bukkit.getScheduler().cancelTask(taskId)
+                stopTask()
             }
         }
+    }
+
+    private fun stopTask() {
+        if (_running) onFailure?.invoke(user)
+
+        _running = false
+        user.teleportRunnable = null
     }
 
     private fun calculateDistance(): Double {
@@ -96,6 +84,27 @@ class TeleportRunnable(val user: User, val location: Location, val originLocatio
             val originalLocation = getPlayer()?.location ?: error("Player is null!")
 
             return TeleportRunnable(this, location, originalLocation, delay)
+        }
+
+        fun User.teleportSmart(
+            location: Location,
+            instant: Boolean = true,
+            teleportingMessage: (() -> Unit)? = null,
+            successMessage: (() -> Unit)? = null,
+            failureMessage: (() -> Unit)? = null,
+            delay: Long = 3000,
+        ) {
+            if (instant) {
+                teleportNow(location)
+                successMessage?.invoke()
+                return
+            }
+
+            teleportingMessage?.invoke()
+            teleportLater(location, delay).apply {
+                onSuccess = { successMessage?.invoke() }
+                onFailure = { failureMessage?.invoke() }
+            }
         }
     }
 }

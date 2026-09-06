@@ -1,12 +1,11 @@
 package me.testaccount666.serversystem.updates
 
+import me.testaccount666.paperktx.scheduler.skedule.okkero.SynchronizationContext
+import me.testaccount666.paperktx.scheduler.skedule.okkero.schedule
 import me.testaccount666.serversystem.ServerSystem
 import me.testaccount666.serversystem.utils.Version
-import org.bukkit.Bukkit
 import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
+import java.net.http.*
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.Duration
@@ -31,7 +30,8 @@ abstract class AbstractUpdateChecker(@JvmField protected val updateURI: URI?) {
 
         val future = CompletableFuture<Boolean>()
 
-        Bukkit.getScheduler().runTaskAsynchronously(ServerSystem.instance, Runnable {
+        ServerSystem.instance.schedule {
+            switchContext(SynchronizationContext.ASYNC)
             try {
                 val parsedLatestVersion = getLatestVersion().join()
 
@@ -51,7 +51,7 @@ abstract class AbstractUpdateChecker(@JvmField protected val updateURI: URI?) {
             } catch (exception: Exception) {
                 future.completeExceptionally(exception)
             }
-        })
+        }
 
         return future
     }
@@ -92,10 +92,11 @@ abstract class AbstractUpdateChecker(@JvmField protected val updateURI: URI?) {
 
         val future = CompletableFuture<Boolean>()
 
-        Bukkit.getScheduler().runTaskAsynchronously(ServerSystem.instance, Runnable {
+        ServerSystem.instance.schedule {
+            switchContext(SynchronizationContext.ASYNC)
             if (latestVersion == null) {
                 future.completeExceptionally(IllegalStateException("No version info available for download."))
-                return@Runnable
+                return@schedule
             }
             val downloadUrl = downloadUrl
             try {
@@ -110,7 +111,7 @@ abstract class AbstractUpdateChecker(@JvmField protected val updateURI: URI?) {
 
                         if (response.statusCode() != 200) {
                             future.completeExceptionally(RuntimeException("Failed to download update: HTTP ${response.statusCode()}"))
-                            return@Runnable
+                            return@schedule
                         }
 
                         val pluginDir = ServerSystem.instance.dataFolder.parentFile.toPath()
@@ -135,7 +136,7 @@ abstract class AbstractUpdateChecker(@JvmField protected val updateURI: URI?) {
             } catch (exception: Exception) {
                 future.completeExceptionally(exception)
             }
-        })
+        }
 
         return future
     }

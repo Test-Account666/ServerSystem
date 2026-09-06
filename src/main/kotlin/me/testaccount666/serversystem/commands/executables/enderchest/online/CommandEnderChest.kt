@@ -3,8 +3,8 @@ package me.testaccount666.serversystem.commands.executables.enderchest.online
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.enderchest.offline.CommandOfflineEnderChest
+import me.testaccount666.serversystem.extensions.generalMsg
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 
 @ServerSystemCommand("enderchest", ["offlineenderchest"], TabCompleterEnderChest::class)
@@ -39,7 +39,7 @@ class CommandEnderChest : AbstractServerSystemCommand() {
         if (!isPlayer(commandSender)) return
 
         val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
+            commandSender.generalMsg("PlayerNotFound") { target(arguments[0]) }
             return
         }
 

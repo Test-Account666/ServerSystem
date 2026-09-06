@@ -1,11 +1,11 @@
 package me.testaccount666.serversystem.moderation
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.managers.database.moderation.ModerationDatabaseManager
 import java.util.*
 
 abstract class AbstractModerationManager<T : AbstractModeration>(val ownerUuid: UUID) {
-    protected val databaseManager = instance.registry.getService<ModerationDatabaseManager>()
+    protected val databaseManager = getService<ModerationDatabaseManager>()
 
     abstract fun addModeration(moderation: T)
 

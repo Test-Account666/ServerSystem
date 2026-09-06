@@ -29,7 +29,7 @@ class PlaceholderManager {
      */
     fun applyPlaceholders(message: String, commandSender: User, targetName: String?, label: String): String {
         var result = message
-        val senderName = commandSender.getNameSafe()
+        val senderName = commandSender.nameSafe
         val finalTargetName = targetName ?: senderName
 
         result = applyColorPlaceholder(commandSender, result, "<Color:Prefix>", "Prefix")

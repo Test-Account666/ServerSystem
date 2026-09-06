@@ -9,10 +9,7 @@ import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.io.InputStreamReader
+import java.io.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.logging.Level
@@ -106,7 +103,7 @@ open class DefaultConfigReader(override val file: File, protected val _plugin: P
             // Fix missing entries
             if (!configuration.isSet(key)) {
                 logConfigFix(key, "missing")
-                configuration.set(key, originalCfg!!.get(key))
+                configuration[key] = originalCfg!!.get(key)
                 isValid = false
                 continue
             }
@@ -135,7 +132,7 @@ open class DefaultConfigReader(override val file: File, protected val _plugin: P
 
             typeWarnings[defaultType.kotlin]?.let {
                 logConfigFix(key, it)
-                configuration.set(key, defaultValue)
+                configuration[key] = defaultValue
                 isValid = false
             }
         }
@@ -223,7 +220,9 @@ open class DefaultConfigReader(override val file: File, protected val _plugin: P
         return configReader.configuration.getStringList(path)
     }
 
-    override fun set(path: String, `object`: Any?) = configReader.configuration.set(path, `object`)
+    override fun set(path: String, `object`: Any?) {
+        configReader.configuration[path] = `object`
+    }
 
     override fun save() {
         try {
@@ -260,11 +259,7 @@ open class DefaultConfigReader(override val file: File, protected val _plugin: P
         return configReader.configuration.getConfigurationSection(path)
     }
 
-    override fun isConfigurationSection(path: String?): Boolean {
-        if (path == null) return false
-
-        return configReader.configuration.isConfigurationSection(path)
-    }
+    override fun isConfigurationSection(path: String?) = path != null && configReader.configuration.isConfigurationSection(path)
 
     /**
      * Ensures a configuration value exists by restoring it from the default config if missing.
@@ -290,7 +285,7 @@ open class DefaultConfigReader(override val file: File, protected val _plugin: P
             return
         }
 
-        section.set(path.substring(partialPath.length + 1), originalCfg!!.get(path))
+        section[path.substring(partialPath.length + 1)] = originalCfg!!.get(path)
         saveAndReload()
     }
 
@@ -322,7 +317,7 @@ open class DefaultConfigReader(override val file: File, protected val _plugin: P
      * @param path The path to restore
      */
     private fun restoreConfigValue(path: String) {
-        configuration.set(path, originalCfg!!.get(path))
+        configuration[path] = originalCfg!!.get(path)
         saveAndReload()
     }
 

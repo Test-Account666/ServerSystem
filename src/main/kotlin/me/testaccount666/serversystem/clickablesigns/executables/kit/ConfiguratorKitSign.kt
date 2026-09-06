@@ -1,14 +1,14 @@
 package me.testaccount666.serversystem.clickablesigns.executables.kit
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
+import me.testaccount666.paperktx.colors.ChatColor.Companion.stripColor
+import me.testaccount666.paperktx.extensions.ComponentExtensions.asComponent
+import me.testaccount666.paperktx.extensions.ComponentExtensions.asString
 import me.testaccount666.serversystem.clickablesigns.AbstractSignConfigurator
 import me.testaccount666.serversystem.clickablesigns.SignType
 import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager
+import me.testaccount666.serversystem.extensions.getService
+import me.testaccount666.serversystem.extensions.signMsg
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.ChatColor.Companion.stripColor
-import me.testaccount666.serversystem.utils.ComponentColor.componentToString
-import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.sign
 import org.bukkit.block.Sign
 import org.bukkit.block.sign.Side
 import org.bukkit.configuration.file.FileConfiguration
@@ -20,24 +20,21 @@ class ConfiguratorKitSign : AbstractSignConfigurator() {
     override val signType = SignType.KIT
 
     override fun validateConfiguration(user: User, sign: Sign, config: YamlConfiguration): Boolean {
-        val kitManager = instance.registry.getService<KitManager>()
-
         val front = sign.getSide(Side.FRONT)
-        val kitName = componentToString(front.line(1))
-        if (kitName.isEmpty()) {
-            sign("Kit.NoKitSpecified", user).build()
+        val kitName = front.line(1).asString().takeUnless { it.isEmpty() } ?: run {
+            user.signMsg("Kit.NoKitSpecified")
             return false
         }
 
-        if (!kitManager.kitExists(kitName.lowercase())) {
-            sign("Kit.KitNotFound", user) {
+        if (!getService<KitManager>().kitExists(kitName)) {
+            user.signMsg("Kit.KitNotFound") {
                 postModifier { it.replace("<KIT>", kitName) }
-            }.build()
+            }
             return false
         }
 
-        front.line(0, translateToComponent(SignType.KIT.signName))
-        front.line(1, translateToComponent("&2${kitName}"))
+        front.line(0, SignType.KIT.signName.asComponent())
+        front.line(1, "&2${kitName}".asComponent())
         val back = sign.getSide(Side.BACK)
         for (index in 0..3) back.line(index, front.line(index))
         sign.update()
@@ -47,6 +44,6 @@ class ConfiguratorKitSign : AbstractSignConfigurator() {
     override fun addSignSpecificConfiguration(user: User, sign: Sign, config: FileConfiguration) {
         var kitName = sign.getSide(Side.FRONT).getLine(1)
         kitName = stripColor(kitName)
-        config.set("KitName", kitName)
+        config["KitName"] = kitName
     }
 }

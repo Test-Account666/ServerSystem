@@ -3,11 +3,9 @@ package me.testaccount666.serversystem.commands.executables.moderation
 import com.destroystokyo.paper.profile.PlayerProfile
 import io.papermc.paper.ban.BanListType
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabCompleter
-import me.testaccount666.serversystem.commands.interfaces.getService
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
-import me.testaccount666.serversystem.userdata.CachedUser
-import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.userdata.UserManager
+import me.testaccount666.serversystem.userdata.*
 import org.bukkit.BanEntry
 import org.bukkit.Bukkit
 import org.bukkit.command.Command

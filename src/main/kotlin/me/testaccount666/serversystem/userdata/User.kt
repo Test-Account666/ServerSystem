@@ -58,8 +58,8 @@ open class User(userFile: File) : OfflineUser(userFile) {
      */
     override fun getNameOrNull() = getPlayer()?.name ?: name
 
-    open val commandSender: CommandSender?
-        get() = getPlayer()
+    open val commandSender: CommandSender
+        get() = getPlayer()!!
 
     /**
      * Uses User#getCommandSender() to send a message.
@@ -78,8 +78,8 @@ open class User(userFile: File) : OfflineUser(userFile) {
     fun sendMessage(component: Component) = sendMessage(component as Any)
 
     private fun sendMessage(obj: Any) {
-        if (obj is String) commandSender?.sendMessage(obj)
-        if (obj is Component) commandSender?.sendMessage(obj)
+        if (obj is String) commandSender.sendMessage(obj)
+        if (obj is Component) commandSender.sendMessage(obj)
 
         messageListeners.toSet().forEach {
             if (it.isOfflineUser) {
@@ -87,7 +87,7 @@ open class User(userFile: File) : OfflineUser(userFile) {
                 return@forEach
             }
 
-            (it.offlineUser as? User)?.sendMessage(obj)
+            it.onlineUser.sendMessage(obj)
         }
     }
 

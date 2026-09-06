@@ -37,10 +37,13 @@ class CommandMute : AbstractModerationCommand<MuteModeration>() {
     override fun createModeration(command: Command, commandSender: User, targetUser: OfflineUser, expireTime: Long, reason: String): MuteModeration {
         val shadowMute = command.name.equals("shadowmute", true)
 
-        return MuteModeration.builder()
-            .isShadowMute(shadowMute).expireTime(expireTime)
-            .reason(reason).senderUuid(commandSender.uuid)
-            .targetUuid(targetUser.uuid).build()
+        return MuteModeration.builder {
+            isShadowMute(shadowMute)
+            expireTime(expireTime)
+            reason(reason)
+            senderUuid(commandSender.uuid)
+            targetUuid(targetUser.uuid)
+        }
     }
 
     override fun getModerationManager(targetUser: OfflineUser) = targetUser.muteManager

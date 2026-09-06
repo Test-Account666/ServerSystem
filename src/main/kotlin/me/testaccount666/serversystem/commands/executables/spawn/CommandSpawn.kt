@@ -1,16 +1,15 @@
 package me.testaccount666.serversystem.commands.executables.spawn
 
+import me.testaccount666.paperktx.extensions.location
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.extensions.*
 import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.managers.config.ConfigurationManager
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.userdata.teleport.TeleportRunnable.Companion.teleportLater
-import me.testaccount666.serversystem.userdata.teleport.TeleportRunnable.Companion.teleportNow
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
+import me.testaccount666.serversystem.userdata.teleport.TeleportRunnable.Companion.teleportSmart
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.command.Command
@@ -50,8 +49,8 @@ open class CommandSpawn : AbstractServerSystemCommand {
         saveDefaultConfig()
         val config = getService<ConfigurationManager>().generalConfig
 
-        teleportOnJoin = config.getBoolean("Join.Spawn.TeleportOnJoin", false)
-        teleportOnFirstJoin = config.getBoolean("Join.Spawn.TeleportOnFirstJoin", false)
+        teleportOnJoin = config.getBoolean("Join.Spawn.TeleportOnJoin")
+        teleportOnFirstJoin = config.getBoolean("Join.Spawn.TeleportOnFirstJoin")
 
         if (!spawnConfiguration.isSet("Spawn")) return
 
@@ -61,10 +60,10 @@ open class CommandSpawn : AbstractServerSystemCommand {
         val x = spawnConfiguration.getDouble("Spawn.X")
         val y = spawnConfiguration.getDouble("Spawn.Y")
         val z = spawnConfiguration.getDouble("Spawn.Z")
-        val yaw = spawnConfiguration.getDouble("Spawn.Yaw").toFloat()
-        val pitch = spawnConfiguration.getDouble("Spawn.Pitch").toFloat()
+        val yaw = spawnConfiguration.getDouble("Spawn.Yaw")
+        val pitch = spawnConfiguration.getDouble("Spawn.Pitch")
 
-        spawnLocation = Location(world, x, y, z, yaw, pitch)
+        spawnLocation = location(x, y, z, world, yaw, pitch)
     }
 
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
@@ -80,39 +79,34 @@ open class CommandSpawn : AbstractServerSystemCommand {
         if (isConsoleWithNoTarget(commandSender, getSyntaxPath(null), label, arguments = arguments)) return
 
         val spawnLocation = spawnLocation ?: run {
-            command("Spawn.NoSpawnSet", commandSender).build()
+            commandSender.commandMsg("Spawn.NoSpawnSet")
             return
         }
 
         val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
+            commandSender.generalMsg("PlayerNotFound") { target(arguments[0]) }
             return
         }
         val isSelf = targetUser === commandSender
 
-        if (!isSelf && !checkPermission(commandSender, "Spawn.Other", targetUser.getNameSafe())) return
-
+        if (!isSelf && !checkPermission(commandSender, "Spawn.Other", targetUser.nameSafe)) return
         val instantTeleport = !fromCommand || !isSelf || hasCommandPermission(commandSender, "Spawn.InstantTeleport", false)
 
-        if (instantTeleport) {
-            targetUser.teleportNow(spawnLocation)
-            sendSuccessMessage(commandSender, targetUser, isSelf)
-            return
-        }
-
-        command("Spawn.Teleporting", commandSender) { target(targetUser.getNameSafe()) }.build()
-        targetUser.teleportLater(spawnLocation).apply {
-            onSuccess = { sendSuccessMessage(commandSender, targetUser, true) }
-            onFailure = { command("Spawn.Moved", commandSender).build() }
-        }
+        targetUser.teleportSmart(
+            spawnLocation,
+            instantTeleport,
+            { commandSender.commandMsg("Spawn.Teleporting") { target(targetUser.nameSafe) } },
+            { sendSuccessMessage(commandSender, targetUser, isSelf) },
+            { commandSender.commandMsg("Spawn.Moved") }
+        )
     }
 
     private fun sendSuccessMessage(commandSender: User, targetUser: User, isSelf: Boolean) {
         val messagePath = if (isSelf) "Spawn.Success" else "Spawn.SuccessOther"
-        command(messagePath, commandSender) { target(targetUser.getNameSafe()) }.build()
+        commandSender.commandMsg(messagePath) { target(targetUser.nameSafe) }
 
         if (isSelf) return
-        command("Spawn.Success", targetUser) { sender(commandSender.getNameSafe()) }.build()
+        targetUser.commandMsg("Spawn.Success") { sender(commandSender.nameSafe) }
     }
 
     private fun handleSetSpawnCommand(commandSender: User, label: String) {
@@ -120,24 +114,24 @@ open class CommandSpawn : AbstractServerSystemCommand {
 
         val currentLocation = commandSender.getPlayer()!!.location
 
-        spawnConfiguration.set("Spawn.World", currentLocation.world.name)
-        spawnConfiguration.set("Spawn.X", currentLocation.x)
-        spawnConfiguration.set("Spawn.Y", currentLocation.y)
-        spawnConfiguration.set("Spawn.Z", currentLocation.z)
-        spawnConfiguration.set("Spawn.Yaw", currentLocation.yaw)
-        spawnConfiguration.set("Spawn.Pitch", currentLocation.pitch)
+        spawnConfiguration["Spawn.World"] = currentLocation.world.name
+        spawnConfiguration["Spawn.X"] = currentLocation.x
+        spawnConfiguration["Spawn.Y"] = currentLocation.y
+        spawnConfiguration["Spawn.Z"] = currentLocation.z
+        spawnConfiguration["Spawn.Yaw"] = currentLocation.yaw
+        spawnConfiguration["Spawn.Pitch"] = currentLocation.pitch
 
         try {
             spawnConfiguration.save(_spawnFile)
         } catch (exception: IOException) {
-            general("ErrorOccurred", commandSender) { label(label) }.build()
+            commandSender.generalMsg("ErrorOccurred") { label(label) }
             log.log(Level.SEVERE, "Error while saving 'spawn.yml'", exception)
             return
         }
 
         spawnLocation = currentLocation
 
-        command("SetSpawn.Success", commandSender).build()
+        commandSender.commandMsg("SetSpawn.Success")
     }
 
     private fun saveDefaultConfig() {
@@ -149,8 +143,8 @@ open class CommandSpawn : AbstractServerSystemCommand {
             throw RuntimeException("Error while trying to create 'spawn.yml' file", exception)
         }
 
-        spawnConfiguration.set("Config.TeleportOnJoin", true)
-        spawnConfiguration.set("Config.TeleportOnFirstJoin", true)
+        spawnConfiguration["Config.TeleportOnJoin"] = true
+        spawnConfiguration["Config.TeleportOnFirstJoin"] = true
 
         try {
             spawnConfiguration.save(_spawnFile)

@@ -1,5 +1,6 @@
 package me.testaccount666.serversystem.clickablesigns
 
+import me.testaccount666.paperktx.extensions.location
 import me.testaccount666.serversystem.ServerSystem
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -33,10 +34,7 @@ class SignManager {
             val zString = locationSplit[3]
 
             val world = Bukkit.getWorld(worldName) ?: continue
-            val x = xString.toInt()
-            val y = yString.toInt()
-            val z = zString.toInt()
-            val location = Location(world, x.toDouble(), y.toDouble(), z.toDouble())
+            val location = location(xString.toInt(), yString.toInt(), zString.toInt(), world)
             addSignType(location, signType)
         }
     }

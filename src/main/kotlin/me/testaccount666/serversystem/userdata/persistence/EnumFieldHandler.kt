@@ -5,7 +5,7 @@ import org.bukkit.configuration.file.FileConfiguration
 class EnumFieldHandler<T : Enum<T>> : FieldHandler<T> {
 
     override fun save(config: FileConfiguration, path: String, value: T?) {
-        config.set(path, value?.name)
+        config[path] = value?.name
     }
 
     override fun load(config: FileConfiguration, path: String, defaultValue: T?): T {

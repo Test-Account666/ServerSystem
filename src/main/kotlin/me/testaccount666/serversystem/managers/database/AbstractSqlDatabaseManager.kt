@@ -14,7 +14,7 @@ import java.util.logging.Level
  */
 abstract class AbstractSqlDatabaseManager(
     configReader: ConfigReader?,
-    databaseType: String
+    databaseType: String,
 ) : AbstractDatabaseManager(configReader, databaseType) {
     protected var dataSource: HikariDataSource? = null
 
@@ -34,7 +34,7 @@ abstract class AbstractSqlDatabaseManager(
 
     /**
      * Initializes the database connection pool.
-     * 
+     *
      * @throws SQLException If a database access error occurs
      */
     protected open fun initializeConnection(config: HikariConfig) {
@@ -44,7 +44,7 @@ abstract class AbstractSqlDatabaseManager(
 
     /**
      * Creates the necessary database tables if they don't exist.
-     * 
+     *
      * @throws SQLException If a database access error occurs
      */
     protected abstract fun createTablesIfNotExist()
@@ -52,7 +52,7 @@ abstract class AbstractSqlDatabaseManager(
     val connection: Connection
         /**
          * Gets a connection from the connection pool.
-         * 
+         *
          * @return A database connection from the pool
          * @throws SQLException If a database access error occurs
          */

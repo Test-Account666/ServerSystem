@@ -1,11 +1,9 @@
 package me.testaccount666.serversystem.commands.executables.waypoints
 
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabCompleter
-import me.testaccount666.serversystem.commands.interfaces.getService
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
-import me.testaccount666.serversystem.userdata.ConsoleUser
-import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.userdata.UserManager
+import me.testaccount666.serversystem.userdata.*
 import org.bukkit.command.Command
 
 abstract class AbstractTabCompleterWaypoint<T : WaypointManager<P>, P : Waypoint> : ServerSystemTabCompleter {

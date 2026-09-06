@@ -4,5 +4,5 @@ data class VanishData(
     var canDrop: Boolean,
     var canPickup: Boolean,
     var canInteract: Boolean,
-    var canMessage: Boolean
+    var canMessage: Boolean,
 )

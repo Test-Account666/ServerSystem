@@ -1,6 +1,5 @@
 package me.testaccount666.serversystem.commands.interfaces
 
-import me.testaccount666.serversystem.ServerSystem
 import me.testaccount666.serversystem.userdata.User
 import org.bukkit.command.Command
 
@@ -12,7 +11,7 @@ import org.bukkit.command.Command
 fun interface ServerSystemTabCompleter {
     /**
      * Provides tab completion options for a command.
-     * 
+     *
      * @param commandSender The user who is tab-completing the command
      * @param command       The command being tab-completed
      * @param label         The alias of the command that was used
@@ -21,6 +20,3 @@ fun interface ServerSystemTabCompleter {
      */
     fun tabComplete(commandSender: User, command: Command, label: String, vararg arguments: String): List<String>?
 }
-
-inline fun <reified T : Any> ServerSystemTabCompleter.getService(): T = ServerSystem.instance.registry.getService<T>()
-inline fun <reified T : Any> ServerSystemTabCompleter.getServiceOrNull(): T? = ServerSystem.instance.registry.getServiceOrNull<T>()

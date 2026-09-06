@@ -1,21 +1,17 @@
 package me.testaccount666.serversystem.listener.executables.developerjoin
 
+import me.testaccount666.paperktx.extensions.ComponentExtensions.asComponent
+import me.testaccount666.paperktx.scheduler.skedule.okkero.schedule
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.managers.config.ConfigurationManager
-import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
-import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import java.util.*
 
 class ListenerDeveloperJoin : Listener {
-    private val _enabled: Boolean
-
-    init {
-        val configManager = instance.registry.getService<ConfigurationManager>()
-        _enabled = configManager.generalConfig.getBoolean("DeveloperJoin.NotifyDeveloper.Enabled")
-    }
+    private val _enabled = getService<ConfigurationManager>().generalConfig.getBoolean("DeveloperJoin.NotifyDeveloper.Enabled")
 
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
@@ -26,8 +22,11 @@ class ListenerDeveloperJoin : Listener {
         if (!_DEVELOPERS.contains(uuid)) return
 
         val message = "&#7FBF06This Server uses ServerSystem <3"
-        val messageComponent = translateToComponent(message)
-        Bukkit.getScheduler().runTaskLater(instance, Runnable { player.sendMessage(messageComponent) }, 20)
+
+        instance.schedule {
+            waitFor(20L)
+            player.sendMessage(message.asComponent())
+        }
     }
 
     companion object {

@@ -1,10 +1,12 @@
 package me.testaccount666.serversystem.updates
 
+import me.testaccount666.paperktx.extensions.TimeExtensions.toTicks
+import me.testaccount666.paperktx.scheduler.skedule.okkero.schedule
 import me.testaccount666.serversystem.ServerSystem
 import me.testaccount666.serversystem.managers.config.ConfigReader
 import me.testaccount666.serversystem.managers.config.ConfigurationManager
-import org.bukkit.Bukkit
 import java.util.logging.Level
+import kotlin.time.Duration.Companion.hours
 
 /**
  * Manages update checking and downloading lifecycle for the plugin.
@@ -38,7 +40,7 @@ class UpdateManager(private val _plugin: ServerSystem, private val _configManage
         updateChecker = UpdateCheckerType.DISABLED.new()
     }
 
-    private fun formatAvailableUpdateCheckerTypes(): String = UpdateCheckerType.entries.map { it.name }.joinToString { ", " }
+    private fun formatAvailableUpdateCheckerTypes() = UpdateCheckerType.entries.map { it.name }.joinToString { ", " }
 
     private fun initializeUpdateChecker(type: UpdateCheckerType, generalConfig: ConfigReader) {
         val autoUpdate = determineAutoUpdateSetting(generalConfig)
@@ -56,13 +58,16 @@ class UpdateManager(private val _plugin: ServerSystem, private val _configManage
     private fun scheduleUpdateChecks(generalConfig: ConfigReader) {
         val checkForUpdates = generalConfig.getBoolean("UpdateChecker.CheckForUpdates", false)
         if (!checkForUpdates) return
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(_plugin, { performUpdateCheck() }, 20L, 20L * 60 * 60)
+
+        _plugin.schedule {
+            loop(1.hours.toTicks(), 20) { performUpdateCheck() }
+        }
     }
 
     private fun performUpdateCheck() {
         updateChecker.hasUpdate()
-            .exceptionally { handleUpdateCheckError(it) }
-            .thenAccept { handleUpdateCheckResult(it) }
+            .exceptionally(::handleUpdateCheckError)
+            .thenAccept(::handleUpdateCheckResult)
     }
 
     private fun handleUpdateCheckError(throwable: Throwable): Boolean {
@@ -74,8 +79,8 @@ class UpdateManager(private val _plugin: ServerSystem, private val _configManage
         if (!hasUpdate) return
 
         updateChecker.downloadUpdate()
-            .exceptionally { handleUpdateDownloadError(it) }
-            .thenAccept { handleUpdateDownloadResult(it) }
+            .exceptionally(::handleUpdateDownloadError)
+            .thenAccept(::handleUpdateDownloadResult)
     }
 
     private fun handleUpdateDownloadError(throwable: Throwable): Boolean {

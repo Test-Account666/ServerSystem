@@ -1,5 +1,5 @@
 name: ServerSystem
-version: '${project.version}.${id}'
+version: @PROJECT_VERSION@.@BUILD_ID@ #'${project.version}.${id}'
 main: me.testaccount666.serversystem.ServerSystem
 api-version: '1.21'
 authors: [ TestAccount666 ]
@@ -13,5 +13,5 @@ libraries:
   - net.bytebuddy:byte-buddy:1.17.7
   - com.zaxxer:HikariCP:7.0.2
   - com.h2database:h2:2.4.240
-  - org.jetbrains.kotlin:kotlin-stdlib:${kotlin.version}
-  - org.jetbrains.kotlin:kotlin-reflect:${kotlin.version}
+  - org.jetbrains.kotlin:kotlin-stdlib:@KOTLIN_VERSION@
+  - org.jetbrains.kotlin:kotlin-reflect:@KOTLIN_VERSION@

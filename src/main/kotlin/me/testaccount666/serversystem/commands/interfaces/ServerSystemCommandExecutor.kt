@@ -11,7 +11,7 @@ import org.bukkit.command.Command
 fun interface ServerSystemCommandExecutor {
     /**
      * Executes a command for the given sender.
-     * 
+     *
      * @param commandSender The user who executed the command
      * @param command       The command that was executed
      * @param label         The alias of the command that was used

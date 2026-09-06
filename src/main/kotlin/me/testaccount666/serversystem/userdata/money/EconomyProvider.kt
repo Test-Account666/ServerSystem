@@ -1,6 +1,7 @@
 package me.testaccount666.serversystem.userdata.money
 
 import me.testaccount666.serversystem.ServerSystem
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.managers.config.ConfigReader
 import me.testaccount666.serversystem.managers.database.economy.EconomyDatabaseManager
 import me.testaccount666.serversystem.userdata.OfflineUser
@@ -33,7 +34,7 @@ class EconomyProvider {
 
         val economyTypeParsed =
             Type.parseType(configReader.getString("Economy.StorageType.Value")?.uppercase())
-        val databaseManager = ServerSystem.instance.registry.getService<EconomyDatabaseManager>()
+        val databaseManager = getService<EconomyDatabaseManager>()
 
         if (economyTypeParsed == null) {
             economyType = Type.SQLITE
@@ -102,7 +103,7 @@ class EconomyProvider {
         }
 
         if (!anyMigrated) return
-        userConfig.set("User.BankAccounts", null)
+        userConfig["User.BankAccounts"] = null
         offlineUser.save()
 
         ServerSystem.log.info("Completed migration of all YAML bank accounts for user ${offlineUser.getNameOrNull()} (${offlineUser.uuid})")

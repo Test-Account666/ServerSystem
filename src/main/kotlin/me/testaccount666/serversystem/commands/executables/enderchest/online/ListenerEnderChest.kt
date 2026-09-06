@@ -1,13 +1,12 @@
 package me.testaccount666.serversystem.commands.executables.enderchest.online
 
+import me.testaccount666.paperktx.scheduler.skedule.okkero.schedule
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.annotations.RequiredCommands
 import me.testaccount666.serversystem.commands.executables.enderchest.offline.CommandOfflineEnderChest
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor
-import me.testaccount666.serversystem.userdata.User
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.userdata.UserManager
-import me.testaccount666.serversystem.utils.ServiceExtensions.getService
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -39,14 +38,15 @@ class ListenerEnderChest : Listener {
         val viewers = inventory.viewers.toList()
         inventory.close()
 
-        Bukkit.getScheduler().runTaskLater(instance, Runnable {
+        instance.schedule {
+            waitFor(10L)
             viewers.filterIsInstance<Player>().forEach { viewer ->
                 val cachedUser = getService<UserManager>().getUserOrNull(viewer) ?: return@forEach
 
                 if (cachedUser.isOfflineUser) return@forEach
-                val user = cachedUser.offlineUser as User
+                val user = cachedUser.onlineUser
                 _enderChest.executeEnderChestCommand(user, viewedPlayer.name)
             }
-        }, 10L)
+        }
     }
 }

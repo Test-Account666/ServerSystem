@@ -4,7 +4,7 @@ import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.waypoints.CommandType
 import me.testaccount666.serversystem.commands.executables.waypoints.home.AbstractCommandHome
 import me.testaccount666.serversystem.commands.executables.waypoints.home.admin.CommandAdminHome
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
+import me.testaccount666.serversystem.extensions.hasCommandPermission
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.home.HomeManager
 import org.bukkit.command.Command
@@ -67,7 +67,7 @@ class CommandHome : AbstractCommandHome() {
 
     override fun canInstantTeleport(command: Command, user: User): Boolean {
         if (isAdminCommand(command)) return _commandAdminHome.canInstantTeleport(command, user)
-        return hasCommandPermission(user, "Home.InstantTeleport", false)
+        return user.hasCommandPermission("Home.InstantTeleport", false)
     }
 
     private fun isAdminCommand(command: Command?) = command?.name?.startsWith("admin", true) ?: false

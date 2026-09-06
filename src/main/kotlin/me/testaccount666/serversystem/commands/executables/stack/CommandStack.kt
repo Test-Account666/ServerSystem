@@ -1,11 +1,13 @@
 package me.testaccount666.serversystem.commands.executables.stack
 
+import me.testaccount666.paperktx.extensions.get
+import me.testaccount666.paperktx.extensions.isAir
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.extensions.commandMsg
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.ItemStackExtensions.Companion.isAir
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import org.bukkit.command.Command
+import org.bukkit.inventory.EquipmentSlot
 
 @ServerSystemCommand("stack")
 class CommandStack : AbstractServerSystemCommand() {
@@ -15,13 +17,12 @@ class CommandStack : AbstractServerSystemCommand() {
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
         if (!isPlayer(commandSender)) return
 
-        val itemInHand = commandSender.getPlayer()!!.inventory.itemInMainHand
-        if (itemInHand.isAir()) {
-            command("Stack.NoItemInHand", commandSender).build()
+        val itemInHand = commandSender.getPlayer()?.inventory[EquipmentSlot.HAND].takeUnless { it.isAir() } ?: run {
+            commandSender.commandMsg("Stack.NoItemInHand")
             return
         }
 
         itemInHand.amount = itemInHand.maxStackSize
-        command("Stack.Success", commandSender).build()
+        commandSender.commandMsg("Stack.Success")
     }
 }

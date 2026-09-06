@@ -1,12 +1,10 @@
 package me.testaccount666.serversystem.commands.executables.waypoints
 
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.extensions.commandMsg
+import me.testaccount666.serversystem.extensions.generalMsg
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.userdata.teleport.TeleportRunnable.Companion.teleportLater
-import me.testaccount666.serversystem.userdata.teleport.TeleportRunnable.Companion.teleportNow
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
-import me.testaccount666.serversystem.utils.tuples.Tuple
+import me.testaccount666.serversystem.userdata.teleport.TeleportRunnable.Companion.teleportSmart
 import org.bukkit.Location
 import org.bukkit.command.Command
 
@@ -26,32 +24,32 @@ abstract class AbstractCommandWaypoint<T : WaypointManager<P>, P : Waypoint> : A
 
     protected fun handleSet(commandSender: User, command: Command, target: User, pointManager: T, pointName: String) {
         if (pointManager.pointExists(pointName)) {
-            command("${getPrefix(command)}.AlreadyExists", commandSender) {
-                target(target.getNameSafe())
+            commandSender.commandMsg("${getPrefix(command)}.AlreadyExists") {
+                target(target.nameSafe)
                 postModifier { it.replace(getPlaceholder(), pointName) }
-            }.build()
+            }
             return
         }
 
         val location = commandSender.getPlayer()!!.location
         val point = createPoint(pointName, location) ?: run {
-            command("${getPrefix(command)}.InvalidName", commandSender) {
-                target(target.getNameSafe())
-            }.build()
+            commandSender.commandMsg("${getPrefix(command)}.InvalidName") {
+                target(target.nameSafe)
+            }
             return
         }
 
         if (!canAddPoints(pointManager, command)) {
-            command("${getPrefix(command)}.MaxReached", commandSender) { target(target.getNameSafe()) }.build()
+            commandSender.commandMsg("${getPrefix(command)}.MaxReached") { target(target.nameSafe) }
             return
         }
 
         pointManager.addPoint(point)
 
-        command("${getPrefix(command)}.Success", commandSender) {
+        commandSender.commandMsg("${getPrefix(command)}.Success") {
             target(target.getNameOrNull())
             postModifier { it.replace(getPlaceholder(), point.displayName) }
-        }.build()
+        }
     }
 
     protected fun handleDelete(commandSender: User, command: Command, target: User, pointManager: T, pointName: String) {
@@ -62,10 +60,10 @@ abstract class AbstractCommandWaypoint<T : WaypointManager<P>, P : Waypoint> : A
 
         pointManager.removePoint(point)
 
-        command("${getPrefix(command)}.Success", commandSender) {
-            target(target.getNameSafe())
+        commandSender.commandMsg("${getPrefix(command)}.Success") {
+            target(target.nameSafe)
             postModifier { it.replace(getPlaceholder(), point.displayName) }
-        }.build()
+        }
     }
 
     protected fun handleTeleport(commandSender: User, command: Command, target: User, pointManager: T, pointName: String) {
@@ -74,33 +72,25 @@ abstract class AbstractCommandWaypoint<T : WaypointManager<P>, P : Waypoint> : A
             return
         }
 
-        val pointLocation = point.location
-
-        if (!canInstantTeleport(command, commandSender)) {
-            commandSender.teleportLater(pointLocation).apply {
-                onFailure = { command("${getPrefix(command)}.Moved", commandSender) { target(target.getNameSafe()) }.build() }
-                onSuccess = {
-                    command("${getPrefix(command)}.Success", user) {
-                        target(target.getNameSafe())
-                        postModifier { it.replace(getPlaceholder(), point.displayName) }
-                    }.build()
+        commandSender.teleportSmart(
+            point.location,
+            canInstantTeleport(command, commandSender),
+            { commandSender.commandMsg("${getPrefix(command)}.Teleporting") { target(target.nameSafe) } },
+            {
+                commandSender.commandMsg("${getPrefix(command)}.Success") {
+                    target(target.nameSafe)
+                    postModifier { it.replace(getPlaceholder(), point.displayName) }
                 }
-            }
-            command("${getPrefix(command)}.Teleporting", commandSender) { target(target.getNameSafe()) }.build()
-        } else {
-            commandSender.teleportNow(pointLocation)
-            command("${getPrefix(command)}.Success", commandSender) {
-                target(target.getNameSafe())
-                postModifier { it.replace(getPlaceholder(), point.displayName) }
-            }.build()
-        }
+            },
+            { commandSender.commandMsg("${getPrefix(command)}.Moved") { target(target.nameSafe) } }
+        )
     }
 
-    private fun resolveTargetAndPoint(commandSender: User, command: Command, vararg arguments: String): Tuple<User, String>? {
+    private fun resolveTargetAndPoint(commandSender: User, command: Command, vararg arguments: String): Pair<User, String>? {
         val target = fetchTarget(commandSender, command, *arguments) ?: return null
 
         val pointName = arguments[argsBeforePoint(command)]
-        return Tuple(target, pointName)
+        return Pair(target, pointName)
     }
 
     private fun fetchTarget(commandSender: User, command: Command, vararg arguments: String): User? {
@@ -109,7 +99,7 @@ abstract class AbstractCommandWaypoint<T : WaypointManager<P>, P : Waypoint> : A
         val index = argsBeforePoint(command) - 1
 
         val target = getTargetUser(commandSender, index, false, *arguments) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[index]) }.build()
+            commandSender.generalMsg("PlayerNotFound") { target(arguments[index]) }
             return null
         }
 
@@ -117,10 +107,10 @@ abstract class AbstractCommandWaypoint<T : WaypointManager<P>, P : Waypoint> : A
     }
 
     private fun sendNotExistMessage(commandSender: User, target: User, command: Command, pointName: String) {
-        command("${getPrefix(command)}.DoesNotExist", commandSender) {
-            target(target.getNameSafe())
+        commandSender.commandMsg("${getPrefix(command)}.DoesNotExist") {
+            target(target.nameSafe)
             postModifier { it.replace(getPlaceholder(), pointName) }
-        }.build()
+        }
     }
 
     abstract fun argsBeforePoint(command: Command): Int

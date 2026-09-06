@@ -1,10 +1,7 @@
 package me.testaccount666.serversystem.commands.executables.sudo
 
 import me.testaccount666.serversystem.ServerSystem.Companion.log
-import net.bytebuddy.implementation.bind.annotation.AllArguments
-import net.bytebuddy.implementation.bind.annotation.Morph
-import net.bytebuddy.implementation.bind.annotation.RuntimeType
-import net.bytebuddy.implementation.bind.annotation.This
+import net.bytebuddy.implementation.bind.annotation.*
 import org.bukkit.command.CommandSender
 import java.lang.reflect.Method
 import java.util.logging.Level

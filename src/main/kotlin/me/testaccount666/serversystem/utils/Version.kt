@@ -18,8 +18,8 @@ class Version(version: String) : Comparable<Version> {
     }
 
     override fun compareTo(other: Version): Int {
-        val thisVersion: Array<String> = version.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        val otherVersion: Array<String> = other.version.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val thisVersion = version.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val otherVersion = other.version.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
         for (index in 0..<min(thisVersion.size, otherVersion.size)) try {
             val thisVersionInt = thisVersion[index].toInt()

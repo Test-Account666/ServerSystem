@@ -4,11 +4,11 @@ import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.annotations.RequiredCommands
 import me.testaccount666.serversystem.commands.executables.moderation.ModerationUtils
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor
+import me.testaccount666.serversystem.extensions.commandMsg
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.userdata.UserManager
 import me.testaccount666.serversystem.userdata.UserManager.Companion.consoleUser
 import me.testaccount666.serversystem.utils.DurationParser.parseDate
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.ServiceExtensions.getService
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
@@ -32,7 +32,7 @@ class ListenerBan : Listener {
         val parsedDuration = banModeration.expireTime
 
         val unbanDate = parseDate(parsedDuration, user)
-        val kickMessage = command("Moderation.Ban.Kick", consoleUser) {
+        val kickMessage = consoleUser.commandMsg("Moderation.Ban.Kick") {
             sender(senderName)
             language(user.playerLanguage)
             target(user.getNameOrNull())
@@ -43,7 +43,7 @@ class ListenerBan : Listener {
                 it.replace("<DATE>", unbanDate)
                     .replace("<REASON>", banModeration.reason)
             }
-        }.build()
+        }
 
         if (kickMessage.isEmpty()) {
             log.severe("(CommandBan) Kick message is empty! This should not happen!")

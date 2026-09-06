@@ -1,17 +1,16 @@
 package me.testaccount666.serversystem.commands.executables.teleportask
 
+import me.testaccount666.paperktx.extensions.ComponentExtensions.asComponent
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.extensions.commandMsg
+import me.testaccount666.serversystem.extensions.generalMsg
 import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.managers.messages.MessageManager.applyPlaceholders
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.teleport.TeleportRequest
-import me.testaccount666.serversystem.userdata.teleport.TeleportRunnable.Companion.teleportLater
-import me.testaccount666.serversystem.userdata.teleport.TeleportRunnable.Companion.teleportNow
-import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
+import me.testaccount666.serversystem.userdata.teleport.TeleportRunnable.Companion.teleportSmart
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
@@ -63,7 +62,7 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
      */
     private fun validateTargetPlayer(commandSender: User, vararg arguments: String): User? {
         val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
+            commandSender.generalMsg("PlayerNotFound") { target(arguments[0]) }
             return null
         }
 
@@ -71,12 +70,12 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
         val isSelf = targetUser === commandSender
 
         if (isSelf) {
-            command("TeleportAsk.CannotTeleportSelf", commandSender).build()
+            commandSender.commandMsg("TeleportAsk.CannotTeleportSelf")
             return null
         }
 
         if (!targetUser.isAcceptsTeleports) {
-            command("TeleportAsk.NoTeleport", commandSender) { target(targetPlayer.name) }.build()
+            commandSender.commandMsg("TeleportAsk.NoTeleport") { target(targetPlayer.name) }
             return null
         }
 
@@ -88,11 +87,11 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
         val targetPlayer = targetUser.getPlayer()!!
         val timeOut = System.currentTimeMillis() + (1000 * 60 * 2) // Two minutes
 
-        command("TeleportAsk.Success", commandSender) { target(targetPlayer.name) }.build()
+        commandSender.commandMsg("TeleportAsk.Success") { target(targetPlayer.name) }
 
         if (targetUser.isIgnoredPlayer(commandSender.uuid)) return
 
-        command("TeleportAsk.SuccessOther", targetUser) { sender(commandSender.getNameSafe()) }.build()
+        targetUser.commandMsg("TeleportAsk.SuccessOther") { sender(commandSender.nameSafe) }
 
         val teleportRequest = TeleportRequest(commandSender, targetUser, timeOut, false)
         targetUser.teleportRequest = teleportRequest
@@ -104,11 +103,11 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
         val targetPlayer = targetUser.getPlayer()!!
         val timeOut = System.currentTimeMillis() + (1000 * 60 * 2) // Two minutes
 
-        command("TeleportHereAsk.Success", commandSender) { target(targetPlayer.name) }.build()
+        commandSender.commandMsg("TeleportHereAsk.Success") { target(targetPlayer.name) }
 
         if (targetUser.isIgnoredPlayer(commandSender.uuid)) return
 
-        command("TeleportHereAsk.SuccessOther", targetUser) { sender(commandSender.getNameSafe()) }.build()
+        targetUser.commandMsg("TeleportHereAsk.SuccessOther") { sender(commandSender.nameSafe) }
 
         val teleportRequest = TeleportRequest(commandSender, targetUser, timeOut, true)
         targetUser.teleportRequest = teleportRequest
@@ -119,21 +118,21 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
     private fun sendAcceptDenyButtons(commandSender: User, targetUser: User, label: String) {
         val targetPlayer = targetUser.getPlayer()!!
 
-        val acceptButton = command("TeleportAsk.Buttons.Accept.Name", targetUser) {
+        val acceptButton = targetUser.commandMsg("TeleportAsk.Buttons.Accept.Name") {
             format(false)
             send(false)
             prefix(false)
             blankError(true)
             postModifier { applyPlaceholders(it, commandSender, targetPlayer.name, label) }
-        }.build()
+        }
 
-        val denyButton = command("TeleportAsk.Buttons.Deny.Name", targetUser) {
+        val denyButton = targetUser.commandMsg("TeleportAsk.Buttons.Deny.Name") {
             format(false)
             send(false)
             prefix(false)
             blankError(true)
             postModifier { applyPlaceholders(it, commandSender, targetPlayer.name, label) }
-        }.build()
+        }
 
         if (acceptButton.isEmpty() || denyButton.isEmpty()) {
             log.warning(
@@ -141,25 +140,25 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
                     targetUser.getNameOrNull()
                 } in the language file. Please check the language file for errors."
             )
-            general("ErrorOccurred", targetUser) { label(label) }.build()
+            targetUser.generalMsg("ErrorOccurred") { label(label) }
             return
         }
 
-        val acceptButtonTooltip = command("TeleportAsk.Buttons.Accept.Tooltip", targetUser) {
+        val acceptButtonTooltip = targetUser.commandMsg("TeleportAsk.Buttons.Accept.Tooltip") {
             format(false)
             prefix(false)
             send(false)
             blankError(true)
             postModifier { applyPlaceholders(it, commandSender, targetPlayer.name, label) }
-        }.build()
+        }
 
-        val denyButtonTooltip = command("TeleportAsk.Buttons.Deny.Tooltip", targetUser) {
+        val denyButtonTooltip = targetUser.commandMsg("TeleportAsk.Buttons.Deny.Tooltip") {
             format(false)
             prefix(false)
             send(false)
             blankError(true)
             postModifier { applyPlaceholders(it, commandSender, targetPlayer.name, label) }
-        }.build()
+        }
 
         if (acceptButtonTooltip.isEmpty() || denyButtonTooltip.isEmpty()) {
             log.warning(
@@ -167,7 +166,7 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
                     targetUser.getNameOrNull()
                 } in the language file. Please check the language file for errors."
             )
-            general("ErrorOccurred", targetUser) { label(label) }.build()
+            targetUser.generalMsg("ErrorOccurred") { label(label) }
             return
         }
 
@@ -195,13 +194,13 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
      */
     private fun validateTeleportRequest(commandSender: User): TeleportRequest? {
         val teleportRequest = commandSender.teleportRequest?.takeUnless(TeleportRequest::isExpired) ?: run {
-            command("TeleportAccept.NoRequest", commandSender).build()
+            commandSender.commandMsg("TeleportAccept.NoRequest")
             return null
         }
 
         val requester = teleportRequest.sender
         if (requester.getPlayer() == null || !requester.getPlayer()!!.isOnline) {
-            command("TeleportAccept.NoRequest", commandSender).build()
+            commandSender.commandMsg("TeleportAccept.NoRequest")
             return null
         }
 
@@ -215,7 +214,7 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
         val requester = teleportRequest.sender
         commandSender.teleportRequest = null
 
-        command("TeleportAccept.SuccessOther", requester) { target(commandSender.getNameSafe()) }.build()
+        requester.commandMsg("TeleportAccept.SuccessOther") { target(commandSender.nameSafe) }
 
         val teleporter = if (teleportRequest.isTeleportHere) commandSender else requester
         val target = if (teleportRequest.isTeleportHere) requester else commandSender
@@ -229,8 +228,8 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
         val requester = teleportRequest.sender
         commandSender.teleportRequest = null
 
-        command("TeleportDeny.Success", commandSender) { target(requester.getNameSafe()) }.build()
-        command("TeleportDeny.SuccessOther", requester) { target(commandSender.getNameSafe()) }.build()
+        commandSender.commandMsg("TeleportDeny.Success") { target(requester.nameSafe) }
+        requester.commandMsg("TeleportDeny.SuccessOther") { target(commandSender.nameSafe) }
     }
 
     /**
@@ -242,16 +241,13 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
     private fun executeTeleport(teleporter: User, target: User) {
         val targetLocation = target.getPlayer()!!.location
 
-        if (!hasCommandPermission(teleporter, "TeleportAsk.InstantTeleport", false)) {
-            command("TeleportAsk.StartingTeleporting", teleporter) { target(target.getNameSafe()) }.build()
-            teleporter.teleportLater(targetLocation).apply {
-                onFailure = { command("TeleportAsk.Moved", user).build() }
-                onSuccess = { command("TeleportAsk.TeleportFinished", user).build() }
-            }
-        } else {
-            teleporter.teleportNow(targetLocation)
-            command("TeleportAsk.TeleportFinished", teleporter) { target(target.getNameSafe()) }.build()
-        }
+        teleporter.teleportSmart(
+            targetLocation,
+            hasCommandPermission(teleporter, "TeleportAsk.InstantTeleport", false),
+            { teleporter.commandMsg("TeleportAsk.StartingTeleporting") { target(target.nameSafe) } },
+            { teleporter.commandMsg("TeleportAsk.TeleportFinished") { target(target.nameSafe) } },
+            { teleporter.commandMsg("TeleportAsk.Moved") }
+        )
     }
 
 
@@ -266,8 +262,8 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
     private fun createMessageComponent(text: String?, hoverText: String?, clickAction: ClickEvent?): Component {
         if (text == null || hoverText == null || clickAction == null) return Component.empty()
 
-        return translateToComponent(text)
-            .hoverEvent(HoverEvent.showText(translateToComponent(hoverText)))
+        return text.asComponent()
+            .hoverEvent(HoverEvent.showText(hoverText.asComponent()))
             .clickEvent(clickAction)
             .asComponent()
     }
@@ -276,7 +272,7 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
         if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
         val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
+            commandSender.generalMsg("PlayerNotFound") { target(arguments[0]) }
             return
         }
 
@@ -293,12 +289,12 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
         targetUser.isAcceptsTeleports = acceptsTeleports
         targetUser.save()
 
-        command(messagePath, commandSender) { target(targetPlayer.name) }.build()
+        commandSender.commandMsg(messagePath) { target(targetPlayer.name) }
 
         if (isSelf) return
 
-        command("TeleportToggle.Success" + (if (acceptsTeleports) "Enabled" else "Disabled"), targetUser) {
-            sender(commandSender.getNameSafe())
-        }.build()
+        targetUser.commandMsg("TeleportToggle.Success" + (if (acceptsTeleports) "Enabled" else "Disabled")) {
+            sender(commandSender.nameSafe)
+        }
     }
 }

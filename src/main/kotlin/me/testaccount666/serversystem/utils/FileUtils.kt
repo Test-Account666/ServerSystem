@@ -1,9 +1,7 @@
 package me.testaccount666.serversystem.utils
 
 import me.testaccount666.serversystem.exceptions.NotDirectoryException
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.IOException
+import java.io.*
 import java.nio.file.Files
 
 object FileUtils {

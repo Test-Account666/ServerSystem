@@ -1,9 +1,7 @@
 package me.testaccount666.serversystem.managers.database.moderation
 
 import me.testaccount666.serversystem.managers.database.HikariConfigUtil
-import me.testaccount666.serversystem.moderation.AbstractModerationManager
-import me.testaccount666.serversystem.moderation.BanModeration
-import me.testaccount666.serversystem.moderation.MuteModeration
+import me.testaccount666.serversystem.moderation.*
 import me.testaccount666.serversystem.moderation.ban.SqliteBanManager
 import me.testaccount666.serversystem.moderation.mute.SqliteMuteManager
 import java.io.File

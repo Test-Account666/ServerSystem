@@ -1,223 +1,131 @@
 package me.testaccount666.serversystem.commands.executables.teleport
 
+import me.testaccount666.paperktx.extensions.location
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.extensions.*
 import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.command.Command
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
-import org.bukkit.util.Vector
-import java.text.DecimalFormat
 
 @ServerSystemCommand("teleport", ["teleportposition", "teleporthere", "teleportall"])
 class CommandTeleport : AbstractServerSystemCommand() {
+    private val commandHandlers = mapOf(
+        "teleportposition" to TeleportHandler.TeleportPosition(),
+        "teleporthere" to TeleportHandler.Teleport(),
+        "teleport" to TeleportHandler.Teleport(),
+        "teleportall" to TeleportHandler.TeleportAll()
+    )
+
     override fun minRequiredArguments(command: Command): Int {
-        return when (command.name.lowercase()) {
-            "teleportposition" -> 3
-            "teleporthere", "teleport" -> 1
-            "teleportall" -> 0
-            else -> error("(CommandTeleport) Unexpected value: ${command.name}")
-        }
+        return commandHandlers[command.name.lowercase()]?.requiredArguments() ?: error("(CommandTeleport) Unexpected value: ${command.name}")
     }
 
     override fun getUsagePermission(command: Command): String {
-        return when (command.name.lowercase()) {
-            "teleport" -> "Teleport.Use"
-            "teleportposition" -> "TeleportPosition.Use"
-            "teleporthere" -> "TeleportHere.Use"
-            "teleportall" -> "TeleportAll.Use"
-            else -> error("(CommandTeleport) Unexpected value: ${command.name}")
-        }
+        return commandHandlers[command.name.lowercase()]?.usagePermission() ?: error("(CommandTeleport) Unexpected value: ${command.name}")
     }
 
     override fun getSyntaxPath(command: Command?): String {
         command ?: return "Teleport"
 
-        return when (command.name.lowercase()) {
-            "teleportposition" -> "TeleportPosition"
-            "teleporthere" -> "TeleportHere"
-            "teleportall" -> "TeleportAll"
-            else -> "Teleport"
-        }
+        return commandHandlers[command.name.lowercase()]?.usageSyntax() ?: error("(CommandTeleport) Unexpected value: ${command.name}")
     }
 
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        when (command.name.lowercase()) {
-            "teleportposition" -> executeTeleportPosition(commandSender, command, label, *arguments)
-            "teleporthere" -> executeTeleportHere(commandSender, command, label, *arguments)
-            "teleportall" -> executeTeleportAll(commandSender)
-            else -> {
-                if (arguments.size == 2) executeTeleportOther(commandSender, command, label, *arguments)
-                else if (arguments.size > 2) executeTeleportPosition(commandSender, command, label, *arguments)
-                else executeTeleport(commandSender, command, label, *arguments)
+        val commandName = command.name.lowercase().let {
+            if (it == "teleport" && arguments.size >= 3) "teleportposition" else it
+        }
+
+        val handler = commandHandlers[commandName] ?: return
+        if (!checkPermission(commandSender, handler.usagePermission())) return
+
+        if (arguments.size < handler.requiredArguments()) {
+            commandSender.generalMsg("InvalidArguments") {
+                syntax(getSyntaxPath(command))
+                label(label)
+            }
+            return
+        }
+
+        when (handler) {
+            is TeleportHandler.Teleport -> executeTeleport(handler, commandSender, command, label, *arguments)
+            is TeleportHandler.TeleportPosition -> executeTeleportPosition(handler, commandSender, command, label, *arguments)
+            is TeleportHandler.TeleportAll -> {
+                if (!isPlayer(commandSender)) return
+                handler.execute(commandSender, label)
             }
         }
     }
 
-    private fun executeTeleportAll(commandSender: User) {
-        if (!isPlayer(commandSender)) return
-
-        val senderLocation = commandSender.getPlayer()!!.location
-        Bukkit.getOnlinePlayers().forEach { player -> player.teleport(senderLocation) }
-        command("TeleportAll.Success", commandSender) { target("*") }.build()
-    }
-
-    private fun executeTeleportHere(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!isPlayer(commandSender)) return
-
-        if (arguments.isEmpty()) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
-            return
-        }
-
-        getTargetUserAndTeleport(
-            commandSender,
-            { it.teleport(commandSender.getPlayer()!!.location) },
-            "TeleportHere.Success", *arguments
-        )
-    }
-
-    private fun executeTeleport(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!isPlayer(commandSender)) return
-
-        if (arguments.isEmpty()) {
-            general("InvalidArguments", commandSender) {
-                syntax(getSyntaxPath(command))
-                label(label)
-            }.build()
-            return
-        }
-
-        getTargetUserAndTeleport(
-            commandSender,
-            { targetPlayer: Player? -> commandSender.getPlayer()!!.teleport(targetPlayer!!.location) },
-            "Teleport.Success", *arguments
-        )
-    }
-
-    private fun executeTeleportOther(commandSender: User, command: Command, label: String, vararg arguments: String) {
-        if (!validatePermissions(commandSender, "Teleport.Use", "Teleport.Other")) return
-        if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, 1, *arguments)) return
-
-        val sourceUser = getTargetUser(commandSender, arguments = arguments) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
-            return
-        }
-        val targetUser = getTargetUser(commandSender, 1, false, *arguments) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[1]) }.build()
-            return
-        }
-
-        val sourcePlayer = sourceUser.getPlayer()
-        val targetPlayer = targetUser.getPlayer()
-
-        sourcePlayer!!.teleport(targetPlayer!!.location)
-        command("Teleport.SuccessOther", commandSender) {
-            target(sourcePlayer.name)
-            postModifier { it.replace("<TARGET2>", targetPlayer.name) }
-        }.build()
-    }
-
-    private fun executeTeleportPosition(commandSender: User, command: Command, label: String, vararg arguments: String) {
+    fun executeTeleportPosition(handler: TeleportHandler.TeleportPosition, commandSender: User, command: Command, label: String, vararg arguments: String) {
         var isSelf = true
         var startIndex = 0
+        var targetUser = commandSender
 
         if (arguments.size > 3) {
             getTargetUser(commandSender, arguments = arguments)?.also {
                 isSelf = false
                 startIndex = 1
+                targetUser = it
             }
         }
 
         if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, 3, *arguments)) return
 
-        val targetUser = (if (isSelf) commandSender else getTargetUser(commandSender, arguments = arguments)) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
-            return
-        }
-
         val targetPlayer = targetUser.getPlayer()!!
-
         if (!isSelf && !checkPermission(commandSender, "TeleportPosition.Other", targetPlayer.name)) return
 
         val executionLocation = if (commandSender is ConsoleUser) targetPlayer.location else commandSender.getPlayer()!!.location
 
-        val location = extractLocationWithRotation(executionLocation, targetPlayer, startIndex, *arguments) ?: run {
-            command("TeleportPosition.InvalidLocation", commandSender) { target(targetPlayer.name) }.build()
+        val location = loc(executionLocation, targetPlayer, startIndex, *arguments) ?: run {
+            commandSender.commandMsg("TeleportPosition.InvalidLocation") { target(targetPlayer.name) }
             return
         }
 
         if (!isValidTeleportLocation(location, commandSender, targetPlayer)) return
 
-        targetPlayer.teleport(location)
-        sendTeleportPositionSuccess(commandSender, targetPlayer, location, isSelf)
+        handler.setup(targetUser, location)
+        handler.execute(commandSender, label)
+    }
+
+    fun executeTeleport(handler: TeleportHandler.Teleport, commandSender: User, command: Command, label: String, vararg arguments: String) {
+        val isSelf = arguments.size < 2
+        if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, 1, *arguments)) return
+
+        val targetUser = (if (isSelf) commandSender else getTargetUser(commandSender, arguments = arguments)) ?: run {
+            commandSender.generalMsg("PlayerNotFound") { target(arguments[0]) }
+            return
+        }
+
+        val toTarget = getTargetUser(commandSender, 1, false, *arguments)
+
+        if (toTarget == null) handler.setup(commandSender, targetUser)
+        else handler.setup(targetUser, toTarget)
+
+        handler.execute(commandSender, label)
     }
 
     private fun isValidTeleportLocation(location: Location, commandSender: User, targetPlayer: Player): Boolean {
         if (!location.world.worldBorder.isInside(location)) {
-            command("TeleportPosition.OutsideBorder", commandSender) { target(targetPlayer.name) }.build()
+            commandSender.commandMsg("TeleportPosition.OutsideBorder") { target(targetPlayer.name) }
             return false
         }
 
         return location.world === targetPlayer.world || checkPermission(commandSender, "TeleportPosition.World")
     }
 
-    private fun sendTeleportPositionSuccess(commandSender: User, targetPlayer: Player, location: Location, isSelf: Boolean) {
-        val messagePath = if (isSelf) "TeleportPosition.Success" else "TeleportPosition.SuccessOther"
-        command(messagePath, commandSender) {
-            target(targetPlayer.name)
-            postModifier { formatLocationMessage(it, location) }
-        }.build()
-    }
-
-    private fun formatLocationMessage(message: String, location: Location): String {
-        return message.replace("<X>", roundDecimal(location.x))
-            .replace("<Y>", roundDecimal(location.y))
-            .replace("<Z>", roundDecimal(location.z))
-            .replace("<WORLD>", location.world.name)
-    }
-
-    private fun validatePermissions(commandSender: User, vararg permissions: String): Boolean {
-        for (permission in permissions) if (!checkPermission(commandSender, permission)) return false
-        return true
-    }
-
-
-    private fun getTargetUserAndTeleport(commandSender: User, teleportAction: (Player) -> Unit, successMessage: String, vararg arguments: String) {
-        val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
-            return
-        }
-
-        val targetPlayer = targetUser.getPlayer()!!
-        teleportAction(targetPlayer)
-        command(successMessage, commandSender) { target(targetPlayer.name) }.build()
-    }
-
-    private fun roundDecimal(location: Double): String {
-        val format = DecimalFormat("0.##")
-
-        return format.format(location).replace(",", ".")
-    }
-
-    fun extractLocationWithRotation(executeLocation: Location, target: Entity, startIndex: Int, vararg arguments: String): Location? {
+    fun loc(executeLocation: Location, target: Entity, startIndex: Int, vararg arguments: String): Location? {
         val coordinateEndIndex = startIndex + 3
 
         if (arguments.size < coordinateEndIndex) return null
 
-        val x = calculateRelativePosition(_X_AXIS, arguments[startIndex], executeLocation, target.location)
-        val y = calculateRelativePosition(_Y_AXIS, arguments[startIndex + 1], executeLocation, target.location)
-        val z = calculateRelativePosition(_Z_AXIS, arguments[startIndex + 2], executeLocation, target.location)
-
-        if (x == null || y == null || z == null) return null
+        val x = extractCoordinate(executeLocation.x, target.location.x, arguments[startIndex]) ?: return null
+        val y = extractCoordinate(executeLocation.y, target.location.y, arguments[startIndex + 1]) ?: return null
+        val z = extractCoordinate(executeLocation.z, target.location.z, arguments[startIndex + 2]) ?: return null
 
         var yaw = target.location.yaw
         var pitch = target.location.pitch
@@ -225,18 +133,18 @@ class CommandTeleport : AbstractServerSystemCommand() {
         var currentIndex = coordinateEndIndex
 
         if (arguments.size > currentIndex) {
-            val yawVal = calculateRelativeRotation(arguments[currentIndex], executeLocation, target.location, true)
+            val yawVal = extractCoordinate(executeLocation.yaw.toDouble(), yaw.toDouble(), arguments[currentIndex])
             if (yawVal != null) {
-                yaw = yawVal
+                yaw = yawVal.toFloat()
                 currentIndex++
             }
             // If parsing fails, it might be a world name, so we skip yaw parsing
         }
 
         if (arguments.size > currentIndex) {
-            val pitchVal = calculateRelativeRotation(arguments[currentIndex], executeLocation, target.location, false)
+            val pitchVal = extractCoordinate(executeLocation.pitch.toDouble(), pitch.toDouble(), arguments[currentIndex])
             if (pitchVal != null) {
-                pitch = pitchVal
+                pitch = pitchVal.toFloat()
                 currentIndex++
             }
             // If parsing fails, it might be a world name, so we skip pitch parsing
@@ -248,55 +156,99 @@ class CommandTeleport : AbstractServerSystemCommand() {
             target.server.getWorld(worldName)?.let { world = it }
         }
 
-        return Location(world, x, y, z, yaw, pitch)
+        return location(x, y, z, world, yaw, pitch)
     }
 
-    private fun calculateRelativePosition(axis: Vector, input: String, senderLocation: Location, targetLocation: Location): Double? {
-        try {
-            if (input == "~") return getCoordinate(targetLocation, axis)
-            if (input == "@") return getCoordinate(senderLocation, axis)
+    private fun extractCoordinate(origin: Double, altOrigin: Double, token: String): Double? {
+        return when {
+            token == "~" -> altOrigin
+            token == "@" -> origin
+            token.startsWith("~") -> {
+                val offset = token.drop(1).toDoubleOrNull() ?: return null
+                altOrigin + offset
+            }
 
-            if (input.startsWith("~")) return parseOffset(input, targetLocation, axis, 1)
-            if (input.startsWith("@")) return parseOffset(input, senderLocation, axis, 1)
+            token.startsWith("@") -> {
+                val offset = token.drop(1).toDoubleOrNull() ?: return null
+                origin + offset
+            }
 
-            return input.toDouble()
-        } catch (_: NumberFormatException) {
-            return null
+            else -> token.toDoubleOrNull()
         }
     }
 
-    private fun calculateRelativeRotation(input: String, senderLocation: Location, targetLocation: Location, isYaw: Boolean): Float? {
-        try {
-            if (input == "~") return if (isYaw) targetLocation.yaw else targetLocation.pitch
-            if (input == "@") return if (isYaw) senderLocation.yaw else senderLocation.pitch
+    sealed class TeleportHandler {
+        abstract fun requiredArguments(): Int
+        abstract fun usagePermission(): String
+        abstract fun usageSyntax(): String
+        abstract fun execute(commandSender: User, label: String)
 
-            if (input.startsWith("~")) return parseRotationOffset(input, targetLocation, isYaw, 1)
-            if (input.startsWith("@")) return parseRotationOffset(input, senderLocation, isYaw, 1)
+        class Teleport : TeleportHandler() {
+            override fun requiredArguments() = 1
+            override fun usagePermission() = "Teleport.Use"
+            override fun usageSyntax() = "Teleport"
 
-            return input.toFloat()
-        } catch (_: NumberFormatException) {
-            return null
+            private lateinit var _target: User
+            private lateinit var _toTarget: User
+
+            fun setup(target: User, toTarget: User) {
+                _target = target
+                _toTarget = toTarget
+            }
+
+            override fun execute(commandSender: User, label: String) {
+                _target.getPlayer()!!.teleportAsync(_toTarget.getPlayer()!!.location)
+
+                val isSelf = commandSender === _target
+                val successMessage = if (isSelf) "Teleport.Success" else "Teleport.SuccessOther"
+                commandSender.commandMsg(successMessage) {
+                    target(_target.nameSafe)
+                    postModifier { it.replace("<TARGET2>", _toTarget.nameSafe) }
+                }
+            }
         }
-    }
 
-    private fun parseRotationOffset(input: String, location: Location, isYaw: Boolean, offsetStartIndex: Int): Float {
-        val offset = input.drop(offsetStartIndex).toFloat()
-        val currentValue = if (isYaw) location.yaw else location.pitch
-        return currentValue + offset
-    }
+        class TeleportPosition : TeleportHandler() {
+            override fun requiredArguments() = 3
+            override fun usagePermission() = "TeleportPosition.Use"
+            override fun usageSyntax() = "TeleportPosition"
 
-    private fun parseOffset(input: String, location: Location, axis: Vector, offsetStartIndex: Int): Double {
-        val offset = input.drop(offsetStartIndex).toDouble()
-        return getCoordinate(location, axis) + offset
-    }
+            private lateinit var _target: User
+            private lateinit var _location: Location
 
-    private fun getCoordinate(location: Location, axis: Vector): Double {
-        return (axis.getX() * location.x + axis.getY() * location.y + axis.getZ() * location.z)
-    }
+            fun setup(target: User, location: Location) {
+                _target = target
+                _location = location
+            }
 
-    companion object {
-        private val _X_AXIS = Vector(1, 0, 0)
-        private val _Y_AXIS = Vector(0, 1, 0)
-        private val _Z_AXIS = Vector(0, 0, 1)
+            override fun execute(commandSender: User, label: String) {
+                val isSelf = commandSender === _target
+                val successMessage = if (isSelf) "TeleportPosition.Success" else "TeleportPosition.SuccessOther"
+                _target.getPlayer()!!.teleportAsync(_location)
+
+                commandSender.commandMsg(successMessage) {
+                    target(_target.nameSafe)
+                    postModifier { formatLocationMessage(it, _location) }
+                }
+            }
+
+            private fun formatLocationMessage(message: String, location: Location): String {
+                return message.replace("<X>", location.x.format())
+                    .replace("<Y>", location.y.format())
+                    .replace("<Z>", location.z.format())
+                    .replace("<WORLD>", location.world.name)
+            }
+        }
+
+        class TeleportAll : TeleportHandler() {
+            override fun requiredArguments() = 0
+            override fun usagePermission() = "TeleportAll.Use"
+            override fun usageSyntax() = "TeleportAll"
+
+            override fun execute(commandSender: User, label: String) {
+                Bukkit.getOnlinePlayers().forEach { it.teleportAsync(commandSender.getPlayer()!!.location) }
+                commandSender.commandMsg("TeleportAll.Success") { target("*") }
+            }
+        }
     }
 }

@@ -5,7 +5,8 @@ import me.testaccount666.serversystem.commands.executables.waypoints.AbstractCom
 import me.testaccount666.serversystem.commands.executables.waypoints.CommandType
 import me.testaccount666.serversystem.commands.executables.waypoints.warp.manager.Warp
 import me.testaccount666.serversystem.commands.executables.waypoints.warp.manager.WarpManager
-import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
+import me.testaccount666.serversystem.extensions.getService
+import me.testaccount666.serversystem.extensions.hasCommandPermission
 import me.testaccount666.serversystem.userdata.User
 import org.bukkit.Location
 import org.bukkit.command.Command
@@ -46,6 +47,6 @@ class CommandWarp : AbstractCommandWaypoint<WarpManager, Warp>() {
     }
 
     override fun canInstantTeleport(command: Command, user: User): Boolean {
-        return hasCommandPermission(user, "Warp.InstantTeleport", false)
+        return user.hasCommandPermission("Warp.InstantTeleport", false)
     }
 }

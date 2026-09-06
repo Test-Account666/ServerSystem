@@ -1,9 +1,8 @@
 package me.testaccount666.serversystem.clickablesigns.cost
 
 import me.testaccount666.serversystem.ServerSystem.Companion.log
+import me.testaccount666.serversystem.extensions.*
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.sign
 import org.bukkit.configuration.file.FileConfiguration
 import java.util.logging.Level
 
@@ -13,22 +12,33 @@ import java.util.logging.Level
 object CostHandler {
     /**
      * Checks if a user can afford the cost specified in the configuration.
-     * 
+     *
      * @param user   The user to check
      * @param config The configuration containing cost information
      * @return true if the user can afford the cost, false otherwise
      */
-    fun canAfford(user: User, config: FileConfiguration): Boolean {
+    fun canAfford(user: User, config: FileConfiguration, sendMessage: Boolean = true): Boolean {
         val costType = getCostType(config)
         if (costType == CostType.NONE) return true
 
         val costAmount = config.getDouble("Cost.Amount")
         if (costAmount <= 0) return true
 
-        if (costType == CostType.EXP) return user.getPlayer()!!.calculateTotalExperiencePoints() >= costAmount
-        if (costType == CostType.ECONOMY) return user.bankAccount.balance >= costAmount.toBigDecimal()
+        val canAfford = when (costType) {
+            CostType.EXP -> user.getPlayer()!!.calculateTotalExperiencePoints() >= costAmount
+            CostType.ECONOMY -> user.bankAccount.balance >= costAmount.toBigDecimal()
+        }
 
-        return false
+        if (!canAfford && sendMessage) {
+            if (costType == CostType.EXP) user.signMsg("Cost.NotEnoughExp") {
+                postModifier { it.replace("<AMOUNT>", costAmount.toInt().toString()) }
+            }
+            else if (costType == CostType.ECONOMY) user.signMsg("Cost.NotEnoughMoney") {
+                postModifier { it.replace("<AMOUNT>", costAmount.toString()) }
+            }
+        }
+
+        return canAfford
     }
 
     fun refundCost(user: User, config: FileConfiguration) {
@@ -39,8 +49,8 @@ object CostHandler {
         if (costAmount <= 0) return
 
         if (costType == CostType.EXP) {
-            val player = user.getPlayer()
-            player!!.setExperienceLevelAndProgress(player.calculateTotalExperiencePoints() + costAmount.toInt())
+            val player = user.getPlayer()!!
+            player.setExperienceLevelAndProgress(player.calculateTotalExperiencePoints() + costAmount.toInt())
             return
         }
         if (costType == CostType.ECONOMY) {
@@ -50,15 +60,15 @@ object CostHandler {
                 bankAccount.balance += costAmount.toBigDecimal()
                 bankAccount.save()
             } catch (exception: Exception) {
-                log.log(Level.SEVERE, "Failed to refund cost for '${user.getNameOrNull()}', failed to save bank account", exception)
-                general("ErrorOccurred", user).build()
+                log.log(Level.SEVERE, "Failed to refund cost for '${user.nameSafe}', failed to save bank account", exception)
+                user.generalMsg("ErrorOccurred")
             }
         }
     }
 
     /**
      * Deducts the cost from the user.
-     * 
+     *
      * @param user   The user to deduct from
      * @param config The configuration containing cost information
      * @return true if the cost was successfully deducted, false otherwise
@@ -70,22 +80,14 @@ object CostHandler {
         val costAmount = config.getDouble("Cost.Amount")
         if (costAmount <= 0) return true
 
-        if (!canAfford(user, config)) {
-            if (costType == CostType.EXP) sign("Cost.NotEnoughExp", user) {
-                postModifier { it.replace("<AMOUNT>", costAmount.toInt().toString()) }
-            }.build()
-            else if (costType == CostType.ECONOMY) sign("Cost.NotEnoughMoney", user) {
-                postModifier { it.replace("<AMOUNT>", costAmount.toString()) }
-            }.build()
-            return false
-        }
+        if (!canAfford(user, config, false)) return false
 
         if (costType == CostType.EXP) {
-            val player = user.getPlayer()
-            player!!.setExperienceLevelAndProgress(player.calculateTotalExperiencePoints() - costAmount.toInt())
-            sign("Cost.PaidExp", user) {
+            val player = user.getPlayer()!!
+            player.setExperienceLevelAndProgress(player.calculateTotalExperiencePoints() - costAmount.toInt())
+            user.signMsg("Cost.PaidExp") {
                 postModifier { it.replace("<AMOUNT>", costAmount.toInt().toString()) }
-            }.build()
+            }
             return true
         }
         if (costType == CostType.ECONOMY) {
@@ -94,9 +96,9 @@ object CostHandler {
             try {
                 bankAccount.balance -= costAmount.toBigDecimal()
                 bankAccount.save()
-                sign("Cost.PaidMoney", user) {
+                user.signMsg("Cost.PaidMoney") {
                     postModifier { it.replace("<AMOUNT>", costAmount.toString()) }
-                }.build()
+                }
                 return true
             } catch (_: Exception) {
                 return false
@@ -108,16 +110,11 @@ object CostHandler {
 
     /**
      * Gets the cost type from the configuration.
-     * 
+     *
      * @param config The configuration
      * @return The cost type
      */
     fun getCostType(config: FileConfiguration): CostType {
-        val costTypeStr = config.getString("Cost.Type", "NONE")!!
-        return try {
-            CostType.valueOf(costTypeStr.uppercase())
-        } catch (_: IllegalArgumentException) {
-            CostType.NONE
-        }
+        return config.getEnum("Cost.Type", CostType.NONE)
     }
 }
