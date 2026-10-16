@@ -7,7 +7,7 @@ import me.testaccount666.serversystem.managers.config.ConfigReader
  */
 abstract class AbstractDatabaseManager(
     override val configReader: ConfigReader?,
-    override val databaseType: String
+    override val databaseType: String,
 ) : DatabaseManager {
     /**
      * Initializes the database connection and creates tables.

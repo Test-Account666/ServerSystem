@@ -5,9 +5,7 @@ import org.bukkit.command.Command
 
 class TabCompleterAdminHome : AbstractTabCompleterHome() {
     override fun getBasePermission(command: Command): String {
-        val name = command.name.drop("admin".length)
-
-        return when (name) {
+        return when (command.name.drop("admin".length)) {
             "sethome" -> "AdminHome.Set"
             "deletehome" -> "AdminHome.Delete"
             "home" -> "AdminHome.Use"

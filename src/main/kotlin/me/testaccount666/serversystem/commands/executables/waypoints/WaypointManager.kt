@@ -1,5 +1,7 @@
 package me.testaccount666.serversystem.commands.executables.waypoints
 
+import me.testaccount666.paperktx.extensions.getValue
+import me.testaccount666.paperktx.extensions.location
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.configuration.file.FileConfiguration
@@ -80,19 +82,19 @@ abstract class WaypointManager<T : Waypoint>(private val _config: FileConfigurat
     protected abstract val root: String
 
     private fun savePoints() {
-        _config.set(root, null)
+        _config[root] = null
 
         _waypoints.values.forEach {
             val prefix = "${root}.${it.name}"
 
-            _config.set("${prefix}.X", it.location.x)
-            _config.set("${prefix}.Y", it.location.y)
-            _config.set("${prefix}.Z", it.location.z)
+            _config["${prefix}.X"] = it.location.x
+            _config["${prefix}.Y"] = it.location.y
+            _config["${prefix}.Z"] = it.location.z
 
-            _config.set("${prefix}.Yaw", it.location.yaw)
-            _config.set("${prefix}.Pitch", it.location.pitch)
+            _config["${prefix}.Yaw"] = it.location.yaw
+            _config["${prefix}.Pitch"] = it.location.pitch
 
-            _config.set("${prefix}.World", it.location.world.name)
+            _config["${prefix}.World"] = it.location.world.name
         }
 
         try {
@@ -121,15 +123,11 @@ abstract class WaypointManager<T : Waypoint>(private val _config: FileConfigurat
         val y = _config.getDouble("${prefix}.Y")
         val z = _config.getDouble("${prefix}.Z")
 
-        val yaw = _config.getDouble("${prefix}.Yaw").toFloat()
-        val pitch = _config.getDouble("${prefix}.Pitch").toFloat()
+        val yaw = _config.getDouble("${prefix}.Yaw")
+        val pitch = _config.getDouble("${prefix}.Pitch")
 
-        val worldName = _config.getString("${prefix}.World", "")!!
-        val world = Bukkit.getWorld(worldName) ?: return null
-
-        val location = Location(world, x, y, z, yaw, pitch)
-
-        return build(name, location)
+        val world = _config.getValue("${prefix}.World", "").let(Bukkit::getWorld) ?: return null
+        return build(name, location(x, y, z, world, yaw, pitch))
     }
 
     open fun canAddPoints() = true

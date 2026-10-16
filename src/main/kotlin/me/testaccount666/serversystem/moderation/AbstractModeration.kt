@@ -19,9 +19,7 @@ abstract class AbstractModeration {
 
     val isExpired: Boolean
         get() {
-            if (expireTime == -1L) return false
-
-            return System.currentTimeMillis() >= expireTime
+            return expireTime != -1L && System.currentTimeMillis() >= expireTime
         }
 
     abstract class AbstractModerationBuilder<C : AbstractModeration, B : AbstractModerationBuilder<C, B>> {

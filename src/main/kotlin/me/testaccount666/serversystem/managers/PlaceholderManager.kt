@@ -4,18 +4,17 @@ import me.testaccount666.serversystem.ServerSystem
 import me.testaccount666.serversystem.managers.messages.MappingsData
 import me.testaccount666.serversystem.userdata.User
 
+private val _COLOR_KEYS = listOf(
+    "<Color:Prefix>" to "Prefix",
+    "<Color:Separators>" to "Separator",
+    "<Color:Message>" to "Message",
+    "<Color:Highlight>" to "Highlight",
+    "<Color:Error.Message>" to "ErrorMessage",
+    "<Color:Error.Highlight>" to "ErrorHighlight"
+)
+private val _placeholderApi by lazy { runCatching { Class.forName("me.clip.placeholderapi.PlaceholderAPI") }.isSuccess }
+
 class PlaceholderManager {
-    private var _placeholders = false
-
-    init {
-        try {
-            Class.forName("me.clip.placeholderapi.PlaceholderAPI")
-            _placeholders = true
-        } catch (_: Throwable) {
-            _placeholders = false
-        }
-    }
-
     /**
      * Replaces placeholders in the given message with dynamic values based on the provided
      * `commandSender`, `targetName`, and `label`. The method also integrates
@@ -29,22 +28,25 @@ class PlaceholderManager {
      */
     fun applyPlaceholders(message: String, commandSender: User, targetName: String?, label: String): String {
         var result = message
-        val senderName = commandSender.getNameSafe()
+        val senderName = commandSender.nameSafe
         val finalTargetName = targetName ?: senderName
 
-        result = applyColorPlaceholder(commandSender, result, "<Color:Prefix>", "Prefix")
-        result = applyColorPlaceholder(commandSender, result, "<Color:Separators>", "Separator")
-        result = applyColorPlaceholder(commandSender, result, "<Color:Message>", "Message")
-        result = applyColorPlaceholder(commandSender, result, "<Color:Highlight>", "Highlight")
-        result = applyColorPlaceholder(commandSender, result, "<Color:Error.Message>", "ErrorMessage")
-        result = applyColorPlaceholder(commandSender, result, "<Color:Error.Highlight>", "ErrorHighlight")
+        result = _COLOR_KEYS.fold(result) { acc, (placeholder, key) ->
+            applyColorPlaceholder(commandSender, acc, placeholder, key)
+        }
 
-        result = result.replace("<SENDER>", senderName)
-            .replace("<TARGET>", finalTargetName)
-            .replace("<LABEL>", label)
+        val placeholders = listOf(
+            "<SENDER>" to senderName,
+            "<TARGET>" to finalTargetName,
+            "<LABEL>" to label
+        )
+
+        result = placeholders.fold(result) { acc, (placeholder, value) ->
+            acc.replace(placeholder, value)
+        }
 
         // ConsoleUser#getPlayer returns null btw
-        if (_placeholders) result = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(commandSender.getPlayer(), result)
+        if (_placeholderApi) result = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(commandSender.getPlayer(), result)
 
         return result
     }

@@ -31,7 +31,7 @@ object FieldAccessor {
 
     /**
      * Finds a field in a class or any of its superclasses.
-     * 
+     *
      * @param clazz     The class to search in
      * @param fieldName The name of the field to find
      * @return The field if found

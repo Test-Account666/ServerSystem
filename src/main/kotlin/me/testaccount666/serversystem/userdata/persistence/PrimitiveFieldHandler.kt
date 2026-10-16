@@ -10,7 +10,7 @@ import org.bukkit.configuration.file.FileConfiguration
 </T> */
 class PrimitiveFieldHandler<T>(private val _type: Class<T>) : FieldHandler<T> {
     override fun save(config: FileConfiguration, path: String, value: T?) {
-        config.set(path, value)
+        config[path] = value
     }
 
     override fun load(config: FileConfiguration, path: String, defaultValue: T?): T? {

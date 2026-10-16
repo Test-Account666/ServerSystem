@@ -2,9 +2,9 @@ package me.testaccount666.serversystem.commands.executables.ignore
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.extensions.commandMsg
+import me.testaccount666.serversystem.extensions.generalMsg
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 
 @ServerSystemCommand("ignore", ["unignore"])
@@ -29,13 +29,13 @@ class CommandIgnore : AbstractServerSystemCommand() {
 
         val targetUuid = targetPlayer.uniqueId
         if (!commandSender.isIgnoredPlayer(targetUuid)) {
-            command("Unignore.NotIgnored", commandSender) { target(targetPlayer.name) }.build()
+            commandSender.commandMsg("Unignore.NotIgnored") { target(targetPlayer.name) }
             return
         }
 
         commandSender.removeIgnoredPlayer(targetUuid)
         commandSender.save()
-        command("Unignore.Success", commandSender) { target(targetPlayer.name) }.build()
+        commandSender.commandMsg("Unignore.Success") { target(targetPlayer.name) }
     }
 
     private fun executeIgnore(commandSender: User, label: String, vararg arguments: String) {
@@ -44,27 +44,27 @@ class CommandIgnore : AbstractServerSystemCommand() {
 
         val targetUuid = targetPlayer.uniqueId
         if (commandSender.isIgnoredPlayer(targetUuid)) {
-            command("Ignore.AlreadyIgnored", commandSender) { target(targetPlayer.name) }.build()
+            commandSender.commandMsg("Ignore.AlreadyIgnored") { target(targetPlayer.name) }
             return
         }
 
         commandSender.addIgnoredPlayer(targetUuid)
         commandSender.save()
-        command("Ignore.Success", commandSender) { target(targetPlayer.name) }.build()
+        commandSender.commandMsg("Ignore.Success") { target(targetPlayer.name) }
     }
 
     private fun validateAndGetUser(commandSender: User, label: String, command: String?, vararg arguments: String): User? {
         if (!isPlayer(commandSender)) return null
 
         val targetUser = getTargetUser(commandSender, returnSender = false, arguments = arguments) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
+            commandSender.generalMsg("PlayerNotFound") { target(arguments[0]) }
             return null
         }
 
         val isSelf = targetUser === commandSender
 
         if (isSelf) {
-            command("${command}.Self", commandSender).build()
+            commandSender.commandMsg("${command}.Self")
             return null
         }
 

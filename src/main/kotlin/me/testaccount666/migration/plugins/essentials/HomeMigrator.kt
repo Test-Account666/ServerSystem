@@ -27,7 +27,7 @@ class HomeMigrator : AbstractMigrator() {
                 user.homeManager.addPoint(homeName, location)
                 return@runCatching true
             }.onFailure {
-                log.log(Level.WARNING, "Couldn't migrate home '${homeName}' for user '${user.uuid}' (${user.getNameSafe()})", it)
+                log.log(Level.WARNING, "Couldn't migrate home '${homeName}' for user '${user.uuid}' (${user.nameSafe})", it)
             }.getOrDefault(false)
         }
 
@@ -62,7 +62,7 @@ class HomeMigrator : AbstractMigrator() {
                 essentialsUser.setHome(homeName, location)
                 return@runCatching true
             }.onFailure {
-                log.log(Level.WARNING, "Couldn't migrate home '${home.displayName}' for user '${user.uuid}' (${user.getNameSafe()})", it)
+                log.log(Level.WARNING, "Couldn't migrate home '${home.displayName}' for user '${user.uuid}' (${user.nameSafe})", it)
             }.getOrDefault(false)
         }
 

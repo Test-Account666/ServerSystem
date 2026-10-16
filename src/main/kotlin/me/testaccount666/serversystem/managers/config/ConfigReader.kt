@@ -16,6 +16,9 @@ interface ConfigReader {
 
     fun getString(path: String, def: String? = null): String?
 
+    fun <T> getValue(path: String) = getObject(path) as? T
+    fun <T> getValue(path: String, def: T) = getObject(path, def) as? T ?: def
+
     fun getInt(path: String, def: Int = 0): Int
 
     fun getLong(path: String, def: Long = 0): Long

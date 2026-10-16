@@ -4,12 +4,9 @@ import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.commands.management.CommandManager
+import me.testaccount666.serversystem.extensions.*
 import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
-import me.testaccount666.serversystem.userdata.ConsoleUser
-import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.userdata.UserManager
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
+import me.testaccount666.serversystem.userdata.*
 import net.bytebuddy.ByteBuddy
 import net.bytebuddy.description.NamedElement
 import net.bytebuddy.implementation.MethodCall
@@ -34,7 +31,7 @@ class CommandSudo : AbstractServerSystemCommand() {
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
         if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
         val targetUser = getTargetUser(commandSender, returnSender = false, arguments = arguments) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
+            commandSender.generalMsg("PlayerNotFound") { target(arguments[0]) }
             return
         }
 
@@ -43,45 +40,45 @@ class CommandSudo : AbstractServerSystemCommand() {
 
         // No inception here. You can't sudo yourself. Nice try, DiCaprio.
         if (isSelf) {
-            command("Sudo.CannotSudoSelf", commandSender).build()
+            commandSender.commandMsg("Sudo.CannotSudoSelf")
             return
         }
 
         val sudoCommand = arguments[1]
 
         if (sudoCommand.isBlank()) {
-            general("InvalidArguments", commandSender) {
+            commandSender.generalMsg("InvalidArguments") {
                 syntax(getSyntaxPath(command))
                 label(label)
-            }.build()
+            }
             return
         }
 
         if (commandSender !is ConsoleUser && hasCommandPermission(targetPlayer, "Sudo.Exempt", false)) {
-            command("Sudo.CannotSudoExempt", commandSender) { target(targetPlayer.name) }.build()
+            commandSender.commandMsg("Sudo.CannotSudoExempt") { target(targetPlayer.name) }
             return
         }
 
         val cachedSender = getService<UserManager>().getUserOrNull(commandSender.uuid) ?: run {
             log.warning("(CommandSudo) Couldn't find cached command sender?!")
-            general("ErrorOccurred", commandSender) { label(label) }.build()
+            commandSender.generalMsg("ErrorOccurred") { label(label) }
             return
         }
 
         targetUser.addMessageListener(cachedSender)
 
-        command("Sudo.Success", commandSender) {
+        commandSender.commandMsg("Sudo.Success") {
             target(targetPlayer.name)
             postModifier { it.replace("<COMMAND>", sudoCommand) }
-        }.build()
+        }
 
         if (!sudoCommand.startsWith("/")) {
             targetPlayer.chat(sudoCommand)
             return
         }
 
-        val hookedTargetPlayer = createHookedPlayer(targetPlayer, commandSender.commandSender!!) ?: run {
-            general("ErrorOccurred", commandSender) { label(label) }.build()
+        val hookedTargetPlayer = createHookedPlayer(targetPlayer, commandSender.commandSender) ?: run {
+            commandSender.generalMsg("ErrorOccurred") { label(label) }
             return
         }
 

@@ -2,10 +2,10 @@ package me.testaccount666.serversystem.commands.executables.inventorysee.offline
 
 import de.tr7zw.nbtapi.NBT
 import de.tr7zw.nbtapi.handler.NBTHandlers
+import me.testaccount666.paperktx.extensions.*
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.executables.inventorysee.utils.InventorySeeUtils
 import me.testaccount666.serversystem.utils.BiDirectionalHashMap
-import me.testaccount666.serversystem.utils.ItemStackExtensions.Companion.isAir
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.inventory.Inventory
@@ -43,7 +43,7 @@ class InventoryLoader {
                 val slot = itemTag.getByte("Slot")
 
                 val itemStack = NBT.itemStackFromNBT(itemTag)
-                inventory.setItem(slot.toInt(), itemStack)
+                inventory[slot.toInt()] = itemStack
             }
 
             val equipmentTag = fileHandle.getCompound("equipment")
@@ -55,8 +55,7 @@ class InventoryLoader {
                 if (itemTag == null || itemTag.toString().equals("{}", true)) continue
 
                 val itemStack = NBT.itemStackFromNBT(itemTag)
-
-                inventory.setItem(36 + index, itemStack)
+                inventory[36 + index] = itemStack
             }
 
             addSectionDecorators(inventory)
@@ -85,7 +84,7 @@ class InventoryLoader {
             inventoryTag.clear()
 
             for (slot in 0..40) {
-                val item = inventory.getItem(slot)
+                val item = inventory[slot]
                 if (item.isAir()) continue
 
                 val itemTag = NBT.itemStackToNBT(item)
@@ -103,7 +102,7 @@ class InventoryLoader {
             for (i in equipmentSlotList.indices) {
                 val equipmentSlot = equipmentSlotList[i]
                 val slotIndex = 36 + i
-                val item = inventory.getItem(slotIndex)
+                val item = inventory[slotIndex]
                 if (item.isAir()) {
                     equipmentTag.removeKey(equipmentSlot)
                     continue

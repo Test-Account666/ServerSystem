@@ -1,9 +1,9 @@
 package me.testaccount666.migration.plugins.essentials
 
 import me.testaccount666.serversystem.ServerSystem.Companion.log
+import me.testaccount666.serversystem.extensions.commandMsg
 import me.testaccount666.serversystem.moderation.MuteModeration
 import me.testaccount666.serversystem.userdata.UserManager.Companion.consoleUser
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import java.util.logging.Level
 
 class MuteMigrator : AbstractMigrator() {
@@ -20,12 +20,12 @@ class MuteMigrator : AbstractMigrator() {
 
                 if (!essentialsUser.isMuted) return@count false
 
-                val defaultReason = command("Moderation.DefaultReason", consoleUser) {
+                val defaultReason = consoleUser.commandMsg("Moderation.DefaultReason") {
                     target(essentialsUser.name)
                     prefix(false)
                     send(false)
                     blankError(true)
-                }.build()
+                }
 
                 if (defaultReason.isEmpty()) {
                     log.severe("(MuteMigrator) Default reason is empty! This should not happen!")
@@ -42,9 +42,14 @@ class MuteMigrator : AbstractMigrator() {
                 val targetUUID = user.uuid
 
                 muteManager.addModeration(
-                    MuteModeration.builder().isShadowMute(false)
-                        .targetUuid(targetUUID).issueTime(issueTime).expireTime(expireTime)
-                        .senderUuid(senderUUID).reason(reason).build()
+                    MuteModeration.builder {
+                        isShadowMute(false)
+                        targetUuid(targetUUID)
+                        issueTime(issueTime)
+                        expireTime(expireTime)
+                        senderUuid(senderUUID)
+                        reason(reason)
+                    }
                 )
                 user.save()
 

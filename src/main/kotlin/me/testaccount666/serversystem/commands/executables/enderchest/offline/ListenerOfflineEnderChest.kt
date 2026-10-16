@@ -1,14 +1,13 @@
 package me.testaccount666.serversystem.commands.executables.enderchest.offline
 
+import me.testaccount666.paperktx.scheduler.skedule.okkero.schedule
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.annotations.RequiredCommands
 import me.testaccount666.serversystem.commands.executables.enderchest.online.CommandEnderChest
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor
-import me.testaccount666.serversystem.userdata.User
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.userdata.UserManager
-import me.testaccount666.serversystem.utils.ServiceExtensions.getService
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -50,16 +49,16 @@ class ListenerOfflineEnderChest : Listener {
         _enderChestLoader.inventoryMap.removeByKey(viewedPlayer.uniqueId)
         _enderChestLoader.saveOfflineInventory(viewedPlayer.uniqueId, inventory)
 
-        Bukkit.getScheduler().runTaskLater(instance, Runnable {
-            viewers.forEach { viewer ->
-                if (viewer !is Player) return@forEach
+        instance.schedule {
+            waitFor(10L)
+            viewers.filterIsInstance<Player>().forEach { viewer ->
                 val cachedUser = getService<UserManager>().getUserOrNull(viewer) ?: return@forEach
 
                 if (cachedUser.isOfflineUser) return@forEach
-                val user = cachedUser.offlineUser as User
+                val user = cachedUser.onlineUser
                 _enderChest.executeEnderChestCommand(user, viewedPlayer.name)
             }
-        }, 10L)
+        }
     }
 
     @EventHandler

@@ -4,11 +4,10 @@ import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.kit.manager.Kit
 import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager
+import me.testaccount666.serversystem.extensions.*
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.DurationParser.parseDate
 import me.testaccount666.serversystem.utils.DurationParser.parseDuration
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 
 @ServerSystemCommand("kit", ["createkit", "deletekit"], TabCompleterKit::class)
@@ -44,63 +43,59 @@ class CommandKit : AbstractServerSystemCommand() {
     }
 
     private fun handleCreateKit(commandSender: User, vararg arguments: String) {
-        val kitName = arguments[0].lowercase()
+        val kitName = arguments[0]
         val kitManager = getService<KitManager>()
         kitManager.getKit(kitName)?.also { kit ->
-            command("Kit.Create.KitAlreadyExists", commandSender) {
+            commandSender.commandMsg("Kit.Create.KitAlreadyExists") {
                 postModifier { it.replace("<KIT>", kit.displayName) }
-            }.build()
+            }
             return
         }
 
-        var cooldown = -1L
-
-        if (arguments.size > 1) cooldown = parseDuration(arguments[1])
+        val cooldown = if (arguments.size > 1) parseDuration(arguments[1]) else -1L
         if (cooldown == -2L) {
-            command("Kit.Create.InvalidCooldown", commandSender).build()
+            commandSender.commandMsg("Kit.Create.InvalidCooldown")
             return
         }
 
-        val player = commandSender.getPlayer()
-        val inventory = player!!.inventory
-        val contents = inventory.contents
+        val inventory = commandSender.getPlayer()!!.inventory
 
-        val newKit = Kit(kitName, cooldown, contents)
+        val newKit = Kit(kitName, cooldown, inventory.contents)
         kitManager.addKit(newKit)
         kitManager.saveAllKits()
-        command("Kit.Create.Success", commandSender) {
+        commandSender.commandMsg("Kit.Create.Success") {
             postModifier { it.replace("<KIT>", newKit.displayName) }
-        }.build()
+        }
     }
 
     private fun handleDeleteKit(commandSender: User, vararg arguments: String) {
-        val kitName = arguments[0].lowercase()
+        val kitName = arguments[0]
         val kitManager = getService<KitManager>()
         if (!kitManager.kitExists(kitName)) {
-            command("Kit.KitNotFound", commandSender) {
+            commandSender.commandMsg("Kit.KitNotFound") {
                 postModifier { it.replace("<KIT>", arguments[0]) }
-            }.build()
+            }
             return
         }
 
         kitManager.removeKit(kitName)
-        command("Kit.Delete.Success", commandSender) {
+        commandSender.commandMsg("Kit.Delete.Success") {
             postModifier { it.replace("<KIT>", arguments[0]) }
-        }.build()
+        }
     }
 
     private fun handleKit(commandSender: User, vararg arguments: String) {
-        val kitName = arguments[0].lowercase()
+        val kitName = arguments[0]
         val kitManager = getService<KitManager>()
         val kit = kitManager.getKit(kitName) ?: run {
-            command("Kit.KitNotFound", commandSender) {
+            commandSender.commandMsg("Kit.KitNotFound") {
                 postModifier { it.replace("<KIT>", arguments[0]) }
-            }.build()
+            }
             return
         }
 
         val targetUser = getTargetUser(commandSender, 1, arguments = arguments) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[1]) }.build()
+            commandSender.generalMsg("PlayerNotFound") { target(arguments[1]) }
             return
         }
         val targetPlayer = targetUser.getPlayer()!!
@@ -111,22 +106,22 @@ class CommandKit : AbstractServerSystemCommand() {
         if (isSelf && commandSender.isOnKitCooldown(kitName)) {
             val cooldown = commandSender.getKitCooldown(kitName)
 
-            command("Kit.OnCooldown", commandSender) {
+            commandSender.commandMsg("Kit.OnCooldown") {
                 postModifier {
                     it.replace("<KIT>", kit.displayName)
                         .replace("<DATE>", parseDate(cooldown, commandSender))
                 }
-            }.build()
+            }
             return
         }
 
-        if (isSelf) commandSender.setKitCooldown(kitName, kit.coolDown)
+        if (isSelf) targetUser.setKitCooldown(kitName, kit.coolDown).also { targetUser.save() }
         kit.giveKit(targetPlayer)
 
         val messagePath = "Kit.Success." + (if (isSelf) "Self" else "Other")
-        command(messagePath, commandSender) {
+        commandSender.commandMsg(messagePath) {
             target(targetPlayer.name)
             postModifier { it.replace("<KIT>", kit.displayName) }
-        }.build()
+        }
     }
 }

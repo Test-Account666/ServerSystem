@@ -1,28 +1,24 @@
 package me.testaccount666.serversystem.commands.executables.unlimited
 
+import io.papermc.paper.datacomponent.DataComponentTypes
+import io.papermc.paper.datacomponent.item.UseRemainder.useRemainder
+import me.testaccount666.paperktx.extensions.*
+import me.testaccount666.paperktx.scheduler.skedule.okkero.schedule
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.annotations.RequiredCommands
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor
-import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Container
 import org.bukkit.block.data.Directional
 import org.bukkit.entity.*
-import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority
-import org.bukkit.event.Listener
-import org.bukkit.event.block.BlockDispenseArmorEvent
-import org.bukkit.event.block.BlockDispenseEvent
-import org.bukkit.event.block.BlockPlaceEvent
-import org.bukkit.event.entity.CreatureSpawnEvent
+import org.bukkit.event.*
+import org.bukkit.event.block.*
 import org.bukkit.event.entity.ItemSpawnEvent
 import org.bukkit.event.player.*
 import org.bukkit.inventory.InventoryHolder
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.AxolotlBucketMeta
-import org.bukkit.inventory.meta.ItemMeta
-import org.bukkit.inventory.meta.TropicalFishBucketMeta
+import org.bukkit.inventory.meta.*
 
 /**
  * Listener that handles events related to unlimited items functionality.
@@ -34,12 +30,12 @@ class ListenerUnlimited : Listener {
 
     /**
      * Checks if this listener can be registered based on the available commands.
-     * 
+     *
      * @param requiredCommands Set of available command executors
      * @return true if the required CommandUnlimited is available, false otherwise
      */
     fun canRegister(requiredCommands: Set<ServerSystemCommandExecutor>): Boolean {
-        _commandUnlimited = requiredCommands.firstOrNull { it is CommandUnlimited } as? CommandUnlimited ?: return false
+        _commandUnlimited = requiredCommands.firstNotNullOfOrNull { it as? CommandUnlimited } ?: return false
         return true
     }
 
@@ -57,13 +53,8 @@ class ListenerUnlimited : Listener {
      */
     @EventHandler
     fun onBlockPlace(event: BlockPlaceEvent) {
-        val player = event.player
         val itemInHand = event.itemInHand.takeIf(::isUnlimited) ?: return
-        val amount = itemInHand.amount
-        Bukkit.getScheduler().runTaskLater(instance, Runnable {
-            itemInHand.amount = amount
-            player.updateInventory()
-        }, 1L)
+        itemInHand.setData(DataComponentTypes.USE_REMAINDER, useRemainder(itemInHand))
     }
 
     /**
@@ -74,13 +65,10 @@ class ListenerUnlimited : Listener {
         val itemInHand = event.itemDrop.itemStack.takeIf(::isUnlimited) ?: return
 
         event.isCancelled = true
-        val newItem = event.itemDrop.world.dropItemNaturally(event.itemDrop.location, itemInHand)
-
-        val newItemStack = newItem.itemStack
-        val newItemMeta = newItemStack.itemMeta
-        val newDataContainer = newItemMeta.persistentDataContainer
-        newDataContainer.remove(_commandUnlimited.unlimitedKey)
-        newItemStack.setItemMeta(newItemMeta)
+        event.itemDrop.world.dropItem(event.itemDrop.location, itemInHand) { item ->
+            item.velocity = event.itemDrop.velocity
+            item.itemStack.editPersistentDataContainer { it.remove(_commandUnlimited.unlimitedKey) }
+        }
     }
 
     /**
@@ -88,7 +76,7 @@ class ListenerUnlimited : Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onBucketEmpty(event: PlayerBucketEmptyEvent) {
-        event.getPlayer().inventory.getItem(event.hand).takeIf(::isUnlimited) ?: return
+        event.getPlayer().inventory[event.hand].takeIf(::isUnlimited) ?: return
 
         event.isCancelled = true
         handleBucketEmpty(event)
@@ -106,7 +94,8 @@ class ListenerUnlimited : Listener {
             Material.LAVA_BUCKET -> location.world.setType(location, Material.LAVA)
             Material.POWDER_SNOW_BUCKET -> location.world.setType(location, Material.POWDER_SNOW)
             Material.AXOLOTL_BUCKET, Material.COD_BUCKET, Material.SALMON_BUCKET,
-            Material.TADPOLE_BUCKET, Material.PUFFERFISH_BUCKET, Material.TROPICAL_FISH_BUCKET -> handleAquaticBucketEmpty(event, location)
+            Material.TADPOLE_BUCKET, Material.PUFFERFISH_BUCKET, Material.TROPICAL_FISH_BUCKET,
+                -> handleAquaticBucketEmpty(event, location)
 
             else -> Unit
         }
@@ -117,39 +106,16 @@ class ListenerUnlimited : Listener {
      */
     private fun handleAquaticBucketEmpty(event: PlayerBucketEmptyEvent, location: Location) {
         location.world.setType(location, Material.WATER)
-        val itemInHand = event.getPlayer().inventory.getItem(event.hand)
+        val itemInHand = event.getPlayer().inventory[event.hand]
         val itemMeta = itemInHand.itemMeta
 
         when (event.bucket) {
-            Material.AXOLOTL_BUCKET -> location.world.spawn(
-                location, Axolotl::class.java,
-                CreatureSpawnEvent.SpawnReason.BUCKET
-            ) { handleEntitySpawn(it, itemMeta) }
-
-            Material.COD_BUCKET -> location.world.spawn(
-                location, Cod::class.java,
-                CreatureSpawnEvent.SpawnReason.BUCKET
-            ) { handleEntitySpawn(it, itemMeta) }
-
-            Material.SALMON_BUCKET -> location.world.spawn(
-                location, Salmon::class.java,
-                CreatureSpawnEvent.SpawnReason.BUCKET
-            ) { handleEntitySpawn(it, itemMeta) }
-
-            Material.TADPOLE_BUCKET -> location.world.spawn(
-                location, Tadpole::class.java,
-                CreatureSpawnEvent.SpawnReason.BUCKET
-            ) { handleEntitySpawn(it, itemMeta) }
-
-            Material.PUFFERFISH_BUCKET -> location.world.spawn(
-                location, PufferFish::class.java,
-                CreatureSpawnEvent.SpawnReason.BUCKET
-            ) { handleEntitySpawn(it, itemMeta) }
-
-            Material.TROPICAL_FISH_BUCKET -> location.world.spawn(
-                location, TropicalFish::class.java,
-                CreatureSpawnEvent.SpawnReason.BUCKET
-            ) { handleEntitySpawn(it, itemMeta) }
+            Material.AXOLOTL_BUCKET -> location.spawn<Axolotl> { handleEntitySpawn(this, itemMeta) }
+            Material.COD_BUCKET -> location.spawn<Cod> { handleEntitySpawn(this, itemMeta) }
+            Material.SALMON_BUCKET -> location.spawn<Salmon> { handleEntitySpawn(this, itemMeta) }
+            Material.TADPOLE_BUCKET -> location.spawn<Tadpole> { handleEntitySpawn(this, itemMeta) }
+            Material.PUFFERFISH_BUCKET -> location.spawn<PufferFish> { handleEntitySpawn(this, itemMeta) }
+            Material.TROPICAL_FISH_BUCKET -> location.spawn<TropicalFish> { handleEntitySpawn(this, itemMeta) }
 
             else -> Unit
         }
@@ -172,14 +138,10 @@ class ListenerUnlimited : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onBucketFill(event: PlayerBucketFillEvent) {
-        event.getPlayer().inventory.getItem(event.hand).takeIf(::isUnlimited) ?: return
+        event.getPlayer().inventory[event.hand].takeIf(::isUnlimited) ?: return
 
         event.isCancelled = true
-
-        val block = event.block
-        val location = block.location
-
-        location.world.setType(location, Material.AIR)
+        event.block.location.run { world.setType(this, Material.AIR) }
     }
 
     @EventHandler
@@ -193,12 +155,9 @@ class ListenerUnlimited : Listener {
         val itemInHand = event.item.takeIf(::isUnlimited) ?: return
 
         val dispenserBlock = event.getBlock()
-        val blockState = dispenserBlock.state
-        if (blockState !is Container) return
+        val blockState = dispenserBlock.state as? Container ?: return
 
-        val blockData = dispenserBlock.blockData
-        if (blockData !is Directional) return
-        val velocity = event.velocity
+        val blockData = dispenserBlock.blockData as? Directional ?: return
 
         val facing = blockData.facing
         val facingBlock = dispenserBlock.getRelative(facing)
@@ -207,22 +166,24 @@ class ListenerUnlimited : Listener {
         val facingY = facingBlock.y
         val facingZ = facingBlock.z
 
-        val velocityX = velocity.getX()
-        val velocityY = velocity.getY()
-        val velocityZ = velocity.getZ()
+        val (velocityX, velocityY, velocityZ) = event.velocity
 
-        // Very quirky: when placing a block, the velocity is faked as the block’s coordinates.
-        // When dropping an item, velocity is an actual direction vector.
-        // Additionally, `BlockDispenseEvent` is fired AFTER removing the item from inventory, so we cannot grab the index
-        if (facingX.toDouble() != velocityX || facingY.toDouble() != velocityY || facingZ.toDouble() != velocityZ) {
-            Bukkit.getScheduler().runTaskLater(instance, Runnable { blockState.inventory.addItem(itemInHand) }, 1L)
-            return
+        instance.schedule {
+            // Very quirky: when placing a block, the velocity is faked as the block’s coordinates.
+            // When dropping an item, velocity is an actual direction vector.
+            // Additionally, `BlockDispenseEvent` is fired AFTER removing the item from inventory, so we cannot grab the index
+            if (facingX.toDouble() != velocityX || facingY.toDouble() != velocityY || facingZ.toDouble() != velocityZ) {
+                waitFor(1L)
+                blockState.inventory.addItem(itemInHand)
+                return@schedule
+            }
+
+            val foundIndex = findSimilarItemIndex(itemInHand, blockState)
+            if (foundIndex == -1) return@schedule
+
+            waitFor(1L)
+            blockState.inventory[foundIndex] = itemInHand
         }
-
-        val foundIndex = findSimilarItemIndex(itemInHand, blockState)
-        if (foundIndex == -1) return
-
-        Bukkit.getScheduler().runTaskLater(instance, Runnable { blockState.inventory.setItem(foundIndex, itemInHand) }, 1L)
     }
 
     private fun findSimilarItemIndex(comparingItem: ItemStack?, inventoryHolder: InventoryHolder): Int {
@@ -231,7 +192,7 @@ class ListenerUnlimited : Listener {
         val maxIndex = inventoryHolder.inventory.size
 
         for (index in 0..<maxIndex) {
-            val itemStack = inventoryHolder.inventory.getItem(index) ?: continue
+            val itemStack = inventoryHolder.inventory[index].takeUnless { it.isAir() } ?: continue
             if (!itemStack.isSimilar(comparingItem)) continue
 
             foundIndex = index
@@ -244,39 +205,25 @@ class ListenerUnlimited : Listener {
     fun onDispenserArmorFire(event: BlockDispenseArmorEvent) {
         val itemInHand = event.item.takeIf(::isUnlimited) ?: return
 
-        val newItemStack = itemInHand.clone()
-        val newItemMeta = newItemStack.itemMeta
-        val newDataContainer = newItemMeta.persistentDataContainer
-
-        newDataContainer.remove(_commandUnlimited.unlimitedKey)
-        newItemStack.setItemMeta(newItemMeta)
-
-        event.item = newItemStack
+        event.item = itemInHand.clone().edit { persistentDataContainer.remove(_commandUnlimited.unlimitedKey) }
     }
 
     /**
      * Checks if an item is marked as unlimited.
-     * 
+     *
      * @param itemStack The item to check
      * @return true if the item is unlimited, false otherwise
      */
     private fun isUnlimited(itemStack: ItemStack?): Boolean {
         val itemMeta = itemStack?.itemMeta ?: return false
 
-        val dataContainer = itemMeta.persistentDataContainer
-        return dataContainer.has(_commandUnlimited.unlimitedKey)
+        return itemMeta.persistentDataContainer.has(_commandUnlimited.unlimitedKey)
     }
 
     @EventHandler
     fun onItemSpawn(event: ItemSpawnEvent) {
         val itemStack = event.getEntity().itemStack.takeIf(::isUnlimited) ?: return
 
-        val itemMeta = itemStack.itemMeta
-        val dataContainer = itemMeta.persistentDataContainer
-
-        dataContainer.remove(_commandUnlimited.unlimitedKey)
-        itemStack.setItemMeta(itemMeta)
-
-        event.getEntity().itemStack = itemStack
+        event.getEntity().itemStack = itemStack.edit { persistentDataContainer.remove(_commandUnlimited.unlimitedKey) }
     }
 }

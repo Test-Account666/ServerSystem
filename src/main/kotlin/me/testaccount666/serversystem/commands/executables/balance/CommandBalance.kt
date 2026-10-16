@@ -2,10 +2,9 @@ package me.testaccount666.serversystem.commands.executables.balance
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.extensions.*
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.money.EconomyProvider
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 
@@ -34,29 +33,26 @@ class CommandBalance : AbstractServerSystemCommand() {
         if (!isPlayer(commandSender)) return
 
         val bankAccount = commandSender.bankAccount
-        val topTen = bankAccount.topTen
-
-        if (topTen.isEmpty()) {
-            command("Baltop.NoData", commandSender).build()
+        val topTen = bankAccount.topTen.takeIf { it.isNotEmpty() } ?: run {
+            commandSender.commandMsg("Baltop.NoData")
             return
         }
 
-        command("Baltop.Header", commandSender) { prefix(false) }.build()
+        commandSender.commandMsg("Baltop.Header") { prefix(false) }
 
         var position = 1
-        for ((playerUuid, balance) in topTen.entries) {
+        topTen.entries.forEach { (playerUuid, balance) ->
             val formattedBalance = getService<EconomyProvider>().formatMoney(balance)
             val playerName = Bukkit.getOfflinePlayer(playerUuid).name ?: "Unknown"
 
-            val currentPosition = position
-            command("Baltop.Entry", commandSender) {
+            commandSender.commandMsg("Baltop.Entry") {
                 prefix(false)
                 target(playerName)
                 postModifier {
-                    it.replace("<POSITION>", currentPosition.toString())
+                    it.replace("<POSITION>", position.toString())
                         .replace("<BALANCE>", formattedBalance)
                 }
-            }.build()
+            }
             position++
         }
     }
@@ -65,7 +61,7 @@ class CommandBalance : AbstractServerSystemCommand() {
         if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
         val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
+            commandSender.generalMsg("PlayerNotFound") { target(arguments[0]) }
             return
         }
 
@@ -79,9 +75,9 @@ class CommandBalance : AbstractServerSystemCommand() {
 
         val messagePath = if (isSelf) "Balance.Success" else "Balance.SuccessOther"
 
-        command(messagePath, commandSender) {
+        commandSender.commandMsg(messagePath) {
             target(targetPlayer.name)
             postModifier { it.replace("<BALANCE>", formattedBalance) }
-        }.build()
+        }
     }
 }

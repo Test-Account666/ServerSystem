@@ -1,13 +1,15 @@
 package me.testaccount666.serversystem.utils
 
 import me.testaccount666.serversystem.ServerSystem
+import me.testaccount666.serversystem.extensions.generalMsg
+import me.testaccount666.serversystem.extensions.syntaxMsg
 import me.testaccount666.serversystem.managers.messages.MessageManager
 import me.testaccount666.serversystem.userdata.User
 
-class MessageBuilder private constructor(
+class MessageBuilder internal constructor(
     private val messagePath: String,
     private val type: Type,
-    private val receiver: User
+    private val receiver: User,
 ) {
     private var send = true
     private var prefix = true
@@ -35,21 +37,21 @@ class MessageBuilder private constructor(
                 receiver.sendMessage("Something went seriously wrong! Please contact an administrator!")
                 return if (blankError) "" else "!!ERROR!!"
             }
-            return if (blankError) "" else general("ErrorOccurred", receiver).build()
+            return if (blankError) "" else receiver.generalMsg("ErrorOccurred")
         }
 
         message = preModifier?.invoke(message) ?: message
         sender?.let { message = message.replace("<SENDER>", it) }
-        val resolvedTarget = target ?: receiver.getNameSafe()
+        val resolvedTarget = target ?: receiver.nameSafe
 
         syntax?.let {
-            val usage = syntax(it, receiver).apply {
-                sender = this@MessageBuilder.sender
-                prefix = false
-                target = resolvedTarget
-                label = this@MessageBuilder.label
-                send = false
-            }.build()
+            val usage = receiver.syntaxMsg(it) {
+                builder.sender = sender
+                builder.prefix = false
+                builder.target = resolvedTarget
+                builder.label = label
+                builder.send = false
+            }
             message = message.replace("<USAGE>", usage)
         }
 
@@ -63,29 +65,7 @@ class MessageBuilder private constructor(
 
     enum class Type { GENERAL, COMMAND, CLICKABLE_SIGN, SYNTAX }
 
-    companion object {
-        fun general(path: String, receiver: User, block: Builder.() -> Unit = {}) =
-            MessageBuilder(path, Type.GENERAL, receiver).apply {
-                Builder(this).apply(block)
-            }
-
-        fun command(path: String, receiver: User, block: Builder.() -> Unit = {}) =
-            MessageBuilder(path, Type.COMMAND, receiver).apply {
-                Builder(this).apply(block)
-            }
-
-        fun syntax(path: String, receiver: User, block: Builder.() -> Unit = {}) =
-            MessageBuilder(path, Type.SYNTAX, receiver).apply {
-                Builder(this).apply(block)
-            }
-
-        fun sign(path: String, receiver: User, block: Builder.() -> Unit = {}) =
-            MessageBuilder(path, Type.CLICKABLE_SIGN, receiver).apply {
-                Builder(this).apply(block)
-            }
-    }
-
-    class Builder(private val builder: MessageBuilder) {
+    class Builder(internal val builder: MessageBuilder) {
         fun sender(value: String) = apply { builder.sender = value }
         fun prefix(value: Boolean) = apply { builder.prefix = value }
         fun format(value: Boolean) = apply { builder.format = value }

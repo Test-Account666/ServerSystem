@@ -21,5 +21,6 @@ class BanModeration : AbstractModeration {
     companion object {
         @JvmStatic
         fun builder(): BanModerationBuilder<*> = BanModerationBuilderImpl()
+        fun builder(block: BanModerationBuilder<*>.() -> Unit) = builder().apply(block).build()
     }
 }

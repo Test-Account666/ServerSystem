@@ -3,9 +3,9 @@ package me.testaccount666.serversystem.commands.executables.vanish
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.extensions.commandMsg
+import me.testaccount666.serversystem.extensions.generalMsg
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 import org.bukkit.entity.Mob
 import org.bukkit.metadata.FixedMetadataValue
@@ -24,7 +24,7 @@ class CommandVanish : AbstractServerSystemCommand() {
         if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
         val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
+            commandSender.generalMsg("PlayerNotFound") { target(arguments[0]) }
             return
         }
 
@@ -59,7 +59,7 @@ class CommandVanish : AbstractServerSystemCommand() {
 
     private fun handleToggleCommand(
         commandSender: User, targetUser: User, isSelf: Boolean, featureName: String?,
-        getCurrentState: () -> Boolean, setState: (Boolean) -> Unit
+        getCurrentState: () -> Boolean, setState: (Boolean) -> Unit,
     ) {
         var messagePath = if (isSelf) "${featureName}.Success" else "${featureName}.SuccessOther"
         val enableFeature = !getCurrentState()
@@ -69,13 +69,13 @@ class CommandVanish : AbstractServerSystemCommand() {
         setState(enableFeature)
         targetUser.save()
 
-        command(messagePath, commandSender) { target(targetUser.getNameSafe()) }.build()
+        commandSender.commandMsg(messagePath) { target(targetUser.nameSafe) }
 
         if (isSelf) return
 
-        command("${featureName}.Success" + (if (enableFeature) "Enabled" else "Disabled"), targetUser) {
-            sender(commandSender.getNameSafe())
-        }.build()
+        targetUser.commandMsg("${featureName}.Success" + (if (enableFeature) "Enabled" else "Disabled")) {
+            sender(commandSender.nameSafe)
+        }
     }
 
     private fun handleInteractCommand(commandSender: User, targetUser: User, isSelf: Boolean) {
@@ -114,12 +114,12 @@ class CommandVanish : AbstractServerSystemCommand() {
             }.forEach { it.target = null }
         }
 
-        command(messagePath, commandSender) { target(targetUser.getNameSafe()) }.build()
+        commandSender.commandMsg(messagePath) { target(targetUser.nameSafe) }
 
         if (isSelf) return
 
-        command("Vanish.Success" + (if (enableVanish) "Enabled" else "Disabled"), targetUser) {
-            sender(commandSender.getNameSafe())
-        }.build()
+        targetUser.commandMsg("Vanish.Success" + (if (enableVanish) "Enabled" else "Disabled")) {
+            sender(commandSender.nameSafe)
+        }
     }
 }

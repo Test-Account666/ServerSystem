@@ -1,15 +1,14 @@
 package me.testaccount666.serversystem.commands.executables.privatemessage
 
+import me.testaccount666.paperktx.extensions.ComponentExtensions.asComponent
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.events.UserPrivateMessageEvent
+import me.testaccount666.serversystem.extensions.*
 import me.testaccount666.serversystem.managers.messages.MessageManager.applyPlaceholders
 import me.testaccount666.serversystem.userdata.ConsoleUser
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import net.kyori.adventure.text.event.ClickEvent
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -66,7 +65,7 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
         if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
         val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
+            commandSender.generalMsg("PlayerNotFound") { target(arguments[0]) }
             return
         }
 
@@ -84,17 +83,17 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
         targetUser.isSocialSpyEnabled = isEnabled
         targetUser.save()
 
-        command(messagePath, commandSender) { target(targetPlayer.name) }.build()
+        commandSender.commandMsg(messagePath) { target(targetPlayer.name) }
 
         if (isSelf) return
-        command("SocialSpy.Success." + (if (isEnabled) "Enabled" else "Disabled"), targetUser).build()
+        targetUser.commandMsg("SocialSpy.Success." + (if (isEnabled) "Enabled" else "Disabled"))
     }
 
     private fun handleMessageToggleCommand(commandSender: User, command: Command, label: String, vararg arguments: String) {
         if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
         val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
+            commandSender.generalMsg("PlayerNotFound") { target(arguments[0]) }
             return
         }
 
@@ -111,27 +110,27 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
         var messagePath = if (isSelf) "MessageToggle.Success" else "MessageToggle.SuccessOther"
         messagePath = if (acceptsMessages) "${messagePath}.Enabled" else "${messagePath}.Disabled"
 
-        command(messagePath, commandSender) { target(targetPlayer.name) }.build()
+        commandSender.commandMsg(messagePath) { target(targetPlayer.name) }
 
         if (isSelf) return
-        command("MessageToggle.Success" + (if (acceptsMessages) "Enabled" else "Disabled"), targetUser) {
-            sender(commandSender.getNameSafe())
-        }.build()
+        targetUser.commandMsg("MessageToggle.Success" + (if (acceptsMessages) "Enabled" else "Disabled")) {
+            sender(commandSender.nameSafe)
+        }
     }
 
     private fun handleReplyCommand(commandSender: User, command: Command, label: String, vararg arguments: String) {
         val targetUser = commandSender.replyUser?.takeIf(::isValidReplyTarget) ?: run {
-            command("Reply.NoReply", commandSender).build()
+            commandSender.commandMsg("Reply.NoReply")
             return
         }
 
-        val newArguments = arrayOf(targetUser.getNameSafe()) + arguments
+        val newArguments = arrayOf(targetUser.nameSafe) + arguments
         sendPrivateMessage(commandSender, targetUser, label, *newArguments)
     }
 
     private fun handlePrivateMessageCommand(commandSender: User, command: Command, label: String, vararg arguments: String) {
         val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
+            commandSender.generalMsg("PlayerNotFound") { target(arguments[0]) }
             return
         }
 
@@ -140,35 +139,35 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
 
     private fun sendPrivateMessage(commandSender: User, targetUser: User, label: String, vararg arguments: String) {
         val targetName = targetUser.getNameOrNull() ?: run {
-            general("ErrorOccurred", commandSender) {
+            commandSender.generalMsg("ErrorOccurred") {
                 label(label)
                 target(targetUser.uuid.toString())
-            }.build()
+            }
             return
         }
 
         val isSelf = targetUser === commandSender
 
         if (isSelf) {
-            command("PrivateMessage.CannotSendToSelf", commandSender).build()
+            commandSender.commandMsg("PrivateMessage.CannotSendToSelf")
             return
         }
 
         if (!targetUser.isAcceptsMessages) {
-            command("PrivateMessage.NoMessages", commandSender) { target(targetName) }.build()
+            commandSender.commandMsg("PrivateMessage.NoMessages") { target(targetName) }
             return
         }
 
-        val message = arguments.drop(1).joinToString(" ").trim()
+        val message = arguments.join(1)
         val success = getSuccessMessage(commandSender, targetName, label, message)
         val successOther = getSuccessOther(targetUser, commandSender, targetName, label, message)
 
         if (success.isEmpty() || successOther.isEmpty()) {
             log.warning("Couldn't find message for path Commands.PrivateMessage.Success or Commands.PrivateMessage.SuccessOther")
-            general("ErrorOccurred", commandSender) {
+            commandSender.generalMsg("ErrorOccurred") {
                 label(label)
                 target(targetName)
-            }.build()
+            }
             return
         }
 
@@ -177,11 +176,11 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
         if (messageEvent.isCancelled()) return
 
 
-        val successComponent = translateToComponent(success)
+        val successComponent = success.asComponent()
             .clickEvent(ClickEvent.suggestCommand("/${_privateMessageCommand} ${targetName} "))
             .asComponent()
 
-        val successOtherComponent = translateToComponent(successOther)
+        val successOtherComponent = successOther.asComponent()
             .clickEvent(ClickEvent.suggestCommand("/${_privateMessageCommand} ${commandSender.getNameOrNull()} "))
             .asComponent()
 
@@ -200,8 +199,8 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
     }
 
     private fun getSuccessOther(targetUser: User, commandSender: User, targetName: String, label: String, message: String): String {
-        return command("PrivateMessage.SuccessOther", targetUser) {
-            sender(commandSender.getNameSafe())
+        return targetUser.commandMsg("PrivateMessage.SuccessOther") {
+            sender(commandSender.nameSafe)
             prefix(false)
             send(false)
             blankError(true)
@@ -209,11 +208,11 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
                 applyPlaceholders(it, targetUser, targetName, label)
                     .replace("<MESSAGE>", message)
             }
-        }.build()
+        }
     }
 
     private fun getSuccessMessage(commandSender: User, targetName: String, label: String, message: String): String {
-        return command("PrivateMessage.Success", commandSender) {
+        return commandSender.commandMsg("PrivateMessage.Success") {
             format(false)
             target(targetName)
             prefix(false)
@@ -223,13 +222,13 @@ class CommandPrivateMessage : AbstractServerSystemCommand() {
                 applyPlaceholders(it, commandSender, targetName, label)
                     .replace("<MESSAGE>", message)
             }
-        }.build()
+        }
     }
 
     private fun isValidReplyTarget(targetUser: User): Boolean {
         if (targetUser.commandSender == null || targetUser.getNameOrNull() == null) return false
         if (targetUser is ConsoleUser) return true
 
-        return targetUser.getPlayer()?.isOnline ?: false
+        return targetUser.isOnline
     }
 }

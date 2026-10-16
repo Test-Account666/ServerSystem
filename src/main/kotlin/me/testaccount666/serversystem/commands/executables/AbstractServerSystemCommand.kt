@@ -1,19 +1,14 @@
 package me.testaccount666.serversystem.commands.executables
 
-import me.testaccount666.serversystem.ServerSystem
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor
+import me.testaccount666.serversystem.extensions.generalMsg
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.managers.PermissionManager
-import me.testaccount666.serversystem.userdata.ConsoleUser
-import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.userdata.UserManager
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
+import me.testaccount666.serversystem.userdata.*
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
 
 abstract class AbstractServerSystemCommand : ServerSystemCommandExecutor {
-    protected inline fun <reified T : Any> getService(): T = ServerSystem.instance.registry.getService<T>()
-    protected inline fun <reified T : Any> getServiceOrNull(): T? = ServerSystem.instance.registry.getServiceOrNull<T>()
-
     val variantLabelMap = mutableMapOf<String, List<String>>()
 
     /**
@@ -29,12 +24,12 @@ abstract class AbstractServerSystemCommand : ServerSystemCommandExecutor {
      * @return The target user, or null if the target user is not found
      */
     internal fun getTargetUser(commandSender: User, index: Int = 0, returnSender: Boolean = true, vararg arguments: String): User? {
-        if (arguments.size > index) {
-            val userManager = getService<UserManager>()
-            val cachedUser = userManager.getUserOrNull(arguments[index], true)
-            return cachedUser?.offlineUser as? User
+        val name = arguments.getOrNull(index)
+        return when {
+            name != null -> getService<UserManager>().getUserOrNull(name, true)?.offlineUser as? User
+            returnSender -> commandSender
+            else -> null
         }
-        return if (returnSender) commandSender else null
     }
 
     /**
@@ -48,13 +43,13 @@ abstract class AbstractServerSystemCommand : ServerSystemCommandExecutor {
      */
     internal fun isConsoleWithNoTarget(
         commandSender: User, syntaxPath: String, label: String,
-        expectedLength: Int = 0, vararg arguments: String
+        expectedLength: Int = 0, vararg arguments: String,
     ): Boolean {
         if (arguments.size <= expectedLength && commandSender is ConsoleUser) {
-            general("InvalidArguments", commandSender) {
+            commandSender.generalMsg("InvalidArguments") {
                 syntax(syntaxPath)
                 label(label)
-            }.build()
+            }
             return true
         }
         return false
@@ -70,11 +65,10 @@ abstract class AbstractServerSystemCommand : ServerSystemCommandExecutor {
      * @return true if the user has the required permission, false otherwise
      */
     internal fun checkPermission(commandSender: User, permission: String, targetName: String? = null): Boolean {
-        if (!PermissionManager.hasCommandPermission(commandSender, permission)) {
-            sendNoPermissionMessage(commandSender, "Commands.${permission}", targetName)
-            return false
-        }
-        return true
+        if (PermissionManager.hasCommandPermission(commandSender, permission)) return true
+
+        sendNoPermissionMessage(commandSender, "Commands.${permission}", targetName)
+        return false
     }
 
     /**
@@ -85,16 +79,16 @@ abstract class AbstractServerSystemCommand : ServerSystemCommandExecutor {
      * @param targetName The name of the target player, or null if there is no target
      */
     internal fun sendNoPermissionMessage(recipient: User, permission: String, targetName: String?) {
-        general("NoPermission", recipient) {
+        recipient.generalMsg("NoPermission") {
             target(targetName)
             postModifier { it.replace("<PERMISSION>", PermissionManager.getPermission(permission)!!) }
-        }.build()
+        }
     }
 
     internal fun isPlayer(commandSender: User, sendMessage: Boolean = true): Boolean {
         if (commandSender !is ConsoleUser) return true
 
-        if (sendMessage) general("NotPlayer", commandSender).build()
+        if (sendMessage) commandSender.generalMsg("NotPlayer")
         return false
     }
 

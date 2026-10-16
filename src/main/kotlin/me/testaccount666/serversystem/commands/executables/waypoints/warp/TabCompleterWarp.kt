@@ -3,7 +3,7 @@ package me.testaccount666.serversystem.commands.executables.waypoints.warp
 import me.testaccount666.serversystem.commands.executables.waypoints.AbstractTabCompleterWaypoint
 import me.testaccount666.serversystem.commands.executables.waypoints.warp.manager.Warp
 import me.testaccount666.serversystem.commands.executables.waypoints.warp.manager.WarpManager
-import me.testaccount666.serversystem.commands.interfaces.getService
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.userdata.User
 import org.bukkit.command.Command
 

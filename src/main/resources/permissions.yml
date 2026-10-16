@@ -176,7 +176,10 @@ Permissions:
     Spawn:
       Use:
         Required: false
-        Value: "serversystem.command.spawn.use"
+        Value: "serversystem.command.spawn.teleport"
+      InstantTeleport:
+        Required: true
+        Value: "serversystem.command.warp.teleport.instant"
       Other:
         Required: true
         Value: "serversystem.command.spawn.other"
@@ -186,7 +189,10 @@ Permissions:
     Home:
       Use:
         Required: false
-        Value: "serversystem.command.home.use"
+        Value: "serversystem.command.home.teleport"
+      InstantTeleport:
+        Required: true
+        Value: "serversystem.command.home.teleport.instant"
       Set:
         Required: false
         Value: "serversystem.command.home.set"
@@ -374,6 +380,9 @@ Permissions:
       Teleport:
         Required: false
         Value: "serversystem.command.warp.teleport"
+      InstantTeleport:
+        Required: true
+        Value: "serversystem.command.warp.teleport.instant"
       Set:
         Required: true
         Value: "serversystem.admin.command.warp.set"

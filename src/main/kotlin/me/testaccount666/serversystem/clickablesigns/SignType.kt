@@ -12,7 +12,7 @@ import me.testaccount666.serversystem.clickablesigns.executables.weather.ActionW
 import me.testaccount666.serversystem.clickablesigns.executables.weather.ConfiguratorWeatherSign
 
 enum class SignType(private val _key: String, val signName: String, val clickAction: SignClickAction, val configurator: SignConfigurator) {
-    GIVE("Give", "&#3F3FD1[Give]", ActionGiveSign(), ConfiguratorGiveSign()),
+    GIVE("Give", "&#3F3FD1[GIVE]", ActionGiveSign(), ConfiguratorGiveSign()),
     KIT("Kit", "&#3F3FD1[KIT]", ActionKitSign(), ConfiguratorKitSign()),
     WARP("Warp", "&#3F3FD1[WARP]", ActionWarpSign(), ConfiguratorWarpSign()),
     TIME("Time", "&#3F3FD1[TIME]", ActionTimeSign(), ConfiguratorTimeSign()),

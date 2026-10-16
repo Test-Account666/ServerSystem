@@ -2,12 +2,12 @@ package me.testaccount666.serversystem.commands.executables.serversystem
 
 import me.testaccount666.migration.plugins.MigratorRegistry
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabCompleter
-import me.testaccount666.serversystem.commands.interfaces.getService
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.userdata.User
 import org.bukkit.command.Command
 
 class TabCompleterServerSystem : ServerSystemTabCompleter {
-    override fun tabComplete(commandSender: User, command: Command, label: String, vararg arguments: String): List<String>? {
+    override fun tabComplete(commandSender: User, command: Command, label: String, vararg arguments: String): List<String> {
         if (arguments.size <= 1) {
             val possibleCompletions = listOf("version", "reload", "migrate")
             if (arguments.isEmpty()) return possibleCompletions

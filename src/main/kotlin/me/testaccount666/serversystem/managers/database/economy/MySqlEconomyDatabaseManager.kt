@@ -11,7 +11,7 @@ import me.testaccount666.serversystem.managers.database.HikariConfigUtil
 class MySqlEconomyDatabaseManager
 /**
  * Creates a new MySqlEconomyDatabaseManager with the specified configuration.
- * 
+ *
  * @param configReader The configuration reader to get database settings from
  */
     (configReader: ConfigReader?) : AbstractSqlEconomyDatabaseManager(configReader) {

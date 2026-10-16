@@ -7,6 +7,6 @@ import org.bukkit.command.Command
 
 class TabCompleterOfflineEnderChest : ServerSystemTabCompleter {
     override fun tabComplete(commandSender: User, command: Command, label: String, vararg arguments: String): List<String> {
-        return if (arguments.size <= 1) return getOfflinePlayerNames(*arguments) else listOf()
+        return if (arguments.size <= 1) getOfflinePlayerNames(*arguments) else listOf()
     }
 }

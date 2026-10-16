@@ -3,21 +3,17 @@ package me.testaccount666.serversystem.commands.executables.skull
 import com.destroystokyo.paper.profile.PlayerProfile
 import com.destroystokyo.paper.profile.ProfileProperty
 import com.google.gson.JsonParser
+import me.testaccount666.paperktx.extensions.itemStack
 import me.testaccount666.serversystem.ServerSystem
 import me.testaccount666.serversystem.ServerSystem.Companion.log
-import org.bukkit.Bukkit
-import org.bukkit.Material
-import org.bukkit.OfflinePlayer
+import org.bukkit.*
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 import java.io.IOException
 import java.io.InputStreamReader
 import java.net.*
 import java.nio.charset.StandardCharsets
-import java.nio.file.FileSystem
-import java.nio.file.FileSystemAlreadyExistsException
-import java.nio.file.FileSystems
-import java.nio.file.Files
+import java.nio.file.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
@@ -154,14 +150,10 @@ class SkullCreator {
     }
 
     private fun getSkullByPlayerProfile(playerProfile: PlayerProfile): ItemStack {
-        val skullItem = ItemStack(Material.PLAYER_HEAD)
-
-        val skullMeta = skullItem.itemMeta as? SkullMeta ?: return skullItem
-
-        skullMeta.playerProfile = playerProfile
-        skullItem.setItemMeta(skullMeta)
-
-        return skullItem
+        return itemStack(Material.PLAYER_HEAD) {
+            if (this !is SkullMeta) return@itemStack
+            this.playerProfile = playerProfile
+        }
     }
 
     companion object {

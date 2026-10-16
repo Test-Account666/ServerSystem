@@ -5,14 +5,10 @@ import me.testaccount666.serversystem.userdata.vanish.VanishData
 import org.bukkit.Location
 import org.bukkit.configuration.file.FileConfiguration
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.reflect.KClass
-import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.KProperty1
+import kotlin.reflect.*
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
-import kotlin.reflect.jvm.isAccessible
-import kotlin.reflect.jvm.javaField
-import kotlin.reflect.jvm.javaGetter
+import kotlin.reflect.jvm.*
 
 /**
  * Manages the persistence of object fields to and from configuration files.
@@ -38,7 +34,7 @@ object PersistenceManager {
         @Suppress("UNCHECKED_CAST")
         registerHandler(HashSet::class.java, UuidSetFieldHandler() as FieldHandler<HashSet<*>>)
         @Suppress("UNCHECKED_CAST")
-        registerHandler(Map::class.java, KitMapFieldHandler() as FieldHandler<Map<*, *>>)
+        registerHandler(HashMap::class.java, KitMapFieldHandler() as FieldHandler<HashMap<*, *>>)
         registerHandler(VanishData::class.java, VanishDataFieldHandler())
         registerHandler(CommandBack.BackType::class.java, EnumFieldHandler())
     }
@@ -151,6 +147,6 @@ object PersistenceManager {
         val path: String,
         val getter: (Any) -> Any?,
         val setter: (Any, Any?) -> Any?,
-        val handler: FieldHandler<Any>
+        val handler: FieldHandler<Any>,
     )
 }

@@ -48,7 +48,7 @@ object ConstructorAccessor {
     fun <T, P1, P2> createConstructor(
         targetClass: Class<T>,
         param1Type: Class<P1>,
-        param2Type: Class<P2>
+        param2Type: Class<P2>,
     ): BiFunction<P1?, P2?, T?> {
         try {
             val constructor = targetClass.getDeclaredConstructor(param1Type, param2Type)

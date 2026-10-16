@@ -1,13 +1,15 @@
 package me.testaccount666.serversystem.commands.executables.rename
 
+import me.testaccount666.paperktx.extensions.*
+import me.testaccount666.paperktx.extensions.ComponentExtensions.asComponent
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.extensions.commandMsg
+import me.testaccount666.serversystem.extensions.join
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
-import me.testaccount666.serversystem.utils.ItemStackExtensions.Companion.isAir
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.command.Command
+import org.bukkit.inventory.EquipmentSlot
 
 @ServerSystemCommand("rename")
 class CommandRename : AbstractServerSystemCommand() {
@@ -19,20 +21,21 @@ class CommandRename : AbstractServerSystemCommand() {
         if (!isPlayer(commandSender)) return
         val player = commandSender.getPlayer()!!
 
-        val itemInHand = player.inventory.itemInMainHand
+        val itemInHand = player.inventory[EquipmentSlot.HAND]
         if (itemInHand.isAir()) {
-            command("Rename.NoItemInHand", commandSender).build()
+            commandSender.commandMsg("Rename.NoItemInHand")
             return
         }
 
-        val itemMeta = itemInHand.itemMeta
-        var name = translateToComponent(arguments.joinToString(" ").trim())
-        val nukeItalic = !name.hasDecoration(TextDecoration.ITALIC)
-        if (nukeItalic) name = name.decoration(TextDecoration.ITALIC, false)
+        itemInHand.edit {
+            var name = arguments.join().asComponent()
+            val nukeItalic = !name.hasDecoration(TextDecoration.ITALIC)
+            if (nukeItalic) name = name.decoration(TextDecoration.ITALIC, false)
 
-        itemMeta.itemName(name)
-        itemMeta.displayName(name)
-        itemInHand.setItemMeta(itemMeta)
-        command("Rename.Success", commandSender).build()
+            itemName(name)
+            displayName(name)
+        }
+
+        commandSender.commandMsg("Rename.Success")
     }
 }

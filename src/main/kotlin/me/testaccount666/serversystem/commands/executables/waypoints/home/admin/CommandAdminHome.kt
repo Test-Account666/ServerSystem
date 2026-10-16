@@ -2,6 +2,7 @@ package me.testaccount666.serversystem.commands.executables.waypoints.home.admin
 
 import me.testaccount666.serversystem.commands.executables.waypoints.CommandType
 import me.testaccount666.serversystem.commands.executables.waypoints.home.AbstractCommandHome
+import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.home.HomeManager
 import org.bukkit.command.Command
 
@@ -41,6 +42,6 @@ class CommandAdminHome : AbstractCommandHome() {
     }
 
     override fun getSyntaxPath(command: Command?) = "AdminHome"
-
     override fun canAddPoints(pointManager: HomeManager, command: Command) = true
+    override fun canInstantTeleport(command: Command, user: User) = true
 }

@@ -84,6 +84,7 @@ ehthumbs_vista.db
 
 # Dump file
 *.stackdump
+.j*
 
 # Folder config file
 [Dd]esktop.ini
@@ -102,6 +103,7 @@ $RECYCLE.BIN/
 *.lnk
 
 target/
+target
 
 pom.xml.tag
 pom.xml.releaseBackup
@@ -124,3 +126,12 @@ qodana.yaml
 /Changes
 /Changes.md
 /SpigotMC.bbcode
+
+# Gradle
+.gradle/**
+build/**
+gradle/**
+
+# Markdown files
+*.md
+!README.md

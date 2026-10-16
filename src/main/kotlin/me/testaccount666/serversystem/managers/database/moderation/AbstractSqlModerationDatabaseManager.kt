@@ -24,7 +24,7 @@ abstract class AbstractSqlModerationDatabaseManager(configReader: ConfigReader?)
 
     /**
      * Creates the necessary database tables if they don't exist.
-     * 
+     *
      * @throws SQLException If a database access error occurs
      */
     @Throws(SQLException::class)

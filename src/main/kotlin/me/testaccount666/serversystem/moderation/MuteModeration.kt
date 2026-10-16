@@ -31,5 +31,6 @@ class MuteModeration : AbstractModeration {
     companion object {
         @JvmStatic
         fun builder(): MuteModerationBuilder<*> = MuteModerationBuilderImpl()
+        fun builder(block: MuteModerationBuilder<*>.() -> Unit) = builder().apply(block).build()
     }
 }

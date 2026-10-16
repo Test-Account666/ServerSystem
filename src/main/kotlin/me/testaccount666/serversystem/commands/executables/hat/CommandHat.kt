@@ -1,12 +1,12 @@
 package me.testaccount666.serversystem.commands.executables.hat
 
+import me.testaccount666.paperktx.extensions.*
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.extensions.commandMsg
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.ItemStackExtensions.Companion.isAir
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import org.bukkit.command.Command
-import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.EquipmentSlot
 
 @ServerSystemCommand("hat")
 class CommandHat : AbstractServerSystemCommand() {
@@ -17,28 +17,28 @@ class CommandHat : AbstractServerSystemCommand() {
         if (!isPlayer(commandSender)) return
 
         val inventory = commandSender.getPlayer()!!.inventory
-        val itemInHand = inventory.itemInMainHand
-        val itemOnHead = inventory.helmet ?: ItemStack.empty()
+        val itemInHand = inventory[EquipmentSlot.HAND]
+        val itemOnHead = inventory[EquipmentSlot.HEAD]
 
         if (itemInHand.isAir() && itemOnHead.isAir()) {
-            command("Hat.NoHat", commandSender).build()
+            commandSender.commandMsg("Hat.NoHat")
             return
         }
 
         if (itemInHand.isAir() && !itemOnHead.isAir()) {
-            inventory.helmet = ItemStack.empty()
-            inventory.setItemInMainHand(itemOnHead)
-            command("Hat.RemovedHat", commandSender).build()
+            inventory[EquipmentSlot.HEAD] = null
+            inventory[EquipmentSlot.HAND] = itemOnHead
+            commandSender.commandMsg("Hat.RemovedHat")
             return
         }
 
         if (!itemInHand.isAir() && !itemOnHead.isAir()) {
-            command("Hat.AlreadyHasHat", commandSender).build()
+            commandSender.commandMsg("Hat.AlreadyHasHat")
             return
         }
 
-        inventory.helmet = itemInHand
-        inventory.setItemInMainHand(ItemStack.empty())
-        command("Hat.AppliedHat", commandSender).build()
+        inventory[EquipmentSlot.HEAD] = itemInHand
+        inventory[EquipmentSlot.HAND] = null
+        commandSender.commandMsg("Hat.AppliedHat")
     }
 }

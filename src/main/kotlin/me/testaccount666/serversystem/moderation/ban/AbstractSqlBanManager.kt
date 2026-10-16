@@ -10,13 +10,13 @@ abstract class AbstractSqlBanManager(ownerUuid: UUID) : AbstractSqlModerationMan
     override val moderationTypes = listOf("BAN")
 
     override fun mapResultSet(resultSet: ResultSet): BanModeration {
-        return BanModeration.builder()
-            .issueTime(resultSet.getLong("IssueTime"))
-            .expireTime(resultSet.getLong("ExpireTime"))
-            .reason(resultSet.getString("Reason"))
-            .senderUuid(UUID.fromString(resultSet.getString("SenderUUID")))
-            .targetUuid(UUID.fromString(resultSet.getString("TargetUUID")))
-            .build()
+        return BanModeration.builder {
+            issueTime(resultSet.getLong("IssueTime"))
+            expireTime(resultSet.getLong("ExpireTime"))
+            reason(resultSet.getString("Reason"))
+            senderUuid(UUID.fromString(resultSet.getString("SenderUUID")))
+            targetUuid(UUID.fromString(resultSet.getString("TargetUUID")))
+        }
     }
 
     val isPlayerBanned

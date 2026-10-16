@@ -4,9 +4,10 @@ import de.tr7zw.nbtapi.NBT
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.inventorysee.online.CommandInventorySee
+import me.testaccount666.serversystem.extensions.generalMsg
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.UserManager
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 
@@ -33,10 +34,10 @@ class CommandOfflineInventorySee : AbstractServerSystemCommand {
 
     override fun execute(commandSender: User, command: Command, label: String, vararg arguments: String) {
         if (inventoryLoader == null) {
-            general("CommandDisabled", commandSender) {
+            commandSender.generalMsg("CommandDisabled") {
                 label(label)
                 postModifier { it.replace("<REASON>", "NBTAPI is not installed, Offline-InventorySee will not work!") }
-            }.build()
+            }
             return
         }
 
@@ -49,27 +50,27 @@ class CommandOfflineInventorySee : AbstractServerSystemCommand {
         if (!isPlayer(commandSender)) return
 
         val cachedUser = getService<UserManager>().getUserOrNull(arguments[0]) ?: run {
-            general("Offline.NeverPlayed", commandSender) { target(arguments[0]) }.build()
+            commandSender.generalMsg("Offline.NeverPlayed") { target(arguments[0]) }
             return
         }
 
         if (cachedUser.isOnlineUser) {
-            general("Offline.NotOffline", commandSender) { target(arguments[0]) }.build()
+            commandSender.generalMsg("Offline.NotOffline") { target(arguments[0]) }
             return
         }
 
         val targetPlayer = cachedUser.offlineUser.player ?: return
         if (!targetPlayer.hasPlayedBefore()) {
-            general("Offline.NeverPlayed", commandSender) { target(arguments[0]) }.build()
+            commandSender.generalMsg("Offline.NeverPlayed") { target(arguments[0]) }
             return
         }
 
         val inventory = inventoryLoader!!.loadOfflineInventory(targetPlayer) ?: run {
             log.warning("(OfflineInventorySee) Failed to load inventory of '${arguments[0]}'!")
-            general("ErrorOccurred", commandSender) {
+            commandSender.generalMsg("ErrorOccurred") {
                 target(arguments[0])
                 label(label)
-            }.build()
+            }
             return
         }
 

@@ -3,9 +3,9 @@ package me.testaccount666.serversystem.commands.executables.language
 import me.testaccount666.serversystem.ServerSystem
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.extensions.commandMsg
 import me.testaccount666.serversystem.managers.messages.MessageManager.defaultLanguage
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
 import org.bukkit.command.Command
 
 @ServerSystemCommand("language", [], TabCompleterLanguages::class)
@@ -36,8 +36,8 @@ class CommandLanguage : AbstractServerSystemCommand() {
         chars[0] = chars[0].uppercaseChar()
         selectedLanguage = String(chars)
 
-        command("Language.Changed", commandSender) {
+        commandSender.commandMsg("Language.Changed") {
             postModifier { it.replace("<LANGUAGE>", selectedLanguage) }
-        }.build()
+        }
     }
 }

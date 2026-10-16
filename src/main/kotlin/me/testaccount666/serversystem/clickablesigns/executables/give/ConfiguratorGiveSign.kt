@@ -1,20 +1,16 @@
 package me.testaccount666.serversystem.clickablesigns.executables.give
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
+import me.testaccount666.paperktx.extensions.ComponentExtensions.asComponent
+import me.testaccount666.paperktx.extensions.isAir
 import me.testaccount666.serversystem.ServerSystem.Companion.log
-import me.testaccount666.serversystem.clickablesigns.AbstractSignConfigurator
-import me.testaccount666.serversystem.clickablesigns.SignManager
-import me.testaccount666.serversystem.clickablesigns.SignType
+import me.testaccount666.serversystem.clickablesigns.*
 import me.testaccount666.serversystem.clickablesigns.cost.CostType
 import me.testaccount666.serversystem.clickablesigns.util.SignUtils
+import me.testaccount666.serversystem.extensions.*
 import me.testaccount666.serversystem.managers.PermissionManager.getPermission
 import me.testaccount666.serversystem.managers.PermissionManager.hasPermission
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.utils.BiDirectionalHashMap
-import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
-import me.testaccount666.serversystem.utils.ItemStackExtensions.Companion.isAir
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.sign
 import org.bukkit.block.Sign
 import org.bukkit.block.sign.Side
 import org.bukkit.configuration.file.FileConfiguration
@@ -40,7 +36,7 @@ class ConfiguratorGiveSign : AbstractSignConfigurator(), Listener {
         if (!validatePermission(user)) return
 
         _CONFIGURATORS.put(user, sign)
-        sign("Give.Configuring", user).build()
+        user.signMsg("Give.Configuring")
     }
 
     @EventHandler
@@ -56,19 +52,19 @@ class ConfiguratorGiveSign : AbstractSignConfigurator(), Listener {
 
         val itemToGive = event.getPlayer().inventory.itemInMainHand
         if (itemToGive.isAir()) {
-            sign("Give.NoItem", user).build()
+            user.signMsg("Give.NoItem")
             return
         }
 
         val signFile = SignUtils.getSignFile(sign.location)
         val config = YamlConfiguration.loadConfiguration(signFile)
 
-        config.set("Key", signType.name)
+        config["Key"] = signType.name
 
-        config.set("Cost.Type", CostType.NONE.name)
-        config.set("Cost.Amount", 0)
+        config["Cost.Type"] = CostType.NONE.name
+        config["Cost.Amount"] = 0
 
-        config.set("Item", itemToGive)
+        config["Item"] = itemToGive
 
         try {
             config.save(signFile)
@@ -78,12 +74,12 @@ class ConfiguratorGiveSign : AbstractSignConfigurator(), Listener {
             return
         }
 
-        instance.registry.getService<SignManager>().addSignType(sign.location, signType)
+        getService<SignManager>().addSignType(sign.location, signType)
         _CONFIGURATORS.removeByValue(sign)
 
         val front = sign.getSide(Side.FRONT)
-        front.line(0, translateToComponent(SignType.GIVE.signName))
-        front.line(1, translateToComponent("&2${itemToGive.type.name}"))
+        front.line(0, SignType.GIVE.signName.asComponent())
+        front.line(1, "&2${itemToGive.type.name}".asComponent())
         val back = sign.getSide(Side.BACK)
         for (index in 0..3) back.line(index, front.line(index))
         sign.update()
@@ -91,17 +87,17 @@ class ConfiguratorGiveSign : AbstractSignConfigurator(), Listener {
 
     /**
      * Validates that the user has permission to create this sign.
-     * 
+     *
      * @param user The user to check
      * @return true if the user has permission, false otherwise
      */
     private fun validatePermission(user: User): Boolean {
         if (!hasPermission(user, createPermissionNode, false)) {
-            general("NoPermission", user) {
+            user.generalMsg("NoPermission") {
                 postModifier {
                     it.replace("<PERMISSION>", getPermission(createPermissionNode)!!)
                 }
-            }.build()
+            }
             return false
         }
         return true

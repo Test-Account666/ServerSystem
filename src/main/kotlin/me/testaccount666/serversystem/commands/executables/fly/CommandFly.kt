@@ -2,9 +2,9 @@ package me.testaccount666.serversystem.commands.executables.fly
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.extensions.commandMsg
+import me.testaccount666.serversystem.extensions.generalMsg
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 
 /**
@@ -30,7 +30,7 @@ class CommandFly : AbstractServerSystemCommand() {
         if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, arguments = arguments)) return
 
         val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
+            commandSender.generalMsg("PlayerNotFound") { target(arguments[0]) }
             return
         }
 
@@ -48,11 +48,11 @@ class CommandFly : AbstractServerSystemCommand() {
         targetPlayer.allowFlight = isFlying
         if (!isOnGround) targetPlayer.isFlying = isFlying
 
-        command(messagePath, commandSender) { target(targetPlayer.name) }.build()
+        commandSender.commandMsg(messagePath) { target(targetPlayer.name) }
 
         if (isSelf) return
-        command("Fly.Success." + (if (isFlying) "Enabled" else "Disabled"), targetUser) {
-            sender(commandSender.getNameSafe())
-        }.build()
+        targetUser.commandMsg("Fly.Success." + (if (isFlying) "Enabled" else "Disabled")) {
+            sender(commandSender.nameSafe)
+        }
     }
 }

@@ -2,9 +2,7 @@ package me.testaccount666.serversystem.commands.wrappers
 
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemTabCompleter
-import org.bukkit.command.Command
-import org.bukkit.command.CommandSender
-import org.bukkit.command.TabCompleter
+import org.bukkit.command.*
 
 class TabCompleterWrapper(val tabCompleter: ServerSystemTabCompleter) : AbstractCommandWrapper(), TabCompleter {
     override fun onTabComplete(commandSender: CommandSender, command: Command, label: String, arguments: Array<String>): List<String>? {

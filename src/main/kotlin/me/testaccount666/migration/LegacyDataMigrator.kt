@@ -1,31 +1,25 @@
 package me.testaccount666.migration
 
+import me.testaccount666.paperktx.extensions.isAir
+import me.testaccount666.paperktx.extensions.location
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
 import me.testaccount666.serversystem.commands.executables.kit.manager.Kit
 import me.testaccount666.serversystem.commands.executables.kit.manager.KitManager
 import me.testaccount666.serversystem.commands.executables.waypoints.warp.manager.Warp
 import me.testaccount666.serversystem.commands.executables.waypoints.warp.manager.WarpManager
-import me.testaccount666.serversystem.moderation.AbstractModeration
-import me.testaccount666.serversystem.moderation.BanModeration
-import me.testaccount666.serversystem.moderation.MuteModeration
-import me.testaccount666.serversystem.userdata.ConsoleUser
-import me.testaccount666.serversystem.userdata.OfflineUser
-import me.testaccount666.serversystem.userdata.UserManager
+import me.testaccount666.serversystem.extensions.getService
+import me.testaccount666.serversystem.moderation.*
+import me.testaccount666.serversystem.userdata.*
 import me.testaccount666.serversystem.userdata.home.Home
-import me.testaccount666.serversystem.utils.ItemStackExtensions.Companion.isAir
 import me.testaccount666.serversystem.utils.Version
 import org.bukkit.Bukkit
-import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.inventory.ItemStack
 import java.io.File
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.ResultSet
-import java.sql.SQLException
+import java.sql.*
 import java.util.*
 import java.util.logging.Level
 
@@ -42,8 +36,7 @@ class LegacyDataMigrator {
      * @return Optional containing the offline user if found, empty otherwise
      */
     private fun getOfflineUser(uuid: UUID): OfflineUser? {
-        val userManager = instance.registry.getService<UserManager>()
-        val user = userManager.getUserOrNull(uuid) ?: run {
+        val user = getService<UserManager>().getUserOrNull(uuid) ?: run {
             log.warning("Could not find user with UUID: ${uuid}")
             return null
         }
@@ -199,7 +192,7 @@ class LegacyDataMigrator {
         var migratedCount = 0
 
         val defaultItem = ItemStack(Material.AIR)
-        val kitManager = instance.registry.getService<KitManager>()
+        val kitManager = getService<KitManager>()
 
         for (kitName in kitNames) try {
             val offhandItem = kitsSection.getItemStack("${kitName}.40", defaultItem)
@@ -252,7 +245,7 @@ class LegacyDataMigrator {
             return
         }
 
-        val warpManager = instance.registry.getService<WarpManager>()
+        val warpManager = getService<WarpManager>()
         val warpSection = legacyWarpsConfig.getConfigurationSection("Warps")
         val warpNames = warpSection?.getKeys(false) ?: HashSet()
         var migratedCount = 0
@@ -263,8 +256,8 @@ class LegacyDataMigrator {
             val x = legacyWarpsConfig.getDouble("${prefix}.X")
             val y = legacyWarpsConfig.getDouble("${prefix}.Y")
             val z = legacyWarpsConfig.getDouble("${prefix}.Z")
-            val yaw = legacyWarpsConfig.getDouble("${prefix}.Yaw").toFloat()
-            val pitch = legacyWarpsConfig.getDouble("${prefix}.Pitch").toFloat()
+            val yaw = legacyWarpsConfig.getDouble("${prefix}.Yaw")
+            val pitch = legacyWarpsConfig.getDouble("${prefix}.Pitch")
             val worldName = legacyWarpsConfig.getString("${prefix}.World") ?: ""
 
             val world = Bukkit.getWorld(worldName) ?: run {
@@ -272,7 +265,7 @@ class LegacyDataMigrator {
                 continue
             }
 
-            val location = Location(world, x, y, z, yaw, pitch)
+            val location = location(x, y, z, world, yaw, pitch)
             val warp = Warp.of(warpName, location) ?: run {
                 log(Level.WARNING, "Warp name '${warpName}' contains invalid characters, skipping")
                 continue
@@ -354,15 +347,15 @@ class LegacyDataMigrator {
         val legacyConfigFile = File(_legacyDataDirectory, "config.yml")
         val legacyConfig = YamlConfiguration.loadConfiguration(legacyConfigFile)
 
-        if (legacyConfig.getBoolean("mysql.use", false)) {
+        if (legacyConfig.getBoolean("mysql.use")) {
             log(Level.INFO, "Legacy MySQL configuration detected. Migrating...")
             migrateMySqlConfig(legacyConfig)
         }
 
         // Sqlite is handled below
-        if (legacyConfig.getBoolean("sqlite.use", false)) log(Level.INFO, "Legacy SQLite configuration detected. Migrating...")
+        if (legacyConfig.getBoolean("sqlite.use")) log(Level.INFO, "Legacy SQLite configuration detected. Migrating...")
 
-        if (legacyConfig.getBoolean("h2.use", false)) {
+        if (legacyConfig.getBoolean("h2.use")) {
             log(Level.INFO, "Legacy H2 configuration detected. Migrating...")
             migrateH2Config(legacyConfig)
         }
@@ -406,10 +399,13 @@ class LegacyDataMigrator {
 
             // Use current time as issue time since we don't have that in the legacy database
             val issueTime = System.currentTimeMillis()
-            val banModeration = BanModeration.builder()
-                .issueTime(issueTime).expireTime(unbanTime)
-                .reason(reason).senderUuid(senderUuid)
-                .targetUuid(bannedUuid).build()
+            val banModeration = BanModeration.builder {
+                issueTime(issueTime)
+                expireTime(unbanTime)
+                reason(reason)
+                senderUuid(senderUuid)
+                targetUuid(bannedUuid)
+            }
             applyModeration(bannedUuid, banModeration)
         }
     }
@@ -459,10 +455,14 @@ class LegacyDataMigrator {
 
             // Use current time as issue time since we don't have that in the legacy database
             val issueTime = System.currentTimeMillis()
-            val muteModeration = MuteModeration.builder()
-                .issueTime(issueTime).expireTime(unbanTime)
-                .reason(reason).senderUuid(senderUuid)
-                .targetUuid(bannedUuid).isShadowMute(isShadowMute).build()
+            val muteModeration = MuteModeration.builder {
+                issueTime(issueTime)
+                expireTime(unbanTime)
+                reason(reason)
+                senderUuid(senderUuid)
+                targetUuid(bannedUuid)
+                isShadowMute(isShadowMute)
+            }
             applyModeration(bannedUuid, muteModeration)
         }
     }

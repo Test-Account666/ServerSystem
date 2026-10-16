@@ -1,16 +1,16 @@
 package me.testaccount666.serversystem.commands.executables.inventorysee.utils
 
+import me.testaccount666.paperktx.extensions.ComponentExtensions.asComponent
+import me.testaccount666.paperktx.extensions.itemStack
+import me.testaccount666.paperktx.extensions.set
+import me.testaccount666.paperktx.scheduler.skedule.okkero.schedule
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.UserManager
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.TextColor
-import net.kyori.adventure.text.format.TextDecoration
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
-import org.bukkit.inventory.ItemStack
 
 /**
  * Utility class for common inventory see operations.
@@ -19,7 +19,7 @@ import org.bukkit.inventory.ItemStack
 object InventorySeeUtils {
     /**
      * Places filled markers in the inventory.
-     * 
+     *
      * @param inventory   The inventory to place markers in
      * @param material    The material to use for the markers
      * @param displayName The display name for the markers
@@ -27,22 +27,12 @@ object InventorySeeUtils {
      * @param endSlot     The ending slot (exclusive)
      */
     fun placeFilledMarkers(inventory: Inventory, material: Material, displayName: String, startSlot: Int, endSlot: Int) {
-        val markerItem = ItemStack(material)
-        val itemMeta = markerItem.itemMeta
-        itemMeta.displayName(
-            Component.text(displayName)
-                .decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE)
-                .color(TextColor.color(255, 0, 0))
-                .asComponent()
-        )
-        markerItem.setItemMeta(itemMeta)
-
-        for (slot in startSlot..<endSlot) inventory.setItem(slot, markerItem)
+        inventory[startSlot..<endSlot] = itemStack(material) { itemName("&#FF0000${displayName}".asComponent()) }
     }
 
     /**
      * Adds section decorators to the inventory.
-     * 
+     *
      * @param displayInventory The inventory to add decorators to
      * @param isOffline        Whether this is for an offline inventory
      */
@@ -61,7 +51,7 @@ object InventorySeeUtils {
 
     /**
      * Handles inventory viewers when a player quits or joins.
-     * 
+     *
      * @param inventory       The inventory being viewed
      * @param player          The player who quit or joined
      * @param delayTicks      The delay in ticks before processing
@@ -69,21 +59,19 @@ object InventorySeeUtils {
      */
     fun handleInventoryViewers(
         inventory: Inventory, player: Player, delayTicks: Long,
-        inventoryAction: (User, String) -> Unit
+        inventoryAction: (User, String) -> Unit,
     ) {
         val viewers = ArrayList(inventory.viewers)
         inventory.close()
 
-        Bukkit.getScheduler().runTaskLater(instance, Runnable {
-            viewers.forEach {
-                if (it !is Player) return@forEach
-                val userManager = instance.registry.getService<UserManager>()
-                val cachedUser = userManager.getUserOrNull(it) ?: return@forEach
+        instance.schedule {
+            waitFor(delayTicks)
+            viewers.asSequence().mapNotNull { it as? Player }.forEach {
+                val cachedUser = getService<UserManager>().getUserOrNull(it) ?: return@forEach
 
                 if (cachedUser.isOfflineUser) return@forEach
-                val user = cachedUser.offlineUser as User
-                inventoryAction(user, player.name)
+                inventoryAction(cachedUser.onlineUser, player.name)
             }
-        }, delayTicks)
+        }
     }
 }

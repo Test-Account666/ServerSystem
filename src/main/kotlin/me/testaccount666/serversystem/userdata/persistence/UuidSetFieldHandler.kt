@@ -10,11 +10,11 @@ import java.util.*
 class UuidSetFieldHandler : FieldHandler<HashSet<UUID>> {
     override fun save(config: FileConfiguration, path: String, value: HashSet<UUID>?) {
         if (value.isNullOrEmpty()) {
-            config.set(path, null)
+            config[path] = null
             return
         }
 
-        config.set(path, value.map { it.toString() })
+        config[path] = value.map { it.toString() }
     }
 
     override fun load(config: FileConfiguration, path: String, defaultValue: HashSet<UUID>?): HashSet<UUID> {

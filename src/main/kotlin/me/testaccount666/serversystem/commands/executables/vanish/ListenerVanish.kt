@@ -2,21 +2,19 @@ package me.testaccount666.serversystem.commands.executables.vanish
 
 import com.destroystokyo.paper.event.server.PaperServerListPingEvent
 import io.papermc.paper.event.player.AsyncChatEvent
+import me.testaccount666.paperktx.scheduler.skedule.okkero.schedule
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.annotations.RequiredCommands
 import me.testaccount666.serversystem.commands.interfaces.ServerSystemCommandExecutor
+import me.testaccount666.serversystem.extensions.commandMsg
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.managers.PermissionManager.hasCommandPermission
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.UserManager
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.ServiceExtensions.getService
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
-import org.bukkit.event.Cancellable
-import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority
-import org.bukkit.event.Listener
+import org.bukkit.event.*
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockReceiveGameEvent
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent
@@ -133,10 +131,11 @@ class ListenerVanish : Listener {
 
     @EventHandler
     fun onGameModeChange(event: PlayerGameModeChangeEvent) {
-        Bukkit.getScheduler().runTaskLater(instance, Runnable {
-            val user = getVanishedUser(event.getPlayer()) ?: return@Runnable
+        instance.schedule {
+            waitFor(1L)
+            val user = getVanishedUser(event.getPlayer()) ?: return@schedule
             _commandVanish.vanishPacket.sendVanishPacket(user)
-        }, 1L)
+        }
     }
 
     private fun handleOtherPlayerJoin(joiningPlayer: Player) {
@@ -161,15 +160,18 @@ class ListenerVanish : Listener {
 
         cancellable.isCancelled = true
 
-        messagePath?.let { command(messagePath, user).build() }
+        messagePath?.let { user.commandMsg(messagePath) }
     }
 
     private fun temporarilySetSpectatorMode(event: PlayerInteractEvent) {
-        val previousGameMode = event.getPlayer().gameMode
-        event.getPlayer().gameMode = GameMode.SPECTATOR
-        event.isCancelled = false
+        instance.schedule {
+            val previousGameMode = event.getPlayer().gameMode
+            event.getPlayer().gameMode = GameMode.SPECTATOR
+            event.isCancelled = false
 
-        Bukkit.getScheduler().runTaskLater(instance, Runnable { event.getPlayer().gameMode = previousGameMode }, 5L)
+            waitFor(5L)
+            event.getPlayer().gameMode = previousGameMode
+        }
     }
 
     private fun getVanishedUser(player: Player?): User? {
@@ -177,7 +179,7 @@ class ListenerVanish : Listener {
         val user = getService<UserManager>().getUserOrNull(player) ?: return null
         if (!user.isOnlineUser) return null
 
-        val onlineUser = user.offlineUser as User
+        val onlineUser = user.onlineUser
         if (!onlineUser.isVanish) return null
 
         return onlineUser

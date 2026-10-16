@@ -1,11 +1,12 @@
 package me.testaccount666.serversystem.clickablesigns.executables.time
 
+import me.testaccount666.paperktx.colors.ChatColor.Companion.stripColor
+import me.testaccount666.paperktx.extensions.ChecksExtensions.isAny
+import me.testaccount666.paperktx.extensions.ComponentExtensions.asComponent
 import me.testaccount666.serversystem.clickablesigns.AbstractSignConfigurator
 import me.testaccount666.serversystem.clickablesigns.SignType
+import me.testaccount666.serversystem.extensions.signMsg
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.ChatColor.Companion.stripColor
-import me.testaccount666.serversystem.utils.ComponentColor.translateToComponent
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.sign
 import org.bukkit.block.Sign
 import org.bukkit.block.sign.Side
 import org.bukkit.configuration.file.FileConfiguration
@@ -20,19 +21,19 @@ class ConfiguratorTimeSign : AbstractSignConfigurator() {
         val front = sign.getSide(Side.FRONT)
         val timeType = front.getLine(1).lowercase()
         if (timeType.isEmpty()) {
-            sign("Time.NoTimeSpecified", user).build()
+            user.signMsg("Time.NoTimeSpecified")
             return false
         }
 
         if (!isValidTimeType(timeType)) {
-            sign("Time.InvalidTime", user) {
+            user.signMsg("Time.InvalidTime") {
                 postModifier { it.replace("<TIME>", timeType) }
-            }.build()
+            }
             return false
         }
 
-        front.line(0, translateToComponent(SignType.TIME.signName))
-        front.line(1, translateToComponent("&2${timeType}"))
+        front.line(0, SignType.TIME.signName.asComponent())
+        front.line(1, "&2${timeType}".asComponent())
         val back = sign.getSide(Side.BACK)
         for (index in 0..3) back.line(index, front.line(index))
         sign.update()
@@ -40,16 +41,11 @@ class ConfiguratorTimeSign : AbstractSignConfigurator() {
     }
 
     override fun addSignSpecificConfiguration(user: User, sign: Sign, config: FileConfiguration) {
-        var timeType = sign.getSide(Side.FRONT).getLine(1).lowercase()
-        timeType = stripColor(timeType)
-        config.set("TimeType", timeType)
+        val timeType = sign.getSide(Side.FRONT).getLine(1).lowercase()
+        config["TimeType"] = stripColor(timeType)
     }
 
     private fun isValidTimeType(timeType: String): Boolean {
-        return timeType == "day" ||
-                timeType == "night" ||
-                timeType == "noon" ||
-                timeType == "midnight" ||
-                timeType.matches("\\d+".toRegex())
+        return timeType.isAny("day", "night", "noon", "midnight") || timeType.matches("\\d+".toRegex())
     }
 }

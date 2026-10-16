@@ -1,15 +1,12 @@
 package me.testaccount666.serversystem.listener.executables.joinquitnotifier
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
+import me.testaccount666.paperktx.extensions.ComponentExtensions.asComponent
 import me.testaccount666.serversystem.ServerSystem.Companion.log
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.managers.config.ConfigurationManager
 import me.testaccount666.serversystem.managers.messages.MessageManager.formatMessage
-import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.UserManager
-import org.bukkit.Bukkit
-import org.bukkit.NamespacedKey
-import org.bukkit.Registry
-import org.bukkit.Sound
+import org.bukkit.*
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -22,21 +19,20 @@ class ListenerJoin : Listener {
     private var _sound: Sound? = null
 
     constructor() {
-        val configManager = instance.registry.getService<ConfigurationManager>()
-        val config = configManager.generalConfig
+        val config = getService<ConfigurationManager>().generalConfig
         _modifyMessage = config.getBoolean("Join.Message.Enabled")
         _sendMessage = config.getBoolean("Join.Message.SendMessage")
-        _message = config.getString("Join.Message.Message", "")!!
+        _message = config.getValue("Join.Message.Message", "")
         _playSound = config.getBoolean("Join.Sound.Enabled")
         if (!_playSound) {
             _sound = null
             return
         }
 
-        var soundString = config.getString("Join.Sound.Sound", "")
+        var soundString = config.getValue("Join.Sound.Sound", "")
 
         var isMinecraft = true
-        if (soundString!!.contains(":")) {
+        if (soundString.contains(":")) {
             val space = soundString.substring(0, soundString.indexOf(":"))
             soundString = soundString.drop(soundString.indexOf(":") + 1)
             isMinecraft = space.contentEquals("minecraft", true)
@@ -76,7 +72,7 @@ class ListenerJoin : Listener {
             return
         }
         val player = event.getPlayer()
-        val user = instance.registry.getService<UserManager>().getUserOrNull(player) ?: run {
+        val user = getService<UserManager>().getUserOrNull(player) ?: run {
             log.warning("Couldn't cache User '${player.name}'! This should not happen!")
             return
         }
@@ -84,9 +80,7 @@ class ListenerJoin : Listener {
             log.warning("User '${player.name}' is cached as Offline User! This should not happen!")
             return
         }
-        val onlineUser = user.offlineUser as User
 
-        val message = formatMessage(_message, onlineUser, null, null, false)
-        event.joinMessage = message
+        formatMessage(_message, user.onlineUser, null, null, false).asComponent().also(event::joinMessage)
     }
 }

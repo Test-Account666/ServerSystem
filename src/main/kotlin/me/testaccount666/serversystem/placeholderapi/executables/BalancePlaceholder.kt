@@ -1,6 +1,7 @@
 package me.testaccount666.serversystem.placeholderapi.executables
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
+import me.testaccount666.serversystem.extensions.format
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.placeholderapi.Placeholder
 import me.testaccount666.serversystem.userdata.OfflineUser
 import me.testaccount666.serversystem.userdata.UserManager
@@ -23,24 +24,23 @@ class BalancePlaceholder : Placeholder {
         val balance = user.bankAccount.balance
 
         val formatBalance = identifier.equals("balance", true)
-        if (!formatBalance) return String.format("%.2f", balance.toDouble())
+        if (!formatBalance) return balance.toDouble().format("%.2f")
 
-        return instance.registry.getService<EconomyProvider>().formatMoney(balance)
+        return getService<EconomyProvider>().formatMoney(balance)
     }
 
     override val identifiers = setOf("balance", "unformattedbalance")
 
     private fun getOfflinePlayer(nameOrUuid: String): OfflinePlayer {
         try {
-            val uuid = UUID.fromString(nameOrUuid)
-            return Bukkit.getOfflinePlayer(uuid)
+            return Bukkit.getOfflinePlayer(UUID.fromString(nameOrUuid))
         } catch (_: IllegalArgumentException) {
         }
         return Bukkit.getOfflinePlayer(nameOrUuid)
     }
 
     private fun getOfflineUser(player: OfflinePlayer): OfflineUser? {
-        val cachedUser = instance.registry.getService<UserManager>().getUserOrNull(player.uniqueId)
+        val cachedUser = getService<UserManager>().getUserOrNull(player.uniqueId)
         return cachedUser?.offlineUser
     }
 }

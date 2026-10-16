@@ -10,7 +10,7 @@ import java.io.File
 object HikariConfigUtil {
     /**
      * Configures HikariCP for MySQL.
-     * 
+     *
      * @param configReader The configuration reader to get database settings from
      * @param configPrefix The prefix for configuration keys (e.g., "Economy.MySQL" or "Moderation.MySQL")
      * @param poolName     The name of the connection pool
@@ -57,7 +57,7 @@ object HikariConfigUtil {
 
     /**
      * Configures HikariCP for SQLite.
-     * 
+     *
      * @param databaseFile The SQLite database file
      * @param poolName     The name of the connection pool
      * @return A configured HikariConfig for SQLite

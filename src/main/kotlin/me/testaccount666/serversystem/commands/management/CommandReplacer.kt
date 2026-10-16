@@ -2,15 +2,14 @@ package me.testaccount666.serversystem.commands.management
 
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.ServerSystem.Companion.log
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.managers.config.ConfigurationManager
-import me.testaccount666.serversystem.utils.tuples.Tuple
 import org.bukkit.Bukkit
 import org.bukkit.configuration.ConfigurationSection
 
 class CommandReplacer {
     fun replaceCommands() {
-        val configManager = instance.registry.getService<ConfigurationManager>()
-        val replaceConfig = configManager.commandReplaceConfig
+        val replaceConfig = getService<ConfigurationManager>().commandReplaceConfig
 
         if (!replaceConfig.getBoolean("ReplacedCommands.Enabled", false)) return
 
@@ -27,25 +26,25 @@ class CommandReplacer {
             else log.warning(message)
         }
 
-        instance.registry.getService<CommandManager>().syncCommands()
+        getService<CommandManager>().syncCommands()
     }
 
-    private fun replaceCommands(identifier: String, section: ConfigurationSection): Tuple<Boolean, String> {
-        val commandManager = instance.registry.getService<CommandManager>()
+    private fun replaceCommands(identifier: String, section: ConfigurationSection): Pair<Boolean, String> {
+        val commandManager = getService<CommandManager>()
 
-        val fromCommandName = section.getString("From.Command") ?: return Tuple(
+        val fromCommandName = section.getString("From.Command") ?: return Pair(
             false,
             "Invalid command replacement with identifier '${identifier}': 'From Command' is null!"
         )
 
-        val fromPluginName = section.getString("From.Plugin") ?: return Tuple(
+        val fromPluginName = section.getString("From.Plugin") ?: return Pair(
             false,
             "Invalid command replacement with identifier '${identifier}': 'From Plugin' is null!"
         )
 
 
         val (success, message) = verifyPlugin(fromPluginName)
-        if (!success) return Tuple(
+        if (!success) return Pair(
             false,
             "Invalid command replacement with identifier '${identifier}': ${message} (FromPlugin)"
         )
@@ -54,18 +53,18 @@ class CommandReplacer {
             "${
                 fromPluginName.lowercase()
             }:${fromCommandName.lowercase()}"
-        ) ?: return Tuple(
+        ) ?: return Pair(
             false,
             "Invalid command replacement with identifier '${identifier}': ${fromPluginName}:${fromCommandName} (Command not found in plugin '${fromPluginName}')"
         )
 
 
-        val toCommandName = section.getString("To.Command") ?: return Tuple(
+        val toCommandName = section.getString("To.Command") ?: return Pair(
             false,
             "Invalid command replacement with identifier '${identifier}': 'To Command' is null!"
         )
 
-        commandManager.getCommand(toCommandName.lowercase()) ?: return Tuple(
+        commandManager.getCommand(toCommandName.lowercase()) ?: return Pair(
             false,
             "Invalid command replacement with identifier '${identifier}': ${toCommandName} (Command not found!)"
         )
@@ -75,16 +74,16 @@ class CommandReplacer {
         commandMap.remove(toCommandName.lowercase())
         commandMap[toCommandName.lowercase()] = fromCommand
 
-        return Tuple(true, "Replaced command '${toCommandName}' with '${fromPluginName}:${fromCommandName}'")
+        return Pair(true, "Replaced command '${toCommandName}' with '${fromPluginName}:${fromCommandName}'")
     }
 
-    private fun verifyPlugin(pluginName: String): Tuple<Boolean, String?> {
+    private fun verifyPlugin(pluginName: String): Pair<Boolean, String?> {
         val pluginManager = Bukkit.getPluginManager()
         val plugin =
-            pluginManager.getPlugin(pluginName) ?: return Tuple(false, "Invalid plugin name '${pluginName}' (Plugin not found!)")
+            pluginManager.getPlugin(pluginName) ?: return Pair(false, "Invalid plugin name '${pluginName}' (Plugin not found!)")
 
-        if (!plugin.isEnabled) return Tuple(false, "Invalid plugin name '${pluginName}' (Plugin is not enabled!)")
+        if (!plugin.isEnabled) return Pair(false, "Invalid plugin name '${pluginName}' (Plugin is not enabled!)")
 
-        return Tuple(true, null)
+        return Pair(true, null)
     }
 }

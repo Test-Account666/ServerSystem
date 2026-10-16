@@ -2,17 +2,13 @@ package me.testaccount666.serversystem.listener.executables.minecraftdiscordchat
 
 import com.google.gson.JsonObject
 import io.papermc.paper.event.player.AsyncChatEvent
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
+import me.testaccount666.paperktx.extensions.ComponentExtensions.asString
 import me.testaccount666.serversystem.ServerSystem.Companion.log
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.managers.config.ConfigurationManager
-import me.testaccount666.serversystem.utils.ChatColor.Companion.stripColor
-import me.testaccount666.serversystem.utils.ComponentColor.componentToString
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
+import org.bukkit.event.*
 import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
+import java.net.http.*
 import java.util.function.Function
 import java.util.logging.Level
 
@@ -21,7 +17,7 @@ class ListenerMinecraftDiscordChat : Listener {
     private val _webHookUri: URI
 
     init {
-        val configManager = instance.registry.getService<ConfigurationManager>()
+        val configManager = getService<ConfigurationManager>()
         val generalConfig = configManager.generalConfig
 
         var uri = generalConfig.getString("MinecraftDiscordChat.WebhookUrl")
@@ -31,13 +27,11 @@ class ListenerMinecraftDiscordChat : Listener {
         _webHookUri = URI(uri)
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     fun onChat(event: AsyncChatEvent) {
         if (!_enabled) return
 
-        var message = componentToString(event.message())
-        message = stripColor(message)
-        message = message.replace("@", "\\@")
+        val message = event.message().asString(true).replace("@", "\\@")
 
         HttpClient.newHttpClient().use { httpClient ->
             val jsonObject = JsonObject()

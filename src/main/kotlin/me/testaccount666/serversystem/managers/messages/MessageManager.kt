@@ -1,12 +1,13 @@
 package me.testaccount666.serversystem.managers.messages
 
+import me.testaccount666.paperktx.colors.ChatColor
+import me.testaccount666.paperktx.extensions.ComponentExtensions.asComponent
 import me.testaccount666.serversystem.ServerSystem
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.managers.PlaceholderManager
 import me.testaccount666.serversystem.managers.config.ConfigReader
 import me.testaccount666.serversystem.managers.config.ConfigurationManager
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.ChatColor
-import me.testaccount666.serversystem.utils.ComponentColor
 import net.kyori.adventure.text.Component
 import java.io.FileNotFoundException
 import java.util.logging.Level
@@ -27,8 +28,7 @@ object MessageManager {
     fun initialize() {
         placeholderManager = PlaceholderManager()
         languageLoader = LanguageLoader()
-        defaultLanguage = ServerSystem.instance.registry.getService<ConfigurationManager>().generalConfig
-            .getString("Language.DefaultLanguage", FALLBACK_LANGUAGE)!!
+        defaultLanguage = getService<ConfigurationManager>().generalConfig.getValue("Language.DefaultLanguage", FALLBACK_LANGUAGE)
 
         val message = languageLoader.getMessageReader(defaultLanguage)
         val mappings = languageLoader.getMappingReader(defaultLanguage)
@@ -69,15 +69,7 @@ object MessageManager {
      */
     @JvmStatic
     fun formatMessageAsComponent(message: String?, commandSender: User, targetName: String?, label: String?, addPrefix: Boolean): Component {
-        var message = message ?: return Component.empty()
-
-        if (addPrefix) {
-            val prefix = getMessage(commandSender, "General.Prefix") ?: ""
-            message = prefix + message
-        }
-
-        val processedMessage = placeholderManager.applyPlaceholders(message, commandSender, targetName, label ?: "")
-        return ComponentColor.translateToComponent(processedMessage)
+        return formatMessage(message, commandSender, targetName, label, addPrefix).asComponent()
     }
 
     /**
@@ -92,20 +84,14 @@ object MessageManager {
         val language = language ?: user.playerLanguage
         val messagePath = "Messages.${messagePath}"
 
-        var reader: ConfigReader
-        try {
-            reader = getConfigReader(language)
-        } catch (exception: FileNotFoundException) {
-            ServerSystem.log.log(Level.WARNING, "Failed to load messages for language '${language}': ${exception.message}", exception)
-            reader = getConfigReader(defaultLanguage)
-        }
+        val reader = runCatching { getConfigReader(language) }.onFailure {
+            ServerSystem.log.log(Level.WARNING, "Failed to load messages for language '${language}': ${it.message}", it)
+        }.getOrThrow() // Technically should never throw
 
-        val message = reader.getString(messagePath) ?: let {
+        return reader.getString(messagePath) ?: run {
             ServerSystem.log.warning("Message '${messagePath}' not found for language ${language}!")
-            null
+            return null
         }
-
-        return message
     }
 
     /**

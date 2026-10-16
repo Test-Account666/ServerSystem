@@ -22,5 +22,5 @@ annotation class SaveableField(
      *
      * @return The handler class
      */
-    val handler: KClass<out FieldHandler<*>> = DefaultFieldHandler::class
+    val handler: KClass<out FieldHandler<*>> = DefaultFieldHandler::class,
 )

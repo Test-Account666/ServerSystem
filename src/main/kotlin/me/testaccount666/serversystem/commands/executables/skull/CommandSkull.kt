@@ -1,12 +1,13 @@
 package me.testaccount666.serversystem.commands.executables.skull
 
+import me.testaccount666.paperktx.scheduler.skedule.okkero.SynchronizationContext
+import me.testaccount666.paperktx.scheduler.skedule.okkero.schedule
 import me.testaccount666.serversystem.ServerSystem.Companion.instance
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.extensions.commandMsg
+import me.testaccount666.serversystem.extensions.generalMsg
 import me.testaccount666.serversystem.userdata.User
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
-import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.inventory.ItemStack
 import java.net.URI
@@ -24,32 +25,33 @@ class CommandSkull : AbstractServerSystemCommand() {
         val other = arguments.isNotEmpty()
         if (other && !checkPermission(commandSender, "Skull.Other", arguments[0])) return
 
-        Bukkit.getScheduler().runTaskAsynchronously(instance, Runnable {
+        instance.schedule {
+            switchContext(SynchronizationContext.ASYNC)
             if (other) executeOtherSkull(commandSender, *arguments)
             else executeSelfSkull(commandSender)
-        })
+        }
     }
 
     private fun executeSelfSkull(commandSender: User) {
-        val skull = _skullCreator.getSkull(commandSender.getNameSafe())
+        val skull = _skullCreator.getSkull(commandSender.nameSafe)
         commandSender.getPlayer()!!.inventory.addItem(skull)
     }
 
     private fun executeOtherSkull(commandSender: User, vararg arguments: String) {
         val skull = createSkullFromInput(commandSender, arguments[0]) ?: run {
-            general("ErrorOccurred", commandSender).build()
+            commandSender.generalMsg("ErrorOccurred")
             return
         }
 
         commandSender.getPlayer()!!.inventory.addItem(skull)
-        command("Skull.Success", commandSender).build()
+        commandSender.commandMsg("Skull.Success")
     }
 
     private fun createSkullFromInput(commandSender: User, input: String): ItemStack? {
         parseUuid(input)?.let { return _skullCreator.getSkull(it) }
 
         parseUrl(input)?.let {
-            command("Skull.Fetching", commandSender).build()
+            commandSender.commandMsg("Skull.Fetching")
             return _skullCreator.getSkullByTexture(it)
         }
 

@@ -13,7 +13,7 @@ object MenuUtils {
 
     /**
      * Opens a workbench menu for the player.
-     * 
+     *
      * @param player The player to open the menu for
      */
     fun openWorkbench(player: Player) {
@@ -23,7 +23,7 @@ object MenuUtils {
 
     /**
      * Opens an anvil menu for the player.
-     * 
+     *
      * @param player The player to open the menu for
      */
     fun openAnvil(player: Player) {
@@ -33,7 +33,7 @@ object MenuUtils {
 
     /**
      * Opens a smithing table menu for the player.
-     * 
+     *
      * @param player The player to open the menu for
      */
     fun openSmithing(player: Player) {
@@ -43,7 +43,7 @@ object MenuUtils {
 
     /**
      * Opens a loom menu for the player.
-     * 
+     *
      * @param player The player to open the menu for
      */
     fun openLoom(player: Player) {
@@ -53,7 +53,7 @@ object MenuUtils {
 
     /**
      * Opens a grindstone menu for the player.
-     * 
+     *
      * @param player The player to open the menu for
      */
     fun openGrindstone(player: Player) {
@@ -63,7 +63,7 @@ object MenuUtils {
 
     /**
      * Opens a cartography table menu for the player.
-     * 
+     *
      * @param player The player to open the menu for
      */
     fun openCartography(player: Player) {
@@ -73,7 +73,7 @@ object MenuUtils {
 
     /**
      * Opens a stonecutter menu for the player.
-     * 
+     *
      * @param player The player to open the menu for
      */
     fun openStonecutter(player: Player) {

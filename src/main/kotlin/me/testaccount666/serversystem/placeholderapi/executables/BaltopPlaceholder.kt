@@ -1,6 +1,6 @@
 package me.testaccount666.serversystem.placeholderapi.executables
 
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.placeholderapi.Placeholder
 import me.testaccount666.serversystem.userdata.OfflineUser
 import me.testaccount666.serversystem.userdata.UserManager
@@ -94,13 +94,12 @@ class BaltopPlaceholder : Placeholder {
 
         if (!format) return String.format("%.2f", balance.toDouble())
 
-        return instance.registry.getService<EconomyProvider>().formatMoney(balance)
+        return getService<EconomyProvider>().formatMoney(balance)
     }
 
     override val identifiers = setOf("baltop")
 
     private fun getOfflineUser(player: OfflinePlayer): OfflineUser? {
-        val cachedUser = instance.registry.getService<UserManager>().getUserOrNull(player.uniqueId)
-        return cachedUser?.offlineUser
+        return getService<UserManager>().getUserOrNull(player.uniqueId)?.offlineUser
     }
 }

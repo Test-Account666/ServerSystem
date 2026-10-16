@@ -15,7 +15,7 @@ import org.bukkit.event.player.PlayerLoginEvent
 class ListenerOfflineInventorySee : AbstractInventorySeeListener(), Listener {
     /**
      * Checks if the listener can be registered by finding the required CommandInventorySee instance.
-     * 
+     *
      * @param commands Set of available commands
      * @return true if the listener can be registered, false otherwise
      */

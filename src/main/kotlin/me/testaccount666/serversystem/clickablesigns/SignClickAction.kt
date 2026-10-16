@@ -8,14 +8,14 @@ interface SignClickAction {
 
     /**
      * The permission node for the permission required to use this sign.
-     * 
+     *
      * @return The permission node
      */
     val usePermissionNode: String
 
     /**
      * The permission node for the permission required to break this+ sign.
-     * 
+     *
      * @return The permission node
      */
     val destroyPermissionNode: String

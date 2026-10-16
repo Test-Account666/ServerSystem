@@ -24,12 +24,12 @@ object PermissionManager {
     @JvmStatic
     @JvmOverloads
     fun hasCommandPermission(user: User, permissionPath: String?, sendFailInfo: Boolean = true): Boolean {
-        return hasPermission(user.commandSender!!, "Commands.${permissionPath}", sendFailInfo)
+        return hasPermission(user.commandSender, "Commands.${permissionPath}", sendFailInfo)
     }
 
     @JvmStatic
     fun hasPermission(user: User, permissionPath: String?, sendFailInfo: Boolean): Boolean {
-        return hasPermission(user.commandSender!!, permissionPath, sendFailInfo)
+        return hasPermission(user.commandSender, permissionPath, sendFailInfo)
     }
 
     @JvmStatic

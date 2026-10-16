@@ -2,10 +2,9 @@ package me.testaccount666.serversystem.commands.executables.pay
 
 import me.testaccount666.serversystem.commands.ServerSystemCommand
 import me.testaccount666.serversystem.commands.executables.AbstractServerSystemCommand
+import me.testaccount666.serversystem.extensions.*
 import me.testaccount666.serversystem.userdata.User
 import me.testaccount666.serversystem.userdata.money.EconomyProvider
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.command
-import me.testaccount666.serversystem.utils.MessageBuilder.Companion.general
 import org.bukkit.command.Command
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -20,7 +19,7 @@ class CommandPay : AbstractServerSystemCommand() {
         if (isConsoleWithNoTarget(commandSender, getSyntaxPath(command), label, 1, *arguments)) return
 
         val targetUser = getTargetUser(commandSender, arguments = arguments) ?: run {
-            general("PlayerNotFound", commandSender) { target(arguments[0]) }.build()
+            commandSender.generalMsg("PlayerNotFound") { target(arguments[0]) }
             return
         }
 
@@ -28,39 +27,39 @@ class CommandPay : AbstractServerSystemCommand() {
         val isSelf = targetUser === commandSender
 
         if (isSelf) {
-            command("Pay.CannotPaySelf", commandSender).build()
+            commandSender.commandMsg("Pay.CannotPaySelf")
             return
         }
 
         val amount = arguments[1].toBigDecimalOrNull()?.setScale(2, RoundingMode.HALF_UP) ?: run {
-            command("Pay.InvalidAmount", commandSender) { target(targetPlayer.name) }.build()
+            commandSender.commandMsg("Pay.InvalidAmount") { target(targetPlayer.name) }
             return
         }
 
         if (amount <= BigDecimal.ZERO) {
-            command("Pay.InvalidAmount", commandSender) { target(targetPlayer.name) }.build()
+            commandSender.commandMsg("Pay.InvalidAmount") { target(targetPlayer.name) }
             return
         }
 
         val bankAccount = commandSender.bankAccount
 
         if (bankAccount.balance < amount) {
-            command("Pay.NotEnoughMoney", commandSender) { target(targetPlayer.name) }.build()
+            commandSender.commandMsg("Pay.NotEnoughMoney") { target(targetPlayer.name) }
             return
         }
 
         bankAccount.transfer(amount, targetUser.bankAccount)
         val formattedAmount = getService<EconomyProvider>().formatMoney(amount)
 
-        command("Pay.Success", commandSender) {
+        commandSender.commandMsg("Pay.Success") {
             target(targetPlayer.name)
             postModifier { it.replace("<AMOUNT>", formattedAmount) }
-        }.build()
+        }
 
-        command("Pay.SuccessOther", targetUser) {
+        targetUser.commandMsg("Pay.SuccessOther") {
             target(targetPlayer.name)
-            sender(commandSender.getNameSafe())
+            sender(commandSender.nameSafe)
             postModifier { it.replace("<AMOUNT>", formattedAmount) }
-        }.build()
+        }
     }
 }

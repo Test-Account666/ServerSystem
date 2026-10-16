@@ -1,14 +1,14 @@
 package me.testaccount666.migration.plugins.essentials
 
 import com.earth2me.essentials.Essentials
-import me.testaccount666.serversystem.ServerSystem.Companion.instance
+import me.testaccount666.serversystem.extensions.getService
 import me.testaccount666.serversystem.userdata.UserManager
 import org.bukkit.Bukkit
 import java.nio.file.Path
 import java.util.*
 
 abstract class AbstractMigrator {
-    val userManager by lazy { instance.registry.getService<UserManager>() }
+    val userManager by lazy { getService<UserManager>() }
     val essentials by lazy { Essentials.getPlugin(Essentials::class.java) }
 
     protected fun offlinePlayers() = Bukkit.getOfflinePlayers()

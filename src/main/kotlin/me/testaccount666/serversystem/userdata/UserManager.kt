@@ -1,11 +1,14 @@
 package me.testaccount666.serversystem.userdata
 
+import me.testaccount666.paperktx.extensions.TimeExtensions.toTicks
+import me.testaccount666.paperktx.scheduler.skedule.okkero.schedule
 import me.testaccount666.serversystem.ServerSystem
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.nio.file.Path
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.time.Duration.Companion.minutes
 
 /**
  * Manages ServerSystem's user data.
@@ -17,13 +20,9 @@ class UserManager {
     private val _userUuidMap = ConcurrentHashMap<UUID, CachedUser>()
 
     init {
-        Bukkit.getScheduler()
-            .scheduleAsyncRepeatingTask(
-                ServerSystem.instance,
-                { cleanStaleUsers() },
-                (15 * 20 * 60).toLong(),
-                (15 * 20 * 60).toLong()
-            ) // 15 Minutes
+        ServerSystem.instance.schedule {
+            loop(15.minutes.toTicks(), 15.minutes.toTicks()) { cleanStaleUsers() }
+        }
 
         Bukkit.getOnlinePlayers().forEach(::getUserOrNull)
     }
