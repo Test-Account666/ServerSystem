@@ -24,17 +24,13 @@ class SignManager {
             val fileConfig = YamlConfiguration.loadConfiguration(file!!)
             val key = fileConfig.getString("Key") ?: continue
             val signType = SignType.getSignTypeByKey(key) ?: continue
-            val locationString = file.name.substring(0, file.name.indexOf("."))
-            val locationSplit = locationString.split("_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            val locationSplit = file.nameWithoutExtension.split("_").dropLastWhile(String::isEmpty)
             if (locationSplit.size != 4) continue
 
-            val worldName = locationSplit[0]
-            val xString = locationSplit[1]
-            val yString = locationSplit[2]
-            val zString = locationSplit[3]
+            val (worldName, x, y, z) = locationSplit
 
             val world = Bukkit.getWorld(worldName) ?: continue
-            val location = location(xString.toInt(), yString.toInt(), zString.toInt(), world)
+            val location = location(x.toInt(), y.toInt(), z.toInt(), world)
             addSignType(location, signType)
         }
     }

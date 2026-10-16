@@ -60,11 +60,10 @@ class ListenerManager(private val _commandManager: CommandManager) {
         }
 
         try {
-            val methodAccessor =
-                MethodAccessor.createAccessor(
-                    listener.javaClass, "canRegister",
-                    Set::class.java, Boolean::class.java
-                )
+            val methodAccessor = MethodAccessor.createAccessor(
+                listener.javaClass, "canRegister",
+                Set::class.java, Boolean::class.java
+            )
 
             return methodAccessor.apply(listener, instances) ?: false
         } catch (exception: RuntimeException) {

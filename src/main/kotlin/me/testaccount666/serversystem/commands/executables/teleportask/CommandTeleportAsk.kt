@@ -135,11 +135,7 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
         }
 
         if (acceptButton.isEmpty() || denyButton.isEmpty()) {
-            log.warning(
-                "Couldn't find accept or deny button for ${
-                    targetUser.getNameOrNull()
-                } in the language file. Please check the language file for errors."
-            )
+            log.warning("Couldn't find accept or deny button for ${targetUser.getNameOrNull()} in the language file. Please check the language file for errors.")
             targetUser.generalMsg("ErrorOccurred") { label(label) }
             return
         }
@@ -161,11 +157,7 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
         }
 
         if (acceptButtonTooltip.isEmpty() || denyButtonTooltip.isEmpty()) {
-            log.warning(
-                "Couldn't find accept or deny button tooltip for ${
-                    targetUser.getNameOrNull()
-                } in the language file. Please check the language file for errors."
-            )
+            log.warning("Couldn't find accept or deny button tooltip for ${targetUser.getNameOrNull()} in the language file. Please check the language file for errors.")
             targetUser.generalMsg("ErrorOccurred") { label(label) }
             return
         }
@@ -259,7 +251,7 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
      * @param clickAction The action to perform when clicked
      * @return The formatted component
      */
-    private fun createMessageComponent(text: String?, hoverText: String?, clickAction: ClickEvent?): Component {
+    private fun createMessageComponent(text: String?, hoverText: String?, clickAction: ClickEvent<*>?): Component {
         if (text == null || hoverText == null || clickAction == null) return Component.empty()
 
         return text.asComponent()
@@ -293,8 +285,6 @@ class CommandTeleportAsk : AbstractServerSystemCommand() {
 
         if (isSelf) return
 
-        targetUser.commandMsg("TeleportToggle.Success" + (if (acceptsTeleports) "Enabled" else "Disabled")) {
-            sender(commandSender.nameSafe)
-        }
+        targetUser.commandMsg("TeleportToggle.Success" + (if (acceptsTeleports) "Enabled" else "Disabled")) { sender(commandSender.nameSafe) }
     }
 }

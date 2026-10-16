@@ -3,23 +3,17 @@ package me.testaccount666.serversystem
 import java.util.concurrent.ConcurrentHashMap
 
 class ServiceRegistry {
-    private val _services: MutableMap<Class<*>, Any> = ConcurrentHashMap()
+    private val _services = ConcurrentHashMap<Class<*>, Any>()
 
-    @Synchronized
     fun <T : Any> registerService(type: Class<T>, service: T): T {
         check(!hasService(type)) { "Service already registered: ${type.name}" }
-
-        _services[type] = service
-        return service
+        return service.also { _services[type] = it }
     }
 
-    fun <T : Any> getService(type: Class<T>): T = type.cast(_services[type])
+    fun <T : Any> getService(type: Class<T>) = getServiceOrNull(type) ?: error("Service not registered: ${type.name}")
+    fun <T : Any> getServiceOrNull(type: Class<T>) = _services[type]?.let(type::cast)
+    fun <T : Any> hasService(type: Class<T>) = _services.containsKey(type)
 
-    fun <T : Any> getServiceOrNull(type: Class<T>): T? = _services[type]?.let { type.cast(it) }
-
-    fun <T : Any> hasService(type: Class<T>): Boolean = type in _services
-
-    @Synchronized
     fun clearServices() = _services.clear()
 
     inline fun <reified T : Any> registerService(service: T): T = registerService(T::class.java, service)

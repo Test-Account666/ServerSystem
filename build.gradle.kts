@@ -1,6 +1,7 @@
 import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
 import io.papermc.paperweight.util.path
 import org.apache.tools.ant.filters.ReplaceTokens
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -17,17 +18,17 @@ val cleanVersion = "4.1.0"
 
 @Suppress("UNCHECKED_CAST")
 val gitVersion = extra["gitVersion"] as groovy.lang.Closure<String>
-version = "${cleanVersion}-" + gitVersion().dropWhile { it != '-' }.drop(1).replace("dirty", getFormattedDate())
+version = "${cleanVersion}-" + gitVersion().substringAfter("-").replace("dirty", getFormattedDate())
+/*.dropWhile { it != '-' }.drop(1)*/
 
-fun getFormattedDate(): String {
-    return DateTimeFormatter.ofPattern("yyyy-MM-dd.HH-mm").format(LocalDateTime.now())
-}
+fun getFormattedDate(): String = DateTimeFormatter.ofPattern("yyyy-MM-dd.HH-mm").format(LocalDateTime.now())
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(libs.versions.java.get())
-    }
+    toolchain { languageVersion = JavaLanguageVersion.of(libs.versions.java.get()) }
+    disableAutoTargetJvm()
 }
+
+tasks.withType<JavaCompile> { options.release.set(21) }
 
 val generateVersionInfo = tasks.register("generateVersionInfo") {
     val template = file("src/main/resources/templates/VersionInfo.kt")
@@ -45,15 +46,16 @@ val generateVersionInfo = tasks.register("generateVersionInfo") {
 }
 
 kotlin {
-    compilerOptions { freeCompilerArgs.addAll("-Xjsr305=strict", "-jvm-target=21") }
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_21)
+        freeCompilerArgs.add("-Xjsr305=strict")
+    }
 
     sourceSets.main { kotlin.srcDir(generateVersionInfo) }
 }
 
 configurations {
-    compileOnly {
-        extendsFrom(configurations.annotationProcessor.get())
-    }
+    compileOnly { extendsFrom(configurations.annotationProcessor.get()) }
 }
 
 repositories {
@@ -105,7 +107,7 @@ tasks.shadowJar {
     val libsDirectory = layout.buildDirectory.path.resolve("libs")
 
     doFirst {
-        libsDirectory.toFile().listFiles().filter { it.name.endsWith(".jar") }.forEach(File::delete)
+        libsDirectory.toFile().listFiles()?.filter { it.name.endsWith(".jar") }?.forEach(File::delete)
     }
 
     doLast {
@@ -115,17 +117,16 @@ tasks.shadowJar {
 }
 
 tasks.processResources {
-    exclude("templates/**")
-    filter(
-        ReplaceTokens::class,
-        mapOf(
-            "tokens" to mapOf(
-                "PROJECT_VERSION" to project.version,
-                "CLEAN_VERSION" to cleanVersion,
-                "KOTLIN_VERSION" to libs.versions.kotlin.get()
-            )
-        )
+    val props = mapOf(
+        "PROJECT_VERSION" to project.version,
+        "CLEAN_VERSION" to cleanVersion,
+        "KOTLIN_VERSION" to libs.versions.kotlin.get()
     )
+
+    inputs.properties(props)
+
+    exclude("templates/**")
+    filter(ReplaceTokens::class, mapOf("tokens" to props))
 }
 
 tasks.withType<Test>(Test::useJUnitPlatform)

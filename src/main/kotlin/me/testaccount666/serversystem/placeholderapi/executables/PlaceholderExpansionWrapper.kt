@@ -20,15 +20,15 @@ class PlaceholderExpansionWrapper : PlaceholderExpansion() {
             return null
         }
 
-        val split = params.split("_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        val identifier = split[0].lowercase()
+        val split = params.split("_").dropLastWhile(String::isEmpty)
+        val identifier = split.first().lowercase()
 
         val placeholder = getService<PlaceholderManager>().getPlaceholder(identifier) ?: run {
             log.warning("An unknown placeholder was requested! '${params}'")
             return null
         }
 
-        val arguments = (if (split.size == 1) emptyArray() else split.copyOfRange(1, split.size))
+        val arguments = split.drop(1).toTypedArray()
 
         if (player == null) return placeholder.execute(null, identifier, *arguments)
         val cachedUser = getService<UserManager>().getUserOrNull(player.uniqueId) ?: return null
